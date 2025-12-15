@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@opencode-ai/sdk':
+        specifier: 1.0.160
+        version: 1.0.160
       dotenv:
         specifier: 17.2.3
         version: 17.2.3
@@ -790,6 +793,9 @@ packages:
     peerDependenciesMeta:
       rolldown:
         optional: true
+
+  '@opencode-ai/sdk@1.0.160':
+    resolution: {integrity: sha512-w+0rlYWaCyA9za5FmTR/HXKmAZNVBOsqBnQt937Rj2xIwfcMiwaNj1uK9w8tGwso6gUpdUX7SN9R4U9Id/8hVg==}
 
   '@oxc-minify/binding-android-arm64@0.102.0':
     resolution: {integrity: sha512-pknM+ttJTwRr7ezn1v5K+o2P4RRjLAzKI10bjVDPybwWQ544AZW6jxm7/YDgF2yUbWEV9o7cAQPkIUOmCiW8vg==}
@@ -5101,6 +5107,8 @@ snapshots:
       - vti
       - vue-tsc
       - yaml
+
+  '@opencode-ai/sdk@1.0.160': {}
 
   '@oxc-minify/binding-android-arm64@0.102.0':
     optional: true
