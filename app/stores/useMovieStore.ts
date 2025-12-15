@@ -1,449 +1,148 @@
-interface OmdbMovieDetails {
-  Title: string
-  Year: string
-  imdbID: string
-  Rated: string
-  Released: string
-  Runtime: string
-  Genre: string
-  Director: string
-  Writer: string
-  Actors: string
-  Plot: string
-  Language: string
-  Country: string
-  Awards?: string
-  Poster?: string
-  Ratings?: Array<{ Source: string; Value: string }>
-  Metascore?: string
-  imdbRating: string
-  imdbVotes: string
-  Type?: string
-  DVD?: string
-  BoxOffice?: string
-  Production?: string
-  Website?: string
-  Response: string
-  Error?: string
-}
-
-interface Movie {
-  title: string
-  identifier: string
-  description?: string
-  date?: string
-  year?: string
-  creator?: string | string[]
-  subject?: string[]
-  collection?: string[]
-  downloads?: number
-  mediatype?: string
-  thumbnailUrl?: string
-  downloadUrl?: string
-}
-
-interface MovieDetails {
-  metadata?: {
-    thumbnail?: string
-    [key: string]: any
-  }
-  files?: Array<{
-    name: string
-    [key: string]: any
-  }>
-  [key: string]: any
-}
+import type { MovieEntry, MovieSource, MovieSourceType } from '~/types/movie'
 
 interface LoadingState {
   movies: boolean
   movieDetails: boolean
-  saving: boolean
   imdbFetch: boolean
 }
 
-type SavingStatus = Record<string, 'saving' | 'saved' | 'error'>
-
 export const useMovieStore = defineStore('movie', () => {
-  const movies = ref<Movie[]>([])
+  // State
+  const movies = ref<MovieEntry[]>([])
   const isLoading = ref<LoadingState>({
     movies: false,
     movieDetails: false,
-    saving: false,
     imdbFetch: false,
   })
 
-  const savingStatus = ref<SavingStatus>({})
+  // Cached poster existence checks
+  const posterCache = ref<Map<string, boolean>>(new Map())
 
-  // Helper function to validate OMDB API key
-  const validateOmdbApiKey = (): string | null => {
-    const apiKey = useRuntimeConfig().public.OMDB_API_KEY
-
-    if (!apiKey) {
-      useMessageStore().showMessage({
-        type: 'error',
-        body: 'OMDB_API_KEY is not configured in runtime config',
-      })
-      isLoading.value.imdbFetch = false
-      return null
-    }
-
-    return apiKey
-  }
-
-  const fetchArchiveOrgMovies = async () => {
+  /**
+   * Load movies from data/movies.json
+   * Converts the object-based database to an array for easier use in components
+   */
+  const loadFromFile = async () => {
     isLoading.value.movies = true
 
-    const allMovies: Movie[] = []
-    const rowsPerPage = 100 // Number of results per page
-    const totalPages = 2 // Number of pages to fetch
-
-    // Fetch 5 pages of results
-    for (let page = 0; page < totalPages; page++) {
-      const { data, error } = await request<{ response: { docs: Movie[] } }>(
-        'https://archive.org/advancedsearch.php',
-        {
-          params: {
-            q: 'mediatype:movies AND collection:feature_films',
-            output: 'json',
-            rows: rowsPerPage,
-            start: page * rowsPerPage, // Pagination offset
-            sort: 'downloads desc', // Sort by most downloaded
-          },
-        }
-      )
-
-      if (error || !data) continue
-      const pageMovies = data.response.docs || []
-      allMovies.push(...pageMovies)
-      // Break early if we get fewer results than expected (last page)
-      if (pageMovies.length < rowsPerPage) break
-    }
-
-    movies.value = allMovies
-    console.log('allMovies', allMovies)
-
-    isLoading.value.movies = false
-  }
-
-  // Fetch movies from Strapi
-  const fetchMovies = async (all?: false) => {
-    isLoading.value.movies = true
-    const { find } = useStrapi()
-
-    if (all) {
-      const response = await find<Movie[]>('movies', {
-        populate: ['poster', 'links'],
-      })
-      if (response) {
-        movies.value = response.data
-      }
-    } else {
-      // Fetch movies that have an imdbId using GraphQL
-      const graphql = useStrapiGraphQL()
-      const response = await graphql(`
-        query GetMoviesWithImdbId {
-          movies(filters: { imdbId: { notNull: true } }) {
-            data {
-              id
-              attributes {
-                title
-                poster {
-                  data {
-                    attributes {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `)
-      console.log('response', response)
-
-      if (response?.movies?.data) {
-        movies.value = response.movies.data
-      }
-    }
-
-    isLoading.value.movies = false
-  }
-
-  // Add a function to fetch movie details by identifier
-  const fetchMovieDetails = async (identifier: string) => {
-    isLoading.value.movieDetails = true
-
-    const response = await useFetch<MovieDetails>(`https://archive.org/metadata/${identifier}`)
-
-    if (response.error.value) {
-      useMessageStore().showMessage({
-        type: 'error',
-        body: `Failed to fetch movie details`,
-      })
-      return
-    }
-
-    isLoading.value.movieDetails = false
-    return response.data.value as MovieDetails
-  }
-
-  // Add a function to save a movie to Strapi
-  const saveMovieToStrapi = async (movie: Movie) => {
-    // Set the saving status for this movie
-    savingStatus.value[movie.identifier] = 'saving'
-    isLoading.value.saving = true
-
-    // Prepare movie data for Strapi
-    // const movieData: Movie = {
-    // 	title: movie.title,
-    // 	year: movie.date || "",
-    // };
-
-    // Use Nuxt Strapi module to save the movie
-    const { create, find } = useStrapi()
     try {
-      const linkData = {
-        site: 'archive.org',
-        identifier: movie.identifier,
+      // Fetch the movies.json file from the public directory
+      const response = await $fetch<Record<string, any>>('/data/movies.json')
+
+      // Convert object to array, filtering out metadata entries
+      const movieEntries: MovieEntry[] = []
+      for (const [key, value] of Object.entries(response)) {
+        // Skip metadata entries (start with underscore)
+        if (key.startsWith('_')) continue
+
+        // Type guard: ensure it's a valid MovieEntry
+        if (value && typeof value === 'object' && 'imdbId' in value && 'title' in value) {
+          movieEntries.push(value as MovieEntry)
+        }
       }
-      const links = await find('external-links', {
-        filters: {
-          $and: [{ site: { $eq: 'archive.org' } }, { identifier: { $eq: movie.identifier } }],
-        },
-      })
-      console.log('links', links)
 
-      const link = !links.data.length
-        ? (await create('external-links', linkData)).data
-        : links.data[0]
-      console.log('link', link)
-
-      const year = movie.date ? new Date(movie.date).getFullYear().toString() : undefined
-
-      const result = await create('movies', {
-        title: movie.title,
-        year,
-        links: [link.id],
-      })
-      console.log('result', result)
-
-      // Update status on success
-      savingStatus.value[movie.identifier] = 'saved'
-      isLoading.value.saving = false
-      useMessageStore().showMessage({
-        type: 'success',
-        body: `Successfully saved "${movie.title}" to your collection!`,
-      })
-
-      // Return the saved movie data
-      return result
-    } catch (createError: any) {
-      useMessageStore().showMessage({
-        type: 'error',
-        body: `Strapi create error: ${createError.message || 'Failed to save movie to Strapi'}`,
-      })
-      savingStatus.value[movie.identifier] = 'error'
-      isLoading.value.saving = false
-    }
-  }
-
-  /**
-   * Search for movies using OMDB API directly
-   * @param id - Movie ID in Strapi
-   * @param query - Search query/keyword
-   * @param year - Optional year of release
-   * @returns Search results from OMDB
-   */
-  const searchImdb = async (id: number, query: string, year?: string) => {
-    isLoading.value.imdbFetch = true
-
-    // Validate API key
-    const apiKey = validateOmdbApiKey()
-    if (!apiKey) return null
-
-    try {
-      // Directly fetch from OMDB API
-      const searchResult = await $fetch('https://www.omdbapi.com/', {
-        params: {
-          apikey: apiKey,
-          s: query,
-          ...(year ? { y: year } : {}),
-        },
-      })
-
-      if (searchResult.Error) {
-        useMessageStore().showMessage({
-          type: 'warning',
-          body: searchResult.Error,
-        })
-      } else {
-        useMessageStore().showMessage({
-          type: 'success',
-          body: `Found ${searchResult.totalResults} results for "${query}" on OMDb.`,
-        })
-      }
-      if (searchResult.totalResults === '1') {
-        useStrapi().update('movies', id, {
-          imdbId: searchResult.Search[0].imdbID,
-        })
-      }
-      isLoading.value.imdbFetch = false
-
-      // Return the result which already has the expected format:
-      // { Search: [...], totalResults: "...", Response: "True" }
+      movies.value = movieEntries
+      console.log(`Loaded ${movieEntries.length} movies from data/movies.json`)
     } catch (error: any) {
+      console.error('Failed to load movies from file:', error)
       useMessageStore().showMessage({
         type: 'error',
-        body: `OMDB search error: ${error.message || 'Failed to search movies'}`,
+        body: `Failed to load movies: ${error.message || 'Unknown error'}`,
       })
-      isLoading.value.imdbFetch = false
-      return null
+    } finally {
+      isLoading.value.movies = false
     }
   }
 
   /**
-   * Get detailed information for a specific movie from OMDB API and update Strapi entry
-   * @param id - Strapi ID of the movie entry to update
-   * @param imdbId - IMDB ID of the movie for exact match
-   * @returns Detailed movie information from OMDB
+   * Filter movies by source type
+   * @param sourceType - Type of source to filter by ('archive.org' or 'youtube')
+   * @returns Filtered array of movies
    */
-  const getMovieDetails = async (id: string, imdbId: string) => {
-    isLoading.value.imdbFetch = true
-
-    // Validate API key
-    const apiKey = validateOmdbApiKey()
-    if (!apiKey) return null
-
-    // Fetch movie details from OMDB API
-    const movieDetails = await $fetch<OmdbMovieDetails>('https://www.omdbapi.com/', {
-      params: {
-        apikey: apiKey,
-        i: imdbId,
-        plot: 'full',
-      },
-    })
-
-    if (movieDetails.Error) {
-      useMessageStore().showMessage({
-        type: 'warning',
-        body: movieDetails.Error,
-      })
-      isLoading.value.imdbFetch = false
-      return null
-    }
-
-    // Update the movie in Strapi
-
-    const { update } = useStrapi()
-    const updateResult = await update('movies', id, {
-      title: movieDetails.Title,
-      year: parseInt(movieDetails.Year) || undefined,
-      imdbId: movieDetails.imdbID,
-      rated: movieDetails.Rated,
-      released: movieDetails.Released,
-      runtime: movieDetails.Runtime,
-      genre: movieDetails.Genre,
-      director: movieDetails.Director,
-      writer: movieDetails.Writer,
-      actors: movieDetails.Actors,
-      plot: movieDetails.Plot,
-      language: movieDetails.Language,
-      country: movieDetails.Country,
-      imdbRating: parseFloat(movieDetails.imdbRating) || undefined,
-      imdbVotes: parseInt(movieDetails.imdbVotes.replace(/,/g, '')) || undefined,
-    })
-
-    if (updateResult) {
-      useMessageStore().showMessage({
-        type: 'success',
-        body: `Successfully updated "${movieDetails.Title}" with OMDB details!`,
-      })
-    }
-
-    isLoading.value.imdbFetch = false
+  const filterBySource = (sourceType: MovieSourceType): MovieEntry[] => {
+    return movies.value.filter(movie => movie.sources.some(source => source.type === sourceType))
   }
+
   /**
-   * Fetch movie images from OMDB API
-   * @param id - Strapi ID of the movie entry
-   * @param imdbId - IMDB ID of the movie for exact match
-   * @returns Movie images data from OMDB or null if error
+   * Search movies by title, year, genre, or other metadata
+   * @param query - Search query string
+   * @returns Filtered array of movies matching the query
    */
-  const getMovieImage = async (id: string, imdbId: string) => {
-    isLoading.value.imdbFetch = true
+  const searchMovies = (query: string): MovieEntry[] => {
+    if (!query.trim()) return movies.value
 
-    // Validate API key
-    const apiKey = validateOmdbApiKey()
-    if (!apiKey) return null
+    const lowerQuery = query.toLowerCase()
 
-    try {
-      // Fetch movie images from OMDB API
-      const movieImage = await $fetch<Blob>(`http://img.omdbapi.com/?apikey=${apiKey}&i=${imdbId}`)
+    return movies.value.filter(movie => {
+      // Search in title
+      if (movie.title.toLowerCase().includes(lowerQuery)) return true
 
-      useMessageStore().showMessage({
-        type: 'success',
-        body: `Successfully fetched images for movie with IMDB ID: ${imdbId}`,
-      })
+      // Search in AI extracted title
+      if (movie.ai?.extractedTitle?.toLowerCase().includes(lowerQuery)) return true
 
-      isLoading.value.imdbFetch = false
-      // Upload the image to Strapi using Nuxt Strapi module
-      const formData = new FormData()
+      // Search in year
+      if (movie.year?.toString().includes(lowerQuery)) return true
 
-      // Create a file from the blob
-      const file = new File([movieImage], `${imdbId}.jpg`, {
-        type: 'image/jpeg',
-      })
-      formData.append('files', file)
-
-      try {
-        const _token = useStrapiToken()
-        const client = useStrapiClient()
-
-        const uploadResponse = await client<any[]>('/upload', {
-          method: 'POST',
-          body: formData,
-        })
-
-        if (uploadResponse && uploadResponse.length > 0) {
-          useMessageStore().showMessage({
-            type: 'success',
-            body: `Successfully uploaded image for movie with IMDB ID: ${imdbId}`,
-          })
-
-          // Update the movie record with the uploaded image
-          const { update } = useStrapi()
-          await update('movies', id, {
-            poster: uploadResponse[0].id,
-          })
-        }
-      } catch (uploadError: any) {
-        useMessageStore().showMessage({
-          type: 'error',
-          body: `Failed to upload image: ${uploadError.message || 'Unknown error'}`,
-        })
+      // Search in metadata
+      if (movie.metadata) {
+        const { Genre, Director, Actors, Plot } = movie.metadata
+        if (Genre?.toLowerCase().includes(lowerQuery)) return true
+        if (Director?.toLowerCase().includes(lowerQuery)) return true
+        if (Actors?.toLowerCase().includes(lowerQuery)) return true
+        if (Plot?.toLowerCase().includes(lowerQuery)) return true
       }
-    } catch (error: any) {
-      useMessageStore().showMessage({
-        type: 'error',
-        body: `Failed to fetch movie images: ${error.message || 'Unknown error'}`,
-      })
-      isLoading.value.imdbFetch = false
-      return null
-    }
+
+      return false
+    })
+  }
+
+  /**
+   * Get a single movie by imdbId
+   * @param imdbId - IMDB ID or temporary ID
+   * @returns Movie entry or undefined
+   */
+  const getMovieById = (imdbId: string): MovieEntry | undefined => {
+    return movies.value.find(movie => movie.imdbId === imdbId)
+  }
+
+  /**
+   * Get movies that have OMDB metadata
+   * @returns Array of movies with metadata
+   */
+  const getEnrichedMovies = (): MovieEntry[] => {
+    return movies.value.filter(movie => movie.metadata !== undefined)
+  }
+
+  /**
+   * Get movies without OMDB metadata (need enrichment)
+   * @returns Array of movies without metadata
+   */
+  const getUnenrichedMovies = (): MovieEntry[] => {
+    return movies.value.filter(movie => movie.metadata === undefined)
   }
 
   /**
    * Check if a local poster exists for the given imdbId
+   * Uses cache to avoid repeated network requests
    * @param imdbId - IMDB ID to check
    * @returns Promise<boolean> indicating whether the poster exists locally
    */
   const posterExists = async (imdbId: string): Promise<boolean> => {
     if (!imdbId) return false
 
+    // Check cache first
+    if (posterCache.value.has(imdbId)) {
+      return posterCache.value.get(imdbId)!
+    }
+
     try {
       // Try to fetch the local poster with HEAD request to avoid downloading
       const response = await fetch(`/posters/${imdbId}.jpg`, { method: 'HEAD' })
-      return response.ok
+      const exists = response.ok
+      posterCache.value.set(imdbId, exists)
+      return exists
     } catch {
+      posterCache.value.set(imdbId, false)
       return false
     }
   }
@@ -451,24 +150,22 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get the best available poster URL with fallback logic
    * Priority: local cache -> OMDB URL -> placeholder
-   * @param imdbId - IMDB ID of the movie
-   * @param metadata - Optional movie metadata containing poster URL
+   * @param movie - Movie entry
    * @returns Promise<string> - URL to the poster image
    */
-  const getPosterUrl = async (imdbId: string, metadata?: { Poster?: string }): Promise<string> => {
-    // Fallback placeholder image
+  const getPosterUrl = async (movie: MovieEntry): Promise<string> => {
     const placeholder = '/images/poster-placeholder.jpg'
 
-    if (!imdbId) return placeholder
+    if (!movie.imdbId) return placeholder
 
     // Check for local poster first (best performance)
-    const hasLocal = await posterExists(imdbId)
+    const hasLocal = await posterExists(movie.imdbId)
     if (hasLocal) {
-      return `/posters/${imdbId}.jpg`
+      return `/posters/${movie.imdbId}.jpg`
     }
 
     // Fallback to OMDB poster URL if available
-    const omdbPoster = metadata?.Poster
+    const omdbPoster = movie.metadata?.Poster
     if (omdbPoster && omdbPoster !== 'N/A') {
       return omdbPoster
     }
@@ -480,27 +177,22 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get poster URL synchronously (for SSR or when you know the status)
    * This version doesn't check if the local file exists - assumes you've already checked
-   * @param imdbId - IMDB ID of the movie
-   * @param metadata - Optional movie metadata containing poster URL
+   * @param movie - Movie entry
    * @param preferLocal - Whether to prefer local path (default: true)
    * @returns string - URL to the poster image
    */
-  const getPosterUrlSync = (
-    imdbId: string,
-    metadata?: { Poster?: string },
-    preferLocal: boolean = true
-  ): string => {
+  const getPosterUrlSync = (movie: MovieEntry, preferLocal: boolean = true): string => {
     const placeholder = '/images/poster-placeholder.jpg'
 
-    if (!imdbId) return placeholder
+    if (!movie.imdbId) return placeholder
 
     // If preferLocal, return local path (browser will handle 404 gracefully)
     if (preferLocal) {
-      return `/posters/${imdbId}.jpg`
+      return `/posters/${movie.imdbId}.jpg`
     }
 
     // Otherwise use OMDB poster URL
-    const omdbPoster = metadata?.Poster
+    const omdbPoster = movie.metadata?.Poster
     if (omdbPoster && omdbPoster !== 'N/A') {
       return omdbPoster
     }
@@ -530,21 +222,127 @@ export const useMovieStore = defineStore('movie', () => {
     return results
   }
 
+  /**
+   * Get all sources for a movie grouped by type
+   * @param movie - Movie entry
+   * @returns Object with sources grouped by type
+   */
+  const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
+    const grouped: Record<MovieSourceType, MovieSource[]> = {
+      'archive.org': [],
+      youtube: [],
+    }
+
+    for (const source of movie.sources) {
+      grouped[source.type].push(source)
+    }
+
+    return grouped
+  }
+
+  /**
+   * Get the primary source for a movie (first source, or highest quality)
+   * @param movie - Movie entry
+   * @returns Primary movie source
+   */
+  const getPrimarySource = (movie: MovieEntry): MovieSource | undefined => {
+    if (movie.sources.length === 0) return undefined
+
+    // Prefer archive.org sources (usually higher quality)
+    const archiveSources = movie.sources.filter(s => s.type === 'archive.org')
+    if (archiveSources.length > 0) {
+      // Sort by downloads if available
+      const sorted = [...archiveSources].sort((a, b) => {
+        const aDownloads = 'downloads' in a ? a.downloads || 0 : 0
+        const bDownloads = 'downloads' in b ? b.downloads || 0 : 0
+        return bDownloads - aDownloads
+      })
+      return sorted[0]
+    }
+
+    // Otherwise return first YouTube source
+    return movie.sources[0]
+  }
+
+  /**
+   * Runtime OMDB enrichment (optional, for movies without metadata)
+   * This can be used to fetch metadata on-demand for movies that don't have it yet
+   * @param movie - Movie entry to enrich
+   * @returns Updated movie metadata or null if failed
+   */
+  const enrichMovieMetadata = async (movie: MovieEntry) => {
+    isLoading.value.imdbFetch = true
+
+    const apiKey = useRuntimeConfig().public.OMDB_API_KEY
+    if (!apiKey) {
+      console.warn('OMDB_API_KEY not configured, skipping runtime enrichment')
+      isLoading.value.imdbFetch = false
+      return null
+    }
+
+    try {
+      // Only enrich if we have a valid IMDB ID (not temporary)
+      if (!movie.imdbId.startsWith('tt')) {
+        console.warn(`Cannot enrich movie with temporary ID: ${movie.imdbId}`)
+        isLoading.value.imdbFetch = false
+        return null
+      }
+
+      const metadata = await $fetch('https://www.omdbapi.com/', {
+        params: {
+          apikey: apiKey,
+          i: movie.imdbId,
+          plot: 'full',
+        },
+      })
+
+      if (metadata.Error) {
+        console.error(`OMDB error for ${movie.imdbId}:`, metadata.Error)
+        isLoading.value.imdbFetch = false
+        return null
+      }
+
+      // Update the movie in our local state
+      const movieIndex = movies.value.findIndex(m => m.imdbId === movie.imdbId)
+      if (movieIndex !== -1) {
+        movies.value[movieIndex].metadata = metadata
+      }
+
+      isLoading.value.imdbFetch = false
+      return metadata
+    } catch (error: any) {
+      console.error('Failed to enrich movie metadata:', error)
+      isLoading.value.imdbFetch = false
+      return null
+    }
+  }
+
   return {
+    // State
     movies,
     isLoading,
-    savingStatus,
-    fetchArchiveOrgMovies,
-    fetchMovies,
-    fetchMovieDetails,
-    searchImdb,
-    getMovieDetails,
-    getMovieImage,
-    saveMovieToStrapi,
+
+    // Data loading
+    loadFromFile,
+
+    // Filtering & search
+    filterBySource,
+    searchMovies,
+    getMovieById,
+    getEnrichedMovies,
+    getUnenrichedMovies,
+
+    // Source utilities
+    getSourcesByType,
+    getPrimarySource,
+
     // Poster utilities
     posterExists,
     getPosterUrl,
     getPosterUrlSync,
     preloadPosters,
+
+    // Runtime enrichment (optional)
+    enrichMovieMetadata,
   }
 })
