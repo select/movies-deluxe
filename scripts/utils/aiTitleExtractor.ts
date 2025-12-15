@@ -69,8 +69,13 @@ export async function extractTitle(
       },
     })
 
-    // Extract text from response
-    const extractedTitle = result.parts?.[0]?.text?.trim() || ''
+    // Extract text from response parts
+    // The response contains an array of parts, we need to find text parts
+    const textParts = result.data.parts.filter((part: any) => part.type === 'text')
+    const extractedTitle = textParts
+      .map((part: any) => part.text)
+      .join('')
+      .trim()
 
     if (!extractedTitle) {
       throw new Error('No title extracted from AI response')
