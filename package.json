@@ -7,11 +7,23 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "scrape:archive": "tsx scripts/scrape-archive.ts",
+    "scrape:youtube": "tsx scripts/scrape-youtube.ts",
+    "scrape:all": "pnpm scrape:archive && pnpm scrape:youtube",
+    "enrich:omdb": "tsx scripts/enrich-omdb.ts",
+    "validate:data": "tsx scripts/validate-data.ts"
   },
   "dependencies": {
+    "dotenv": "17.2.3",
     "nuxt": "^4.2.2",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "25.0.2",
+    "tsx": "4.21.0",
+    "youtubei": "1.8.3",
+    "youtubei.js": "^10.5.0"
   }
 }
