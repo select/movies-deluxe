@@ -1,0 +1,20 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+.nuxt
+.output
+dist
+
+# Generated files
+*.log
+.DS_Store
+.env
+.env.*
+
+# Beads
+.beads/*.jsonl
+
+# Git
+.git

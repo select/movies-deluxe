@@ -10,6 +10,10 @@
     "postinstall": "nuxt prepare",
     "prepare": "simple-git-hooks",
     "commitlint": "commitlint --edit",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "scrape:archive": "tsx scripts/scrape-archive.ts",
     "scrape:youtube": "tsx scripts/scrape-youtube.ts",
     "scrape:all": "pnpm scrape:archive && pnpm scrape:youtube",
@@ -17,7 +21,18 @@
     "validate:data": "tsx scripts/validate-data.ts"
   },
   "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged",
     "commit-msg": "pnpm commitlint --edit $1"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "oxlint --fix",
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "dotenv": "17.2.3",
@@ -29,9 +44,17 @@
     "@commitlint/cli": "20.2.0",
     "@commitlint/config-conventional": "20.2.0",
     "@types/node": "25.0.2",
+    "@typescript-eslint/eslint-plugin": "8.50.0",
+    "@typescript-eslint/parser": "8.50.0",
+    "eslint": "9.39.2",
+    "eslint-plugin-oxlint": "1.33.0",
+    "eslint-plugin-vue": "10.6.2",
     "lint-staged": "16.2.7",
+    "oxlint": "1.33.0",
+    "prettier": "3.7.4",
     "simple-git-hooks": "2.13.1",
     "tsx": "4.21.0",
+    "typescript-eslint": "8.50.0",
     "youtubei": "1.8.3",
     "youtubei.js": "^10.5.0"
   }
