@@ -19,7 +19,8 @@
     "scrape:all": "pnpm scrape:archive && pnpm scrape:youtube",
     "enrich:omdb": "tsx scripts/enrich-omdb.ts",
     "validate:data": "tsx scripts/validate-data.ts",
-    "download-posters": "tsx scripts/download-posters.ts"
+    "download-posters": "tsx scripts/download-posters.ts",
+    "extract-titles": "tsx scripts/extract-titles-ai.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
@@ -38,6 +39,7 @@
   "dependencies": {
     "dotenv": "17.2.3",
     "nuxt": "^4.2.2",
+    "openai": "6.13.0",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4"
   },
