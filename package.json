@@ -8,11 +8,16 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "prepare": "simple-git-hooks",
+    "commitlint": "commitlint --edit",
     "scrape:archive": "tsx scripts/scrape-archive.ts",
     "scrape:youtube": "tsx scripts/scrape-youtube.ts",
     "scrape:all": "pnpm scrape:archive && pnpm scrape:youtube",
     "enrich:omdb": "tsx scripts/enrich-omdb.ts",
     "validate:data": "tsx scripts/validate-data.ts"
+  },
+  "simple-git-hooks": {
+    "commit-msg": "pnpm commitlint --edit $1"
   },
   "dependencies": {
     "dotenv": "17.2.3",
@@ -21,7 +26,11 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "20.2.0",
+    "@commitlint/config-conventional": "20.2.0",
     "@types/node": "25.0.2",
+    "lint-staged": "16.2.7",
+    "simple-git-hooks": "2.13.1",
     "tsx": "4.21.0",
     "youtubei": "1.8.3",
     "youtubei.js": "^10.5.0"

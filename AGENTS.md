@@ -151,3 +151,334 @@ For example: `bd create --help` shows `--parent`, `--deps`, `--assignee`, etc.
 - ❌ Do NOT clutter repo root with planning documents
 
 For more details, see README.md and QUICKSTART.md.
+
+## Commit Message Format (Conventional Commits)
+
+**IMPORTANT**: This project uses **Conventional Commits** for ALL commit messages. Commits are automatically validated using commitlint and git hooks.
+
+### Why Conventional Commits?
+
+- **Automated changelogs**: Generate release notes automatically
+- **Semantic versioning**: Determine version bumps from commit history
+- **Clear history**: Understand changes at a glance
+- **Better collaboration**: Consistent format across all contributors
+- **CI/CD integration**: Trigger builds/deployments based on commit types
+
+### Format Specification
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Header (required)**: `<type>(<scope>): <subject>`
+
+- Maximum 120 characters
+- Type and subject are required
+- Scope is optional but recommended
+- Subject must be lowercase, no period at end
+
+**Body (optional)**: Detailed description
+
+- Separated from header by blank line
+- Maximum 120 characters per line
+- Explain the "why" not the "what"
+
+**Footer (optional)**: Metadata
+
+- Separated from body by blank line
+- Breaking changes: `BREAKING CHANGE: description`
+- Issue references: `Closes #123`, `Fixes #456`
+
+### Commit Types
+
+| Type       | Description               | Example                                               |
+| ---------- | ------------------------- | ----------------------------------------------------- |
+| `feat`     | New feature               | `feat(scraper): add youtube channel scraping`         |
+| `fix`      | Bug fix                   | `fix(validation): handle missing imdb ids correctly`  |
+| `docs`     | Documentation only        | `docs(readme): update installation instructions`      |
+| `style`    | Code style/formatting     | `style(app): fix indentation in movie store`          |
+| `refactor` | Code refactoring          | `refactor(utils): simplify data manager logic`        |
+| `perf`     | Performance improvement   | `perf(store): add caching for movie queries`          |
+| `test`     | Add/update tests          | `test(validation): add tests for duplicate detection` |
+| `build`    | Build system/dependencies | `build: add commitlint and git hooks`                 |
+| `ci`       | CI/CD changes             | `ci: add github actions workflow`                     |
+| `chore`    | Maintenance tasks         | `chore: update dependencies`                          |
+| `revert`   | Revert previous commit    | `revert: feat(scraper): add youtube scraping`         |
+
+### Scope Usage (Optional)
+
+Scopes provide context about what part of the codebase changed:
+
+**Common scopes for this project:**
+
+- `scraper` - Scraping scripts (archive, youtube)
+- `validation` - Data validation
+- `enrichment` - OMDB enrichment
+- `store` - Pinia store
+- `types` - TypeScript types
+- `utils` - Utility functions
+- `config` - Configuration files
+- `deps` - Dependencies
+
+**Examples:**
+
+```bash
+feat(scraper): add archive.org movie scraping
+fix(validation): correct imdb id format check
+docs(readme): add scraping instructions
+refactor(store): simplify movie loading logic
+```
+
+**No scope is also valid:**
+
+```bash
+feat: add movie search functionality
+fix: correct data validation logic
+```
+
+### Breaking Changes
+
+Breaking changes MUST be indicated in the commit footer using `BREAKING CHANGE:` followed by a description.
+
+**Format:**
+
+```
+feat(api): change movie data structure
+
+BREAKING CHANGE: Movie entries now use nested source objects instead of flat structure. Update all consumers to use movie.sources[0].url instead of movie.url.
+```
+
+**Alternative (NOT recommended):**
+
+```
+feat(api)!: change movie data structure
+```
+
+### Good Examples
+
+```bash
+# Simple feature
+feat(scraper): add youtube channel scraping
+
+# Bug fix with scope
+fix(validation): handle missing imdb ids correctly
+
+# Feature with body
+feat(enrichment): add omdb api integration
+
+Integrate OMDB API to enrich movie metadata with ratings,
+plot summaries, and additional details. Includes rate limiting
+and error handling for API failures.
+
+# Breaking change
+refactor(types)!: restructure movie entry interface
+
+BREAKING CHANGE: MovieEntry interface now requires 'sources' array
+instead of single 'url' field. Migration guide in docs/migration.md.
+
+Closes #42
+
+# Multiple issues
+fix(validation): improve duplicate detection
+
+Fixes #123, #124, #125
+```
+
+### Bad Examples
+
+```bash
+# ❌ Missing type
+Add youtube scraping
+
+# ❌ Uppercase subject
+feat(scraper): Add YouTube scraping
+
+# ❌ Period at end
+feat(scraper): add youtube scraping.
+
+# ❌ Too vague
+fix: bug fix
+
+# ❌ Wrong type
+update: add new feature
+
+# ❌ No subject
+feat(scraper):
+
+# ❌ Breaking change in subject (use footer instead)
+feat(api): BREAKING: change data structure
+```
+
+### Validation
+
+Commits are automatically validated on every commit using:
+
+- **commitlint**: Validates commit message format
+- **git hooks**: Runs validation before commit is created
+
+**What gets validated:**
+
+- ✅ Type is one of the allowed types
+- ✅ Subject is lowercase and doesn't end with period
+- ✅ Header is max 120 characters
+- ✅ Body lines are max 120 characters
+- ✅ Proper blank lines between sections
+
+**If validation fails:**
+
+```bash
+$ git commit -m "Add feature"
+⧗   input: Add feature
+✖   type must be one of [feat, fix, docs, ...] [type-enum]
+✖   found 1 problems, 0 warnings
+```
+
+### Emergency Bypass
+
+**Use sparingly!** If you absolutely must bypass validation:
+
+```bash
+git commit --no-verify -m "emergency fix"
+```
+
+**When to use `--no-verify`:**
+
+- ✅ Emergency hotfixes in production
+- ✅ Reverting broken commits
+- ✅ Fixing broken git hooks
+
+**When NOT to use:**
+
+- ❌ "I don't want to write a proper message"
+- ❌ Regular development work
+- ❌ "It's faster this way"
+
+### Testing the Setup
+
+**Test invalid commit (should fail):**
+
+```bash
+echo "invalid message" | npx commitlint
+# Expected: ✖ type must be one of [feat, fix, ...]
+```
+
+**Test valid commit (should pass):**
+
+```bash
+echo "feat: add new feature" | npx commitlint
+# Expected: (no output, exit code 0)
+```
+
+**Test with git:**
+
+```bash
+# This should fail
+git commit --allow-empty -m "invalid message"
+
+# This should succeed
+git commit --allow-empty -m "feat: test conventional commits"
+```
+
+### CI/CD Integration
+
+**GitHub Actions example:**
+
+```yaml
+- name: Validate commit messages
+  run: |
+    pnpm commitlint --from=HEAD~1 --to=HEAD
+```
+
+**Pre-push validation:**
+
+```bash
+# Validate all commits since main
+git log main..HEAD --format=%s | while read msg; do
+  echo "$msg" | npx commitlint
+done
+```
+
+### Rules and Best Practices
+
+**DO:**
+
+- ✅ Use present tense: "add feature" not "added feature"
+- ✅ Use imperative mood: "fix bug" not "fixes bug"
+- ✅ Be specific: "fix validation for imdb ids" not "fix bug"
+- ✅ Reference issues: "Closes #123" in footer
+- ✅ Explain WHY in body, not WHAT (code shows what)
+- ✅ Use scopes to provide context
+- ✅ Keep subject under 72 chars (120 is max, but shorter is better)
+
+**DON'T:**
+
+- ❌ Use past tense: "added", "fixed"
+- ❌ Use vague descriptions: "update", "change", "modify"
+- ❌ Capitalize subject
+- ❌ End subject with period
+- ❌ Mix multiple unrelated changes in one commit
+- ❌ Use `--no-verify` for regular commits
+- ❌ Forget to reference related issues
+
+### Integration with bd (beads)
+
+When closing beads issues, reference them in commit footer:
+
+```bash
+feat(scraper): add youtube channel scraping
+
+Implements youtube scraping for configured channels.
+Includes rate limiting and error handling.
+
+Closes movies-deluxe-uq0.12
+```
+
+### Tools and Resources
+
+**Installed packages:**
+
+- `@commitlint/cli` - Commit message linter
+- `@commitlint/config-conventional` - Conventional commits rules
+- `simple-git-hooks` - Git hooks manager
+- `lint-staged` - Run linters on staged files
+
+**Configuration files:**
+
+- `commitlint.config.js` - Commitlint rules
+- `package.json` - Git hooks and lint-staged config
+
+**Useful commands:**
+
+```bash
+# Validate last commit
+git log -1 --pretty=%B | npx commitlint
+
+# Validate commit range
+npx commitlint --from=HEAD~5 --to=HEAD
+
+# Reinstall git hooks
+pnpm simple-git-hooks
+
+# Check hook status
+ls -la .git/hooks/commit-msg .git/hooks/pre-commit
+```
+
+### Important Rules
+
+- ✅ Use conventional commits for ALL commits
+- ✅ Always include a type (feat, fix, docs, etc.)
+- ✅ Keep subject lowercase and concise
+- ✅ Use body to explain WHY, not WHAT
+- ✅ Reference issues in footer
+- ✅ Use `BREAKING CHANGE:` footer for breaking changes
+- ✅ Test your commit message before committing
+- ❌ Do NOT use `--no-verify` for regular commits
+- ❌ Do NOT use vague commit messages
+- ❌ Do NOT mix unrelated changes
+- ❌ Do NOT forget to explain breaking changes
+
+For more details, see https://www.conventionalcommits.org/
