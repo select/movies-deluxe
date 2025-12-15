@@ -1,0 +1,26 @@
+{
+  "$schema": "./youtube-channels.schema.json",
+  "channels": [
+    {
+      "id": "@FilmRiseMovies",
+      "name": "FilmRise Movies",
+      "language": "en",
+      "enabled": true,
+      "notes": "Large collection of classic and independent films across multiple genres"
+    },
+    {
+      "id": "@Popcornflix",
+      "name": "Popcornflix",
+      "language": "en",
+      "enabled": true,
+      "notes": "Free streaming service with a wide variety of movies and TV shows"
+    },
+    {
+      "id": "@MovieCentral",
+      "name": "Movie Central",
+      "language": "en",
+      "enabled": true,
+      "notes": "Curated collection of full-length movies in various genres"
+    }
+  ]
+}
