@@ -51,36 +51,49 @@ export type MovieSource = ArchiveOrgSource | YouTubeSource
 
 /**
  * OMDB metadata structure
+ * Note: OMDB API returns fields with capital first letters
  */
 export interface MovieMetadata {
-  title?: string
-  year?: string
-  rated?: string
-  released?: string
-  runtime?: string
-  genre?: string
-  director?: string
-  writer?: string
-  actors?: string
-  plot?: string
-  language?: string
-  country?: string
-  awards?: string
-  poster?: string
-  ratings?: Array<{
-    source: string
-    value: string
+  Title?: string
+  Year?: string
+  Rated?: string
+  Released?: string
+  Runtime?: string
+  Genre?: string
+  Director?: string
+  Writer?: string
+  Actors?: string
+  Plot?: string
+  Language?: string
+  Country?: string
+  Awards?: string
+  Poster?: string
+  Ratings?: Array<{
+    Source: string
+    Value: string
   }>
-  metascore?: string
+  Metascore?: string
   imdbRating?: string
   imdbVotes?: string
-  imdbId?: string
-  type?: string
-  dvd?: string
-  boxOffice?: string
-  production?: string
-  website?: string
-  response?: string
+  imdbID?: string
+  Type?: string
+  DVD?: string
+  BoxOffice?: string
+  Production?: string
+  Website?: string
+  Response?: string
+}
+
+/**
+ * AI-extracted metadata structure
+ * Contains metadata extracted using AI/LLM processing
+ */
+export interface AIMetadata {
+  extractedTitle?: string // Cleaned movie title extracted from promotional text
+  confidence?: number // Confidence score (0-1) for the extraction
+  timestamp?: string // ISO 8601 timestamp when AI processing occurred
+  model?: string // AI model used (e.g., 'gpt-4', 'claude-3')
+  prompt?: string // Prompt template used for extraction
 }
 
 /**
@@ -92,6 +105,7 @@ export interface MovieEntry {
   year?: number
   sources: MovieSource[]
   metadata?: MovieMetadata
+  ai?: AIMetadata // AI-extracted metadata
   lastUpdated: string // ISO 8601 timestamp
 }
 
