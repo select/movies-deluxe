@@ -455,7 +455,7 @@ export const useMovieStore = defineStore('movie', () => {
    * @param metadata - Optional movie metadata containing poster URL
    * @returns Promise<string> - URL to the poster image
    */
-  const getPosterUrl = async (imdbId: string, metadata?: { poster?: string }): Promise<string> => {
+  const getPosterUrl = async (imdbId: string, metadata?: { Poster?: string }): Promise<string> => {
     // Fallback placeholder image
     const placeholder = '/images/poster-placeholder.jpg'
 
@@ -468,7 +468,7 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     // Fallback to OMDB poster URL if available
-    const omdbPoster = metadata?.poster
+    const omdbPoster = metadata?.Poster
     if (omdbPoster && omdbPoster !== 'N/A') {
       return omdbPoster
     }
@@ -487,7 +487,7 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const getPosterUrlSync = (
     imdbId: string,
-    metadata?: { poster?: string },
+    metadata?: { Poster?: string },
     preferLocal: boolean = true
   ): string => {
     const placeholder = '/images/poster-placeholder.jpg'
@@ -500,7 +500,7 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     // Otherwise use OMDB poster URL
-    const omdbPoster = metadata?.poster
+    const omdbPoster = metadata?.Poster
     if (omdbPoster && omdbPoster !== 'N/A') {
       return omdbPoster
     }

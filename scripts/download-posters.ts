@@ -93,7 +93,8 @@ function extractPosterDownloads(
     const movie = value as MovieEntry
 
     // Check if movie has OMDB metadata with poster URL
-    const posterUrl = movie.metadata?.poster
+    // Note: OMDB API returns 'Poster' with capital P
+    const posterUrl = movie.metadata?.Poster || movie.metadata?.poster
     if (!posterUrl || posterUrl === 'N/A') {
       continue
     }
@@ -257,7 +258,8 @@ async function main() {
   const totalMovies = allMovies.length
   const moviesWithPosters = allMovies.filter(([_, movie]) => {
     const m = movie as MovieEntry
-    return m.metadata?.poster && m.metadata.poster !== 'N/A'
+    const posterUrl = m.metadata?.Poster || m.metadata?.poster
+    return posterUrl && posterUrl !== 'N/A'
   }).length
 
   logger.info(`Loaded ${totalMovies} movies (${moviesWithPosters} with poster URLs)`)
