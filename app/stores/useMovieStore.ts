@@ -431,6 +431,105 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
+  /**
+   * Check if a local poster exists for the given imdbId
+   * @param imdbId - IMDB ID to check
+   * @returns Promise<boolean> indicating whether the poster exists locally
+   */
+  const posterExists = async (imdbId: string): Promise<boolean> => {
+    if (!imdbId) return false
+
+    try {
+      // Try to fetch the local poster with HEAD request to avoid downloading
+      const response = await fetch(`/posters/${imdbId}.jpg`, { method: 'HEAD' })
+      return response.ok
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * Get the best available poster URL with fallback logic
+   * Priority: local cache -> OMDB URL -> placeholder
+   * @param imdbId - IMDB ID of the movie
+   * @param metadata - Optional movie metadata containing poster URL
+   * @returns Promise<string> - URL to the poster image
+   */
+  const getPosterUrl = async (imdbId: string, metadata?: { poster?: string }): Promise<string> => {
+    // Fallback placeholder image
+    const placeholder = '/images/poster-placeholder.jpg'
+
+    if (!imdbId) return placeholder
+
+    // Check for local poster first (best performance)
+    const hasLocal = await posterExists(imdbId)
+    if (hasLocal) {
+      return `/posters/${imdbId}.jpg`
+    }
+
+    // Fallback to OMDB poster URL if available
+    const omdbPoster = metadata?.poster
+    if (omdbPoster && omdbPoster !== 'N/A') {
+      return omdbPoster
+    }
+
+    // Final fallback to placeholder
+    return placeholder
+  }
+
+  /**
+   * Get poster URL synchronously (for SSR or when you know the status)
+   * This version doesn't check if the local file exists - assumes you've already checked
+   * @param imdbId - IMDB ID of the movie
+   * @param metadata - Optional movie metadata containing poster URL
+   * @param preferLocal - Whether to prefer local path (default: true)
+   * @returns string - URL to the poster image
+   */
+  const getPosterUrlSync = (
+    imdbId: string,
+    metadata?: { poster?: string },
+    preferLocal: boolean = true
+  ): string => {
+    const placeholder = '/images/poster-placeholder.jpg'
+
+    if (!imdbId) return placeholder
+
+    // If preferLocal, return local path (browser will handle 404 gracefully)
+    if (preferLocal) {
+      return `/posters/${imdbId}.jpg`
+    }
+
+    // Otherwise use OMDB poster URL
+    const omdbPoster = metadata?.poster
+    if (omdbPoster && omdbPoster !== 'N/A') {
+      return omdbPoster
+    }
+
+    return placeholder
+  }
+
+  /**
+   * Preload posters for multiple movies (batch check)
+   * @param imdbIds - Array of IMDB IDs to check
+   * @returns Promise<Map<string, boolean>> - Map of imdbId to existence status
+   */
+  const preloadPosters = async (imdbIds: string[]): Promise<Map<string, boolean>> => {
+    const results = new Map<string, boolean>()
+
+    // Check all posters in parallel (but limit concurrency to avoid overwhelming the server)
+    const batchSize = 10
+    for (let i = 0; i < imdbIds.length; i += batchSize) {
+      const batch = imdbIds.slice(i, i + batchSize)
+      const promises = batch.map(async imdbId => {
+        const exists = await posterExists(imdbId)
+        results.set(imdbId, exists)
+      })
+      await Promise.all(promises)
+    }
+
+    return results
+  }
+
   return {
     movies,
     isLoading,
@@ -442,5 +541,10 @@ export const useMovieStore = defineStore('movie', () => {
     getMovieDetails,
     getMovieImage,
     saveMovieToStrapi,
+    // Poster utilities
+    posterExists,
+    getPosterUrl,
+    getPosterUrlSync,
+    preloadPosters,
   }
 })

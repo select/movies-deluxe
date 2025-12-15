@@ -18,7 +18,8 @@
     "scrape:youtube": "tsx scripts/scrape-youtube.ts",
     "scrape:all": "pnpm scrape:archive && pnpm scrape:youtube",
     "enrich:omdb": "tsx scripts/enrich-omdb.ts",
-    "validate:data": "tsx scripts/validate-data.ts"
+    "validate:data": "tsx scripts/validate-data.ts",
+    "download-posters": "tsx scripts/download-posters.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",

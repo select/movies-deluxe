@@ -22,3 +22,9 @@ logs
 .env
 .env.*
 !.env.example
+
+# Poster images (keep directory structure)
+public/posters/*.jpg
+public/posters/*.png
+public/posters/*.webp
+!public/posters/.gitkeep
