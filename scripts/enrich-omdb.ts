@@ -152,12 +152,33 @@ async function enrichMovies(options: EnrichmentOptions): Promise<EnrichmentResul
 
     logger.info(`[${i + 1}/${moviesToProcess.length}] Processing: ${movie.title}`)
 
+    // Prioritize AI-extracted title if available
+    const titleToUse = movie.ai?.extractedTitle || movie.title
+    const usingAiTitle = !!movie.ai?.extractedTitle
+
+    if (usingAiTitle) {
+      logger.debug(`  Using AI-extracted title: "${titleToUse}"`)
+    }
+
     // Parse title to extract name and year
-    const { name, year } = parseTitle(movie.title)
+    const { name, year } = parseTitle(titleToUse)
 
     try {
-      // Attempt to match with OMDB
-      const matchResult = await matchMovie(name, year, apiKey)
+      // Attempt to match with OMDB using AI-extracted title first
+      let matchResult = await matchMovie(name, year, apiKey)
+
+      // If AI title didn't match and we have a fallback, try original title
+      if (matchResult.confidence === 'none' && usingAiTitle) {
+        logger.debug(`  AI title didn't match, trying original title: "${movie.title}"`)
+        const { name: originalName, year: originalYear } = parseTitle(movie.title)
+        matchResult = await matchMovie(originalName, originalYear, apiKey)
+
+        if (matchResult.confidence !== 'none') {
+          logger.debug('  ✓ Match found using original title')
+        }
+      } else if (usingAiTitle && matchResult.confidence !== 'none') {
+        logger.debug('  ✓ Match found using AI-extracted title')
+      }
 
       result.processed++
 
