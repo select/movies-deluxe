@@ -7,6 +7,8 @@
  */
 
 import { parseArgs } from 'node:util'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { Client } from 'youtubei'
 import { generateYouTubeId } from '../types/movie.ts'
 import {
@@ -21,7 +23,48 @@ import type { YouTubeSource, MovieEntry } from '../types/movie.ts'
 
 const logger = createLogger('YouTubeScraper')
 
-// Default channels to scrape (using channel handles)
+// YouTube channel configuration
+interface ChannelConfig {
+  id: string
+  name: string
+  language: string
+  enabled: boolean
+  notes?: string
+}
+
+interface YouTubeChannelsConfig {
+  channels: ChannelConfig[]
+}
+
+/**
+ * Load YouTube channels from config file
+ */
+function loadChannelsConfig(): string[] {
+  const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
+
+  try {
+    const configData = readFileSync(configPath, 'utf-8')
+    const config: YouTubeChannelsConfig = JSON.parse(configData)
+
+    // Filter enabled channels and extract IDs
+    const enabledChannels = config.channels
+      .filter(channel => channel.enabled)
+      .map(channel => channel.id)
+
+    if (enabledChannels.length === 0) {
+      logger.warn('No enabled channels found in config, using defaults')
+      return DEFAULT_CHANNELS
+    }
+
+    logger.info(`Loaded ${enabledChannels.length} enabled channels from config`)
+    return enabledChannels
+  } catch (error) {
+    logger.warn(`Failed to load config from ${configPath}, using defaults:`, error)
+    return DEFAULT_CHANNELS
+  }
+}
+
+// Default channels to scrape (fallback if config file not found)
 const DEFAULT_CHANNELS = [
   '@FilmRiseMovies', // FilmRise Movies
   '@Popcornflix', // Popcornflix
@@ -331,13 +374,16 @@ async function scrapeYouTube(options: ScraperOptions): Promise<void> {
   }
 }
 
+// Load channels from config
+const configChannels = loadChannelsConfig()
+
 // Parse command line arguments
 const { values } = parseArgs({
   options: {
     channels: {
       type: 'string',
       short: 'c',
-      default: DEFAULT_CHANNELS.join(','),
+      default: configChannels.join(','),
     },
     limit: {
       type: 'string',
