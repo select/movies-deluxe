@@ -38,14 +38,13 @@
       <!-- Filter Content -->
       <div class="overflow-y-auto max-h-[60vh] p-4">
         <div class="max-w-7xl mx-auto space-y-4">
-          <!-- Row 1: Sort, Rating, Year, Votes -->
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-            <!-- Sort Controls -->
+          <!-- Sort Section (Top) -->
+          <div class="pb-4 border-b-2 border-gray-300 dark:border-gray-600">
             <FilterSection
               title="Sort By"
               icon="i-mdi-sort"
             >
-              <div class="space-y-2">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <AppInputRadio
                   v-for="option in sortOptions"
                   :key="`${option.field}-${option.direction}`"
@@ -57,7 +56,10 @@
                 />
               </div>
             </FilterSection>
+          </div>
 
+          <!-- Row 1: Rating, Year, Votes -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Rating Filter -->
             <FilterSection
               title="Rating"
@@ -313,5 +315,7 @@ const currentSort = computed(() => filterStore.filters.sort || SORT_OPTIONS[0])
 // Handle sort change
 const handleSortChange = (option: SortOption) => {
   filterStore.setSort(option)
+  // Auto-close filter menu after sort selection
+  emit('close')
 }
 </script>
