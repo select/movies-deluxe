@@ -34,11 +34,17 @@
         </div>
       </header>
 
+      <!-- Sidebar -->
+      <Sidebar @open-filters="isFilterMenuOpen = true" />
+
       <!-- Filter Menu -->
-      <FilterMenu />
+      <FilterMenu
+        :is-open="isFilterMenuOpen"
+        @close="isFilterMenuOpen = false"
+      />
 
       <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8">
+      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-20">
         <!-- Loading State -->
         <div
           v-if="movieStore.isLoading.movies"
@@ -210,6 +216,9 @@ const movieStore = useMovieStore()
 
 // Dark mode state (default to dark)
 const isDark = ref(true)
+
+// Filter menu state
+const isFilterMenuOpen = ref(false)
 
 // Pagination
 const itemsPerPage = 20
