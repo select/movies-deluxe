@@ -61,6 +61,16 @@ pnpm scrape:youtube -- --channels "@Channel1,@Channel2"
 pnpm scrape:youtube -- --limit 100
 ```
 
+**IMPORTANT:** Always use the `@` symbol when specifying channel handles in the `--channels` parameter. Without it, the scraper won't find the channel configuration and title cleaning will be skipped.
+
+```bash
+# ✅ CORRECT - includes @ symbol
+pnpm tsx scripts/scrape-youtube.ts --channels=@Netzkino
+
+# ❌ WRONG - missing @ symbol (title cleaning won't work!)
+pnpm tsx scripts/scrape-youtube.ts --channels=Netzkino
+```
+
 ## Finding Good Channels
 
 Look for channels that:
@@ -141,3 +151,72 @@ Test scraper with dry-run:
 ```bash
 pnpm tsx scripts/scrape-youtube.ts --channel=Netzkino --limit=5 --dry-run
 ```
+
+## Troubleshooting
+
+### Titles Not Being Cleaned
+
+**Symptom:** Movie titles in database still have promotional clutter like "(FULL MOVIE...)" or "[Genre]"
+
+**Cause:** Channel ID mismatch - the scraper couldn't find the channel configuration
+
+**Solution:** Ensure you're using the `@` symbol when specifying channels:
+
+```bash
+# Check if title cleaning is working - look for "Title cleaned:" debug messages
+pnpm tsx scripts/scrape-youtube.ts --channels=@Netzkino --limit=5
+
+# If you see "Title cleaned:" messages, it's working!
+# If not, check:
+# 1. Channel ID in config matches what you're passing (including @ symbol)
+# 2. Channel has a cleaning rule in scripts/utils/titleCleaner.ts
+```
+
+**Test title cleaning directly:**
+
+```bash
+# Create a test script
+cat > scripts/test-my-title.ts << 'EOF'
+import { cleanTitle } from './utils/titleCleaner.ts'
+
+const title = "Your YouTube Title Here (FULL MOVIE...)"
+const result = cleanTitle(title, '@Netzkino')
+console.log('Original:', title)
+console.log('Cleaned:', result)
+EOF
+
+pnpm tsx scripts/test-my-title.ts
+```
+
+### No Videos Found
+
+**Symptom:** Scraper reports "No videos found in channel"
+
+**Possible causes:**
+
+1. Channel handle is incorrect
+2. Channel has no public videos
+3. YouTube API rate limit reached
+
+**Solution:**
+
+- Verify channel handle by visiting `youtube.com/@ChannelHandle`
+- Check if channel has public videos
+- Wait a few minutes if rate limited
+
+### OMDB Matching Fails
+
+**Symptom:** Movies added but no OMDB metadata
+
+**Possible causes:**
+
+1. OMDB API key not configured
+2. Title cleaning not working (see above)
+3. Movie not in OMDB database
+4. OMDB API quota exceeded (1000 requests/day)
+
+**Solution:**
+
+- Set `NUXT_PUBLIC_OMDB_API_KEY` environment variable
+- Verify title cleaning is working
+- Run OMDB enrichment separately: `pnpm tsx scripts/enrich-omdb.ts`
