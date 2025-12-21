@@ -1,24 +1,64 @@
 <template>
-  <div class="relative">
-    <!-- Sidebar Container - Elongated Vertical Pill -->
+  <div>
+    <!-- Mobile: Fixed Bottom Button (visible only on mobile) -->
+    <button
+      class="md:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-blue-500 dark:bg-yellow-600 text-white shadow-lg hover:bg-blue-600 dark:hover:bg-yellow-500 transition-all flex items-center justify-center"
+      :aria-label="isMobileOpen ? 'Close filters' : 'Open filters'"
+      @click="toggleMobileSidebar"
+    >
+      <div
+        :class="[
+          'text-2xl transition-transform duration-300',
+          isMobileOpen ? 'i-mdi-close' : 'i-mdi-filter-variant',
+        ]"
+      />
+    </button>
+
+    <!-- Mobile: Overlay (visible only when mobile sidebar is open) -->
+    <div
+      v-if="isMobileOpen"
+      class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+      @click="closeMobileSidebar"
+    />
+
+    <!-- Sidebar Container -->
     <aside
       :class="[
-        'fixed left-4 top-24 z-40',
+        'fixed z-40',
         'transition-all duration-300 ease-in-out',
         'bg-white dark:bg-gray-800',
         'border border-gray-200 dark:border-gray-700',
         'shadow-lg',
-        isExpanded ? 'w-64' : 'w-16',
-        'rounded-full',
         'overflow-hidden',
+        // Mobile styles (< md breakpoint)
+        'md:hidden',
+        'top-0 left-0 h-full w-80 rounded-r-2xl',
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full',
+        // Desktop styles (>= md breakpoint)
+        'md:block md:left-4 md:top-24 md:rounded-full md:translate-x-0',
+        isExpanded ? 'md:w-64' : 'md:w-16',
       ]"
-      style="max-height: calc(100vh - 8rem)"
+      :style="{ 'max-height': 'calc(100vh - 8rem)' }"
     >
-      <!-- Toggle Button -->
+      <!-- Mobile: Header with Close Button -->
+      <div class="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-lg font-semibold">
+          Filters
+        </h2>
+        <button
+          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          aria-label="Close filters"
+          @click="closeMobileSidebar"
+        >
+          <div class="i-mdi-close text-xl" />
+        </button>
+      </div>
+
+      <!-- Desktop: Toggle Button -->
       <button
-        class="w-full p-4 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        class="hidden md:flex w-full p-4 items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         :aria-label="isExpanded ? 'Collapse sidebar' : 'Expand sidebar'"
-        @click="toggleSidebar"
+        @click="toggleDesktopSidebar"
       >
         <div
           :class="[
@@ -37,38 +77,47 @@
       <!-- Divider -->
       <div
         v-if="isExpanded"
-        class="border-t border-gray-200 dark:border-gray-700"
+        class="hidden md:block border-t border-gray-200 dark:border-gray-700"
       />
 
       <!-- Filter Content -->
       <div
-        v-if="isExpanded"
-        class="p-4 overflow-y-auto"
-        style="max-height: calc(100vh - 12rem)"
+        :class="[
+          'overflow-y-auto',
+          // Mobile: always show content when open
+          'md:hidden p-4',
+          // Desktop: show only when expanded
+          'md:block',
+          isExpanded ? 'md:p-4' : 'md:hidden',
+        ]"
+        :style="{ 'max-height': 'calc(100vh - 12rem)' }"
       >
         <slot />
       </div>
 
-      <!-- Collapsed State Icons -->
+      <!-- Desktop: Collapsed State Icons -->
       <div
-        v-else
-        class="flex flex-col items-center gap-4 py-4"
+        v-if="!isExpanded"
+        class="hidden md:flex flex-col items-center gap-4 py-4"
       >
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           title="Source Filter"
+          @click="toggleDesktopSidebar"
         >
           <div class="i-mdi-filter text-xl" />
         </button>
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           title="Rating Filter"
+          @click="toggleDesktopSidebar"
         >
           <div class="i-mdi-star text-xl" />
         </button>
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           title="Year Filter"
+          @click="toggleDesktopSidebar"
         >
           <div class="i-mdi-calendar text-xl" />
         </button>
@@ -78,15 +127,30 @@
 </template>
 
 <script setup lang="ts">
+// Desktop sidebar state (collapsed/expanded)
 const isExpanded = ref(false)
 
-const toggleSidebar = () => {
+// Mobile sidebar state (open/closed)
+const isMobileOpen = ref(false)
+
+const toggleDesktopSidebar = () => {
   isExpanded.value = !isExpanded.value
+}
+
+const toggleMobileSidebar = () => {
+  isMobileOpen.value = !isMobileOpen.value
+}
+
+const closeMobileSidebar = () => {
+  isMobileOpen.value = false
 }
 
 // Expose methods for parent components
 defineExpose({
   isExpanded,
-  toggleSidebar,
+  isMobileOpen,
+  toggleDesktopSidebar,
+  toggleMobileSidebar,
+  closeMobileSidebar,
 })
 </script>
