@@ -138,18 +138,30 @@ function calculateConfidence(
   const resultTitle = result.Title.toLowerCase()
   const searchTitle = originalTitle.toLowerCase()
 
+  // Year matching - CRITICAL for disambiguation
+  const yearMatches = originalYear && result.Year === originalYear.toString()
+  const yearMismatch = originalYear && result.Year !== originalYear.toString()
+
   // Exact title match
   if (resultTitle === searchTitle) {
-    if (originalYear && result.Year === originalYear.toString()) {
+    if (yearMatches) {
       return 'exact' as MatchConfidence
+    }
+    // If year is provided but doesn't match, downgrade confidence
+    if (yearMismatch) {
+      return 'medium' as MatchConfidence
     }
     return 'high' as MatchConfidence
   }
 
   // Title contains search term or vice versa
   if (resultTitle.includes(searchTitle) || searchTitle.includes(resultTitle)) {
-    if (originalYear && result.Year === originalYear.toString()) {
+    if (yearMatches) {
       return 'high' as MatchConfidence
+    }
+    // If year is provided but doesn't match, downgrade confidence
+    if (yearMismatch) {
+      return 'low' as MatchConfidence
     }
     return 'medium' as MatchConfidence
   }
@@ -160,6 +172,10 @@ function calculateConfidence(
   const matchingWords = originalWords.filter(w => resultWords.includes(w))
 
   if (matchingWords.length >= Math.min(originalWords.length, resultWords.length) * 0.6) {
+    // Even with fuzzy matching, year mismatch should downgrade
+    if (yearMismatch) {
+      return 'low' as MatchConfidence
+    }
     return 'medium' as MatchConfidence
   }
 

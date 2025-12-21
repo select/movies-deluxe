@@ -120,6 +120,7 @@ async function processMovie(
     collection,
     downloads: movie.downloads,
     thumbnail: `https://archive.org/services/img/${movie.identifier}`,
+    releaseDate: movie.date || movie.year, // Store original date/year from Archive.org
     addedAt: new Date().toISOString(),
   }
 
