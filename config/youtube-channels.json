@@ -1,26 +1,55 @@
 {
   "$schema": "./youtube-channels.schema.json",
+
   "channels": [
+    {
+      "id": "@Netzkino",
+      "name": "Netzkino",
+      "language": "de",
+      "enabled": true,
+      "notes": "German-language channel offering licensed full-length movies, often dubbed or subtitled"
+    },
     {
       "id": "@FilmRiseMovies",
       "name": "FilmRise Movies",
       "language": "en",
       "enabled": true,
-      "notes": "Large collection of classic and independent films across multiple genres"
+      "notes": "Large collection of classic, independent, and genre films available free with ads"
     },
     {
       "id": "@Popcornflix",
       "name": "Popcornflix",
       "language": "en",
       "enabled": true,
-      "notes": "Free streaming service with a wide variety of movies and TV shows"
+      "notes": "Free streaming brand with a wide variety of full-length movies on YouTube"
     },
     {
       "id": "@MovieCentral",
       "name": "Movie Central",
       "language": "en",
       "enabled": true,
-      "notes": "Curated collection of full-length movies in various genres"
+      "notes": "Curated collection of full-length movies across many genres, ad-supported"
+    },
+    {
+      "id": "@TimelessClassicMovies",
+      "name": "Timeless Classic Movies",
+      "language": "en",
+      "enabled": true,
+      "notes": "Focuses on classic Hollywood and early cinema films that are free to watch"
+    },
+    {
+      "id": "@Mosfilm",
+      "name": "Mosfilm",
+      "language": "ru",
+      "enabled": true,
+      "notes": "Official channel of the Russian studio streaming many of its films legally"
+    },
+    {
+      "id": "@Moviedome",
+      "name": "Moviedome",
+      "language": "de",
+      "enabled": true,
+      "notes": "German channel similar to Netzkino with licensed full-length movies"
     }
   ]
 }
