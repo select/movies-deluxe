@@ -85,3 +85,59 @@ Other potential channels to consider:
 - Timeless Classic Movies
 - Cult Cinema Classics
 - Public Domain Movies
+
+## Title Cleaning Rules
+
+YouTube channels often add promotional text to video titles. The scraper uses channel-specific regex patterns to extract clean movie titles for better OMDB matching.
+
+### How It Works
+
+1. When scraping a video, the raw title is cleaned using channel-specific rules
+2. The cleaned title is then parsed to extract the movie name and year
+3. The cleaned title is used for OMDB matching to improve accuracy
+
+### Supported Channels
+
+- **Netzkino** (`@Netzkino`) - Removes "(full movie...)" patterns
+  - Example: `Golden Winter 2 (Christmas comedy full movie...)` → `Golden Winter 2`
+
+- **FilmRise Movies** (`@FilmRiseMovies`) - Removes "| Free Full ... | FilmRise" suffixes
+  - Example: `A Christmas Karen | Free Full Holiday Movie | FilmRise Movies` → `A Christmas Karen`
+
+- **Popcornflix** (`@Popcornflix`) - Removes "| FULL MOVIE | Genre" patterns
+  - Example: `Banger (2018) | FULL MOVIE | Action, Crime | Omar Gooding` → `Banger`
+
+- **Movie Central** (`@MovieCentral`) - Extracts alternate title from "Original | Alternate" format
+  - Example: `Surviving The Club Underworld | Young Lion of the West` → `Young Lion of the West`
+
+- **Timeless Classic Movies** (`@TimelessClassicMovies`) - Removes [Genre] tags
+  - Example: `Johnny O'Clock [Film Noir] [Drama] [Crime]` → `Johnny O'Clock`
+
+- **Mosfilm** (`@Mosfilm`) - Removes "| GENRE | Subtítulos" patterns
+  - Example: `Operacion "Y" | COMEDIA | Subtítulos en español` → `Operacion "Y"`
+
+- **Moviedome** (`@Moviedome`) - Extracts title from "Description: Title (Ganzer Film)" format
+  - Example: `So ein toller Liebesfilm...: Testament of Youth (Ganzer Film)` → `Testament of Youth`
+
+### Adding New Channels
+
+When adding a new channel with promotional titles:
+
+1. Add dirty/clean examples to `config/dirty-clean-examples.txt`
+2. Add cleaning rule to `scripts/utils/titleCleaner.ts`
+3. Run `pnpm tsx scripts/test-title-cleaning.ts` to verify
+4. Update this documentation
+
+### Testing
+
+Test all cleaning rules:
+
+```bash
+pnpm tsx scripts/test-title-cleaning.ts
+```
+
+Test scraper with dry-run:
+
+```bash
+pnpm tsx scripts/scrape-youtube.ts --channel=Netzkino --limit=5 --dry-run
+```

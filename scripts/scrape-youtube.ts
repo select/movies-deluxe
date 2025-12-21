@@ -19,6 +19,7 @@ import {
 } from './utils/dataManager.ts'
 import { matchMovie } from './utils/omdbMatcher.ts'
 import { createLogger } from './utils/logger.ts'
+import { cleanTitle } from './utils/titleCleaner.ts'
 import type { YouTubeSource, MovieEntry } from '../types/movie.ts'
 
 const logger = createLogger('YouTubeScraper')
@@ -240,8 +241,17 @@ async function processVideo(
   channelConfig: ChannelConfig | undefined,
   options: ScraperOptions
 ): Promise<MovieEntry | null> {
-  // Parse title and year
-  const { title, year } = parseMovieTitle(video.title)
+  // Clean title based on channel-specific rules
+  const rawTitle = video.title
+  const cleanedTitle = channelConfig ? cleanTitle(rawTitle, channelConfig.id) : rawTitle
+
+  // Log title cleaning if it changed
+  if (cleanedTitle !== rawTitle) {
+    logger.debug(`  Title cleaned: "${rawTitle}" → "${cleanedTitle}"`)
+  }
+
+  // Parse cleaned title and year
+  const { title, year } = parseMovieTitle(cleanedTitle)
 
   // Log extracted year
   if (year) {
