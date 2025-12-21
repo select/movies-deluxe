@@ -243,6 +243,11 @@ async function processVideo(
   // Parse title and year
   const { title, year } = parseMovieTitle(video.title)
 
+  // Log extracted year
+  if (year) {
+    logger.debug(`  Extracted year from title: ${year}`)
+  }
+
   // Create YouTube source
   const source: YouTubeSource = {
     type: 'youtube',
@@ -250,6 +255,7 @@ async function processVideo(
     url: `https://www.youtube.com/watch?v=${video.id}`,
     channelName: video.channelName,
     channelId: video.channelId,
+    releaseYear: year, // Store extracted year in source for OMDB validation
     language: channelConfig?.language, // Add language from channel config
     publishedAt: video.publishedAt,
     duration: video.duration,
