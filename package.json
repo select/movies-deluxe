@@ -20,7 +20,8 @@
     "enrich:omdb": "tsx scripts/enrich-omdb.ts",
     "validate:data": "tsx scripts/validate-data.ts",
     "download-posters": "tsx scripts/download-posters.ts",
-    "extract-titles": "tsx scripts/extract-titles-ai.ts"
+    "extract-titles": "tsx scripts/extract-titles-ai.ts",
+    "deduplicate": "tsx scripts/deduplicate.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
