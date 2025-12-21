@@ -417,6 +417,9 @@ function findDuplicates(db: MoviesDatabase): ValidationIssue[] {
   const titleGroups = new Map<string, string[]>()
 
   for (const [id, movie] of movies) {
+    if (!movie.title || typeof movie.title !== 'string') {
+      continue
+    }
     const normalizedTitle = movie.title
       .toLowerCase()
       .replace(/[^\w\s]/g, '')
