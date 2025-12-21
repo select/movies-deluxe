@@ -122,27 +122,26 @@
               title="Year"
               icon="i-mdi-calendar"
             >
-              <label class="flex items-center gap-2 cursor-pointer">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600 dark:text-gray-400">From:</span>
+                  <span class="font-medium">{{ filterStore.filters.minYear || '1910' }}+</span>
+                </div>
                 <input
-                  type="checkbox"
-                  class="rounded"
+                  :value="filterStore.filters.minYear"
+                  type="range"
+                  min="1910"
+                  max="2025"
+                  step="1"
+                  class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  @input="(e) => filterStore.setMinYear(Number((e.target as HTMLInputElement).value))"
                 >
-                <span class="text-sm">2020s</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  class="rounded"
-                >
-                <span class="text-sm">2010s</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  class="rounded"
-                >
-                <span class="text-sm">2000s</span>
-              </label>
+                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-500">
+                  <span>1910</span>
+                  <span>1970</span>
+                  <span>2025</span>
+                </div>
+              </div>
             </FilterSection>
           </div>
         </div>
