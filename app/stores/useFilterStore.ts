@@ -1,5 +1,5 @@
 import { useStorage } from '@vueuse/core'
-import type { MovieEntry, MovieSourceType } from '~/app/types'
+import type { MovieEntry } from '~/app/types'
 import { SORT_OPTIONS, sortMovies, type SortOption } from '~/utils/movieSort'
 
 /**
@@ -9,8 +9,8 @@ export interface FilterState {
   // Sorting
   sort: SortOption
 
-  // Source filter
-  sources: MovieSourceType[]
+  // Source filter (can be 'archive.org' or YouTube channel names)
+  sources: string[]
 
   // Rating filter
   minRating: number
@@ -63,9 +63,9 @@ export const useFilterStore = defineStore('filter', () => {
   }
 
   /**
-   * Toggle source filter
+   * Toggle source filter (archive.org or YouTube channel name)
    */
-  const toggleSource = (source: MovieSourceType) => {
+  const toggleSource = (source: string) => {
     const index = filters.value.sources.indexOf(source)
     if (index === -1) {
       filters.value.sources.push(source)
@@ -146,11 +146,23 @@ export const useFilterStore = defineStore('filter', () => {
   const applyFilters = (movies: MovieEntry[]): MovieEntry[] => {
     let filtered = [...movies]
 
-    // 1. Filter by source
+    // 1. Filter by source (archive.org or YouTube channel)
     if (filters.value.sources.length > 0) {
-      filtered = filtered.filter(movie =>
-        movie.sources.some(source => filters.value.sources.includes(source.type))
-      )
+      filtered = filtered.filter(movie => {
+        return movie.sources.some(source => {
+          // Check if Archive.org is selected
+          if (source.type === 'archive.org') {
+            return filters.value.sources.includes('archive.org')
+          }
+
+          // Check if YouTube channel is selected
+          if (source.type === 'youtube') {
+            return filters.value.sources.includes(source.channelName)
+          }
+
+          return false
+        })
+      })
     }
 
     // 2. Filter by minimum rating
