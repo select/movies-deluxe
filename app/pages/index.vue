@@ -167,8 +167,9 @@
                 <div class="i-mdi-movie text-6xl" />
               </div>
               
-              <!-- Source Badge -->
-              <div class="absolute top-2 right-2">
+              <!-- Badges -->
+              <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
+                <!-- Source Badge -->
                 <span
                   v-if="movie.sources[0]?.type === 'archive.org'"
                   class="px-2 py-1 text-xs rounded-full bg-gray-700 dark:bg-gray-600 text-white"
@@ -180,6 +181,14 @@
                   class="px-2 py-1 text-xs rounded-full bg-red-500 text-white"
                 >
                   {{ movie.sources[0].channelName || 'YouTube' }}
+                </span>
+                
+                <!-- Language Badge -->
+                <span
+                  v-if="getLanguageCode(movie.metadata?.Language)"
+                  class="px-2 py-1 text-xs rounded-full bg-gray-800 dark:bg-gray-700 text-white font-semibold"
+                >
+                  {{ getLanguageCode(movie.metadata?.Language) }}
                 </span>
               </div>
             </div>
