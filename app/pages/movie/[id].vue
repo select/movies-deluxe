@@ -195,21 +195,62 @@
             </div>
           </div>
 
-          <!-- Video Player Placeholder -->
-          <div class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center">
-            <div class="i-mdi-play-circle text-6xl text-gray-400 dark:text-gray-600 mb-4" />
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
-              Video player will be implemented in the next task
-            </p>
-            <a
-              v-if="movie.sources[0]"
-              :href="movie.sources[0].url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-block px-6 py-3 rounded-full bg-gray-700 dark:bg-yellow-600 text-white hover:bg-gray-600 dark:hover:bg-yellow-500 transition-colors"
+          <!-- Video Player -->
+          <div
+            v-if="movie.sources[0]"
+            class="bg-black rounded-lg overflow-hidden"
+          >
+            <!-- YouTube Player -->
+            <div
+              v-if="movie.sources[0].type === 'youtube'"
+              class="aspect-video"
             >
-              Watch on {{ movie.sources[0].type === 'youtube' ? 'YouTube' : 'Archive.org' }}
-            </a>
+              <iframe
+                :src="getYouTubeEmbedUrl(movie.sources[0].url)"
+                class="w-full h-full"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                title="YouTube video player"
+              />
+            </div>
+
+            <!-- Archive.org Player -->
+            <div
+              v-else-if="movie.sources[0].type === 'archive.org'"
+              class="aspect-video"
+            >
+              <iframe
+                :src="getArchiveEmbedUrl(movie.sources[0])"
+                class="w-full h-full"
+                frameborder="0"
+                webkitallowfullscreen="true"
+                mozallowfullscreen="true"
+                allowfullscreen
+                title="Archive.org video player"
+              />
+            </div>
+
+            <!-- Fallback: External Link -->
+            <div
+              v-else
+              class="aspect-video flex items-center justify-center bg-gray-800"
+            >
+              <div class="text-center p-8">
+                <div class="i-mdi-open-in-new text-6xl text-gray-400 mb-4" />
+                <p class="text-gray-300 mb-4">
+                  Video player not available for this source
+                </p>
+                <a
+                  :href="movie.sources[0].url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-block px-6 py-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
+                >
+                  Watch Externally
+                </a>
+              </div>
+            </div>
           </div>
 
           <!-- Additional Info -->
@@ -322,6 +363,74 @@ const toggleDarkMode = () => {
 const handlePosterError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.style.display = 'none'
+}
+
+/**
+ * Extract YouTube video ID from URL and create embed URL
+ * Supports formats:
+ * - https://www.youtube.com/watch?v=VIDEO_ID
+ * - https://youtu.be/VIDEO_ID
+ * - https://www.youtube.com/embed/VIDEO_ID
+ */
+const getYouTubeEmbedUrl = (url: string): string => {
+  try {
+    // eslint-disable-next-line no-undef
+    const urlObj = new URL(url)
+    
+    // Handle youtu.be short links
+    if (urlObj.hostname === 'youtu.be') {
+      const videoId = urlObj.pathname.slice(1) // Remove leading slash
+      return `https://www.youtube.com/embed/${videoId}`
+    }
+    
+    // Handle youtube.com links
+    if (urlObj.hostname.includes('youtube.com')) {
+      // Already an embed URL
+      if (urlObj.pathname.includes('/embed/')) {
+        return url
+      }
+      
+      // Extract from watch?v= parameter
+      const videoId = urlObj.searchParams.get('v')
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`
+      }
+    }
+    
+    // Fallback: return original URL
+    return url
+  } catch {
+    // Invalid URL, return as-is
+    return url
+  }
+}
+
+/**
+ * Create Archive.org embed URL from source
+ * Uses the identifier from the source or extracts from URL
+ */
+const getArchiveEmbedUrl = (source: any): string => {
+  // If source has identifier field, use it directly
+  if (source.identifier) {
+    return `https://archive.org/embed/${source.identifier}`
+  }
+  
+  // Try to extract identifier from URL
+  try {
+    // eslint-disable-next-line no-undef
+    const url = new URL(source.url)
+    const pathParts = url.pathname.split('/').filter(Boolean)
+    
+    // URL format: https://archive.org/details/IDENTIFIER
+    if (pathParts[0] === 'details' && pathParts[1]) {
+      return `https://archive.org/embed/${pathParts[1]}`
+    }
+    
+    // Fallback: return original URL
+    return source.url
+  } catch {
+    return source.url
+  }
 }
 </script>
 
