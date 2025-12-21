@@ -67,7 +67,7 @@
       </div>
 
       <!-- Desktop: Icon-Only Buttons -->
-      <div class="hidden md:flex flex-col items-center gap-4 py-4">
+      <div class="hidden md:flex flex-col items-center gap-2 py-2">
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           title="Filters"
