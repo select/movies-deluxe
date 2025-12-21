@@ -171,7 +171,7 @@
               <div class="absolute top-2 right-2">
                 <span
                   v-if="movie.sources[0]?.type === 'archive.org'"
-                  class="px-2 py-1 text-xs rounded-full bg-blue-500 text-white"
+                  class="px-2 py-1 text-xs rounded-full bg-gray-700 dark:bg-gray-600 text-white"
                 >
                   Archive.org
                 </span>
@@ -214,7 +214,7 @@
                 :href="movie.sources[0].url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="block w-full text-center px-3 py-2 text-sm rounded-full bg-blue-500 dark:bg-yellow-600 text-white hover:bg-blue-600 dark:hover:bg-yellow-500 transition-colors"
+                class="block w-full text-center px-3 py-2 text-sm rounded-full bg-gray-700 dark:bg-yellow-600 text-white hover:bg-gray-600 dark:hover:bg-yellow-500 transition-colors"
               >
                 Watch Now
               </a>
