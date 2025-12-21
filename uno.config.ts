@@ -3,15 +3,15 @@ import {
   presetAttributify,
   presetIcons,
   presetTypography,
-  presetUno,
   presetWebFonts,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
+import presetWind from '@unocss/preset-wind4'
 
 export default defineConfig({
   presets: [
-    presetUno(),
+    presetWind(),
     presetAttributify(),
     presetIcons({
       scale: 1.2,
@@ -24,8 +24,8 @@ export default defineConfig({
     presetTypography(),
     presetWebFonts({
       fonts: {
-        sans: 'Inter:400,600,800',
-        mono: 'Fira Code',
+        sans: 'Ubuntu:400,500,700',
+        mono: 'Ubuntu Mono',
       },
     }),
   ],
