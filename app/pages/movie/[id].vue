@@ -411,8 +411,61 @@
       <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
         <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
           <p>All movies are legally available from Archive.org and YouTube</p>
+          <button
+            class="mt-2 text-xs hover:underline"
+            @click="showKeyboardHelp = true"
+          >
+            Press ? for keyboard shortcuts
+          </button>
         </div>
       </footer>
+
+      <!-- Keyboard Shortcuts Help Modal -->
+      <div
+        v-if="showKeyboardHelp"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        @click="showKeyboardHelp = false"
+      >
+        <div
+          class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4"
+          @click.stop
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold">
+              Keyboard Shortcuts
+            </h3>
+            <button
+              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+              @click="showKeyboardHelp = false"
+            >
+              <div class="i-mdi-close text-xl" />
+            </button>
+          </div>
+          
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700 dark:text-gray-300">Go back to home</span>
+              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700 dark:text-gray-300">Toggle watchlist</span>
+              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700 dark:text-gray-300">Previous movie</span>
+              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">←</kbd>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700 dark:text-gray-300">Next movie</span>
+              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">→</kbd>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-700 dark:text-gray-300">Show this help</span>
+              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">?</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -520,7 +573,90 @@ onMounted(async () => {
   }
 
   isLoading.value = false
+  
+  // Setup keyboard navigation
+  setupKeyboardNavigation()
 })
+
+// Keyboard navigation state
+const showKeyboardHelp = ref(false)
+
+// Setup keyboard navigation
+const setupKeyboardNavigation = () => {
+  // eslint-disable-next-line no-undef
+  const handleKeyPress = (event: KeyboardEvent) => {
+    // Ignore if user is typing in an input field
+    const target = event.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      return
+    }
+
+    switch (event.key) {
+      case 'Escape':
+        // Go back to home
+        // eslint-disable-next-line no-undef
+        navigateTo('/')
+        break
+        
+      case ' ':
+      case 'Enter':
+        // Toggle watchlist (only if Space or Enter)
+        if (event.key === ' ' || event.key === 'Enter') {
+          event.preventDefault() // Prevent page scroll on Space
+          toggleWatchlist()
+        }
+        break
+        
+      case 'ArrowLeft':
+        // Navigate to previous movie
+        navigateToPrevMovie()
+        break
+        
+      case 'ArrowRight':
+        // Navigate to next movie
+        navigateToNextMovie()
+        break
+        
+      case '?':
+        // Toggle keyboard shortcuts help
+        showKeyboardHelp.value = !showKeyboardHelp.value
+        break
+    }
+  }
+
+  // eslint-disable-next-line no-undef
+  window.addEventListener('keydown', handleKeyPress)
+  
+  // Cleanup on unmount
+  onUnmounted(() => {
+    // eslint-disable-next-line no-undef
+    window.removeEventListener('keydown', handleKeyPress)
+  })
+}
+
+// Navigate to previous movie
+const navigateToPrevMovie = () => {
+  if (!movie.value) return
+  
+  const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
+  if (currentIndex > 0) {
+    const prevMovie = movieStore.movies[currentIndex - 1]
+    // eslint-disable-next-line no-undef
+    navigateTo(`/movie/${prevMovie.imdbId}`)
+  }
+}
+
+// Navigate to next movie
+const navigateToNextMovie = () => {
+  if (!movie.value) return
+  
+  const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
+  if (currentIndex < movieStore.movies.length - 1) {
+    const nextMovie = movieStore.movies[currentIndex + 1]
+    // eslint-disable-next-line no-undef
+    navigateTo(`/movie/${nextMovie.imdbId}`)
+  }
+}
 
 // Update meta tags for SEO and social sharing
 const updateMetaTags = (movie: MovieEntry) => {
