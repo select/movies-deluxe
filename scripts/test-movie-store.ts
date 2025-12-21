@@ -2,7 +2,7 @@
 
 /**
  * Test script to verify the movie store refactoring
- * This simulates loading movies from data/movies.json
+ * This simulates loading movies from public/data/movies.json
  */
 
 import fs from 'node:fs'
@@ -17,7 +17,7 @@ async function testMovieStore() {
   console.log('Testing movie store refactoring...\n')
 
   // Load movies.json
-  const moviesPath = path.join(__dirname, '../data/movies.json')
+  const moviesPath = path.join(__dirname, '../public/data/movies.json')
   const data = JSON.parse(fs.readFileSync(moviesPath, 'utf-8'))
 
   // Convert object to array (same logic as store)
@@ -29,7 +29,7 @@ async function testMovieStore() {
     }
   }
 
-  console.log(`✓ Loaded ${movieEntries.length} movies from data/movies.json`)
+  console.log(`✓ Loaded ${movieEntries.length} movies from public/data/movies.json`)
 
   // Test filtering by source
   const archiveMovies = movieEntries.filter(movie =>

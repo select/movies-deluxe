@@ -2,7 +2,7 @@
 /**
  * Archive.org Movie Scraper
  *
- * Fetches movies from Archive.org collections and stores them in data/movies.json
+ * Fetches movies from Archive.org collections and stores them in public/data/movies.json
  * Supports pagination, multiple collections, and OMDB matching
  */
 

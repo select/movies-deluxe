@@ -25,7 +25,7 @@ import { createLogger } from './utils/logger'
 
 const logger = createLogger('deduplicate')
 
-const DATA_FILE = resolve(process.cwd(), 'data/movies.json')
+const DATA_FILE = resolve(process.cwd(), 'public/data/movies.json')
 
 // Parse command line arguments
 interface CliOptions {

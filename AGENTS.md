@@ -508,10 +508,9 @@ For more details, see https://www.conventionalcommits.org/
 **`scripts/`** - Node.js scripts (NOT part of Nuxt build)
 
 - Run via `pnpm tsx scripts/<name>.ts`
+- Scripts write directly to `public/data/movies.json`
 
 **`config/`** - Project configuration data
-
-**`data/`** - Backend data storage (copied to `public/` for frontend)
 
 ### Naming Conventions
 

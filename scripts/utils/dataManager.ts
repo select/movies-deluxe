@@ -1,5 +1,5 @@
 /**
- * Data manager for loading, saving, and merging movies.json
+ * Data manager for loading, saving, and merging public/data/movies.json
  */
 
 import { readFile, writeFile, mkdir } from 'fs/promises'
@@ -9,7 +9,7 @@ import type { MoviesDatabase, MovieEntry } from '../../types/movie.ts'
 import { createLogger } from './logger.ts'
 
 const logger = createLogger('DataManager')
-const DATA_DIR = join(process.cwd(), 'data')
+const DATA_DIR = join(process.cwd(), 'public/data')
 const MOVIES_FILE = join(DATA_DIR, 'movies.json')
 
 /**
