@@ -1,0 +1,276 @@
+<template>
+  <div
+    :class="isDark ? 'dark' : ''"
+    class="min-h-screen transition-colors"
+  >
+    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <!-- Header -->
+      <header class="border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold">
+              Movies Deluxe
+            </h1>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Free legal movie streams from Archive.org and YouTube
+            </p>
+          </div>
+          
+          <!-- Dark Mode Toggle -->
+          <button
+            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleDarkMode"
+          >
+            <div
+              v-if="isDark"
+              class="i-mdi-weather-sunny text-xl"
+            />
+            <div
+              v-else
+              class="i-mdi-weather-night text-xl"
+            />
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Loading State -->
+        <div
+          v-if="movieStore.isLoading.movies"
+          class="text-center py-12"
+        >
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100" />
+          <p class="mt-4 text-gray-600 dark:text-gray-400">
+            Loading movies...
+          </p>
+        </div>
+
+        <!-- Movie Stats -->
+        <div
+          v-else-if="movieStore.movies.length > 0"
+          class="mb-8"
+        >
+          <div class="flex flex-wrap gap-4 text-sm">
+            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+              <span class="font-semibold">Total Movies:</span> {{ movieStore.movies.length }}
+            </div>
+            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+              <span class="font-semibold">Archive.org:</span> {{ archiveCount }}
+            </div>
+            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+              <span class="font-semibold">YouTube:</span> {{ youtubeCount }}
+            </div>
+            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+              <span class="font-semibold">With Metadata:</span> {{ enrichedCount }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Movie Grid -->
+        <div
+          v-if="movieStore.movies.length > 0"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        >
+          <div
+            v-for="movie in displayedMovies"
+            :key="movie.imdbId"
+            class="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
+          >
+            <!-- Poster -->
+            <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
+              <!-- Use local poster for movies with real IMDB IDs -->
+              <img
+                v-if="movie.imdbId.startsWith('tt')"
+                :src="`/posters/${movie.imdbId}.jpg`"
+                :alt="movie.title"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                @error="(e) => handlePosterError(e, movie)"
+              >
+              <!-- Fallback to OMDB poster for non-matched movies -->
+              <img
+                v-else-if="movie.metadata?.Poster && movie.metadata.Poster !== 'N/A'"
+                :src="movie.metadata.Poster"
+                :alt="movie.title"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              >
+              <!-- Icon fallback -->
+              <div
+                v-else
+                class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
+              >
+                <div class="i-mdi-movie text-6xl" />
+              </div>
+              
+              <!-- Source Badge -->
+              <div class="absolute top-2 right-2">
+                <span
+                  v-if="movie.sources[0]?.type === 'archive.org'"
+                  class="px-2 py-1 text-xs rounded bg-blue-500 text-white"
+                >
+                  Archive.org
+                </span>
+                <span
+                  v-else-if="movie.sources[0]?.type === 'youtube'"
+                  class="px-2 py-1 text-xs rounded bg-red-500 text-white"
+                >
+                  YouTube
+                </span>
+              </div>
+            </div>
+
+            <!-- Movie Info -->
+            <div class="p-4">
+              <h3 class="font-semibold text-sm line-clamp-2 mb-2">
+                {{ movie.title }}
+              </h3>
+              
+              <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 mb-3">
+                <span v-if="movie.year">{{ movie.year }}</span>
+                <span v-if="movie.year && movie.metadata?.imdbRating">•</span>
+                <span
+                  v-if="movie.metadata?.imdbRating"
+                  class="flex items-center gap-1"
+                >
+                  <div class="i-mdi-star text-yellow-500" />
+                  {{ movie.metadata.imdbRating }}
+                </span>
+              </div>
+
+              <!-- Watch Button -->
+              <a
+                v-if="movie.sources[0]"
+                :href="movie.sources[0].url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block w-full text-center px-3 py-2 text-sm rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+              >
+                Watch Now
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div
+          v-else-if="!movieStore.isLoading.movies"
+          class="text-center py-12"
+        >
+          <p class="text-gray-600 dark:text-gray-400">
+            No movies found.
+          </p>
+        </div>
+
+        <!-- Load More Button -->
+        <div
+          v-if="hasMore"
+          class="text-center mt-8"
+        >
+          <button
+            class="px-6 py-3 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+            @click="loadMore"
+          >
+            Load More
+          </button>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p>All movies are legally available from Archive.org and YouTube</p>
+        </div>
+      </footer>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const movieStore = useMovieStore()
+
+// Dark mode state
+const isDark = ref(false)
+
+// Pagination
+const itemsPerPage = 20
+const currentPage = ref(1)
+
+// Load movies on mount
+onMounted(async () => {
+  await movieStore.loadFromFile()
+  
+  // Check for saved dark mode preference
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme')
+    isDark.value = savedTheme === 'dark'
+  }
+})
+
+// Toggle dark mode
+const toggleDarkMode = () => {
+  isDark.value = !isDark.value
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  }
+}
+
+// Computed properties
+const displayedMovies = computed(() => {
+  return movieStore.movies.slice(0, currentPage.value * itemsPerPage)
+})
+
+const hasMore = computed(() => {
+  return displayedMovies.value.length < movieStore.movies.length
+})
+
+const archiveCount = computed(() => {
+  return movieStore.filterBySource('archive.org').length
+})
+
+const youtubeCount = computed(() => {
+  return movieStore.filterBySource('youtube').length
+})
+
+const enrichedCount = computed(() => {
+  return movieStore.getEnrichedMovies().length
+})
+
+// Load more movies
+const loadMore = () => {
+  currentPage.value++
+}
+
+// Handle poster loading errors
+const handlePosterError = (event: Event, movie: { metadata?: { Poster?: string } }) => {
+  const img = event.target as HTMLImageElement
+  // Try OMDB poster as fallback
+  if (movie.metadata?.Poster && movie.metadata.Poster !== 'N/A') {
+    img.src = movie.metadata.Poster
+  } else {
+    // Hide the image and show icon fallback
+    img.style.display = 'none'
+  }
+}
+</script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+</style>
