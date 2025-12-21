@@ -66,12 +66,9 @@ export const useFilterStore = defineStore('filter', () => {
    * Toggle source filter (archive.org or YouTube channel name)
    */
   const toggleSource = (source: string) => {
-    const index = filters.value.sources.indexOf(source)
-    if (index === -1) {
-      filters.value.sources.push(source)
-    } else {
-      filters.value.sources.splice(index, 1)
-    }
+    filters.value.sources = filters.value.sources.includes(source)
+      ? filters.value.sources.filter(s => s !== source)
+      : [...filters.value.sources, source]
   }
 
   /**
@@ -99,24 +96,18 @@ export const useFilterStore = defineStore('filter', () => {
    * Toggle genre filter
    */
   const toggleGenre = (genre: string) => {
-    const index = filters.value.genres.indexOf(genre)
-    if (index === -1) {
-      filters.value.genres.push(genre)
-    } else {
-      filters.value.genres.splice(index, 1)
-    }
+    filters.value.genres = filters.value.genres.includes(genre)
+      ? filters.value.genres.filter(g => g !== genre)
+      : [...filters.value.genres, genre]
   }
 
   /**
    * Toggle country filter
    */
   const toggleCountry = (country: string) => {
-    const index = filters.value.countries.indexOf(country)
-    if (index === -1) {
-      filters.value.countries.push(country)
-    } else {
-      filters.value.countries.splice(index, 1)
-    }
+    filters.value.countries = filters.value.countries.includes(country)
+      ? filters.value.countries.filter(c => c !== country)
+      : [...filters.value.countries, country]
   }
 
   /**
