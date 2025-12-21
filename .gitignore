@@ -28,3 +28,7 @@ public/posters/*.jpg
 public/posters/*.png
 public/posters/*.webp
 !public/posters/.gitkeep
+
+# Backup files
+*.backup.json
+*.bak
