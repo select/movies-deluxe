@@ -129,6 +129,12 @@
                 >
                   <div class="i-mdi-star text-yellow-500 dark:text-yellow-400" />
                   {{ movie.metadata.imdbRating }}
+                  <span
+                    v-if="movie.metadata?.imdbVotes"
+                    class="text-gray-500 dark:text-gray-500"
+                  >
+                    ({{ formatVotes(movie.metadata.imdbVotes) }})
+                  </span>
                 </span>
               </div>
 
