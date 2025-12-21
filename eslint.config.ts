@@ -16,6 +16,17 @@ export default tseslint.config(
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
+      globals: {
+        // Nuxt auto-imports
+        useMovieStore: 'readonly',
+        ref: 'readonly',
+        computed: 'readonly',
+        onMounted: 'readonly',
+        // Browser globals
+        localStorage: 'readonly',
+        Event: 'readonly',
+        HTMLImageElement: 'readonly',
+      },
     },
   },
   {
