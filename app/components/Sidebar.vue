@@ -34,10 +34,8 @@
         'top-0 left-0 h-full w-80 rounded-r-2xl',
         isMobileOpen ? 'translate-x-0' : '-translate-x-full',
         // Desktop styles (>= md breakpoint)
-        'md:left-4 md:top-24 md:rounded-full md:translate-x-0',
-        isExpanded ? 'md:w-64' : 'md:w-16',
+        'md:left-4 md:top-24 md:rounded-full md:translate-x-0 md:w-16',
       ]"
-      :style="{ 'max-height': 'calc(100vh - 8rem)' }"
     >
       <!-- Mobile: Header with Close Button -->
       <div class="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -53,41 +51,9 @@
         </button>
       </div>
 
-      <!-- Desktop: Toggle Button -->
-      <button
-        class="hidden md:flex w-full p-4 items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        :aria-label="isExpanded ? 'Collapse sidebar' : 'Expand sidebar'"
-        @click="toggleDesktopSidebar"
-      >
-        <div
-          :class="[
-            'text-xl transition-transform duration-300',
-            isExpanded ? 'i-mdi-chevron-left' : 'i-mdi-chevron-right',
-          ]"
-        />
-        <span
-          v-if="isExpanded"
-          class="ml-2 font-semibold text-sm"
-        >
-          Menu
-        </span>
-      </button>
-
-      <!-- Divider -->
+      <!-- Mobile: Sidebar Content -->
       <div
-        v-if="isExpanded"
-        class="hidden md:block border-t border-gray-200 dark:border-gray-700"
-      />
-
-      <!-- Sidebar Content -->
-      <div
-        :class="[
-          'overflow-y-auto',
-          // Mobile: always show content when drawer is open
-          'p-4 md:hidden',
-          // Desktop: show only when expanded
-          isExpanded ? 'md:block md:p-4' : 'md:hidden',
-        ]"
+        class="md:hidden overflow-y-auto p-4"
         :style="{ 'max-height': 'calc(100vh - 12rem)' }"
       >
         <!-- Filter Button -->
@@ -100,11 +66,8 @@
         </button>
       </div>
 
-      <!-- Desktop: Collapsed State Icons -->
-      <div
-        v-if="!isExpanded"
-        class="hidden md:flex flex-col items-center gap-4 py-4"
-      >
+      <!-- Desktop: Icon-Only Buttons -->
+      <div class="hidden md:flex flex-col items-center gap-4 py-4">
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           title="Filters"
@@ -118,19 +81,12 @@
 </template>
 
 <script setup lang="ts">
-// Desktop sidebar state (collapsed/expanded)
-const isExpanded = ref(false)
-
 // Mobile sidebar state (open/closed)
 const isMobileOpen = ref(false)
 
 const emit = defineEmits<{
   openFilters: []
 }>()
-
-const toggleDesktopSidebar = () => {
-  isExpanded.value = !isExpanded.value
-}
 
 const toggleMobileSidebar = () => {
   isMobileOpen.value = !isMobileOpen.value
@@ -148,9 +104,7 @@ const openFilters = () => {
 
 // Expose methods for parent components
 defineExpose({
-  isExpanded,
   isMobileOpen,
-  toggleDesktopSidebar,
   toggleMobileSidebar,
   closeMobileSidebar,
 })

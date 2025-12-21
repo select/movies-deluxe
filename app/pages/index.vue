@@ -124,10 +124,10 @@
                 
                 <!-- Language Badge -->
                 <span
-                  v-if="getLanguageCode(movie.metadata?.Language)"
+                  v-if="getLanguageCode(movie.metadata?.Language) || (movie.sources[0]?.type === 'youtube' && movie.sources[0].language)"
                   class="px-2 py-1 text-xs rounded-full bg-gray-800 dark:bg-gray-700 text-white font-semibold"
                 >
-                  {{ getLanguageCode(movie.metadata?.Language) }}
+                  {{ getLanguageCode(movie.metadata?.Language) || (movie.sources[0]?.type === 'youtube' ? movie.sources[0].language?.toUpperCase() : '') }}
                 </span>
               </div>
             </div>
