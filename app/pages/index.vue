@@ -34,78 +34,11 @@
         </div>
       </header>
 
-      <!-- Sidebar -->
-      <Sidebar>
-        <FilterSection
-          title="Source"
-          icon="i-mdi-source-branch"
-        >
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">Archive.org</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">YouTube</span>
-          </label>
-        </FilterSection>
-
-        <FilterSection
-          title="Rating"
-          icon="i-mdi-star"
-        >
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">8+ Stars</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">6+ Stars</span>
-          </label>
-        </FilterSection>
-
-        <FilterSection
-          title="Year"
-          icon="i-mdi-calendar"
-        >
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">2020s</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">2010s</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              class="rounded"
-            >
-            <span class="text-sm">2000s</span>
-          </label>
-        </FilterSection>
-      </Sidebar>
+      <!-- Filter Menu -->
+      <FilterMenu />
 
       <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-20">
+      <main class="max-w-7xl mx-auto px-4 py-8">
         <!-- Loading State -->
         <div
           v-if="movieStore.isLoading.movies"
