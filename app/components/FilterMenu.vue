@@ -147,34 +147,24 @@
             >
               <div class="space-y-3">
                 <!-- Archive.org -->
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    :checked="filterStore.filters.sources.includes('archive.org')"
-                    type="checkbox"
-                    class="rounded"
-                    @change="filterStore.toggleSource('archive.org')"
-                  >
-                  <span class="text-sm">Archive.org</span>
-                </label>
+                <AppInputCheckbox
+                  :checked="filterStore.filters.sources.includes('archive.org')"
+                  label="Archive.org"
+                  @change="filterStore.toggleSource('archive.org')"
+                />
 
                 <!-- YouTube Channels -->
                 <div class="pl-4 space-y-2 border-l-2 border-gray-300 dark:border-gray-600">
                   <p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-2">
                     YouTube Channels
                   </p>
-                  <label
+                  <AppInputCheckbox
                     v-for="channel in youtubeChannels"
                     :key="channel"
-                    class="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      :checked="filterStore.filters.sources.includes(channel)"
-                      type="checkbox"
-                      class="rounded"
-                      @change="filterStore.toggleSource(channel)"
-                    >
-                    <span class="text-sm">{{ channel }}</span>
-                  </label>
+                    :checked="filterStore.filters.sources.includes(channel)"
+                    :label="channel"
+                    @change="filterStore.toggleSource(channel)"
+                  />
                 </div>
               </div>
             </FilterSection>
