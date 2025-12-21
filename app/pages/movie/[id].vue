@@ -331,6 +331,29 @@
               </a>
             </div>
           </div>
+
+          <!-- Related Movies -->
+          <div
+            v-if="relatedMovies.length > 0"
+            class="pt-8 border-t border-gray-200 dark:border-gray-800"
+          >
+            <h2 class="text-2xl font-bold mb-6">
+              Related Movies
+            </h2>
+            
+            <!-- Horizontal scrollable grid -->
+            <div class="relative">
+              <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                <div
+                  v-for="relatedMovie in relatedMovies"
+                  :key="relatedMovie.imdbId"
+                  class="flex-shrink-0 w-48 snap-start"
+                >
+                  <MovieCard :movie="relatedMovie" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 
@@ -369,6 +392,57 @@ const shareToastMessage = ref('')
 // Watchlist computed
 const isInWatchlist = computed(() => {
   return movie.value ? watchlistStore.isInWatchlist(movie.value.imdbId) : false
+})
+
+// Related movies computed
+const relatedMovies = computed(() => {
+  if (!movie.value) return []
+  
+  const currentMovie = movie.value
+  const allMovies = movieStore.movies
+  
+  // Score each movie based on similarity
+  const scored = allMovies
+    .filter(m => m.imdbId !== currentMovie.imdbId) // Exclude current movie
+    .map(m => {
+      let score = 0
+      
+      // Genre match (highest priority)
+      if (currentMovie.metadata?.Genre && m.metadata?.Genre) {
+        const currentGenres = currentMovie.metadata.Genre.split(',').map(g => g.trim().toLowerCase())
+        const movieGenres = m.metadata.Genre.split(',').map(g => g.trim().toLowerCase())
+        const commonGenres = currentGenres.filter(g => movieGenres.includes(g))
+        score += commonGenres.length * 10 // 10 points per matching genre
+      }
+      
+      // Year similarity (±5 years)
+      if (currentMovie.year && m.year) {
+        const yearDiff = Math.abs(parseInt(currentMovie.year) - parseInt(m.year))
+        if (yearDiff <= 5) {
+          score += (5 - yearDiff) * 2 // 2-10 points based on proximity
+        }
+      }
+      
+      // Director match
+      if (currentMovie.metadata?.Director && m.metadata?.Director) {
+        if (currentMovie.metadata.Director === m.metadata.Director) {
+          score += 15 // 15 points for same director
+        }
+      }
+      
+      // Prefer movies with metadata
+      if (m.metadata) {
+        score += 1
+      }
+      
+      return { movie: m, score }
+    })
+    .filter(item => item.score > 0) // Only include movies with some similarity
+    .sort((a, b) => b.score - a.score) // Sort by score descending
+    .slice(0, 8) // Limit to 8 movies
+    .map(item => item.movie)
+  
+  return scored
 })
 
 // Load movie on mount
@@ -620,5 +694,35 @@ const getArchiveEmbedUrl = (source: any): string => {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Custom scrollbar for related movies */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 </style>
