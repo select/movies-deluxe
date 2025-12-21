@@ -1,25 +1,10 @@
 <template>
   <div>
-    <!-- Mobile & Desktop: Fixed Filter Button -->
-    <button
-      class="fixed top-20 right-6 z-50 px-4 py-2 rounded-full bg-gray-700 dark:bg-yellow-600 text-white shadow-lg hover:bg-gray-600 dark:hover:bg-yellow-500 transition-all flex items-center gap-2"
-      :aria-label="isOpen ? 'Close filters' : 'Open filters'"
-      @click="toggleMenu"
-    >
-      <div
-        :class="[
-          'text-xl transition-transform duration-300',
-          isOpen ? 'i-mdi-close' : 'i-mdi-filter-variant',
-        ]"
-      />
-      <span class="text-sm font-semibold">Filters</span>
-    </button>
-
     <!-- Overlay (visible when menu is open) -->
     <div
       v-if="isOpen"
       class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
-      @click="closeMenu"
+      @click="emit('close')"
     />
 
     <!-- Filter Menu Panel (slides from top) -->
@@ -44,7 +29,7 @@
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           aria-label="Close filters"
-          @click="closeMenu"
+          @click="emit('close')"
         >
           <div class="i-mdi-close text-xl" />
         </button>
@@ -131,21 +116,13 @@
 </template>
 
 <script setup lang="ts">
-// Filter menu state (open/closed)
-const isOpen = ref(false)
-
-const toggleMenu = () => {
-  isOpen.value = !isOpen.value
+interface Props {
+  isOpen: boolean
 }
 
-const closeMenu = () => {
-  isOpen.value = false
-}
+defineProps<Props>()
 
-// Expose methods for parent components
-defineExpose({
-  isOpen,
-  toggleMenu,
-  closeMenu,
-})
+const emit = defineEmits<{
+  close: []
+}>()
 </script>

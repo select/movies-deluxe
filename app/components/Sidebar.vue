@@ -3,13 +3,13 @@
     <!-- Mobile: Fixed Bottom Button (visible only on mobile) -->
     <button
       class="md:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gray-700 dark:bg-yellow-600 text-white shadow-lg hover:bg-gray-600 dark:hover:bg-yellow-500 transition-all flex items-center justify-center"
-      :aria-label="isMobileOpen ? 'Close filters' : 'Open filters'"
+      :aria-label="isMobileOpen ? 'Close sidebar' : 'Open sidebar'"
       @click="toggleMobileSidebar"
     >
       <div
         :class="[
           'text-2xl transition-transform duration-300',
-          isMobileOpen ? 'i-mdi-close' : 'i-mdi-filter-variant',
+          isMobileOpen ? 'i-mdi-close' : 'i-mdi-menu',
         ]"
       />
     </button>
@@ -42,11 +42,11 @@
       <!-- Mobile: Header with Close Button -->
       <div class="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 class="text-lg font-semibold">
-          Filters
+          Menu
         </h2>
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          aria-label="Close filters"
+          aria-label="Close sidebar"
           @click="closeMobileSidebar"
         >
           <div class="i-mdi-close text-xl" />
@@ -69,7 +69,7 @@
           v-if="isExpanded"
           class="ml-2 font-semibold text-sm"
         >
-          Filters
+          Menu
         </span>
       </button>
 
@@ -79,7 +79,7 @@
         class="hidden md:block border-t border-gray-200 dark:border-gray-700"
       />
 
-      <!-- Filter Content -->
+      <!-- Sidebar Content -->
       <div
         :class="[
           'overflow-y-auto',
@@ -90,7 +90,14 @@
         ]"
         :style="{ 'max-height': 'calc(100vh - 12rem)' }"
       >
-        <slot />
+        <!-- Filter Button -->
+        <button
+          class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left"
+          @click="openFilters"
+        >
+          <div class="i-mdi-filter-variant text-xl" />
+          <span class="text-sm font-medium">Filters</span>
+        </button>
       </div>
 
       <!-- Desktop: Collapsed State Icons -->
@@ -100,24 +107,10 @@
       >
         <button
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          title="Source Filter"
-          @click="toggleDesktopSidebar"
+          title="Filters"
+          @click="openFilters"
         >
-          <div class="i-mdi-filter text-xl" />
-        </button>
-        <button
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          title="Rating Filter"
-          @click="toggleDesktopSidebar"
-        >
-          <div class="i-mdi-star text-xl" />
-        </button>
-        <button
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          title="Year Filter"
-          @click="toggleDesktopSidebar"
-        >
-          <div class="i-mdi-calendar text-xl" />
+          <div class="i-mdi-filter-variant text-xl" />
         </button>
       </div>
     </aside>
@@ -131,6 +124,10 @@ const isExpanded = ref(false)
 // Mobile sidebar state (open/closed)
 const isMobileOpen = ref(false)
 
+const emit = defineEmits<{
+  openFilters: []
+}>()
+
 const toggleDesktopSidebar = () => {
   isExpanded.value = !isExpanded.value
 }
@@ -141,6 +138,12 @@ const toggleMobileSidebar = () => {
 
 const closeMobileSidebar = () => {
   isMobileOpen.value = false
+}
+
+const openFilters = () => {
+  emit('openFilters')
+  // Close mobile sidebar when opening filters
+  closeMobileSidebar()
 }
 
 // Expose methods for parent components
