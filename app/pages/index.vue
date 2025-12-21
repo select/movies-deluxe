@@ -210,12 +210,24 @@ const toggleDarkMode = () => {
 }
 
 // Computed properties
+const sortedMovies = computed(() => {
+  // Sort movies: those with IMDB IDs (potential posters) first, then others
+  return [...movieStore.movies].sort((a, b) => {
+    const aHasImdb = a.imdbId.startsWith('tt')
+    const bHasImdb = b.imdbId.startsWith('tt')
+    
+    if (aHasImdb && !bHasImdb) return -1
+    if (!aHasImdb && bHasImdb) return 1
+    return 0
+  })
+})
+
 const displayedMovies = computed(() => {
-  return movieStore.movies.slice(0, currentPage.value * itemsPerPage)
+  return sortedMovies.value.slice(0, currentPage.value * itemsPerPage)
 })
 
 const hasMore = computed(() => {
-  return displayedMovies.value.length < movieStore.movies.length
+  return displayedMovies.value.length < sortedMovies.value.length
 })
 
 const archiveCount = computed(() => {
