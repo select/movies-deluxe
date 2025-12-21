@@ -34,7 +34,7 @@
         'top-0 left-0 h-full w-80 rounded-r-2xl',
         isMobileOpen ? 'translate-x-0' : '-translate-x-full',
         // Desktop styles (>= md breakpoint)
-        'md:left-4 md:top-24 md:rounded-full md:translate-x-0 md:w-16',
+        'md:left-4 md:top-24 md:rounded-full md:translate-x-0 md:w-12',
       ]"
     >
       <!-- Mobile: Header with Close Button -->

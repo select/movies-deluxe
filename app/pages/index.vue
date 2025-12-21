@@ -44,7 +44,7 @@
       />
 
       <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-20">
+      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
         <!-- Loading State -->
         <div
           v-if="movieStore.isLoading.movies"
