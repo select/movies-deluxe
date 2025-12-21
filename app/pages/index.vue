@@ -82,92 +82,11 @@
           v-if="movieStore.movies.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         >
-          <div
+          <MovieCard
             v-for="movie in displayedMovies"
             :key="movie.imdbId"
-            class="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
-          >
-            <!-- Poster -->
-            <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
-              <!-- Use local poster only for movies with real IMDB IDs -->
-              <img
-                v-if="movie.imdbId.startsWith('tt')"
-                :src="`/posters/${movie.imdbId}.jpg`"
-                :alt="movie.title"
-                class="w-full h-full object-cover"
-                loading="lazy"
-                @error="(e) => handlePosterError(e)"
-              >
-              <!-- Icon fallback for movies without local posters -->
-              <div
-                v-else
-                class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
-              >
-                <div class="i-mdi-movie text-6xl" />
-              </div>
-              
-              <!-- Badges -->
-              <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
-                <!-- Source Badge -->
-                <span
-                  v-if="movie.sources[0]?.type === 'archive.org'"
-                  class="px-2 py-1 text-xs rounded-full bg-gray-700 dark:bg-gray-600 text-white"
-                >
-                  Archive.org
-                </span>
-                <span
-                  v-else-if="movie.sources[0]?.type === 'youtube'"
-                  class="px-2 py-1 text-xs rounded-full bg-red-500 text-white"
-                >
-                  {{ movie.sources[0].channelName || 'YouTube' }}
-                </span>
-                
-                <!-- Language Badge -->
-                <span
-                  v-if="getLanguageCode(movie.metadata?.Language) || (movie.sources[0]?.type === 'youtube' && movie.sources[0].language)"
-                  class="px-2 py-1 text-xs rounded-full bg-gray-800 dark:bg-gray-700 text-white font-semibold"
-                >
-                  {{ getLanguageCode(movie.metadata?.Language) || (movie.sources[0]?.type === 'youtube' ? movie.sources[0].language?.toUpperCase() : '') }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Movie Info -->
-            <div class="p-4">
-              <h3 class="font-semibold text-sm line-clamp-2 mb-2">
-                {{ movie.title }}
-              </h3>
-              
-              <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 mb-3">
-                <span v-if="movie.year">{{ movie.year }}</span>
-                <span v-if="movie.year && movie.metadata?.imdbRating">•</span>
-                <span
-                  v-if="movie.metadata?.imdbRating"
-                  class="flex items-center gap-1"
-                >
-                  <div class="i-mdi-star text-yellow-500 dark:text-yellow-400" />
-                  {{ movie.metadata.imdbRating }}
-                  <span
-                    v-if="movie.metadata?.imdbVotes"
-                    class="text-gray-500 dark:text-gray-500"
-                  >
-                    ({{ formatVotes(movie.metadata.imdbVotes) }})
-                  </span>
-                </span>
-              </div>
-
-              <!-- Watch Button -->
-              <a
-                v-if="movie.sources[0]"
-                :href="movie.sources[0].url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block w-full text-center px-3 py-2 text-sm rounded-full bg-gray-700 dark:bg-yellow-600 text-white hover:bg-gray-600 dark:hover:bg-yellow-500 transition-colors"
-              >
-                Watch Now
-              </a>
-            </div>
-          </div>
+            :movie="movie"
+          />
         </div>
 
         <!-- Empty State -->
@@ -212,7 +131,11 @@
 </template>
 
 <script setup lang="ts">
+import { useMovieStore } from '~/app/stores/useMovieStore'
+import { useFilterStore } from '~/app/stores/useFilterStore'
+
 const movieStore = useMovieStore()
+const filterStore = useFilterStore()
 
 // Dark mode state (default to dark)
 const isDark = ref(true)
@@ -257,24 +180,17 @@ const toggleDarkMode = () => {
 }
 
 // Computed properties
-const sortedMovies = computed(() => {
-  // Sort movies: those with IMDB IDs (potential posters) first, then others
-  return [...movieStore.movies].sort((a, b) => {
-    const aHasImdb = a.imdbId.startsWith('tt')
-    const bHasImdb = b.imdbId.startsWith('tt')
-    
-    if (aHasImdb && !bHasImdb) return -1
-    if (!aHasImdb && bHasImdb) return 1
-    return 0
-  })
+const filteredAndSortedMovies = computed(() => {
+  // Apply all filters and sorting from the filter store
+  return filterStore.applyFilters(movieStore.movies)
 })
 
 const displayedMovies = computed(() => {
-  return sortedMovies.value.slice(0, currentPage.value * itemsPerPage)
+  return filteredAndSortedMovies.value.slice(0, currentPage.value * itemsPerPage)
 })
 
 const hasMore = computed(() => {
-  return displayedMovies.value.length < sortedMovies.value.length
+  return displayedMovies.value.length < filteredAndSortedMovies.value.length
 })
 
 const archiveCount = computed(() => {
@@ -322,23 +238,9 @@ const setupInfiniteScroll = () => {
 const loadMore = () => {
   currentPage.value++
 }
-
-// Handle poster loading errors
-const handlePosterError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  // Hide the image and show icon fallback
-  img.style.display = 'none'
-}
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);

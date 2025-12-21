@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   },
 
   // Modules
-  modules: ['@unocss/nuxt', '@pinia/nuxt'],
+  modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt'],
 
   // Apply font-sans class to body element globally
   app: {
