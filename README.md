@@ -14,7 +14,7 @@ pnpm install
 
 ### Development
 
-- `pnpm dev` - Start development server on http://localhost:3000
+- `pnpm dev` - Start development server on http://localhost:3003
 - `pnpm build` - Build application for production
 - `pnpm generate` - Generate static site
 - `pnpm preview` - Preview production build locally
@@ -154,6 +154,27 @@ OPENAI_API_KEY=sk-your-api-key-here
 
 ## Configuration
 
+### Project Structure
+
+```
+movies-deluxe/
+├── app/                    # Frontend application (Nuxt 4)
+│   ├── components/         # Vue components (auto-imported)
+│   ├── pages/              # File-based routing
+│   ├── stores/             # Pinia stores (auto-imported)
+│   ├── types/              # Frontend TypeScript types
+│   └── utils/              # Utility functions (auto-imported)
+├── config/                 # Configuration files
+│   └── youtube-channels.json  # YouTube channel configuration
+├── public/                 # Static assets (served at root)
+│   ├── data/               # Movie database (movies.json)
+│   └── posters/            # Downloaded poster images
+├── scripts/                # Data collection and processing scripts
+│   └── utils/              # Script utilities
+├── types/                  # Shared TypeScript types
+└── tests/                  # Test files
+```
+
 ### YouTube Channels
 
 Edit `config/youtube-channels.json` to configure which YouTube channels to scrape:
@@ -211,6 +232,18 @@ Recommended workflow for collecting and processing movies:
    ```
 
 ## Features
+
+### Frontend Application
+
+- **Movie Catalog**: Browse 250+ free legal movies from Archive.org and YouTube
+- **Advanced Filtering**: Filter by source (Archive.org or individual YouTube channels), genre, country, rating, year, and vote count
+- **Sidebar Navigation**: Quick access to filters and statistics
+- **Dark Mode**: Toggle between light and dark themes
+- **Infinite Scroll**: Automatically load more movies as you scroll
+- **Search**: Find movies by title
+- **Sort Options**: Sort by title, year, rating, or vote count
+- **Responsive Design**: Works on desktop and mobile devices
+- **Movie Cards**: Display poster, title, year, rating, and vote count
 
 ### Data Collection
 
