@@ -39,28 +39,26 @@ interface YouTubeChannelsConfig {
 /**
  * Load YouTube channels from config file
  */
-function loadChannelsConfig(): string[] {
+function loadChannelsConfig(): ChannelConfig[] {
   const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
 
   try {
     const configData = readFileSync(configPath, 'utf-8')
     const config: YouTubeChannelsConfig = JSON.parse(configData)
 
-    // Filter enabled channels and extract IDs
-    const enabledChannels = config.channels
-      .filter(channel => channel.enabled)
-      .map(channel => channel.id)
+    // Filter enabled channels
+    const enabledChannels = config.channels.filter(channel => channel.enabled)
 
     if (enabledChannels.length === 0) {
       logger.warn('No enabled channels found in config, using defaults')
-      return DEFAULT_CHANNELS
+      return DEFAULT_CHANNELS.map(id => ({ id, name: id, language: 'en', enabled: true }))
     }
 
     logger.info(`Loaded ${enabledChannels.length} enabled channels from config`)
     return enabledChannels
   } catch (error) {
     logger.warn(`Failed to load config from ${configPath}, using defaults:`, error)
-    return DEFAULT_CHANNELS
+    return DEFAULT_CHANNELS.map(id => ({ id, name: id, language: 'en', enabled: true }))
   }
 }
 
@@ -239,6 +237,7 @@ async function fetchChannelVideos(
  */
 async function processVideo(
   video: YouTubeVideo,
+  channelConfig: ChannelConfig | undefined,
   options: ScraperOptions
 ): Promise<MovieEntry | null> {
   // Parse title and year
@@ -251,6 +250,7 @@ async function processVideo(
     url: `https://www.youtube.com/watch?v=${video.id}`,
     channelName: video.channelName,
     channelId: video.channelId,
+    language: channelConfig?.language, // Add language from channel config
     publishedAt: video.publishedAt,
     duration: video.duration,
     viewCount: video.viewCount,
@@ -314,10 +314,15 @@ async function scrapeYouTube(options: ScraperOptions): Promise<void> {
   let totalAdded = 0
   let totalUpdated = 0
 
+  // Load channel configs for language lookup
+  const channelConfigs = loadChannelsConfig()
+  const channelConfigMap = new Map(channelConfigs.map(c => [c.id, c]))
+
   // Process each channel
   for (const channelId of options.channels) {
     logger.info(`\n=== Processing channel: ${channelId} ===`)
 
+    const channelConfig = channelConfigMap.get(channelId)
     const videos = await fetchChannelVideos(youtube, channelId, options.limit)
 
     if (videos.length === 0) {
@@ -328,7 +333,7 @@ async function scrapeYouTube(options: ScraperOptions): Promise<void> {
     // Process each video
     for (const video of videos) {
       try {
-        const entry = await processVideo(video, options)
+        const entry = await processVideo(video, channelConfig, options)
         if (entry) {
           const existingEntry = db[entry.imdbId]
 
@@ -383,7 +388,7 @@ const { values } = parseArgs({
     channels: {
       type: 'string',
       short: 'c',
-      default: configChannels.join(','),
+      default: configChannels.map(c => c.id).join(','),
     },
     limit: {
       type: 'string',

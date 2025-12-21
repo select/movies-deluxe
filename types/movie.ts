@@ -39,6 +39,7 @@ export interface YouTubeSource extends MovieSourceBase {
   videoId: string
   channelName: string
   channelId?: string
+  language?: string // Language code from channel config (e.g., 'en', 'es')
   duration?: number // Duration in seconds
   publishedAt?: string
   viewCount?: number
