@@ -344,12 +344,79 @@ onMounted(async () => {
 
   if (foundMovie) {
     movie.value = foundMovie
+    updateMetaTags(foundMovie)
   } else {
     error.value = `Movie with ID "${movieId}" not found.`
   }
 
   isLoading.value = false
 })
+
+// Update meta tags for SEO and social sharing
+const updateMetaTags = (movie: MovieEntry) => {
+  const title = movie.title + (movie.year ? ` (${movie.year})` : '')
+  const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
+  const poster = movie.poster || '/favicon.ico'
+  const url = `https://movies-deluxe.app/movie/${movie.imdbId}`
+
+  // eslint-disable-next-line no-undef
+  useHead({
+    title,
+    meta: [
+      // Basic meta tags
+      { name: 'description', content: description },
+      
+      // Open Graph (Facebook, LinkedIn)
+      { property: 'og:type', content: 'video.movie' },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:image', content: poster },
+      { property: 'og:url', content: url },
+      { property: 'og:site_name', content: 'Movies Deluxe' },
+      
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: title },
+      { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: poster },
+      
+      // Additional movie metadata
+      ...(movie.metadata?.Director ? [{ property: 'video:director', content: movie.metadata.Director }] : []),
+      ...(movie.metadata?.Actors ? [{ property: 'video:actor', content: movie.metadata.Actors }] : []),
+      ...(movie.year ? [{ property: 'video:release_date', content: movie.year.toString() }] : []),
+    ],
+    script: [
+      // JSON-LD structured data for search engines
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Movie',
+          name: movie.title,
+          ...(movie.year && { datePublished: movie.year.toString() }),
+          ...(movie.metadata?.Plot && { description: movie.metadata.Plot }),
+          ...(movie.poster && { image: poster }),
+          ...(movie.metadata?.Director && { director: { '@type': 'Person', name: movie.metadata.Director } }),
+          ...(movie.metadata?.Actors && { 
+            actor: movie.metadata.Actors.split(',').map((name: string) => ({
+              '@type': 'Person',
+              name: name.trim()
+            }))
+          }),
+          ...(movie.metadata?.Genre && { genre: movie.metadata.Genre.split(',').map((g: string) => g.trim()) }),
+          ...(movie.metadata?.imdbRating && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: movie.metadata.imdbRating,
+              ...(movie.metadata.imdbVotes && { ratingCount: movie.metadata.imdbVotes.replace(/,/g, '') })
+            }
+          }),
+          ...(movie.imdbId.startsWith('tt') && { sameAs: `https://www.imdb.com/title/${movie.imdbId}/` })
+        })
+      }
+    ]
+  })
+}
 
 // Toggle dark mode
 const toggleDarkMode = () => {
