@@ -193,6 +193,30 @@
               </div>
             </FilterSection>
           </div>
+
+          <!-- Country Filter -->
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <FilterSection
+              title="Countries"
+              icon="i-mdi-earth"
+            >
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="country in availableCountries"
+                  :key="country"
+                  :class="[
+                    'px-3 py-1.5 text-sm rounded-full transition-colors',
+                    filterStore.filters.countries.includes(country)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  ]"
+                  @click="filterStore.toggleCountry(country)"
+                >
+                  {{ country }}
+                </button>
+              </div>
+            </FilterSection>
+          </div>
         </div>
       </div>
     </div>
@@ -243,6 +267,34 @@ const availableGenres = [
   'Thriller',
   'War',
   'Western',
+]
+
+// Available countries (from dataset analysis)
+const availableCountries = [
+  'Australia',
+  'Belgium',
+  'Canada',
+  'Denmark',
+  'Finland',
+  'France',
+  'Germany',
+  'Greece',
+  'Hungary',
+  'India',
+  'Italy',
+  'Japan',
+  'Netherlands',
+  'Portugal',
+  'Romania',
+  'Russia',
+  'South Africa',
+  'Soviet Union',
+  'Spain',
+  'United Arab Emirates',
+  'United Kingdom',
+  'United States',
+  'USA',
+  'Vietnam',
 ]
 
 // Safe access to current sort (handles SSR and undefined cases)
