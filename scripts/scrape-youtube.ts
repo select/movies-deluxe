@@ -2,7 +2,7 @@
 /**
  * YouTube Movie Scraper
  *
- * Fetches movies from YouTube channels and stores them in data/movies.json
+ * Fetches movies from YouTube channels and stores them in public/data/movies.json
  * Supports multiple channels, OMDB matching, and title parsing
  */
 

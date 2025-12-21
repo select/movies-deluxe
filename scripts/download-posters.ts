@@ -27,7 +27,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Configuration
-const DATA_FILE = path.join(__dirname, '../data/movies.json')
+const DATA_FILE = path.join(__dirname, '../public/data/movies.json')
 const POSTERS_DIR = path.join(__dirname, '../public/posters')
 
 interface DownloadOptions {
@@ -56,7 +56,7 @@ interface DownloadReport {
 }
 
 /**
- * Load movies from data/movies.json
+ * Load movies from public/data/movies.json
  */
 function loadMoviesData(): MoviesDatabase {
   try {

@@ -19,7 +19,7 @@ export const useMovieStore = defineStore('movie', () => {
   const posterCache = ref<Map<string, boolean>>(new Map())
 
   /**
-   * Load movies from data/movies.json
+   * Load movies from public/data/movies.json
    * Converts the object-based database to an array for easier use in components
    */
   const loadFromFile = async () => {
@@ -42,7 +42,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       movies.value = movieEntries
-      console.log(`Loaded ${movieEntries.length} movies from data/movies.json`)
+      console.log(`Loaded ${movieEntries.length} movies from public/data/movies.json`)
     } catch (error: any) {
       console.error('Failed to load movies from file:', error)
       useMessageStore().showMessage({
