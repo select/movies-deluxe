@@ -152,16 +152,26 @@ async function enrichMovies(options: EnrichmentOptions): Promise<EnrichmentResul
 
     logger.info(`[${i + 1}/${moviesToProcess.length}] Processing: ${movie.title}`)
 
-    // Extract year from Archive.org releaseDate for strict year validation
+    // Extract year from sources for strict year validation
+    // Priority: Archive.org releaseDate > YouTube releaseYear
     const archiveSource = movie.sources.find(s => s.type === 'archive.org')
+    const youtubeSource = movie.sources.find(s => s.type === 'youtube')
+
     const archiveYear = archiveSource?.releaseDate
       ? new Date(archiveSource.releaseDate).getFullYear()
       : undefined
 
+    const youtubeYear = youtubeSource?.releaseYear
+
+    // Prefer Archive.org year, fallback to YouTube year
+    const sourceYear = archiveYear || youtubeYear
+
     if (archiveYear) {
       logger.debug(`  Archive.org year: ${archiveYear}`)
+    } else if (youtubeYear) {
+      logger.debug(`  YouTube year: ${youtubeYear}`)
     } else {
-      logger.warn(`  No Archive.org year available - OMDB matching may be less accurate`)
+      logger.warn(`  No source year available - OMDB matching may be less accurate`)
     }
 
     // Prioritize AI-extracted title if available
@@ -172,9 +182,9 @@ async function enrichMovies(options: EnrichmentOptions): Promise<EnrichmentResul
       logger.debug(`  Using AI-extracted title: "${titleToUse}"`)
     }
 
-    // Parse title to extract name and year (fallback if no Archive.org year)
+    // Parse title to extract name and year (fallback if no source year)
     const { name, year: titleYear } = parseTitle(titleToUse)
-    const yearToUse = archiveYear || titleYear // Prefer Archive.org year
+    const yearToUse = sourceYear || titleYear // Prefer source year (Archive.org or YouTube)
 
     try {
       // Attempt to match with OMDB using AI-extracted title first
@@ -184,7 +194,7 @@ async function enrichMovies(options: EnrichmentOptions): Promise<EnrichmentResul
       if (matchResult.confidence === 'none' && usingAiTitle) {
         logger.debug(`  AI title didn't match, trying original title: "${movie.title}"`)
         const { name: originalName, year: originalYear } = parseTitle(movie.title)
-        const originalYearToUse = archiveYear || originalYear // Still prefer Archive.org year
+        const originalYearToUse = sourceYear || originalYear // Still prefer source year
         matchResult = await matchMovie(originalName, originalYearToUse, apiKey)
 
         if (matchResult.confidence !== 'none') {
