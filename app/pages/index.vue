@@ -131,8 +131,8 @@
 </template>
 
 <script setup lang="ts">
-import { useMovieStore } from '~/app/stores/useMovieStore'
-import { useFilterStore } from '~/app/stores/useFilterStore'
+import { useMovieStore } from '@/stores/useMovieStore'
+import { useFilterStore } from '@/stores/useFilterStore'
 
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()

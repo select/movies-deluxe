@@ -95,20 +95,26 @@
               title="Rating"
               icon="i-mdi-star"
             >
-              <label class="flex items-center gap-2 cursor-pointer">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600 dark:text-gray-400">Minimum:</span>
+                  <span class="font-medium">{{ filterStore.filters.minRating.toFixed(1) }}+</span>
+                </div>
                 <input
-                  type="checkbox"
-                  class="rounded"
+                  :value="filterStore.filters.minRating"
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                  class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  @input="(e) => filterStore.setMinRating(Number((e.target as HTMLInputElement).value))"
                 >
-                <span class="text-sm">8+ Stars</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  class="rounded"
-                >
-                <span class="text-sm">6+ Stars</span>
-              </label>
+                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-500">
+                  <span>0</span>
+                  <span>5</span>
+                  <span>10</span>
+                </div>
+              </div>
             </FilterSection>
 
             <!-- Year Filter -->
@@ -146,8 +152,8 @@
 </template>
 
 <script setup lang="ts">
-import { useFilterStore } from '~/app/stores/useFilterStore'
-import { SORT_OPTIONS, type SortOption } from '~/utils/movieSort'
+import { useFilterStore } from '@/stores/useFilterStore'
+import { SORT_OPTIONS, type SortOption } from '@/utils/movieSort'
 
 interface Props {
   isOpen: boolean
