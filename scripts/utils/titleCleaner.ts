@@ -30,8 +30,13 @@ export const TITLE_CLEANING_RULES: TitleCleaningRule[] = [
     channelName: 'Netzkino',
     patterns: [
       {
+        regex: /^Watch\s+/i,
+        replacement: '',
+        description: 'Remove "Watch" prefix',
+      },
+      {
         regex:
-          /\s*\([^)]*(?:full movie|comedy|drama|film|classic|ganzer film|romantic|family|animal)[^)]*\)\s*$/i,
+          /\s*\([^)]*(?:full.*?movie|movie.*?full|comedy|drama|thriller|horror|film|classic|ganzer film|romantic|family|animal)[^)]*\)\s*$/i,
         replacement: '',
         description: 'Remove promotional text in parentheses at end',
       },
@@ -44,8 +49,17 @@ export const TITLE_CLEANING_RULES: TitleCleaningRule[] = [
       },
       {
         dirty:
-          'One of a Kind (STAR-STARRED COMEDY full movie in German, Romantic Comedy, Film Classic)',
-        clean: 'One of a Kind',
+          'Dead Awake (FULL HORROR MOVIE in German, new horror movies 2025, full-length mystery thriller)',
+        clean: 'Dead Awake',
+      },
+      {
+        dirty:
+          'The Driftless Area - Nothing is as it seems (THRILLING THRILLER with ZOOEY DESHANEL, Mystery)',
+        clean: 'The Driftless Area - Nothing is as it seems',
+      },
+      {
+        dirty: 'Watch Golden Winter 2',
+        clean: 'Golden Winter 2',
       },
     ],
   },
