@@ -156,17 +156,24 @@
           </p>
         </div>
 
-        <!-- Load More Button -->
+        <!-- Infinite Scroll Sentinel -->
         <div
           v-if="hasMore"
-          class="text-center mt-8"
+          ref="sentinelRef"
+          class="text-center mt-8 py-4"
         >
-          <button
-            class="px-6 py-3 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-            @click="loadMore"
-          >
-            Load More
-          </button>
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100" />
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Loading more movies...
+          </p>
+        </div>
+        
+        <!-- End of List Message -->
+        <div
+          v-else-if="movieStore.movies.length > 0"
+          class="text-center mt-8 py-4 text-sm text-gray-600 dark:text-gray-400"
+        >
+          You've reached the end of the list
         </div>
       </main>
 
@@ -190,6 +197,9 @@ const isDark = ref(true)
 const itemsPerPage = 20
 const currentPage = ref(1)
 
+// Infinite scroll sentinel ref
+const sentinelRef = ref<HTMLElement | null>(null)
+
 // Load movies on mount
 onMounted(async () => {
   await movieStore.loadFromFile()
@@ -198,6 +208,16 @@ onMounted(async () => {
   if (typeof window !== 'undefined') {
     const savedTheme = localStorage.getItem('theme')
     isDark.value = savedTheme ? savedTheme === 'dark' : true
+  }
+  
+  // Set up intersection observer for infinite scroll
+  setupInfiniteScroll()
+})
+
+// Clean up observer on unmount
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
   }
 })
 
@@ -241,6 +261,35 @@ const youtubeCount = computed(() => {
 const enrichedCount = computed(() => {
   return movieStore.getEnrichedMovies().length
 })
+
+// Intersection observer for infinite scroll
+let observer: IntersectionObserver | null = null
+
+const setupInfiniteScroll = () => {
+  if (typeof window === 'undefined') return
+  
+  observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0]
+      // Load more when sentinel is visible and there are more items
+      if (entry.isIntersecting && hasMore.value) {
+        loadMore()
+      }
+    },
+    {
+      // Trigger when sentinel is 200px from viewport
+      rootMargin: '200px',
+      threshold: 0,
+    }
+  )
+  
+  // Watch the sentinel element
+  watch(sentinelRef, (newSentinel) => {
+    if (observer && newSentinel) {
+      observer.observe(newSentinel)
+    }
+  }, { immediate: true })
+}
 
 // Load more movies
 const loadMore = () => {
