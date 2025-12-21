@@ -1,4 +1,4 @@
-import type { MovieEntry } from '~/types/movie'
+import type { MovieEntry } from '~/app/types'
 
 export type SortField = 'year' | 'rating' | 'title' | 'votes'
 export type SortDirection = 'asc' | 'desc'
