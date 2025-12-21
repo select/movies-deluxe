@@ -44,15 +44,65 @@
 
       <!-- Main Content -->
       <main class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Loading State -->
+        <!-- Loading State - Skeleton -->
         <div
           v-if="isLoading"
-          class="text-center py-12"
+          class="space-y-8 animate-pulse"
         >
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100" />
-          <p class="mt-4 text-gray-600 dark:text-gray-400">
-            Loading movie details...
-          </p>
+          <!-- Movie Header Skeleton -->
+          <div class="flex flex-col md:flex-row gap-8">
+            <!-- Poster Skeleton -->
+            <div class="flex-shrink-0">
+              <div class="w-full md:w-80 aspect-[2/3] bg-gray-300 dark:bg-gray-700 rounded-lg shimmer" />
+            </div>
+
+            <!-- Movie Info Skeleton -->
+            <div class="flex-1 space-y-6">
+              <!-- Title -->
+              <div class="h-10 bg-gray-300 dark:bg-gray-700 rounded-lg w-3/4 shimmer" />
+              
+              <!-- Metadata Row -->
+              <div class="flex gap-4">
+                <div class="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                <div class="h-8 w-16 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                <div class="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+              </div>
+              
+              <!-- Rating -->
+              <div class="flex items-center gap-2">
+                <div class="h-8 w-8 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                <div class="h-8 w-16 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex gap-3">
+                <div class="h-10 w-40 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                <div class="h-10 w-28 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+              </div>
+              
+              <!-- Genre -->
+              <div class="space-y-2">
+                <div class="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                <div class="flex gap-2">
+                  <div class="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                  <div class="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                </div>
+              </div>
+              
+              <!-- Plot -->
+              <div class="space-y-2">
+                <div class="h-4 w-12 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                <div class="space-y-2">
+                  <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                  <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                  <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4 shimmer" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Player Skeleton -->
+          <div class="aspect-video bg-gray-300 dark:bg-gray-700 rounded-lg shimmer" />
         </div>
 
         <!-- Error State -->
@@ -694,6 +744,27 @@ const getArchiveEmbedUrl = (source: any): string => {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Shimmer animation for skeleton loaders */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    currentColor 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    currentColor 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
 }
 
 /* Custom scrollbar for related movies */
