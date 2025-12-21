@@ -46,21 +46,15 @@
               icon="i-mdi-sort"
             >
               <div class="space-y-2">
-                <label
+                <AppInputRadio
                   v-for="option in sortOptions"
                   :key="`${option.field}-${option.direction}`"
-                  class="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    :checked="currentSort.field === option.field && currentSort.direction === option.direction"
-                    type="radio"
-                    name="sort"
-                    :value="option"
-                    class="rounded-full"
-                    @change="handleSortChange(option)"
-                  >
-                  <span class="text-sm">{{ option.label }}</span>
-                </label>
+                  :checked="currentSort.field === option.field && currentSort.direction === option.direction"
+                  :label="option.label"
+                  name="sort"
+                  :value="option"
+                  @change="handleSortChange(option)"
+                />
               </div>
             </FilterSection>
 
