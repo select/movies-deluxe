@@ -1,5 +1,5 @@
 import { useStorage } from '@vueuse/core'
-import type { MovieEntry, MovieSourceType } from '~/types/movie'
+import type { MovieEntry, MovieSourceType } from '~/app/types'
 import { SORT_OPTIONS, sortMovies, type SortOption } from '~/utils/movieSort'
 
 /**

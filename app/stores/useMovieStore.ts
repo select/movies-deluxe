@@ -1,10 +1,4 @@
-import type { MovieEntry, MovieSource, MovieSourceType } from '~/types/movie'
-
-interface LoadingState {
-  movies: boolean
-  movieDetails: boolean
-  imdbFetch: boolean
-}
+import type { MovieEntry, MovieSource, MovieSourceType, LoadingState } from '~/app/types'
 
 export const useMovieStore = defineStore('movie', () => {
   // State
