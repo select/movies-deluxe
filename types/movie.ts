@@ -28,6 +28,7 @@ export interface ArchiveOrgSource extends MovieSourceBase {
   collection?: string // e.g., 'feature_films'
   downloads?: number
   thumbnail?: string
+  releaseDate?: string // Release year from Archive.org metadata (e.g., '1950')
 }
 
 /**
