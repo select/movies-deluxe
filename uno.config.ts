@@ -32,14 +32,14 @@ export default defineConfig({
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   shortcuts: {
-    btn: 'px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors',
+    btn: 'px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 transition-colors',
     'btn-secondary':
       'px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors',
     card: 'p-4 rounded-lg shadow-md bg-white dark:bg-gray-800',
   },
   theme: {
     colors: {
-      primary: '#3b82f6',
+      primary: '#4b5563', // gray-600 - carbon theme
       secondary: '#64748b',
     },
   },

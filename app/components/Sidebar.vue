@@ -2,7 +2,7 @@
   <div>
     <!-- Mobile: Fixed Bottom Button (visible only on mobile) -->
     <button
-      class="md:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-blue-500 dark:bg-yellow-600 text-white shadow-lg hover:bg-blue-600 dark:hover:bg-yellow-500 transition-all flex items-center justify-center"
+      class="md:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gray-700 dark:bg-yellow-600 text-white shadow-lg hover:bg-gray-600 dark:hover:bg-yellow-500 transition-all flex items-center justify-center"
       :aria-label="isMobileOpen ? 'Close filters' : 'Open filters'"
       @click="toggleMobileSidebar"
     >
