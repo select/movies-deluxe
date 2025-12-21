@@ -1,6 +1,7 @@
 <template>
-  <div
-    class="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
+  <NuxtLink
+    :to="`/movie/${movie.imdbId}`"
+    class="block border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
   >
     <!-- Poster -->
     <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
@@ -71,18 +72,12 @@
         </span>
       </div>
 
-      <!-- Watch Button -->
-      <a
-        v-if="movie.sources[0]"
-        :href="movie.sources[0].url"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="block w-full text-center px-3 py-2 text-sm rounded-full bg-gray-700 dark:bg-yellow-600 text-white hover:bg-gray-600 dark:hover:bg-yellow-500 transition-colors"
-      >
-        Watch Now
-      </a>
+      <!-- View Details Button -->
+      <div class="block w-full text-center px-3 py-2 text-sm rounded-full bg-gray-700 dark:bg-yellow-600 text-white hover:bg-gray-600 dark:hover:bg-yellow-500 transition-colors">
+        View Details
+      </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
