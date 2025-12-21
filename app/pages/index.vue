@@ -18,13 +18,13 @@
           
           <!-- Dark Mode Toggle -->
           <button
-            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
             @click="toggleDarkMode"
           >
             <div
               v-if="isDark"
-              class="i-mdi-weather-sunny text-xl"
+              class="i-mdi-weather-sunny text-xl text-yellow-500"
             />
             <div
               v-else
@@ -53,16 +53,16 @@
           class="mb-8"
         >
           <div class="flex flex-wrap gap-4 text-sm">
-            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
               <span class="font-semibold">Total Movies:</span> {{ movieStore.movies.length }}
             </div>
-            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
               <span class="font-semibold">Archive.org:</span> {{ archiveCount }}
             </div>
-            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
               <span class="font-semibold">YouTube:</span> {{ youtubeCount }}
             </div>
-            <div class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
               <span class="font-semibold">With Metadata:</span> {{ enrichedCount }}
             </div>
           </div>
@@ -80,24 +80,16 @@
           >
             <!-- Poster -->
             <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
-              <!-- Use local poster for movies with real IMDB IDs -->
+              <!-- Use local poster only for movies with real IMDB IDs -->
               <img
                 v-if="movie.imdbId.startsWith('tt')"
                 :src="`/posters/${movie.imdbId}.jpg`"
                 :alt="movie.title"
                 class="w-full h-full object-cover"
                 loading="lazy"
-                @error="(e) => handlePosterError(e, movie)"
+                @error="(e) => handlePosterError(e)"
               >
-              <!-- Fallback to OMDB poster for non-matched movies -->
-              <img
-                v-else-if="movie.metadata?.Poster && movie.metadata.Poster !== 'N/A'"
-                :src="movie.metadata.Poster"
-                :alt="movie.title"
-                class="w-full h-full object-cover"
-                loading="lazy"
-              >
-              <!-- Icon fallback -->
+              <!-- Icon fallback for movies without local posters -->
               <div
                 v-else
                 class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
@@ -109,15 +101,15 @@
               <div class="absolute top-2 right-2">
                 <span
                   v-if="movie.sources[0]?.type === 'archive.org'"
-                  class="px-2 py-1 text-xs rounded bg-blue-500 text-white"
+                  class="px-2 py-1 text-xs rounded-full bg-blue-500 text-white"
                 >
                   Archive.org
                 </span>
                 <span
                   v-else-if="movie.sources[0]?.type === 'youtube'"
-                  class="px-2 py-1 text-xs rounded bg-red-500 text-white"
+                  class="px-2 py-1 text-xs rounded-full bg-red-500 text-white"
                 >
-                  YouTube
+                  {{ movie.sources[0].channelName || 'YouTube' }}
                 </span>
               </div>
             </div>
@@ -135,7 +127,7 @@
                   v-if="movie.metadata?.imdbRating"
                   class="flex items-center gap-1"
                 >
-                  <div class="i-mdi-star text-yellow-500" />
+                  <div class="i-mdi-star text-yellow-500 dark:text-yellow-400" />
                   {{ movie.metadata.imdbRating }}
                 </span>
               </div>
@@ -146,7 +138,7 @@
                 :href="movie.sources[0].url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="block w-full text-center px-3 py-2 text-sm rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                class="block w-full text-center px-3 py-2 text-sm rounded-full bg-blue-500 dark:bg-yellow-600 text-white hover:bg-blue-600 dark:hover:bg-yellow-500 transition-colors"
               >
                 Watch Now
               </a>
@@ -170,7 +162,7 @@
           class="text-center mt-8"
         >
           <button
-            class="px-6 py-3 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+            class="px-6 py-3 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
             @click="loadMore"
           >
             Load More
@@ -191,8 +183,8 @@
 <script setup lang="ts">
 const movieStore = useMovieStore()
 
-// Dark mode state
-const isDark = ref(false)
+// Dark mode state (default to dark)
+const isDark = ref(true)
 
 // Pagination
 const itemsPerPage = 20
@@ -202,10 +194,10 @@ const currentPage = ref(1)
 onMounted(async () => {
   await movieStore.loadFromFile()
   
-  // Check for saved dark mode preference
+  // Check for saved dark mode preference, default to dark
   if (typeof window !== 'undefined') {
     const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme === 'dark'
+    isDark.value = savedTheme ? savedTheme === 'dark' : true
   }
 })
 
@@ -244,15 +236,10 @@ const loadMore = () => {
 }
 
 // Handle poster loading errors
-const handlePosterError = (event: Event, movie: { metadata?: { Poster?: string } }) => {
+const handlePosterError = (event: Event) => {
   const img = event.target as HTMLImageElement
-  // Try OMDB poster as fallback
-  if (movie.metadata?.Poster && movie.metadata.Poster !== 'N/A') {
-    img.src = movie.metadata.Poster
-  } else {
-    // Hide the image and show icon fallback
-    img.style.display = 'none'
-  }
+  // Hide the image and show icon fallback
+  img.style.display = 'none'
 }
 </script>
 
