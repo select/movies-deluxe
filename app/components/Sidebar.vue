@@ -31,11 +31,10 @@
         'shadow-lg',
         'overflow-hidden',
         // Mobile styles (< md breakpoint)
-        'md:hidden',
         'top-0 left-0 h-full w-80 rounded-r-2xl',
         isMobileOpen ? 'translate-x-0' : '-translate-x-full',
         // Desktop styles (>= md breakpoint)
-        'md:block md:left-4 md:top-24 md:rounded-full md:translate-x-0',
+        'md:left-4 md:top-24 md:rounded-full md:translate-x-0',
         isExpanded ? 'md:w-64' : 'md:w-16',
       ]"
       :style="{ 'max-height': 'calc(100vh - 8rem)' }"
@@ -84,11 +83,10 @@
       <div
         :class="[
           'overflow-y-auto',
-          // Mobile: always show content when open
-          'md:hidden p-4',
+          // Mobile: always show content when drawer is open
+          'p-4 md:hidden',
           // Desktop: show only when expanded
-          'md:block',
-          isExpanded ? 'md:p-4' : 'md:hidden',
+          isExpanded ? 'md:block md:p-4' : 'md:hidden',
         ]"
         :style="{ 'max-height': 'calc(100vh - 12rem)' }"
       >
