@@ -152,6 +152,18 @@ async function enrichMovies(options: EnrichmentOptions): Promise<EnrichmentResul
 
     logger.info(`[${i + 1}/${moviesToProcess.length}] Processing: ${movie.title}`)
 
+    // Extract year from Archive.org releaseDate for strict year validation
+    const archiveSource = movie.sources.find(s => s.type === 'archive.org')
+    const archiveYear = archiveSource?.releaseDate
+      ? new Date(archiveSource.releaseDate).getFullYear()
+      : undefined
+
+    if (archiveYear) {
+      logger.debug(`  Archive.org year: ${archiveYear}`)
+    } else {
+      logger.warn(`  No Archive.org year available - OMDB matching may be less accurate`)
+    }
+
     // Prioritize AI-extracted title if available
     const titleToUse = movie.ai?.extractedTitle || movie.title
     const usingAiTitle = !!movie.ai?.extractedTitle
@@ -160,18 +172,20 @@ async function enrichMovies(options: EnrichmentOptions): Promise<EnrichmentResul
       logger.debug(`  Using AI-extracted title: "${titleToUse}"`)
     }
 
-    // Parse title to extract name and year
-    const { name, year } = parseTitle(titleToUse)
+    // Parse title to extract name and year (fallback if no Archive.org year)
+    const { name, year: titleYear } = parseTitle(titleToUse)
+    const yearToUse = archiveYear || titleYear // Prefer Archive.org year
 
     try {
       // Attempt to match with OMDB using AI-extracted title first
-      let matchResult = await matchMovie(name, year, apiKey)
+      let matchResult = await matchMovie(name, yearToUse, apiKey)
 
       // If AI title didn't match and we have a fallback, try original title
       if (matchResult.confidence === 'none' && usingAiTitle) {
         logger.debug(`  AI title didn't match, trying original title: "${movie.title}"`)
         const { name: originalName, year: originalYear } = parseTitle(movie.title)
-        matchResult = await matchMovie(originalName, originalYear, apiKey)
+        const originalYearToUse = archiveYear || originalYear // Still prefer Archive.org year
+        matchResult = await matchMovie(originalName, originalYearToUse, apiKey)
 
         if (matchResult.confidence !== 'none') {
           logger.debug('  ✓ Match found using original title')

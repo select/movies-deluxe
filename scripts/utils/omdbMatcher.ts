@@ -129,6 +129,11 @@ export async function getMovieByImdbId(
 
 /**
  * Calculate match confidence between search result and original title/year
+ *
+ * STRICT YEAR VALIDATION:
+ * - If originalYear is provided, OMDB year MUST match exactly
+ * - Rejects matches where OMDB year is missing, "N/A", or doesn't match
+ * - This prevents matching wrong movies with similar titles but different years
  */
 function calculateConfidence(
   originalTitle: string,
@@ -138,18 +143,35 @@ function calculateConfidence(
   const resultTitle = result.Title.toLowerCase()
   const searchTitle = originalTitle.toLowerCase()
 
-  // Year matching - CRITICAL for disambiguation
+  // STRICT YEAR VALIDATION - Must match exactly if provided
+  if (originalYear) {
+    const omdbYear = result.Year
+
+    // Reject if OMDB year is missing or "N/A"
+    if (!omdbYear || omdbYear === 'N/A') {
+      logger.debug(
+        `Rejecting "${result.Title}": OMDB year missing or N/A (expected ${originalYear})`
+      )
+      return 'none' as MatchConfidence
+    }
+
+    // Reject if years don't match exactly (no tolerance)
+    const omdbYearNum = parseInt(omdbYear, 10)
+    if (omdbYearNum !== originalYear) {
+      logger.debug(
+        `Rejecting "${result.Title}": Year mismatch (Archive.org: ${originalYear}, OMDB: ${omdbYearNum})`
+      )
+      return 'none' as MatchConfidence
+    }
+  }
+
+  // Year matches (or not provided) - proceed with title matching
   const yearMatches = originalYear && result.Year === originalYear.toString()
-  const yearMismatch = originalYear && result.Year !== originalYear.toString()
 
   // Exact title match
   if (resultTitle === searchTitle) {
     if (yearMatches) {
       return 'exact' as MatchConfidence
-    }
-    // If year is provided but doesn't match, downgrade confidence
-    if (yearMismatch) {
-      return 'medium' as MatchConfidence
     }
     return 'high' as MatchConfidence
   }
@@ -158,10 +180,6 @@ function calculateConfidence(
   if (resultTitle.includes(searchTitle) || searchTitle.includes(resultTitle)) {
     if (yearMatches) {
       return 'high' as MatchConfidence
-    }
-    // If year is provided but doesn't match, downgrade confidence
-    if (yearMismatch) {
-      return 'low' as MatchConfidence
     }
     return 'medium' as MatchConfidence
   }
@@ -172,10 +190,6 @@ function calculateConfidence(
   const matchingWords = originalWords.filter(w => resultWords.includes(w))
 
   if (matchingWords.length >= Math.min(originalWords.length, resultWords.length) * 0.6) {
-    // Even with fuzzy matching, year mismatch should downgrade
-    if (yearMismatch) {
-      return 'low' as MatchConfidence
-    }
     return 'medium' as MatchConfidence
   }
 
