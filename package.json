@@ -40,6 +40,8 @@
   "dependencies": {
     "@opencode-ai/sdk": "1.0.160",
     "@pinia/nuxt": "0.11.3",
+    "@vueuse/core": "14.1.0",
+    "@vueuse/nuxt": "14.1.0",
     "dotenv": "17.2.3",
     "nuxt": "^4.2.2",
     "openai": "6.13.0",

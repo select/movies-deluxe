@@ -38,6 +38,32 @@
       <!-- Filter Content -->
       <div class="overflow-y-auto max-h-[60vh] p-6">
         <div class="max-w-7xl mx-auto">
+          <!-- Sort Controls -->
+          <div class="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <FilterSection
+              title="Sort By"
+              icon="i-mdi-sort"
+            >
+              <div class="space-y-2">
+                <label
+                  v-for="option in sortOptions"
+                  :key="`${option.field}-${option.direction}`"
+                  class="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    :checked="currentSort.field === option.field && currentSort.direction === option.direction"
+                    type="radio"
+                    name="sort"
+                    :value="option"
+                    class="rounded-full"
+                    @change="handleSortChange(option)"
+                  >
+                  <span class="text-sm">{{ option.label }}</span>
+                </label>
+              </div>
+            </FilterSection>
+          </div>
+
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Source Filter -->
             <FilterSection
@@ -46,15 +72,19 @@
             >
               <label class="flex items-center gap-2 cursor-pointer">
                 <input
+                  :checked="filterStore.filters.sources.includes('archive.org')"
                   type="checkbox"
                   class="rounded"
+                  @change="filterStore.toggleSource('archive.org')"
                 >
                 <span class="text-sm">Archive.org</span>
               </label>
               <label class="flex items-center gap-2 cursor-pointer">
                 <input
+                  :checked="filterStore.filters.sources.includes('youtube')"
                   type="checkbox"
                   class="rounded"
+                  @change="filterStore.toggleSource('youtube')"
                 >
                 <span class="text-sm">YouTube</span>
               </label>
@@ -116,6 +146,9 @@
 </template>
 
 <script setup lang="ts">
+import { useFilterStore } from '~/app/stores/useFilterStore'
+import { SORT_OPTIONS, type SortOption } from '~/utils/movieSort'
+
 interface Props {
   isOpen: boolean
 }
@@ -125,4 +158,18 @@ defineProps<Props>()
 const emit = defineEmits<{
   close: []
 }>()
+
+// Use filter store
+const filterStore = useFilterStore()
+
+// Get sort options from utils
+const sortOptions = SORT_OPTIONS
+
+// Safe access to current sort (handles SSR and undefined cases)
+const currentSort = computed(() => filterStore.filters.sort || SORT_OPTIONS[0])
+
+// Handle sort change
+const handleSortChange = (option: SortOption) => {
+  filterStore.setSort(option)
+}
 </script>
