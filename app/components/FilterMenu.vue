@@ -169,6 +169,30 @@
               </div>
             </FilterSection>
           </div>
+
+          <!-- Genre Filter -->
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <FilterSection
+              title="Genres"
+              icon="i-mdi-movie-filter"
+            >
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="genre in availableGenres"
+                  :key="genre"
+                  :class="[
+                    'px-3 py-1.5 text-sm rounded-full transition-colors',
+                    filterStore.filters.genres.includes(genre)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  ]"
+                  @click="filterStore.toggleGenre(genre)"
+                >
+                  {{ genre }}
+                </button>
+              </div>
+            </FilterSection>
+          </div>
         </div>
       </div>
     </div>
@@ -194,6 +218,32 @@ const filterStore = useFilterStore()
 
 // Get sort options from utils
 const sortOptions = SORT_OPTIONS
+
+// Available genres (from dataset analysis)
+const availableGenres = [
+  'Action',
+  'Adventure',
+  'Animation',
+  'Biography',
+  'Comedy',
+  'Crime',
+  'Documentary',
+  'Drama',
+  'Family',
+  'Fantasy',
+  'Film-Noir',
+  'History',
+  'Horror',
+  'Music',
+  'Musical',
+  'Mystery',
+  'Romance',
+  'Sci-Fi',
+  'Short',
+  'Thriller',
+  'War',
+  'Western',
+]
 
 // Safe access to current sort (handles SSR and undefined cases)
 const currentSort = computed(() => filterStore.filters.sort || SORT_OPTIONS[0])
