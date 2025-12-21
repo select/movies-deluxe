@@ -143,6 +143,31 @@
                 </div>
               </div>
             </FilterSection>
+
+            <!-- Votes Filter -->
+            <FilterSection
+              title="Votes"
+              icon="i-mdi-account-group"
+            >
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600 dark:text-gray-400">Minimum:</span>
+                  <span class="font-medium">{{ filterStore.filters.minVotes.toLocaleString() }}+</span>
+                </div>
+                <input
+                  :value="filterStore.filters.minVotes"
+                  type="number"
+                  min="0"
+                  step="100"
+                  placeholder="0"
+                  class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @input="(e) => filterStore.setMinVotes(Number((e.target as HTMLInputElement).value))"
+                >
+                <p class="text-xs text-gray-500 dark:text-gray-500">
+                  Filter by IMDB vote count
+                </p>
+              </div>
+            </FilterSection>
           </div>
         </div>
       </div>
