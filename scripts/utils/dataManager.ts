@@ -191,3 +191,110 @@ export function getDatabaseStats(db: MoviesDatabase): {
     youtubeSources,
   }
 }
+
+/**
+ * Find potential duplicate movies by title similarity
+ */
+export function findPotentialDuplicates(
+  db: MoviesDatabase,
+  threshold: number = 0.85
+): Array<{ entries: MovieEntry[]; similarity: number }> {
+  const entries = Object.entries(db)
+    .filter(([key]) => !key.startsWith('_'))
+    .map(([_, entry]) => entry as MovieEntry)
+
+  const duplicates: Array<{ entries: MovieEntry[]; similarity: number }> = []
+
+  for (let i = 0; i < entries.length; i++) {
+    for (let j = i + 1; j < entries.length; j++) {
+      const title1 = entries[i].title.toLowerCase()
+      const title2 = entries[j].title.toLowerCase()
+
+      // Simple similarity check (can be improved with Levenshtein distance)
+      const similarity = calculateSimilarity(title1, title2)
+
+      if (similarity >= threshold) {
+        duplicates.push({
+          entries: [entries[i], entries[j]],
+          similarity,
+        })
+      }
+    }
+  }
+
+  return duplicates
+}
+
+/**
+ * Calculate simple similarity between two strings
+ */
+function calculateSimilarity(str1: string, str2: string): number {
+  const longer = str1.length > str2.length ? str1 : str2
+  const shorter = str1.length > str2.length ? str2 : str1
+
+  if (longer.length === 0) return 1.0
+
+  const editDistance = getEditDistance(longer, shorter)
+  return (longer.length - editDistance) / longer.length
+}
+
+/**
+ * Calculate edit distance (Levenshtein distance)
+ */
+function getEditDistance(str1: string, str2: string): number {
+  const costs: number[] = []
+  for (let i = 0; i <= str1.length; i++) {
+    let lastValue = i
+    for (let j = 0; j <= str2.length; j++) {
+      if (i === 0) {
+        costs[j] = j
+      } else if (j > 0) {
+        let newValue = costs[j - 1]
+        if (str1.charAt(i - 1) !== str2.charAt(j - 1)) {
+          newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1
+        }
+        costs[j - 1] = lastValue
+        lastValue = newValue
+      }
+    }
+    if (i > 0) {
+      costs[str2.length] = lastValue
+    }
+  }
+  return costs[str2.length]
+}
+
+/**
+ * Merge two movie entries
+ */
+export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): MovieEntry {
+  // Prefer entry with real IMDB ID
+  const primary = entry1.imdbId.startsWith('tt') ? entry1 : entry2
+  const secondary = primary === entry1 ? entry2 : entry1
+
+  // Merge sources
+  const mergedSources = [...primary.sources]
+  for (const source of secondary.sources) {
+    const isDuplicate = mergedSources.some(
+      s =>
+        s.type === source.type &&
+        ((s.type === 'archive.org' &&
+          source.type === 'archive.org' &&
+          s.identifier === source.identifier) ||
+          (s.type === 'youtube' && source.type === 'youtube' && s.videoId === source.videoId))
+    )
+
+    if (!isDuplicate) {
+      mergedSources.push(source)
+    }
+  }
+
+  return {
+    ...primary,
+    sources: mergedSources,
+    metadata: primary.metadata || secondary.metadata,
+    ai: primary.ai || secondary.ai,
+    year: primary.year || secondary.year,
+    lastUpdated: new Date().toISOString(),
+  }
+}
