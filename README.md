@@ -1,259 +1,252 @@
-# Nuxt Minimal Starter
+# Movies Deluxe
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A Nuxt application for discovering and managing free legal movie streams.
 
 ## Setup
 
-Make sure to install dependencies:
+Install dependencies:
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## Available Scripts
 
-Start the development server on `http://localhost:3000`:
+### Development
+
+- `pnpm dev` - Start development server on http://localhost:3000
+- `pnpm build` - Build application for production
+- `pnpm generate` - Generate static site
+- `pnpm preview` - Preview production build locally
+
+### Data Collection
+
+#### Archive.org Scraper
+
+`pnpm scrape:archive` - Scrape movies from Archive.org's feature films collection
+
+Available flags:
+
+- `--limit <number>` - Maximum number of movies to scrape (default: 50)
+- `--offset <number>` - Skip first N results (for pagination)
+- `--dry-run` - Preview results without saving to database
+- `--verbose` - Show detailed progress and debug information
+
+Example: `pnpm scrape:archive --limit 100 --verbose`
+
+#### YouTube Scraper
+
+`pnpm scrape:youtube` - Scrape movies from configured YouTube channels
+
+Available flags:
+
+- `--limit <number>` - Maximum videos per channel (default: 50)
+- `--dry-run` - Preview results without saving to database
+- `--verbose` - Show detailed progress and API responses
+- `--channel <id>` - Scrape specific channel only (by channel ID)
+
+Configuration: Edit `config/youtube-channels.json` to add/remove channels
+
+Example: `pnpm scrape:youtube --limit 25 --channel UCxKJ3RQQYlDmI8JLpt5HvWg`
+
+#### Batch Collection
+
+`pnpm scrape:all` - Run both archive and YouTube scrapers sequentially
+
+### Data Processing
+
+#### AI Title Extraction
+
+`pnpm extract-titles` - Extract clean movie titles using AI (requires AWS Bedrock or OpenAI)
+
+Available flags:
+
+- `--dry-run` - Preview extractions without saving
+- `--limit <number>` - Process only N movies
+- `--stats` - Show statistics only, no processing
+- `--verbose` - Show detailed extraction progress
+- `--min-confidence <level>` - Filter by confidence: high, medium, or low (default: high)
+- `--filter <source>` - Process specific source: archive, youtube, or all (default: all)
+
+Example: `pnpm extract-titles --limit 10 --min-confidence high --verbose`
+
+#### OMDB Enrichment
+
+`pnpm enrich:omdb` - Enrich movie metadata from OMDB API (requires OMDB_API_KEY)
+
+Available flags:
+
+- `--dry-run` - Preview matches without saving
+- `--limit <number>` - Process only N movies
+- `--force` - Re-enrich movies that already have OMDB data
+- `--verbose` - Show detailed matching progress
+- `--delay <ms>` - Delay between API requests (default: 200ms)
+
+Example: `pnpm enrich:omdb --limit 20 --force --verbose`
+
+#### Poster Download
+
+`pnpm download-posters` - Download movie posters to local cache
+
+Available flags:
+
+- `--dry-run` - Preview downloads without saving files
+- `--limit <number>` - Download only N posters
+- `--force` - Re-download existing posters
+- `--verbose` - Show detailed download progress
+- `--delay <ms>` - Delay between downloads (default: 100ms)
+
+Example: `pnpm download-posters --limit 50 --verbose`
+
+#### Deduplication
+
+`pnpm deduplicate` - Remove duplicate movie entries
+
+Available flags:
+
+- `--dry-run` - Preview duplicates without removing
+- `--verbose` - Show detailed duplicate analysis
+- `--strategy <method>` - Deduplication strategy: imdb, title, or url (default: imdb)
+
+Example: `pnpm deduplicate --strategy title --verbose`
+
+#### Data Validation
+
+`pnpm validate:data` - Validate movie data structure
+
+Available flags:
+
+- `--verbose` - Show detailed validation results
+- `--fix` - Automatically fix common issues
+- `--strict` - Enable strict validation rules
+
+Example: `pnpm validate:data --verbose --fix`
+
+### Code Quality
+
+- `pnpm lint` - Run linters (oxlint + eslint)
+- `pnpm lint:fix` - Fix linting issues automatically
+- `pnpm format` - Format code with prettier
+- `pnpm format:check` - Check code formatting without changes
+
+### Git Hooks
+
+- `pnpm prepare` - Install git hooks (runs automatically after install)
+- `pnpm commitlint` - Validate commit message format
+
+## Environment Variables
+
+Create a `.env` file in the project root:
 
 ```bash
-# npm
-npm run dev
+# Required for OMDB metadata enrichment (pnpm enrich:omdb)
+OMDB_API_KEY=your-omdb-key-here
 
-# pnpm
-pnpm dev
+# Required for AI title extraction (pnpm extract-titles)
+# Option 1: AWS Bedrock (recommended)
+AWS_REGION=eu-central-1
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
 
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## AI-Powered Title Extraction
-
-This project uses AI to extract clean movie titles from promotional YouTube/Archive.org titles for improved OMDB matching.
-
-### Why AI Title Extraction?
-
-- **Better OMDB Matching**: Clean titles improve metadata enrichment success rate
-- **Handles Promotional Text**: Removes channel names, "Free Full Movie", quality indicators, etc.
-- **Consistent Format**: Standardizes titles across different sources
-- **Historical Knowledge**: Uses AI trained on 100+ years of cinema
-
-### Setup
-
-1. Get an OpenAI API key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. Add it to your `.env` file:
-
-```bash
+# Option 2: OpenAI API
 OPENAI_API_KEY=sk-your-api-key-here
 ```
 
-### Usage
+## Configuration
 
-```bash
-# Extract titles for all movies without AI metadata
-pnpm extract-titles
+### YouTube Channels
 
-# Preview without saving (dry run)
-pnpm extract-titles --dry-run
+Edit `config/youtube-channels.json` to configure which YouTube channels to scrape:
 
-# Process only 10 movies (for testing)
-pnpm extract-titles --limit 10
-
-# Reprocess all movies (even those with existing AI metadata)
-pnpm extract-titles --force
-```
-
-### Examples
-
-| Original Title                                                    | Extracted Title     |
-| ----------------------------------------------------------------- | ------------------- |
-| `A Christmas Karen \| Free Full Holiday Movie \| FilmRise Movies` | `A Christmas Karen` |
-| `Charlie Chaplin's " The Pawnshop"`                               | `The Pawnshop`      |
-| `Nosferatu (1922) - Classic Horror Film [HD]`                     | `Nosferatu`         |
-| `The Santa Trap \| Free Full Movie \| FilmRise`                   | `The Santa Trap`    |
-
-### AI Metadata Structure
-
-Extracted data is stored in the `ai` field of each movie entry:
-
-```typescript
+```json
 {
-  "imdbId": "tt0012345",
-  "title": "A Christmas Karen | Free Full Holiday Movie | FilmRise Movies",
-  "ai": {
-    "extractedTitle": "A Christmas Karen",
-    "confidence": 0.9,
-    "timestamp": "2025-12-16T00:00:00.000Z",
-    "model": "gpt-4o-mini",
-    "prompt": "extract-movie-title.md"
-  }
+  "channels": [
+    {
+      "id": "UCxKJ3RQQYlDmI8JLpt5HvWg",
+      "name": "FilmRise Movies",
+      "enabled": true
+    }
+  ]
 }
 ```
 
-### Workflow Integration
+## Production Workflow
 
-The recommended workflow for processing movies:
+Recommended workflow for collecting and processing movies:
 
-1. **Scrape**: `pnpm scrape:archive` or `pnpm scrape:youtube`
-2. **Extract Titles**: `pnpm extract-titles` (uses AI to clean titles)
-3. **Enrich**: `pnpm enrich:omdb` (uses AI-extracted titles for better matching)
-4. **Download Posters**: `pnpm download-posters`
-5. **Validate**: `pnpm validate:data`
+1. **Scrape movies from sources**
 
-### Cost Considerations
+   ```bash
+   pnpm scrape:archive --limit 100 --verbose
+   pnpm scrape:youtube --limit 50 --verbose
+   ```
 
-- **Model**: Uses `gpt-4o-mini` (fast and cost-effective)
-- **Rate Limiting**: 100ms delay between requests (36 requests/minute)
-- **Typical Cost**: ~$0.001 per 100 titles (very affordable)
-- **Caching**: Results are stored, so titles are only extracted once
+2. **Extract clean titles using AI** (optional, improves OMDB matching)
 
-### Customizing the Prompt
+   ```bash
+   pnpm extract-titles --min-confidence high --verbose
+   ```
 
-Edit `/prompts/extract-movie-title.md` to customize the extraction behavior. The prompt includes:
+3. **Enrich with OMDB metadata**
 
-- Instructions for removing promotional text
-- Examples of input/output pairs
-- Movie enthusiast persona for better context
+   ```bash
+   pnpm enrich:omdb --verbose --delay 200
+   ```
 
-## Movie Poster Management
+4. **Download poster images**
 
-This project implements a local poster caching system for improved performance and reliability.
+   ```bash
+   pnpm download-posters --verbose
+   ```
 
-### Why Local Poster Caching?
+5. **Validate data structure**
 
-- **Performance**: Serving posters from local storage is faster than fetching from external CDNs
-- **Offline Support**: Cached posters remain available even when the OMDB CDN is unreachable
-- **CDN Reliability**: Reduces dependency on external services that may have rate limits or downtime
-- **Bandwidth**: Reduces repeated requests to external CDN for the same images
+   ```bash
+   pnpm validate:data --verbose --fix
+   ```
 
-### Poster Storage
+6. **Remove duplicates** (if needed)
+   ```bash
+   pnpm deduplicate --strategy imdb --verbose
+   ```
 
-Posters are stored locally in the `/public/posters/` directory with the following naming convention:
+## Features
 
-```
-/public/posters/[imdbId].jpg
-```
+### Data Collection
 
-**Example**: A movie with IMDB ID `tt0147467` will have its poster at `/public/posters/tt0147467.jpg`
+- Scrapes movies from Archive.org and YouTube channels
+- Configurable limits and pagination support
+- Dry-run mode for testing before saving
 
-### Downloading Posters
+### AI-Powered Title Extraction
 
-Use the provided CLI commands to download movie posters from OMDB metadata:
+- Cleans promotional text from movie titles
+- Improves OMDB matching accuracy
+- Supports AWS Bedrock (Claude) and OpenAI
+- Confidence scoring (high/medium/low)
 
-```bash
-# Preview what will be downloaded (dry run)
-pnpm download-posters:dry-run
+### OMDB Metadata Enrichment
 
-# Download all posters
-pnpm download-posters
-```
+- Fetches ratings, plot summaries, and cast information
+- Automatic rate limiting to respect API limits
+- Smart matching using cleaned titles
 
-**Features**:
+### Local Poster Caching
 
-- ✅ Automatic retry logic (3 attempts with exponential backoff)
-- ✅ Rate limiting (100ms delay between downloads)
-- ✅ Skips already downloaded posters
-- ✅ Progress reporting with statistics
-- ✅ Validates downloaded images
-- ✅ Handles movies without OMDB metadata gracefully
+- Downloads and serves posters from local storage
+- Three-tier fallback system (local → OMDB CDN → placeholder)
+- Automatic retry logic with rate limiting
 
-### Poster Fallback System
+### Data Validation
 
-The movie store implements a three-tier fallback system (priority order):
+- Validates movie data structure
+- Checks for required fields
+- Identifies duplicate entries
+- Auto-fix common issues
 
-1. **Local Cache**: `/posters/[imdbId].jpg` (fastest, served from public directory)
-2. **OMDB CDN**: `metadata.Poster` URL (fallback when local file doesn't exist)
-3. **Placeholder**: `/images/poster-placeholder.jpg` (final fallback)
+## Documentation
 
-**Usage in Components**:
-
-```typescript
-import { useMovieStore } from '~/stores/useMovieStore'
-
-const movieStore = useMovieStore()
-
-// Async version (checks if local file exists)
-const posterUrl = await movieStore.getPosterUrl(imdbId, metadata)
-
-// Sync version (assumes local exists, browser handles 404 gracefully)
-const posterUrl = movieStore.getPosterUrlSync(imdbId, metadata, true)
-
-// Check if local poster exists
-const hasLocal = await movieStore.posterExists(imdbId)
-
-// Batch preload multiple posters (optimized)
-const results = await movieStore.preloadPosters([imdbId1, imdbId2, imdbId3])
-```
-
-### Updating Posters
-
-When movie metadata changes (new OMDB enrichment):
-
-1. Delete the old poster file: `rm public/posters/[imdbId].jpg`
-2. Run the download command: `pnpm download-posters`
-3. The script will re-download only missing posters
-
-**Tip**: The download script automatically skips existing posters, so it's safe to run repeatedly.
-
-### Technical Details
-
-**Download Script**: `/server/scripts/downloadPosters.ts`
-
-- Reads movie data from `/data/movies.json`
-- Downloads from `metadata.Poster` URLs
-- Saves to `/public/posters/[imdbId].jpg`
-- Built with Node.js built-in `fetch` and `fs/promises` (zero external dependencies)
-
-**Store Methods**: `/app/stores/useMovieStore.ts`
-
-- `posterExists(imdbId)` - Check if local poster exists (HEAD request)
-- `getPosterUrl(imdbId, metadata)` - Get best available poster URL (async)
-- `getPosterUrlSync(imdbId, metadata, preferLocal)` - Sync version for SSR
-- `preloadPosters(imdbIds[])` - Batch check with rate limiting (10 concurrent)
+- [Nuxt Documentation](https://nuxt.com/docs)
+- [Deployment Guide](https://nuxt.com/docs/getting-started/deployment)
+- [OpenAI API Keys](https://platform.openai.com/api-keys)
+- [OMDB API](http://www.omdbapi.com/apikey.aspx)
