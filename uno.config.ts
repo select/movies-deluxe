@@ -3,11 +3,11 @@ import {
   presetAttributify,
   presetIcons,
   presetTypography,
-  presetWebFonts,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
 import presetWind from '@unocss/preset-wind4'
+import presetWebFonts from '@unocss/preset-web-fonts'
 
 export default defineConfig({
   presets: [
@@ -23,6 +23,7 @@ export default defineConfig({
     }),
     presetTypography(),
     presetWebFonts({
+      provider: 'google',
       fonts: {
         sans: 'Ubuntu:400,500,700',
         mono: 'Ubuntu Mono',
@@ -44,4 +45,6 @@ export default defineConfig({
   },
   // Enable dark mode with class strategy
   darkMode: 'class',
+  // Safelist font-sans to ensure it's always generated
+  safelist: ['font-sans'],
 })

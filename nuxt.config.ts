@@ -10,4 +10,13 @@ export default defineNuxtConfig({
 
   // Modules
   modules: ['@unocss/nuxt', '@pinia/nuxt'],
+
+  // Apply font-sans class to body element globally
+  app: {
+    head: {
+      bodyAttrs: {
+        class: 'font-sans',
+      },
+    },
+  },
 })
