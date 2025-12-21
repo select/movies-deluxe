@@ -482,3 +482,335 @@ ls -la .git/hooks/commit-msg .git/hooks/pre-commit
 - ❌ Do NOT forget to explain breaking changes
 
 For more details, see https://www.conventionalcommits.org/
+
+## Nuxt 4 Directory Structure
+
+**IMPORTANT**: This project uses **Nuxt 4** with its standard directory conventions. Understanding the directory structure is essential for proper code organization.
+
+### Why Follow Nuxt Conventions?
+
+- **Auto-imports**: Components, composables, and utilities are automatically imported
+- **File-based routing**: Pages are automatically registered as routes
+- **Type safety**: TypeScript types are auto-generated from directory structure
+- **Developer experience**: Consistent structure across all Nuxt projects
+- **Build optimization**: Nuxt optimizes based on directory usage
+
+### Standard Nuxt 4 Directories
+
+#### `app/` - Application Source Code
+
+The main application directory containing all frontend code.
+
+**Subdirectories:**
+
+- `app/pages/` - File-based routing (e.g., `index.vue` → `/`, `about.vue` → `/about`)
+- `app/components/` - Vue components (auto-imported globally)
+- `app/composables/` - Vue composables (auto-imported, e.g., `useMovies.ts`)
+- `app/layouts/` - Layout components (e.g., `default.vue`, `admin.vue`)
+- `app/middleware/` - Route middleware (e.g., `auth.ts`)
+- `app/plugins/` - Vue plugins (auto-registered)
+- `app/stores/` - Pinia stores (e.g., `useMovieStore.ts`)
+- `app/utils/` - Utility functions (auto-imported)
+- `app/assets/` - Assets processed by build tool (CSS, images)
+- `app.vue` - Root application component (optional)
+
+**Current usage in this project:**
+
+```
+app/
+├── pages/
+│   └── index.vue          # Movie listing page (route: /)
+└── stores/
+    └── useMovieStore.ts   # Pinia store for movie data
+```
+
+#### `server/` - Server-Side Code
+
+Backend API routes and server middleware.
+
+**Subdirectories:**
+
+- `server/api/` - API endpoints (e.g., `movies.get.ts` → `/api/movies`)
+- `server/routes/` - Server routes (e.g., `sitemap.xml.ts` → `/sitemap.xml`)
+- `server/middleware/` - Server middleware (runs on every request)
+- `server/plugins/` - Server plugins (Nitro plugins)
+- `server/utils/` - Server utility functions
+
+**Not currently used** - Movie data is loaded from static JSON file.
+
+**Future use cases:**
+
+- `/api/movies` - Dynamic movie data endpoint
+- `/api/search` - Movie search API
+- `/api/omdb` - OMDB proxy endpoint
+
+#### `public/` - Static Assets
+
+Files served directly without processing. Accessible at root URL.
+
+**Current usage:**
+
+```
+public/
+├── posters/              # Movie poster images (57 files)
+│   ├── tt0284688.jpg
+│   └── ...
+├── data/
+│   └── movies.json       # Static movie database (106 movies)
+├── favicon.ico
+└── robots.txt
+```
+
+**Access pattern:**
+
+- `/posters/tt0284688.jpg` → `public/posters/tt0284688.jpg`
+- `/data/movies.json` → `public/data/movies.json`
+
+#### `types/` - TypeScript Type Definitions
+
+Shared TypeScript types and interfaces.
+
+**Current usage:**
+
+```
+types/
+└── movie.ts              # MovieEntry interface
+```
+
+**Best practices:**
+
+- Use for shared types across frontend and backend
+- Auto-imported in Nuxt components
+- Keep types close to their usage (e.g., store types in store file)
+
+#### `scripts/` - Build and Utility Scripts
+
+Node.js scripts for data processing, scraping, and maintenance.
+
+**Current usage:**
+
+```
+scripts/
+├── utils/                # Shared script utilities
+│   ├── aiTitleExtractor.ts
+│   ├── dataManager.ts
+│   ├── imageDownloader.ts
+│   ├── logger.ts
+│   └── omdbMatcher.ts
+├── scrape-archive.ts     # Archive.org scraper
+├── scrape-youtube.ts     # YouTube scraper
+├── enrich-omdb.ts        # OMDB metadata enrichment
+├── download-posters.ts   # Poster downloader
+├── deduplicate.ts        # Duplicate detection
+└── validate-data.ts      # Data validation
+```
+
+**Not part of Nuxt build** - Run manually via `pnpm tsx scripts/<name>.ts`
+
+#### `config/` - Configuration Files
+
+Project-specific configuration data.
+
+**Current usage:**
+
+```
+config/
+├── youtube-channels.json # YouTube channel configurations
+└── README.md
+```
+
+#### `data/` - Backend Data Storage
+
+Primary data storage (not served publicly).
+
+**Current usage:**
+
+```
+data/
+└── movies.json           # Master movie database (106 movies)
+```
+
+**Note:** Copied to `public/data/movies.json` for frontend access.
+
+#### Root Configuration Files
+
+- `nuxt.config.ts` - Nuxt configuration (modules, dev server, build options)
+- `uno.config.ts` - UnoCSS configuration (presets, theme, shortcuts)
+- `tsconfig.json` - TypeScript configuration
+- `eslint.config.ts` - ESLint configuration
+- `package.json` - Dependencies and scripts
+- `.prettierrc` - Prettier configuration
+- `commitlint.config.js` - Commit message validation
+
+### Project-Specific Conventions
+
+#### Where to Put New Code
+
+**Frontend components:**
+
+```
+app/components/MovieCard.vue       # Reusable movie card component
+app/components/SearchBar.vue       # Search bar component
+```
+
+**Pages (routes):**
+
+```
+app/pages/index.vue                # Home page (/)
+app/pages/movies/[id].vue          # Movie detail page (/movies/:id)
+app/pages/about.vue                # About page (/about)
+```
+
+**Composables (reusable logic):**
+
+```
+app/composables/useMovies.ts       # Movie data composable
+app/composables/useSearch.ts       # Search logic composable
+```
+
+**Stores (global state):**
+
+```
+app/stores/useMovieStore.ts        # Movie data store (current)
+app/stores/useUserStore.ts         # User preferences store
+```
+
+**API endpoints:**
+
+```
+server/api/movies.get.ts           # GET /api/movies
+server/api/movies/[id].get.ts      # GET /api/movies/:id
+server/api/search.post.ts          # POST /api/search
+```
+
+**Utility functions:**
+
+```
+app/utils/formatDate.ts            # Frontend utilities (auto-imported)
+server/utils/database.ts           # Server utilities (auto-imported)
+scripts/utils/scraper.ts           # Script utilities (manual import)
+```
+
+**Types:**
+
+```
+types/movie.ts                     # Shared types (auto-imported)
+app/types/components.ts            # Component-specific types
+server/types/api.ts                # API-specific types
+```
+
+**Static assets:**
+
+```
+public/posters/tt1234567.jpg       # Poster images
+public/images/logo.png             # Site images
+public/fonts/custom.woff2          # Custom fonts
+```
+
+**Processed assets:**
+
+```
+app/assets/styles/main.css         # CSS (processed by Vite)
+app/assets/images/hero.jpg         # Images (optimized by Vite)
+```
+
+#### Naming Conventions
+
+**Files:**
+
+- Components: `PascalCase.vue` (e.g., `MovieCard.vue`)
+- Pages: `kebab-case.vue` (e.g., `movie-detail.vue`)
+- Composables: `camelCase.ts` starting with `use` (e.g., `useMovies.ts`)
+- Stores: `camelCase.ts` starting with `use` (e.g., `useMovieStore.ts`)
+- Utils: `camelCase.ts` (e.g., `formatDate.ts`)
+- API routes: `kebab-case.method.ts` (e.g., `movies.get.ts`)
+
+**Exports:**
+
+- Composables: `export function useMovies() { ... }`
+- Stores: `export const useMovieStore = defineStore('movie', ...)`
+- Utils: `export function formatDate() { ... }`
+- Types: `export interface MovieEntry { ... }`
+
+#### Auto-Import Rules
+
+**Automatically imported (no import statement needed):**
+
+- Components from `app/components/`
+- Composables from `app/composables/`
+- Utils from `app/utils/`
+- Nuxt built-ins: `ref`, `computed`, `useState`, `useFetch`, etc.
+- Vue built-ins: `onMounted`, `watch`, `nextTick`, etc.
+
+**Requires manual import:**
+
+- Types from `types/`
+- Scripts from `scripts/`
+- External packages from `node_modules`
+- Server utils in frontend code (and vice versa)
+
+**Example:**
+
+```vue
+<script setup lang="ts">
+// ✅ Auto-imported (no import needed)
+const movieStore = useMovieStore()
+const movies = ref([])
+const isDark = useDark()
+
+// ❌ Requires manual import
+import type { MovieEntry } from '~/types/movie'
+import { someExternalLib } from 'external-package'
+</script>
+```
+
+### Development Workflow
+
+**Starting development:**
+
+```bash
+pnpm dev                  # Start dev server (port 3003)
+```
+
+**Running scripts:**
+
+```bash
+pnpm tsx scripts/scrape-archive.ts      # Run scraper
+pnpm tsx scripts/download-posters.ts    # Download posters
+```
+
+**Building for production:**
+
+```bash
+pnpm build                # Build for production
+pnpm preview              # Preview production build
+```
+
+**Type checking:**
+
+```bash
+pnpm nuxi typecheck       # Check TypeScript types
+```
+
+### Important Rules
+
+- ✅ Follow Nuxt 4 directory conventions
+- ✅ Use `app/` for all frontend code
+- ✅ Use `server/` for all backend code
+- ✅ Use `public/` for static assets (no processing)
+- ✅ Use `app/assets/` for processed assets (CSS, optimized images)
+- ✅ Leverage auto-imports (components, composables, utils)
+- ✅ Use file-based routing in `app/pages/`
+- ✅ Keep scripts separate in `scripts/` directory
+- ✅ Store types in `types/` for sharing across app
+- ❌ Do NOT put frontend code in `server/`
+- ❌ Do NOT put backend code in `app/`
+- ❌ Do NOT put processed assets in `public/`
+- ❌ Do NOT manually import auto-imported items
+
+### Resources
+
+- **Nuxt 4 Docs**: https://nuxt.com/docs
+- **Directory Structure**: https://nuxt.com/docs/guide/directory-structure
+- **Auto-imports**: https://nuxt.com/docs/guide/concepts/auto-imports
+- **File-based Routing**: https://nuxt.com/docs/guide/directory-structure/pages
