@@ -145,6 +145,41 @@
                 </span>
               </div>
 
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap gap-3 mb-6">
+                <!-- Watchlist Button -->
+                <button
+                  class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-700 dark:bg-gray-800 text-white hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors"
+                  @click="toggleWatchlist"
+                >
+                  <div
+                    :class="[
+                      'i-mdi-heart text-lg',
+                      isInWatchlist ? 'text-red-500' : ''
+                    ]"
+                  />
+                  {{ isInWatchlist ? 'In Watchlist' : 'Add to Watchlist' }}
+                </button>
+
+                <!-- Share Button -->
+                <button
+                  class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-700 dark:bg-gray-800 text-white hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors"
+                  @click="shareMovie"
+                >
+                  <div class="i-mdi-share-variant text-lg" />
+                  Share
+                </button>
+              </div>
+
+              <!-- Share Toast -->
+              <div
+                v-if="showShareToast"
+                class="mb-4 p-3 rounded-lg bg-green-600 text-white text-sm flex items-center gap-2"
+              >
+                <div class="i-mdi-check-circle text-lg" />
+                {{ shareToastMessage }}
+              </div>
+
               <!-- Genre -->
               <div
                 v-if="movie.metadata?.Genre"
@@ -316,6 +351,8 @@ import type { MovieEntry } from '~/app/types'
 // eslint-disable-next-line no-undef
 const route = useRoute()
 const movieStore = useMovieStore()
+// eslint-disable-next-line no-undef
+const watchlistStore = useWatchlistStore()
 
 // Dark mode state (sync with localStorage)
 const isDark = ref(true)
@@ -324,6 +361,15 @@ const isDark = ref(true)
 const movie = ref<MovieEntry | null>(null)
 const isLoading = ref(true)
 const error = ref<string | null>(null)
+
+// Share functionality state
+const showShareToast = ref(false)
+const shareToastMessage = ref('')
+
+// Watchlist computed
+const isInWatchlist = computed(() => {
+  return movie.value ? watchlistStore.isInWatchlist(movie.value.imdbId) : false
+})
 
 // Load movie on mount
 onMounted(async () => {
@@ -424,6 +470,70 @@ const toggleDarkMode = () => {
   if (typeof window !== 'undefined') {
     localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
   }
+}
+
+// Toggle watchlist
+const toggleWatchlist = () => {
+  if (!movie.value) return
+  watchlistStore.toggle(movie.value.imdbId)
+}
+
+// Share movie
+const shareMovie = async () => {
+  if (!movie.value) return
+
+  const title = movie.value.title + (movie.value.year ? ` (${movie.value.year})` : '')
+  const text = movie.value.metadata?.Plot || `Watch ${movie.value.title} for free on Movies Deluxe`
+  // eslint-disable-next-line no-undef
+  const url = `${window.location.origin}/movie/${movie.value.imdbId}`
+
+  // Try Web Share API first (mobile and some desktop browsers)
+  // eslint-disable-next-line no-undef
+  if (navigator.share) {
+    try {
+      // eslint-disable-next-line no-undef
+      await navigator.share({
+        title,
+        text,
+        url
+      })
+      showToast('Shared successfully!')
+    } catch (err) {
+      // User cancelled or error occurred
+      if ((err as Error).name !== 'AbortError') {
+        // eslint-disable-next-line no-undef, no-console
+        console.error('Share failed:', err)
+        fallbackCopyToClipboard(url)
+      }
+    }
+  } else {
+    // Fallback to clipboard
+    fallbackCopyToClipboard(url)
+  }
+}
+
+// Fallback: Copy to clipboard
+const fallbackCopyToClipboard = async (url: string) => {
+  try {
+    // eslint-disable-next-line no-undef
+    await navigator.clipboard.writeText(url)
+    showToast('Link copied to clipboard!')
+  } catch (err) {
+    // eslint-disable-next-line no-undef, no-console
+    console.error('Copy failed:', err)
+    showToast('Failed to copy link')
+  }
+}
+
+// Show toast notification
+const showToast = (message: string) => {
+  shareToastMessage.value = message
+  showShareToast.value = true
+  
+  // eslint-disable-next-line no-undef
+  setTimeout(() => {
+    showShareToast.value = false
+  }, 3000)
 }
 
 // Handle poster loading errors
