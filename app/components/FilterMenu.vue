@@ -70,24 +70,38 @@
               title="Source"
               icon="i-mdi-source-branch"
             >
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  :checked="filterStore.filters.sources.includes('archive.org')"
-                  type="checkbox"
-                  class="rounded"
-                  @change="filterStore.toggleSource('archive.org')"
-                >
-                <span class="text-sm">Archive.org</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  :checked="filterStore.filters.sources.includes('youtube')"
-                  type="checkbox"
-                  class="rounded"
-                  @change="filterStore.toggleSource('youtube')"
-                >
-                <span class="text-sm">YouTube</span>
-              </label>
+              <div class="space-y-3">
+                <!-- Archive.org -->
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    :checked="filterStore.filters.sources.includes('archive.org')"
+                    type="checkbox"
+                    class="rounded"
+                    @change="filterStore.toggleSource('archive.org')"
+                  >
+                  <span class="text-sm">Archive.org</span>
+                </label>
+
+                <!-- YouTube Channels -->
+                <div class="pl-4 space-y-2 border-l-2 border-gray-300 dark:border-gray-600">
+                  <p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-2">
+                    YouTube Channels
+                  </p>
+                  <label
+                    v-for="channel in youtubeChannels"
+                    :key="channel"
+                    class="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      :checked="filterStore.filters.sources.includes(channel)"
+                      type="checkbox"
+                      class="rounded"
+                      @change="filterStore.toggleSource(channel)"
+                    >
+                    <span class="text-sm">{{ channel }}</span>
+                  </label>
+                </div>
+              </div>
             </FilterSection>
 
             <!-- Rating Filter -->
@@ -242,6 +256,17 @@ const filterStore = useFilterStore()
 
 // Get sort options from utils
 const sortOptions = SORT_OPTIONS
+
+// YouTube channels (from actual data)
+const youtubeChannels = [
+  'FilmRise Movies',
+  'Mosfilm',
+  'Movie Central',
+  'Moviedome',
+  'Netzkino',
+  'Popcornflix',
+  'Timeless Classic Movies',
+]
 
 // Available genres (from dataset analysis)
 const availableGenres = [
