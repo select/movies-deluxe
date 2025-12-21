@@ -24,16 +24,12 @@ export const useMovieStore = defineStore('movie', () => {
       const response = await $fetch<Record<string, any>>('/data/movies.json')
 
       // Convert object to array, filtering out metadata entries
-      const movieEntries: MovieEntry[] = []
-      for (const [key, value] of Object.entries(response)) {
-        // Skip metadata entries (start with underscore)
-        if (key.startsWith('_')) continue
-
-        // Type guard: ensure it's a valid MovieEntry
-        if (value && typeof value === 'object' && 'imdbId' in value && 'title' in value) {
-          movieEntries.push(value as MovieEntry)
-        }
-      }
+      const movieEntries: MovieEntry[] = Object.entries(response)
+        .filter(([key]) => !key.startsWith('_'))
+        .filter(
+          ([, value]) => value && typeof value === 'object' && 'imdbId' in value && 'title' in value
+        )
+        .map(([, value]) => value as MovieEntry)
 
       movies.value = movieEntries
       console.log(`Loaded ${movieEntries.length} movies from public/data/movies.json`)
@@ -222,16 +218,16 @@ export const useMovieStore = defineStore('movie', () => {
    * @returns Object with sources grouped by type
    */
   const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
-    const grouped: Record<MovieSourceType, MovieSource[]> = {
-      'archive.org': [],
-      youtube: [],
-    }
-
-    for (const source of movie.sources) {
-      grouped[source.type].push(source)
-    }
-
-    return grouped
+    return movie.sources.reduce(
+      (grouped, source) => {
+        grouped[source.type].push(source)
+        return grouped
+      },
+      {
+        'archive.org': [],
+        youtube: [],
+      } as Record<MovieSourceType, MovieSource[]>
+    )
   }
 
   /**
