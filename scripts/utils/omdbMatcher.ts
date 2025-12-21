@@ -223,25 +223,24 @@ export async function matchMovie(
     }
 
     // Find best match
-    let bestMatch: OMDBSearchResult | null = null
-    let bestConfidence: MatchConfidence = 'none' as MatchConfidence
-
-    for (const result of searchResults.Search) {
-      const confidence = calculateConfidence(title, year, result)
-
-      // Priority order: exact > high > medium > low
-      const confidencePriority = {
-        exact: 4,
-        high: 3,
-        medium: 2,
-        low: 1,
-        none: 0,
-      }
-      if (confidencePriority[confidence] > confidencePriority[bestConfidence]) {
-        bestMatch = result
-        bestConfidence = confidence
-      }
+    const confidencePriority = {
+      exact: 4,
+      high: 3,
+      medium: 2,
+      low: 1,
+      none: 0,
     }
+
+    const { bestMatch, bestConfidence } = searchResults.Search.reduce(
+      (best, result) => {
+        const confidence = calculateConfidence(title, year, result)
+        if (confidencePriority[confidence] > confidencePriority[best.bestConfidence]) {
+          return { bestMatch: result, bestConfidence: confidence }
+        }
+        return best
+      },
+      { bestMatch: null as OMDBSearchResult | null, bestConfidence: 'none' as MatchConfidence }
+    )
 
     if (!bestMatch) {
       return {

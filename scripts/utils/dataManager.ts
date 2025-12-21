@@ -88,23 +88,21 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
     const existingSources = existing.sources || []
     const newSources = entry.sources || []
 
-    const mergedSources = [...existingSources]
-    for (const newSource of newSources) {
-      const isDuplicate = existingSources.some(
-        s =>
-          s.type === newSource.type &&
-          ((s.type === 'archive.org' &&
-            newSource.type === 'archive.org' &&
-            s.identifier === newSource.identifier) ||
-            (s.type === 'youtube' &&
-              newSource.type === 'youtube' &&
-              s.videoId === newSource.videoId))
-      )
-
-      if (!isDuplicate) {
-        mergedSources.push(newSource)
-      }
-    }
+    const mergedSources = [
+      ...existingSources,
+      ...newSources.filter(newSource => {
+        return !existingSources.some(
+          s =>
+            s.type === newSource.type &&
+            ((s.type === 'archive.org' &&
+              newSource.type === 'archive.org' &&
+              s.identifier === newSource.identifier) ||
+              (s.type === 'youtube' &&
+                newSource.type === 'youtube' &&
+                s.videoId === newSource.videoId))
+        )
+      }),
+    ]
 
     // Update entry
     db[movieId] = {
@@ -175,13 +173,13 @@ export function getDatabaseStats(db: MoviesDatabase): {
   let archiveOrgSources = 0
   let youtubeSources = 0
 
-  for (const [_, entry] of entries) {
+  entries.forEach(([_, entry]) => {
     const movieEntry = entry as MovieEntry
-    for (const source of movieEntry.sources || []) {
+    movieEntry.sources?.forEach(source => {
       if (source.type === 'archive.org') archiveOrgSources++
       if (source.type === 'youtube') youtubeSources++
-    }
-  }
+    })
+  })
 
   return {
     total: entries.length,
@@ -273,21 +271,19 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
   const secondary = primary === entry1 ? entry2 : entry1
 
   // Merge sources
-  const mergedSources = [...primary.sources]
-  for (const source of secondary.sources) {
-    const isDuplicate = mergedSources.some(
-      s =>
-        s.type === source.type &&
-        ((s.type === 'archive.org' &&
-          source.type === 'archive.org' &&
-          s.identifier === source.identifier) ||
-          (s.type === 'youtube' && source.type === 'youtube' && s.videoId === source.videoId))
-    )
-
-    if (!isDuplicate) {
-      mergedSources.push(source)
-    }
-  }
+  const mergedSources = [
+    ...primary.sources,
+    ...secondary.sources.filter(source => {
+      return !primary.sources.some(
+        s =>
+          s.type === source.type &&
+          ((s.type === 'archive.org' &&
+            source.type === 'archive.org' &&
+            s.identifier === source.identifier) ||
+            (s.type === 'youtube' && source.type === 'youtube' && s.videoId === source.videoId))
+      )
+    }),
+  ]
 
   return {
     ...primary,

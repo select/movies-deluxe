@@ -376,7 +376,7 @@
   },
   "archive-ColorCrazinessTheThreeStooges": {
     "imdbId": "archive-ColorCrazinessTheThreeStooges",
-    "title": ["The Three Stooges - \"Color Craziness\"", "\"Color Craziness\" - The Three Stooges"],
+    "title": "The Three Stooges - Color Craziness",
     "sources": [
       {
         "type": "archive.org",
@@ -4558,7 +4558,7 @@
   },
   "youtube-4eCYz0RRLjc": {
     "imdbId": "youtube-4eCYz0RRLjc",
-    "title": "Quarantined Together For Christmas | Renovating Love | Full Hallmark Christmas Movie",
+    "title": "Quarantined Together For Christmas",
     "sources": [
       {
         "type": "youtube",
@@ -4578,7 +4578,7 @@
   },
   "youtube-NGvuHFCI3Mo": {
     "imdbId": "youtube-NGvuHFCI3Mo",
-    "title": "Surviving The Club Underworld | Young Lion of the West",
+    "title": "Young Lion of the West",
     "sources": [
       {
         "type": "youtube",
