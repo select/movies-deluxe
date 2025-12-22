@@ -73,6 +73,18 @@ export default defineEventHandler(async event => {
     // Handle metadata update
     if (metadata) {
       movie.metadata = metadata
+
+      // Sync top-level fields from OMDB metadata
+      if (metadata.Title) {
+        movie.title = metadata.Title
+      }
+      if (metadata.Year) {
+        // OMDB Year can be a range (e.g. "1999–2004"), take the first 4 digits
+        const yearMatch = metadata.Year.match(/\d{4}/)
+        if (yearMatch) {
+          movie.year = parseInt(yearMatch[0])
+        }
+      }
     }
 
     if (verified !== undefined) {

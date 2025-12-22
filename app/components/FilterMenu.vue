@@ -18,12 +18,10 @@
         'overflow-hidden',
         // Mobile: Bottom sheet (< md breakpoint)
         'bottom-0 left-0 right-0 rounded-t-2xl border-t border-gray-200 dark:border-gray-700',
-        'max-h-[90vh] flex flex-col',
-        'md:top-0 md:left-0 md:bottom-auto md:right-auto md:h-full md:w-[400px] md:rounded-none md:border-t-0 md:border-r md:border-gray-200 md:dark:border-gray-700',
-        // Animation: translateY for mobile, translateX for desktop
-        isOpen
-          ? 'translate-y-0 md:translate-x-0'
-          : 'translate-y-full md:translate-y-0 md:-translate-x-full',
+        'max-h-[90vh] md:max-h-full flex flex-col',
+        'md:top-0 md:left-0 md:bottom-0 md:right-0 md:h-full md:w-full md:rounded-none md:border-none',
+        // Animation: translateY for both mobile and desktop
+        isOpen ? 'translate-y-0' : 'translate-y-full',
       ]"
     >
       <!-- Header -->

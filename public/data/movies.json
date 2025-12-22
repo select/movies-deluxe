@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-22T16:47:15.839Z"
+    "lastUpdated": "2025-12-22T21:03:10.368Z"
   },
   "archive-HisNewJobCharlesChaplin-1915": {
     "imdbId": "archive-HisNewJobCharlesChaplin-1915",
@@ -10232,60 +10232,6 @@
     ],
     "lastUpdated": "2025-12-22T16:03:42.471Z"
   },
-  "tt4515408": {
-    "imdbId": "tt4515408",
-    "title": "Banger",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "ds_VNsWnqxs",
-        "url": "https://www.youtube.com/watch?v=ds_VNsWnqxs",
-        "channelName": "Popcornflix",
-        "channelId": "UCVFYikepF-avelvuIaQ_lHA",
-        "language": "en",
-        "publishedAt": "1 year ago",
-        "duration": 5006,
-        "viewCount": 10031,
-        "thumbnail": "https://i.ytimg.com/vi/ds_VNsWnqxs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA21vuUk-quVC-OxbazSqw55a6F1A",
-        "addedAt": "2025-12-21T22:02:03.167Z"
-      }
-    ],
-    "lastUpdated": "2025-12-22T16:42:01.239Z",
-    "year": 2025,
-    "verified": true,
-    "metadata": {
-      "Title": "Banger",
-      "Year": "2016",
-      "Rated": "N/A",
-      "Released": "14 May 2016",
-      "Runtime": "90 min",
-      "Genre": "Drama, Thriller",
-      "Director": "Mike Berry",
-      "Writer": "Mike Berry",
-      "Actors": "Clifton Powell, KateLynn E. Newberry, Omar Gooding",
-      "Plot": "When a turf war between two street gangs leads to the death of a young Haitian immigrant, his mother conjures up a spell to bring her son back from the grave to exact revenge on those responsible. The code of the street is simple; stay loyal to the gang, stay focused on the money and most importantly, stay ALIVE",
-      "Language": "English",
-      "Country": "United States",
-      "Awards": "N/A",
-      "Poster": "https://m.media-amazon.com/images/M/MV5BNTU5NzVkMzgtMjAwYi00OWRiLTg3ZmItMGU2ZTMwNmI1Njc3XkEyXkFqcGc@._V1_SX300.jpg",
-      "Ratings": [
-        {
-          "Source": "Internet Movie Database",
-          "Value": "5.4/10"
-        }
-      ],
-      "Metascore": "N/A",
-      "imdbRating": "5.4",
-      "imdbVotes": "56",
-      "imdbID": "tt4515408",
-      "Type": "movie",
-      "DVD": "N/A",
-      "BoxOffice": "N/A",
-      "Production": "N/A",
-      "Website": "N/A",
-      "Response": "True"
-    }
-  },
   "tt0147467": {
     "imdbId": "tt0147467",
     "title": "Sex Madness",
@@ -10387,5 +10333,59 @@
       "Response": "True"
     },
     "verified": true
+  },
+  "tt4515408": {
+    "imdbId": "tt4515408",
+    "title": "Banger",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "ds_VNsWnqxs",
+        "url": "https://www.youtube.com/watch?v=ds_VNsWnqxs",
+        "channelName": "Popcornflix",
+        "channelId": "UCVFYikepF-avelvuIaQ_lHA",
+        "language": "en",
+        "publishedAt": "1 year ago",
+        "duration": 5006,
+        "viewCount": 10031,
+        "thumbnail": "https://i.ytimg.com/vi/ds_VNsWnqxs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA21vuUk-quVC-OxbazSqw55a6F1A",
+        "addedAt": "2025-12-21T22:02:03.167Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:03:10.368Z",
+    "year": 2025,
+    "verified": true,
+    "metadata": {
+      "Title": "Banger",
+      "Year": "2016",
+      "Rated": "N/A",
+      "Released": "14 May 2016",
+      "Runtime": "90 min",
+      "Genre": "Drama, Thriller",
+      "Director": "Mike Berry",
+      "Writer": "Mike Berry",
+      "Actors": "Clifton Powell, KateLynn E. Newberry, Omar Gooding",
+      "Plot": "When a turf war between two street gangs leads to the death of a young Haitian immigrant, his mother conjures up a spell to bring her son back from the grave to exact revenge on those responsible. The code of the street is simple; stay loyal to the gang, stay focused on the money and most importantly, stay ALIVE",
+      "Language": "English",
+      "Country": "United States",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BNTU5NzVkMzgtMjAwYi00OWRiLTg3ZmItMGU2ZTMwNmI1Njc3XkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "5.4/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "5.4",
+      "imdbVotes": "56",
+      "imdbID": "tt4515408",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    }
   }
 }
