@@ -28,7 +28,8 @@ export const useMovieStore = defineStore('movie', () => {
 
     try {
       // Fetch the movies.json file from the public directory
-      const response = await $fetch<Record<string, unknown>>('/data/movies.json')
+      // Add a timestamp to avoid caching issues
+      const response = await $fetch<Record<string, unknown>>(`/data/movies.json?t=${Date.now()}`)
 
       // Convert object to array, filtering out metadata entries
       const movieEntries: MovieEntry[] = Object.entries(response)
