@@ -23,17 +23,17 @@
       </div>
       
       <!-- Badges -->
-      <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
+      <div class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
         <!-- Source Badge -->
         <span
           v-if="movie.sources[0]?.type === 'archive.org'"
-          class="px-2 py-1 text-xs rounded-full bg-gray-700 dark:bg-gray-600 text-white"
+          class="px-1.5 py-0.5 text-xs rounded-full bg-gray-700 dark:bg-gray-600 text-white"
         >
           Archive.org
         </span>
         <span
           v-else-if="movie.sources[0]?.type === 'youtube'"
-          class="px-2 py-1 text-xs rounded-full bg-red-500 text-white"
+          class="px-1.5 py-0.5 text-xs rounded-full bg-red-500 text-white"
         >
           {{ movie.sources[0].channelName || 'YouTube' }}
         </span>
@@ -41,7 +41,7 @@
         <!-- Language Badge -->
         <span
           v-if="languageCode"
-          class="px-2 py-1 text-xs rounded-full bg-gray-800 dark:bg-gray-700 text-white font-semibold"
+          class="px-1.5 py-0.5 text-xs rounded-full bg-gray-800 dark:bg-gray-700 text-white font-semibold"
         >
           {{ languageCode }}
         </span>
