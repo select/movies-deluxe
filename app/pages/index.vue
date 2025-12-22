@@ -68,11 +68,11 @@
           >
             <div
               v-if="isDark"
-              class="i-mdi-weather-sunny text-xl text-yellow-500"
+              class="i-material-symbols-light-wb-sunny text-xl text-yellow-500"
             />
             <div
               v-else
-              class="i-mdi-weather-night text-xl"
+              class="i-material-symbols-light-dark-mode text-xl"
             />
           </button>
         </div>
