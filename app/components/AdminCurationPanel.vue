@@ -169,7 +169,12 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, OMDBSearchResult } from '~/types'
+import type { MovieEntry, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
+
+interface UpdateResponse {
+  success: boolean
+  movieId: string
+}
 
 const props = defineProps<{
   movie: MovieEntry
@@ -209,7 +214,7 @@ const handleSearch = async () => {
   
   try {
     // eslint-disable-next-line no-undef
-    const data = await $fetch('/api/admin/omdb/search', {
+    const data = await $fetch<OMDBSearchResponse>('/api/admin/omdb/search', {
       query: {
         s: searchTitle.value,
         y: searchYear.value
@@ -217,7 +222,7 @@ const handleSearch = async () => {
     })
     
     if (data.Response === 'True') {
-      searchResults.value = data.Search
+      searchResults.value = data.Search || []
     } else {
       searchError.value = data.Error || 'No results found'
     }
@@ -233,13 +238,13 @@ const selectMovie = async (imdbId: string) => {
     isSearching.value = true
     // Get full details first
     // eslint-disable-next-line no-undef
-    const details = await $fetch('/api/admin/omdb/details', {
+    const details = await $fetch<MovieMetadata & { Response: string, Error?: string }>('/api/admin/omdb/details', {
       query: { i: imdbId }
     })
     
     if (details.Response === 'True') {
       // eslint-disable-next-line no-undef
-      const res = await $fetch('/api/admin/movie/update', {
+      const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
         method: 'POST',
         body: {
           movieId: props.movie.imdbId,
@@ -270,7 +275,7 @@ const removeMetadata = async () => {
   try {
     isSearching.value = true
     // eslint-disable-next-line no-undef
-    const res = await $fetch('/api/admin/movie/update', {
+    const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
         movieId: props.movie.imdbId,
@@ -293,7 +298,7 @@ const verifyMovie = async () => {
   try {
     isSearching.value = true
     // eslint-disable-next-line no-undef
-    const res = await $fetch('/api/admin/movie/update', {
+    const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
         movieId: props.movie.imdbId,
