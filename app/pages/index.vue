@@ -174,6 +174,15 @@ onUnmounted(() => {
   }
 })
 
+// Reset pagination when filters change
+watch(
+  () => filterStore.filters,
+  () => {
+    currentPage.value = 1
+  },
+  { deep: true }
+)
+
 // Toggle dark mode
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
