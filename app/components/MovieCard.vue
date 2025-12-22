@@ -49,8 +49,8 @@
     </div>
 
     <!-- Movie Info -->
-    <div class="p-4">
-      <h3 class="font-semibold text-sm line-clamp-2 mb-2">
+    <div class="p-3">
+      <h3 class="font-semibold text-sm line-clamp-2 mb-1">
         {{ movie.title }}
       </h3>
       
