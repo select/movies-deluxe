@@ -15,7 +15,7 @@
               Free legal movie streams from Archive.org and YouTube
             </p>
           </div>
-          
+
           <!-- Dark Mode Toggle -->
           <button
             class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -44,7 +44,7 @@
       />
 
       <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
+      <main class="max-w-9xl mx-auto px-4 py-8 md:ml-16">
         <!-- Loading State -->
         <div
           v-if="movieStore.isLoading.movies"
@@ -62,16 +62,16 @@
           class="mb-8"
         >
           <div class="flex flex-wrap gap-4 text-sm">
-            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full">
               <span class="font-semibold">Total Movies:</span> {{ movieStore.movies.length }}
             </div>
-            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full">
               <span class="font-semibold">Archive.org:</span> {{ archiveCount }}
             </div>
-            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full">
               <span class="font-semibold">YouTube:</span> {{ youtubeCount }}
             </div>
-            <div class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800">
+            <div class="px-4 py-2 rounded-full">
               <span class="font-semibold">With Metadata:</span> {{ enrichedCount }}
             </div>
           </div>
@@ -110,7 +110,7 @@
             Loading more movies...
           </p>
         </div>
-        
+
         <!-- End of List Message -->
         <div
           v-else-if="movieStore.movies.length > 0"
@@ -153,13 +153,13 @@ const sentinelRef = ref<HTMLElement | null>(null)
 // Load movies on mount
 onMounted(async () => {
   await movieStore.loadFromFile()
-  
+
   // Check for saved dark mode preference, default to dark
   if (typeof window !== 'undefined') {
     const savedTheme = localStorage.getItem('theme')
     isDark.value = savedTheme ? savedTheme === 'dark' : true
   }
-  
+
   // Set up intersection observer for infinite scroll
   setupInfiniteScroll()
 })
@@ -210,7 +210,7 @@ let observer: IntersectionObserver | null = null
 
 const setupInfiniteScroll = () => {
   if (typeof window === 'undefined') return
-  
+
   observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0]
@@ -225,7 +225,7 @@ const setupInfiniteScroll = () => {
       threshold: 0,
     }
   )
-  
+
   // Watch the sentinel element
   watch(sentinelRef, (newSentinel) => {
     if (observer && newSentinel) {
