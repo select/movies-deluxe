@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-22T22:10:48.517Z"
+    "lastUpdated": "2025-12-22T22:14:31.899Z"
   },
   "archive-TheFastandtheFuriousJohnIreland1954goofyrip": {
     "imdbId": "archive-TheFastandtheFuriousJohnIreland1954goofyrip",
@@ -17,10 +17,11 @@
         "downloads": 1470475,
         "thumbnail": "https://archive.org/services/img/TheFastandtheFuriousJohnIreland1954goofyrip",
         "releaseDate": "1955-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.211Z"
+        "addedAt": "2025-12-22T22:14:26.305Z",
+        "description": "http://imdb.com/title/tt0046969/ A man wrongly imprisoned for murder (John Ireland) breaks out of jail. He wants to clear his name, but with the police pursuing him, he's forced to take a beautiful young woman, driving a fast sports car, hostage and slip into a cross-border sports car race to try to make it to Mexico before the police get him"
       }
     ],
-    "lastUpdated": "2025-12-21T21:06:40.638Z"
+    "lastUpdated": "2025-12-22T22:14:26.305Z"
   },
   "archive-VoyagetothePlanetofPrehistoricWomen": {
     "imdbId": "archive-VoyagetothePlanetofPrehistoricWomen",
@@ -4807,46 +4808,6 @@
       }
     ],
     "lastUpdated": "2025-12-21T22:02:35.942Z"
-  },
-  "youtube-wU7-81LTeSc": {
-    "imdbId": "youtube-wU7-81LTeSc",
-    "title": "A Soldier came back from the Front",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "wU7-81LTeSc",
-        "url": "https://www.youtube.com/watch?v=wU7-81LTeSc",
-        "channelName": "Mosfilm",
-        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
-        "language": "ru",
-        "publishedAt": "7 months ago",
-        "duration": 5068,
-        "viewCount": 14750,
-        "thumbnail": "https://i.ytimg.com/vi/wU7-81LTeSc/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA4tFJmWcm_JlRBUDW-JmmDPWDb-Q",
-        "addedAt": "2025-12-21T22:02:36.442Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:02:36.442Z"
-  },
-  "youtube-xy_ji_hsC6c": {
-    "imdbId": "youtube-xy_ji_hsC6c",
-    "title": "La Prisonera del Cáucaso",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "xy_ji_hsC6c",
-        "url": "https://www.youtube.com/watch?v=xy_ji_hsC6c",
-        "channelName": "Mosfilm",
-        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
-        "language": "ru",
-        "publishedAt": "8 months ago",
-        "duration": 4861,
-        "viewCount": 162748,
-        "thumbnail": "https://i.ytimg.com/vi/xy_ji_hsC6c/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD4tjaEtKKxPzgKhbMsXufV9zPKyA",
-        "addedAt": "2025-12-21T22:02:37.444Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:02:37.444Z"
   },
   "youtube-UGxTgsOBjvs": {
     "imdbId": "youtube-UGxTgsOBjvs",
@@ -10758,5 +10719,207 @@
     },
     "year": 1980,
     "verified": true
+  },
+  "tt0171661": {
+    "imdbId": "tt0171661",
+    "title": "Prishyol soldat s fronta",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "wU7-81LTeSc",
+        "url": "https://www.youtube.com/watch?v=wU7-81LTeSc",
+        "channelName": "Mosfilm",
+        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
+        "language": "ru",
+        "publishedAt": "7 months ago",
+        "duration": 5068,
+        "viewCount": 14750,
+        "thumbnail": "https://i.ytimg.com/vi/wU7-81LTeSc/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA4tFJmWcm_JlRBUDW-JmmDPWDb-Q",
+        "addedAt": "2025-12-21T22:02:36.442Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:12:27.961Z",
+    "metadata": {
+      "Title": "Prishyol soldat s fronta",
+      "Year": "1972",
+      "Rated": "N/A",
+      "Released": "21 Feb 1972",
+      "Runtime": "86 min",
+      "Genre": "Drama, War",
+      "Director": "Nikolay Gubenko",
+      "Writer": "Sergei Antonov, Nikolay Gubenko, Vasiliy Shukshin",
+      "Actors": "Mikhail Gluzskiy, Irina Miroshnichenko, Nikolay Gubenko",
+      "Plot": "The war is drawing to a close, soldiers demobilized from wounds are returning to their homelands. What awaits them in their native villages?",
+      "Language": "Russian",
+      "Country": "Soviet Union",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BYzIyMDdmODUtOTlkMC00YTI2LWI0YTYtNGFiYjJjY2U2YjdmXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "7.7/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "7.7",
+      "imdbVotes": "55",
+      "imdbID": "tt0171661",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1972,
+    "verified": true
+  },
+  "tt0060584": {
+    "imdbId": "tt0060584",
+    "title": "Kidnapping, Caucasian Style",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "xy_ji_hsC6c",
+        "url": "https://www.youtube.com/watch?v=xy_ji_hsC6c",
+        "channelName": "Mosfilm",
+        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
+        "language": "ru",
+        "publishedAt": "8 months ago",
+        "duration": 4861,
+        "viewCount": 162748,
+        "thumbnail": "https://i.ytimg.com/vi/xy_ji_hsC6c/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD4tjaEtKKxPzgKhbMsXufV9zPKyA",
+        "addedAt": "2025-12-21T22:02:37.444Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:14:18.977Z",
+    "metadata": {
+      "Title": "Kidnapping, Caucasian Style",
+      "Year": "1967",
+      "Rated": "TV-13",
+      "Released": "03 Apr 1967",
+      "Runtime": "82 min",
+      "Genre": "Adventure, Comedy, Drama",
+      "Director": "Leonid Gaidai",
+      "Writer": "Leonid Gaidai, Yakov Kostyukovskiy, Moris Slobodskoy",
+      "Actors": "Aleksandr Demyanenko, Natalya Varley, Vladimir Etush",
+      "Plot": "In this comic story, nerdy Shurik travels to the Caucasus in search of native legends and folklore. But what he finds is a beautiful girl whom, due to intoxication and deceit of the local \"gang\", he ends up literally stealing for the local deceitful governor. All the time Shurik thinks that it is all just a one old Caucasian custom. When he, finally, realizes what he did he goes out in search for the girl of his dreams.",
+      "Language": "Russian",
+      "Country": "Soviet Union",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BOWRhZDc5ZWYtNGZmMi00MDdiLTljYTYtN2EwOTA5OTYzMjNjXkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "8.3/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "8.3",
+      "imdbVotes": "13,967",
+      "imdbID": "tt0060584",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1967,
+    "verified": true
+  },
+  "archive-HisNewJobCharlesChaplin-1915": {
+    "imdbId": "archive-HisNewJobCharlesChaplin-1915",
+    "title": "CUKESIM's New Job! ( Charles Chaplin-1915)",
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "HisNewJobCharlesChaplin-1915",
+        "url": "https://archive.org/details/HisNewJobCharlesChaplin-1915",
+        "collection": "feature_films",
+        "downloads": 4557225,
+        "thumbnail": "https://archive.org/services/img/HisNewJobCharlesChaplin-1915",
+        "addedAt": "2025-12-22T22:14:26.305Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:14:26.305Z"
+  },
+  "archive-sex_madness": {
+    "imdbId": "archive-sex_madness",
+    "title": "Sex Madness",
+    "year": 1938,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "sex_madness",
+        "url": "https://archive.org/details/sex_madness",
+        "collection": "feature_films",
+        "downloads": 3686698,
+        "description": "This is a typical sex exploitation film from the early 1930s - complete with wild parties, sex out of wedlock, lesbianism, etc. A chorus girl's exposure to the \"casting couch\" also exposes her to syphilis. Exploitation filmmakers hoped to capitalize on the taboo subjects of venereal disease, sex before marriage, lesbianism, etc. while skirting the Motion Picture Production Code of 1930 which forbade a film from containing such content. Films like this would tour the United States for years - mostly being shown in rundown, skid row theaters. This film has been re-edited and re-titled (\"Human Wreckage\", \"They Must Be Told\", \"Trial Marriage\", \"About Trial Marriage\") many times to attract the same audience to film, to take advantage of a taboo subject which may have gotten press recently or to appease local censors who disapproved of the film's content. You can find more information regarding this film on its IMDb page . Also, if you are interested in the rich, uniquely American history of exploitation films, there are two excellent books on the subject: \"Forbidden Fruit - The Golden Age of the Exploitation Film\", Felicia Feaster and Bret Wood, Midnight Marquee Press, 1999. \"Bold! Daring! Shocking! True! A History of Exploitation Films, 1919 - 1959\" Eric Schaefer, Duke University Press, 1999",
+        "thumbnail": "https://archive.org/services/img/sex_madness",
+        "releaseDate": "1938-01-01T00:00:00Z",
+        "addedAt": "2025-12-22T22:14:26.305Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:14:26.305Z"
+  },
+  "archive-charlie_chaplin_film_fest": {
+    "imdbId": "archive-charlie_chaplin_film_fest",
+    "title": "Charlie Chaplin Festival",
+    "year": 1938,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "charlie_chaplin_film_fest",
+        "url": "https://archive.org/details/charlie_chaplin_film_fest",
+        "collection": "feature_films",
+        "downloads": 1493108,
+        "description": "Four Chaplin shorts from 1917: The Adventurer, The Cure, Easy Street and The Immigrant, presented with music and sound effects. You can find more information regarding this film on its IMDb page .",
+        "thumbnail": "https://archive.org/services/img/charlie_chaplin_film_fest",
+        "releaseDate": "1938-01-01T00:00:00Z",
+        "addedAt": "2025-12-22T22:14:26.305Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:14:26.305Z"
+  },
+  "archive-Return_of_the_Kung_Fu_Dragon": {
+    "imdbId": "archive-Return_of_the_Kung_Fu_Dragon",
+    "title": "Return of the Kung Fu Dragon",
+    "year": 1976,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "Return_of_the_Kung_Fu_Dragon",
+        "url": "https://archive.org/details/Return_of_the_Kung_Fu_Dragon",
+        "collection": "feature_films",
+        "downloads": 1318707,
+        "description": "The complicated story involves the military conquest of a peaceful island-nation by an evil despot and his sorcerer ally. His victory leaves the island's three heroic protectors dead, but, their young children are hidden away to grow to adulthood with different identities, unaware of their heritage, in hope that, in time, they might challenge and defeat the evil ruler. The charming Polly Kuan stars as one of these children who has been adopted by the conquerer himself, initially as an insult to the defeated hero, later as his protégé. from: imdb",
+        "thumbnail": "https://archive.org/services/img/Return_of_the_Kung_Fu_Dragon",
+        "releaseDate": "1976-01-01T00:00:00Z",
+        "addedAt": "2025-12-22T22:14:26.305Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:14:26.305Z"
+  },
+  "youtube-7EGUIXraFJc": {
+    "imdbId": "youtube-7EGUIXraFJc",
+    "title": "Der Herrscher von Kansas",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "7EGUIXraFJc",
+        "url": "https://www.youtube.com/watch?v=7EGUIXraFJc",
+        "channelName": "Netzkino",
+        "channelId": "UCGkHFrwE8KEuOHPVsIOskAg",
+        "description": "💙 Ganze Filme in voller Länge komplett auf Deutsch - jetzt abonnieren: http://bit.ly/NetzkinoAbo\n📺 Der entflohene Soldat Cam Bleeker erhält Freiheit im Tausch für die Jagd auf den Jayhawker-Anführer Darcy. Doch als er dessen wahre Absichten erkennt, wendet er sich gegen ihn und hilft, Kansas von der Tyrannei zu befreien.\n\n🎬 Der Herrscher von Kansas (1959)\nOriginaltitel: The Jayhawkers!\nMit: Jeff Chandler, Fess Parker, Nicole Maurey, Henry Silva, Leo Gordon\nRegie: Melvin Frank\nFSK: Ab 16 Jahren\n\nINHALTSANGABE:\nDer ehemalige Soldat Cam Bleeker entkommt aus dem Gefängnis und sucht Zuflucht bei der französischen Emigrantin Jeanne Dubois. Als er von Gouverneur Clayton gefangen genommen wird, bietet dieser ihm die Freiheit an, wenn er Darcy, den Anführer der Jayhawkers, aufspürt. Bleeker schließt sich Darcy an, doch bald erkennt er dessen wahre Absichten und wendet sich gegen ihn. Mit Hilfe des Gouverneurs gelingt es ihm, Darcy zu stürzen und Kansas vor der Tyrannei zu bewahren.\n#Netzkino #ganzerFilm #Western\n\nCOPYRIGHT: \nDie Lizenz zur Veröffentlichung dieses Films auf YouTube wurde ordnungsgemäß erworben. \nBei Fragen wenden Sie sich bitte an: copyright.berlin@plaion.com \n\nPLAION PICTURES is a serious and legal video on demand company located in Berlin, Germany. We are holding proper license for all of our published movies. For any questions contact copyright.berlin@plaion.com\n\nFOLGE UNS!\n✘ TikTok - https://www.tiktok.com/@dein_filmtreff\n✘ Instagram - https://www.instagram.com/netzkinode/\n✘ Facebook - https://www.facebook.com/netzkino\n\nUNTERSTÜTZE NETZKINO\n✘ Du willst uns unterstützen und ein cooles Badge in den Kommentaren? Dann hier entlang https://www.youtube.com/channel/UCGkHFrwE8KEuOHPVsIOskAg/join\n✘ Unterstütze uns mit einem kleinen monatlichen Beitrag für mehr Filme und andere tolle Vorteile. Jetzt Netzkino Mitglied werden! https://www.youtube.com/channel/UCGkHFrwE8KEuOHPVsIOskAg/join\n\nNETZKINO WEBSITE & TRAILER\n✘ Viele weitere Filme zum kostenlosen Streamen auf: netzkino.de\n✘ Abonniere unseren Trailer-Kanal für die neusten Kinotrailer: http://bit.ly/NetzkinoTrailer\n✘ Keine Zeit für minutenlange Trailer? Dann genieße unser Kino in Kurzform auf NetzkinoClips: https://bit.ly/netzkino-clips\n\nUNSERE APPS\n✘ Android - http://bit.ly/Netzkino_AndroidApp\n✘ iOS - http://bit.ly/NetzkinoApple\n✘ Windows Phone - http://bit.ly/NetzkinoWindowsPhone\n✘ Amazon Kindle - http://bit.ly/NetzkinoAmazon\n\nNOCH MEHR FILME?\n► HD-Kino: http://bit.ly/NetzkinoHighDefinition\n► Actionfilme: http://bit.ly/NetzkinoAction\n► Komödien: http://bit.ly/NetzkinoKomoedie\n► Thriller: http://bit.ly/NetzkinoThriller\n► Alle Playlists: http://bit.ly/NetzkinoPlaylists",
+        "language": "de",
+        "publishedAt": "4 hours ago",
+        "duration": 6026,
+        "viewCount": 1752,
+        "thumbnail": "https://i.ytimg.com/vi/7EGUIXraFJc/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAO_7-jpjgsbWrFUVXNj_xykgobCQ",
+        "addedAt": "2025-12-22T22:14:31.399Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:14:31.399Z"
   }
 }
