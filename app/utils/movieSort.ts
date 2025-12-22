@@ -1,6 +1,6 @@
 import type { MovieEntry } from '~/types'
 
-export type SortField = 'year' | 'rating' | 'title' | 'votes'
+export type SortField = 'year' | 'rating' | 'title' | 'votes' | 'relevance'
 export type SortDirection = 'asc' | 'desc'
 
 export interface SortOption {
@@ -13,6 +13,7 @@ export interface SortOption {
  * Available sort options for movies
  */
 export const SORT_OPTIONS: SortOption[] = [
+  { field: 'relevance', direction: 'desc', label: 'Relevance' },
   { field: 'year', direction: 'desc', label: 'Year (Newest)' },
   { field: 'year', direction: 'asc', label: 'Year (Oldest)' },
   { field: 'rating', direction: 'desc', label: 'Rating (High)' },
