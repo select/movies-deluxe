@@ -64,17 +64,17 @@
           v-else-if="movieStore.movies.length > 0"
           class="mb-8"
         >
-          <div class="flex flex-wrap gap-4 text-sm">
-            <div class="px-4 py-2 rounded-full">
+          <div class="flex flex-wrap gap-3 text-sm">
+            <div class="px-3 py-1 rounded-full">
               <span class="font-semibold">Total Movies:</span> {{ movieStore.movies.length }}
             </div>
-            <div class="px-4 py-2 rounded-full">
+            <div class="px-3 py-1 rounded-full">
               <span class="font-semibold">Archive.org:</span> {{ archiveCount }}
             </div>
-            <div class="px-4 py-2 rounded-full">
+            <div class="px-3 py-1 rounded-full">
               <span class="font-semibold">YouTube:</span> {{ youtubeCount }}
             </div>
-            <div class="px-4 py-2 rounded-full">
+            <div class="px-3 py-1 rounded-full">
               <span class="font-semibold">With Metadata:</span> {{ enrichedCount }}
             </div>
           </div>
