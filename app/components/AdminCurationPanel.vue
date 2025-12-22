@@ -234,12 +234,12 @@ const selectMovie = async (imdbId: string) => {
         emit('updated', res.movieId)
       }
     } else {
-      // eslint-disable-next-line no-undef
-      alert('Failed to get movie details: ' + details.Error)
+      // eslint-disable-next-line no-undef, no-console
+      console.error('Failed to get movie details:', details.Error)
     }
-  } catch {
-    // eslint-disable-next-line no-undef
-    alert('Failed to update movie')
+  } catch (err) {
+    // eslint-disable-next-line no-undef, no-console
+    console.error('Failed to update movie:', err)
   } finally {
     isSearching.value = false
   }
@@ -263,9 +263,9 @@ const removeMetadata = async () => {
     if (res.success) {
       emit('updated', res.movieId)
     }
-  } catch {
-    // eslint-disable-next-line no-undef
-    alert('Failed to remove metadata')
+  } catch (err) {
+    // eslint-disable-next-line no-undef, no-console
+    console.error('Failed to remove metadata:', err)
   } finally {
     isSearching.value = false
   }
