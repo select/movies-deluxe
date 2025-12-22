@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-21T22:04:41.525Z"
+    "lastUpdated": "2025-12-22T16:03:42.971Z"
   },
   "archive-HisNewJobCharlesChaplin-1915": {
     "imdbId": "archive-HisNewJobCharlesChaplin-1915",
@@ -18,7 +18,7 @@
         "addedAt": "2025-12-21T21:06:28.211Z"
       }
     ],
-    "lastUpdated": "2025-12-21T21:06:40.638Z"
+    "lastUpdated": "2025-12-22T16:01:55.743Z"
   },
   "archive-sex_madness": {
     "imdbId": "archive-sex_madness",
@@ -10299,5 +10299,26 @@
       "Website": "N/A",
       "Response": "True"
     }
+  },
+  "youtube-6nJ8n3MIiZY": {
+    "imdbId": "youtube-6nJ8n3MIiZY",
+    "title": "A Christmas Karen",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "6nJ8n3MIiZY",
+        "url": "https://www.youtube.com/watch?v=6nJ8n3MIiZY",
+        "channelName": "FilmRise Movies",
+        "channelId": "UC8IHAQMuiJdY6ALuhG7iU8Q",
+        "description": "Karen is an entitled middle-aged woman whose demanding nature has alienated her neighbors and family. After a series of instances displaying her privilege and prejudice, she receives an \"intervention\" by some unconventional spirits. Starring Michele Simms, Meghan Colleen Moroney, and Rolin Alexis.\n\nSubscribe to FilmRise Movies For More Free Full Movies: https://www.youtube.com/@UC8IHAQMuiJdY6ALuhG7iU8Q  \n\nFor More FilmRise Check Out Our Other Channels:\nFilmRise Television: https://www.youtube.com/@UCVVXDVee0JZ2dlPYtpdTZVg \nHighway to Heaven - Full Episodes: https://www.youtube.com/@UCALafPO1DB8RZgSn3F7Qbtg  \nFilmRise True Crime: https://www.youtube.com/@UCU4BHh9Dwfd7-I_xTZ5037Q\n\n#AChristmasKaren #Comedy #FilmRise",
+        "language": "en",
+        "publishedAt": "2 weeks ago",
+        "duration": 5877,
+        "viewCount": 63327,
+        "thumbnail": "https://i.ytimg.com/vi/6nJ8n3MIiZY/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCEsHkqtPzXLfzmy8aOc3NcHOrkGQ",
+        "addedAt": "2025-12-22T16:03:42.470Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T16:03:42.471Z"
   }
 }

@@ -65,6 +65,10 @@ async function fetchArchiveOrgMovies(
   url.searchParams.set('rows', rows.toString())
   url.searchParams.set('start', start.toString())
   url.searchParams.set('sort', 'downloads desc')
+  url.searchParams.set(
+    'fl',
+    'identifier,title,description,date,year,downloads,collection,mediatype'
+  )
 
   logger.info(`Fetching ${collection} page ${page + 1} (${start}-${start + rows})...`)
 
@@ -119,6 +123,7 @@ async function processMovie(
     url: `https://archive.org/details/${movie.identifier}`,
     collection,
     downloads: movie.downloads,
+    description: movie.description,
     thumbnail: `https://archive.org/services/img/${movie.identifier}`,
     releaseDate: movie.date || movie.year, // Store original date/year from Archive.org
     addedAt: new Date().toISOString(),
@@ -301,10 +306,10 @@ Examples:
 }
 
 // Get OMDB API key from env or command line
-const omdbApiKey = values['omdb-api-key'] || process.env.NUXT_PUBLIC_OMDB_API_KEY
+const omdbApiKey = values['omdb-api-key'] || process.env.OMDB_API_KEY
 
 if (!values['skip-omdb'] && !omdbApiKey) {
-  logger.warn('OMDB API key not found. Set NUXT_PUBLIC_OMDB_API_KEY or use --omdb-api-key')
+  logger.warn('OMDB API key not found. Set OMDB_API_KEY or use --omdb-api-key')
   logger.warn('Continuing without OMDB matching (use --skip-omdb to suppress this warning)')
 }
 
