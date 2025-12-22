@@ -86,6 +86,30 @@
             </button>
           </div>
 
+          <div class="pt-2">
+            <div class="flex items-center gap-2 mb-2">
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-yellow-400">
+                Direct IMDB ID
+              </h3>
+            </div>
+            <div class="flex gap-2">
+              <input
+                v-model.trim="imdbIdInput"
+                type="text"
+                placeholder="tt1234567"
+                class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-mono"
+                @keyup.enter="handleDirectImdbFetch"
+              >
+              <button
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold transition-colors disabled:opacity-50"
+                :disabled="isSearching || !imdbIdInput"
+                @click="handleDirectImdbFetch"
+              >
+                Fetch
+              </button>
+            </div>
+          </div>
+
           <div
             v-if="searchError"
             class="text-red-500 text-sm"
@@ -187,6 +211,7 @@ const emit = defineEmits<{
 const isLocalhost = ref(false)
 const searchTitle = ref('')
 const searchYear = ref('')
+const imdbIdInput = ref('')
 const isSearching = ref(false)
 const searchResults = ref<OMDBSearchResult[]>([])
 const searchError = ref('')
@@ -201,6 +226,7 @@ onMounted(() => {
 watch(() => props.movie.imdbId, () => {
   searchTitle.value = props.movie.title
   searchYear.value = props.movie.year?.toString() || ''
+  imdbIdInput.value = ''
   searchResults.value = []
   searchError.value = ''
 })
@@ -234,6 +260,21 @@ const handleSearch = async () => {
   } finally {
     isSearching.value = false
   }
+}
+
+const handleDirectImdbFetch = async () => {
+  const input = imdbIdInput.value.trim()
+  if (!input) return
+  
+  // Extract IMDB ID from input (could be full URL or just the ID)
+  const match = input.match(/tt\d{7,}/)
+  if (!match) {
+    searchError.value = 'Invalid IMDB ID or URL (should contain tt followed by at least 7 digits)'
+    return
+  }
+  
+  const id = match[0]
+  await selectMovie(id)
 }
 
 const selectMovie = async (imdbId: string) => {

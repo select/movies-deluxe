@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="`/movie/${movie.imdbId}`"
-    class="block border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
+    class="block border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
   >
     <!-- Poster -->
     <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
@@ -27,13 +27,13 @@
         <!-- Source Badge -->
         <span
           v-if="movie.sources[0]?.type === 'archive.org'"
-          class="px-1.5 py-0.5 text-xs rounded-full bg-gray-700 dark:bg-gray-600 text-white"
+          class="px-1.5 py-0.5 text-[10px] rounded-full glass text-gray-800 dark:text-white font-medium"
         >
           Archive.org
         </span>
         <span
           v-else-if="movie.sources[0]?.type === 'youtube'"
-          class="px-1.5 py-0.5 text-xs rounded-full bg-red-500 text-white"
+          class="px-1.5 py-0.5 text-[10px] rounded-full glass text-red-600 dark:text-red-400 font-bold"
         >
           {{ movie.sources[0].channelName || 'YouTube' }}
         </span>
@@ -41,7 +41,7 @@
         <!-- Language Badge -->
         <span
           v-if="languageCode"
-          class="px-1.5 py-0.5 text-xs rounded-full bg-gray-800 dark:bg-gray-700 text-white font-semibold"
+          class="px-1.5 py-0.5 text-[10px] rounded-full glass text-gray-800 dark:text-white font-bold"
         >
           {{ languageCode }}
         </span>
@@ -50,22 +50,25 @@
 
     <!-- Movie Info -->
     <div class="p-3">
-      <h3 class="font-semibold text-sm line-clamp-2 mb-1">
+      <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug">
         {{ movie.title }}
       </h3>
       
-      <div class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+      <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 font-medium">
         <span v-if="movie.year">{{ movie.year }}</span>
-        <span v-if="movie.year && movie.metadata?.imdbRating">•</span>
+        <span
+          v-if="movie.year && movie.metadata?.imdbRating"
+          class="opacity-50"
+        >•</span>
         <span
           v-if="movie.metadata?.imdbRating"
           class="flex items-center gap-1"
         >
-          <div class="i-mdi-star text-yellow-500 dark:text-yellow-400" />
-          {{ movie.metadata.imdbRating }}
+          <div class="i-mdi-star text-yellow-500 dark:text-yellow-400 text-xs" />
+          <span class="font-bold text-gray-700 dark:text-gray-200">{{ movie.metadata.imdbRating }}</span>
           <span
             v-if="movie.metadata?.imdbVotes"
-            class="text-gray-500 dark:text-gray-500"
+            class="text-[10px] opacity-70"
           >
             ({{ formatVotes(movie.metadata.imdbVotes) }})
           </span>

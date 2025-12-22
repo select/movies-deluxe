@@ -477,6 +477,8 @@ pnpm tsx scripts/<name>.ts            # Run scripts
 pnpm typecheck                        # Verify typing
 ```
 
+**IMPORTANT**: Do NOT kill the dev server on port 3003 if it is already running, as the user may be using it to provide feedback and new issues.
+
 ## Frontend Verification
 
 **IMPORTANT**: Always verify frontend changes using the **chrome-devtools** MCP.

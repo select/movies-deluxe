@@ -48,6 +48,10 @@ export interface FilterState {
 
   // Localhost-only filters
   showMissingMetadataOnly: boolean
+
+  // Pagination
+  currentPage: number
+  lastScrollY: number
 }
 
 /**
@@ -63,6 +67,8 @@ const DEFAULT_FILTERS: FilterState = {
   countries: [],
   searchQuery: '',
   showMissingMetadataOnly: false,
+  currentPage: 1,
+  lastScrollY: 0,
 }
 
 /**
@@ -238,6 +244,22 @@ export const useFilterStore = defineStore('filter', () => {
   }
 
   /**
+   * Set current page for pagination
+   */
+  const setCurrentPage = (page: number) => {
+    filters.value.currentPage = page
+    persistFilters()
+  }
+
+  /**
+   * Set last scroll position
+   */
+  const setScrollY = (y: number) => {
+    filters.value.lastScrollY = y
+    persistFilters()
+  }
+
+  /**
    * Reset all filters to defaults
    */
   const resetFilters = () => {
@@ -389,6 +411,8 @@ export const useFilterStore = defineStore('filter', () => {
     toggleGenre,
     toggleCountry,
     toggleMissingMetadata,
+    setCurrentPage,
+    setScrollY,
     resetFilters,
     applyFilters,
     getAvailableGenres,

@@ -25,25 +25,30 @@ export default defineConfig({
     presetWebFonts({
       provider: 'google',
       fonts: {
-        sans: 'Ubuntu:400,500,700',
+        sans: 'Ubuntu:300,400,500,700',
         mono: 'Ubuntu Mono',
       },
     }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   shortcuts: {
-    btn: 'px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 transition-colors',
+    btn: 'px-4 py-2 rounded-full bg-gray-700 text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 font-medium',
     'btn-secondary':
-      'px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors',
-    card: 'p-4 rounded-lg shadow-md bg-white dark:bg-gray-800',
+      'px-4 py-2 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 font-medium',
+    card: 'p-4 rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700',
+    glass:
+      'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border border-white/20 dark:border-gray-800/30',
   },
   preflights: [
     {
       getCSS: () => `
-        /* Global body scrollbar */
+        /* Global body settings */
         body {
           scrollbar-width: auto;
           scrollbar-color: #d4d4d4 #f5f5f5;
+          line-height: 1.6;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
         body::-webkit-scrollbar {
           width: 12px;
