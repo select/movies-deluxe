@@ -177,6 +177,21 @@
               </div>
             </FilterSection>
 
+            <!-- Developer Tools (Localhost Only) -->
+            <FilterSection
+              v-if="isLocalhost()"
+              title="Developer Tools"
+              icon="i-mdi-dev-to"
+            >
+              <div class="space-y-3">
+                <AppInputCheckbox
+                  :checked="filterStore.filters.showMissingMetadataOnly"
+                  label="Show Missing Metadata Only"
+                  @change="filterStore.toggleMissingMetadata()"
+                />
+              </div>
+            </FilterSection>
+
             <!-- Genres and Countries Combined -->
             <div class="space-y-4">
               <!-- Genre Filter -->
@@ -234,6 +249,7 @@
 import { useFilterStore } from '@/stores/useFilterStore'
 import { SORT_OPTIONS, type SortOption } from '@/utils/movieSort'
 import { YOUTUBE_CHANNELS, AVAILABLE_GENRES, AVAILABLE_COUNTRIES } from '@/constants/filters'
+import { isLocalhost } from '@/utils/isLocalhost'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { onClickOutside, useScrollLock } from '@vueuse/core'
 

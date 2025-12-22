@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-22T21:03:10.368Z"
+    "lastUpdated": "2025-12-22T21:36:16.666Z"
   },
   "archive-HisNewJobCharlesChaplin-1915": {
     "imdbId": "archive-HisNewJobCharlesChaplin-1915",
@@ -4911,26 +4911,6 @@
       }
     ],
     "lastUpdated": "2025-12-21T22:02:32.437Z"
-  },
-  "youtube-BYPxz9mUlLQ": {
-    "imdbId": "youtube-BYPxz9mUlLQ",
-    "title": "Boris Godunov, part two",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "BYPxz9mUlLQ",
-        "url": "https://www.youtube.com/watch?v=BYPxz9mUlLQ",
-        "channelName": "Mosfilm",
-        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
-        "language": "ru",
-        "publishedAt": "6 months ago",
-        "duration": 4382,
-        "viewCount": 7045,
-        "thumbnail": "https://i.ytimg.com/vi/BYPxz9mUlLQ/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBsKStXs-G8XxDjFN37Euh4aRJPVQ",
-        "addedAt": "2025-12-21T22:02:32.938Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:02:32.938Z"
   },
   "youtube-dHHq6QTCtP4": {
     "imdbId": "youtube-dHHq6QTCtP4",
@@ -10387,5 +10367,59 @@
       "Website": "N/A",
       "Response": "True"
     }
+  },
+  "tt0092688": {
+    "imdbId": "tt0092688",
+    "title": "Boris Godunov",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "BYPxz9mUlLQ",
+        "url": "https://www.youtube.com/watch?v=BYPxz9mUlLQ",
+        "channelName": "Mosfilm",
+        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
+        "language": "ru",
+        "publishedAt": "6 months ago",
+        "duration": 4382,
+        "viewCount": 7045,
+        "thumbnail": "https://i.ytimg.com/vi/BYPxz9mUlLQ/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBsKStXs-G8XxDjFN37Euh4aRJPVQ",
+        "addedAt": "2025-12-21T22:02:32.938Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:36:16.662Z",
+    "metadata": {
+      "Title": "Boris Godunov",
+      "Year": "1986",
+      "Rated": "N/A",
+      "Released": "31 Oct 1986",
+      "Runtime": "130 min",
+      "Genre": "Drama, History",
+      "Director": "Sergey Bondarchuk",
+      "Writer": "Alexander Pushkin, Sergey Bondarchuk",
+      "Actors": "Sergey Bondarchuk, Alyona Bondarchuk, Gennadi Mitrofanov",
+      "Plot": "Based on the Alexander Pushkin's play, epic story about Tsar Boris Godunov, who reigned over Russia between 1598 and 1605.",
+      "Language": "Russian, French",
+      "Country": "Soviet Union, Czechoslovakia, West Germany, Poland",
+      "Awards": "1 win & 1 nomination total",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMDUzNWU2NzUtNjE0Yy00NGU5LWFjZmEtMjFjM2FiZDJhMzk1XkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "6.6/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "6.6",
+      "imdbVotes": "296",
+      "imdbID": "tt0092688",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1986,
+    "verified": true
   }
 }

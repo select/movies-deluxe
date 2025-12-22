@@ -45,6 +45,9 @@ export interface FilterState {
 
   // Search query
   searchQuery: string
+
+  // Localhost-only filters
+  showMissingMetadataOnly: boolean
 }
 
 /**
@@ -59,6 +62,7 @@ const DEFAULT_FILTERS: FilterState = {
   genres: [],
   countries: [],
   searchQuery: '',
+  showMissingMetadataOnly: false,
 }
 
 /**
@@ -226,6 +230,14 @@ export const useFilterStore = defineStore('filter', () => {
   }
 
   /**
+   * Toggle missing metadata filter (localhost only)
+   */
+  const toggleMissingMetadata = () => {
+    filters.value.showMissingMetadataOnly = !filters.value.showMissingMetadataOnly
+    persistFilters()
+  }
+
+  /**
    * Reset all filters to defaults
    */
   const resetFilters = () => {
@@ -313,6 +325,11 @@ export const useFilterStore = defineStore('filter', () => {
       })
     }
 
+    // 6.5 Filter by missing metadata (localhost only)
+    if (filters.value.showMissingMetadataOnly) {
+      filtered = filtered.filter(movie => !movie.metadata || !movie.metadata.imdbID)
+    }
+
     // 7. Apply sorting
     const sortOption =
       SORT_OPTIONS.find(
@@ -371,6 +388,7 @@ export const useFilterStore = defineStore('filter', () => {
     setMinVotes,
     toggleGenre,
     toggleCountry,
+    toggleMissingMetadata,
     resetFilters,
     applyFilters,
     getAvailableGenres,
