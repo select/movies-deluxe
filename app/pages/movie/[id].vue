@@ -533,6 +533,14 @@ const relatedMovies = computed(() => {
         }
       }
 
+      // Actor matches
+      if (currentMovie.metadata?.Actors && m.metadata?.Actors) {
+        const currentActors = currentMovie.metadata.Actors.split(',').map(a => a.trim().toLowerCase())
+        const movieActors = m.metadata.Actors.split(',').map(a => a.trim().toLowerCase())
+        const commonActors = currentActors.filter(a => movieActors.includes(a))
+        score += commonActors.length * 5 // 5 points per shared actor
+      }
+
       // Prefer movies with metadata
       if (m.metadata) {
         score += 1
