@@ -34,7 +34,10 @@
         </div>
       </header>
 
-      <!-- Sidebar -->
+      <!-- Mobile Menu Button -->
+      <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
+
+      <!-- Desktop Sidebar -->
       <Sidebar @open-filters="isFilterMenuOpen = true" />
 
       <!-- Filter Menu -->
@@ -44,7 +47,7 @@
       />
 
       <!-- Main Content -->
-      <main class="max-w-9xl mx-auto px-4 py-8 md:ml-16">
+      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
         <!-- Loading State -->
         <div
           v-if="movieStore.isLoading.movies"
