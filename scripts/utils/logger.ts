@@ -26,30 +26,30 @@ class Logger {
     this.context = context
   }
 
-  private log(level: LogLevel, message: string, ...args: any[]) {
+  private log(level: LogLevel, message: string, ...args: unknown[]) {
     const timestamp = new Date().toISOString()
     const color = colors[level]
     const reset = colors.RESET
     console.log(`${color}[${timestamp}] [${this.context}] ${level}:${reset} ${message}`, ...args)
   }
 
-  debug(message: string, ...args: any[]) {
+  debug(message: string, ...args: unknown[]) {
     this.log(LogLevel.DEBUG, message, ...args)
   }
 
-  info(message: string, ...args: any[]) {
+  info(message: string, ...args: unknown[]) {
     this.log(LogLevel.INFO, message, ...args)
   }
 
-  warn(message: string, ...args: any[]) {
+  warn(message: string, ...args: unknown[]) {
     this.log(LogLevel.WARN, message, ...args)
   }
 
-  error(message: string, ...args: any[]) {
+  error(message: string, ...args: unknown[]) {
     this.log(LogLevel.ERROR, message, ...args)
   }
 
-  success(message: string, ...args: any[]) {
+  success(message: string, ...args: unknown[]) {
     this.log(LogLevel.SUCCESS, message, ...args)
   }
 }

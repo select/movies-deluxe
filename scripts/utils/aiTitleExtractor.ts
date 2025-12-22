@@ -11,6 +11,25 @@ import { resolve } from 'node:path'
 const PROMPT_FILE = resolve(process.cwd(), 'prompts/extract-movie-title.md')
 
 /**
+ * Minimal OpenCode client interface for type safety
+ */
+interface OpenCodeClient {
+  session: {
+    prompt: (params: {
+      path: { id: string }
+      body: {
+        model: { providerID: string; modelID: string }
+        parts: Array<{ type: string; text: string }>
+      }
+    }) => Promise<{
+      data: {
+        parts: Array<{ type: string; text?: string }>
+      }
+    }>
+  }
+}
+
+/**
  * Load prompt template from prompts directory
  */
 export async function loadPrompt(): Promise<string> {
@@ -46,7 +65,7 @@ function calculateConfidence(
  * Extract single movie title using OpenCode SDK
  */
 export async function extractTitle(
-  client: any, // OpenCode client instance
+  client: OpenCodeClient,
   sessionId: string,
   promptTemplate: string,
   originalTitle: string
@@ -71,9 +90,9 @@ export async function extractTitle(
 
     // Extract text from response parts
     // The response contains an array of parts, we need to find text parts
-    const textParts = result.data.parts.filter((part: any) => part.type === 'text')
+    const textParts = result.data.parts.filter((part: { type: string }) => part.type === 'text')
     const extractedTitle = textParts
-      .map((part: any) => part.text)
+      .map((part: { text: string }) => part.text)
       .join('')
       .trim()
 
@@ -99,7 +118,7 @@ export async function extractTitle(
  * Batch extract titles with delay between requests
  */
 export async function batchExtractTitles(
-  client: any, // OpenCode client instance
+  client: OpenCodeClient,
   sessionId: string,
   promptTemplate: string,
   titles: Array<{ id: string; title: string }>,
