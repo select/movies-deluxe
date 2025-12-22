@@ -438,6 +438,14 @@ For more details, see https://www.conventionalcommits.org/
 
 **`config/`** - Project configuration data
 
+### Important Rules
+
+- ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files
+- ✅ Leverage auto-imports (components, composables, utils)
+- ✅ Use file-based routing in `app/pages/`
+- ❌ Do NOT manually import auto-imported items
+- ❌ Do NOT put processed assets in `public/`
+
 ### Naming Conventions
 
 - Components: `PascalCase.vue` (e.g., `MovieCard.vue`)
@@ -476,11 +484,3 @@ pnpm tsx scripts/<name>.ts            # Run scripts
 - Use `chrome-devtools_navigate_page` to `http://localhost:3003`
 - Use `chrome-devtools_take_screenshot` or `chrome-devtools_take_snapshot` to verify UI
 - Check console for errors with `chrome-devtools_list_console_messages`
-
-### Important Rules
-
-- ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files
-- ✅ Leverage auto-imports (components, composables, utils)
-- ✅ Use file-based routing in `app/pages/`
-- ❌ Do NOT manually import auto-imported items
-- ❌ Do NOT put processed assets in `public/`
