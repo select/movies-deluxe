@@ -207,7 +207,6 @@ function parseArgs(): DownloadOptions {
     } else if (arg === '--concurrency') {
       options.concurrency = parseInt(args[++i], 10)
     } else if (arg === '--help' || arg === '-h') {
-      // eslint-disable-next-line no-console
       console.log(`
 Usage: pnpm download-posters [options]
 

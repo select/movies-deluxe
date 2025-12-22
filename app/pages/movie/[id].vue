@@ -393,7 +393,7 @@
             
             <!-- Horizontal scrollable grid -->
             <div class="relative">
-              <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+              <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
                 <div
                   v-for="relatedMovie in relatedMovies"
                   :key="relatedMovie.imdbId"
@@ -901,35 +901,5 @@ const getArchiveEmbedUrl = (source: any): string => {
   );
   background-size: 1000px 100%;
   animation: shimmer 2s infinite linear;
-}
-
-/* Custom scrollbar for related movies */
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  height: 8px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-
-.dark .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #4b5563;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
 }
 </style>

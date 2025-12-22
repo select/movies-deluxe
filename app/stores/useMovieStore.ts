@@ -32,9 +32,7 @@ export const useMovieStore = defineStore('movie', () => {
         .map(([, value]) => value as MovieEntry)
 
       movies.value = movieEntries
-      console.log(`Loaded ${movieEntries.length} movies from public/data/movies.json`)
     } catch (error: any) {
-      console.error('Failed to load movies from file:', error)
       useMessageStore().showMessage({
         type: 'error',
         body: `Failed to load movies: ${error.message || 'Unknown error'}`,
@@ -265,7 +263,6 @@ export const useMovieStore = defineStore('movie', () => {
 
     const apiKey = useRuntimeConfig().public.OMDB_API_KEY
     if (!apiKey) {
-      console.warn('OMDB_API_KEY not configured, skipping runtime enrichment')
       isLoading.value.imdbFetch = false
       return null
     }
@@ -273,7 +270,6 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       // Only enrich if we have a valid IMDB ID (not temporary)
       if (!movie.imdbId.startsWith('tt')) {
-        console.warn(`Cannot enrich movie with temporary ID: ${movie.imdbId}`)
         isLoading.value.imdbFetch = false
         return null
       }
@@ -287,7 +283,6 @@ export const useMovieStore = defineStore('movie', () => {
       })
 
       if (metadata.Error) {
-        console.error(`OMDB error for ${movie.imdbId}:`, metadata.Error)
         isLoading.value.imdbFetch = false
         return null
       }
@@ -300,8 +295,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       isLoading.value.imdbFetch = false
       return metadata
-    } catch (error: any) {
-      console.error('Failed to enrich movie metadata:', error)
+    } catch {
       isLoading.value.imdbFetch = false
       return null
     }

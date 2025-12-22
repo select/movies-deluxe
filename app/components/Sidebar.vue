@@ -53,7 +53,7 @@
 
       <!-- Mobile: Sidebar Content -->
       <div
-        class="md:hidden overflow-y-auto p-4"
+        class="md:hidden overflow-y-auto scrollbar-thin p-4"
         :style="{ 'max-height': 'calc(100vh - 12rem)' }"
       >
         <!-- Filter Button -->
