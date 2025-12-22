@@ -35,6 +35,20 @@
           </p>
         </div>
         <div class="flex items-center gap-3">
+          <button
+            class="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            title="Toggle dark mode"
+            @click="toggleDark()"
+          >
+            <div
+              v-if="isDark"
+              class="i-mdi-weather-sunny"
+            />
+            <div
+              v-else
+              class="i-mdi-weather-night"
+            />
+          </button>
           <NuxtLink
             to="/"
             class="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
@@ -564,6 +578,10 @@ const scraping = ref(false)
 const stats = ref<ScrapeStats | null>(null)
 const results = ref<ScrapeResults | null>(null)
 const posterResults = ref<PosterResults | null>(null)
+
+// Dark mode toggle
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 const archiveOptions = reactive({
   rows: 10,
