@@ -34,7 +34,7 @@ export default defineEventHandler(async event => {
       movie.verified = false
 
       // If it was matched to an IMDB ID, migrate it back to a temporary ID
-      if (currentId.startsWith('tt')) {
+      if (currentId.startsWith('tt') && movie.sources && movie.sources.length > 0) {
         const source = movie.sources[0]
         let tempId = currentId
         if (source.type === 'youtube') {

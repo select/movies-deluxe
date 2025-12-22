@@ -97,14 +97,16 @@
         <div class="pt-4 border-t border-yellow-200 dark:border-yellow-800 flex flex-wrap gap-4">
           <button
             v-if="!movie.verified"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition-colors text-sm font-bold"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition-colors text-sm font-bold disabled:opacity-50"
+            :disabled="isSearching"
             @click="verifyMovie"
           >
             <div class="i-mdi-check-decagram text-lg" />
             Mark as Verified
           </button>
           <button
-            class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors text-sm font-bold"
+            class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors text-sm font-bold disabled:opacity-50"
+            :disabled="isSearching"
             @click="removeMetadata"
           >
             <div class="i-mdi-delete-sweep text-lg" />
@@ -144,7 +146,8 @@
               </p>
             </div>
             <button
-              class="self-center px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+              class="self-center px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded font-bold opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+              :disabled="isSearching"
               @click="selectMovie(result.imdbID)"
             >
               Select
