@@ -461,6 +461,13 @@
               </div>
             </div>
           </div>
+
+          <!-- Admin Curation Panel -->
+          <AdminCurationPanel
+            v-if="movie"
+            :movie="movie"
+            @updated="handleMovieUpdated"
+          />
         </div>
       </main>
 
@@ -741,6 +748,30 @@ const navigateToNextMovie = () => {
     if (nextMovie) {
       // eslint-disable-next-line no-undef
       navigateTo(`/movie/${nextMovie.imdbId}`)
+    }
+  }
+}
+
+// Handle movie updated from curation panel
+const handleMovieUpdated = async (newId: string) => {
+  // If ID changed, navigate to new URL
+  if (newId !== movie.value?.imdbId) {
+    // eslint-disable-next-line no-undef
+    await navigateTo(`/movie/${newId}`)
+    // Force reload data for the new ID
+    const foundMovie = movieStore.getMovieById(newId)
+    if (foundMovie) {
+      movie.value = foundMovie
+      updateMetaTags(foundMovie)
+    }
+  } else {
+    // Just refresh current movie data from store (store should be updated by the API call indirectly if we reload it)
+    // For now, let's just reload the whole database in the store to be sure
+    await movieStore.loadFromFile()
+    const foundMovie = movieStore.getMovieById(newId)
+    if (foundMovie) {
+      movie.value = foundMovie
+      updateMetaTags(foundMovie)
     }
   }
 }
