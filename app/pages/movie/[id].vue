@@ -638,21 +638,16 @@ const relatedMovies = computed(() => {
   return scored
 })
 
-// Load movie on mount
-onMounted(async () => {
-  // Load dark mode preference
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme ? savedTheme === 'dark' : true
-  }
+// Load movie data
+const loadMovieData = async (movieId: string) => {
+  isLoading.value = true
+  error.value = null
 
-  // Load movies if not already loaded
+  // Ensure movies are loaded in store
   if (movieStore.movies.length === 0) {
     await movieStore.loadFromFile()
   }
 
-  // Get movie by ID from route params
-  const movieId = route.params.id as string
   const foundMovie = movieStore.getMovieById(movieId)
 
   if (foundMovie) {
@@ -663,9 +658,29 @@ onMounted(async () => {
   }
 
   isLoading.value = false
+}
+
+// Load movie on mount
+onMounted(async () => {
+  // Load dark mode preference
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme')
+    isDark.value = savedTheme ? savedTheme === 'dark' : true
+  }
+
+  // Get movie by ID from route params
+  const movieId = route.params.id as string
+  await loadMovieData(movieId)
 
   // Setup keyboard navigation
   setupKeyboardNavigation()
+})
+
+// Watch for route changes to reload movie data
+watch(() => route.params.id, async (newId) => {
+  if (newId) {
+    await loadMovieData(newId as string)
+  }
 })
 
 // Keyboard navigation state
@@ -754,20 +769,16 @@ const navigateToNextMovie = () => {
 
 // Handle movie updated from curation panel
 const handleMovieUpdated = async (newId: string) => {
+  // Always reload the database from file first to get the latest changes
+  await movieStore.loadFromFile()
+
   // If ID changed, navigate to new URL
   if (newId !== movie.value?.imdbId) {
     // eslint-disable-next-line no-undef
     await navigateTo(`/movie/${newId}`)
-    // Force reload data for the new ID
-    const foundMovie = movieStore.getMovieById(newId)
-    if (foundMovie) {
-      movie.value = foundMovie
-      updateMetaTags(foundMovie)
-    }
+    // The watcher on route.params.id will handle loading the new movie data
   } else {
-    // Just refresh current movie data from store (store should be updated by the API call indirectly if we reload it)
-    // For now, let's just reload the whole database in the store to be sure
-    await movieStore.loadFromFile()
+    // Just refresh current movie data from store
     const foundMovie = movieStore.getMovieById(newId)
     if (foundMovie) {
       movie.value = foundMovie
