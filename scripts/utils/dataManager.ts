@@ -84,25 +84,36 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
     // Movie exists - merge sources and update metadata
     logger.debug(`Updating existing movie: ${movieId}`)
 
-    // Merge sources (avoid duplicates)
+    // Merge sources (avoid duplicates, update existing)
     const existingSources = existing.sources || []
     const newSources = entry.sources || []
 
-    const mergedSources = [
-      ...existingSources,
-      ...newSources.filter(newSource => {
-        return !existingSources.some(
-          s =>
-            s.type === newSource.type &&
-            ((s.type === 'archive.org' &&
-              newSource.type === 'archive.org' &&
-              s.identifier === newSource.identifier) ||
-              (s.type === 'youtube' &&
-                newSource.type === 'youtube' &&
-                s.videoId === newSource.videoId))
-        )
-      }),
-    ]
+    const mergedSources = [...existingSources]
+
+    for (const newSource of newSources) {
+      const existingIndex = mergedSources.findIndex(
+        s =>
+          s.type === newSource.type &&
+          ((s.type === 'archive.org' &&
+            newSource.type === 'archive.org' &&
+            s.identifier === newSource.identifier) ||
+            (s.type === 'youtube' &&
+              newSource.type === 'youtube' &&
+              s.videoId === newSource.videoId))
+      )
+
+      if (existingIndex !== -1) {
+        // Update existing source with new data (preferring non-empty values)
+        mergedSources[existingIndex] = {
+          ...mergedSources[existingIndex],
+          ...newSource,
+          description: newSource.description || mergedSources[existingIndex].description,
+        }
+      } else {
+        // Add new source
+        mergedSources.push(newSource)
+      }
+    }
 
     // Update entry
     db[movieId] = {

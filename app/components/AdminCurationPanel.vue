@@ -8,6 +8,13 @@
       <h2 class="text-xl font-bold">
         Admin Curation
       </h2>
+      <div
+        v-if="movie.verified"
+        class="flex items-center gap-1 text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded"
+      >
+        <div class="i-mdi-check-decagram" />
+        Verified
+      </div>
       <span class="ml-auto text-xs font-mono bg-yellow-200 dark:bg-yellow-800 px-2 py-1 rounded">
         localhost only
       </span>
@@ -87,7 +94,15 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t border-yellow-200 dark:border-yellow-800">
+        <div class="pt-4 border-t border-yellow-200 dark:border-yellow-800 flex flex-wrap gap-4">
+          <button
+            v-if="!movie.verified"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition-colors text-sm font-bold"
+            @click="verifyMovie"
+          >
+            <div class="i-mdi-check-decagram text-lg" />
+            Mark as Verified
+          </button>
           <button
             class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors text-sm font-bold"
             @click="removeMetadata"
@@ -266,6 +281,29 @@ const removeMetadata = async () => {
   } catch (err) {
     // eslint-disable-next-line no-undef, no-console
     console.error('Failed to remove metadata:', err)
+  } finally {
+    isSearching.value = false
+  }
+}
+
+const verifyMovie = async () => {
+  try {
+    isSearching.value = true
+    // eslint-disable-next-line no-undef
+    const res = await $fetch('/api/admin/movie/update', {
+      method: 'POST',
+      body: {
+        movieId: props.movie.imdbId,
+        verified: true
+      }
+    })
+    
+    if (res.success) {
+      emit('updated', res.movieId)
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-undef, no-console
+    console.error('Failed to verify movie:', err)
   } finally {
     isSearching.value = false
   }

@@ -204,10 +204,14 @@ async function fetchChannelVideos(
         continue
       }
 
+      // Fetch full video details to get the description
+      logger.debug(`  Fetching details for video: ${video.id}`)
+      const fullVideo = await youtube.getVideo(video.id)
+
       results.push({
         id: video.id,
         title,
-        description: video.description || '',
+        description: fullVideo?.description || '',
         publishedAt: video.uploadDate || '',
         channelName: channel.name,
         channelId: channel.id,
@@ -221,6 +225,9 @@ async function fetchChannelVideos(
       })
 
       count++
+
+      // Small delay between video detail fetches
+      await new Promise(resolve => setTimeout(resolve, 200))
     }
 
     logger.success(`Found ${results.length} videos from ${channel.name}`)
@@ -265,6 +272,7 @@ async function processVideo(
     url: `https://www.youtube.com/watch?v=${video.id}`,
     channelName: video.channelName,
     channelId: video.channelId,
+    description: video.description,
     releaseYear: year, // Store extracted year in source for OMDB validation
     language: channelConfig?.language, // Add language from channel config
     publishedAt: video.publishedAt,
