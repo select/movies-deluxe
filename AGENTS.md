@@ -438,7 +438,7 @@ For more details, see https://www.conventionalcommits.org/
 
 **`config/`** - Project configuration data
 
-### Important Rules
+**Important Rules:**
 
 - ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files
 - ✅ Leverage auto-imports (components, composables, utils)
@@ -474,6 +474,7 @@ For more details, see https://www.conventionalcommits.org/
 pnpm dev                              # Start dev server (port 3003)
 pnpm build                            # Build for production
 pnpm tsx scripts/<name>.ts            # Run scripts
+pnpm typecheck                        # Verify typing
 ```
 
 ## Frontend Verification
@@ -484,3 +485,4 @@ pnpm tsx scripts/<name>.ts            # Run scripts
 - Use `chrome-devtools_navigate_page` to `http://localhost:3003`
 - Use `chrome-devtools_take_screenshot` or `chrome-devtools_take_snapshot` to verify UI
 - Check console for errors with `chrome-devtools_list_console_messages`
+- Run `pnpm typecheck` to ensure type safety
