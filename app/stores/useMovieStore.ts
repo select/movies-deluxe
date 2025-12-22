@@ -21,7 +21,7 @@ export const useMovieStore = defineStore('movie', () => {
 
     try {
       // Fetch the movies.json file from the public directory
-      const response = await $fetch<Record<string, any>>('/data/movies.json')
+      const response = await $fetch<Record<string, unknown>>('/data/movies.json')
 
       // Convert object to array, filtering out metadata entries
       const movieEntries: MovieEntry[] = Object.entries(response)
@@ -32,10 +32,11 @@ export const useMovieStore = defineStore('movie', () => {
         .map(([, value]) => value as MovieEntry)
 
       movies.value = movieEntries
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       useMessageStore().showMessage({
         type: 'error',
-        body: `Failed to load movies: ${error.message || 'Unknown error'}`,
+        body: `Failed to load movies: ${errorMessage}`,
       })
     } finally {
       isLoading.value.movies = false

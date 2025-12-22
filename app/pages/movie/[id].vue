@@ -471,7 +471,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry } from '~/app/types'
+import type { MovieEntry, ArchiveOrgSource } from '~/app/types'
 
 // Nuxt auto-imports
 // eslint-disable-next-line no-undef
@@ -846,7 +846,7 @@ const getYouTubeEmbedUrl = (url: string): string => {
  * Create Archive.org embed URL from source
  * Uses the identifier from the source or extracts from URL
  */
-const getArchiveEmbedUrl = (source: any): string => {
+const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
   // If source has identifier field, use it directly
   if (source.identifier) {
     return `https://archive.org/embed/${source.identifier}`
