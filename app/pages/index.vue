@@ -112,7 +112,7 @@
         >
           <div class="flex flex-wrap gap-6 text-sm">
             <div class="">
-              <span class="text-gray-500">Total Movies:</span> {{ movieStore.movies.length }}
+              <span class="text-gray-500">Total Movies:</span> {{ filteredAndSortedMovies.length }}
             </div>
             <div class="">
               <span class="text-gray-500">Archive.org:</span> {{ archiveCount }}
