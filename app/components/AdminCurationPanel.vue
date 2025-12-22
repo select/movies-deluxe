@@ -193,6 +193,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-undef */
 import type { MovieEntry, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
 
 interface UpdateResponse {
@@ -242,7 +243,7 @@ const handleSearch = async () => {
   searchResults.value = []
   
   try {
-    // eslint-disable-next-line no-undef
+     
     const data = await $fetch<OMDBSearchResponse>('/api/admin/omdb/search', {
       query: {
         s: title,
@@ -281,13 +282,13 @@ const selectMovie = async (imdbId: string) => {
   try {
     isSearching.value = true
     // Get full details first
-    // eslint-disable-next-line no-undef
+     
     const details = await $fetch<MovieMetadata & { Response: string, Error?: string }>('/api/admin/omdb/details', {
       query: { i: imdbId }
     })
     
     if (details.Response === 'True') {
-      // eslint-disable-next-line no-undef
+       
       const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
         method: 'POST',
         body: {
@@ -301,11 +302,11 @@ const selectMovie = async (imdbId: string) => {
         emit('updated', res.movieId)
       }
     } else {
-      // eslint-disable-next-line no-undef, no-console
+      // eslint-disable-next-line no-console
       console.error('Failed to get movie details:', details.Error)
     }
   } catch (err) {
-    // eslint-disable-next-line no-undef, no-console
+    // eslint-disable-next-line no-console
     console.error('Failed to update movie:', err)
   } finally {
     isSearching.value = false
@@ -313,12 +314,12 @@ const selectMovie = async (imdbId: string) => {
 }
 
 const removeMetadata = async () => {
-  // eslint-disable-next-line no-undef
+   
   if (!confirm('Are you sure you want to remove metadata? This will reset the movie to an unmatched state.')) return
   
   try {
     isSearching.value = true
-    // eslint-disable-next-line no-undef
+     
     const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
@@ -331,7 +332,7 @@ const removeMetadata = async () => {
       emit('updated', res.movieId)
     }
   } catch (err) {
-    // eslint-disable-next-line no-undef, no-console
+    // eslint-disable-next-line no-console
     console.error('Failed to remove metadata:', err)
   } finally {
     isSearching.value = false
@@ -341,7 +342,7 @@ const removeMetadata = async () => {
 const verifyMovie = async () => {
   try {
     isSearching.value = true
-    // eslint-disable-next-line no-undef
+     
     const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
@@ -354,7 +355,7 @@ const verifyMovie = async () => {
       emit('updated', res.movieId)
     }
   } catch (err) {
-    // eslint-disable-next-line no-undef, no-console
+    // eslint-disable-next-line no-console
     console.error('Failed to verify movie:', err)
   } finally {
     isSearching.value = false
