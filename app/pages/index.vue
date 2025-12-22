@@ -65,16 +65,16 @@
           class="mb-8"
         >
           <div class="flex flex-wrap gap-3 text-sm">
-            <div class="px-3 py-1 rounded-full">
+            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
               <span class="font-semibold">Total Movies:</span> {{ movieStore.movies.length }}
             </div>
-            <div class="px-3 py-1 rounded-full">
+            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
               <span class="font-semibold">Archive.org:</span> {{ archiveCount }}
             </div>
-            <div class="px-3 py-1 rounded-full">
+            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
               <span class="font-semibold">YouTube:</span> {{ youtubeCount }}
             </div>
-            <div class="px-3 py-1 rounded-full">
+            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
               <span class="font-semibold">With Metadata:</span> {{ enrichedCount }}
             </div>
           </div>
