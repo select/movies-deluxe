@@ -127,10 +127,32 @@
             </div>
           </div>
         </div>
+
+        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Posters Downloaded</span>
+            <div class="i-mdi-image-multiple text-2xl text-purple-500" />
+          </div>
+          <div class="text-3xl font-bold">
+            {{ stats.posters.downloaded }}
+          </div>
+          <div class="mt-2 flex flex-col gap-1">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-400">of {{ stats.posters.withPosterUrl }} with URL</span>
+              <span class="font-medium">{{ stats.posters.percent.toFixed(1) }}%</span>
+            </div>
+            <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                class="h-full bg-purple-500 transition-all duration-1000" 
+                :style="{ width: `${stats.posters.percent}%` }"
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Scrape Controls -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Archive.org Scraper -->
         <div class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700">
           <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
@@ -249,26 +271,78 @@
             </button>
           </div>
         </div>
+
+        <!-- Poster Downloader -->
+        <div class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <div class="i-mdi-image-multiple text-purple-500" />
+            Poster Downloader
+          </h2>
+          
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Download limit</label>
+              <input
+                v-model="posterOptions.limit"
+                type="number"
+                class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <div class="relative">
+                  <input
+                    v-model="posterOptions.force"
+                    type="checkbox"
+                    class="sr-only peer"
+                  >
+                  <div class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600" />
+                </div>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Force re-download</span>
+              </label>
+            </div>
+
+            <button 
+              class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
+              :disabled="scraping"
+              @click="startPosterDownload"
+            >
+              <div
+                v-if="scraping"
+                class="i-mdi-loading animate-spin"
+              />
+              <div
+                v-else
+                class="i-mdi-download"
+              />
+              {{ scraping ? 'Downloading...' : 'Download Posters' }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Results Log -->
       <section
-        v-if="results"
+        v-if="results || posterResults"
         class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700"
       >
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl font-bold">
-            Scrape Results
+            {{ posterResults ? 'Poster Download Results' : 'Scrape Results' }}
           </h2>
           <button
             class="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-            @click="results = null"
+            @click="results = null; posterResults = null"
           >
             Clear
           </button>
         </div>
         
-        <div class="grid grid-cols-3 gap-4 mb-6">
+        <div
+          v-if="results"
+          class="grid grid-cols-3 gap-4 mb-6"
+        >
           <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
             <div class="text-xs text-blue-600 dark:text-blue-400 uppercase font-bold tracking-wider mb-1">
               Processed
@@ -296,19 +370,60 @@
         </div>
 
         <div
-          v-if="results.errors.length > 0"
+          v-if="posterResults"
+          class="grid grid-cols-2 gap-4 mb-6"
+        >
+          <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
+            <div class="text-xs text-blue-600 dark:text-blue-400 uppercase font-bold tracking-wider mb-1">
+              Successful
+            </div>
+            <div class="text-2xl font-bold text-blue-700 dark:text-blue-300">
+              {{ posterResults.successful }}
+            </div>
+          </div>
+          <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-100 dark:border-red-800">
+            <div class="text-xs text-red-600 dark:text-red-400 uppercase font-bold tracking-wider mb-1">
+              Failed
+            </div>
+            <div class="text-2xl font-bold text-red-700 dark:text-red-300">
+              {{ posterResults.failed }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="(results?.errors.length || 0) > 0 || (posterResults?.errors.length || 0) > 0"
           class="space-y-2"
         >
           <h3 class="text-sm font-bold text-red-500 uppercase tracking-wider">
-            Errors ({{ results.errors.length }})
+            Errors ({{ (results?.errors.length || 0) + (posterResults?.errors.length || 0) }})
           </h3>
           <div class="max-h-40 overflow-y-auto bg-red-50 dark:bg-red-900/10 p-4 rounded-xl text-xs font-mono text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30">
             <div
-              v-for="(err, i) in results.errors"
+              v-for="(err, i) in (results?.errors || posterResults?.errors || [])"
               :key="i"
               class="mb-1"
             >
               • {{ err }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="results?.debug && results.debug.length > 0"
+          class="space-y-2"
+        >
+          <h3 class="text-sm font-bold text-blue-500 uppercase tracking-wider">
+            Debug Log ({{ results.debug.length }})
+            /* eslint-disable no-console */
+          </h3>
+          <div class="max-h-60 overflow-y-auto bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl text-xs font-mono text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
+            <div
+              v-for="(msg, i) in results.debug"
+              :key="i"
+              class="mb-1"
+            >
+              {{ msg }}
             </div>
           </div>
         </div>
@@ -342,6 +457,13 @@ interface ScrapeStats {
     curated: number
     percent: number
   }
+  posters: {
+    totalMovies: number
+    withPosterUrl: number
+    downloaded: number
+    missing: number
+    percent: number
+  }
 }
 
 interface ScrapeResults {
@@ -351,23 +473,36 @@ interface ScrapeResults {
   errors: string[]
 }
 
+interface PosterResults {
+  processed: number
+  successful: number
+  failed: number
+  errors: string[]
+}
+
 const isDev = ref(false)
 const loading = ref(false)
 const scraping = ref(false)
 const stats = ref<ScrapeStats | null>(null)
 const results = ref<ScrapeResults | null>(null)
+const posterResults = ref<PosterResults | null>(null)
 
 const archiveOptions = reactive({
-  rows: 100,
+  rows: 10,
   pages: 1,
-  skipOmdb: false,
+  skipOmdb: true,
   autoDetect: true,
-  collections: ['feature_films']
+  collections: ['feature_films'],
 })
 
 const youtubeOptions = reactive({
+  limit: 10,
+  skipOmdb: true,
+})
+
+const posterOptions = reactive({
   limit: 50,
-  skipOmdb: false
+  force: false,
 })
 
 onMounted(async () => {
@@ -425,6 +560,28 @@ const startYouTubeScrape = async () => {
       processed: 0,
       added: 0,
       updated: 0,
+      errors: [e instanceof Error ? e.message : String(e)],
+    }
+  } finally {
+    scraping.value = false
+  }
+}
+
+const startPosterDownload = async () => {
+  scraping.value = true
+  posterResults.value = null
+  try {
+    posterResults.value = await $fetch('/api/admin/posters/download', {
+      method: 'POST',
+      body: posterOptions,
+    })
+    await refreshStats()
+  } catch (e: unknown) {
+    console.error('Poster download failed', e)
+    posterResults.value = {
+      processed: 0,
+      successful: 0,
+      failed: 0,
       errors: [e instanceof Error ? e.message : String(e)],
     }
   } finally {
