@@ -52,6 +52,12 @@ export default defineEventHandler(async _event => {
       curated: dbStats.curatedCount,
       percent: dbStats.total > 0 ? (dbStats.curatedCount / dbStats.total) * 100 : 0,
     },
+    omdb: {
+      total: dbStats.total,
+      matched: dbStats.matched,
+      unmatched: dbStats.unmatched,
+      percent: dbStats.total > 0 ? (dbStats.matched / dbStats.total) * 100 : 0,
+    },
     posters: {
       totalMovies: entries.length,
       withPosterUrl: totalWithPosterUrl,
