@@ -504,7 +504,22 @@ const relatedMovies = computed(() => {
   const currentMovie = movie.value
   const allMovies = movieStore.movies
 
-  // Score each movie based on similarity
+  /**
+   * Score each movie based on similarity to current movie.
+   * 
+   * Scoring criteria (in order of weight):
+   * - Genre match: 10 points per shared genre (can stack, e.g., 30 for 3 shared genres)
+   * - Director match: 15 points (binary - same director or not)
+   * - Actor match: 5 points per shared actor (balanced to prevent dominance)
+   * - Year proximity: 2-10 points (closer years = higher score, ±5 years max)
+   * - Metadata presence: 1 point (prefer enriched movies)
+   * 
+   * Actor scoring rationale:
+   * - 5 points per actor balances well with other criteria
+   * - 2 shared actors (10 pts) ≈ 1 genre match (10 pts)
+   * - Prevents actor-heavy movies from dominating recommendations
+   * - Still meaningful enough to surface cast-based similarities
+   */
   const scored = allMovies
     .filter(m => m.imdbId !== currentMovie.imdbId) // Exclude current movie
     .map(m => {
