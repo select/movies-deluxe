@@ -606,7 +606,7 @@ const showKeyboardHelp = ref(false)
 
 // Setup keyboard navigation
 const setupKeyboardNavigation = () => {
-  // eslint-disable-next-line no-undef
+   
   const handleKeyPress = (event: KeyboardEvent) => {
     // Ignore if user is typing in an input field
     const target = event.target as HTMLElement
@@ -647,12 +647,12 @@ const setupKeyboardNavigation = () => {
     }
   }
 
-  // eslint-disable-next-line no-undef
+   
   window.addEventListener('keydown', handleKeyPress)
 
   // Cleanup on unmount
   onUnmounted(() => {
-    // eslint-disable-next-line no-undef
+     
     window.removeEventListener('keydown', handleKeyPress)
   })
 }
@@ -767,7 +767,7 @@ const shareMovie = async () => {
 
   const title = movie.value.title + (movie.value.year ? ` (${movie.value.year})` : '')
   const text = movie.value.metadata?.Plot || `Watch ${movie.value.title} for free on Movies Deluxe`
-  // eslint-disable-next-line no-undef
+   
   const url = `${window.location.origin}/movie/${movie.value.imdbId}`
 
   // Try Web Share API first (mobile and some desktop browsers)
@@ -813,7 +813,7 @@ const showToast = (message: string) => {
   shareToastMessage.value = message
   showShareToast.value = true
 
-  // eslint-disable-next-line no-undef
+   
   setTimeout(() => {
     showShareToast.value = false
   }, 3000)

@@ -9,6 +9,7 @@
 
     <!-- Filter Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
+      ref="filterMenuRef"
       :class="[
         'fixed z-40',
         'transition-all duration-300 ease-in-out',
@@ -232,12 +233,13 @@
 import { useFilterStore } from '@/stores/useFilterStore'
 import { SORT_OPTIONS, type SortOption } from '@/utils/movieSort'
 import { YOUTUBE_CHANNELS, AVAILABLE_GENRES, AVAILABLE_COUNTRIES } from '@/constants/filters'
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 
 interface Props {
   isOpen: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   close: []
@@ -262,4 +264,35 @@ const handleSortChange = (option: SortOption) => {
   filterStore.setSort(option)
   // User can continue adjusting filters - manual close via X button or overlay
 }
+
+// Focus trap for accessibility
+const filterMenuRef = ref<HTMLElement | null>(null)
+
+// Activate focus trap when menu is open
+const { activate, deactivate } = useFocusTrap(filterMenuRef, {
+  immediate: false,
+  allowOutsideClick: true,
+  escapeDeactivates: false, // We handle Escape in the parent component
+  returnFocusOnDeactivate: true,
+  initialFocus: false, // Don't auto-focus on open to avoid jarring UX
+})
+
+// Watch for menu open/close to manage focus trap
+watch(() => props.isOpen, (isOpen) => {
+  if (isOpen) {
+    // Activate focus trap when menu opens
+    activate()
+    
+    // Small delay to allow animation to start, then focus close button
+    if (typeof window !== 'undefined') {
+      window.setTimeout(() => {
+        const closeButton = filterMenuRef.value?.querySelector('button[aria-label="Close filters"]') as HTMLElement
+        closeButton?.focus()
+      }, 100)
+    }
+  } else {
+    // Deactivate focus trap when menu closes
+    deactivate()
+  }
+})
 </script>
