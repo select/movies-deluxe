@@ -16,13 +16,13 @@
             >
               <div class="i-mdi-arrow-left text-xl" />
             </NuxtLink>
-            
+
             <div class="flex-1">
               <h1 class="text-2xl font-bold">
                 Movies Deluxe
               </h1>
             </div>
-            
+
             <!-- Dark Mode Toggle -->
             <button
               class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -60,26 +60,26 @@
             <div class="flex-1 space-y-6">
               <!-- Title -->
               <div class="h-10 bg-gray-300 dark:bg-gray-700 rounded-lg w-3/4 shimmer" />
-              
+
               <!-- Metadata Row -->
               <div class="flex gap-4">
                 <div class="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
                 <div class="h-8 w-16 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
                 <div class="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
               </div>
-              
+
               <!-- Rating -->
               <div class="flex items-center gap-2">
                 <div class="h-8 w-8 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
                 <div class="h-8 w-16 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
               </div>
-              
+
               <!-- Action Buttons -->
               <div class="flex gap-3">
                 <div class="h-10 w-40 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
                 <div class="h-10 w-28 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
               </div>
-              
+
               <!-- Genre -->
               <div class="space-y-2">
                 <div class="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
@@ -88,7 +88,7 @@
                   <div class="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
                 </div>
               </div>
-              
+
               <!-- Plot -->
               <div class="space-y-2">
                 <div class="h-4 w-12 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
@@ -390,7 +390,7 @@
             <h2 class="text-2xl font-bold mb-6">
               Related Movies
             </h2>
-            
+
             <!-- Horizontal scrollable grid -->
             <div class="relative">
               <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
@@ -441,7 +441,7 @@
               <div class="i-mdi-close text-xl" />
             </button>
           </div>
-          
+
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-gray-700 dark:text-gray-300">Go back to home</span>
@@ -500,16 +500,16 @@ const isInWatchlist = computed(() => {
 // Related movies computed
 const relatedMovies = computed(() => {
   if (!movie.value) return []
-  
+
   const currentMovie = movie.value
   const allMovies = movieStore.movies
-  
+
   // Score each movie based on similarity
   const scored = allMovies
     .filter(m => m.imdbId !== currentMovie.imdbId) // Exclude current movie
     .map(m => {
       let score = 0
-      
+
       // Genre match (highest priority)
       if (currentMovie.metadata?.Genre && m.metadata?.Genre) {
         const currentGenres = currentMovie.metadata.Genre.split(',').map(g => g.trim().toLowerCase())
@@ -517,7 +517,7 @@ const relatedMovies = computed(() => {
         const commonGenres = currentGenres.filter(g => movieGenres.includes(g))
         score += commonGenres.length * 10 // 10 points per matching genre
       }
-      
+
       // Year similarity (±5 years)
       if (currentMovie.year && m.year) {
         const yearDiff = Math.abs(parseInt(currentMovie.year) - parseInt(m.year))
@@ -525,26 +525,26 @@ const relatedMovies = computed(() => {
           score += (5 - yearDiff) * 2 // 2-10 points based on proximity
         }
       }
-      
+
       // Director match
       if (currentMovie.metadata?.Director && m.metadata?.Director) {
         if (currentMovie.metadata.Director === m.metadata.Director) {
           score += 15 // 15 points for same director
         }
       }
-      
+
       // Prefer movies with metadata
       if (m.metadata) {
         score += 1
       }
-      
+
       return { movie: m, score }
     })
     .filter(item => item.score > 0) // Only include movies with some similarity
     .sort((a, b) => b.score - a.score) // Sort by score descending
     .slice(0, 8) // Limit to 8 movies
     .map(item => item.movie)
-  
+
   return scored
 })
 
@@ -573,7 +573,7 @@ onMounted(async () => {
   }
 
   isLoading.value = false
-  
+
   // Setup keyboard navigation
   setupKeyboardNavigation()
 })
@@ -597,7 +597,7 @@ const setupKeyboardNavigation = () => {
         // eslint-disable-next-line no-undef
         navigateTo('/')
         break
-        
+
       case ' ':
       case 'Enter':
         // Toggle watchlist (only if Space or Enter)
@@ -606,17 +606,17 @@ const setupKeyboardNavigation = () => {
           toggleWatchlist()
         }
         break
-        
+
       case 'ArrowLeft':
         // Navigate to previous movie
         navigateToPrevMovie()
         break
-        
+
       case 'ArrowRight':
         // Navigate to next movie
         navigateToNextMovie()
         break
-        
+
       case '?':
         // Toggle keyboard shortcuts help
         showKeyboardHelp.value = !showKeyboardHelp.value
@@ -626,7 +626,7 @@ const setupKeyboardNavigation = () => {
 
   // eslint-disable-next-line no-undef
   window.addEventListener('keydown', handleKeyPress)
-  
+
   // Cleanup on unmount
   onUnmounted(() => {
     // eslint-disable-next-line no-undef
@@ -637,7 +637,7 @@ const setupKeyboardNavigation = () => {
 // Navigate to previous movie
 const navigateToPrevMovie = () => {
   if (!movie.value) return
-  
+
   const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
   if (currentIndex > 0) {
     const prevMovie = movieStore.movies[currentIndex - 1]
@@ -649,7 +649,7 @@ const navigateToPrevMovie = () => {
 // Navigate to next movie
 const navigateToNextMovie = () => {
   if (!movie.value) return
-  
+
   const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
   if (currentIndex < movieStore.movies.length - 1) {
     const nextMovie = movieStore.movies[currentIndex + 1]
@@ -671,7 +671,7 @@ const updateMetaTags = (movie: MovieEntry) => {
     meta: [
       // Basic meta tags
       { name: 'description', content: description },
-      
+
       // Open Graph (Facebook, LinkedIn)
       { property: 'og:type', content: 'video.movie' },
       { property: 'og:title', content: title },
@@ -679,13 +679,13 @@ const updateMetaTags = (movie: MovieEntry) => {
       { property: 'og:image', content: poster },
       { property: 'og:url', content: url },
       { property: 'og:site_name', content: 'Movies Deluxe' },
-      
+
       // Twitter Card
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
       { name: 'twitter:image', content: poster },
-      
+
       // Additional movie metadata
       ...(movie.metadata?.Director ? [{ property: 'video:director', content: movie.metadata.Director }] : []),
       ...(movie.metadata?.Actors ? [{ property: 'video:actor', content: movie.metadata.Actors }] : []),
@@ -703,7 +703,7 @@ const updateMetaTags = (movie: MovieEntry) => {
           ...(movie.metadata?.Plot && { description: movie.metadata.Plot }),
           ...(movie.poster && { image: poster }),
           ...(movie.metadata?.Director && { director: { '@type': 'Person', name: movie.metadata.Director } }),
-          ...(movie.metadata?.Actors && { 
+          ...(movie.metadata?.Actors && {
             actor: movie.metadata.Actors.split(',').map((name: string) => ({
               '@type': 'Person',
               name: name.trim()
@@ -789,7 +789,7 @@ const fallbackCopyToClipboard = async (url: string) => {
 const showToast = (message: string) => {
   shareToastMessage.value = message
   showShareToast.value = true
-  
+
   // eslint-disable-next-line no-undef
   setTimeout(() => {
     showShareToast.value = false
@@ -813,27 +813,27 @@ const getYouTubeEmbedUrl = (url: string): string => {
   try {
     // eslint-disable-next-line no-undef
     const urlObj = new URL(url)
-    
+
     // Handle youtu.be short links
     if (urlObj.hostname === 'youtu.be') {
       const videoId = urlObj.pathname.slice(1) // Remove leading slash
       return `https://www.youtube.com/embed/${videoId}`
     }
-    
+
     // Handle youtube.com links
     if (urlObj.hostname.includes('youtube.com')) {
       // Already an embed URL
       if (urlObj.pathname.includes('/embed/')) {
         return url
       }
-      
+
       // Extract from watch?v= parameter
       const videoId = urlObj.searchParams.get('v')
       if (videoId) {
         return `https://www.youtube.com/embed/${videoId}`
       }
     }
-    
+
     // Fallback: return original URL
     return url
   } catch {
@@ -851,18 +851,18 @@ const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
   if (source.identifier) {
     return `https://archive.org/embed/${source.identifier}`
   }
-  
+
   // Try to extract identifier from URL
   try {
     // eslint-disable-next-line no-undef
     const url = new URL(source.url)
     const pathParts = url.pathname.split('/').filter(Boolean)
-    
+
     // URL format: https://archive.org/details/IDENTIFIER
     if (pathParts[0] === 'details' && pathParts[1]) {
       return `https://archive.org/embed/${pathParts[1]}`
     }
-    
+
     // Fallback: return original URL
     return source.url
   } catch {
