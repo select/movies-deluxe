@@ -19,6 +19,8 @@ export default defineConfig({
       collections: {
         mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
         carbon: () => import('@iconify-json/carbon/icons.json').then(i => i.default),
+        'material-symbols-light': () =>
+          import('@iconify-json/material-symbols-light/icons.json').then(i => i.default),
       },
     }),
     presetTypography(),
