@@ -54,7 +54,7 @@
         {{ movie.title }}
       </h3>
       
-      <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 mb-3">
+      <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
         <span v-if="movie.year">{{ movie.year }}</span>
         <span v-if="movie.year && movie.metadata?.imdbRating">•</span>
         <span
@@ -70,11 +70,6 @@
             ({{ formatVotes(movie.metadata.imdbVotes) }})
           </span>
         </span>
-      </div>
-
-      <!-- View Details Button -->
-      <div class="block w-full text-center px-3 py-2 text-sm rounded-full bg-gray-700 dark:bg-yellow-600 text-white hover:bg-gray-600 dark:hover:bg-yellow-500 transition-colors">
-        View Details
       </div>
     </div>
   </NuxtLink>
