@@ -37,7 +37,7 @@ export type {
 
   // Utility types
   TemporaryId,
-} from '~/types/movie'
+} from '../../types/movie'
 
 // Re-export utility functions
 export {
@@ -47,7 +47,7 @@ export {
   generateYouTubeId,
   extractIdentifier,
   MatchConfidence,
-} from '~/types/movie'
+} from '../../types/movie'
 
 /**
  * Frontend-specific types

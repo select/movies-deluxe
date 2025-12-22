@@ -185,27 +185,32 @@ watch(
 )
 
 // Keyboard shortcuts
-const { Escape, f } = useMagicKeys()
+const keys = useMagicKeys()
+const { Escape, f } = keys
 
 // Escape key closes filter menu
-whenever(Escape, () => {
-  if (isFilterMenuOpen.value) {
-    isFilterMenuOpen.value = false
-  }
-})
+if (Escape) {
+  whenever(Escape, () => {
+    if (isFilterMenuOpen.value) {
+      isFilterMenuOpen.value = false
+    }
+  })
+}
 
 // 'F' key toggles filter menu (only when not typing in input)
-whenever(f, () => {
-  // Check if user is typing in an input/textarea
-  if (typeof window !== 'undefined') {
-    const activeElement = window.document.activeElement
-    const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-    
-    if (!isTyping) {
-      isFilterMenuOpen.value = !isFilterMenuOpen.value
+if (f) {
+  whenever(f, () => {
+    // Check if user is typing in an input/textarea
+    if (typeof window !== 'undefined') {
+      const activeElement = window.document.activeElement
+      const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+      
+      if (!isTyping) {
+        isFilterMenuOpen.value = !isFilterMenuOpen.value
+      }
     }
-  }
-})
+  })
+}
 
 // Toggle dark mode
 const toggleDarkMode = () => {
@@ -251,7 +256,7 @@ const setupInfiniteScroll = () => {
     (entries) => {
       const entry = entries[0]
       // Load more when sentinel is visible and there are more items
-      if (entry.isIntersecting && hasMore.value) {
+      if (entry && entry.isIntersecting && hasMore.value) {
         loadMore()
       }
     },

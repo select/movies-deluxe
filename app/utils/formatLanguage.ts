@@ -7,7 +7,8 @@ export function getLanguageCode(language: string | undefined): string {
   if (!language) return ''
 
   // Extract first language if comma-separated
-  const firstLang = language.split(',')[0].trim().toLowerCase()
+  const firstLang = language.split(',')[0]?.trim().toLowerCase()
+  if (!firstLang) return ''
 
   // Map common languages to codes
   const languageMap: Record<string, string> = {
