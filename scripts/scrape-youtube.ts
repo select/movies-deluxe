@@ -452,10 +452,10 @@ Examples:
 }
 
 // Get OMDB API key from env or command line
-const omdbApiKey = values['omdb-api-key'] || process.env.NUXT_PUBLIC_OMDB_API_KEY
+const omdbApiKey = values['omdb-api-key'] || process.env.OMDB_API_KEY
 
 if (!values['skip-omdb'] && !omdbApiKey) {
-  logger.warn('OMDB API key not found. Set NUXT_PUBLIC_OMDB_API_KEY or use --omdb-api-key')
+  logger.warn('OMDB API key not found. Set OMDB_API_KEY or use --omdb-api-key')
   logger.warn('Continuing without OMDB matching (use --skip-omdb to suppress this warning)')
 }
 

@@ -16,6 +16,7 @@ export type MovieSourceType = 'archive.org' | 'youtube'
 export interface MovieSourceBase {
   type: MovieSourceType
   url: string
+  description?: string // Original source description (e.g., YouTube description)
   addedAt: string // ISO 8601 timestamp
 }
 
@@ -111,6 +112,7 @@ export interface MovieEntry {
   sources: MovieSource[]
   metadata?: MovieMetadata
   ai?: AIMetadata // AI-extracted metadata
+  verified?: boolean // Whether this entry has been manually verified by a human
   lastUpdated: string // ISO 8601 timestamp
 }
 
