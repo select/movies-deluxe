@@ -6,7 +6,7 @@
     <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
       <header class="border-b border-gray-200 dark:border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+        <div class="max-w-none mx-auto px-4 lg:px-[6%] py-6 flex items-center justify-between">
           <div>
             <h1 class="text-3xl font-bold">
               Movies Deluxe
@@ -93,16 +93,16 @@
       />
 
       <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
+      <main class="max-w-none mx-auto px-4 lg:px-[6%] py-8 md:ml-16">
         <!-- Loading State -->
         <div
-          v-if="movieStore.isLoading.movies"
-          class="text-center py-12"
+          v-if="movieStore.isInitialLoading"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
         >
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100" />
-          <p class="mt-4 text-gray-600 dark:text-gray-400">
-            Loading movies...
-          </p>
+          <MovieCardSkeleton
+            v-for="i in 12"
+            :key="i"
+          />
         </div>
 
         <!-- Movie Stats -->
@@ -140,7 +140,7 @@
 
         <!-- Empty State -->
         <div
-          v-else-if="!movieStore.isLoading.movies"
+          v-else-if="!movieStore.isInitialLoading"
           class="text-center py-12"
         >
           <p class="text-gray-600 dark:text-gray-400">
@@ -171,7 +171,7 @@
 
       <!-- Footer -->
       <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
-        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        <div class="max-w-none mx-auto px-4 lg:px-[6%] py-6 text-center text-sm text-gray-600 dark:text-gray-400">
           <p>All movies are legally available from Archive.org and YouTube</p>
         </div>
       </footer>

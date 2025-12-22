@@ -16,6 +16,7 @@ export const useMovieStore = defineStore('movie', () => {
     movieDetails: false,
     imdbFetch: false,
   })
+  const isInitialLoading = ref(true)
 
   // Fuse.js instance for advanced search
   const fuse = ref<Fuse<MovieEntry> | null>(null)
@@ -77,6 +78,7 @@ export const useMovieStore = defineStore('movie', () => {
       console.error('Failed to load movies:', err)
     } finally {
       isLoading.value.movies = false
+      isInitialLoading.value = false
     }
   }
 
@@ -348,6 +350,7 @@ export const useMovieStore = defineStore('movie', () => {
     // State
     movies,
     isLoading,
+    isInitialLoading,
 
     // Data loading
     loadFromFile,
