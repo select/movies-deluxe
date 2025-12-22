@@ -16,6 +16,29 @@
             </p>
           </div>
 
+          <!-- Search Bar -->
+          <div class="flex-1 max-w-md mx-8 hidden md:block">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div class="i-mdi-magnify text-gray-400" />
+              </div>
+              <input
+                :value="filterStore.filters.searchQuery"
+                type="text"
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                placeholder="Search movies, actors, directors..."
+                @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
+              >
+              <button
+                v-if="filterStore.filters.searchQuery"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                @click="filterStore.setSearchQuery('')"
+              >
+                <div class="i-mdi-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
+              </button>
+            </div>
+          </div>
+
           <!-- Dark Mode Toggle -->
           <button
             class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -33,6 +56,29 @@
           </button>
         </div>
       </header>
+
+      <!-- Mobile Search Bar -->
+      <div class="md:hidden px-4 py-4 border-b border-gray-200 dark:border-gray-800">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div class="i-mdi-magnify text-gray-400" />
+          </div>
+          <input
+            :value="filterStore.filters.searchQuery"
+            type="text"
+            class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+            placeholder="Search movies, actors..."
+            @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
+          >
+          <button
+            v-if="filterStore.filters.searchQuery"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center"
+            @click="filterStore.setSearchQuery('')"
+          >
+            <div class="i-mdi-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
+          </button>
+        </div>
+      </div>
 
       <!-- Mobile Menu Button -->
       <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
@@ -141,6 +187,16 @@ import { useMagicKeys, whenever } from '@vueuse/core'
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
 
+// Search handling
+const handleSearchInput = (query: string) => {
+  filterStore.setSearchQuery(query)
+  
+  // If searching, switch to relevance sort if not already
+  if (query && filterStore.filters.sort.field !== 'relevance') {
+    filterStore.setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
+  }
+}
+
 // Dark mode state (default to dark)
 const isDark = ref(true)
 
@@ -222,8 +278,11 @@ const toggleDarkMode = () => {
 
 // Computed properties
 const filteredAndSortedMovies = computed(() => {
-  // Apply all filters and sorting from the filter store
-  return filterStore.applyFilters(movieStore.movies)
+  // 1. Apply search first (using Fuse.js in movieStore)
+  const searchedMovies = movieStore.searchMovies(filterStore.filters.searchQuery)
+  
+  // 2. Apply other filters and sorting
+  return filterStore.applyFilters(searchedMovies)
 })
 
 const displayedMovies = computed(() => {

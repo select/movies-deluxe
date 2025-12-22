@@ -1,3 +1,4 @@
+import Fuse from 'fuse.js'
 import type { MovieEntry, MovieSource, MovieSourceType, MovieMetadata } from '~/types'
 
 // Frontend-specific loading state type
@@ -16,20 +17,52 @@ export const useMovieStore = defineStore('movie', () => {
     imdbFetch: false,
   })
 
+  // Fuse.js instance for advanced search
+  const fuse = ref<Fuse<MovieEntry> | null>(null)
+
+  // Initialize or update Fuse instance when movies change
+  watch(
+    movies,
+    newMovies => {
+      if (newMovies.length > 0) {
+        fuse.value = new Fuse(newMovies, {
+          keys: [
+            { name: 'title', weight: 1.0 },
+            { name: 'ai.extractedTitle', weight: 0.9 },
+            { name: 'metadata.Actors', weight: 0.7 },
+            { name: 'metadata.Director', weight: 0.7 },
+            { name: 'metadata.Genre', weight: 0.5 },
+            { name: 'year', weight: 0.3 },
+          ],
+          threshold: 0.3, // Adjust for fuzziness (0.0 is exact match, 1.0 is anything)
+          includeScore: true,
+          useExtendedSearch: true,
+        })
+      } else {
+        fuse.value = null
+      }
+    },
+    { immediate: true }
+  )
+
   // Cached poster existence checks
   const posterCache = ref<Map<string, boolean>>(new Map())
 
   /**
-   * Load movies from public/data/movies.json
+   * Load movies from server API
    * Converts the object-based database to an array for easier use in components
    */
   const loadFromFile = async () => {
     isLoading.value.movies = true
 
     try {
-      // Fetch the movies.json file from the public directory
-      // Add a timestamp to avoid caching issues
-      const response = await $fetch<Record<string, unknown>>(`/data/movies.json?t=${Date.now()}`)
+      // Fetch the movies from the server API instead of static file to avoid caching issues
+      const response = await $fetch<Record<string, unknown>>('/api/movies')
+
+      if (response.error) {
+        console.error('Failed to load movies:', response.message)
+        return
+      }
 
       // Convert object to array, filtering out metadata entries
       const movieEntries: MovieEntry[] = Object.entries(response)
@@ -40,8 +73,8 @@ export const useMovieStore = defineStore('movie', () => {
         .map(([, value]) => value as MovieEntry)
 
       movies.value = movieEntries
-    } catch {
-      // Failed to load movies
+    } catch (err) {
+      console.error('Failed to load movies:', err)
     } finally {
       isLoading.value.movies = false
     }
@@ -57,15 +90,20 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Search movies by title, year, genre, or other metadata
+   * Search movies by title, year, genre, or other metadata using Fuse.js
    * @param query - Search query string
    * @returns Filtered array of movies matching the query
    */
   const searchMovies = (query: string): MovieEntry[] => {
     if (!query.trim()) return movies.value
 
-    const lowerQuery = query.toLowerCase()
+    if (fuse.value) {
+      const results = fuse.value.search(query)
+      return results.map(r => r.item)
+    }
 
+    // Fallback to simple search if Fuse is not initialized
+    const lowerQuery = query.toLowerCase()
     return movies.value.filter(movie => {
       // Search in title
       if (movie.title.toLowerCase().includes(lowerQuery)) return true

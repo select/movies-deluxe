@@ -39,6 +39,9 @@ export interface FilterState {
 
   // Country filter
   countries: string[]
+
+  // Search query
+  searchQuery: string
 }
 
 /**
@@ -52,6 +55,7 @@ const DEFAULT_FILTERS: FilterState = {
   minVotes: 0,
   genres: [],
   countries: [],
+  searchQuery: '',
 }
 
 /**
@@ -131,6 +135,14 @@ export const useFilterStore = defineStore('filter', () => {
     )
     return found || SORT_OPTIONS[0]!
   })
+
+  /**
+   * Set search query
+   */
+  const setSearchQuery = (query: string) => {
+    filters.value.searchQuery = query
+    persistFilters()
+  }
 
   /**
    * Toggle source filter (archive.org or YouTube channel name)
@@ -280,7 +292,11 @@ export const useFilterStore = defineStore('filter', () => {
         opt =>
           opt.field === filters.value.sort.field && opt.direction === filters.value.sort.direction
       ) || SORT_OPTIONS[0]!
-    filtered = sortMovies(filtered, sortOption)
+
+    // Only apply sorting if not 'relevance' (which is handled by search)
+    if (sortOption.field !== 'relevance') {
+      filtered = sortMovies(filtered, sortOption)
+    }
 
     return filtered
   }
@@ -321,6 +337,7 @@ export const useFilterStore = defineStore('filter', () => {
 
     // Actions
     setSort,
+    setSearchQuery,
     toggleSource,
     setMinRating,
     setMinYear,
