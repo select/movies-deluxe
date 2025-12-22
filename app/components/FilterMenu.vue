@@ -7,17 +7,21 @@
       @click="emit('close')"
     />
 
-    <!-- Filter Menu Panel (slides from top) -->
+    <!-- Filter Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
       :class="[
         'fixed z-40',
         'transition-all duration-300 ease-in-out',
         'bg-white dark:bg-gray-800',
-        'border-b border-gray-200 dark:border-gray-700',
         'shadow-lg',
-        'left-0 right-0',
         'overflow-hidden',
-        isOpen ? 'top-0' : '-top-full',
+        // Mobile: Bottom sheet (< md breakpoint)
+        'bottom-0 left-0 right-0 rounded-t-2xl border-t border-gray-200 dark:border-gray-700',
+        'md:top-0 md:left-0 md:bottom-auto md:right-auto md:h-full md:w-[400px] md:rounded-none md:border-t-0 md:border-r md:border-gray-200 md:dark:border-gray-700',
+        // Animation: translateY for mobile, translateX for desktop
+        isOpen
+          ? 'translate-y-0 md:translate-x-0'
+          : 'translate-y-full md:translate-y-0 md:-translate-x-full',
       ]"
     >
       <!-- Header -->
@@ -36,7 +40,7 @@
       </div>
 
       <!-- Filter Content -->
-      <div class="overflow-y-auto scrollbar-thin max-h-[60vh] p-4">
+      <div class="overflow-y-auto scrollbar-thin max-h-[60vh] md:h-[calc(100vh-4rem)] p-4">
         <div class="max-w-7xl mx-auto space-y-4">
           <!-- Sort Section (Top) -->
           <div class="pb-4 border-b-2 border-gray-300 dark:border-gray-600">
