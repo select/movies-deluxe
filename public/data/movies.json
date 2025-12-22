@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-22T16:35:20.469Z"
+    "lastUpdated": "2025-12-22T16:47:15.839Z"
   },
   "archive-HisNewJobCharlesChaplin-1915": {
     "imdbId": "archive-HisNewJobCharlesChaplin-1915",
@@ -19,24 +19,6 @@
       }
     ],
     "lastUpdated": "2025-12-22T16:01:55.743Z"
-  },
-  "archive-sex_madness": {
-    "imdbId": "archive-sex_madness",
-    "title": "Sex Madness",
-    "year": 1938,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "sex_madness",
-        "url": "https://archive.org/details/sex_madness",
-        "collection": "feature_films",
-        "downloads": 3686698,
-        "thumbnail": "https://archive.org/services/img/sex_madness",
-        "releaseDate": "1938-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.211Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.638Z"
   },
   "archive-charlie_chaplin_film_fest": {
     "imdbId": "archive-charlie_chaplin_film_fest",
@@ -281,24 +263,6 @@
         "downloads": 473620,
         "thumbnail": "https://archive.org/services/img/Horror_Express",
         "releaseDate": "1973-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.212Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.639Z"
-  },
-  "archive-secret_weapon": {
-    "imdbId": "archive-secret_weapon",
-    "title": "Sherlock Holmes and the Secret Weapon",
-    "year": 1943,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "secret_weapon",
-        "url": "https://archive.org/details/secret_weapon",
-        "collection": "feature_films",
-        "downloads": 439364,
-        "thumbnail": "https://archive.org/services/img/secret_weapon",
-        "releaseDate": "1943-01-01T00:00:00Z",
         "addedAt": "2025-12-21T21:06:28.212Z"
       }
     ],
@@ -10286,7 +10250,7 @@
         "addedAt": "2025-12-21T22:02:03.167Z"
       }
     ],
-    "lastUpdated": "2025-12-22T16:35:20.469Z",
+    "lastUpdated": "2025-12-22T16:42:01.239Z",
     "year": 2025,
     "verified": true,
     "metadata": {
@@ -10321,5 +10285,107 @@
       "Website": "N/A",
       "Response": "True"
     }
+  },
+  "tt0147467": {
+    "imdbId": "tt0147467",
+    "title": "Sex Madness",
+    "year": 1938,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "sex_madness",
+        "url": "https://archive.org/details/sex_madness",
+        "collection": "feature_films",
+        "downloads": 3686698,
+        "thumbnail": "https://archive.org/services/img/sex_madness",
+        "releaseDate": "1938-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.211Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T16:46:34.871Z",
+    "metadata": {
+      "Title": "Sex Madness",
+      "Year": "1934",
+      "Rated": "Not Rated",
+      "Released": "28 Apr 1938",
+      "Runtime": "57 min",
+      "Genre": "Drama",
+      "Director": "Dwain Esper",
+      "Writer": "Joseph Seiden, Vincent Valentini",
+      "Actors": "Vivian McGill, Rose Tapley, Al Rigali",
+      "Plot": "Philanthropist Paul Lorenz is one of the more public faces in the fight against behavior that spreads the many \"social diseases\", such as syphilis and gonorrhea. An example of such behavior is performing in or attending burlesque shows, which promote casual sex. Indeed, many in the audience at one burlesque show in New York have only sex on their minds, including young unmarried couple James and Jane, office colleagues Peggy and Betty (Peggy is trying to seduce Betty), and Paul Lorenz's own son Tom, who is anticipating an aftershow group-sex party that will include some of the girls from the show, such as Sheila Wayne, who has syphilis but treats it as casually as her sexual encounters. Her fellow showgirl Millicent Hamilton will not be at the party. Millicent was once a small-town girl who was planning to marry her beau, Wendel Hope, until she won a beauty contest. Her prize was a trip to New York, but she found life there more difficult than she expected, and a sexual encounter associated with trying to advance her show-business career resulted in her also contracting syphilis. Respected Dr. Hampton informs her that she can fully recover and eventually marry Wendel if she takes the slow and intensive but proven therapy, but when she leaves New York for home--which means therapy with another doctor--Dr. Hampton warns her to beware of quacks who might promise expensive miracle cures. Will she heed Dr. Hampton's advice, or will she fall prey to the hope of a quick cure so that she can marry Wendel sooner?",
+      "Language": "English",
+      "Country": "United States",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BY2EwN2RhY2QtZDVlNS00YzE3LWE1MDMtNTA1MWMxMDg3ODM5XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "2.9/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "2.9",
+      "imdbVotes": "995",
+      "imdbID": "tt0147467",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
+  },
+  "tt0035317": {
+    "imdbId": "tt0035317",
+    "title": "Sherlock Holmes and the Secret Weapon",
+    "year": 1943,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "secret_weapon",
+        "url": "https://archive.org/details/secret_weapon",
+        "collection": "feature_films",
+        "downloads": 439364,
+        "thumbnail": "https://archive.org/services/img/secret_weapon",
+        "releaseDate": "1943-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.212Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T16:47:15.839Z",
+    "metadata": {
+      "Title": "Sherlock Holmes and the Secret Weapon",
+      "Year": "1942",
+      "Rated": "Approved",
+      "Released": "12 Feb 1943",
+      "Runtime": "68 min",
+      "Genre": "Adventure, Crime, Drama",
+      "Director": "Roy William Neill",
+      "Writer": "Edward T. Lowe Jr., Scott Darling, Edmund L. Hartmann",
+      "Actors": "Basil Rathbone, Nigel Bruce, Lionel Atwill",
+      "Plot": "Sherlock Holmes helps a scientist escape the clutches of the Gestapo in Switzerland and gets him to England. The man has invented a revolutionary new bombsight that will significantly aid Britain's war effort. Now that he's in England he should be safe, right?",
+      "Language": "English, French, Indonesian",
+      "Country": "United States",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BYTM1ZWFkYzYtOGRlNy00NGE2LWFmZGUtZDYyMDE1ZTNiYjVhXkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "6.5/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "6.5",
+      "imdbVotes": "7,187",
+      "imdbID": "tt0035317",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
   }
 }
