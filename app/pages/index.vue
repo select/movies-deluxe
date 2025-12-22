@@ -283,7 +283,7 @@ watch(
 
 // Keyboard shortcuts
 const keys = useMagicKeys()
-const { Escape, f } = keys
+const { Escape, k } = keys
 
 // Escape key closes filter menu
 if (Escape) {
@@ -294,9 +294,9 @@ if (Escape) {
   })
 }
 
-// 'F' key toggles filter menu (only when not typing in input)
-if (f) {
-  whenever(f, () => {
+// 'K' key toggles filter menu (only when not typing in input)
+if (k) {
+  whenever(k, () => {
     // Check if user is typing in an input/textarea
     if (typeof window !== 'undefined') {
       const activeElement = window.document.activeElement
