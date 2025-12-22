@@ -339,6 +339,62 @@
             </div>
           </div>
 
+          <!-- Source Links -->
+          <div
+            v-if="movie.sources.length > 0"
+            class="flex flex-wrap gap-6 py-4 px-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700"
+          >
+            <div
+              v-for="source in movie.sources"
+              :key="source.url"
+              class="flex items-center gap-3 text-sm"
+            >
+              <template v-if="source.type === 'archive.org'">
+                <span class="font-semibold text-gray-600 dark:text-gray-400">Source:</span>
+                <a
+                  :href="source.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                >
+                  <div class="i-mdi-bank text-lg" />
+                  Archive.org
+                </a>
+              </template>
+              <template v-else-if="source.type === 'youtube'">
+                <span class="font-semibold text-gray-600 dark:text-gray-400">Source:</span>
+                <a
+                  :href="source.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                >
+                  <div class="i-mdi-youtube text-lg text-red-600" />
+                  YouTube
+                </a>
+                <template v-if="source.channelName">
+                  <span class="text-gray-400">on</span>
+                  <a
+                    v-if="source.channelId"
+                    :href="`https://www.youtube.com/channel/${source.channelId}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                  >
+                    <div class="i-mdi-television-play text-base" />
+                    {{ source.channelName }}
+                  </a>
+                  <span
+                    v-else
+                    class="text-gray-700 dark:text-gray-300 font-medium"
+                  >
+                    {{ source.channelName }}
+                  </span>
+                </template>
+              </template>
+            </div>
+          </div>
+
           <!-- Additional Info -->
           <div
             v-if="movie.metadata"
