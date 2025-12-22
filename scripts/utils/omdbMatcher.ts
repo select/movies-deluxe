@@ -131,8 +131,8 @@ export async function getMovieByImdbId(
  * Calculate match confidence between search result and original title/year
  *
  * STRICT YEAR VALIDATION:
- * - If originalYear is provided, OMDB year MUST match exactly
- * - Rejects matches where OMDB year is missing, "N/A", or doesn't match
+ * - If originalYear is provided, OMDB year MUST match within ±2 years
+ * - Rejects matches where OMDB year is missing, "N/A", or diff > 2
  * - This prevents matching wrong movies with similar titles but different years
  */
 function calculateConfidence(
@@ -142,6 +142,7 @@ function calculateConfidence(
 ): MatchConfidence {
   const resultTitle = result.Title.toLowerCase()
   const searchTitle = originalTitle.toLowerCase()
+  const omdbYearNum = result.Year ? parseInt(result.Year, 10) : 0
 
   // STRICT YEAR VALIDATION - Must match exactly if provided
   if (originalYear) {
@@ -155,22 +156,20 @@ function calculateConfidence(
       return 'none' as MatchConfidence
     }
 
-    // Reject if years don't match exactly (no tolerance)
-    const omdbYearNum = parseInt(omdbYear, 10)
-    if (omdbYearNum !== originalYear) {
+    // Reject if years don't match within ±2 years tolerance
+    if (Math.abs(omdbYearNum - originalYear) > 2) {
       logger.debug(
-        `Rejecting "${result.Title}": Year mismatch (Archive.org: ${originalYear}, OMDB: ${omdbYearNum})`
+        `Rejecting "${result.Title}": Year mismatch (Archive.org: ${originalYear}, OMDB: ${omdbYearNum}, diff: ${Math.abs(omdbYearNum - originalYear)})`
       )
       return 'none' as MatchConfidence
     }
   }
 
-  // Year matches (or not provided) - proceed with title matching
-  const yearMatches = originalYear && result.Year === originalYear.toString()
+  const exactYearMatch = originalYear && omdbYearNum === originalYear
 
   // Exact title match
   if (resultTitle === searchTitle) {
-    if (yearMatches) {
+    if (exactYearMatch) {
       return 'exact' as MatchConfidence
     }
     return 'high' as MatchConfidence
@@ -178,7 +177,7 @@ function calculateConfidence(
 
   // Title contains search term or vice versa
   if (resultTitle.includes(searchTitle) || searchTitle.includes(resultTitle)) {
-    if (yearMatches) {
+    if (exactYearMatch) {
       return 'high' as MatchConfidence
     }
     return 'medium' as MatchConfidence
@@ -213,8 +212,8 @@ export async function matchMovie(
   }
 
   try {
-    // Search OMDB
-    const searchResults = await searchOMDB(title, year, apiKey)
+    // Search OMDB without year to allow for tolerance in matching
+    const searchResults = await searchOMDB(title, undefined, apiKey)
 
     if (!searchResults.Search || searchResults.Search.length === 0) {
       return {
