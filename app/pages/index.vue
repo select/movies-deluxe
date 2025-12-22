@@ -203,7 +203,7 @@
 <script setup lang="ts">
 import { useMovieStore } from '@/stores/useMovieStore'
 import { useFilterStore } from '@/stores/useFilterStore'
-import { useMagicKeys, whenever, useWindowScroll } from '@vueuse/core'
+import { useMagicKeys, whenever, useWindowScroll, onKeyStroke } from '@vueuse/core'
 import { onBeforeRouteLeave } from 'vue-router'
 
 const movieStore = useMovieStore()
@@ -283,7 +283,7 @@ watch(
 
 // Keyboard shortcuts
 const keys = useMagicKeys()
-const { Escape, k } = keys
+const { Escape } = keys
 
 // Escape key closes filter menu
 if (Escape) {
@@ -294,20 +294,21 @@ if (Escape) {
   })
 }
 
-// 'K' key toggles filter menu (only when not typing in input)
-if (k) {
-  whenever(k, () => {
+// 'K' key toggles filter menu (with Ctrl/Cmd modifier)
+// Using onKeyStroke to prevent default browser behavior
+onKeyStroke('k', (e) => {
+  // Only trigger with Ctrl (Windows/Linux) or Cmd (Mac)
+  if (e.ctrlKey || e.metaKey) {
     // Check if user is typing in an input/textarea
-    if (typeof window !== 'undefined') {
-      const activeElement = window.document.activeElement
-      const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-
-      if (!isTyping) {
-        isFilterMenuOpen.value = !isFilterMenuOpen.value
-      }
+    const activeElement = window.document.activeElement
+    const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+    
+    if (!isTyping) {
+      e.preventDefault() // Prevent browser's default Ctrl+K behavior
+      isFilterMenuOpen.value = !isFilterMenuOpen.value
     }
-  })
-}
+  }
+})
 
 // Toggle dark mode
 const toggleDarkMode = () => {
