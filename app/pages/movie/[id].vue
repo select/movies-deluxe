@@ -327,7 +327,8 @@
                   Video player not available for this source
                 </p>
                 <a
-                  :href="movie.sources[0].url"
+                  v-if="firstSourceUrl"
+                  :href="firstSourceUrl"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="inline-block px-6 py-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
@@ -471,7 +472,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, ArchiveOrgSource } from '~/app/types'
+import type { MovieEntry, ArchiveOrgSource } from '~/types'
 
 // Nuxt auto-imports
 // eslint-disable-next-line no-undef
@@ -479,6 +480,9 @@ const route = useRoute()
 const movieStore = useMovieStore()
 // eslint-disable-next-line no-undef
 const watchlistStore = useWatchlistStore()
+
+// Get the first source URL safely
+const firstSourceUrl = computed(() => movie.value?.sources[0]?.url || '')
 
 // Dark mode state (sync with localStorage)
 const isDark = ref(true)
@@ -535,7 +539,7 @@ const relatedMovies = computed(() => {
 
       // Year similarity (±5 years)
       if (currentMovie.year && m.year) {
-        const yearDiff = Math.abs(parseInt(currentMovie.year) - parseInt(m.year))
+        const yearDiff = Math.abs(currentMovie.year - m.year)
         if (yearDiff <= 5) {
           score += (5 - yearDiff) * 2 // 2-10 points based on proximity
         }
@@ -664,8 +668,10 @@ const navigateToPrevMovie = () => {
   const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
   if (currentIndex > 0) {
     const prevMovie = movieStore.movies[currentIndex - 1]
-    // eslint-disable-next-line no-undef
-    navigateTo(`/movie/${prevMovie.imdbId}`)
+    if (prevMovie) {
+      // eslint-disable-next-line no-undef
+      navigateTo(`/movie/${prevMovie.imdbId}`)
+    }
   }
 }
 
@@ -674,10 +680,12 @@ const navigateToNextMovie = () => {
   if (!movie.value) return
 
   const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
-  if (currentIndex < movieStore.movies.length - 1) {
+  if (currentIndex !== -1 && currentIndex < movieStore.movies.length - 1) {
     const nextMovie = movieStore.movies[currentIndex + 1]
-    // eslint-disable-next-line no-undef
-    navigateTo(`/movie/${nextMovie.imdbId}`)
+    if (nextMovie) {
+      // eslint-disable-next-line no-undef
+      navigateTo(`/movie/${nextMovie.imdbId}`)
+    }
   }
 }
 
@@ -685,7 +693,7 @@ const navigateToNextMovie = () => {
 const updateMetaTags = (movie: MovieEntry) => {
   const title = movie.title + (movie.year ? ` (${movie.year})` : '')
   const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
-  const poster = movie.poster || '/favicon.ico'
+  const poster = movie.metadata?.Poster || '/favicon.ico'
   const url = `https://movies-deluxe.app/movie/${movie.imdbId}`
 
   // eslint-disable-next-line no-undef
@@ -718,13 +726,13 @@ const updateMetaTags = (movie: MovieEntry) => {
       // JSON-LD structured data for search engines
       {
         type: 'application/ld+json',
-        children: JSON.stringify({
+        textContent: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'Movie',
           name: movie.title,
           ...(movie.year && { datePublished: movie.year.toString() }),
           ...(movie.metadata?.Plot && { description: movie.metadata.Plot }),
-          ...(movie.poster && { image: poster }),
+          ...(movie.metadata?.Poster && { image: poster }),
           ...(movie.metadata?.Director && { director: { '@type': 'Person', name: movie.metadata.Director } }),
           ...(movie.metadata?.Actors && {
             actor: movie.metadata.Actors.split(',').map((name: string) => ({

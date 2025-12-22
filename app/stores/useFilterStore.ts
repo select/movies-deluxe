@@ -1,13 +1,26 @@
-import { useStorage } from '@vueuse/core'
-import type { MovieEntry } from '~/app/types'
-import { SORT_OPTIONS, sortMovies, type SortOption } from '~/utils/movieSort'
+import type { MovieEntry } from '~/types'
+import {
+  SORT_OPTIONS,
+  sortMovies,
+  type SortOption,
+  type SortField,
+  type SortDirection,
+} from '~/utils/movieSort'
+
+/**
+ * Serializable sort state (for localStorage)
+ */
+export interface SortState {
+  field: SortField
+  direction: SortDirection
+}
 
 /**
  * Filter state interface
  */
 export interface FilterState {
-  // Sorting
-  sort: SortOption
+  // Sorting (stored as field + direction for localStorage compatibility)
+  sort: SortState
 
   // Source filter (can be 'archive.org' or YouTube channel names)
   sources: string[]
@@ -32,7 +45,7 @@ export interface FilterState {
  * Default filter state
  */
 const DEFAULT_FILTERS: FilterState = {
-  sort: SORT_OPTIONS[0], // Year (Newest)
+  sort: { field: 'year', direction: 'desc' }, // Year (Newest)
   sources: [],
   minRating: 0,
   minYear: 0,
@@ -42,25 +55,82 @@ const DEFAULT_FILTERS: FilterState = {
 }
 
 /**
- * Filter store with persistent state using VueUse useStorage
+ * Filter store with persistent state
  */
 export const useFilterStore = defineStore('filter', () => {
-  // Persistent state using localStorage (with SSR-safe defaults)
-  const filters = useStorage<FilterState>(
-    'movies-deluxe-filters',
-    DEFAULT_FILTERS,
-    typeof window !== 'undefined' ? localStorage : undefined,
-    {
-      mergeDefaults: true, // Merge with defaults if keys are missing
+  // Initialize from localStorage (client-side only)
+  const getInitialFilters = (): FilterState => {
+    if (typeof window === 'undefined') {
+      return DEFAULT_FILTERS
     }
-  )
+
+    try {
+      const stored = localStorage.getItem('movies-deluxe-filters')
+      if (stored) {
+        return JSON.parse(stored)
+      }
+    } catch {
+      // Failed to parse localStorage
+    }
+
+    return DEFAULT_FILTERS
+  }
+
+  // Reactive state
+  const filters = ref<FilterState>(getInitialFilters())
+
+  // On client-side mount, reload from localStorage to ensure hydration is correct
+  if (typeof window !== 'undefined') {
+    onMounted(() => {
+      const stored = localStorage.getItem('movies-deluxe-filters')
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          // Only update if different from current state
+          if (JSON.stringify(filters.value) !== stored) {
+            filters.value = parsed
+          }
+        } catch {
+          // Failed to reload from localStorage
+        }
+      }
+    })
+  }
+
+  // Helper to persist to localStorage
+  const persistFilters = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('movies-deluxe-filters', JSON.stringify(filters.value))
+      } catch {
+        // Failed to save to localStorage
+      }
+    }
+  }
 
   /**
    * Set sort option
    */
   const setSort = (option: SortOption) => {
-    filters.value.sort = option
+    filters.value.sort = { field: option.field, direction: option.direction }
+    persistFilters()
   }
+
+  /**
+   * Get current sort option (reconstructed from stored state)
+   */
+  const currentSortOption = computed((): SortOption => {
+    // During SSR, filters might not be initialized yet
+    if (!filters.value || !filters.value.sort) {
+      return SORT_OPTIONS[0]!
+    }
+
+    const stored = filters.value.sort
+    const found = SORT_OPTIONS.find(
+      opt => opt.field === stored.field && opt.direction === stored.direction
+    )
+    return found || SORT_OPTIONS[0]!
+  })
 
   /**
    * Toggle source filter (archive.org or YouTube channel name)
@@ -69,6 +139,7 @@ export const useFilterStore = defineStore('filter', () => {
     filters.value.sources = filters.value.sources.includes(source)
       ? filters.value.sources.filter(s => s !== source)
       : [...filters.value.sources, source]
+    persistFilters()
   }
 
   /**
@@ -76,6 +147,7 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const setMinRating = (rating: number) => {
     filters.value.minRating = rating
+    persistFilters()
   }
 
   /**
@@ -83,6 +155,7 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const setMinYear = (year: number) => {
     filters.value.minYear = year
+    persistFilters()
   }
 
   /**
@@ -90,6 +163,7 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const setMinVotes = (votes: number) => {
     filters.value.minVotes = votes
+    persistFilters()
   }
 
   /**
@@ -99,6 +173,7 @@ export const useFilterStore = defineStore('filter', () => {
     filters.value.genres = filters.value.genres.includes(genre)
       ? filters.value.genres.filter(g => g !== genre)
       : [...filters.value.genres, genre]
+    persistFilters()
   }
 
   /**
@@ -108,6 +183,7 @@ export const useFilterStore = defineStore('filter', () => {
     filters.value.countries = filters.value.countries.includes(country)
       ? filters.value.countries.filter(c => c !== country)
       : [...filters.value.countries, country]
+    persistFilters()
   }
 
   /**
@@ -115,6 +191,7 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const resetFilters = () => {
     filters.value = { ...DEFAULT_FILTERS }
+    persistFilters()
   }
 
   /**
@@ -198,7 +275,12 @@ export const useFilterStore = defineStore('filter', () => {
     }
 
     // 7. Apply sorting
-    filtered = sortMovies(filtered, filters.value.sort)
+    const sortOption =
+      SORT_OPTIONS.find(
+        opt =>
+          opt.field === filters.value.sort.field && opt.direction === filters.value.sort.direction
+      ) || SORT_OPTIONS[0]!
+    filtered = sortMovies(filtered, sortOption)
 
     return filtered
   }
@@ -235,6 +317,7 @@ export const useFilterStore = defineStore('filter', () => {
 
     // Computed
     hasActiveFilters,
+    currentSortOption,
 
     // Actions
     setSort,

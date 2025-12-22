@@ -3,7 +3,7 @@
     <!-- Overlay (visible when menu is open) -->
     <div
       v-if="isOpen"
-      class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+      class="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
       @click="emit('close')"
     />
 
@@ -11,7 +11,7 @@
     <div
       ref="filterMenuRef"
       :class="[
-        'fixed z-40',
+        'fixed z-50',
         'transition-all duration-300 ease-in-out',
         'bg-white dark:bg-gray-800',
         'shadow-lg',
@@ -56,7 +56,7 @@
                   :checked="currentSort.field === option.field && currentSort.direction === option.direction"
                   :label="option.label"
                   name="sort"
-                  :value="option"
+                  :value="`${option.field}-${option.direction}`"
                   @change="handleSortChange(option)"
                 />
               </div>
@@ -257,7 +257,7 @@ const availableGenres = AVAILABLE_GENRES
 const availableCountries = AVAILABLE_COUNTRIES
 
 // Safe access to current sort (handles SSR and undefined cases)
-const currentSort = computed(() => filterStore.filters.sort || SORT_OPTIONS[0])
+const currentSort = computed(() => filterStore.currentSortOption)
 
 // Handle sort change
 const handleSortChange = (option: SortOption) => {
@@ -271,27 +271,23 @@ const filterMenuRef = ref<HTMLElement | null>(null)
 // Activate focus trap when menu is open
 const { activate, deactivate } = useFocusTrap(filterMenuRef, {
   immediate: false,
-  allowOutsideClick: true,
+  allowOutsideClick: false, // Prevent clicks outside while trap is active
   escapeDeactivates: false, // We handle Escape in the parent component
   returnFocusOnDeactivate: true,
-  initialFocus: false, // Don't auto-focus on open to avoid jarring UX
+  initialFocus: 'button[aria-label="Close filters"]', // Auto-focus close button
+  fallbackFocus: () => filterMenuRef.value as HTMLElement, // Fallback if close button not found
 })
 
 // Watch for menu open/close to manage focus trap
 watch(() => props.isOpen, (isOpen) => {
   if (isOpen) {
-    // Activate focus trap when menu opens
-    activate()
-    
-    // Small delay to allow animation to start, then focus close button
+    // Small delay to ensure DOM is ready and animation has started
     if (typeof window !== 'undefined') {
       window.setTimeout(() => {
-        const closeButton = filterMenuRef.value?.querySelector('button[aria-label="Close filters"]') as HTMLElement
-        closeButton?.focus()
-      }, 100)
+        activate()
+      }, 50)
     }
   } else {
-    // Deactivate focus trap when menu closes
     deactivate()
   }
 })

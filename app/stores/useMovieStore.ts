@@ -1,4 +1,11 @@
-import type { MovieEntry, MovieSource, MovieSourceType, LoadingState } from '~/app/types'
+import type { MovieEntry, MovieSource, MovieSourceType, MovieMetadata } from '~/types'
+
+// Frontend-specific loading state type
+export interface LoadingState {
+  movies: boolean
+  movieDetails: boolean
+  imdbFetch: boolean
+}
 
 export const useMovieStore = defineStore('movie', () => {
   // State
@@ -32,12 +39,8 @@ export const useMovieStore = defineStore('movie', () => {
         .map(([, value]) => value as MovieEntry)
 
       movies.value = movieEntries
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      useMessageStore().showMessage({
-        type: 'error',
-        body: `Failed to load movies: ${errorMessage}`,
-      })
+    } catch {
+      // Failed to load movies
     } finally {
       isLoading.value.movies = false
     }
@@ -275,7 +278,7 @@ export const useMovieStore = defineStore('movie', () => {
         return null
       }
 
-      const metadata = await $fetch('https://www.omdbapi.com/', {
+      const metadata = await $fetch<MovieMetadata>('https://www.omdbapi.com/', {
         params: {
           apikey: apiKey,
           i: movie.imdbId,
@@ -283,15 +286,15 @@ export const useMovieStore = defineStore('movie', () => {
         },
       })
 
-      if (metadata.Error) {
+      if (metadata && 'Error' in metadata) {
         isLoading.value.imdbFetch = false
         return null
       }
 
       // Update the movie in our local state
       const movieIndex = movies.value.findIndex(m => m.imdbId === movie.imdbId)
-      if (movieIndex !== -1) {
-        movies.value[movieIndex].metadata = metadata
+      if (movieIndex !== -1 && movies.value[movieIndex]) {
+        movies.value[movieIndex]!.metadata = metadata
       }
 
       isLoading.value.imdbFetch = false
