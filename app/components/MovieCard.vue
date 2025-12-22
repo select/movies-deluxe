@@ -54,7 +54,7 @@
         {{ movie.title }}
       </h3>
       
-      <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+      <div class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
         <span v-if="movie.year">{{ movie.year }}</span>
         <span v-if="movie.year && movie.metadata?.imdbRating">•</span>
         <span
