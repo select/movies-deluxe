@@ -231,6 +231,7 @@
 <script setup lang="ts">
 import { useFilterStore } from '@/stores/useFilterStore'
 import { SORT_OPTIONS, type SortOption } from '@/utils/movieSort'
+import { YOUTUBE_CHANNELS, AVAILABLE_GENRES, AVAILABLE_COUNTRIES } from '@/constants/filters'
 
 interface Props {
   isOpen: boolean
@@ -248,70 +249,10 @@ const filterStore = useFilterStore()
 // Get sort options from utils
 const sortOptions = SORT_OPTIONS
 
-// YouTube channels (from actual data)
-const youtubeChannels = [
-  'FilmRise Movies',
-  'Mosfilm',
-  'Movie Central',
-  'Moviedome',
-  'Netzkino',
-  'Popcornflix',
-  'Timeless Classic Movies',
-]
-
-// Available genres (from dataset analysis)
-const availableGenres = [
-  'Action',
-  'Adventure',
-  'Animation',
-  'Biography',
-  'Comedy',
-  'Crime',
-  'Documentary',
-  'Drama',
-  'Family',
-  'Fantasy',
-  'Film-Noir',
-  'History',
-  'Horror',
-  'Music',
-  'Musical',
-  'Mystery',
-  'Romance',
-  'Sci-Fi',
-  'Short',
-  'Thriller',
-  'War',
-  'Western',
-]
-
-// Available countries (from dataset analysis)
-const availableCountries = [
-  'Australia',
-  'Belgium',
-  'Canada',
-  'Denmark',
-  'Finland',
-  'France',
-  'Germany',
-  'Greece',
-  'Hungary',
-  'India',
-  'Italy',
-  'Japan',
-  'Netherlands',
-  'Portugal',
-  'Romania',
-  'Russia',
-  'South Africa',
-  'Soviet Union',
-  'Spain',
-  'United Arab Emirates',
-  'United Kingdom',
-  'United States',
-  'USA',
-  'Vietnam',
-]
+// Import filter constants
+const youtubeChannels = YOUTUBE_CHANNELS
+const availableGenres = AVAILABLE_GENRES
+const availableCountries = AVAILABLE_COUNTRIES
 
 // Safe access to current sort (handles SSR and undefined cases)
 const currentSort = computed(() => filterStore.filters.sort || SORT_OPTIONS[0])
