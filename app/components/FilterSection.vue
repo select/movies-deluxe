@@ -1,12 +1,12 @@
 <template>
   <div class="mb-4">
     <!-- Filter Title -->
-    <div class="flex items-center gap-2 mb-2">
+    <div class="flex items-center gap-2 mb-3 px-2 py-1 rounded-md bg-gradient-to-r from-gray-100 to-transparent dark:from-gray-800 dark:to-transparent">
       <div
         v-if="icon"
-        :class="['text-base text-gray-600', icon]"
+        :class="['text-base text-gray-600 dark:text-gray-400', icon]"
       />
-      <h3 class="font-semibold text-xs uppercase tracking-wide text-gray-600 dark:text-gray-400">
+      <h3 class="font-bold text-[10px] uppercase tracking-wider text-gray-600 dark:text-gray-400">
         {{ title }}
       </h3>
     </div>

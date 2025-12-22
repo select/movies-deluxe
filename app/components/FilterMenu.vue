@@ -13,8 +13,8 @@
       :class="[
         'fixed z-50',
         'transition-all duration-300 ease-in-out',
-        'bg-white dark:bg-gray-800',
-        'shadow-lg',
+        'glass',
+        'shadow-2xl',
         'overflow-hidden flex flex-col',
         // Mobile: Bottom sheet (< md breakpoint)
         'bottom-0 left-0 right-0 rounded-t-2xl border-t border-gray-200 dark:border-gray-700 max-h-[90vh]',

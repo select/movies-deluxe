@@ -2,41 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-22T21:36:16.666Z"
-  },
-  "archive-HisNewJobCharlesChaplin-1915": {
-    "imdbId": "archive-HisNewJobCharlesChaplin-1915",
-    "title": "CUKESIM's New Job! ( Charles Chaplin-1915)",
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "HisNewJobCharlesChaplin-1915",
-        "url": "https://archive.org/details/HisNewJobCharlesChaplin-1915",
-        "collection": "feature_films",
-        "downloads": 4557225,
-        "thumbnail": "https://archive.org/services/img/HisNewJobCharlesChaplin-1915",
-        "addedAt": "2025-12-21T21:06:28.211Z"
-      }
-    ],
-    "lastUpdated": "2025-12-22T16:01:55.743Z"
-  },
-  "archive-charlie_chaplin_film_fest": {
-    "imdbId": "archive-charlie_chaplin_film_fest",
-    "title": "Charlie Chaplin Festival",
-    "year": 1938,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "charlie_chaplin_film_fest",
-        "url": "https://archive.org/details/charlie_chaplin_film_fest",
-        "collection": "feature_films",
-        "downloads": 1493108,
-        "thumbnail": "https://archive.org/services/img/charlie_chaplin_film_fest",
-        "releaseDate": "1938-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.211Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.638Z"
+    "lastUpdated": "2025-12-22T21:56:04.399Z"
   },
   "archive-TheFastandtheFuriousJohnIreland1954goofyrip": {
     "imdbId": "archive-TheFastandtheFuriousJohnIreland1954goofyrip",
@@ -51,24 +17,6 @@
         "downloads": 1470475,
         "thumbnail": "https://archive.org/services/img/TheFastandtheFuriousJohnIreland1954goofyrip",
         "releaseDate": "1955-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.211Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.638Z"
-  },
-  "archive-Return_of_the_Kung_Fu_Dragon": {
-    "imdbId": "archive-Return_of_the_Kung_Fu_Dragon",
-    "title": "Return of the Kung Fu Dragon",
-    "year": 1976,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Return_of_the_Kung_Fu_Dragon",
-        "url": "https://archive.org/details/Return_of_the_Kung_Fu_Dragon",
-        "collection": "feature_films",
-        "downloads": 1318707,
-        "thumbnail": "https://archive.org/services/img/Return_of_the_Kung_Fu_Dragon",
-        "releaseDate": "1976-01-01T00:00:00Z",
         "addedAt": "2025-12-21T21:06:28.211Z"
       }
     ],
@@ -491,24 +439,6 @@
         "downloads": 351705,
         "thumbnail": "https://archive.org/services/img/CC_1915_10_04_CharlieShanghaied",
         "releaseDate": "1915-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.213Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.640Z"
-  },
-  "archive-StarWreckInThePirkining": {
-    "imdbId": "archive-StarWreckInThePirkining",
-    "title": "Star Wreck: In the Pirkining",
-    "year": 2005,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "StarWreckInThePirkining",
-        "url": "https://archive.org/details/StarWreckInThePirkining",
-        "collection": "feature_films",
-        "downloads": 345869,
-        "thumbnail": "https://archive.org/services/img/StarWreckInThePirkining",
-        "releaseDate": "2005-01-01T00:00:00Z",
         "addedAt": "2025-12-21T21:06:28.213Z"
       }
     ],
@@ -4624,28 +4554,6 @@
     ],
     "lastUpdated": "2025-12-21T22:02:15.353Z"
   },
-  "youtube-0Z2bScHfSHE": {
-    "imdbId": "youtube-0Z2bScHfSHE",
-    "title": "The Invisible Avenger",
-    "year": 1958,
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "0Z2bScHfSHE",
-        "url": "https://www.youtube.com/watch?v=0Z2bScHfSHE",
-        "channelName": "Timeless Classic Movies",
-        "channelId": "UCOg0aMAXmF3o5m243PxhE5g",
-        "releaseYear": 1958,
-        "language": "en",
-        "publishedAt": "11 years ago",
-        "duration": 3403,
-        "viewCount": 158303,
-        "thumbnail": "https://i.ytimg.com/vi/0Z2bScHfSHE/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCdHOpNfSX7dV1l675RaEvW_TJjYw",
-        "addedAt": "2025-12-21T22:02:17.857Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:02:17.857Z"
-  },
   "youtube-Te14w9EKz_Y": {
     "imdbId": "youtube-Te14w9EKz_Y",
     "title": "Police Rookie",
@@ -4871,26 +4779,6 @@
       }
     ],
     "lastUpdated": "2025-12-21T22:02:30.935Z"
-  },
-  "youtube-XVBxtAJAlf4": {
-    "imdbId": "youtube-XVBxtAJAlf4",
-    "title": "El Brazo de Diamantes | COMEDIA DE DETECTIVES | Subtitulos en Español",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "XVBxtAJAlf4",
-        "url": "https://www.youtube.com/watch?v=XVBxtAJAlf4",
-        "channelName": "Mosfilm",
-        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
-        "language": "ru",
-        "publishedAt": "5 months ago",
-        "duration": 5926,
-        "viewCount": 151881,
-        "thumbnail": "https://i.ytimg.com/vi/XVBxtAJAlf4/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC6A4xetYmXaqfmtkS687h5XVU2uQ",
-        "addedAt": "2025-12-21T22:02:31.436Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:02:31.436Z"
   },
   "youtube-awkwxCWMTWg": {
     "imdbId": "youtube-awkwxCWMTWg",
@@ -5331,26 +5219,6 @@
       }
     ],
     "lastUpdated": "2025-12-21T22:02:50.519Z"
-  },
-  "youtube-oDsQlSU2QrU": {
-    "imdbId": "youtube-oDsQlSU2QrU",
-    "title": "JOYRIDE - SPRITZTOUR",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "oDsQlSU2QrU",
-        "url": "https://www.youtube.com/watch?v=oDsQlSU2QrU",
-        "channelName": "Moviedome",
-        "channelId": "UCh4JH8axA_jUjB8YoRnm0cg",
-        "language": "de",
-        "publishedAt": "4 weeks ago",
-        "duration": 5838,
-        "viewCount": 68338,
-        "thumbnail": "https://i.ytimg.com/vi/oDsQlSU2QrU/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDopRUrwiupRwvPZCTbY74qO2nq-Q",
-        "addedAt": "2025-12-21T22:02:51.019Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:02:51.019Z"
   },
   "youtube-E5OqGAVIuXQ": {
     "imdbId": "youtube-E5OqGAVIuXQ",
@@ -6066,7 +5934,7 @@
         "addedAt": "2025-12-21T22:01:45.921Z"
       }
     ],
-    "lastUpdated": "2025-12-21T22:03:47.988Z",
+    "lastUpdated": "2025-12-22T21:43:54.305Z",
     "year": 2022,
     "metadata": {
       "Title": "A Christmas Karen",
@@ -6099,7 +5967,8 @@
       "Production": "N/A",
       "Website": "N/A",
       "Response": "True"
-    }
+    },
+    "verified": true
   },
   "tt0347938": {
     "imdbId": "tt0347938",
@@ -10191,27 +10060,6 @@
       "Response": "True"
     }
   },
-  "youtube-6nJ8n3MIiZY": {
-    "imdbId": "youtube-6nJ8n3MIiZY",
-    "title": "A Christmas Karen",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "6nJ8n3MIiZY",
-        "url": "https://www.youtube.com/watch?v=6nJ8n3MIiZY",
-        "channelName": "FilmRise Movies",
-        "channelId": "UC8IHAQMuiJdY6ALuhG7iU8Q",
-        "description": "Karen is an entitled middle-aged woman whose demanding nature has alienated her neighbors and family. After a series of instances displaying her privilege and prejudice, she receives an \"intervention\" by some unconventional spirits. Starring Michele Simms, Meghan Colleen Moroney, and Rolin Alexis.\n\nSubscribe to FilmRise Movies For More Free Full Movies: https://www.youtube.com/@UC8IHAQMuiJdY6ALuhG7iU8Q  \n\nFor More FilmRise Check Out Our Other Channels:\nFilmRise Television: https://www.youtube.com/@UCVVXDVee0JZ2dlPYtpdTZVg \nHighway to Heaven - Full Episodes: https://www.youtube.com/@UCALafPO1DB8RZgSn3F7Qbtg  \nFilmRise True Crime: https://www.youtube.com/@UCU4BHh9Dwfd7-I_xTZ5037Q\n\n#AChristmasKaren #Comedy #FilmRise",
-        "language": "en",
-        "publishedAt": "2 weeks ago",
-        "duration": 5877,
-        "viewCount": 63327,
-        "thumbnail": "https://i.ytimg.com/vi/6nJ8n3MIiZY/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCEsHkqtPzXLfzmy8aOc3NcHOrkGQ",
-        "addedAt": "2025-12-22T16:03:42.470Z"
-      }
-    ],
-    "lastUpdated": "2025-12-22T16:03:42.471Z"
-  },
   "tt0147467": {
     "imdbId": "tt0147467",
     "title": "Sex Madness",
@@ -10420,6 +10268,335 @@
       "Response": "True"
     },
     "year": 1986,
+    "verified": true
+  },
+  "tt0005482": {
+    "imdbId": "tt0005482",
+    "title": "The Hidden City",
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "HisNewJobCharlesChaplin-1915",
+        "url": "https://archive.org/details/HisNewJobCharlesChaplin-1915",
+        "collection": "feature_films",
+        "downloads": 4557225,
+        "thumbnail": "https://archive.org/services/img/HisNewJobCharlesChaplin-1915",
+        "addedAt": "2025-12-21T21:06:28.211Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:40:59.302Z",
+    "metadata": {
+      "Title": "The Hidden City",
+      "Year": "1915",
+      "Rated": "N/A",
+      "Released": "27 Mar 1915",
+      "Runtime": "20 min",
+      "Genre": "Adventure, Short",
+      "Director": "Francis Ford",
+      "Writer": "Grace Cunard (scenario)",
+      "Actors": "Francis Ford, Grace Cunard, John Ford, Eddie Polo",
+      "Plot": "N/A",
+      "Language": "English",
+      "Country": "USA",
+      "Awards": "N/A",
+      "Poster": "N/A",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "4.8/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "4.8",
+      "imdbVotes": "9",
+      "imdbID": "tt0005482",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1915,
+    "verified": true
+  },
+  "tt0062759": {
+    "imdbId": "tt0062759",
+    "title": "The Diamond Arm",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "XVBxtAJAlf4",
+        "url": "https://www.youtube.com/watch?v=XVBxtAJAlf4",
+        "channelName": "Mosfilm",
+        "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
+        "language": "ru",
+        "publishedAt": "5 months ago",
+        "duration": 5926,
+        "viewCount": 151881,
+        "thumbnail": "https://i.ytimg.com/vi/XVBxtAJAlf4/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC6A4xetYmXaqfmtkS687h5XVU2uQ",
+        "addedAt": "2025-12-21T22:02:31.436Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:43:25.062Z",
+    "metadata": {
+      "Title": "The Diamond Arm",
+      "Year": "1969",
+      "Rated": "Not Rated",
+      "Released": "01 Nov 1998",
+      "Runtime": "94 min",
+      "Genre": "Adventure, Comedy, Crime",
+      "Director": "Leonid Gaidai",
+      "Writer": "Leonid Gaidai, Yakov Kostyukovskiy, Moris Slobodskoy",
+      "Actors": "Yuriy Nikulin, Nina Grebeshkova, Andrey Mironov",
+      "Plot": "Semyon Gorbunkov goes on a cruise. In Istanbul, he slips and breaks his arm. What he didn't know is that this was a signal for a gang of smugglers (a real smuggler - Gena - was also on board the same ship). So his arm gets bandaged with gold and diamonds. After he returns home, the gangsters are trying to get their stuff back, while the police try to catch them using Gorbunkov and his arm.",
+      "Language": "Russian",
+      "Country": "Soviet Union",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BOGY3NjE0YmItNGQ4OS00OGY1LWI3MjItOWU5OTBkN2QyNTI2XkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "8.3/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "8.3",
+      "imdbVotes": "16,674",
+      "imdbID": "tt0062759",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1969,
+    "verified": true
+  },
+  "tt0005423": {
+    "imdbId": "tt0005423",
+    "title": "Greater Love Hath No Man",
+    "year": 1915,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "charlie_chaplin_film_fest",
+        "url": "https://archive.org/details/charlie_chaplin_film_fest",
+        "collection": "feature_films",
+        "downloads": 1493108,
+        "thumbnail": "https://archive.org/services/img/charlie_chaplin_film_fest",
+        "releaseDate": "1938-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.211Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:45:41.542Z",
+    "metadata": {
+      "Title": "Greater Love Hath No Man",
+      "Year": "1915",
+      "Rated": "N/A",
+      "Released": "05 Jul 1915",
+      "Runtime": "50 min",
+      "Genre": "Drama",
+      "Director": "Herbert Blaché",
+      "Writer": "Frank L. Packard",
+      "Actors": "Emmett Corrigan, Crauford Kent, Thomas A. Curran",
+      "Plot": "N/A",
+      "Language": "None, English",
+      "Country": "United States",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMzIzYjA2NTAtZWEyYS00ODZmLWE4YmQtZjU3YmYxNmVlMDMxXkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+      "Ratings": [],
+      "Metascore": "N/A",
+      "imdbRating": "N/A",
+      "imdbVotes": "N/A",
+      "imdbID": "tt0005423",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
+  },
+  "youtube-oDsQlSU2QrU": {
+    "imdbId": "youtube-oDsQlSU2QrU",
+    "title": "Joyride",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "oDsQlSU2QrU",
+        "url": "https://www.youtube.com/watch?v=oDsQlSU2QrU",
+        "channelName": "Moviedome",
+        "channelId": "UCh4JH8axA_jUjB8YoRnm0cg",
+        "language": "de",
+        "publishedAt": "4 weeks ago",
+        "duration": 5838,
+        "viewCount": 68338,
+        "thumbnail": "https://i.ytimg.com/vi/oDsQlSU2QrU/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDopRUrwiupRwvPZCTbY74qO2nq-Q",
+        "addedAt": "2025-12-21T22:02:51.019Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:46:56.527Z",
+    "year": 2022,
+    "verified": false
+  },
+  "tt0472566": {
+    "imdbId": "tt0472566",
+    "title": "Star Wreck: In the Pirkinning",
+    "year": 2005,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "StarWreckInThePirkining",
+        "url": "https://archive.org/details/StarWreckInThePirkining",
+        "collection": "feature_films",
+        "downloads": 345869,
+        "thumbnail": "https://archive.org/services/img/StarWreckInThePirkining",
+        "releaseDate": "2005-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.213Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:51:40.619Z",
+    "metadata": {
+      "Title": "Star Wreck: In the Pirkinning",
+      "Year": "2005",
+      "Rated": "N/A",
+      "Released": "01 Oct 2005",
+      "Runtime": "103 min",
+      "Genre": "Action, Comedy, Sci-Fi",
+      "Director": "Timo Vuorensola",
+      "Writer": "Rudi Airisto, Samuli Torssonen, Jarmo Puskala, Samuli Torssonen (creator)",
+      "Actors": "Antti Satama, Tiina Routamaa, Samuli Torssonen, Timo Vuorensola",
+      "Plot": "The future looks bleak for Captain Pirk. Originally from the far future, he traveled back to save the world, but was shipwrecked on the 21st century. The world of the past is a dangerous place and he is finding it difficult to convince the ladies he is, in fact, an intergalactic space hero from the future. To make things right Pirk comes up with a questionable plan to save mankind's future...",
+      "Language": "Finnish, English",
+      "Country": "Finland",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMTk4MjQzNjA3NV5BMl5BanBnXkFtZTcwODkwMTEzMQ@@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "6.6/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "6.6",
+      "imdbVotes": "5,878",
+      "imdbID": "tt0472566",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
+  },
+  "tt0075133": {
+    "imdbId": "tt0075133",
+    "title": "Ju ma pao",
+    "year": 1976,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "Return_of_the_Kung_Fu_Dragon",
+        "url": "https://archive.org/details/Return_of_the_Kung_Fu_Dragon",
+        "collection": "feature_films",
+        "downloads": 1318707,
+        "thumbnail": "https://archive.org/services/img/Return_of_the_Kung_Fu_Dragon",
+        "releaseDate": "1976-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.211Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:54:10.179Z",
+    "metadata": {
+      "Title": "Ju ma pao",
+      "Year": "1976",
+      "Rated": "Not Rated",
+      "Released": "N/A",
+      "Runtime": "84 min",
+      "Genre": "Action",
+      "Director": "Chi-Lien Yu, Kang Yu",
+      "Writer": "Ge-Sun Lee, Yu-Yen Lin",
+      "Actors": "Polly Ling-Feng Shang-Kuan, Chung Chien Li, Sing Chen",
+      "Plot": "Golden City, capital of wondrous Phoenix island, is attacked by an evil despot and his sorcerer ally and conquered, with the Emperor and his three generals killed by the invaders. The young princess and the three children of the generals are hidden away from the invaders with the hope that they one day will return to avenge the deaths of their fathers and reclaim the island paradise. Almost twenty years pass and the grown children do finally return to confront the despot and the sorcerer but, will they be successful?",
+      "Language": "Mandarin",
+      "Country": "Taiwan",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BNDFmNDgyNjItNjRhYS00NjgwLWFmZmItNTViNTkzNjA4NGM0XkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "4.6/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "4.6",
+      "imdbVotes": "168",
+      "imdbID": "tt0075133",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
+  },
+  "tt0047594": {
+    "imdbId": "tt0047594",
+    "title": "The Invisible Avenger",
+    "year": 1954,
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "0Z2bScHfSHE",
+        "url": "https://www.youtube.com/watch?v=0Z2bScHfSHE",
+        "channelName": "Timeless Classic Movies",
+        "channelId": "UCOg0aMAXmF3o5m243PxhE5g",
+        "releaseYear": 1958,
+        "language": "en",
+        "publishedAt": "11 years ago",
+        "duration": 3403,
+        "viewCount": 158303,
+        "thumbnail": "https://i.ytimg.com/vi/0Z2bScHfSHE/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCdHOpNfSX7dV1l675RaEvW_TJjYw",
+        "addedAt": "2025-12-21T22:02:17.857Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:56:04.393Z",
+    "metadata": {
+      "Title": "The Invisible Avenger",
+      "Year": "1954",
+      "Rated": "N/A",
+      "Released": "29 Dec 1954",
+      "Runtime": "70 min",
+      "Genre": "Crime, Mystery, Sci-Fi",
+      "Director": "Motoyoshi Oda",
+      "Writer": "Shigeaki Hidaka, Kei Beppu",
+      "Actors": "Seizaburô Kawazu, Miki Sanjô, Minoru Takada",
+      "Plot": "A car strikes an unseen object. Blood spreads from an invisible source, which becomes visible as the bleeding man dies. He carries with him a suicide note dedicated to his only friend, who is also an invisible man. An eager young reporter tracks down Takemitsu Nanjo, a war veteran who makes his living visibly, painting his face like a clown's and carrying advertising signs. His favorite neighbor is a little blind girl whose mother is running afoul of local gangsters. The gangsters have been terrorizing the city as \"the invisible gang,\" wrapping themselves up in scarves and trenchcoats so as to be visible to their victims, even though they are supposed to be invisible underneath. Once they discover Nanjo, who is defending his only friends, they beat him and leave him for dead.",
+      "Language": "Japanese",
+      "Country": "Japan",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMjhmYmZjYWMtZTMyNS00Y2ZmLWFiN2MtMjQ3ODZmNzc1ZWJmXkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "5.8/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "5.8",
+      "imdbVotes": "161",
+      "imdbID": "tt0047594",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
     "verified": true
   }
 }

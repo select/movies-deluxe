@@ -5,19 +5,37 @@
   >
     <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
-      <header class="border-b border-gray-200 dark:border-gray-800">
-        <div class="max-w-none mx-auto px-4 lg:px-[6%] py-6 flex items-center justify-between">
+      <header class="sticky top-0 z-30 glass border-b border-gray-200 dark:border-gray-800 transition-all duration-300 bg-gradient-to-r from-white/80 via-white/70 to-white/80 dark:from-gray-900/80 dark:via-gray-900/70 dark:to-gray-900/80">
+        <div
+          :class="[
+            'max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between transition-all duration-300',
+            windowScrollY > 50 ? 'py-3' : 'py-6'
+          ]"
+        >
           <div>
-            <h1 class="text-3xl font-bold">
+            <h1
+              :class="[
+                'font-bold transition-all duration-300',
+                windowScrollY > 50 ? 'text-xl' : 'text-3xl'
+              ]"
+            >
               Movies Deluxe
             </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p
+              v-if="windowScrollY <= 50"
+              class="text-sm text-gray-600 dark:text-gray-400 mt-1 transition-all duration-300"
+            >
               Free legal movie streams from Archive.org and YouTube
             </p>
           </div>
 
           <!-- Search Bar -->
-          <div class="flex-1 max-w-md mx-8 hidden md:block">
+          <div
+            :class="[
+              'flex-1 max-w-md mx-8 hidden md:block transition-all duration-300',
+              windowScrollY > 50 ? 'scale-95' : 'scale-100'
+            ]"
+          >
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <div class="i-mdi-magnify text-gray-400" />
@@ -41,7 +59,10 @@
 
           <!-- Dark Mode Toggle -->
           <button
-            class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            :class="[
+              'rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300',
+              windowScrollY > 50 ? 'p-1.5' : 'p-2'
+            ]"
             :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
             @click="toggleDarkMode"
           >
@@ -182,10 +203,12 @@
 <script setup lang="ts">
 import { useMovieStore } from '@/stores/useMovieStore'
 import { useFilterStore } from '@/stores/useFilterStore'
-import { useMagicKeys, whenever } from '@vueuse/core'
+import { useMagicKeys, whenever, useWindowScroll } from '@vueuse/core'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
+const { y: windowScrollY } = useWindowScroll()
 
 // Search handling
 const handleSearchInput = (query: string) => {
@@ -205,7 +228,6 @@ const isFilterMenuOpen = ref(false)
 
 // Pagination
 const itemsPerPage = 20
-const currentPage = ref(1)
 
 // Infinite scroll sentinel ref
 const sentinelRef = ref<HTMLElement | null>(null)
@@ -222,6 +244,21 @@ onMounted(async () => {
 
   // Set up intersection observer for infinite scroll
   setupInfiniteScroll()
+
+  // Restore scroll position after a short delay to ensure DOM is rendered
+  if (filterStore.filters.lastScrollY > 0) {
+    setTimeout(() => {
+      window.scrollTo({
+        top: filterStore.filters.lastScrollY,
+        behavior: 'instant'
+      })
+    }, 100)
+  }
+})
+
+// Save scroll position before leaving
+onBeforeRouteLeave(() => {
+  filterStore.setScrollY(windowScrollY.value)
 })
 
 // Clean up observer on unmount
@@ -231,13 +268,17 @@ onUnmounted(() => {
   }
 })
 
-// Reset pagination when filters change
+// Reset pagination when filters change (excluding currentPage itself)
 watch(
-  () => filterStore.filters,
   () => {
-    currentPage.value = 1
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { currentPage, lastScrollY, ...rest } = filterStore.filters
+    return JSON.stringify(rest)
   },
-  { deep: true }
+  () => {
+    filterStore.setCurrentPage(1)
+    filterStore.setScrollY(0)
+  }
 )
 
 // Keyboard shortcuts
@@ -286,7 +327,7 @@ const filteredAndSortedMovies = computed(() => {
 })
 
 const displayedMovies = computed(() => {
-  return filteredAndSortedMovies.value.slice(0, currentPage.value * itemsPerPage)
+  return filteredAndSortedMovies.value.slice(0, filterStore.filters.currentPage * itemsPerPage)
 })
 
 const hasMore = computed(() => {
@@ -336,7 +377,7 @@ const setupInfiniteScroll = () => {
 
 // Load more movies
 const loadMore = () => {
-  currentPage.value++
+  filterStore.setCurrentPage(filterStore.filters.currentPage + 1)
 }
 </script>
 
