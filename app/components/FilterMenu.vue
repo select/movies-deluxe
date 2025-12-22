@@ -18,6 +18,7 @@
         'overflow-hidden',
         // Mobile: Bottom sheet (< md breakpoint)
         'bottom-0 left-0 right-0 rounded-t-2xl border-t border-gray-200 dark:border-gray-700',
+        'max-h-[90vh] flex flex-col',
         'md:top-0 md:left-0 md:bottom-auto md:right-auto md:h-full md:w-[400px] md:rounded-none md:border-t-0 md:border-r md:border-gray-200 md:dark:border-gray-700',
         // Animation: translateY for mobile, translateX for desktop
         isOpen
@@ -41,7 +42,7 @@
       </div>
 
       <!-- Filter Content -->
-      <div class="overflow-y-auto scrollbar-thin max-h-[60vh] md:h-[calc(100vh-4rem)] p-4">
+      <div class="overflow-y-auto scrollbar-thin flex-1 md:h-[calc(100vh-4rem)] p-4">
         <div class="max-w-7xl mx-auto space-y-4">
           <!-- Sort Section (Top) -->
           <div class="pb-4 border-b-2 border-gray-300 dark:border-gray-600">
@@ -234,6 +235,7 @@ import { useFilterStore } from '@/stores/useFilterStore'
 import { SORT_OPTIONS, type SortOption } from '@/utils/movieSort'
 import { YOUTUBE_CHANNELS, AVAILABLE_GENRES, AVAILABLE_COUNTRIES } from '@/constants/filters'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
+import { onClickOutside, useScrollLock } from '@vueuse/core'
 
 interface Props {
   isOpen: boolean
@@ -268,6 +270,16 @@ const handleSortChange = (option: SortOption) => {
 // Focus trap for accessibility
 const filterMenuRef = ref<HTMLElement | null>(null)
 
+// Scroll lock for body when menu is open
+const isLocked = useScrollLock(typeof window !== 'undefined' ? document.body : null)
+
+// Close menu when clicking outside
+onClickOutside(filterMenuRef, () => {
+  if (props.isOpen) {
+    emit('close')
+  }
+})
+
 // Activate focus trap when menu is open
 const { activate, deactivate } = useFocusTrap(filterMenuRef, {
   immediate: false,
@@ -278,8 +290,9 @@ const { activate, deactivate } = useFocusTrap(filterMenuRef, {
   fallbackFocus: () => filterMenuRef.value as HTMLElement, // Fallback if close button not found
 })
 
-// Watch for menu open/close to manage focus trap
+// Watch for menu open/close to manage focus trap and scroll lock
 watch(() => props.isOpen, (isOpen) => {
+  isLocked.value = isOpen
   if (isOpen) {
     // Small delay to ensure DOM is ready and animation has started
     if (typeof window !== 'undefined') {

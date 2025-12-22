@@ -64,18 +64,18 @@
           v-else-if="movieStore.movies.length > 0"
           class="mb-8"
         >
-          <div class="flex flex-wrap gap-3 text-sm">
-            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
-              <span class="font-semibold">Total Movies:</span> {{ movieStore.movies.length }}
+          <div class="flex flex-wrap gap-6 text-sm">
+            <div class="">
+              <span class="text-gray-500">Total Movies:</span> {{ movieStore.movies.length }}
             </div>
-            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
-              <span class="font-semibold">Archive.org:</span> {{ archiveCount }}
+            <div class="">
+              <span class="text-gray-500">Archive.org:</span> {{ archiveCount }}
             </div>
-            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
-              <span class="font-semibold">YouTube:</span> {{ youtubeCount }}
+            <div class="">
+              <span class="text-gray-500">YouTube:</span> {{ youtubeCount }}
             </div>
-            <div class="px-3 py-1 rounded-full border border-gray-300 dark:border-gray-700">
-              <span class="font-semibold">With Metadata:</span> {{ enrichedCount }}
+            <div class="">
+              <span class="text-gray-500">With Metadata:</span> {{ enrichedCount }}
             </div>
           </div>
         </div>
@@ -204,7 +204,7 @@ if (f) {
     if (typeof window !== 'undefined') {
       const activeElement = window.document.activeElement
       const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-      
+
       if (!isTyping) {
         isFilterMenuOpen.value = !isFilterMenuOpen.value
       }

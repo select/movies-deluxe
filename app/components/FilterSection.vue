@@ -4,7 +4,7 @@
     <div class="flex items-center gap-2 mb-2">
       <div
         v-if="icon"
-        :class="['text-base', icon]"
+        :class="['text-base text-gray-600', icon]"
       />
       <h3 class="font-semibold text-xs uppercase tracking-wide text-gray-600 dark:text-gray-400">
         {{ title }}
