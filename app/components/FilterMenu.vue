@@ -36,7 +36,7 @@
       </div>
 
       <!-- Filter Content -->
-      <div class="overflow-y-auto max-h-[60vh] p-4">
+      <div class="overflow-y-auto scrollbar-thin max-h-[60vh] p-4">
         <div class="max-w-7xl mx-auto space-y-4">
           <!-- Sort Section (Top) -->
           <div class="pb-4 border-b-2 border-gray-300 dark:border-gray-600">

@@ -37,6 +37,120 @@ export default defineConfig({
       'px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors',
     card: 'p-4 rounded-lg shadow-md bg-white dark:bg-gray-800',
   },
+  preflights: [
+    {
+      getCSS: () => `
+        /* Global body scrollbar */
+        body {
+          scrollbar-width: auto;
+          scrollbar-color: #d4d4d4 #f5f5f5;
+        }
+        body::-webkit-scrollbar {
+          width: 12px;
+        }
+        body::-webkit-scrollbar-track {
+          background: #f5f5f5;
+          border-radius: 6px;
+        }
+        body::-webkit-scrollbar-thumb {
+          background: #d4d4d4;
+          border-radius: 6px;
+        }
+        body::-webkit-scrollbar-thumb:hover {
+          background: #a3a3a3;
+        }
+
+        /* Global body scrollbar - Dark mode */
+        .dark body {
+          scrollbar-color: #404040 #262626;
+        }
+        :is(.dark) body::-webkit-scrollbar-track {
+          background: #262626;
+        }
+        :is(.dark) body::-webkit-scrollbar-thumb {
+          background: #404040;
+        }
+        :is(.dark) body::-webkit-scrollbar-thumb:hover {
+          background: #525252;
+        }
+
+        /* Thin scrollbar (8px) - Light mode */
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: #d4d4d4 transparent;
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: #d4d4d4;
+          border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: #a3a3a3;
+        }
+
+        /* Thin scrollbar - Dark mode */
+        .dark .scrollbar-thin {
+          scrollbar-color: #404040 transparent;
+        }
+        .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: #404040;
+        }
+        .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: #525252;
+        }
+
+        /* Default scrollbar (12px) - Light mode */
+        .scrollbar-default {
+          scrollbar-width: auto;
+          scrollbar-color: #d4d4d4 #f5f5f5;
+        }
+        .scrollbar-default::-webkit-scrollbar {
+          width: 12px;
+          height: 12px;
+        }
+        .scrollbar-default::-webkit-scrollbar-track {
+          background: #f5f5f5;
+          border-radius: 6px;
+        }
+        .scrollbar-default::-webkit-scrollbar-thumb {
+          background: #d4d4d4;
+          border-radius: 6px;
+        }
+        .scrollbar-default::-webkit-scrollbar-thumb:hover {
+          background: #a3a3a3;
+        }
+
+        /* Default scrollbar - Dark mode */
+        .dark .scrollbar-default {
+          scrollbar-color: #404040 #262626;
+        }
+        .dark .scrollbar-default::-webkit-scrollbar-track {
+          background: #262626;
+        }
+        .dark .scrollbar-default::-webkit-scrollbar-thumb {
+          background: #404040;
+        }
+        .dark .scrollbar-default::-webkit-scrollbar-thumb:hover {
+          background: #525252;
+        }
+
+        /* Hidden scrollbar (but still scrollable) */
+        .scrollbar-hidden {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scrollbar-hidden::-webkit-scrollbar {
+          display: none;
+        }
+      `,
+    },
+  ],
   theme: {
     colors: {
       primary: '#525252', // neutral-600 - true carbon theme
@@ -59,6 +173,6 @@ export default defineConfig({
   },
   // Enable dark mode with class strategy
   darkMode: 'class',
-  // Safelist font-sans to ensure it's always generated
-  safelist: ['font-sans'],
+  // Safelist to ensure classes are always generated
+  safelist: ['font-sans', 'scrollbar-thin', 'scrollbar-default', 'scrollbar-hidden'],
 })

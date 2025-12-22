@@ -55,6 +55,13 @@ export default tseslint.config(
     },
   },
   {
+    // Allow console.log in scripts and tests (Node.js code, not frontend)
+    files: ['scripts/**/*.ts', 'tests/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     ignores: ['.nuxt', '.output', 'dist', 'node_modules', '*.config.js', 'commitlint.config.js'],
   }
 )
