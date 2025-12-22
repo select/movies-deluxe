@@ -71,7 +71,10 @@ export const useFilterStore = defineStore('filter', () => {
     try {
       const stored = localStorage.getItem('movies-deluxe-filters')
       if (stored) {
-        return JSON.parse(stored)
+        return {
+          ...DEFAULT_FILTERS,
+          ...JSON.parse(stored),
+        }
       }
     } catch {
       // Failed to parse localStorage
@@ -90,9 +93,10 @@ export const useFilterStore = defineStore('filter', () => {
       if (stored) {
         try {
           const parsed = JSON.parse(stored)
+          const merged = { ...DEFAULT_FILTERS, ...parsed }
           // Only update if different from current state
-          if (JSON.stringify(filters.value) !== stored) {
-            filters.value = parsed
+          if (JSON.stringify(filters.value) !== JSON.stringify(merged)) {
+            filters.value = merged
           }
         } catch {
           // Failed to reload from localStorage

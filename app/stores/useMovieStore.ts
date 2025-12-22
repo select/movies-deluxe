@@ -95,7 +95,7 @@ export const useMovieStore = defineStore('movie', () => {
    * @returns Filtered array of movies matching the query
    */
   const searchMovies = (query: string): MovieEntry[] => {
-    if (!query.trim()) return movies.value
+    if (!query || !query.trim()) return movies.value
 
     if (fuse.value) {
       const results = fuse.value.search(query)
