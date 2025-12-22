@@ -315,7 +315,6 @@ const currentSort = computed(() => filterStore.filters.sort || SORT_OPTIONS[0])
 // Handle sort change
 const handleSortChange = (option: SortOption) => {
   filterStore.setSort(option)
-  // Auto-close filter menu after sort selection
-  emit('close')
+  // User can continue adjusting filters - manual close via X button or overlay
 }
 </script>
