@@ -136,6 +136,7 @@
 <script setup lang="ts">
 import { useMovieStore } from '@/stores/useMovieStore'
 import { useFilterStore } from '@/stores/useFilterStore'
+import { useMagicKeys, whenever } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
@@ -182,6 +183,29 @@ watch(
   },
   { deep: true }
 )
+
+// Keyboard shortcuts
+const { Escape, f } = useMagicKeys()
+
+// Escape key closes filter menu
+whenever(Escape, () => {
+  if (isFilterMenuOpen.value) {
+    isFilterMenuOpen.value = false
+  }
+})
+
+// 'F' key toggles filter menu (only when not typing in input)
+whenever(f, () => {
+  // Check if user is typing in an input/textarea
+  if (typeof window !== 'undefined') {
+    const activeElement = window.document.activeElement
+    const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+    
+    if (!isTyping) {
+      isFilterMenuOpen.value = !isFilterMenuOpen.value
+    }
+  }
+})
 
 // Toggle dark mode
 const toggleDarkMode = () => {

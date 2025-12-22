@@ -25,8 +25,12 @@ export default tseslint.config(
         onUnmounted: 'readonly',
         watch: 'readonly',
         // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        setTimeout: 'readonly',
         localStorage: 'readonly',
         Event: 'readonly',
+        KeyboardEvent: 'readonly',
         HTMLImageElement: 'readonly',
         HTMLElement: 'readonly',
         IntersectionObserver: 'readonly',
