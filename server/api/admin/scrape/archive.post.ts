@@ -1,9 +1,4 @@
-import {
-  loadMoviesDatabase,
-  saveMoviesDatabase,
-  upsertMovie,
-  getDatabaseStats,
-} from '../../../utils/movieData'
+import { loadMoviesDatabase, saveMoviesDatabase, upsertMovie } from '../../../utils/movieData'
 import { fetchArchiveOrgMovies, processArchiveMovie } from '../../../utils/archive'
 
 export default defineEventHandler(async event => {
@@ -18,7 +13,6 @@ export default defineEventHandler(async event => {
   const omdbApiKey = process.env.OMDB_API_KEY
 
   const db = await loadMoviesDatabase()
-  const stats = getDatabaseStats(db)
 
   const results = {
     processed: 0,
@@ -30,8 +24,40 @@ export default defineEventHandler(async event => {
   for (const collection of collections) {
     let startPage = 0
     if (autoDetect) {
-      const existingInCollection = stats.collections[collection] || 0
-      startPage = Math.floor(existingInCollection / rows)
+      // Find the first page with new movies by binary search
+      // Check pages 0, 5, 10, 15, 20 to find approximate starting point
+      const testPages = [0, 5, 10, 15, 20, 25, 30]
+      let lastPageWithAllExisting = -1
+
+      for (const testPage of testPages) {
+        const testMovies = await fetchArchiveOrgMovies(collection, Math.min(rows, 5), testPage)
+        if (testMovies.length === 0) break
+
+        // Check if all movies on this page already exist
+        const allExist = testMovies.every(movie => {
+          const tempId = `archive-${movie.identifier}`
+          const existing = db[tempId]
+          if (!existing) return false
+          // Check if this specific source exists
+          const hasSource = existing.sources?.some(
+            s => s.type === 'archive.org' && s.identifier === movie.identifier
+          )
+          return hasSource
+        })
+
+        if (allExist) {
+          lastPageWithAllExisting = testPage
+        } else {
+          // Found a page with new movies
+          startPage = testPage
+          break
+        }
+      }
+
+      // If all test pages have existing movies, start after the last one
+      if (lastPageWithAllExisting >= 0 && startPage === 0) {
+        startPage = lastPageWithAllExisting + 1
+      }
     }
 
     for (let p = 0; p < pages; p++) {
@@ -45,10 +71,23 @@ export default defineEventHandler(async event => {
           const entry = await processArchiveMovie(movie, collection, { skipOmdb, omdbApiKey })
           if (entry) {
             const existing = db[entry.imdbId]
+            const existingSource = existing?.sources?.find(
+              s =>
+                s.type === 'archive.org' &&
+                entry.sources?.[0]?.type === 'archive.org' &&
+                s.identifier === entry.sources[0].identifier
+            )
+
             upsertMovie(db, entry.imdbId, entry)
-            if (existing) results.updated++
-            else results.added++
             results.processed++
+
+            if (!existing) {
+              results.added++
+            } else if (!existingSource) {
+              // Movie exists but this is a new source
+              results.updated++
+            }
+            // If movie and source both exist, don't count as updated
           }
         } catch (e: unknown) {
           results.errors.push(
