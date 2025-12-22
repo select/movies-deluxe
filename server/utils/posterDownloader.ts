@@ -3,7 +3,11 @@ import * as https from 'node:https'
 import * as http from 'node:http'
 import { join } from 'node:path'
 
-export async function downloadPoster(url: string, imdbId: string): Promise<boolean> {
+export async function downloadPoster(
+  url: string,
+  imdbId: string,
+  force: boolean = false
+): Promise<boolean> {
   if (!url || url === 'N/A' || !imdbId) return false
 
   const postersDir = join(process.cwd(), 'public/posters')
@@ -14,7 +18,7 @@ export async function downloadPoster(url: string, imdbId: string): Promise<boole
   const filepath = join(postersDir, `${imdbId}.jpg`)
 
   // Skip if already exists
-  if (fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
+  if (!force && fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
     return true
   }
 

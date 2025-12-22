@@ -131,7 +131,10 @@ export function getDatabaseStats(db: MoviesDatabase) {
       if (source.type === 'archive.org') {
         stats.archiveOrgSources++
         if (source.collection) {
-          stats.collections[source.collection] = (stats.collections[source.collection] || 0) + 1
+          const collection = Array.isArray(source.collection)
+            ? source.collection[0]
+            : source.collection
+          stats.collections[collection] = (stats.collections[collection] || 0) + 1
         }
       }
       if (source.type === 'youtube') stats.youtubeSources++

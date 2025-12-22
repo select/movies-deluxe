@@ -87,7 +87,7 @@ export async function processArchiveMovie(
     addedAt: new Date().toISOString(),
   }
 
-  let imdbId = generateArchiveId(movie.identifier)
+  let imdbId: string = generateArchiveId(movie.identifier)
   let metadata = undefined
 
   if (!options.skipOmdb && options.omdbApiKey) {
