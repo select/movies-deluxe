@@ -22,6 +22,9 @@ export interface FilterState {
   // Sorting (stored as field + direction for localStorage compatibility)
   sort: SortState
 
+  // Remember previous sort when searching
+  previousSort?: SortState
+
   // Source filter (can be 'archive.org' or YouTube channel names)
   sources: string[]
 
@@ -121,6 +124,13 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const setSort = (option: SortOption) => {
     filters.value.sort = { field: option.field, direction: option.direction }
+
+    // If user manually sets sort while searching, clear previousSort
+    // so we don't overwrite their manual choice when they clear search
+    if (filters.value.searchQuery !== '') {
+      filters.value.previousSort = undefined
+    }
+
     persistFilters()
   }
 
@@ -144,6 +154,19 @@ export const useFilterStore = defineStore('filter', () => {
    * Set search query
    */
   const setSearchQuery = (query: string) => {
+    const wasEmpty = filters.value.searchQuery === ''
+    const isNowEmpty = query === ''
+
+    if (wasEmpty && !isNowEmpty) {
+      // Entering search: save current sort and switch to relevance
+      filters.value.previousSort = { ...filters.value.sort }
+      filters.value.sort = { field: 'relevance', direction: 'desc' }
+    } else if (!wasEmpty && isNowEmpty && filters.value.previousSort) {
+      // Clearing search: restore previous sort
+      filters.value.sort = { ...filters.value.previousSort }
+      filters.value.previousSort = undefined
+    }
+
     filters.value.searchQuery = query
     persistFilters()
   }
