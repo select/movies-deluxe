@@ -468,6 +468,15 @@ pnpm build                            # Build for production
 pnpm tsx scripts/<name>.ts            # Run scripts
 ```
 
+## Frontend Verification
+
+**IMPORTANT**: Always verify frontend changes using the **chrome-devtools** MCP.
+
+- Start the dev server (`pnpm dev`)
+- Use `chrome-devtools_navigate_page` to `http://localhost:3003`
+- Use `chrome-devtools_take_screenshot` or `chrome-devtools_take_snapshot` to verify UI
+- Check console for errors with `chrome-devtools_list_console_messages`
+
 ### Important Rules
 
 - ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files

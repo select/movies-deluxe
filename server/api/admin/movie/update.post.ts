@@ -1,20 +1,8 @@
-import { defineEventHandler, readBody, createError, getRequestHost } from 'h3'
+import { defineEventHandler, readBody, createError } from 'h3'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 
 export default defineEventHandler(async event => {
-  // Security check: Only allow localhost
-  const host = getRequestHost(event)
-  const isLocal =
-    host.includes('localhost') || host.includes('127.0.0.1') || host.startsWith('localhost:')
-
-  if (!isLocal) {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'Forbidden: Admin APIs are only available on localhost',
-    })
-  }
-
   const body = await readBody(event)
   const { movieId, newImdbId, metadata, removeMetadata, verified } = body
 
