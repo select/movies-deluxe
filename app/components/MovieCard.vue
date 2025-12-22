@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="`/movie/${movie.imdbId}`"
-    class="block border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
+    class="block border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white dark:bg-gray-800"
   >
     <!-- Poster -->
     <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
