@@ -60,14 +60,14 @@
           </h3>
           <div class="flex gap-2">
             <input
-              v-model="searchTitle"
+              v-model.trim="searchTitle"
               type="text"
               placeholder="Movie Title"
               class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm"
               @keyup.enter="handleSearch"
             >
             <input
-              v-model="searchYear"
+              v-model.trim="searchYear"
               type="text"
               placeholder="Year"
               class="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm"
@@ -206,7 +206,10 @@ watch(() => props.movie.imdbId, () => {
 })
 
 const handleSearch = async () => {
-  if (!searchTitle.value) return
+  const title = searchTitle.value.trim()
+  const year = searchYear.value.trim()
+  
+  if (!title) return
   
   isSearching.value = true
   searchError.value = ''
@@ -216,8 +219,8 @@ const handleSearch = async () => {
     // eslint-disable-next-line no-undef
     const data = await $fetch<OMDBSearchResponse>('/api/admin/omdb/search', {
       query: {
-        s: searchTitle.value,
-        y: searchYear.value
+        s: title,
+        y: year
       }
     })
     
