@@ -179,7 +179,7 @@
 
             <!-- Developer Tools (Localhost Only) -->
             <FilterSection
-              v-if="isLocalhost()"
+              v-if="isDev"
               title="Developer Tools"
               icon="i-mdi-dev-to"
             >
@@ -273,6 +273,12 @@ const sortOptions = SORT_OPTIONS
 const youtubeChannels = YOUTUBE_CHANNELS
 const availableGenres = AVAILABLE_GENRES
 const availableCountries = AVAILABLE_COUNTRIES
+
+// Developer mode detection (localhost only)
+const isDev = ref(false)
+onMounted(() => {
+  isDev.value = isLocalhost()
+})
 
 // Safe access to current sort (handles SSR and undefined cases)
 const currentSort = computed(() => filterStore.currentSortOption)

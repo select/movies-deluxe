@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-22T21:56:04.399Z"
+    "lastUpdated": "2025-12-22T22:10:48.517Z"
   },
   "archive-TheFastandtheFuriousJohnIreland1954goofyrip": {
     "imdbId": "archive-TheFastandtheFuriousJohnIreland1954goofyrip",
@@ -40,24 +40,6 @@
     ],
     "lastUpdated": "2025-12-21T21:06:40.638Z"
   },
-  "archive-reefer_madness1938": {
-    "imdbId": "archive-reefer_madness1938",
-    "title": "Reefer Madness",
-    "year": 1938,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "reefer_madness1938",
-        "url": "https://archive.org/details/reefer_madness1938",
-        "collection": "feature_films",
-        "downloads": 990105,
-        "thumbnail": "https://archive.org/services/img/reefer_madness1938",
-        "releaseDate": "1938-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.212Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.638Z"
-  },
   "archive-3stooges": {
     "imdbId": "archive-3stooges",
     "title": "Three Stooges Episodes",
@@ -69,22 +51,6 @@
         "collection": "feature_films",
         "downloads": 744488,
         "thumbnail": "https://archive.org/services/img/3stooges",
-        "addedAt": "2025-12-21T21:06:28.212Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.639Z"
-  },
-  "archive-RecurringDinosaurInfestationFilms": {
-    "imdbId": "archive-RecurringDinosaurInfestationFilms",
-    "title": "Recurring Dinosaur Infestation Films",
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "RecurringDinosaurInfestationFilms",
-        "url": "https://archive.org/details/RecurringDinosaurInfestationFilms",
-        "collection": "feature_films",
-        "downloads": 657786,
-        "thumbnail": "https://archive.org/services/img/RecurringDinosaurInfestationFilms",
         "addedAt": "2025-12-21T21:06:28.212Z"
       }
     ],
@@ -175,24 +141,6 @@
         "downloads": 501155,
         "thumbnail": "https://archive.org/services/img/CC_1916_10_02_ThePawnshop",
         "releaseDate": "1916-01-01T00:00:00Z",
-        "addedAt": "2025-12-21T21:06:28.212Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T21:06:40.639Z"
-  },
-  "archive-Cosmos_War_of_the_Planets": {
-    "imdbId": "archive-Cosmos_War_of_the_Planets",
-    "title": "Cosmos: War of the Planets",
-    "year": 1977,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Cosmos_War_of_the_Planets",
-        "url": "https://archive.org/details/Cosmos_War_of_the_Planets",
-        "collection": "feature_films",
-        "downloads": 478712,
-        "thumbnail": "https://archive.org/services/img/Cosmos_War_of_the_Planets",
-        "releaseDate": "1977-01-01T00:00:00Z",
         "addedAt": "2025-12-21T21:06:28.212Z"
       }
     ],
@@ -4370,26 +4318,6 @@
     ],
     "lastUpdated": "2025-12-21T22:01:47.423Z"
   },
-  "youtube-wgBnLO4Pnb0": {
-    "imdbId": "youtube-wgBnLO4Pnb0",
-    "title": "FARRAH BATTLES ROBOT! Saturn 3",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "wgBnLO4Pnb0",
-        "url": "https://www.youtube.com/watch?v=wgBnLO4Pnb0",
-        "channelName": "Popcornflix",
-        "channelId": "UCVFYikepF-avelvuIaQ_lHA",
-        "language": "en",
-        "publishedAt": "1 year ago",
-        "duration": 5231,
-        "viewCount": 172566,
-        "thumbnail": "https://i.ytimg.com/vi/wgBnLO4Pnb0/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAKQuXSd9OcW3IuW66OAtyIN1DVyA",
-        "addedAt": "2025-12-21T22:01:50.149Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:01:50.149Z"
-  },
   "youtube-F681oejtkVM": {
     "imdbId": "youtube-F681oejtkVM",
     "title": "Steve Martini's The Judge",
@@ -4409,26 +4337,6 @@
       }
     ],
     "lastUpdated": "2025-12-21T22:01:59.162Z"
-  },
-  "youtube-yJf4PmH93Gc": {
-    "imdbId": "youtube-yJf4PmH93Gc",
-    "title": "Steve Martini's The Judge",
-    "sources": [
-      {
-        "type": "youtube",
-        "videoId": "yJf4PmH93Gc",
-        "url": "https://www.youtube.com/watch?v=yJf4PmH93Gc",
-        "channelName": "Popcornflix",
-        "channelId": "UCVFYikepF-avelvuIaQ_lHA",
-        "language": "en",
-        "publishedAt": "1 year ago",
-        "duration": 5185,
-        "viewCount": 487867,
-        "thumbnail": "https://i.ytimg.com/vi/yJf4PmH93Gc/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAheEyUBpSQ8as7vef-dfDX1r9vug",
-        "addedAt": "2025-12-21T22:01:59.662Z"
-      }
-    ],
-    "lastUpdated": "2025-12-21T22:01:59.662Z"
   },
   "youtube-UyddVRVDENU": {
     "imdbId": "youtube-UyddVRVDENU",
@@ -10597,6 +10505,258 @@
       "Website": "N/A",
       "Response": "True"
     },
+    "verified": true
+  },
+  "tt0149677": {
+    "imdbId": "tt0149677",
+    "title": "War of the Planets",
+    "year": 1977,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "Cosmos_War_of_the_Planets",
+        "url": "https://archive.org/details/Cosmos_War_of_the_Planets",
+        "collection": "feature_films",
+        "downloads": 478712,
+        "thumbnail": "https://archive.org/services/img/Cosmos_War_of_the_Planets",
+        "releaseDate": "1977-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.212Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:58:07.649Z",
+    "metadata": {
+      "Title": "War of the Planets",
+      "Year": "1977",
+      "Rated": "PG",
+      "Released": "N/A",
+      "Runtime": "89 min",
+      "Genre": "Adventure, Sci-Fi",
+      "Director": "Alfonso Brescia",
+      "Writer": "Alfonso Brescia, Aldo Crudo, Maxim Lo Jacono",
+      "Actors": "John Richardson, Yanti Somer, West Buchanan",
+      "Plot": "A strange signal arrives on the Earth disturbing all communications, while a UFO appears above the Antarctic sea. Captain Alex Hamilton is sent with his spaceship and crew to the space outside the Solar System to find the origin of that signal. They reach an unknown planet where a giant robot enslaved a whole population of humanoids by taking their psychic energies. The robot's got his eyes on the Earth, too.",
+      "Language": "English",
+      "Country": "Italy",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMTUwODlmMTktZTlmYy00NWJlLTg4MTEtN2FhYjc0YWVjMTg4XkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "2.9/10"
+        }
+      ],
+      "Metascore": "N/A",
+      "imdbRating": "2.9",
+      "imdbVotes": "1,013",
+      "imdbID": "tt0149677",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
+  },
+  "tt0028346": {
+    "imdbId": "tt0028346",
+    "title": "Reefer Madness",
+    "year": 1936,
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "reefer_madness1938",
+        "url": "https://archive.org/details/reefer_madness1938",
+        "collection": "feature_films",
+        "downloads": 990105,
+        "thumbnail": "https://archive.org/services/img/reefer_madness1938",
+        "releaseDate": "1938-01-01T00:00:00Z",
+        "addedAt": "2025-12-21T21:06:28.212Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:58:41.020Z",
+    "metadata": {
+      "Title": "Reefer Madness",
+      "Year": "1936",
+      "Rated": "PG",
+      "Released": "01 Dec 1938",
+      "Runtime": "66 min",
+      "Genre": "Comedy, Crime, Drama",
+      "Director": "Louis J. Gasnier",
+      "Writer": "Lawrence Meade, Arthur Hoerl, Paul Franklin",
+      "Actors": "Dorothy Short, Kenneth Craig, Lillian Miles",
+      "Plot": "Film that relates the story, as told by high school principal Dr. Carroll to parents at a PTA meeting, of the scourge of marijuana. The tale revolves around Mae and Jack, accomplices in the distribution of marijuana, who manage to entice the local high school kids to stop by Mae's apartment to smoke reefer. The lives of all who are involved with this menace are inevitably shattered. One man becomes so addicted to the killer weed that the guilt over framing a teen for murder causes a judge to order him to be committed for life to a mental hospital. Dr. Carroll closes by advising us to not incur the same tragedy.",
+      "Language": "English",
+      "Country": "United States",
+      "Awards": "N/A",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BNjhmYjVkN2QtODE0MS00MjlkLThjM2ItNWRiNjcxZDg5YmVjXkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "3.7/10"
+        },
+        {
+          "Source": "Rotten Tomatoes",
+          "Value": "39%"
+        },
+        {
+          "Source": "Metacritic",
+          "Value": "70/100"
+        }
+      ],
+      "Metascore": "70",
+      "imdbRating": "3.7",
+      "imdbVotes": "9,511",
+      "imdbID": "tt0028346",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "verified": true
+  },
+  "tt0197521": {
+    "imdbId": "tt0197521",
+    "title": "Godzilla: King of the Monsters!",
+    "sources": [
+      {
+        "type": "archive.org",
+        "identifier": "RecurringDinosaurInfestationFilms",
+        "url": "https://archive.org/details/RecurringDinosaurInfestationFilms",
+        "collection": "feature_films",
+        "downloads": 657786,
+        "thumbnail": "https://archive.org/services/img/RecurringDinosaurInfestationFilms",
+        "addedAt": "2025-12-21T21:06:28.212Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T21:59:32.059Z",
+    "metadata": {
+      "Title": "Godzilla: King of the Monsters!",
+      "Year": "1956",
+      "Rated": "Approved",
+      "Released": "27 Apr 1956",
+      "Runtime": "80 min",
+      "Genre": "Action, Horror, Sci-Fi",
+      "Director": "Ishirô Honda, Terry O. Morse",
+      "Writer": "Shigeru Kayama, Takeo Murata, Ishirô Honda",
+      "Actors": "Raymond Burr, Takashi Shimura, Momoko Kôchi",
+      "Plot": "When American reporter Steve Martin investigates a series of mysterious disasters off the coast of Japan, he comes face to face with an ancient creature so powerful and so terrifying, it can reduce Tokyo to a smoldering graveyard. Nuclear weapon testing resurrected this relic from the Jurassic age, and now it's rampaging across Japan. At night, Godzilla wades through Tokyo leaving death and destruction in his wake, disappearing into Tokyo Bay when his rage subsides. Coventional weapons are useless against him; but renowned scientist Dr. Serizawa has discovered a weapon that could destroy all life in the bay -- including Godzilla. But which disaster is worse, Godzilla's fury, or the death of Tokyo Bay?",
+      "Language": "English, Japanese",
+      "Country": "Japan, United States",
+      "Awards": "1 nomination total",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BM2M3Y2NhY2QtNjUyOC00YWFkLTg2ZGEtZjEwODgxNGZiZWM5XkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "6.3/10"
+        },
+        {
+          "Source": "Rotten Tomatoes",
+          "Value": "85%"
+        },
+        {
+          "Source": "Metacritic",
+          "Value": "61/100"
+        }
+      ],
+      "Metascore": "61",
+      "imdbRating": "6.3",
+      "imdbVotes": "9,321",
+      "imdbID": "tt0197521",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "N/A",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1956,
+    "verified": true
+  },
+  "youtube-yJf4PmH93Gc": {
+    "imdbId": "youtube-yJf4PmH93Gc",
+    "title": "The Judge",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "yJf4PmH93Gc",
+        "url": "https://www.youtube.com/watch?v=yJf4PmH93Gc",
+        "channelName": "Popcornflix",
+        "channelId": "UCVFYikepF-avelvuIaQ_lHA",
+        "language": "en",
+        "publishedAt": "1 year ago",
+        "duration": 5185,
+        "viewCount": 487867,
+        "thumbnail": "https://i.ytimg.com/vi/yJf4PmH93Gc/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAheEyUBpSQ8as7vef-dfDX1r9vug",
+        "addedAt": "2025-12-21T22:01:59.662Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:10:04.089Z",
+    "year": 2014,
+    "verified": false
+  },
+  "tt0079285": {
+    "imdbId": "tt0079285",
+    "title": "Saturn 3",
+    "sources": [
+      {
+        "type": "youtube",
+        "videoId": "wgBnLO4Pnb0",
+        "url": "https://www.youtube.com/watch?v=wgBnLO4Pnb0",
+        "channelName": "Popcornflix",
+        "channelId": "UCVFYikepF-avelvuIaQ_lHA",
+        "language": "en",
+        "publishedAt": "1 year ago",
+        "duration": 5231,
+        "viewCount": 172566,
+        "thumbnail": "https://i.ytimg.com/vi/wgBnLO4Pnb0/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAKQuXSd9OcW3IuW66OAtyIN1DVyA",
+        "addedAt": "2025-12-21T22:01:50.149Z"
+      }
+    ],
+    "lastUpdated": "2025-12-22T22:10:48.514Z",
+    "metadata": {
+      "Title": "Saturn 3",
+      "Year": "1980",
+      "Rated": "R",
+      "Released": "15 Feb 1980",
+      "Runtime": "88 min",
+      "Genre": "Adventure, Horror, Sci-Fi",
+      "Director": "Stanley Donen, John Barry",
+      "Writer": "Martin Amis, John Barry",
+      "Actors": "Farrah Fawcett, Kirk Douglas, Harvey Keitel",
+      "Plot": "Two lovers stationed at a remote base in the asteroid belt of Saturn are intruded upon by an anal-retentive technocrat from Earth and his charge: a malevolent eight foot tall robot.",
+      "Language": "English",
+      "Country": "United Kingdom, United States",
+      "Awards": "5 nominations total",
+      "Poster": "https://m.media-amazon.com/images/M/MV5BMzc1NjVmNGEtMzU2ZS00MjI5LWJhODYtMzMzN2VkNjc2NTU3XkEyXkFqcGc@._V1_SX300.jpg",
+      "Ratings": [
+        {
+          "Source": "Internet Movie Database",
+          "Value": "5.1/10"
+        },
+        {
+          "Source": "Rotten Tomatoes",
+          "Value": "31%"
+        },
+        {
+          "Source": "Metacritic",
+          "Value": "9/100"
+        }
+      ],
+      "Metascore": "9",
+      "imdbRating": "5.1",
+      "imdbVotes": "11,087",
+      "imdbID": "tt0079285",
+      "Type": "movie",
+      "DVD": "N/A",
+      "BoxOffice": "$9,000,000",
+      "Production": "N/A",
+      "Website": "N/A",
+      "Response": "True"
+    },
+    "year": 1980,
     "verified": true
   }
 }
