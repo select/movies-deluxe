@@ -141,7 +141,7 @@
         <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">OMDB</span>
-            <div class="i-mdi-check-decagram text-xl text-green-500" />
+            <div class="i-mdi-database-sync text-xl text-green-500" />
           </div>
           <div class="text-2xl font-bold">
             {{ stats.omdb.matched }}
@@ -432,7 +432,7 @@
         <!-- OMDB Enrichment -->
         <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-            <div class="i-mdi-database-sync text-blue-600" />
+            <div class="i-mdi-database-sync text-green-600" />
             OMDB Enrichment
           </h2>
 
@@ -461,7 +461,7 @@
             </div>
 
             <button
-              class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl shadow-lg shadow-green-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               :disabled="scraping"
               @click="startOMDBEnrichment"
             >
