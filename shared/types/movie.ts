@@ -16,6 +16,8 @@ export type MovieSourceType = 'archive.org' | 'youtube'
 export interface MovieSourceBase {
   type: MovieSourceType
   url: string
+  label?: string // Custom label for this source (e.g., "Widescreen", "HD")
+  quality?: string // Quality indicator (e.g., "720p", "1080p", "SD")
   description?: string // Original source description (e.g., YouTube description)
   addedAt: string // ISO 8601 timestamp
 }

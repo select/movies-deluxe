@@ -102,12 +102,15 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
               s.videoId === newSource.videoId))
       )
 
-      if (existingIndex !== -1) {
+      const existingSource = mergedSources[existingIndex]
+      if (existingSource) {
         // Update existing source with new data (preferring non-empty values)
         mergedSources[existingIndex] = {
-          ...mergedSources[existingIndex],
+          ...existingSource,
           ...newSource,
-          description: newSource.description || mergedSources[existingIndex].description,
+          label: newSource.label || existingSource.label,
+          quality: newSource.quality || existingSource.quality,
+          description: newSource.description || existingSource.description,
         }
       } else {
         // Add new source
@@ -282,19 +285,35 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
   const secondary = primary === entry1 ? entry2 : entry1
 
   // Merge sources
-  const mergedSources = [
-    ...primary.sources,
-    ...secondary.sources.filter(source => {
-      return !primary.sources.some(
-        s =>
-          s.type === source.type &&
-          ((s.type === 'archive.org' &&
-            source.type === 'archive.org' &&
-            s.identifier === source.identifier) ||
-            (s.type === 'youtube' && source.type === 'youtube' && s.videoId === source.videoId))
-      )
-    }),
-  ]
+  const mergedSources = [...primary.sources]
+
+  for (const secondarySource of secondary.sources) {
+    const existingIndex = mergedSources.findIndex(
+      s =>
+        s.type === secondarySource.type &&
+        ((s.type === 'archive.org' &&
+          secondarySource.type === 'archive.org' &&
+          s.identifier === secondarySource.identifier) ||
+          (s.type === 'youtube' &&
+            secondarySource.type === 'youtube' &&
+            s.videoId === secondarySource.videoId))
+    )
+
+    const existingSource = mergedSources[existingIndex]
+    if (existingIndex !== -1 && existingSource) {
+      // Update existing source with new data
+      mergedSources[existingIndex] = {
+        ...existingSource,
+        ...secondarySource,
+        label: secondarySource.label || existingSource.label,
+        quality: secondarySource.quality || existingSource.quality,
+        description: secondarySource.description || existingSource.description,
+      }
+    } else {
+      // Add new source
+      mergedSources.push(secondarySource)
+    }
+  }
 
   return {
     ...primary,
