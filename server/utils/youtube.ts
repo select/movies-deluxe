@@ -1,5 +1,7 @@
 import type { Client } from 'youtubei'
 import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
+import { cleanTitle, cleanTitleGeneral } from './titleCleaner'
+import { matchMovie } from './omdb'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   let cleanTitle = title
@@ -159,8 +161,9 @@ export async function processYouTubeVideo(
   channelConfig: { id: string; language?: string } | undefined,
   options: { skipOmdb: boolean; omdbApiKey?: string }
 ): Promise<MovieEntry | null> {
-  const cleanedTitle = channelConfig ? cleanTitle(video.title, channelConfig.id) : video.title
-  const { title, year } = parseMovieTitle(cleanedTitle)
+  // Keep original title for storage
+  const originalTitle = video.title
+  const { title: parsedTitle, year: parsedYear } = parseMovieTitle(originalTitle)
 
   const source: YouTubeSource = {
     type: 'youtube',
@@ -169,7 +172,7 @@ export async function processYouTubeVideo(
     channelName: video.channelName,
     channelId: video.channelId,
     description: video.description,
-    releaseYear: year,
+    releaseYear: parsedYear,
     language: channelConfig?.language,
     publishedAt: video.publishedAt,
     duration: video.duration,
@@ -182,7 +185,27 @@ export async function processYouTubeVideo(
   let metadata = undefined
 
   if (!options.skipOmdb && options.omdbApiKey) {
-    const matchResult = await matchMovie(title, year, options.omdbApiKey)
+    // Try multiple cleaning strategies for OMDB matching
+    let matchResult = { confidence: 'none' as const, imdbId: undefined, metadata: undefined }
+
+    // Strategy 1: Use channel-specific cleaning if available
+    if (channelConfig) {
+      const channelCleanedTitle = cleanTitle(originalTitle, channelConfig.id)
+      const { title: channelTitle, year: channelYear } = parseMovieTitle(channelCleanedTitle)
+      matchResult = await matchMovie(channelTitle, channelYear || parsedYear, options.omdbApiKey)
+    }
+
+    // Strategy 2: If channel cleaning failed, try general cleaning
+    if (matchResult.confidence === 'none') {
+      const generalCleanedTitle = cleanTitleGeneral(parsedTitle)
+      matchResult = await matchMovie(generalCleanedTitle, parsedYear, options.omdbApiKey)
+    }
+
+    // Strategy 3: If general cleaning failed, try original parsed title
+    if (matchResult.confidence === 'none') {
+      matchResult = await matchMovie(parsedTitle, parsedYear, options.omdbApiKey)
+    }
+
     if (matchResult.confidence !== 'none' && matchResult.imdbId) {
       imdbId = matchResult.imdbId
       metadata = matchResult.metadata
@@ -191,8 +214,8 @@ export async function processYouTubeVideo(
 
   return {
     imdbId,
-    title,
-    year,
+    title: originalTitle, // Store original title
+    year: parsedYear,
     sources: [source],
     metadata,
     lastUpdated: new Date().toISOString(),
