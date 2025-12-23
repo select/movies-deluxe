@@ -12,6 +12,7 @@ import { defineEventHandler, readBody, createError } from 'h3'
 // - hasFailedOmdbMatch, saveFailedOmdbMatch, clearFailedOmdbMatches, removeFailedOmdbMatch (from failedOmdb.ts)
 // - matchMovie (from omdb.ts)
 // - emitProgress (from progress.ts)
+// - cleanTitleGeneral (from titleCleaner.ts)
 
 interface EnrichmentOptions {
   limit?: number
@@ -141,14 +142,18 @@ export default defineEventHandler(async event => {
       const yearToUse = sourceYear || titleYear
 
       try {
-        // Attempt to match with OMDB
-        let matchResult = await matchMovie(name, yearToUse, apiKey)
+        // Clean the title for better OMDB matching (but don't store the cleaned version)
+        const cleanedName = cleanTitleGeneral(name)
+
+        // Attempt to match with OMDB using cleaned title
+        let matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
 
         // If AI title didn't match and we have a fallback, try original title
         if (matchResult.confidence === 'none' && usingAiTitle) {
           const { name: originalName, year: originalYear } = parseTitle(movie.title)
           const originalYearToUse = sourceYear || originalYear
-          matchResult = await matchMovie(originalName, originalYearToUse, apiKey)
+          const cleanedOriginalName = cleanTitleGeneral(originalName)
+          matchResult = await matchMovie(cleanedOriginalName, originalYearToUse, apiKey)
         }
 
         result.processed++
