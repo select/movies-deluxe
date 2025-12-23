@@ -1,10 +1,20 @@
-import { existsSync } from 'node:fs'
-import { join } from 'node:path'
-import type { MovieEntry } from '../../../../shared/types/movie'
+import { existsSync, readFileSync } from 'node:fs'
+import { join, resolve } from 'node:path'
+import type { MovieEntry, YouTubeSource } from '../../../../shared/types/movie'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
   const dbStats = getDatabaseStats(db)
+
+  // Load channel configs
+  const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
+  let channelConfigs: Array<{ id: string; name: string; enabled: boolean }> = []
+  try {
+    const configData = readFileSync(configPath, 'utf-8')
+    channelConfigs = JSON.parse(configData).channels
+  } catch (e) {
+    console.error('Failed to load youtube-channels.json', e)
+  }
 
   // Fetch Archive.org total (feature_films collection as default)
   let archiveTotal = 0
@@ -18,14 +28,25 @@ export default defineEventHandler(async _event => {
     console.error('Failed to fetch Archive.org total', e)
   }
 
-  // Poster stats
+  // Poster stats and YouTube channel stats
   const entries = Object.values(db).filter(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
   )
+
+  const youtubeChannelStats = channelConfigs.map(config => ({
+    id: config.id,
+    name: config.name,
+    enabled: config.enabled,
+    scraped: 0,
+    total: 0, // We don't have total per channel easily without extra API calls
+  }))
+
   const postersDir = join(process.cwd(), 'public/posters')
   let totalWithPosterUrl = 0
   let totalDownloaded = 0
+
   entries.forEach(movie => {
+    // Poster stats
     const posterUrl = movie.metadata?.Poster
     if (posterUrl && posterUrl !== 'N/A') {
       totalWithPosterUrl++
@@ -34,9 +55,19 @@ export default defineEventHandler(async _event => {
         totalDownloaded++
       }
     }
+
+    // YouTube channel stats
+    movie.sources?.forEach(source => {
+      if (source.type === 'youtube') {
+        const channelId = (source as YouTubeSource).channelId
+        const stats = youtubeChannelStats.find(s => s.id === channelId)
+        if (stats) {
+          stats.scraped++
+        }
+      }
+    })
   })
 
-  // For YouTube, we'd need to iterate channels, but for now let's return db stats + archive total
   return {
     database: dbStats,
     external: {
@@ -44,6 +75,9 @@ export default defineEventHandler(async _event => {
         total: archiveTotal,
         scraped: dbStats.archiveOrgSources,
         percent: archiveTotal > 0 ? (dbStats.archiveOrgSources / archiveTotal) * 100 : 0,
+      },
+      youtube: {
+        channels: youtubeChannelStats,
       },
     },
     curation: {
