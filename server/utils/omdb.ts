@@ -1,11 +1,3 @@
-import type {
-  OMDBSearchResponse,
-  OMDBSearchResult,
-  MovieMetadata,
-  MatchResult,
-  MatchConfidence,
-} from '../../shared/types/movie'
-
 // Rate limiting
 let lastRequestTime = 0
 const MIN_REQUEST_INTERVAL = 250 // 250ms between requests
