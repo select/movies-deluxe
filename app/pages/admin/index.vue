@@ -70,103 +70,88 @@
       <!-- Stats Overview -->
       <section
         v-if="stats"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
       >
-        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Movies</span>
-            <div class="i-mdi-movie-open text-2xl text-blue-500" />
+        <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Movies</span>
+            <div class="i-mdi-movie-open text-xl text-blue-500" />
           </div>
-          <div class="text-3xl font-bold">
+          <div class="text-2xl font-bold">
             {{ stats.database.total }}
           </div>
-          <div class="mt-2 text-xs text-gray-400">
-            {{ stats.database.matched }} matched, {{ stats.database.unmatched }} unmatched
+          <div class="mt-1 text-xs text-gray-400">
+            {{ stats.database.matched }} matched
           </div>
         </div>
 
-        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Archive.org Coverage</span>
-            <div class="i-mdi-archive text-2xl text-amber-500" />
+        <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Archive.org</span>
+            <div class="i-mdi-archive text-xl text-amber-500" />
           </div>
-          <div class="text-3xl font-bold">
+          <div class="text-2xl font-bold">
             {{ stats.external.archiveOrg.scraped }}
           </div>
-          <div class="mt-2 flex flex-col gap-1">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-gray-400">of {{ stats.external.archiveOrg.total }} total</span>
-              <span class="font-medium">{{ stats.external.archiveOrg.percent.toFixed(2) }}%</span>
-            </div>
-            <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div class="mt-1 flex items-center gap-2">
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 class="h-full bg-amber-500 transition-all duration-1000"
                 :style="{ width: `${stats.external.archiveOrg.percent}%` }"
               />
             </div>
+            <span class="text-xs font-medium">{{ stats.external.archiveOrg.percent.toFixed(0) }}%</span>
           </div>
         </div>
 
-        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">YouTube Sources</span>
-            <div class="i-mdi-youtube text-2xl text-red-500" />
+        <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">YouTube</span>
+            <div class="i-mdi-youtube text-xl text-red-500" />
           </div>
-          <div class="text-3xl font-bold">
+          <div class="text-2xl font-bold">
             {{ stats.database.youtubeSources }}
           </div>
-          <div class="mt-2 text-xs text-gray-400">
-            Across configured channels
+          <div class="mt-1 text-xs text-gray-400">
+            sources
           </div>
         </div>
 
-        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">OMDB Matched</span>
-            <div class="i-mdi-check-decagram text-2xl text-green-500" />
+        <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">OMDB</span>
+            <div class="i-mdi-check-decagram text-xl text-green-500" />
           </div>
-
-
-
-          <!-- OMDB Enrichment -->
-          <div class="pt-4 ">
-            <div class="text-2xl font-bold mb-1">
-              {{ stats.omdb.matched }}
+          <div class="text-2xl font-bold">
+            {{ stats.omdb.matched }}
+          </div>
+          <div class="mt-1 flex items-center gap-2">
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-green-500 transition-all duration-1000"
+                :style="{ width: `${stats.omdb.percent}%` }"
+              />
             </div>
-            <div class="flex flex-col gap-1">
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-gray-400">of {{ stats.omdb.total }} movies</span>
-                <span class="font-medium">{{ stats.omdb.percent.toFixed(1) }}%</span>
-              </div>
-              <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-blue-600 transition-all duration-1000"
-                  :style="{ width: `${stats.omdb.percent}%` }"
-                />
-              </div>
-            </div>
+            <span class="text-xs font-medium">{{ stats.omdb.percent.toFixed(0) }}%</span>
           </div>
         </div>
 
-        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Posters Downloaded</span>
-            <div class="i-mdi-image-multiple text-2xl text-purple-500" />
+        <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Posters</span>
+            <div class="i-mdi-image-multiple text-xl text-purple-500" />
           </div>
-          <div class="text-3xl font-bold">
+          <div class="text-2xl font-bold">
             {{ stats.posters.downloaded }}
           </div>
-          <div class="mt-2 flex flex-col gap-1">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-gray-400">of {{ stats.posters.withPosterUrl }} with URL</span>
-              <span class="font-medium">{{ stats.posters.percent.toFixed(1) }}%</span>
-            </div>
-            <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div class="mt-1 flex items-center gap-2">
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 class="h-full bg-purple-500 transition-all duration-1000"
                 :style="{ width: `${stats.posters.percent}%` }"
               />
             </div>
+            <span class="text-xs font-medium">{{ stats.posters.percent.toFixed(0) }}%</span>
           </div>
         </div>
       </section>
