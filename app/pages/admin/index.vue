@@ -145,45 +145,9 @@
         :channels="adminStore.stats.external.youtube.channels"
       />
 
-      <!-- Workflow Guide -->
-      <section class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-        <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
-          <div class="i-mdi-information text-blue-600" />
-          Admin Workflow
-        </h2>
-        <div class="grid md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <h3 class="font-semibold mb-2 flex items-center gap-2">
-              <div class="i-mdi-numeric-1-circle text-amber-600" />
-              Data Collection
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400">
-              Scrape Archive.org and YouTube to collect raw movie data (titles, years, URLs, thumbnails). No OMDB enrichment happens during scraping.
-            </p>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-2 flex items-center gap-2">
-              <div class="i-mdi-numeric-2-circle text-green-600" />
-              Data Enrichment
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400">
-              Run OMDB enrichment separately to add metadata (plot, director, actors, ratings). Uses multiple cleaning strategies for better matching.
-            </p>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-2 flex items-center gap-2">
-              <div class="i-mdi-numeric-3-circle text-purple-600" />
-              Poster Download
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400">
-              After OMDB enrichment, download poster images locally. Posters are stored in public/posters/ for offline use.
-            </p>
-          </div>
-        </div>
-      </section>
 
       <!-- Scrape Controls -->
-      <div class="space-y-6">
+      <div class="space-y-6 grid grid-cols-2 gap-8">
         <!-- Data Collection Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -240,7 +204,7 @@
 </template>
 
 <script setup lang="ts">
- 
+
 import type { ScrapeStats } from '~/types/admin'
 
 const isDev = ref(false)
