@@ -145,30 +145,144 @@
         :channels="adminStore.stats.external.youtube.channels"
       />
 
-      <!-- SQLite Progress -->
+      <!-- Progress Indicators -->
       <div
-        v-if="adminStore.progress.sqlite && adminStore.progress.sqlite.status === 'in_progress'"
-        class="p-6 rounded-3xl shadow-lg border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800"
+        v-if="Object.keys(adminStore.progress).some(key => adminStore.progress[key]?.status === 'in_progress')"
+        class="space-y-4"
       >
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold flex items-center gap-2">
-            <div class="i-mdi-database-export text-blue-600" />
-            Generating SQLite Database
-          </h2>
-          <span class="text-sm font-mono">{{ adminStore.progress.sqlite.current }} / {{ adminStore.progress.sqlite.total }}</span>
-        </div>
-        <div class="space-y-2">
-          <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              class="h-full bg-blue-600 transition-all duration-300"
-              :style="{
-                width: `${(adminStore.progress.sqlite.current / adminStore.progress.sqlite.total) * 100}%`,
-              }"
-            />
+        <!-- Archive Progress -->
+        <div
+          v-if="adminStore.progress.archive && adminStore.progress.archive.status === 'in_progress'"
+          class="p-6 rounded-3xl shadow-lg border border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <div class="i-mdi-archive text-amber-600 animate-pulse" />
+              Scraping Archive.org
+            </h2>
+            <span class="text-sm font-mono">{{ adminStore.progress.archive.current }} / {{ adminStore.progress.archive.total }}</span>
           </div>
-          <p class="text-sm text-blue-700 dark:text-blue-300 italic">
-            {{ adminStore.progress.sqlite.message }}
-          </p>
+          <div class="space-y-2">
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-amber-600 transition-all duration-300"
+                :style="{
+                  width: `${(adminStore.progress.archive.current / adminStore.progress.archive.total) * 100}%`,
+                }"
+              />
+            </div>
+            <p class="text-sm text-amber-700 dark:text-amber-300 italic">
+              {{ adminStore.progress.archive.message }}
+            </p>
+          </div>
+        </div>
+
+        <!-- YouTube Progress -->
+        <div
+          v-if="adminStore.progress.youtube && adminStore.progress.youtube.status === 'in_progress'"
+          class="p-6 rounded-3xl shadow-lg border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <div class="i-mdi-youtube text-red-600 animate-pulse" />
+              Scraping YouTube
+            </h2>
+            <span class="text-sm font-mono">{{ adminStore.progress.youtube.current }} / {{ adminStore.progress.youtube.total }}</span>
+          </div>
+          <div class="space-y-2">
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-red-600 transition-all duration-300"
+                :style="{
+                  width: `${(adminStore.progress.youtube.current / adminStore.progress.youtube.total) * 100}%`,
+                }"
+              />
+            </div>
+            <p class="text-sm text-red-700 dark:text-red-300 italic">
+              {{ adminStore.progress.youtube.message }}
+            </p>
+          </div>
+        </div>
+
+        <!-- OMDB Progress -->
+        <div
+          v-if="adminStore.progress.omdb && adminStore.progress.omdb.status === 'in_progress'"
+          class="p-6 rounded-3xl shadow-lg border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <div class="i-mdi-database-sync text-green-600 animate-pulse" />
+              Enriching with OMDB
+            </h2>
+            <span class="text-sm font-mono">{{ adminStore.progress.omdb.current }} / {{ adminStore.progress.omdb.total }}</span>
+          </div>
+          <div class="space-y-2">
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-green-600 transition-all duration-300"
+                :style="{
+                  width: `${(adminStore.progress.omdb.current / adminStore.progress.omdb.total) * 100}%`,
+                }"
+              />
+            </div>
+            <p class="text-sm text-green-700 dark:text-green-300 italic">
+              {{ adminStore.progress.omdb.message }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Posters Progress -->
+        <div
+          v-if="adminStore.progress.posters && adminStore.progress.posters.status === 'in_progress'"
+          class="p-6 rounded-3xl shadow-lg border border-purple-200 bg-purple-50 dark:bg-purple-900/20 dark:border-purple-800"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <div class="i-mdi-image-multiple text-purple-600 animate-pulse" />
+              Downloading Posters
+            </h2>
+            <span class="text-sm font-mono">{{ adminStore.progress.posters.current }} / {{ adminStore.progress.posters.total }}</span>
+          </div>
+          <div class="space-y-2">
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-purple-600 transition-all duration-300"
+                :style="{
+                  width: `${(adminStore.progress.posters.current / adminStore.progress.posters.total) * 100}%`,
+                }"
+              />
+            </div>
+            <p class="text-sm text-purple-700 dark:text-purple-300 italic">
+              {{ adminStore.progress.posters.message }}
+            </p>
+          </div>
+        </div>
+
+        <!-- SQLite Progress -->
+        <div
+          v-if="adminStore.progress.sqlite && adminStore.progress.sqlite.status === 'in_progress'"
+          class="p-6 rounded-3xl shadow-lg border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <div class="i-mdi-database-export text-blue-600 animate-pulse" />
+              Generating SQLite Database
+            </h2>
+            <span class="text-sm font-mono">{{ adminStore.progress.sqlite.current }} / {{ adminStore.progress.sqlite.total }}</span>
+          </div>
+          <div class="space-y-2">
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-blue-600 transition-all duration-300"
+                :style="{
+                  width: `${(adminStore.progress.sqlite.current / adminStore.progress.sqlite.total) * 100}%`,
+                }"
+              />
+            </div>
+            <p class="text-sm text-blue-700 dark:text-blue-300 italic">
+              {{ adminStore.progress.sqlite.message }}
+            </p>
+          </div>
         </div>
       </div>
 
