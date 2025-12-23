@@ -8,61 +8,119 @@
     "curatedCount": 874,
     "collections": {
       "feature_films": 18055
-    }
+    },
+    "youtubeChannels": [
+      {
+        "id": "UCGkHFrwE8KEuOHPVsIOskAg",
+        "name": "Netzkino",
+        "language": "de",
+        "enabled": true,
+        "scraped": 39
+      },
+      {
+        "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
+        "name": "FilmRise Movies",
+        "language": "en",
+        "enabled": true,
+        "scraped": 5
+      },
+      {
+        "id": "UCVFYikepF-avelvuIaQ_lHA",
+        "name": "Popcornflix",
+        "language": "en",
+        "enabled": true,
+        "scraped": 29
+      },
+      {
+        "id": "UCGBzBkV-MinlBvHBzZawfLQ",
+        "name": "Movie Central",
+        "language": "en",
+        "enabled": true,
+        "scraped": 11
+      },
+      {
+        "id": "UCOg0aMAXmF3o5m243PxhE5g",
+        "name": "Timeless Classic Movies",
+        "language": "en",
+        "enabled": true,
+        "scraped": 29
+      },
+      {
+        "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
+        "name": "Mosfilm",
+        "language": "ru",
+        "enabled": true,
+        "scraped": 279
+      },
+      {
+        "id": "UCh4JH8axA_jUjB8YoRnm0cg",
+        "name": "Moviedome",
+        "language": "de",
+        "enabled": true,
+        "scraped": 30
+      }
+    ]
   },
   "external": {
     "archiveOrg": {
-      "total": 26779,
+      "total": 26777,
       "scraped": 18055,
-      "percent": 67.42223383994921
+      "percent": 67.4272696717332
     },
     "youtube": {
       "channels": [
         {
-          "id": "@Netzkino",
+          "id": "UCGkHFrwE8KEuOHPVsIOskAg",
           "name": "Netzkino",
+          "language": "de",
           "enabled": true,
           "scraped": 39,
           "total": 2800
         },
         {
-          "id": "@FilmRiseMovies",
+          "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
           "name": "FilmRise Movies",
+          "language": "en",
           "enabled": true,
-          "scraped": 0,
-          "total": 442
+          "scraped": 5,
+          "total": 443
         },
         {
-          "id": "@Popcornflix",
+          "id": "UCVFYikepF-avelvuIaQ_lHA",
           "name": "Popcornflix",
+          "language": "en",
           "enabled": true,
           "scraped": 29,
           "total": 751
         },
         {
-          "id": "@MovieCentral",
+          "id": "UCGBzBkV-MinlBvHBzZawfLQ",
           "name": "Movie Central",
+          "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 11,
           "total": 2500
         },
         {
-          "id": "@TimelessClassicMovies",
+          "id": "UCOg0aMAXmF3o5m243PxhE5g",
           "name": "Timeless Classic Movies",
+          "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 29,
           "total": 174
         },
         {
-          "id": "@Mosfilm",
+          "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
           "name": "Mosfilm",
+          "language": "ru",
           "enabled": true,
           "scraped": 279,
           "total": 291
         },
         {
-          "id": "@Moviedome",
+          "id": "UCh4JH8axA_jUjB8YoRnm0cg",
           "name": "Moviedome",
+          "language": "de",
           "enabled": true,
           "scraped": 30,
           "total": 606
@@ -84,9 +142,12 @@
   "posters": {
     "totalMovies": 18324,
     "withPosterUrl": 844,
-    "downloaded": 148,
-    "missing": 696,
-    "percent": 17.535545023696685
+    "downloaded": 236,
+    "missing": 608,
+    "percentOfMoviesWithUrl": 27.96208530805687,
+    "percentOfAllMovies": 1.287928399912683,
+    "filesInDirectory": 246,
+    "matchedPosters": 236
   },
-  "lastUpdated": "2025-12-23T17:18:18.679Z"
+  "lastUpdated": "2025-12-23T20:43:02.756Z"
 }
