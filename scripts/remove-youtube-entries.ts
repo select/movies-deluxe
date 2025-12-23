@@ -16,7 +16,7 @@
 import { parseArgs } from 'node:util'
 import { loadMoviesDatabase, saveMoviesDatabase } from './utils/dataManager.ts'
 import { createLogger } from './utils/logger.ts'
-import type { MovieEntry } from '../types/movie.ts'
+import type { MovieEntry } from '../shared/types/movie.ts'
 
 const logger = createLogger('RemoveYouTube')
 

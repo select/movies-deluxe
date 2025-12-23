@@ -8,7 +8,7 @@ import type {
   MovieMetadata,
   MatchResult,
   MatchConfidence,
-} from '../../types/movie.ts'
+} from '../../shared/types/movie.ts'
 import { createLogger } from './logger.ts'
 
 const logger = createLogger('OMDBMatcher')

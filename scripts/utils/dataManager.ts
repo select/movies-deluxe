@@ -5,7 +5,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import type { MoviesDatabase, MovieEntry } from '../../types/movie.ts'
+import type { MoviesDatabase, MovieEntry } from '../../shared/types/movie.ts'
 import { createLogger } from './logger.ts'
 
 const logger = createLogger('DataManager')

@@ -21,7 +21,7 @@ import {
 } from './utils/dataManager.ts'
 import { matchMovie } from './utils/omdbMatcher.ts'
 import { createLogger } from './utils/logger.ts'
-import type { MatchConfidence } from '../types/movie.ts'
+import type { MatchConfidence } from '../shared/types/movie.ts'
 
 // Load environment variables
 config()

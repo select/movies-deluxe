@@ -18,7 +18,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { batchDownloadImages } from './utils/imageDownloader'
 import { createLogger } from './utils/logger'
-import type { MoviesDatabase, MovieEntry } from '../types/movie'
+import type { MoviesDatabase, MovieEntry } from '../shared/types/movie'
 
 const logger = createLogger('PosterDownloader')
 

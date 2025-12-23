@@ -10,7 +10,7 @@ import { parseArgs } from 'node:util'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Client } from 'youtubei'
-import { generateYouTubeId } from '../types/movie.ts'
+import { generateYouTubeId } from '../shared/types/movie.ts'
 import {
   loadMoviesDatabase,
   saveMoviesDatabase,
@@ -20,7 +20,7 @@ import {
 import { matchMovie } from './utils/omdbMatcher.ts'
 import { createLogger } from './utils/logger.ts'
 import { cleanTitle } from './utils/titleCleaner.ts'
-import type { YouTubeSource, MovieEntry } from '../types/movie.ts'
+import type { YouTubeSource, MovieEntry } from '../shared/types/movie.ts'
 
 const logger = createLogger('YouTubeScraper')
 

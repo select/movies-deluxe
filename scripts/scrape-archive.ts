@@ -7,7 +7,7 @@
  */
 
 import { parseArgs } from 'node:util'
-import { generateArchiveId } from '../types/movie.ts'
+import { generateArchiveId } from '../shared/types/movie.ts'
 import {
   loadMoviesDatabase,
   saveMoviesDatabase,
@@ -16,7 +16,7 @@ import {
 } from './utils/dataManager.ts'
 import { matchMovie } from './utils/omdbMatcher.ts'
 import { createLogger } from './utils/logger.ts'
-import type { ArchiveOrgSource, MovieEntry } from '../types/movie.ts'
+import type { ArchiveOrgSource, MovieEntry } from '../shared/types/movie.ts'
 
 const logger = createLogger('ArchiveScraper')
 

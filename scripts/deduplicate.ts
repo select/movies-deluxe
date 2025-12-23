@@ -20,7 +20,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import type { MovieEntry, MoviesDatabase, MovieSource } from '../types/movie'
+import type { MovieEntry, MoviesDatabase, MovieSource } from '../shared/types/movie'
 import { createLogger } from './utils/logger'
 
 const logger = createLogger('deduplicate')
