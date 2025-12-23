@@ -280,18 +280,50 @@
             </div>
           </div>
 
+          <!-- Source Selector (if multiple sources) -->
+          <div
+            v-if="movie.sources.length > 1"
+            class="mb-4"
+          >
+            <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+              Select Source
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="(source, index) in movie.sources"
+                :key="source.url"
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+                :class="[
+                  selectedSourceIndex === index
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                ]"
+                @click="selectedSourceIndex = index"
+              >
+                <div class="flex items-center gap-2">
+                  <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-red-600' : 'i-mdi-bank'" />
+                  <span>{{ source.label || (source.type === 'youtube' ? (source.channelName || 'YouTube') : 'Archive.org') }}</span>
+                  <span
+                    v-if="source.quality"
+                    class="text-xs opacity-75"
+                  >({{ source.quality }})</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
           <!-- Video Player -->
           <div
-            v-if="movie.sources[0]"
+            v-if="movie.sources[selectedSourceIndex]"
             class="bg-black rounded-lg overflow-hidden"
           >
             <!-- YouTube Player -->
             <div
-              v-if="movie.sources[0].type === 'youtube'"
+              v-if="movie.sources[selectedSourceIndex].type === 'youtube'"
               class="aspect-video"
             >
               <iframe
-                :src="getYouTubeEmbedUrl(movie.sources[0].url)"
+                :src="getYouTubeEmbedUrl(movie.sources[selectedSourceIndex].url)"
                 class="w-full h-full"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -302,11 +334,11 @@
 
             <!-- Archive.org Player -->
             <div
-              v-else-if="movie.sources[0].type === 'archive.org'"
+              v-else-if="movie.sources[selectedSourceIndex].type === 'archive.org'"
               class="aspect-video"
             >
               <iframe
-                :src="getArchiveEmbedUrl(movie.sources[0])"
+                :src="getArchiveEmbedUrl(movie.sources[selectedSourceIndex])"
                 class="w-full h-full"
                 frameborder="0"
                 webkitallowfullscreen="true"
@@ -327,8 +359,8 @@
                   Video player not available for this source
                 </p>
                 <a
-                  v-if="firstSourceUrl"
-                  :href="firstSourceUrl"
+                  v-if="movie.sources[selectedSourceIndex].url"
+                  :href="movie.sources[selectedSourceIndex].url"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="inline-block px-6 py-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
@@ -345,12 +377,13 @@
             class="flex flex-wrap gap-6 py-4 px-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700"
           >
             <div
-              v-for="source in movie.sources"
+              v-for="(source, index) in movie.sources"
               :key="source.url"
               class="flex items-center gap-3 text-sm"
+              :class="{ 'opacity-100': selectedSourceIndex === index, 'opacity-60': selectedSourceIndex !== index }"
             >
               <template v-if="source.type === 'archive.org'">
-                <span class="font-semibold text-gray-600 dark:text-gray-400">Source:</span>
+                <span class="font-semibold text-gray-600 dark:text-gray-400">Source {{ index + 1 }}:</span>
                 <a
                   :href="source.url"
                   target="_blank"
@@ -362,7 +395,7 @@
                 </a>
               </template>
               <template v-else-if="source.type === 'youtube'">
-                <span class="font-semibold text-gray-600 dark:text-gray-400">Source:</span>
+                <span class="font-semibold text-gray-600 dark:text-gray-400">Source {{ index + 1 }}:</span>
                 <a
                   :href="source.url"
                   target="_blank"
@@ -392,6 +425,19 @@
                   </span>
                 </template>
               </template>
+              <button
+                v-if="selectedSourceIndex !== index"
+                class="ml-2 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                @click="selectedSourceIndex = index"
+              >
+                Switch to this source
+              </button>
+              <span
+                v-else
+                class="ml-2 text-xs text-green-600 dark:text-green-400 font-bold"
+              >
+                Currently Playing
+              </span>
             </div>
           </div>
 
@@ -546,9 +592,6 @@ const filterStore = useFilterStore()
 // eslint-disable-next-line no-undef
 const watchlistStore = useWatchlistStore()
 
-// Get the first source URL safely
-const firstSourceUrl = computed(() => movie.value?.sources[0]?.url || '')
-
 // Dark mode state (sync with localStorage)
 const isDark = ref(true)
 
@@ -556,6 +599,7 @@ const isDark = ref(true)
 const movie = ref<MovieEntry | null>(null)
 const isLoading = ref(true)
 const error = ref<string | null>(null)
+const selectedSourceIndex = ref(0)
 
 // Share functionality state
 const showShareToast = ref(false)
@@ -644,6 +688,7 @@ const relatedMovies = computed(() => {
 const loadMovieData = async (movieId: string) => {
   isLoading.value = true
   error.value = null
+  selectedSourceIndex.value = 0
 
   // Ensure movies are loaded in store
   if (movieStore.movies.length === 0) {

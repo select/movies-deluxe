@@ -18,6 +18,7 @@ export async function loadMoviesDatabase(): Promise<MoviesDatabase> {
     const content = await readFile(MOVIES_FILE, 'utf-8')
     return JSON.parse(content) as MoviesDatabase
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Failed to load movies database:', error)
     throw error
   }
@@ -36,6 +37,7 @@ export async function saveMoviesDatabase(db: MoviesDatabase): Promise<void> {
     const content = JSON.stringify(db, null, 2)
     await writeFile(MOVIES_FILE, content, 'utf-8')
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Failed to save movies database:', error)
     throw error
   }
@@ -77,12 +79,15 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
               s.videoId === newSource.videoId))
       )
 
-      if (existingIndex !== -1) {
+      const existingSource = mergedSources[existingIndex]
+      if (existingSource) {
         // Update existing source with new data (preferring non-empty values)
         mergedSources[existingIndex] = {
-          ...mergedSources[existingIndex],
+          ...existingSource,
           ...newSource,
-          description: newSource.description || mergedSources[existingIndex].description,
+          label: newSource.label || existingSource.label,
+          quality: newSource.quality || existingSource.quality,
+          description: newSource.description || existingSource.description,
         }
       } else {
         // Add new source
