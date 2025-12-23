@@ -122,10 +122,19 @@
             <div class="i-mdi-youtube text-xl text-red-500" />
           </div>
           <div class="text-2xl font-bold">
-            {{ stats.database.youtubeSources }}
+            {{ youtubeTotalScraped }}
           </div>
-          <div class="mt-1 text-xs text-gray-400">
-            sources
+          <div class="mt-1 flex items-center gap-2">
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-red-500 transition-all duration-1000"
+                :style="{ width: `${youtubePercent}%` }"
+              />
+            </div>
+            <span class="text-[10px] font-medium">{{ youtubePercent.toFixed(0) }}%</span>
+          </div>
+          <div class="text-[10px] text-gray-400 mt-1">
+            {{ youtubeTotalScraped }} / {{ youtubeTotalAvailable || '?' }} videos
           </div>
         </div>
 
@@ -750,6 +759,21 @@ const totalExternalVideos = computed(() => {
   const archiveTotal = stats.value.external.archiveOrg.total || 0
   const youtubeTotal = stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.total || 0), 0)
   return archiveTotal + youtubeTotal
+})
+
+const youtubeTotalScraped = computed(() => {
+  if (!stats.value) return 0
+  return stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.scraped || 0), 0)
+})
+
+const youtubeTotalAvailable = computed(() => {
+  if (!stats.value) return 0
+  return stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.total || 0), 0)
+})
+
+const youtubePercent = computed(() => {
+  if (youtubeTotalAvailable.value === 0) return 0
+  return (youtubeTotalScraped.value / youtubeTotalAvailable.value) * 100
 })
 
 const databasePercentOfTotal = computed(() => {
