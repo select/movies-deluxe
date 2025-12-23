@@ -80,7 +80,6 @@
 
 <script setup lang="ts">
 import type { MovieEntry } from '~/types'
-import { getLanguageCode } from '@/utils/formatLanguage'
 
 interface Props {
   movie: MovieEntry

@@ -1,13 +1,4 @@
-import type { MovieEntry } from '~/types'
-
-export type SortField = 'year' | 'rating' | 'title' | 'votes' | 'relevance'
-export type SortDirection = 'asc' | 'desc'
-
-export interface SortOption {
-  field: SortField
-  direction: SortDirection
-  label: string
-}
+import type { MovieEntry, SortField, SortDirection, SortOption } from '~/types'
 
 /**
  * Available sort options for movies

@@ -115,3 +115,31 @@ export interface DisplayPreferences {
   /** Show metadata badges */
   showMetadata: boolean
 }
+
+/**
+ * Movie sorting types
+ */
+
+/** Valid sort fields for movies */
+export type SortField = 'year' | 'rating' | 'title' | 'votes' | 'relevance'
+
+/** Sort direction */
+export type SortDirection = 'asc' | 'desc'
+
+/**
+ * Sort option configuration
+ *
+ * @example
+ * ```ts
+ * const sortOption: SortOption = {
+ *   field: 'year',
+ *   direction: 'desc',
+ *   label: 'Year (Newest)'
+ * }
+ * ```
+ */
+export interface SortOption {
+  field: SortField
+  direction: SortDirection
+  label: string
+}

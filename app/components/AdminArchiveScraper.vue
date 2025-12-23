@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="ts">
-import { useAdminStore } from '~/stores/useAdminStore'
 import type { ArchiveOptions } from '~/types/admin'
 
 const options = defineModel<ArchiveOptions>({ required: true })

@@ -58,7 +58,6 @@
 </template>
 
 <script setup lang="ts">
-import { useAdminStore } from '~/stores/useAdminStore'
 import type { PosterOptions } from '~/types/admin'
 
 const options = defineModel<PosterOptions>({ required: true })

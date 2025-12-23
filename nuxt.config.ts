@@ -11,6 +11,11 @@ export default defineNuxtConfig({
   // Modules
   modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt'],
 
+  // Pinia configuration for auto-importing stores
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
+
   // Apply font-sans class to body element globally
   app: {
     head: {
