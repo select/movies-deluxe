@@ -6,18 +6,13 @@
  */
 
 import { defineEventHandler, readBody, createError } from 'h3'
-import {
-  loadMoviesDatabase,
-  saveMoviesDatabase,
-  getUnmatchedMovies,
-  migrateMovieId,
-  hasFailedOmdbMatch,
-  markFailedOmdbMatch,
-  clearFailedOmdbMatches,
-} from '../../../../scripts/utils/dataManager'
-import { matchMovie } from '../../../../scripts/utils/omdbMatcher'
 import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../../../../shared/types/movie'
-import { emitProgress } from '../../../utils/progress'
+
+// Note: The following functions are auto-imported from server/utils/:
+// - loadMoviesDatabase, saveMoviesDatabase, getUnmatchedMovies, migrateMovieId,
+//   hasFailedOmdbMatch, markFailedOmdbMatch, clearFailedOmdbMatches (from movieData.ts)
+// - matchMovie (from omdb.ts)
+// - emitProgress (from progress.ts)
 
 interface EnrichmentOptions {
   limit?: number
