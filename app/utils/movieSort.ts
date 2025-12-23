@@ -1,5 +1,8 @@
 import type { MovieEntry, SortField, SortDirection, SortOption } from '~/types'
 
+// Re-export types for use in other modules
+export type { SortField, SortDirection, SortOption }
+
 /**
  * Available sort options for movies
  */

@@ -397,17 +397,22 @@ export function mergeDuplicates(
     throw new Error('Cannot merge empty duplicates array')
   }
 
+  const firstEntry = duplicates[0]
+  if (!firstEntry) {
+    throw new Error('First duplicate entry is undefined')
+  }
+
   if (duplicates.length === 1) {
-    return duplicates[0]
+    return firstEntry
   }
 
   // In interactive mode, just return the first (API will handle selection)
   if (mode === 'interactive') {
-    return duplicates[0]
+    return firstEntry
   }
 
   // Auto mode: use smart merge strategy
-  let best = duplicates[0]
+  let best: MovieEntry = firstEntry
   let bestScore = 0
 
   for (const entry of duplicates) {
