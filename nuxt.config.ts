@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   },
 
   // Modules
-  modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt'],
+  modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint'],
 
   // Pinia configuration for auto-importing stores
   pinia: {

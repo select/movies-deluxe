@@ -212,8 +212,7 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-undef */
-import { isLocalhost } from '@/utils/isLocalhost'
+ 
 import type { ScrapeStats } from '~/types/admin'
 
 const isDev = ref(false)
