@@ -142,18 +142,31 @@ export default defineEventHandler(async event => {
       const yearToUse = sourceYear || titleYear
 
       try {
-        // Clean the title for better OMDB matching (but don't store the cleaned version)
+        // Try multiple cleaning strategies for better OMDB matching
+        let matchResult = { confidence: 'none' as const, imdbId: undefined, metadata: undefined }
+
+        // Strategy 1: Try with general cleaner (handles Archive.org, foreign titles, etc.)
         const cleanedName = cleanTitleGeneral(name)
+        matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
 
-        // Attempt to match with OMDB using cleaned title
-        let matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
+        // Strategy 2: If cleaned version failed, try original parsed title
+        if (matchResult.confidence === 'none') {
+          matchResult = await matchMovie(name, yearToUse, apiKey)
+        }
 
-        // If AI title didn't match and we have a fallback, try original title
+        // Strategy 3: If AI title didn't match and we have a fallback, try original title
         if (matchResult.confidence === 'none' && usingAiTitle) {
           const { name: originalName, year: originalYear } = parseTitle(movie.title)
           const originalYearToUse = sourceYear || originalYear
+
+          // Try cleaned original
           const cleanedOriginalName = cleanTitleGeneral(originalName)
           matchResult = await matchMovie(cleanedOriginalName, originalYearToUse, apiKey)
+
+          // Try uncleaned original
+          if (matchResult.confidence === 'none') {
+            matchResult = await matchMovie(originalName, originalYearToUse, apiKey)
+          }
         }
 
         result.processed++
