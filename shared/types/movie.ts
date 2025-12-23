@@ -133,8 +133,7 @@ export interface DatabaseSchema {
 export interface MoviesDatabase {
   _schema: DatabaseSchema
   _example?: MovieEntry // Optional example entry for documentation
-  _failedOmdbMatches?: string[] // List of titles/IDs that failed OMDB matching
-  [imdbId: string]: MovieEntry | DatabaseSchema | MovieEntry | string[] | undefined
+  [imdbId: string]: MovieEntry | DatabaseSchema | MovieEntry | undefined
 }
 
 /**

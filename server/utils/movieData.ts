@@ -382,32 +382,14 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
 }
 
 /**
- * Mark a title/ID as failed for OMDB matching
+ * DEPRECATED: Failed OMDB matches are now tracked in public/data/failed-omdb.json
+ * Use functions from server/utils/failedOmdb.ts instead:
+ * - saveFailedOmdbMatch(identifier, title, reason)
+ * - hasFailedOmdbMatch(identifier)
+ * - clearFailedOmdbMatches()
+ * - removeFailedOmdbMatch(identifier)
+ * - getFailedOmdbMatches()
  */
-export function markFailedOmdbMatch(db: MoviesDatabase, identifier: string): void {
-  if (!db._failedOmdbMatches) {
-    db._failedOmdbMatches = []
-  }
-  if (!db._failedOmdbMatches.includes(identifier)) {
-    db._failedOmdbMatches.push(identifier)
-    db._schema.lastUpdated = new Date().toISOString()
-  }
-}
-
-/**
- * Check if a title/ID has previously failed OMDB matching
- */
-export function hasFailedOmdbMatch(db: MoviesDatabase, identifier: string): boolean {
-  return db._failedOmdbMatches?.includes(identifier) || false
-}
-
-/**
- * Clear failed OMDB matches
- */
-export function clearFailedOmdbMatches(db: MoviesDatabase): void {
-  db._failedOmdbMatches = []
-  db._schema.lastUpdated = new Date().toISOString()
-}
 
 /**
  * Normalize title for comparison (remove punctuation, lowercase, trim)

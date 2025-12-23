@@ -8,8 +8,8 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 
 // Note: The following functions are auto-imported from server/utils/:
-// - loadMoviesDatabase, saveMoviesDatabase, getUnmatchedMovies, migrateMovieId,
-//   hasFailedOmdbMatch, markFailedOmdbMatch, clearFailedOmdbMatches (from movieData.ts)
+// - loadMoviesDatabase, saveMoviesDatabase, getUnmatchedMovies, migrateMovieId (from movieData.ts)
+// - hasFailedOmdbMatch, saveFailedOmdbMatch, clearFailedOmdbMatches, removeFailedOmdbMatch (from failedOmdb.ts)
 // - matchMovie (from omdb.ts)
 // - emitProgress (from progress.ts)
 
@@ -65,7 +65,7 @@ export default defineEventHandler(async event => {
     const db = await loadMoviesDatabase()
 
     if (forceRetryFailed) {
-      clearFailedOmdbMatches(db)
+      clearFailedOmdbMatches()
     }
 
     // Get movies to process
@@ -78,7 +78,7 @@ export default defineEventHandler(async event => {
 
     // Filter out previously failed matches unless forced
     if (!forceRetryFailed) {
-      moviesToProcess = moviesToProcess.filter(movie => !hasFailedOmdbMatch(db, movie.imdbId))
+      moviesToProcess = moviesToProcess.filter(movie => !hasFailedOmdbMatch(movie.imdbId))
     }
 
     // Apply limit
@@ -105,7 +105,7 @@ export default defineEventHandler(async event => {
         result.processed++
         result.failed++
         result.errors.push(`Invalid title for ${oldId}`)
-        markFailedOmdbMatch(db, oldId)
+        saveFailedOmdbMatch(oldId, movie.title || 'Unknown', 'Invalid title')
         continue
       }
 
@@ -147,7 +147,7 @@ export default defineEventHandler(async event => {
         if (matchResult.confidence === 'none') {
           result.failed++
           result.errors.push(`No match found for: ${movie.title}`)
-          markFailedOmdbMatch(db, oldId)
+          saveFailedOmdbMatch(oldId, movie.title, 'No OMDB match found')
           await saveMoviesDatabase(db)
           continue
         }
@@ -155,6 +155,12 @@ export default defineEventHandler(async event => {
         // We have a match!
         const newId = matchResult.imdbId!
         result.matched++
+
+        // Remove from failed list if it was there (successful retry)
+        removeFailedOmdbMatch(oldId)
+        if (oldId !== newId) {
+          removeFailedOmdbMatch(newId)
+        }
 
         // Update the movie entry
         movie.imdbId = newId
