@@ -3,6 +3,80 @@ import * as https from 'node:https'
 import * as http from 'node:http'
 import { join } from 'node:path'
 
+const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'public/data/failed-posters.json')
+
+interface FailedDownload {
+  imdbId: string
+  url: string
+  failedAt: string
+  error: string
+}
+
+/**
+ * Load failed downloads from disk
+ */
+function loadFailedDownloads(): Set<string> {
+  try {
+    if (fs.existsSync(FAILED_DOWNLOADS_FILE)) {
+      const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
+      const failed: FailedDownload[] = JSON.parse(data)
+      return new Set(failed.map(f => f.imdbId))
+    }
+  } catch (error) {
+    console.error('Failed to load failed downloads:', error)
+  }
+  return new Set()
+}
+
+/**
+ * Save failed download to disk
+ */
+function saveFailedDownload(imdbId: string, url: string, error: string): void {
+  try {
+    const dataDir = join(process.cwd(), 'public/data')
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true })
+    }
+
+    let failed: FailedDownload[] = []
+    if (fs.existsSync(FAILED_DOWNLOADS_FILE)) {
+      const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
+      failed = JSON.parse(data)
+    }
+
+    // Remove existing entry if present
+    failed = failed.filter(f => f.imdbId !== imdbId)
+
+    // Add new failed entry
+    failed.push({
+      imdbId,
+      url,
+      failedAt: new Date().toISOString(),
+      error,
+    })
+
+    fs.writeFileSync(FAILED_DOWNLOADS_FILE, JSON.stringify(failed, null, 2))
+  } catch (err) {
+    console.error('Failed to save failed download:', err)
+  }
+}
+
+/**
+ * Remove from failed downloads (successful retry)
+ */
+function removeFailedDownload(imdbId: string): void {
+  try {
+    if (!fs.existsSync(FAILED_DOWNLOADS_FILE)) return
+
+    const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
+    let failed: FailedDownload[] = JSON.parse(data)
+    failed = failed.filter(f => f.imdbId !== imdbId)
+    fs.writeFileSync(FAILED_DOWNLOADS_FILE, JSON.stringify(failed, null, 2))
+  } catch (err) {
+    console.error('Failed to remove from failed downloads:', err)
+  }
+}
+
 export async function downloadPoster(
   url: string,
   imdbId: string,
@@ -22,14 +96,28 @@ export async function downloadPoster(
     return true
   }
 
+  // Skip if previously failed (unless force)
+  if (!force) {
+    const failedDownloads = loadFailedDownloads()
+    if (failedDownloads.has(imdbId)) {
+      console.log(`Skipping ${imdbId} - previously failed`)
+      return false
+    }
+  }
+
   try {
     await downloadImageOnce(url, filepath, 30000)
+    // Remove from failed downloads if it was there
+    removeFailedDownload(imdbId)
     return true
   } catch (error) {
-    console.error(`Failed to download poster for ${imdbId}:`, error)
+    const errorMsg = error instanceof Error ? error.message : String(error)
+    console.error(`Failed to download poster for ${imdbId}:`, errorMsg)
     if (fs.existsSync(filepath)) {
       fs.unlinkSync(filepath)
     }
+    // Track failed download
+    saveFailedDownload(imdbId, url, errorMsg)
     return false
   }
 }
