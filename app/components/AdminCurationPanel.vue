@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isLocalhost"
-    class="mt-8 p-6 bg-yellow-50 dark:bg-gray-800 border-2 border-yellow-200 dark:border-gray-700 rounded-xl"
+    class="mt-8 p-6 bg-yellow-50 dark:bg-gray-800 border-2 border-yellow-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100"
   >
     <div class="flex items-center gap-2 mb-4 text-yellow-800 dark:text-gray-100">
       <div class="i-mdi-shield-edit text-2xl" />
