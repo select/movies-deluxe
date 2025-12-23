@@ -137,16 +137,21 @@ export default defineEventHandler(async event => {
       const { name, year: titleYear } = parseTitle(movie.title)
       const yearToUse = sourceYear || titleYear
 
+      // Track all attempts for enhanced failure tracking
+      const attempts: Array<{ query: string; year?: number }> = []
+
       try {
         // Try multiple cleaning strategies for better OMDB matching
         let matchResult: MatchResult = { confidence: MatchConfidence.NONE }
 
         // Strategy 1: Try with general cleaner (handles Archive.org, foreign titles, etc.)
         const cleanedName = cleanTitleGeneral(name)
+        attempts.push({ query: cleanedName, year: yearToUse })
         matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
 
         // Strategy 2: If cleaned version failed, try original parsed title
         if (matchResult.confidence === MatchConfidence.NONE) {
+          attempts.push({ query: name, year: yearToUse })
           matchResult = await matchMovie(name, yearToUse, apiKey)
         }
 
@@ -155,7 +160,7 @@ export default defineEventHandler(async event => {
         if (matchResult.confidence === MatchConfidence.NONE) {
           result.failed++
           result.errors.push(`No match found for: ${movie.title}`)
-          saveFailedOmdbMatch(oldId, movie.title, 'No OMDB match found')
+          saveFailedOmdbMatch(oldId, movie.title, 'No OMDB match found', attempts, yearToUse)
           await saveMoviesDatabase(db)
           continue
         }

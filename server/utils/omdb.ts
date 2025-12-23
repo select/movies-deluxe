@@ -151,6 +151,7 @@ function calculateConfidence(
 
 /**
  * Match a movie title and year to an IMDB ID
+ * Uses flexible year matching: tries exact year first, then ±2 year range if no match
  */
 export async function matchMovie(
   title: string,
@@ -164,7 +165,21 @@ export async function matchMovie(
   }
 
   try {
-    const searchResults = await searchOMDB(title, undefined, apiKey)
+    // Phase 1: Try with exact year if provided
+    let searchResults = await searchOMDB(title, year, apiKey)
+
+    // Phase 2: If no results and year was provided, try without year and filter by ±2 year range
+    if ((!searchResults.Search || searchResults.Search.length === 0) && year) {
+      searchResults = await searchOMDB(title, undefined, apiKey)
+
+      // Filter results to ±2 year range
+      if (searchResults.Search && searchResults.Search.length > 0) {
+        searchResults.Search = searchResults.Search.filter(result => {
+          const resultYear = parseInt(result.Year, 10)
+          return !isNaN(resultYear) && Math.abs(resultYear - year) <= 2
+        })
+      }
+    }
 
     if (!searchResults.Search || searchResults.Search.length === 0) {
       return {

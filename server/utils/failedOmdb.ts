@@ -3,10 +3,18 @@ import { join } from 'node:path'
 
 const FAILED_OMDB_FILE = join(process.cwd(), 'public/data/failed-omdb.json')
 
+interface TitleAttempt {
+  query: string
+  year?: number
+}
+
 interface FailedOmdbMatch {
   identifier: string
-  title: string
+  originalTitle: string
+  year?: number
+  attempts: TitleAttempt[]
   failedAt: string
+  lastAttempt: string
   reason?: string
 }
 
@@ -27,9 +35,20 @@ export function loadFailedOmdbMatches(): Set<string> {
 }
 
 /**
- * Save failed OMDB match to disk
+ * Save failed OMDB match to disk with detailed attempt tracking
+ * @param identifier - Movie identifier (imdbId or temporary ID)
+ * @param originalTitle - Original title before cleaning
+ * @param reason - Reason for failure
+ * @param attempts - Array of title queries attempted with their years
+ * @param year - Year from source metadata
  */
-export function saveFailedOmdbMatch(identifier: string, title: string, reason?: string): void {
+export function saveFailedOmdbMatch(
+  identifier: string,
+  originalTitle: string,
+  reason?: string,
+  attempts?: TitleAttempt[],
+  year?: number
+): void {
   try {
     const dataDir = join(process.cwd(), 'public/data')
     if (!fs.existsSync(dataDir)) {
@@ -42,16 +61,38 @@ export function saveFailedOmdbMatch(identifier: string, title: string, reason?: 
       failed = JSON.parse(data)
     }
 
-    // Remove existing entry if present
-    failed = failed.filter(f => f.identifier !== identifier)
+    // Find existing entry
+    const existingIndex = failed.findIndex(f => f.identifier === identifier)
+    const now = new Date().toISOString()
 
-    // Add new failed entry
-    failed.push({
-      identifier,
-      title,
-      failedAt: new Date().toISOString(),
-      reason,
-    })
+    if (existingIndex >= 0) {
+      // Update existing entry
+      const existing = failed[existingIndex]!
+      existing.lastAttempt = now
+      existing.reason = reason
+      if (attempts && attempts.length > 0) {
+        // Merge attempts, avoiding duplicates
+        const existingAttempts = existing.attempts || []
+        const newAttempts = attempts.filter(
+          newAttempt =>
+            !existingAttempts.some(
+              existing => existing.query === newAttempt.query && existing.year === newAttempt.year
+            )
+        )
+        existing.attempts = [...existingAttempts, ...newAttempts]
+      }
+    } else {
+      // Add new failed entry
+      failed.push({
+        identifier,
+        originalTitle,
+        year,
+        attempts: attempts || [],
+        failedAt: now,
+        lastAttempt: now,
+        reason,
+      })
+    }
 
     fs.writeFileSync(FAILED_OMDB_FILE, JSON.stringify(failed, null, 2))
   } catch (err) {
