@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+
 export default defineEventHandler(async event => {
   const body = await readBody(event)
   const { limit = 50, force = false } = body
@@ -15,10 +18,22 @@ export default defineEventHandler(async event => {
     errors: [] as string[],
   }
 
-  // Filter movies that have a poster URL
+  const postersDir = join(process.cwd(), 'public/posters')
+
+  // Filter movies that have a poster URL and don't have a downloaded poster yet
   const toProcess = entries.filter(movie => {
     const posterUrl = movie.metadata?.Poster
-    return posterUrl && posterUrl !== 'N/A'
+    if (!posterUrl || posterUrl === 'N/A') return false
+
+    // Skip if already downloaded (unless force)
+    if (!force) {
+      const filepath = join(postersDir, `${movie.imdbId}.jpg`)
+      if (existsSync(filepath)) {
+        return false
+      }
+    }
+
+    return true
   })
 
   const total = Math.min(toProcess.length, limit)
@@ -42,8 +57,7 @@ export default defineEventHandler(async event => {
       if (success) {
         results.successful++
       } else {
-        results.failed++
-        results.errors.push(`Failed to download poster for ${movie.imdbId}`)
+        results.skipped++
       }
       results.processed++
       count++
