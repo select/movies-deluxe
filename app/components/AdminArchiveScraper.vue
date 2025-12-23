@@ -9,55 +9,27 @@
 
     <div class="space-y-6">
       <div class="grid grid-cols-2 gap-4">
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Rows per page</label>
-          <input
-            v-model="options.rows"
-            type="number"
-            class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-          >
-        </div>
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Pages to fetch</label>
-          <input
-            v-model="options.pages"
-            type="number"
-            class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-          >
-        </div>
+        <AppInputNumber
+          v-model="options.rows"
+          label="Rows per page"
+        />
+        <AppInputNumber
+          v-model="options.pages"
+          label="Pages to fetch"
+        />
       </div>
 
       <div class="flex flex-col gap-3">
-        <label class="flex items-center gap-3 cursor-pointer group">
-          <div class="relative">
-            <input
-              v-model="options.autoDetect"
-              type="checkbox"
-              class="sr-only peer"
-            >
-            <div
-              class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
-            />
-          </div>
-          <span
-            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
-          >Auto-detect starting page</span>
-        </label>
-        <label class="flex items-center gap-3 cursor-pointer group">
-          <div class="relative">
-            <input
-              v-model="options.skipOmdb"
-              type="checkbox"
-              class="sr-only peer"
-            >
-            <div
-              class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
-            />
-          </div>
-          <span
-            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
-          >Skip OMDB matching (faster)</span>
-        </label>
+        <AppInputSwitch
+          :checked="options.autoDetect"
+          label="Auto-detect starting page"
+          @change="options.autoDetect = $event"
+        />
+        <AppInputSwitch
+          :checked="options.skipOmdb"
+          label="Skip OMDB matching (faster)"
+          @change="options.skipOmdb = $event"
+        />
       </div>
 
       <button

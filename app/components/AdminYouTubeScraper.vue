@@ -31,46 +31,22 @@
         </p>
       </div>
 
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Videos per channel</label>
-        <input
-          v-model="options.limit"
-          type="number"
-          class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-        >
-      </div>
+      <AppInputNumber
+        v-model="options.limit"
+        label="Videos per channel"
+      />
 
       <div class="flex flex-col gap-3">
-        <label class="flex items-center gap-3 cursor-pointer group">
-          <div class="relative">
-            <input
-              v-model="options.allPages"
-              type="checkbox"
-              class="sr-only peer"
-            >
-            <div
-              class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
-            />
-          </div>
-          <span
-            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
-          >Scrape all pages (ignore limit)</span>
-        </label>
-        <label class="flex items-center gap-3 cursor-pointer group">
-          <div class="relative">
-            <input
-              v-model="options.skipOmdb"
-              type="checkbox"
-              class="sr-only peer"
-            >
-            <div
-              class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
-            />
-          </div>
-          <span
-            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
-          >Skip OMDB matching (faster)</span>
-        </label>
+        <AppInputSwitch
+          :checked="options.allPages"
+          label="Scrape all pages (ignore limit)"
+          @change="options.allPages = $event"
+        />
+        <AppInputSwitch
+          :checked="options.skipOmdb"
+          label="Skip OMDB matching (faster)"
+          @change="options.skipOmdb = $event"
+        />
       </div>
 
       <button
