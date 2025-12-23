@@ -187,7 +187,7 @@ export async function fetchChannelVideos(
   let count = 0
   let hasMore = true
 
-  while (hasMore && count < limit) {
+  while (hasMore && (allPages || count < limit)) {
     const videoList = await channel.videos.next()
     if (!videoList || videoList.length === 0) {
       hasMore = false
@@ -195,7 +195,7 @@ export async function fetchChannelVideos(
     }
 
     for (const video of videoList) {
-      if (count >= limit) break
+      if (!allPages && count >= limit) break
       const title = video.title || ''
       if (
         title.toLowerCase().includes('#shorts') ||
@@ -227,10 +227,6 @@ export async function fetchChannelVideos(
       })
       count++
       await new Promise(resolve => setTimeout(resolve, 200))
-    }
-
-    if (!allPages) {
-      hasMore = false
     }
   }
 
