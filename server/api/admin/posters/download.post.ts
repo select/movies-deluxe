@@ -1,6 +1,6 @@
 import { loadMoviesDatabase } from '../../../utils/movieData'
 import { downloadPoster } from '../../../utils/posterDownloader'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { MovieEntry } from '../../../../shared/types/movie'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)

@@ -542,6 +542,8 @@ import type { MovieEntry, ArchiveOrgSource } from '~/types'
 const route = useRoute()
 const movieStore = useMovieStore()
 // eslint-disable-next-line no-undef
+const filterStore = useFilterStore()
+// eslint-disable-next-line no-undef
 const watchlistStore = useWatchlistStore()
 
 // Get the first source URL safely
@@ -741,12 +743,27 @@ const setupKeyboardNavigation = () => {
 
 // Navigate to previous movie
 const navigateToPrevMovie = () => {
-  if (!movie.value) return
+  // Use route.params.id directly to avoid stale closures
+  const currentId = route.params.id as string
+  if (!currentId) return
 
-  const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
+  const movies = filterStore.filteredAndSortedMovies
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Previous - Total filtered movies:', movies.length)
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Previous - Current ID from route:', currentId)
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Previous - First 5 movies:', movies.slice(0, 5).map(m => `${m.title} (${m.year})`))
+  
+  const currentIndex = movies.findIndex(m => m.imdbId === currentId)
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Previous - Current index:', currentIndex)
+  
   if (currentIndex > 0) {
-    const prevMovie = movieStore.movies[currentIndex - 1]
+    const prevMovie = movies[currentIndex - 1]
     if (prevMovie) {
+      // eslint-disable-next-line no-console, no-undef
+      console.log('[NAV] Previous - Navigating to:', prevMovie.title, prevMovie.imdbId)
       // eslint-disable-next-line no-undef
       navigateTo(`/movie/${prevMovie.imdbId}`)
     }
@@ -755,12 +772,27 @@ const navigateToPrevMovie = () => {
 
 // Navigate to next movie
 const navigateToNextMovie = () => {
-  if (!movie.value) return
+  // Use route.params.id directly to avoid stale closures
+  const currentId = route.params.id as string
+  if (!currentId) return
 
-  const currentIndex = movieStore.movies.findIndex(m => m.imdbId === movie.value!.imdbId)
-  if (currentIndex !== -1 && currentIndex < movieStore.movies.length - 1) {
-    const nextMovie = movieStore.movies[currentIndex + 1]
+  const movies = filterStore.filteredAndSortedMovies
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Next - Total filtered movies:', movies.length)
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Next - Current ID from route:', currentId)
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Next - First 5 movies:', movies.slice(0, 5).map(m => `${m.title} (${m.year})`))
+  
+  const currentIndex = movies.findIndex(m => m.imdbId === currentId)
+  // eslint-disable-next-line no-console, no-undef
+  console.log('[NAV] Next - Current index:', currentIndex)
+  
+  if (currentIndex !== -1 && currentIndex < movies.length - 1) {
+    const nextMovie = movies[currentIndex + 1]
     if (nextMovie) {
+      // eslint-disable-next-line no-console, no-undef
+      console.log('[NAV] Next - Navigating to:', nextMovie.title, nextMovie.imdbId)
       // eslint-disable-next-line no-undef
       navigateTo(`/movie/${nextMovie.imdbId}`)
     }

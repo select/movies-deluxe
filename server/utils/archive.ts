@@ -1,4 +1,4 @@
-import { generateArchiveId, type ArchiveOrgSource, type MovieEntry } from '~/shared/types/movie'
+import { generateArchiveId, type ArchiveOrgSource, type MovieEntry } from '../../shared/types/movie'
 import { matchMovie } from './omdb'
 
 export interface ArchiveOrgMovie {

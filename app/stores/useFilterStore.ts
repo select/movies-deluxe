@@ -393,6 +393,15 @@ export const useFilterStore = defineStore('filter', () => {
     return Array.from(countriesSet).sort()
   }
 
+  /**
+   * Get filtered and sorted movies from the movie store
+   * This is the list that should be used for navigation and display
+   */
+  const filteredAndSortedMovies = computed((): MovieEntry[] => {
+    const movieStore = useMovieStore()
+    return applyFilters(movieStore.movies)
+  })
+
   return {
     // State
     filters,
@@ -400,6 +409,7 @@ export const useFilterStore = defineStore('filter', () => {
     // Computed
     hasActiveFilters,
     currentSortOption,
+    filteredAndSortedMovies,
 
     // Actions
     setSort,

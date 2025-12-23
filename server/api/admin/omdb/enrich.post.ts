@@ -13,7 +13,7 @@ import {
   migrateMovieId,
 } from '../../../../scripts/utils/dataManager'
 import { matchMovie } from '../../../../scripts/utils/omdbMatcher'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { MovieEntry } from '../../../../shared/types/movie'
 
 interface EnrichmentOptions {
   limit?: number
