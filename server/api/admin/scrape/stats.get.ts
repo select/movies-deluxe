@@ -59,8 +59,11 @@ export default defineEventHandler(async _event => {
     // YouTube channel stats
     movie.sources?.forEach(source => {
       if (source.type === 'youtube') {
-        const channelId = (source as YouTubeSource).channelId
-        const stats = youtubeChannelStats.find(s => s.id === channelId)
+        const youtubeSource = source as YouTubeSource
+        // Match by channelId or channelName (prefixed with @)
+        const stats = youtubeChannelStats.find(
+          s => s.id === youtubeSource.channelId || s.id === `@${youtubeSource.channelName}`
+        )
         if (stats) {
           stats.scraped++
         }
