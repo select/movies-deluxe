@@ -238,7 +238,7 @@
           <div class="space-y-6">
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Select Channels</label>
-              <div class="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-xl p-2 space-y-1">
+              <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-2 space-y-1">
                 <label
                   v-for="channel in youtubeChannels"
                   :key="channel.id"
