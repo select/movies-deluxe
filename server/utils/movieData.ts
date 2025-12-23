@@ -343,3 +343,233 @@ export function clearFailedOmdbMatches(db: MoviesDatabase): void {
   db._failedOmdbMatches = []
   db._schema.lastUpdated = new Date().toISOString()
 }
+
+/**
+ * Normalize title for comparison (remove punctuation, lowercase, trim)
+ */
+export function normalizeTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '') // Remove punctuation
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim()
+}
+
+/**
+ * Find duplicate movies grouped by normalized title
+ * Returns a Map where keys are normalized titles and values are arrays of movie entries
+ */
+export function findDuplicates(db: MoviesDatabase): Map<string, MovieEntry[]> {
+  const entries = Object.entries(db)
+    .filter(([key]) => !key.startsWith('_'))
+    .map(([_, entry]) => entry as MovieEntry)
+
+  const titleGroups = new Map<string, MovieEntry[]>()
+
+  for (const entry of entries) {
+    const normalized = normalizeTitle(entry.title)
+    if (!titleGroups.has(normalized)) {
+      titleGroups.set(normalized, [])
+    }
+    titleGroups.get(normalized)!.push(entry)
+  }
+
+  // Filter to only groups with more than one entry
+  const duplicates = new Map<string, MovieEntry[]>()
+  for (const [title, entries] of titleGroups) {
+    if (entries.length > 1) {
+      duplicates.set(title, entries)
+    }
+  }
+
+  return duplicates
+}
+
+/**
+ * Merge duplicate movies using smart strategy
+ * Priority: IMDB ID > OMDB enriched > has metadata > more sources
+ */
+export function mergeDuplicates(
+  duplicates: MovieEntry[],
+  mode: 'auto' | 'interactive'
+): MovieEntry {
+  if (duplicates.length === 0) {
+    throw new Error('Cannot merge empty duplicates array')
+  }
+
+  if (duplicates.length === 1) {
+    return duplicates[0]
+  }
+
+  // In interactive mode, just return the first (API will handle selection)
+  if (mode === 'interactive') {
+    return duplicates[0]
+  }
+
+  // Auto mode: use smart merge strategy
+  let best = duplicates[0]
+  let bestScore = 0
+
+  for (const entry of duplicates) {
+    let score = 0
+
+    // Prefer entries with real IMDB IDs
+    if (entry.imdbId.startsWith('tt')) score += 100
+
+    // Prefer entries with OMDB metadata
+    if (entry.metadata) score += 50
+
+    // Prefer entries with AI metadata
+    if (entry.ai) score += 25
+
+    // Prefer entries with more sources
+    score += entry.sources.length * 5
+
+    // Prefer entries with year
+    if (entry.year) score += 10
+
+    if (score > bestScore) {
+      bestScore = score
+      best = entry
+    }
+  }
+
+  // Merge sources from all duplicates
+  const mergedSources = [...best.sources]
+  const seenSources = new Set<string>()
+
+  // Track existing sources
+  for (const source of best.sources) {
+    const key =
+      source.type === 'archive.org' ? `archive:${source.identifier}` : `youtube:${source.videoId}`
+    seenSources.add(key)
+  }
+
+  // Add sources from other duplicates
+  for (const entry of duplicates) {
+    if (entry.imdbId === best.imdbId) continue
+
+    for (const source of entry.sources) {
+      const key =
+        source.type === 'archive.org' ? `archive:${source.identifier}` : `youtube:${source.videoId}`
+
+      if (!seenSources.has(key)) {
+        mergedSources.push(source)
+        seenSources.add(key)
+      }
+    }
+  }
+
+  return {
+    ...best,
+    sources: mergedSources,
+    lastUpdated: new Date().toISOString(),
+  }
+}
+
+/**
+ * Generate a unique movie ID from title
+ */
+export function generateMovieId(title: string, existingIds: Set<string>): string {
+  // Create slug from title
+  const slug = title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .substring(0, 50)
+
+  // Try base slug first
+  const id = `temp-${slug}`
+  if (!existingIds.has(id)) {
+    return id
+  }
+
+  // Add counter if needed
+  let counter = 1
+  while (existingIds.has(`${id}-${counter}`)) {
+    counter++
+  }
+
+  return `${id}-${counter}`
+}
+
+/**
+ * Remove movies with duplicate IDs (keep first occurrence)
+ */
+export function removeDuplicateIds(db: MoviesDatabase): { removed: string[]; kept: string[] } {
+  const seen = new Set<string>()
+  const removed: string[] = []
+  const kept: string[] = []
+
+  const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
+
+  for (const [key, entry] of entries) {
+    const movieEntry = entry as MovieEntry
+    const id = movieEntry.imdbId
+
+    if (seen.has(id)) {
+      // Duplicate ID - remove this entry
+      delete db[key]
+      removed.push(key)
+    } else {
+      // First occurrence - keep it
+      seen.add(id)
+      kept.push(key)
+    }
+  }
+
+  return { removed, kept }
+}
+
+/**
+ * Find orphaned poster files (files not referenced by any movie)
+ */
+export async function findOrphanedPosters(db: MoviesDatabase): Promise<string[]> {
+  try {
+    const { readdir } = await import('fs/promises')
+    const { join } = await import('path')
+
+    const postersDir = join(process.cwd(), 'public/posters')
+
+    // Check if directory exists
+    try {
+      const files = await readdir(postersDir)
+
+      // Get all poster filenames referenced in database
+      const referencedPosters = new Set<string>()
+      const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
+
+      for (const [_, entry] of entries) {
+        const movieEntry = entry as MovieEntry
+        if (movieEntry.metadata?.Poster) {
+          // Extract filename from poster URL
+          const posterUrl = movieEntry.metadata.Poster
+          if (posterUrl.startsWith('/posters/')) {
+            const filename = posterUrl.replace('/posters/', '')
+            referencedPosters.add(filename)
+          }
+        }
+      }
+
+      // Find files not referenced
+      const orphaned: string[] = []
+      for (const file of files) {
+        if (file === '.gitkeep') continue
+        if (!referencedPosters.has(file)) {
+          orphaned.push(file)
+        }
+      }
+
+      return orphaned
+    } catch (error: any) {
+      // Directory doesn't exist or can't be read
+      if (error.code === 'ENOENT') {
+        return []
+      }
+      throw error
+    }
+  } catch (error) {
+    console.error('Failed to find orphaned posters:', error)
+    return []
+  }
+}
