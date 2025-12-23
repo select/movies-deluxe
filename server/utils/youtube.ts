@@ -147,7 +147,7 @@ export function parseMovieTitle(title: string): { title: string; year?: number }
   let year: number | undefined
   for (const pattern of yearPatterns) {
     const match = cleanTitle.match(pattern)
-    if (match) {
+    if (match && match[1]) {
       const parsedYear = parseInt(match[1])
       if (parsedYear >= 1900 && parsedYear <= 2030) {
         year = parsedYear
@@ -180,6 +180,7 @@ export async function fetchChannelVideos(
   }
 
   const channel = searchResults.items[0]
+  if (!channel || !channel.videos) return []
   const videoList = await channel.videos.next()
   if (!videoList || videoList.length === 0) return []
 
@@ -208,8 +209,8 @@ export async function fetchChannelVideos(
       title,
       description: fullVideo?.description || '',
       publishedAt: video.uploadDate || '',
-      channelName: channel.name,
-      channelId: channel.id,
+      channelName: channel.name || '',
+      channelId: channel.id || '',
       thumbnails: {
         high:
           video.thumbnails?.[2]?.url || video.thumbnails?.[1]?.url || video.thumbnails?.[0]?.url,
@@ -258,7 +259,7 @@ export async function processYouTubeVideo(
     addedAt: new Date().toISOString(),
   }
 
-  let imdbId = generateYouTubeId(video.id)
+  let imdbId: string = generateYouTubeId(video.id)
   let metadata = undefined
 
   if (!options.skipOmdb && options.omdbApiKey) {
