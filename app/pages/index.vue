@@ -201,8 +201,6 @@
 </template>
 
 <script setup lang="ts">
-import { useMovieStore } from '@/stores/useMovieStore'
-import { useFilterStore } from '@/stores/useFilterStore'
 import { useMagicKeys, whenever, useWindowScroll, onKeyStroke } from '@vueuse/core'
 import { onBeforeRouteLeave } from 'vue-router'
 

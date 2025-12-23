@@ -61,8 +61,6 @@
 </template>
 
 <script setup lang="ts">
-import { useAdminStore } from '~/stores/useAdminStore'
-
 interface OMDBOptions {
   limit: number
   onlyUnmatched: boolean

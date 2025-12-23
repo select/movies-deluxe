@@ -17,8 +17,23 @@ export default tseslint.config(
         sourceType: 'module',
       },
       globals: {
-        // Nuxt auto-imports
+        // Nuxt auto-imports - Stores (from app/stores/)
         useMovieStore: 'readonly',
+        useFilterStore: 'readonly',
+        useWatchlistStore: 'readonly',
+        useAdminStore: 'readonly',
+        // Nuxt auto-imports - Utils (from app/utils/)
+        getLanguageCode: 'readonly',
+        formatVotes: 'readonly',
+        isLocalhost: 'readonly',
+        SORT_OPTIONS: 'readonly',
+        sortByYear: 'readonly',
+        sortByRating: 'readonly',
+        sortByTitle: 'readonly',
+        sortByVotes: 'readonly',
+        sortMovies: 'readonly',
+        findSortOption: 'readonly',
+        // Nuxt auto-imports - Vue/Nuxt composables
         ref: 'readonly',
         computed: 'readonly',
         onMounted: 'readonly',

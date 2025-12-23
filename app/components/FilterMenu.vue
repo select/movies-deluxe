@@ -246,10 +246,8 @@
 </template>
 
 <script setup lang="ts">
-import { useFilterStore } from '@/stores/useFilterStore'
-import { SORT_OPTIONS, type SortOption } from '@/utils/movieSort'
+import type { SortOption } from '~/types'
 import { YOUTUBE_CHANNELS, AVAILABLE_GENRES, AVAILABLE_COUNTRIES } from '@/constants/filters'
-import { isLocalhost } from '@/utils/isLocalhost'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { onClickOutside, useScrollLock } from '@vueuse/core'
 
