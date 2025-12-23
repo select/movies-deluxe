@@ -476,13 +476,13 @@ pnpm build                            # Build for production
 pnpm tsx scripts/<name>.ts            # Run scripts
 ```
 
-**IMPORTANT**: Do NOT kill the dev server on port 3003 if it is already running, as the user may be using it to provide feedback and new issues.
-
 ## Frontend Verification
 
 **IMPORTANT**: Always verify frontend changes using the **chrome-devtools** MCP.
 
 - Start the dev server (`pnpm dev`)
+- You can restart the server but you must wait till it is ready (use the `/api/readyz` endpoint to check)
+- Do not kill the server in the end **IMPORTANT**
 - Use `chrome-devtools_navigate_page` to `http://localhost:3003`
 - Use `chrome-devtools_take_screenshot` or `chrome-devtools_take_snapshot` to verify UI
 - Check console for errors with `chrome-devtools_list_console_messages`
