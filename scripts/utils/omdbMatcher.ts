@@ -8,8 +8,8 @@ import type {
   MovieMetadata,
   MatchResult,
   MatchConfidence,
-} from '../../shared/types/movie.ts'
-import { createLogger } from './logger.ts'
+} from '../../shared/types/movie'
+import { createLogger } from './logger'
 
 const logger = createLogger('OMDBMatcher')
 
@@ -115,7 +115,7 @@ export async function getMovieByImdbId(
     const response = await rateLimitedFetch(url)
     const data = (await response.json()) as MovieMetadata
 
-    if (data.response === 'False') {
+    if (data.Response === 'False') {
       logger.warn(`Movie not found: ${imdbId}`)
       return null
     }
@@ -231,7 +231,10 @@ export async function matchMovie(
     }
 
     const { bestMatch, bestConfidence } = searchResults.Search.reduce(
-      (best, result) => {
+      (
+        best: { bestMatch: OMDBSearchResult | null; bestConfidence: MatchConfidence },
+        result: OMDBSearchResult
+      ) => {
         const confidence = calculateConfidence(title, year, result)
         if (confidencePriority[confidence] > confidencePriority[best.bestConfidence]) {
           return { bestMatch: result, bestConfidence: confidence }
@@ -281,6 +284,7 @@ export async function batchMatchMovies(
 
   for (let i = 0; i < movies.length; i++) {
     const movie = movies[i]
+    if (!movie) continue
     const result = await matchMovie(movie.title, movie.year, apiKey)
     results.push(result)
 

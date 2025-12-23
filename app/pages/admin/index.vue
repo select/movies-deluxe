@@ -597,7 +597,7 @@ const startArchiveScrape = async () => {
   scraping.value = true
   results.value = null
   try {
-    results.value = await $fetch('/api/admin/scrape/archive', {
+    results.value = await ($fetch as any)('/api/admin/scrape/archive', {
       method: 'POST',
       body: archiveOptions
     })
@@ -619,7 +619,7 @@ const startYouTubeScrape = async () => {
   scraping.value = true
   results.value = null
   try {
-    results.value = await $fetch('/api/admin/scrape/youtube', {
+    results.value = await ($fetch as any)('/api/admin/scrape/youtube', {
       method: 'POST',
       body: youtubeOptions
     })
@@ -641,7 +641,7 @@ const startPosterDownload = async () => {
   scraping.value = true
   posterResults.value = null
   try {
-    posterResults.value = await $fetch('/api/admin/posters/download', {
+    posterResults.value = await ($fetch as any)('/api/admin/posters/download', {
       method: 'POST',
       body: posterOptions,
     })
@@ -663,7 +663,7 @@ const startOMDBEnrichment = async () => {
   scraping.value = true
   results.value = null
   try {
-    results.value = await $fetch('/api/admin/omdb/enrich', {
+    results.value = await ($fetch as any)('/api/admin/omdb/enrich', {
       method: 'POST',
       body: omdbOptions,
     })

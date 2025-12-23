@@ -26,7 +26,7 @@ export default defineEventHandler(async _event => {
   let totalWithPosterUrl = 0
   let totalDownloaded = 0
   entries.forEach(movie => {
-    const posterUrl = movie.metadata?.Poster || movie.metadata?.poster
+    const posterUrl = movie.metadata?.Poster
     if (posterUrl && posterUrl !== 'N/A') {
       totalWithPosterUrl++
       const filepath = join(postersDir, `${movie.imdbId}.jpg`)

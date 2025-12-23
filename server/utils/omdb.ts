@@ -4,7 +4,7 @@ import type {
   MovieMetadata,
   MatchResult,
   MatchConfidence,
-} from '../../types/movie'
+} from '../../shared/types/movie'
 
 // Rate limiting
 let lastRequestTime = 0
@@ -97,7 +97,7 @@ export async function getMovieByImdbId(
     const response = await rateLimitedFetch(url)
     const data = (await response.json()) as MovieMetadata
 
-    if (data.response === 'False') {
+    if (data.Response === 'False') {
       return null
     }
 
@@ -189,7 +189,10 @@ export async function matchMovie(
     }
 
     const { bestMatch, bestConfidence } = searchResults.Search.reduce(
-      (best, result) => {
+      (
+        best: { bestMatch: OMDBSearchResult | null; bestConfidence: MatchConfidence },
+        result: OMDBSearchResult
+      ) => {
         const confidence = calculateConfidence(title, year, result)
         if (confidencePriority[confidence] > confidencePriority[best.bestConfidence]) {
           return { bestMatch: result, bestConfidence: confidence }

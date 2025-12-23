@@ -13,7 +13,7 @@ import {
   migrateMovieId,
 } from '../../../../scripts/utils/dataManager'
 import { matchMovie } from '../../../../scripts/utils/omdbMatcher'
-import type { MovieEntry } from '../../../../shared/types/movie'
+import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../../../../shared/types/movie'
 
 interface EnrichmentOptions {
   limit?: number
@@ -33,7 +33,7 @@ interface EnrichmentResult {
 function parseTitle(title: string): { name: string; year?: number } {
   // Try to extract year from title like "Movie Name (1999)"
   const match = title.match(/^(.+?)\s*\((\d{4})\)/)
-  if (match) {
+  if (match && match[1] && match[2]) {
     return {
       name: match[1].trim(),
       year: parseInt(match[2], 10),
@@ -91,8 +91,10 @@ export default defineEventHandler(async event => {
       }
 
       // Extract year from sources
-      const archiveSource = movie.sources.find((s: any) => s.type === 'archive.org')
-      const youtubeSource = movie.sources.find((s: any) => s.type === 'youtube')
+      const archiveSource = movie.sources.find(
+        (s): s is ArchiveOrgSource => s.type === 'archive.org'
+      )
+      const youtubeSource = movie.sources.find((s): s is YouTubeSource => s.type === 'youtube')
 
       const archiveYear = archiveSource?.releaseDate
         ? new Date(archiveSource.releaseDate).getFullYear()

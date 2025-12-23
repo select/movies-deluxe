@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
 
   // Filter movies that have a poster URL
   const toProcess = entries.filter(movie => {
-    const posterUrl = movie.metadata?.Poster || movie.metadata?.poster
+    const posterUrl = movie.metadata?.Poster
     return posterUrl && posterUrl !== 'N/A'
   })
 
@@ -29,7 +29,7 @@ export default defineEventHandler(async event => {
   for (const movie of toProcess) {
     if (count >= limit) break
 
-    const posterUrl = (movie.metadata?.Poster || movie.metadata?.poster) as string
+    const posterUrl = movie.metadata?.Poster as string
 
     try {
       const success = await downloadPoster(posterUrl, movie.imdbId, force)
