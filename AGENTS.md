@@ -474,7 +474,6 @@ For more details, see https://www.conventionalcommits.org/
 pnpm dev                              # Start dev server (port 3003)
 pnpm build                            # Build for production
 pnpm tsx scripts/<name>.ts            # Run scripts
-pnpm typecheck                        # Verify typing
 ```
 
 **IMPORTANT**: Do NOT kill the dev server on port 3003 if it is already running, as the user may be using it to provide feedback and new issues.
@@ -487,4 +486,3 @@ pnpm typecheck                        # Verify typing
 - Use `chrome-devtools_navigate_page` to `http://localhost:3003`
 - Use `chrome-devtools_take_screenshot` or `chrome-devtools_take_snapshot` to verify UI
 - Check console for errors with `chrome-devtools_list_console_messages`
-- Run `pnpm typecheck` to ensure type safety
