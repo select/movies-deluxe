@@ -80,8 +80,17 @@
           <div class="text-2xl font-bold">
             {{ stats.database.total }}
           </div>
-          <div class="mt-1 text-xs text-gray-400">
-            {{ stats.database.matched }} matched
+          <div class="mt-1 flex items-center gap-2">
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-blue-500 transition-all duration-1000"
+                :style="{ width: `${databasePercentOfTotal}%` }"
+              />
+            </div>
+            <span class="text-[10px] font-medium">{{ databasePercentOfTotal.toFixed(1) }}%</span>
+          </div>
+          <div class="text-[10px] text-gray-400 mt-1">
+            of {{ totalExternalVideos.toLocaleString() }} available
           </div>
         </div>
 
@@ -725,6 +734,19 @@ const loadYouTubeChannels = async () => {
     console.error('Failed to load YouTube channels', e)
   }
 }
+
+// Computed properties
+const totalExternalVideos = computed(() => {
+  if (!stats.value) return 0
+  const archiveTotal = stats.value.external.archiveOrg.total || 0
+  const youtubeTotal = stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.total || 0), 0)
+  return archiveTotal + youtubeTotal
+})
+
+const databasePercentOfTotal = computed(() => {
+  if (!stats.value || totalExternalVideos.value === 0) return 0
+  return (stats.value.database.total / totalExternalVideos.value) * 100
+})
 
 const refreshStats = async () => {
   loading.value = true
