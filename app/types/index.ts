@@ -24,7 +24,6 @@ export type {
   ArchiveOrgSource,
   YouTubeSource,
   MovieMetadata,
-  AIMetadata,
 
   // Database types
   DatabaseSchema,

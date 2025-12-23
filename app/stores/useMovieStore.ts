@@ -29,7 +29,6 @@ export const useMovieStore = defineStore('movie', () => {
         fuse.value = new Fuse(newMovies, {
           keys: [
             { name: 'title', weight: 1.0 },
-            { name: 'ai.extractedTitle', weight: 0.9 },
             { name: 'metadata.Actors', weight: 0.7 },
             { name: 'metadata.Director', weight: 0.7 },
             { name: 'metadata.Genre', weight: 0.5 },
@@ -112,9 +111,6 @@ export const useMovieStore = defineStore('movie', () => {
     return movies.value.filter((movie: MovieEntry) => {
       // Search in title
       if (movie.title.toLowerCase().includes(lowerQuery)) return true
-
-      // Search in AI extracted title
-      if (movie.ai?.extractedTitle?.toLowerCase().includes(lowerQuery)) return true
 
       // Search in year
       if (movie.year?.toString().includes(lowerQuery)) return true

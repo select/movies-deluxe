@@ -181,7 +181,6 @@ function chooseBestEntry(entries: Array<[string, MovieEntry]>): [string, MovieEn
 
     if (movieEntry.imdbId.startsWith('tt')) score += 100
     if (movieEntry.metadata) score += 50
-    if (movieEntry.ai) score += 25
     score += movieEntry.sources.length * 5
     if (movieEntry.year) score += 10
 
