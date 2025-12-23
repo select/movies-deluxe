@@ -290,7 +290,7 @@ export const useFilterStore = defineStore('filter', () => {
     // 1. Filter by source (archive.org or YouTube channel)
     if (filters.value.sources.length > 0) {
       filtered = filtered.filter(movie => {
-        return movie.sources.some(source => {
+        return movie.sources.some((source: MovieSource) => {
           // Check if Archive.org is selected
           if (source.type === 'archive.org') {
             return filters.value.sources.includes('archive.org')
@@ -332,7 +332,7 @@ export const useFilterStore = defineStore('filter', () => {
     // 5. Filter by genres (any selected genre must be present)
     if (filters.value.genres.length > 0) {
       filtered = filtered.filter(movie => {
-        const movieGenres = movie.metadata?.Genre?.split(', ').map(g => g.trim()) || []
+        const movieGenres = movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
         return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
       })
     }
@@ -340,7 +340,8 @@ export const useFilterStore = defineStore('filter', () => {
     // 6. Filter by countries (any selected country must be present)
     if (filters.value.countries.length > 0) {
       filtered = filtered.filter(movie => {
-        const movieCountries = movie.metadata?.Country?.split(', ').map(c => c.trim()) || []
+        const movieCountries =
+          movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
         return filters.value.countries.some(selectedCountry =>
           movieCountries.includes(selectedCountry)
         )
@@ -373,7 +374,7 @@ export const useFilterStore = defineStore('filter', () => {
   const getAvailableGenres = (movies: MovieEntry[]): string[] => {
     const genresSet = new Set<string>()
     movies.forEach(movie => {
-      movie.metadata?.Genre?.split(', ').forEach(genre => {
+      movie.metadata?.Genre?.split(', ').forEach((genre: string) => {
         genresSet.add(genre.trim())
       })
     })
@@ -386,7 +387,7 @@ export const useFilterStore = defineStore('filter', () => {
   const getAvailableCountries = (movies: MovieEntry[]): string[] => {
     const countriesSet = new Set<string>()
     movies.forEach(movie => {
-      movie.metadata?.Country?.split(', ').forEach(country => {
+      movie.metadata?.Country?.split(', ').forEach((country: string) => {
         countriesSet.add(country.trim())
       })
     })

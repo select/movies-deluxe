@@ -314,16 +314,16 @@
 
           <!-- Video Player -->
           <div
-            v-if="movie.sources[selectedSourceIndex]"
+            v-if="currentSource"
             class="bg-black rounded-lg overflow-hidden"
           >
             <!-- YouTube Player -->
             <div
-              v-if="movie.sources[selectedSourceIndex].type === 'youtube'"
+              v-if="currentSource.type === 'youtube'"
               class="aspect-video"
             >
               <iframe
-                :src="getYouTubeEmbedUrl(movie.sources[selectedSourceIndex].url)"
+                :src="getYouTubeEmbedUrl(currentSource.url)"
                 class="w-full h-full"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -334,11 +334,11 @@
 
             <!-- Archive.org Player -->
             <div
-              v-else-if="movie.sources[selectedSourceIndex].type === 'archive.org'"
+              v-else-if="currentSource.type === 'archive.org'"
               class="aspect-video"
             >
               <iframe
-                :src="getArchiveEmbedUrl(movie.sources[selectedSourceIndex])"
+                :src="getArchiveEmbedUrl(currentSource)"
                 class="w-full h-full"
                 frameborder="0"
                 webkitallowfullscreen="true"
@@ -346,28 +346,6 @@
                 allowfullscreen
                 title="Archive.org video player"
               />
-            </div>
-
-            <!-- Fallback: External Link -->
-            <div
-              v-else
-              class="aspect-video flex items-center justify-center bg-gray-800"
-            >
-              <div class="text-center p-8">
-                <div class="i-mdi-open-in-new text-6xl text-gray-400 mb-4" />
-                <p class="text-gray-300 mb-4">
-                  Video player not available for this source
-                </p>
-                <a
-                  v-if="movie.sources[selectedSourceIndex].url"
-                  :href="movie.sources[selectedSourceIndex].url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-block px-6 py-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
-                >
-                  Watch Externally
-                </a>
-              </div>
             </div>
           </div>
 
@@ -601,6 +579,12 @@ const isLoading = ref(true)
 const error = ref<string | null>(null)
 const selectedSourceIndex = ref(0)
 
+// Current selected source
+const currentSource = computed(() => {
+  if (!movie.value || !movie.value.sources) return null
+  return movie.value.sources[selectedSourceIndex.value] || movie.value.sources[0] || null
+})
+
 // Share functionality state
 const showShareToast = ref(false)
 const shareToastMessage = ref('')
@@ -634,15 +618,15 @@ const relatedMovies = computed(() => {
    * - Still meaningful enough to surface cast-based similarities
    */
   const scored = allMovies
-    .filter(m => m.imdbId !== currentMovie.imdbId) // Exclude current movie
-    .map(m => {
+    .filter((m: MovieEntry) => m.imdbId !== currentMovie.imdbId) // Exclude current movie
+    .map((m: MovieEntry) => {
       let score = 0
 
       // Genre match (highest priority)
       if (currentMovie.metadata?.Genre && m.metadata?.Genre) {
-        const currentGenres = currentMovie.metadata.Genre.split(',').map(g => g.trim().toLowerCase())
-        const movieGenres = m.metadata.Genre.split(',').map(g => g.trim().toLowerCase())
-        const commonGenres = currentGenres.filter(g => movieGenres.includes(g))
+        const currentGenres = currentMovie.metadata.Genre.split(',').map((g: string) => g.trim().toLowerCase())
+        const movieGenres = m.metadata.Genre.split(',').map((g: string) => g.trim().toLowerCase())
+        const commonGenres = currentGenres.filter((g: string) => movieGenres.includes(g))
         score += commonGenres.length * 10 // 10 points per matching genre
       }
 
@@ -663,9 +647,9 @@ const relatedMovies = computed(() => {
 
       // Actor matches
       if (currentMovie.metadata?.Actors && m.metadata?.Actors) {
-        const currentActors = currentMovie.metadata.Actors.split(',').map(a => a.trim().toLowerCase())
-        const movieActors = m.metadata.Actors.split(',').map(a => a.trim().toLowerCase())
-        const commonActors = currentActors.filter(a => movieActors.includes(a))
+        const currentActors = currentMovie.metadata.Actors.split(',').map((a: string) => a.trim().toLowerCase())
+        const movieActors = m.metadata.Actors.split(',').map((a: string) => a.trim().toLowerCase())
+        const commonActors = currentActors.filter((a: string) => movieActors.includes(a))
         score += commonActors.length * 5 // 5 points per shared actor
       }
 
@@ -676,10 +660,10 @@ const relatedMovies = computed(() => {
 
       return { movie: m, score }
     })
-    .filter(item => item.score > 0) // Only include movies with some similarity
-    .sort((a, b) => b.score - a.score) // Sort by score descending
+    .filter((item: { movie: MovieEntry; score: number }) => item.score > 0) // Only include movies with some similarity
+    .sort((a: { score: number }, b: { score: number }) => b.score - a.score) // Sort by score descending
     .slice(0, 8) // Limit to 8 movies
-    .map(item => item.movie)
+    .map((item: { movie: MovieEntry; score: number }) => item.movie)
 
   return scored
 })
