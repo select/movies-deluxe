@@ -1,9 +1,9 @@
 <template>
   <div
     v-if="isLocalhost"
-    class="mt-8 p-6 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl"
+    class="mt-8 p-6 bg-yellow-50 dark:bg-gray-800 border-2 border-yellow-200 dark:border-gray-700 rounded-xl"
   >
-    <div class="flex items-center gap-2 mb-4 text-yellow-800 dark:text-yellow-200">
+    <div class="flex items-center gap-2 mb-4 text-yellow-800 dark:text-gray-100">
       <div class="i-mdi-shield-edit text-2xl" />
       <h2 class="text-xl font-bold">
         Admin Curation
@@ -15,7 +15,7 @@
         <div class="i-mdi-check-decagram" />
         Verified
       </div>
-      <span class="ml-auto text-xs font-mono bg-yellow-200 dark:bg-yellow-800 px-2 py-1 rounded">
+      <span class="ml-auto text-xs font-mono bg-yellow-200 dark:bg-gray-700 px-2 py-1 rounded">
         localhost only
       </span>
     </div>
@@ -24,13 +24,13 @@
       <!-- Left: Current Info & Search -->
       <div class="space-y-6">
         <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-yellow-400 mb-2">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300 mb-2">
             Source Info
           </h3>
           <div
             v-for="source in movie.sources"
             :key="source.url"
-            class="bg-white dark:bg-gray-800 p-3 rounded border border-yellow-100 dark:border-yellow-900 mb-2"
+            class="bg-white dark:bg-gray-900 p-3 rounded border border-yellow-100 dark:border-gray-700 mb-2"
           >
             <div class="flex items-center gap-2 mb-1">
               <div
@@ -55,7 +55,7 @@
         </div>
 
         <div class="space-y-4">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-yellow-400">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
             Search OMDB
           </h3>
           <div class="flex gap-2">
@@ -63,14 +63,14 @@
               v-model.trim="searchTitle"
               type="text"
               placeholder="Movie Title"
-              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm"
+              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
               @keyup.enter="handleSearch"
             >
             <input
               v-model.trim="searchYear"
               type="text"
               placeholder="Year"
-              class="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm"
+              class="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
               @keyup.enter="handleSearch"
             >
             <button
@@ -88,7 +88,7 @@
 
           <div class="pt-2">
             <div class="flex items-center gap-2 mb-2">
-              <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-yellow-400">
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
                 Direct IMDB ID
               </h3>
             </div>
@@ -97,7 +97,7 @@
                 v-model.trim="imdbIdInput"
                 type="text"
                 placeholder="tt1234567"
-                class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-mono"
+                class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-mono"
                 @keyup.enter="handleDirectImdbFetch"
               >
               <button
@@ -118,7 +118,7 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t border-yellow-200 dark:border-yellow-800 flex flex-wrap gap-4">
+        <div class="pt-4 border-t border-yellow-200 dark:border-gray-700 flex flex-wrap gap-4">
           <button
             v-if="!movie.verified"
             class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition-colors text-sm font-bold disabled:opacity-50"
@@ -141,7 +141,7 @@
 
       <!-- Right: Search Results -->
       <div>
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-yellow-400 mb-2">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300 mb-2">
           Search Results
         </h3>
         <div
@@ -151,7 +151,7 @@
           <div
             v-for="result in searchResults"
             :key="result.imdbID"
-            class="flex gap-3 p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-yellow-600 transition-colors group"
+            class="flex gap-3 p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-gray-500 transition-colors group"
           >
             <img
               :src="result.Poster !== 'N/A' ? result.Poster : '/favicon.ico'"
@@ -180,7 +180,7 @@
         </div>
         <div
           v-else-if="!isSearching"
-          class="h-[200px] flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-lg"
+          class="h-[200px] flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg"
         >
           <div class="i-mdi-magnify text-4xl mb-2" />
           <p class="text-sm">
