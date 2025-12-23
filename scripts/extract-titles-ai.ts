@@ -23,7 +23,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createOpencode } from '@opencode-ai/sdk'
-import type { MovieEntry, MoviesDatabase } from '../types/movie'
+import type { MovieEntry, MoviesDatabase } from '../shared/types/movie'
 import { createLogger } from './utils/logger'
 import { loadPrompt, batchExtractTitles } from './utils/aiTitleExtractor'
 

@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import type { MoviesDatabase, MovieEntry, MovieSource } from '../../types/movie'
+import type { MoviesDatabase, MovieEntry, MovieSource } from '~/shared/types/movie'
 
 const DATA_DIR = join(process.cwd(), 'public/data')
 const MOVIES_FILE = join(DATA_DIR, 'movies.json')

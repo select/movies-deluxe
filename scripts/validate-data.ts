@@ -13,8 +13,13 @@
 import { parseArgs } from 'util'
 import { loadMoviesDatabase, saveMoviesDatabase, getDatabaseStats } from './utils/dataManager.ts'
 import { createLogger } from './utils/logger.ts'
-import type { MoviesDatabase, MovieEntry, ArchiveOrgSource, YouTubeSource } from '../types/movie.ts'
-import { isImdbId, isTemporaryId } from '../types/movie.ts'
+import type {
+  MoviesDatabase,
+  MovieEntry,
+  ArchiveOrgSource,
+  YouTubeSource,
+} from '../shared/types/movie.ts'
+import { isImdbId, isTemporaryId } from '../shared/types/movie.ts'
 
 const logger = createLogger('ValidateData')
 
