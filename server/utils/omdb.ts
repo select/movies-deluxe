@@ -224,3 +224,27 @@ export async function matchMovie(
     }
   }
 }
+
+/**
+ * Batch match multiple movies with progress tracking
+ */
+export async function batchMatchMovies(
+  movies: Array<{ title: string; year?: number }>,
+  apiKey?: string,
+  onProgress?: (current: number, total: number) => void
+): Promise<MatchResult[]> {
+  const results: MatchResult[] = []
+
+  for (let i = 0; i < movies.length; i++) {
+    const movie = movies[i]
+    if (!movie) continue
+    const result = await matchMovie(movie.title, movie.year, apiKey)
+    results.push(result)
+
+    if (onProgress) {
+      onProgress(i + 1, movies.length)
+    }
+  }
+
+  return results
+}

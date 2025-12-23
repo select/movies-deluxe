@@ -154,3 +154,192 @@ export function getDatabaseStats(db: MoviesDatabase) {
 
   return stats
 }
+
+/**
+ * Migrate a movie from a temporary ID to an IMDB ID
+ * Merges data if the IMDB ID already exists
+ */
+export function migrateMovieId(db: MoviesDatabase, oldId: string, newId: string): void {
+  const oldEntry = db[oldId] as MovieEntry | undefined
+
+  if (!oldEntry) {
+    console.warn(`Cannot migrate: movie ${oldId} not found`)
+    return
+  }
+
+  console.log(`Migrating movie from ${oldId} to ${newId}`)
+
+  // Update the imdbId in the entry
+  oldEntry.imdbId = newId
+
+  // Add/merge to new ID
+  upsertMovie(db, newId, oldEntry)
+
+  // Remove old entry
+  delete db[oldId]
+}
+
+/**
+ * Get all movies with temporary IDs (not yet matched to IMDB)
+ */
+export function getUnmatchedMovies(db: MoviesDatabase): MovieEntry[] {
+  return Object.entries(db)
+    .filter(([key]) => !key.startsWith('_') && !key.startsWith('tt'))
+    .map(([_, entry]) => entry as MovieEntry)
+}
+
+/**
+ * Find potential duplicate movies by title similarity
+ */
+export function findPotentialDuplicates(
+  db: MoviesDatabase,
+  threshold: number = 0.85
+): Array<{ entries: MovieEntry[]; similarity: number }> {
+  const entries = Object.entries(db)
+    .filter(([key]) => !key.startsWith('_'))
+    .map(([_, entry]) => entry as MovieEntry)
+
+  const duplicates: Array<{ entries: MovieEntry[]; similarity: number }> = []
+
+  for (let i = 0; i < entries.length; i++) {
+    for (let j = i + 1; j < entries.length; j++) {
+      const entryI = entries[i]
+      const entryJ = entries[j]
+
+      if (!entryI || !entryJ) continue
+
+      const title1 = entryI.title.toLowerCase()
+      const title2 = entryJ.title.toLowerCase()
+
+      // Simple similarity check (can be improved with Levenshtein distance)
+      const similarity = calculateSimilarity(title1, title2)
+
+      if (similarity >= threshold) {
+        duplicates.push({
+          entries: [entryI, entryJ],
+          similarity,
+        })
+      }
+    }
+  }
+
+  return duplicates
+}
+
+/**
+ * Calculate simple similarity between two strings
+ */
+function calculateSimilarity(str1: string, str2: string): number {
+  if (!str1 || !str2) return 0
+  const longer = str1.length > str2.length ? str1 : str2
+  const shorter = str1.length > str2.length ? str2 : str1
+
+  if (longer.length === 0) return 1.0
+
+  const editDistance = getEditDistance(longer, shorter)
+  return (longer.length - editDistance) / longer.length
+}
+
+/**
+ * Calculate edit distance (Levenshtein distance)
+ */
+function getEditDistance(str1: string, str2: string): number {
+  if (!str1 || !str2) return Math.max(str1?.length || 0, str2?.length || 0)
+  const costs: number[] = []
+  for (let i = 0; i <= str1.length; i++) {
+    let lastValue = i
+    for (let j = 0; j <= str2.length; j++) {
+      if (i === 0) {
+        costs[j] = j
+      } else if (j > 0) {
+        let newValue = costs[j - 1] as number
+        if (str1.charAt(i - 1) !== str2.charAt(j - 1)) {
+          newValue = Math.min(Math.min(newValue, lastValue), costs[j] as number) + 1
+        }
+        costs[j - 1] = lastValue
+        lastValue = newValue
+      }
+    }
+    if (i > 0) {
+      costs[str2.length] = lastValue
+    }
+  }
+  return costs[str2.length] as number
+}
+
+/**
+ * Merge two movie entries
+ */
+export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): MovieEntry {
+  // Prefer entry with real IMDB ID
+  const primary = entry1.imdbId.startsWith('tt') ? entry1 : entry2
+  const secondary = primary === entry1 ? entry2 : entry1
+
+  // Merge sources
+  const mergedSources = [...primary.sources]
+
+  for (const secondarySource of secondary.sources) {
+    const existingIndex = mergedSources.findIndex(
+      s =>
+        s.type === secondarySource.type &&
+        ((s.type === 'archive.org' &&
+          secondarySource.type === 'archive.org' &&
+          s.identifier === secondarySource.identifier) ||
+          (s.type === 'youtube' &&
+            secondarySource.type === 'youtube' &&
+            s.videoId === secondarySource.videoId))
+    )
+
+    const existingSource = mergedSources[existingIndex]
+    if (existingIndex !== -1 && existingSource) {
+      // Update existing source with new data
+      mergedSources[existingIndex] = {
+        ...existingSource,
+        ...secondarySource,
+        label: secondarySource.label || existingSource.label,
+        quality: secondarySource.quality || existingSource.quality,
+        description: secondarySource.description || existingSource.description,
+      }
+    } else {
+      // Add new source
+      mergedSources.push(secondarySource)
+    }
+  }
+
+  return {
+    ...primary,
+    sources: mergedSources,
+    metadata: primary.metadata || secondary.metadata,
+    ai: primary.ai || secondary.ai,
+    year: primary.year || secondary.year,
+    lastUpdated: new Date().toISOString(),
+  }
+}
+
+/**
+ * Mark a title/ID as failed for OMDB matching
+ */
+export function markFailedOmdbMatch(db: MoviesDatabase, identifier: string): void {
+  if (!db._failedOmdbMatches) {
+    db._failedOmdbMatches = []
+  }
+  if (!db._failedOmdbMatches.includes(identifier)) {
+    db._failedOmdbMatches.push(identifier)
+    db._schema.lastUpdated = new Date().toISOString()
+  }
+}
+
+/**
+ * Check if a title/ID has previously failed OMDB matching
+ */
+export function hasFailedOmdbMatch(db: MoviesDatabase, identifier: string): boolean {
+  return db._failedOmdbMatches?.includes(identifier) || false
+}
+
+/**
+ * Clear failed OMDB matches
+ */
+export function clearFailedOmdbMatches(db: MoviesDatabase): void {
+  db._failedOmdbMatches = []
+  db._schema.lastUpdated = new Date().toISOString()
+}
