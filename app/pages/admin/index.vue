@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
+  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 md:p-8">
     <div
       v-if="!isDev"
       class="flex flex-col items-center justify-center h-[60vh] text-center"
@@ -56,8 +56,8 @@
             <div class="i-mdi-home" />
             View Site
           </NuxtLink>
-          <button 
-            class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2" 
+          <button
+            class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
             :disabled="loading"
             @click="refreshStats"
           >
@@ -72,7 +72,7 @@
         v-if="stats"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Movies</span>
             <div class="i-mdi-movie-open text-2xl text-blue-500" />
@@ -85,7 +85,7 @@
           </div>
         </div>
 
-        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Archive.org Coverage</span>
             <div class="i-mdi-archive text-2xl text-amber-500" />
@@ -99,15 +99,15 @@
               <span class="font-medium">{{ stats.external.archiveOrg.percent.toFixed(2) }}%</span>
             </div>
             <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div 
-                class="h-full bg-amber-500 transition-all duration-1000" 
+              <div
+                class="h-full bg-amber-500 transition-all duration-1000"
                 :style="{ width: `${stats.external.archiveOrg.percent}%` }"
               />
             </div>
           </div>
         </div>
 
-        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">YouTube Sources</span>
             <div class="i-mdi-youtube text-2xl text-red-500" />
@@ -120,41 +120,16 @@
           </div>
         </div>
 
-        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Data Quality</span>
+            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">OMDB Matched</span>
             <div class="i-mdi-check-decagram text-2xl text-green-500" />
           </div>
-          
-          <!-- Curation Status -->
-          <div class="mb-4">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="i-mdi-check-circle text-sm text-green-500" />
-              <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Curated</span>
-            </div>
-            <div class="text-2xl font-bold mb-1">
-              {{ stats.curation.curated }}
-            </div>
-            <div class="flex flex-col gap-1">
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-gray-400">of {{ stats.curation.total }} entries</span>
-                <span class="font-medium">{{ stats.curation.percent.toFixed(1) }}%</span>
-              </div>
-              <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div 
-                  class="h-full bg-green-500 transition-all duration-1000" 
-                  :style="{ width: `${stats.curation.percent}%` }"
-                />
-              </div>
-            </div>
-          </div>
+
+
 
           <!-- OMDB Enrichment -->
-          <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="i-mdi-database-sync text-sm text-blue-600" />
-              <span class="text-xs font-medium text-gray-600 dark:text-gray-400">OMDB Matched</span>
-            </div>
+          <div class="pt-4 ">
             <div class="text-2xl font-bold mb-1">
               {{ stats.omdb.matched }}
             </div>
@@ -164,8 +139,8 @@
                 <span class="font-medium">{{ stats.omdb.percent.toFixed(1) }}%</span>
               </div>
               <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div 
-                  class="h-full bg-blue-600 transition-all duration-1000" 
+                <div
+                  class="h-full bg-blue-600 transition-all duration-1000"
                   :style="{ width: `${stats.omdb.percent}%` }"
                 />
               </div>
@@ -173,7 +148,7 @@
           </div>
         </div>
 
-        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Posters Downloaded</span>
             <div class="i-mdi-image-multiple text-2xl text-purple-500" />
@@ -187,8 +162,8 @@
               <span class="font-medium">{{ stats.posters.percent.toFixed(1) }}%</span>
             </div>
             <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div 
-                class="h-full bg-purple-500 transition-all duration-1000" 
+              <div
+                class="h-full bg-purple-500 transition-all duration-1000"
                 :style="{ width: `${stats.posters.percent}%` }"
               />
             </div>
@@ -199,12 +174,12 @@
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">
         <!-- Archive.org Scraper -->
-        <div class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
             <div class="i-mdi-archive text-amber-500" />
             Archive.org Scraper
           </h2>
-          
+
           <div class="space-y-6">
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
@@ -250,8 +225,8 @@
               </label>
             </div>
 
-            <button 
-              class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
+            <button
+              class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               :disabled="scraping"
               @click="startArchiveScrape"
             >
@@ -269,12 +244,12 @@
         </div>
 
         <!-- YouTube Scraper -->
-        <div class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
             <div class="i-mdi-youtube text-red-500" />
             YouTube Scraper
           </h2>
-          
+
           <div class="space-y-6">
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Videos per channel</label>
@@ -299,8 +274,8 @@
               </label>
             </div>
 
-            <button 
-              class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
+            <button
+              class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               :disabled="scraping"
               @click="startYouTubeScrape"
             >
@@ -318,12 +293,12 @@
         </div>
 
         <!-- Poster Downloader -->
-        <div class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
             <div class="i-mdi-image-multiple text-purple-500" />
             Poster Downloader
           </h2>
-          
+
           <div class="space-y-6">
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Download limit</label>
@@ -348,8 +323,8 @@
               </label>
             </div>
 
-            <button 
-              class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
+            <button
+              class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               :disabled="scraping"
               @click="startPosterDownload"
             >
@@ -367,12 +342,12 @@
         </div>
 
         <!-- OMDB Enrichment -->
-        <div class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
             <div class="i-mdi-database-sync text-blue-600" />
             OMDB Enrichment
           </h2>
-          
+
           <div class="space-y-6">
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Enrichment limit</label>
@@ -397,8 +372,8 @@
               </label>
             </div>
 
-            <button 
-              class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
+            <button
+              class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               :disabled="scraping"
               @click="startOMDBEnrichment"
             >
@@ -419,7 +394,7 @@
       <!-- Results Log -->
       <section
         v-if="results || posterResults"
-        class="glass p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700"
+        class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
       >
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl font-bold">
@@ -432,7 +407,7 @@
             Clear
           </button>
         </div>
-        
+
         <div
           v-if="results"
           class="grid grid-cols-3 gap-4 mb-6"
@@ -721,15 +696,3 @@ const startOMDBEnrichment = async () => {
   }
 }
 </script>
-
-<style scoped>
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.dark .glass {
-  background: rgba(31, 41, 55, 0.7);
-}
-</style>

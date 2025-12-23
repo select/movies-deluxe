@@ -5,7 +5,7 @@
   >
     <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
-      <header class="sticky top-0 z-30 glass border-b border-gray-200 dark:border-gray-800 transition-all duration-300 bg-gradient-to-r from-white/80 via-white/70 to-white/80 dark:from-gray-900/80 dark:via-gray-900/70 dark:to-gray-900/80">
+      <header class="sticky top-0 z-30 border-b border-gray-200 dark:border-gray-800 transition-all duration-300 bg-gradient-to-r from-white/80 via-white/70 to-white/80 dark:from-gray-900/80 dark:via-gray-900/70 dark:to-gray-900/80 backdrop-blur-xl">
         <div
           :class="[
             'max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between transition-all duration-300',
