@@ -88,6 +88,15 @@ export default defineEventHandler(async event => {
 
     const total = moviesToProcess.length
 
+    // Emit starting progress
+    emitProgress({
+      type: 'omdb',
+      status: 'starting',
+      message: 'Starting OMDB enrichment...',
+      current: 0,
+      total,
+    })
+
     // Process each movie
     for (const movie of moviesToProcess) {
       const oldId = movie.imdbId
@@ -96,7 +105,7 @@ export default defineEventHandler(async event => {
         type: 'omdb',
         status: 'in_progress',
         message: `Enriching: ${movie.title}`,
-        current: result.processed,
+        current: result.processed + 1,
         total,
       })
 
