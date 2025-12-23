@@ -151,26 +151,16 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
   // Load channel configs
   const channelConfigs = await loadYouTubeChannels()
   const channelStatsMap = new Map<string, ChannelStats>()
-  const channelStatsArray: ChannelStats[] = []
 
-  // Initialize channel stats
+  // Initialize channel stats (indexed by channel ID)
   for (const config of channelConfigs) {
-    const channelStats: ChannelStats = {
+    channelStatsMap.set(config.id, {
       id: config.id,
       name: config.name,
       language: config.language,
       enabled: config.enabled,
       scraped: 0,
-    }
-
-    // Store in array (unique)
-    channelStatsArray.push(channelStats)
-
-    // Index by both handle (@id) and actual channelId for lookup
-    channelStatsMap.set(config.id, channelStats)
-    if (config.channelId) {
-      channelStatsMap.set(config.channelId, channelStats)
-    }
+    })
   }
 
   entries.forEach(([_, entry]) => {
@@ -188,12 +178,9 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
       if (source.type === 'youtube') {
         stats.youtubeSources++
 
-        // Count per channel
+        // Count per channel (match by channel ID)
         const youtubeSource = source as any
-        const channelId = youtubeSource.channelId
-
-        // Match by channelId (works for both UC... IDs and @handles)
-        const channelStats = channelStatsMap.get(channelId)
+        const channelStats = channelStatsMap.get(youtubeSource.channelId)
         if (channelStats) {
           channelStats.scraped++
         }
@@ -209,7 +196,7 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
     }
   })
 
-  stats.youtubeChannels = channelStatsArray
+  stats.youtubeChannels = Array.from(channelStatsMap.values())
 
   return stats
 }
@@ -218,7 +205,7 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
  * Load YouTube channel configurations
  */
 async function loadYouTubeChannels(): Promise<
-  Array<{ id: string; channelId?: string; name: string; language?: string; enabled: boolean }>
+  Array<{ id: string; handle?: string; name: string; language?: string; enabled: boolean }>
 > {
   try {
     const { readFile } = await import('fs/promises')

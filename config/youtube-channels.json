@@ -3,56 +3,56 @@
 
   "channels": [
     {
-      "id": "@Netzkino",
-      "channelId": "UCGkHFrwE8KEuOHPVsIOskAg",
+      "id": "UCGkHFrwE8KEuOHPVsIOskAg",
+      "handle": "@Netzkino",
       "name": "Netzkino",
       "language": "de",
       "enabled": true,
       "notes": "German-language channel offering licensed full-length movies, often dubbed or subtitled"
     },
     {
-      "id": "@FilmRiseMovies",
-      "channelId": "UC8IHAQMuiJdY6ALuhG7iU8Q",
+      "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
+      "handle": "@FilmRiseMovies",
       "name": "FilmRise Movies",
       "language": "en",
       "enabled": true,
       "notes": "Large collection of classic, independent, and genre films available free with ads"
     },
     {
-      "id": "@Popcornflix",
-      "channelId": "UCVFYikepF-avelvuIaQ_lHA",
+      "id": "UCVFYikepF-avelvuIaQ_lHA",
+      "handle": "@Popcornflix",
       "name": "Popcornflix",
       "language": "en",
       "enabled": true,
       "notes": "Free streaming brand with a wide variety of full-length movies on YouTube"
     },
     {
-      "id": "@MovieCentral",
-      "channelId": "UCGBzBkV-MinlBvHBzZawfLQ",
+      "id": "UCGBzBkV-MinlBvHBzZawfLQ",
+      "handle": "@MovieCentral",
       "name": "Movie Central",
       "language": "en",
       "enabled": true,
       "notes": "Curated collection of full-length movies across many genres, ad-supported"
     },
     {
-      "id": "@TimelessClassicMovies",
-      "channelId": "UCOg0aMAXmF3o5m243PxhE5g",
+      "id": "UCOg0aMAXmF3o5m243PxhE5g",
+      "handle": "@TimelessClassicMovies",
       "name": "Timeless Classic Movies",
       "language": "en",
       "enabled": true,
       "notes": "Focuses on classic Hollywood and early cinema films that are free to watch"
     },
     {
-      "id": "@Mosfilm",
-      "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
+      "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
+      "handle": "@Mosfilm",
       "name": "Mosfilm",
       "language": "ru",
       "enabled": true,
       "notes": "Official channel of the Russian studio streaming many of its films legally"
     },
     {
-      "id": "@Moviedome",
-      "channelId": "UCh4JH8axA_jUjB8YoRnm0cg",
+      "id": "UCh4JH8axA_jUjB8YoRnm0cg",
+      "handle": "@Moviedome",
       "name": "Moviedome",
       "language": "de",
       "enabled": true,
