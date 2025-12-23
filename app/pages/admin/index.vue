@@ -237,6 +237,29 @@
 
           <div class="space-y-6">
             <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Select Channels</label>
+              <div class="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-xl p-2 space-y-1">
+                <label
+                  v-for="channel in youtubeChannels"
+                  :key="channel.id"
+                  class="flex items-center gap-2 px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700 rounded cursor-pointer text-sm"
+                >
+                  <input
+                    v-model="youtubeOptions.channels"
+                    type="checkbox"
+                    :value="channel.id"
+                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  >
+                  <span>{{ channel.name }}</span>
+                  <span class="text-xs text-gray-400">({{ channel.language }})</span>
+                </label>
+              </div>
+              <p class="text-[10px] text-gray-400">
+                If none selected, all enabled channels will be processed.
+              </p>
+            </div>
+
+            <div class="space-y-2">
               <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Videos per channel</label>
               <input
                 v-model="youtubeOptions.limit"
@@ -246,6 +269,17 @@
             </div>
 
             <div class="flex flex-col gap-3">
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <div class="relative">
+                  <input
+                    v-model="youtubeOptions.allPages"
+                    type="checkbox"
+                    class="sr-only peer"
+                  >
+                  <div class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600" />
+                </div>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Scrape all pages (ignore limit)</span>
+              </label>
               <label class="flex items-center gap-3 cursor-pointer group">
                 <div class="relative">
                   <input
@@ -446,6 +480,31 @@
         </div>
 
         <div
+          v-if="results?.channels && results.channels.length > 0"
+          class="mb-6 space-y-3"
+        >
+          <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500">
+            Per-Channel Progress
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div
+              v-for="chan in results.channels"
+              :key="chan.id"
+              class="p-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl border border-gray-100 dark:border-gray-800"
+            >
+              <div class="font-bold text-sm mb-1 truncate">
+                {{ chan.id }}
+              </div>
+              <div class="flex gap-3 text-xs text-gray-500">
+                <span>Processed: <span class="text-blue-600 dark:text-blue-400 font-medium">{{ chan.processed }}</span></span>
+                <span>Added: <span class="text-green-600 dark:text-green-400 font-medium">{{ chan.added }}</span></span>
+                <span>Updated: <span class="text-purple-600 dark:text-purple-400 font-medium">{{ chan.updated }}</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
           v-if="(results?.errors.length || 0) > 0 || (posterResults?.errors.length || 0) > 0"
           class="space-y-2"
         >
@@ -532,6 +591,14 @@ interface ScrapeResults {
   updated: number
   errors: string[]
   debug?: string[]
+  channels?: Array<{ id: string; processed: number; added: number; updated: number }>
+}
+
+interface YouTubeChannelConfig {
+  id: string
+  name: string
+  enabled: boolean
+  language?: string
 }
 
 interface PosterResults {
@@ -547,6 +614,7 @@ const scraping = ref(false)
 const stats = ref<ScrapeStats | null>(null)
 const results = ref<ScrapeResults | null>(null)
 const posterResults = ref<PosterResults | null>(null)
+const youtubeChannels = ref<YouTubeChannelConfig[]>([])
 
 // Dark mode toggle
 const isDark = useDark()
@@ -563,6 +631,8 @@ const archiveOptions = reactive({
 const youtubeOptions = reactive({
   limit: 10,
   skipOmdb: true,
+  allPages: false,
+  channels: [] as string[],
 })
 
 const posterOptions = reactive({
@@ -579,8 +649,21 @@ onMounted(async () => {
   isDev.value = isLocalhost()
   if (isDev.value) {
     await refreshStats()
+    await loadYouTubeChannels()
   }
 })
+
+const loadYouTubeChannels = async () => {
+  try {
+    // We can't easily fetch the local JSON file directly from the frontend if it's in config/
+    // But we can add a server API for it or just hardcode the list for now since it's small.
+    // Let's try to fetch it from a new API endpoint we'll create.
+    const data = await $fetch<{ channels: YouTubeChannelConfig[] }>('/api/admin/scrape/youtube-channels')
+    youtubeChannels.value = data.channels
+  } catch (e) {
+    console.error('Failed to load YouTube channels', e)
+  }
+}
 
 const refreshStats = async () => {
   loading.value = true

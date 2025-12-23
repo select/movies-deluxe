@@ -168,7 +168,8 @@ export function parseMovieTitle(title: string): { title: string; year?: number }
 export async function fetchChannelVideos(
   youtube: Client,
   channelIdentifier: string,
-  limit: number
+  limit: number,
+  allPages: boolean = false
 ) {
   const searchQuery = channelIdentifier.startsWith('@')
     ? channelIdentifier.slice(1)
@@ -181,45 +182,56 @@ export async function fetchChannelVideos(
 
   const channel = searchResults.items[0]
   if (!channel || !channel.videos) return []
-  const videoList = await channel.videos.next()
-  if (!videoList || videoList.length === 0) return []
 
   const results = []
   let count = 0
+  let hasMore = true
 
-  for (const video of videoList) {
-    if (count >= limit) break
-    const title = video.title || ''
-    if (
-      title.toLowerCase().includes('#shorts') ||
-      title.toLowerCase().includes('trailer') ||
-      title.toLowerCase().includes('clip') ||
-      title.toLowerCase().includes('preview') ||
-      video.isShort
-    ) {
-      continue
+  while (hasMore && count < limit) {
+    const videoList = await channel.videos.next()
+    if (!videoList || videoList.length === 0) {
+      hasMore = false
+      break
     }
 
-    const duration = video.duration || 0
-    if (duration < 40 * 60) continue
+    for (const video of videoList) {
+      if (count >= limit) break
+      const title = video.title || ''
+      if (
+        title.toLowerCase().includes('#shorts') ||
+        title.toLowerCase().includes('trailer') ||
+        title.toLowerCase().includes('clip') ||
+        title.toLowerCase().includes('preview') ||
+        video.isShort
+      ) {
+        continue
+      }
 
-    const fullVideo = await youtube.getVideo(video.id)
-    results.push({
-      id: video.id,
-      title,
-      description: fullVideo?.description || '',
-      publishedAt: video.uploadDate || '',
-      channelName: channel.name || '',
-      channelId: channel.id || '',
-      thumbnails: {
-        high:
-          video.thumbnails?.[2]?.url || video.thumbnails?.[1]?.url || video.thumbnails?.[0]?.url,
-      },
-      duration,
-      viewCount: video.viewCount || 0,
-    })
-    count++
-    await new Promise(resolve => setTimeout(resolve, 200))
+      const duration = video.duration || 0
+      if (duration < 40 * 60) continue
+
+      const fullVideo = await youtube.getVideo(video.id)
+      results.push({
+        id: video.id,
+        title,
+        description: fullVideo?.description || '',
+        publishedAt: video.uploadDate || '',
+        channelName: channel.name || '',
+        channelId: channel.id || '',
+        thumbnails: {
+          high:
+            video.thumbnails?.[2]?.url || video.thumbnails?.[1]?.url || video.thumbnails?.[0]?.url,
+        },
+        duration,
+        viewCount: video.viewCount || 0,
+      })
+      count++
+      await new Promise(resolve => setTimeout(resolve, 200))
+    }
+
+    if (!allPages) {
+      hasMore = false
+    }
   }
 
   return results

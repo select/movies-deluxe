@@ -6,15 +6,23 @@ import { readFileSync } from 'node:fs'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const { channels, limit = 50, skipOmdb = false } = body
+  const { channels, limit = 50, skipOmdb = false, allPages = false } = body
   const omdbApiKey = process.env.OMDB_API_KEY
+
+  const results = {
+    processed: 0,
+    added: 0,
+    updated: 0,
+    errors: [] as string[],
+    channels: [] as Array<{ id: string; processed: number; added: number; updated: number }>,
+  }
 
   const db = await loadMoviesDatabase()
   const youtube = new Client()
 
   // Load channel configs for language lookup
   const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
-  let channelConfigs: Array<{ id: string; enabled: boolean; language?: string }> = []
+  let channelConfigs: Array<{ id: string; enabled: boolean; language?: string; name: string }> = []
   try {
     const configData = readFileSync(configPath, 'utf-8')
     channelConfigs = JSON.parse(configData).channels
@@ -23,19 +31,15 @@ export default defineEventHandler(async event => {
   }
   const channelConfigMap = new Map(channelConfigs.map(c => [c.id, c]))
 
-  const results = {
-    processed: 0,
-    added: 0,
-    updated: 0,
-    errors: [] as string[],
-  }
-
   const channelsToProcess = channels || channelConfigs.filter(c => c.enabled).map(c => c.id)
 
   for (const channelId of channelsToProcess) {
+    const channelResult = { id: channelId, processed: 0, added: 0, updated: 0 }
+    results.channels.push(channelResult)
+
     try {
       const channelConfig = channelConfigMap.get(channelId)
-      const videos = await fetchChannelVideos(youtube, channelId, limit)
+      const videos = await fetchChannelVideos(youtube, channelId, limit, allPages)
 
       for (const video of videos) {
         try {
@@ -43,9 +47,15 @@ export default defineEventHandler(async event => {
           if (entry) {
             const existing = db[entry.imdbId]
             upsertMovie(db, entry.imdbId, entry)
-            if (existing) results.updated++
-            else results.added++
+            if (existing) {
+              results.updated++
+              channelResult.updated++
+            } else {
+              results.added++
+              channelResult.added++
+            }
             results.processed++
+            channelResult.processed++
           }
         } catch (e: unknown) {
           results.errors.push(
