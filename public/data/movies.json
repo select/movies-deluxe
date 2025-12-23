@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-23T00:48:04.919Z"
+    "lastUpdated": "2025-12-23T01:09:10.362Z"
   },
   "archive-VoyagetothePlanetofPrehistoricWomen": {
     "imdbId": "archive-VoyagetothePlanetofPrehistoricWomen",
@@ -55,25 +55,6 @@
         "releaseDate": "1959-01-01T00:00:00Z",
         "addedAt": "2025-12-23T00:20:38.162Z",
         "description": "Vincent Price gives a stellar performance as the suavely malevolent host of a \"haunted house party\" who offers his guests $10,000 if they can survive a night in the murderous mansion. Watch for the great Elisha Cook Jr,(he played Wilmer in the \"Maltese Falcon\") as the groveling homeowner. The eerie looking home used for the exterior shots is the Ennis Brown house in Los Angeles, designed by Frank Lloyd Wright and built in 1924. It was later used in the films \"Blade Runner\", \"Black Rain\", and \"Rocketeer\"."
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.162Z"
-  },
-  "archive-Grave_of_the_Vampire_movie": {
-    "imdbId": "archive-Grave_of_the_Vampire_movie",
-    "title": "Grave of the Vampire",
-    "year": 1974,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Grave_of_the_Vampire_movie",
-        "url": "https://archive.org/details/Grave_of_the_Vampire_movie",
-        "collection": "feature_films",
-        "downloads": 531236,
-        "thumbnail": "https://archive.org/services/img/Grave_of_the_Vampire_movie",
-        "releaseDate": "1974-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.162Z",
-        "description": "William Smith tracks down his father, a vampire who raped his mother. The IMDB entry is here . The mpeg2 file has nav-packets, so you can load it into DVDAuthorGUI (a free program) to create a DVD to watch on your television."
       }
     ],
     "lastUpdated": "2025-12-23T00:20:38.162Z"
@@ -134,25 +115,6 @@
           "Charlie Chaplin's 56th Film Released Oct 02 1916. The Pawnshop was Charlie Chaplin's sixth film for Mutual Film Company. Chaplin played the role of assistant to the pawnshop owner. Henry Bergman played the owner and Edna Purviance the owner's daughter. Albert Austin played an alarm clock owner who watches Charlie in dismay as he checks out the clock. This was one of Chaplin's more popular Mutual Films, mainly for the slapstick comedy he was famous for at the time. http://www.imdb.com/title/tt0007162/",
           "Charlie Chaplin In The Internet Archive http://www.archive.org/details/CC_1914_02_02_MakingALiving http://www.archive.org/details/CC_1914_02_07_KidsAutoRaceAtVenice http://www.archive.org/details/CC_1914_02_09_MabelsStrangePredicament http://www.archive.org/details/CC_1914_02_28_BetweenShowers http://www.archive.org/details/CC_1914_03_02_FilmJohnny http://www.archive.org/details/CC_1914_03_16_HisFavoritePasttime http://www.archive.org/details/CC_1914_03_26_CruelCruelLove http://www.archive.org/details/CC_1914_04_04_TheLandladysPet http://www.archive.org/details/CC_1914_04_20_TwentyMinutesofLove http://www.archive.org/details/CC_1914_04_27_CaughtinaCaberet http://www.archive.org/details/CC_1914_05_07_ABusyDay http://www.archive.org/details/CC_1914_06_01_TheFatalMallet http://www.archive.org/details/CC_1914_06_11_TheKnockout http://www.archive.org/details/CC_1914_06_13_MabelsBusyDay http://www.archive.org/details/CC_1914_06_20_CharlottEtLeMannequin http://www.archive.org/details/CC_1914_07_09_LaffingGas http://www.archive.org/details/CC_1914_08_01_CharolotGargonDeTheater http://www.archive.org/details/CC_1914_08_10_FaceOnTheBarroomFloor http://www.archive.org/details/CC_1914_08_13_CharliesRecreation http://www.archive.org/details/CC_1914_08_27_TheMasquerader http://www.archive.org/details/CC_1914_08_31_TheGoodforNothing http://www.archive.org/details/CC_1914_09_07_TheRounders http://www.archive.org/details/CC_1914_09_14_TheNewJanitor http://www.archive.org/details/CC_1914_10_10_TheRivalMashers http://www.archive.org/details/CC_1914_10_26_DoughandDynamite http://www.archive.org/details/CC_1914_10_29_CharlottMabelAuxCourses http://www.archive.org/details/CC_1914_11_14_TilliesPuncturedRomance http://www.archive.org/details/CC_1914_11_07_MusicalTramps http://www.archive.org/details/CC_1914_11_09_HisTrystingPlace http://www.archive.org/details/CC_1914_12_05_AFairExchange http://www.archive.org/details/CC_1914_12_07_HisPrehistoricpast http://www.archive.org/details/CC_1915_02_01_HisNewJob http://www.archive.org/details/CC_1915_02_15_ANightOut http://www.archive.org/details/CC_1915_03_01_TheChampion http://www.archive.org/details/CC_1915_03_18_InThePark http://www.archive.org/details/CC_1915_04_11_TheTramp http://www.archive.org/details/CC_1915_04_29_ByTheSea http://www.archive.org/details/CC_1915_06_21_Work http://www.archive.org/details/CC_1915_07_12_AWoman http://www.archive.org/details/CC_1915_08_09_TheBank http://www.archive.org/details/CC_1915_10_04_CharlieShanghaied http://www.archive.org/details/CC_1915_11_20_ANightInTheShow http://www.archive.org/details/CC_1915_12_18_ABurlesqueOnCarmen http://www.archive.org/details/CC_1916_05_15_TheFloorwalker http://www.archive.org/details/CC_1916_05_27_Police http://www.archive.org/details/CC_1916_06_12_TheFireman http://www.archive.org/details/CC_1916_07_10_TheVagabond http://www.archive.org/details/CC_1916_08_07_One_A_M http://www.archive.org/details/CC_1916_09_04_TheCount http://www.archive.org/details/CC_1916_10_02_ThePawnshop http://www.archive.org/details/CC_1916_11_13_BehindtheScreen http://www.archive.org/details/CC_1916_12_04_TheRink http://www.archive.org/details/CC_1917_04_16_TheCure http://www.archive.org/details/CC_1917_06_17_TheImmigrant http://www.archive.org/details/CC_1917_10_22_TheAdventurer http://www.archive.org/details/CC_1918_09_29_TheBond http://www.archive.org/details/CC_1918_10_20_ShoulderArms http://www.archive.org/details/CC_1918_xx_xx_TripleTrouble http://www.archive.org/details/CC_1919_06_15_Sunnyside http://www.archive.org/details/CC_1919_12_15_ADaysPleasure __________________________________________________"
         ]
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.162Z"
-  },
-  "archive-Horror_Express": {
-    "imdbId": "archive-Horror_Express",
-    "title": "Horror Express",
-    "year": 1973,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Horror_Express",
-        "url": "https://archive.org/details/Horror_Express",
-        "collection": "feature_films",
-        "downloads": 473673,
-        "thumbnail": "https://archive.org/services/img/Horror_Express",
-        "releaseDate": "1973-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.162Z",
-        "description": "In 1906, on a train racing through Siberia, Christopher Lee and Peter Cushing are engulfed in nightmare when a frozen missing link comes to life. You can load the mpeg2 file into DVDAuthorGUI (a free program) and, with the push of a button, quickly create the structure of a DVD to watch on your television (after burning with ImgBurn or the like)."
       }
     ],
     "lastUpdated": "2025-12-23T00:20:38.162Z"
@@ -771,7 +733,7 @@
         "description": "Sita is a goddess separated from her beloved Lord and husband Rama. Nina is an animator whose husband moves to India, then dumps her by email. Three hilarious shadow puppets narrate both ancient tragedy and modern comedy in this beautifully animated interpretation of the Indian epic Ramayana. Set to the 1920's jazz vocals of Annette Hanshaw, Sita Sings the Blues earns its tagline as \"the Greatest Break-Up Story Ever Told.\""
       }
     ],
-    "lastUpdated": "2025-12-22T23:05:01.252Z",
+    "lastUpdated": "2025-12-23T01:08:43.643Z",
     "metadata": {
       "Title": "Sita Sings the Blues",
       "Year": "2008",
@@ -811,7 +773,8 @@
       "Production": "N/A",
       "Website": "N/A",
       "Response": "True"
-    }
+    },
+    "verified": true
   },
   "tt0092978": {
     "imdbId": "tt0092978",
@@ -830,7 +793,7 @@
         "description": "Alan Arkin and Rutger Hauer star in this award winning movie about the successful mass escape of 300 prisoners from the Sobibor Nazi death camp. Fine acting and production values make this film a worthwhile viewing experience."
       }
     ],
-    "lastUpdated": "2025-12-22T23:23:03.423Z",
+    "lastUpdated": "2025-12-23T01:08:30.487Z",
     "metadata": {
       "Title": "Escape from Sobibor",
       "Year": "1987",
@@ -2404,7 +2367,7 @@
         "description": "An on the run gunfighter, wanted for a crime he didn't commit, stumbles upon the body of a preacher who's been killed. In an attempt to hide from his pursuers, he takes on the dead preacher's identity and proceeds to make quite an impression on an entire town that is being bullied by an arrogant, controlling man and his cronies. Read more about this movie on this IMDB page ."
       }
     ],
-    "lastUpdated": "2025-12-22T23:05:20.353Z",
+    "lastUpdated": "2025-12-23T01:07:36.441Z",
     "metadata": {
       "Title": "The Gun and the Pulpit",
       "Year": "1974",
@@ -2436,7 +2399,8 @@
       "Production": "N/A",
       "Website": "N/A",
       "Response": "True"
-    }
+    },
+    "verified": true
   },
   "tt0055830": {
     "imdbId": "tt0055830",
@@ -2607,7 +2571,7 @@
         "description": "This amazing bank heist movie stars Johnny Cash, Vic Tayback, Ron Howard, and country music great, Merle Travis. Johnny Cash gives a surprising performance as a guitar playing, sadistic psycho-killer. Six year old Ron Howard is absolutely adorable and practically steals the whole show. A must see film."
       }
     ],
-    "lastUpdated": "2025-12-22T23:05:22.940Z",
+    "lastUpdated": "2025-12-23T01:09:10.362Z",
     "metadata": {
       "Title": "Five Minutes to Live",
       "Year": "1961",
@@ -2639,7 +2603,8 @@
       "Production": "N/A",
       "Website": "N/A",
       "Response": "True"
-    }
+    },
+    "verified": true
   },
   "tt0048700": {
     "imdbId": "tt0048700",
@@ -3763,7 +3728,7 @@
         "description": "Captain Oren Hayes (Pat O'Brien) of the Texas Rangers takes a break to visit his daughter (Kristin Harmon) in a neighboring town. When he arrives he find's his daughter Hannah's husband Jeff (Ricky Nelson) is running for Mayor against a corrupt town boss, Nard Lundy (Edward Andrews). Lundy has no intention of allowing the free election of the honest Jeff Rose, so he has his henchmen beat them up. Hayes then calls for the help of some his old buddies in the Rangers."
       }
     ],
-    "lastUpdated": "2025-12-22T23:05:39.550Z",
+    "lastUpdated": "2025-12-23T01:08:01.439Z",
     "metadata": {
       "Title": "The Over-the-Hill Gang",
       "Year": "1969",
@@ -3795,7 +3760,8 @@
       "Production": "N/A",
       "Website": "N/A",
       "Response": "True"
-    }
+    },
+    "verified": true
   },
   "tt0027087": {
     "imdbId": "tt0027087",
@@ -10398,7 +10364,7 @@
         "addedAt": "2025-12-21T21:06:28.213Z"
       }
     ],
-    "lastUpdated": "2025-12-22T23:22:50.720Z",
+    "lastUpdated": "2025-12-23T01:08:21.525Z",
     "metadata": {
       "Title": "Star Wreck: In the Pirkinning",
       "Year": "2005",
@@ -11106,25 +11072,6 @@
     ],
     "lastUpdated": "2025-12-23T00:20:38.162Z"
   },
-  "archive-Sita_Sings_the_Blues": {
-    "imdbId": "archive-Sita_Sings_the_Blues",
-    "title": "Sita Sings the Blues",
-    "year": 2008,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Sita_Sings_the_Blues",
-        "url": "https://archive.org/details/Sita_Sings_the_Blues",
-        "collection": "feature_films",
-        "downloads": 924362,
-        "description": "Sita is a goddess separated from her beloved Lord and husband Rama. Nina is an animator whose husband moves to India, then dumps her by email. Three hilarious shadow puppets narrate both ancient tragedy and modern comedy in this beautifully animated interpretation of the Indian epic Ramayana. Set to the 1920's jazz vocals of Annette Hanshaw, Sita Sings the Blues earns its tagline as \"the Greatest Break-Up Story Ever Told.\"",
-        "thumbnail": "https://archive.org/services/img/Sita_Sings_the_Blues",
-        "releaseDate": "2008-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.162Z"
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.162Z"
-  },
   "archive-nazi_concentration_camps": {
     "imdbId": "archive-nazi_concentration_camps",
     "title": "Nazi Concentration Camps",
@@ -11627,25 +11574,6 @@
     ],
     "lastUpdated": "2025-12-23T00:20:38.162Z"
   },
-  "archive-cco_thegunandthepulpit": {
-    "imdbId": "archive-cco_thegunandthepulpit",
-    "title": "The Gun and the Pulpit",
-    "year": 1974,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "cco_thegunandthepulpit",
-        "url": "https://archive.org/details/cco_thegunandthepulpit",
-        "collection": "feature_films",
-        "downloads": 452486,
-        "description": "An on the run gunfighter, wanted for a crime he didn't commit, stumbles upon the body of a preacher who's been killed. In an attempt to hide from his pursuers, he takes on the dead preacher's identity and proceeds to make quite an impression on an entire town that is being bullied by an arrogant, controlling man and his cronies. Read more about this movie on this IMDB page .",
-        "thumbnail": "https://archive.org/services/img/cco_thegunandthepulpit",
-        "releaseDate": "1974-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.162Z"
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.162Z"
-  },
   "archive-CarnivalofSouls": {
     "imdbId": "archive-CarnivalofSouls",
     "title": "Carnival of Souls",
@@ -11698,25 +11626,6 @@
         "description": "Based on the Sir Authur Conan Doyle story \"The Dancing Men\", Sherlock Holmes and Dr. Watson are placed in WWII europe to help protect a scientist and his invention from the Nazis. Basil Rathbone .... Sherlock Holmes Nigel Bruce .... Dr. John H. Watson Lionel Atwill .... Professor Moriarty Kaaren Verne .... Charlotte Eberli William Post Jr. .... Dr. Franz Tobel Dennis Hoey .... Inspector Lestrade Holmes Herbert .... Sir Reginald Bailey Mary Gordon .... Mrs. Hudson",
         "thumbnail": "https://archive.org/services/img/secret_weapon",
         "releaseDate": "1943-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.162Z"
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.162Z"
-  },
-  "archive-Five_Minutes_To_Live.avi": {
-    "imdbId": "archive-Five_Minutes_To_Live.avi",
-    "title": "Five Minutes To Live",
-    "year": 1961,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Five_Minutes_To_Live.avi",
-        "url": "https://archive.org/details/Five_Minutes_To_Live.avi",
-        "collection": "feature_films",
-        "downloads": 437616,
-        "description": "This amazing bank heist movie stars Johnny Cash, Vic Tayback, Ron Howard, and country music great, Merle Travis. Johnny Cash gives a surprising performance as a guitar playing, sadistic psycho-killer. Six year old Ron Howard is absolutely adorable and practically steals the whole show. A must see film.",
-        "thumbnail": "https://archive.org/services/img/Five_Minutes_To_Live.avi",
-        "releaseDate": "1961-01-01T00:00:00Z",
         "addedAt": "2025-12-23T00:20:38.162Z"
       }
     ],
@@ -12081,25 +11990,6 @@
     ],
     "lastUpdated": "2025-12-23T00:20:38.163Z"
   },
-  "archive-TheOvertheHillGang": {
-    "imdbId": "archive-TheOvertheHillGang",
-    "title": "The Over-the-Hill Gang",
-    "year": 1969,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "TheOvertheHillGang",
-        "url": "https://archive.org/details/TheOvertheHillGang",
-        "collection": "feature_films",
-        "downloads": 353336,
-        "description": "Captain Oren Hayes (Pat O'Brien) of the Texas Rangers takes a break to visit his daughter (Kristin Harmon) in a neighboring town. When he arrives he find's his daughter Hannah's husband Jeff (Ricky Nelson) is running for Mayor against a corrupt town boss, Nard Lundy (Edward Andrews). Lundy has no intention of allowing the free election of the honest Jeff Rose, so he has his henchmen beat them up. Hayes then calls for the help of some his old buddies in the Rangers.",
-        "thumbnail": "https://archive.org/services/img/TheOvertheHillGang",
-        "releaseDate": "1969-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.163Z"
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.163Z"
-  },
   "archive-texas_terror_1935": {
     "imdbId": "archive-texas_terror_1935",
     "title": "Texas Terror",
@@ -12328,7 +12218,8 @@
       "Website": "N/A",
       "Response": "True"
     },
-    "lastUpdated": "2025-12-22T23:05:12.285Z"
+    "lastUpdated": "2025-12-23T01:07:26.389Z",
+    "verified": true
   },
   "tt0068713": {
     "imdbId": "tt0068713",
@@ -12387,7 +12278,8 @@
       "Website": "N/A",
       "Response": "True"
     },
-    "lastUpdated": "2025-12-22T23:05:19.376Z"
+    "lastUpdated": "2025-12-23T01:07:47.644Z",
+    "verified": true
   },
   "tt0022756": {
     "imdbId": "tt0022756",
@@ -12504,25 +12396,6 @@
         "description": "Utopia (also known as Atoll K and Robinson Crusoe Land) is last film Laurel and Hardy made together. It was filmed and produced in Europe.",
         "thumbnail": "https://archive.org/services/img/utopia",
         "releaseDate": "1951-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.162Z"
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.162Z"
-  },
-  "archive-Escape_From_Sobibor.avi": {
-    "imdbId": "archive-Escape_From_Sobibor.avi",
-    "title": "Escape From Sobibor",
-    "year": 1987,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "Escape_From_Sobibor.avi",
-        "url": "https://archive.org/details/Escape_From_Sobibor.avi",
-        "collection": "feature_films",
-        "downloads": 908464,
-        "description": "Alan Arkin and Rutger Hauer star in this award winning movie about the successful mass escape of 300 prisoners from the Sobibor Nazi death camp. Fine acting and production values make this film a worthwhile viewing experience.",
-        "thumbnail": "https://archive.org/services/img/Escape_From_Sobibor.avi",
-        "releaseDate": "1987-01-01T00:00:00Z",
         "addedAt": "2025-12-23T00:20:38.162Z"
       }
     ],
@@ -12656,25 +12529,6 @@
         "description": "Capt. Richard Lance (Gregory Peck) is unjustly held responsible, by his men and his girlfriend (Barbara Payton), for an Indian massacre death of beloved Lt. Holloway. Holloway (Gig Young) is killed while escorting a dangerous Indian chief to another fort's prison. The chief escapes. Knowing their fort is in danger of Indian attack, Lance takes a small group of army misfits to an abandoned nearby army fort to defend a mountain pass against the oncoming Indian assault. Their mission is to stall for time until reinforcements from another fort arrive.",
         "thumbnail": "https://archive.org/services/img/OnlytheValaint",
         "releaseDate": "1951-01-01T00:00:00Z",
-        "addedAt": "2025-12-23T00:20:38.163Z"
-      }
-    ],
-    "lastUpdated": "2025-12-23T00:20:38.163Z"
-  },
-  "archive-StarWreckInThePirkining": {
-    "imdbId": "archive-StarWreckInThePirkining",
-    "title": "Star Wreck: In the Pirkining",
-    "year": 2005,
-    "sources": [
-      {
-        "type": "archive.org",
-        "identifier": "StarWreckInThePirkining",
-        "url": "https://archive.org/details/StarWreckInThePirkining",
-        "collection": "feature_films",
-        "downloads": 345869,
-        "description": "A Finnish culthit that became internationaly known through it's open CC-license. From IMDB: The future looks bleak for Captain Pirk. Originally from the far future, he traveled back to save the world, but was shipwrecked on the 21st century. The world of the past is a dangerous place and he is finding it difficult to convince the ladies he is, in fact, an intergalactic space hero from the future. To make things right Pirk comes up with a questionable plan to save mankind's future...",
-        "thumbnail": "https://archive.org/services/img/StarWreckInThePirkining",
-        "releaseDate": "2005-01-01T00:00:00Z",
         "addedAt": "2025-12-23T00:20:38.163Z"
       }
     ],
