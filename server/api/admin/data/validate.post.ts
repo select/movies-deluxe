@@ -208,7 +208,7 @@ function validateSources(movieId: string, movie: MovieEntry): ValidationIssue[] 
         severity: 'error',
         category: 'sources',
         movieId,
-        message: `Source ${index}: Invalid type "${source.type}"`,
+        message: `Source ${index}: Invalid type "${(source as any).type}"`,
         fixable: false,
       })
     }
@@ -341,18 +341,25 @@ function findDuplicates(db: MoviesDatabase): ValidationIssue[] {
       const years = new Set(movies.map(m => m.year).filter(Boolean))
 
       if (years.size === 1 || years.size === 0) {
+        const firstId = ids[0]
+        const firstMovie = firstId ? db[firstId] : undefined
+        const firstTitle =
+          firstMovie && typeof firstMovie === 'object' && 'title' in firstMovie
+            ? firstMovie.title
+            : title
         issues.push({
           severity: 'warning',
           category: 'duplicates',
-          movieId: ids[0],
-          message: `Potential duplicate movies: ${ids.join(', ')} (title: "${title}")`,
+          movieId: firstId || '',
+          message: `Potential duplicate movies: ${ids.join(', ')} (title: "${firstTitle}")`,
           fixable: false,
         })
       } else {
+        const firstId = ids[0]
         issues.push({
           severity: 'info',
           category: 'duplicates',
-          movieId: ids[0],
+          movieId: firstId || '',
           message: `Similar titles with different years: ${ids.join(', ')} (might be remakes)`,
           fixable: false,
         })

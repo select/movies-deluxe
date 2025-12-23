@@ -63,7 +63,7 @@ export async function downloadImage(
       }
 
       const stats = fs.statSync(filepath)
-      const format = getImageFormat(filepath)
+      const format = getImageFormat(filepath) || undefined
 
       return {
         success: true,
@@ -101,7 +101,7 @@ function downloadImageOnce(url: string, filepath: string, timeout: number): Prom
       // Handle redirects
       if (response.statusCode === 301 || response.statusCode === 302) {
         const redirectUrl = response.headers.location
-        if (redirectUrl) {
+        if (redirectUrl && typeof redirectUrl === 'string') {
           downloadImageOnce(redirectUrl, filepath, timeout).then(resolve).catch(reject)
           return
         }

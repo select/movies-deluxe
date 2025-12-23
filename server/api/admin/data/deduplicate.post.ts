@@ -41,21 +41,21 @@ function levenshteinDistance(str1: string, str2: string): number {
   }
 
   for (let j = 0; j <= len2; j++) {
-    matrix[0][j] = j
+    matrix[0]![j] = j
   }
 
   for (let i = 1; i <= len1; i++) {
     for (let j = 1; j <= len2; j++) {
       const cost = str1[i - 1] === str2[j - 1] ? 0 : 1
-      matrix[i][j] = Math.min(
-        matrix[i - 1][j] + 1,
-        matrix[i][j - 1] + 1,
-        matrix[i - 1][j - 1] + cost
+      matrix[i]![j] = Math.min(
+        matrix[i - 1]![j]! + 1,
+        matrix[i]![j - 1]! + 1,
+        matrix[i - 1]![j - 1]! + cost
       )
     }
   }
 
-  return matrix[len1][len2]
+  return matrix[len1]![len2]!
 }
 
 /**
@@ -89,7 +89,9 @@ function findDuplicateGroups(
   const processed = new Set<string>()
 
   for (let i = 0; i < entries.length; i++) {
-    const [key1, entry1] = entries[i]
+    const entry = entries[i]
+    if (!entry) continue
+    const [key1, entry1] = entry
     if (processed.has(key1)) continue
 
     const group: Array<[string, MovieEntry]> = [[key1, entry1]]
@@ -97,14 +99,16 @@ function findDuplicateGroups(
     const normalized1 = normalizeTitle(entry1.title)
 
     for (let j = i + 1; j < entries.length; j++) {
-      const [key2, entry2] = entries[j]
+      const entry2 = entries[j]
+      if (!entry2) continue
+      const [key2, entry2Data] = entry2
       if (processed.has(key2)) continue
 
-      const normalized2 = normalizeTitle(entry2.title)
+      const normalized2 = normalizeTitle(entry2Data.title)
       const similarity = similarityRatio(normalized1, normalized2)
 
       if (similarity >= threshold) {
-        group.push([key2, entry2])
+        group.push([key2, entry2Data])
         processed.add(key2)
       }
     }
@@ -162,7 +166,16 @@ function mergeSources(entries: Array<[string, MovieEntry]>): MovieSource[] {
  * Choose the best entry from a group
  */
 function chooseBestEntry(entries: Array<[string, MovieEntry]>): [string, MovieEntry] {
-  let best = entries[0]
+  if (entries.length === 0) {
+    throw new Error('Cannot choose best entry from empty array')
+  }
+
+  const firstEntry = entries[0]
+  if (!firstEntry) {
+    throw new Error('First entry is undefined')
+  }
+
+  let best = firstEntry
   let bestScore = 0
 
   for (const entry of entries) {
@@ -192,7 +205,11 @@ function mergeGroup(group: Array<[string, MovieEntry]>): {
   entry: MovieEntry
   merged: string[]
 } {
-  const [bestKey, bestEntry] = chooseBestEntry(group)
+  const bestResult = chooseBestEntry(group)
+  if (!bestResult) {
+    throw new Error('chooseBestEntry returned undefined')
+  }
+  const [bestKey, bestEntry] = bestResult
   const mergedSources = mergeSources(group)
   const merged = group.map(([key]) => key).filter(key => key !== bestKey)
 
