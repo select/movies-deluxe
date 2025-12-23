@@ -1,0 +1,92 @@
+{
+  "database": {
+    "total": 434,
+    "matched": 175,
+    "unmatched": 259,
+    "archiveOrgSources": 275,
+    "youtubeSources": 164,
+    "curatedCount": 175,
+    "collections": {
+      "feature_films": 275
+    }
+  },
+  "external": {
+    "archiveOrg": {
+      "total": 26779,
+      "scraped": 275,
+      "percent": 1.0269240823032975
+    },
+    "youtube": {
+      "channels": [
+        {
+          "id": "@Netzkino",
+          "name": "Netzkino",
+          "enabled": true,
+          "scraped": 31,
+          "total": 2800
+        },
+        {
+          "id": "@FilmRiseMovies",
+          "name": "FilmRise Movies",
+          "enabled": true,
+          "scraped": 0,
+          "total": 442
+        },
+        {
+          "id": "@Popcornflix",
+          "name": "Popcornflix",
+          "enabled": true,
+          "scraped": 29,
+          "total": 751
+        },
+        {
+          "id": "@MovieCentral",
+          "name": "Movie Central",
+          "enabled": true,
+          "scraped": 0,
+          "total": 2500
+        },
+        {
+          "id": "@TimelessClassicMovies",
+          "name": "Timeless Classic Movies",
+          "enabled": true,
+          "scraped": 0,
+          "total": 174
+        },
+        {
+          "id": "@Mosfilm",
+          "name": "Mosfilm",
+          "enabled": true,
+          "scraped": 29,
+          "total": 291
+        },
+        {
+          "id": "@Moviedome",
+          "name": "Moviedome",
+          "enabled": true,
+          "scraped": 30,
+          "total": 605
+        }
+      ]
+    }
+  },
+  "curation": {
+    "total": 434,
+    "curated": 175,
+    "percent": 40.32258064516129
+  },
+  "omdb": {
+    "total": 434,
+    "matched": 175,
+    "unmatched": 259,
+    "percent": 40.32258064516129
+  },
+  "posters": {
+    "totalMovies": 434,
+    "withPosterUrl": 172,
+    "downloaded": 144,
+    "missing": 28,
+    "percent": 83.72093023255815
+  },
+  "lastUpdated": "2025-12-23T03:13:08.024Z"
+}

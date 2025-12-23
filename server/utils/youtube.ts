@@ -210,7 +210,7 @@ export async function fetchChannelVideos(
       const duration = video.duration || 0
       if (duration < 40 * 60) continue
 
-      const fullVideo = await youtube.getVideo(video.id)
+      const fullVideo = await youtube.getVideo(video.id || '')
       results.push({
         id: video.id,
         title,
@@ -235,6 +235,26 @@ export async function fetchChannelVideos(
   }
 
   return results
+}
+
+export async function getChannelVideoCount(youtube: Client, channelId: string): Promise<number> {
+  try {
+    const channel = await (youtube as any).getChannel(channelId)
+    if (channel && 'videoCount' in channel) {
+      const countStr = (channel as any).videoCount as string
+      // Parse "2.8K videos" or "150 videos" or "1,234 videos"
+      const match = countStr.replace(/,/g, '').match(/([\d.]+)\s*([KM])?/)
+      if (match && match[1]) {
+        let total = parseFloat(match[1])
+        if (match[2] === 'K') total *= 1000
+        if (match[2] === 'M') total *= 1000000
+        return Math.floor(total)
+      }
+    }
+  } catch (e) {
+    console.error(`Failed to fetch total for channel ${channelId}`, e)
+  }
+  return 0
 }
 
 export async function processYouTubeVideo(
