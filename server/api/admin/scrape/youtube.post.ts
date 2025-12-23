@@ -4,8 +4,7 @@ import { readFileSync } from 'node:fs'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const { channels, limit = 50, skipOmdb = false, allPages = false } = body
-  const omdbApiKey = process.env.OMDB_API_KEY
+  const { channels, limit = 50, allPages = false } = body
 
   const results = {
     processed: 0,
@@ -51,7 +50,7 @@ export default defineEventHandler(async event => {
 
       for (const video of videos) {
         try {
-          const entry = await processYouTubeVideo(video, channelConfig, { skipOmdb, omdbApiKey })
+          const entry = await processYouTubeVideo(video, channelConfig)
           if (entry) {
             const existing = db[entry.imdbId]
             upsertMovie(db, entry.imdbId, entry)

@@ -378,8 +378,9 @@ export function cleanTitleGeneral(title: string): string {
   // But preserve if it's part of the actual title (hyphenated titles)
   // Strategy: Only remove if the part after dash starts with certain words or is very long
   const dashMatch = cleaned.match(/^(.+?)\s*[-–—:]\s*(.+)$/)
-  if (dashMatch) {
-    const [, firstPart, secondPart] = dashMatch
+  if (dashMatch && dashMatch[1] && dashMatch[2]) {
+    const firstPart = dashMatch[1]
+    const secondPart = dashMatch[2]
     // Check if firstPart contains spaces (not a hyphenated word)
     const firstPartHasSpaces = /\s/.test(firstPart)
     // If second part looks like a subtitle (starts with article/descriptor or is long), remove it
