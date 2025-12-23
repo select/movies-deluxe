@@ -31,19 +31,6 @@
         </p>
       </div>
 
-      <AppInputNumber
-        v-model="options.limit"
-        label="Videos per channel"
-      />
-
-      <div class="flex flex-col gap-3">
-        <AppInputSwitch
-          :checked="options.allPages"
-          label="Scrape all pages (ignore limit)"
-          @change="options.allPages = $event"
-        />
-      </div>
-
       <button
         class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         :disabled="loading"
