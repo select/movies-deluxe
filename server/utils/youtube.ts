@@ -107,8 +107,25 @@ export async function fetchChannelVideos(
   return results
 }
 
-export async function getChannelVideoCount(youtube: Client, channelId: string): Promise<number> {
+export async function getChannelVideoCount(
+  youtube: Client,
+  channelIdentifier: string
+): Promise<number> {
   try {
+    let channelId = channelIdentifier
+
+    // If it's a handle (starts with @), search for the channel first
+    if (channelIdentifier.startsWith('@')) {
+      const searchQuery = channelIdentifier.slice(1)
+      const searchResults = await youtube.search(searchQuery, { type: 'channel' })
+      const channelResult = searchResults.items[0]
+      if (!channelResult) {
+        console.error(`Channel not found: ${channelIdentifier}`)
+        return 0
+      }
+      channelId = channelResult.id || ''
+    }
+
     const channel = await (youtube as any).getChannel(channelId)
     if (channel && 'videoCount' in channel) {
       const countStr = (channel as any).videoCount as string
@@ -122,7 +139,7 @@ export async function getChannelVideoCount(youtube: Client, channelId: string): 
       }
     }
   } catch (e) {
-    console.error(`Failed to fetch total for channel ${channelId}`, e)
+    console.error(`Failed to fetch total for channel ${channelIdentifier}`, e)
   }
   return 0
 }

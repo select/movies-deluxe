@@ -1,7 +1,3 @@
-import { emitProgress } from '../../../utils/progress'
-import { loadMoviesDatabase, saveMoviesDatabase } from '../../../utils/movieData'
-import { scrapeArchiveOrg } from '../../../utils/archiveScraper'
-
 export default defineEventHandler(async event => {
   const body = await readBody(event)
   const {

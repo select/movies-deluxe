@@ -1,8 +1,3 @@
-import { loadMoviesDatabase } from '../../../utils/movieData'
-import { downloadPoster } from '../../../utils/posterDownloader'
-import type { MovieEntry } from '../../../../shared/types/movie'
-import { emitProgress } from '../../../utils/progress'
-
 export default defineEventHandler(async event => {
   const body = await readBody(event)
   const { limit = 50, force = false } = body

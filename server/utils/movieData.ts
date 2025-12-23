@@ -110,15 +110,34 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
   }
 }
 
+export interface ChannelStats {
+  id: string
+  name: string
+  language?: string
+  enabled: boolean
+  scraped: number
+}
+
+export interface DatabaseStats {
+  total: number
+  matched: number
+  unmatched: number
+  archiveOrgSources: number
+  youtubeSources: number
+  curatedCount: number
+  collections: Record<string, number>
+  youtubeChannels: ChannelStats[]
+}
+
 /**
  * Get statistics about the database
  */
-export function getDatabaseStats(db: MoviesDatabase) {
+export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStats> {
   const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
   const matched = entries.filter(([key]) => key.startsWith('tt')).length
   const unmatched = entries.length - matched
 
-  const stats = {
+  const stats: DatabaseStats = {
     total: entries.length,
     matched,
     unmatched,
@@ -126,6 +145,22 @@ export function getDatabaseStats(db: MoviesDatabase) {
     youtubeSources: 0,
     curatedCount: 0,
     collections: {} as Record<string, number>,
+    youtubeChannels: [],
+  }
+
+  // Load channel configs
+  const channelConfigs = await loadYouTubeChannels()
+  const channelStatsMap = new Map<string, ChannelStats>()
+
+  // Initialize channel stats
+  for (const config of channelConfigs) {
+    channelStatsMap.set(config.id, {
+      id: config.id,
+      name: config.name,
+      language: config.language,
+      enabled: config.enabled,
+      scraped: 0,
+    })
   }
 
   entries.forEach(([_, entry]) => {
@@ -140,7 +175,24 @@ export function getDatabaseStats(db: MoviesDatabase) {
           stats.collections[collection] = (stats.collections[collection] || 0) + 1
         }
       }
-      if (source.type === 'youtube') stats.youtubeSources++
+      if (source.type === 'youtube') {
+        stats.youtubeSources++
+
+        // Count per channel
+        const youtubeSource = source as any
+        const channelId = youtubeSource.channelId
+        const channelName = youtubeSource.channelName
+
+        // Try to match by channelId or @channelName
+        let channelStats = channelStatsMap.get(channelId)
+        if (!channelStats && channelName) {
+          channelStats = channelStatsMap.get(`@${channelName}`)
+        }
+
+        if (channelStats) {
+          channelStats.scraped++
+        }
+      }
     })
     // Consider curated if it has metadata and was manually updated or has high confidence
     if (
@@ -152,7 +204,28 @@ export function getDatabaseStats(db: MoviesDatabase) {
     }
   })
 
+  stats.youtubeChannels = Array.from(channelStatsMap.values())
+
   return stats
+}
+
+/**
+ * Load YouTube channel configurations
+ */
+async function loadYouTubeChannels(): Promise<
+  Array<{ id: string; name: string; language?: string; enabled: boolean }>
+> {
+  try {
+    const { readFile } = await import('fs/promises')
+    const { resolve } = await import('path')
+    const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
+    const configData = await readFile(configPath, 'utf-8')
+    const config = JSON.parse(configData)
+    return config.channels || []
+  } catch (e) {
+    console.error('Failed to load youtube-channels.json', e)
+    return []
+  }
 }
 
 /**

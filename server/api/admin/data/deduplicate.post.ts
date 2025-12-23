@@ -6,9 +6,6 @@
  */
 
 import { defineEventHandler, readBody, createError } from 'h3'
-import type { MovieEntry, MoviesDatabase, MovieSource } from '../../../../shared/types/movie'
-
-// Note: loadMoviesDatabase, saveMoviesDatabase are auto-imported from server/utils/movieData.ts
 
 interface DeduplicateOptions {
   dryRun?: boolean

@@ -6,7 +6,6 @@
  */
 
 import { defineEventHandler, readBody, createError } from 'h3'
-import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../../../../shared/types/movie'
 
 // Note: The following functions are auto-imported from server/utils/:
 // - loadMoviesDatabase, saveMoviesDatabase, getUnmatchedMovies, migrateMovieId,
