@@ -64,8 +64,7 @@ export function extractYear(date?: string): number | undefined {
  */
 export async function processArchiveMovie(
   movie: ArchiveOrgMovie,
-  collection: string,
-  _options: { skipOmdb: boolean; omdbApiKey?: string }
+  collection: string
 ): Promise<MovieEntry | null> {
   const year = extractYear(movie.date || movie.year)
 
