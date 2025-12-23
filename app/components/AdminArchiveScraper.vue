@@ -1,5 +1,7 @@
 <template>
-  <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <div
+    class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+  >
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
       <div class="i-mdi-archive text-amber-500" />
       Archive.org Scraper
@@ -33,9 +35,13 @@
               type="checkbox"
               class="sr-only peer"
             >
-            <div class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600" />
+            <div
+              class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
+            />
           </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Auto-detect starting page</span>
+          <span
+            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
+          >Auto-detect starting page</span>
         </label>
         <label class="flex items-center gap-3 cursor-pointer group">
           <div class="relative">
@@ -44,9 +50,13 @@
               type="checkbox"
               class="sr-only peer"
             >
-            <div class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600" />
+            <div
+              class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
+            />
           </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Skip OMDB matching (faster)</span>
+          <span
+            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
+          >Skip OMDB matching (faster)</span>
         </label>
       </div>
 
@@ -88,30 +98,18 @@
 
 <script setup lang="ts">
 import { useAdminStore } from '~/stores/useAdminStore'
+import type { ArchiveOptions } from '~/types/admin'
 
-interface ArchiveOptions {
-  rows: number
-  pages: number
-  skipOmdb: boolean
-  autoDetect: boolean
-  collections: string[]
-}
+const options = defineModel<ArchiveOptions>({ required: true })
 
-const props = defineProps<{
-  modelValue: ArchiveOptions
+defineProps<{
   loading: boolean
 }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: ArchiveOptions]
-  'start': []
+defineEmits<{
+  start: []
 }>()
 
 const adminStore = useAdminStore()
 const progress = computed(() => adminStore.progress.archive)
-
-const options = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
-})
 </script>

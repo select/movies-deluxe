@@ -58,18 +58,20 @@
           </NuxtLink>
           <button
             class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            :disabled="loading || generatingSqlite"
-            @click="generateSqlite"
+            :disabled="adminStore.loading || adminStore.generatingSqlite"
+            @click="adminStore.generateSqlite"
           >
-            <div :class="['i-mdi-database-export', generatingSqlite ? 'animate-spin' : '']" />
+            <div
+              :class="['i-mdi-database-export', adminStore.generatingSqlite ? 'animate-spin' : '']"
+            />
             Generate SQLite
           </button>
           <button
             class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            :disabled="loading"
-            @click="refreshStats"
+            :disabled="adminStore.loading"
+            @click="adminStore.refreshStats"
           >
-            <div :class="['i-mdi-refresh', loading ? 'animate-spin' : '']" />
+            <div :class="['i-mdi-refresh', adminStore.loading ? 'animate-spin' : '']" />
             Refresh Stats
           </button>
         </div>
@@ -77,70 +79,70 @@
 
       <!-- Stats Overview -->
       <section
-        v-if="stats"
+        v-if="adminStore.stats"
         class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
       >
         <AdminStatsCard
           title="Total Movies"
-          :value="stats.database.total"
+          :value="adminStore.stats.database.total"
           icon="i-mdi-movie-open"
           icon-color="text-blue-500"
           show-progress
-          :percent="databasePercentOfTotal"
+          :percent="adminStore.databasePercentOfTotal"
           progress-color="bg-blue-500"
           :percent-precision="1"
-          :subtitle="`of ${totalExternalVideos.toLocaleString()} available`"
+          :subtitle="`of ${adminStore.totalExternalVideos.toLocaleString()} available`"
         />
 
         <AdminStatsCard
           title="Archive.org"
-          :value="stats.external.archiveOrg.scraped"
+          :value="adminStore.stats.external.archiveOrg.scraped"
           icon="i-mdi-archive"
           icon-color="text-amber-500"
           show-progress
-          :percent="stats.external.archiveOrg.percent"
+          :percent="adminStore.stats.external.archiveOrg.percent"
           progress-color="bg-amber-500"
-          :subtitle="`${stats.external.archiveOrg.scraped} / ${stats.external.archiveOrg.total || '?'} videos`"
+          :subtitle="`${adminStore.stats.external.archiveOrg.scraped} / ${adminStore.stats.external.archiveOrg.total || '?'} videos`"
         />
 
         <AdminStatsCard
           title="YouTube"
-          :value="youtubeTotalScraped"
+          :value="adminStore.youtubeTotalScraped"
           icon="i-mdi-youtube"
           icon-color="text-red-500"
           show-progress
-          :percent="youtubePercent"
+          :percent="adminStore.youtubePercent"
           progress-color="bg-red-500"
-          :subtitle="`${youtubeTotalScraped} / ${youtubeTotalAvailable || '?'} videos`"
+          :subtitle="`${adminStore.youtubeTotalScraped} / ${adminStore.youtubeTotalAvailable || '?'} videos`"
         />
 
         <AdminStatsCard
           title="OMDB"
-          :value="stats.omdb.matched"
+          :value="adminStore.stats.omdb.matched"
           icon="i-mdi-database-sync"
           icon-color="text-green-500"
           show-progress
-          :percent="stats.omdb.percent"
+          :percent="adminStore.stats.omdb.percent"
           progress-color="bg-green-500"
-          :subtitle="`${stats.omdb.matched} / ${stats.omdb.total} movies`"
+          :subtitle="`${adminStore.stats.omdb.matched} / ${adminStore.stats.omdb.total} movies`"
         />
 
         <AdminStatsCard
           title="Posters"
-          :value="stats.posters.downloaded"
+          :value="adminStore.stats.posters.downloaded"
           icon="i-mdi-image-multiple"
           icon-color="text-purple-500"
           show-progress
-          :percent="stats.posters.percent"
+          :percent="adminStore.stats.posters.percent"
           progress-color="bg-purple-500"
-          :subtitle="`${stats.posters.downloaded} / ${stats.posters.withPosterUrl} posters`"
+          :subtitle="`${adminStore.stats.posters.downloaded} / ${adminStore.stats.posters.withPosterUrl} posters`"
         />
       </section>
 
       <!-- YouTube Channel Stats -->
       <AdminYouTubeChannelStats
-        v-if="stats?.external.youtube.channels.length"
-        :channels="stats.external.youtube.channels"
+        v-if="adminStore.stats?.external.youtube.channels.length"
+        :channels="adminStore.stats.external.youtube.channels"
       />
 
       <!-- SQLite Progress -->
@@ -159,7 +161,9 @@
           <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
               class="h-full bg-blue-600 transition-all duration-300"
-              :style="{ width: `${(adminStore.progress.sqlite.current / adminStore.progress.sqlite.total) * 100}%` }"
+              :style="{
+                width: `${(adminStore.progress.sqlite.current / adminStore.progress.sqlite.total) * 100}%`,
+              }"
             />
           </div>
           <p class="text-sm text-blue-700 dark:text-blue-300 italic">
@@ -171,37 +175,37 @@
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">
         <AdminArchiveScraper
-          v-model="archiveOptions"
-          :loading="scraping"
-          @start="startArchiveScrape"
+          v-model="adminStore.archiveOptions"
+          :loading="adminStore.scraping"
+          @start="adminStore.startArchiveScrape"
         />
 
         <AdminYouTubeScraper
-          v-model="youtubeOptions"
-          :channels="youtubeChannels"
-          :loading="scraping"
-          @start="startYouTubeScrape"
+          v-model="adminStore.youtubeOptions"
+          :channels="adminStore.youtubeChannels"
+          :loading="adminStore.scraping"
+          @start="adminStore.startYouTubeScrape"
         />
 
         <AdminPosterDownloader
-          v-model="posterOptions"
-          :loading="scraping"
-          @start="startPosterDownload"
+          v-model="adminStore.posterOptions"
+          :loading="adminStore.scraping"
+          @start="adminStore.startPosterDownload"
         />
 
         <AdminOMDBEnrichment
-          v-model="omdbOptions"
-          :loading="scraping"
-          @start="startOMDBEnrichment"
+          v-model="adminStore.omdbOptions"
+          :loading="adminStore.scraping"
+          @start="adminStore.startOMDBEnrichment"
         />
       </div>
 
       <!-- Results Log -->
       <AdminResultsLog
-        v-if="results || posterResults"
-        :results="results"
-        :poster-results="posterResults"
-        @clear="results = null; posterResults = null"
+        v-if="adminStore.results || adminStore.posterResults"
+        :results="adminStore.results"
+        :poster-results="adminStore.posterResults"
+        @clear="clearResults"
       />
     </div>
   </div>
@@ -210,85 +214,9 @@
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import { isLocalhost } from '@/utils/isLocalhost'
-
-interface ScrapeStats {
-  database: {
-    total: number
-    matched: number
-    unmatched: number
-    archiveOrgSources: number
-    youtubeSources: number
-    curatedCount: number
-  }
-  external: {
-    archiveOrg: {
-      total: number
-      scraped: number
-      percent: number
-    }
-    youtube: {
-      channels: Array<{
-        id: string
-        name: string
-        enabled: boolean
-        scraped: number
-        total: number
-      }>
-    }
-  }
-  curation: {
-    total: number
-    curated: number
-    percent: number
-  }
-  omdb: {
-    total: number
-    matched: number
-    unmatched: number
-    percent: number
-  }
-  posters: {
-    totalMovies: number
-    withPosterUrl: number
-    downloaded: number
-    missing: number
-    percent: number
-  }
-  lastUpdated?: string
-}
-
-interface ScrapeResults {
-  processed: number
-  added: number
-  updated: number
-  errors: string[]
-  debug?: string[]
-  channels?: Array<{ id: string; processed: number; added: number; updated: number }>
-}
-
-interface YouTubeChannelConfig {
-  id: string
-  name: string
-  enabled: boolean
-  language?: string
-}
-
-interface PosterResults {
-  processed: number
-  successful: number
-  failed: number
-  errors: string[]
-}
+import type { ScrapeStats } from '~/types/admin'
 
 const isDev = ref(false)
-const loading = ref(false)
-const scraping = ref(false)
-const generatingSqlite = ref(false)
-const stats = ref<ScrapeStats | null>(null)
-const results = ref<ScrapeResults | null>(null)
-const posterResults = ref<PosterResults | null>(null)
-const youtubeChannels = ref<YouTubeChannelConfig[]>([])
-
 const adminStore = useAdminStore()
 const { connect: connectProgress } = useProgress()
 
@@ -296,31 +224,11 @@ const { connect: connectProgress } = useProgress()
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
-const archiveOptions = reactive({
-  rows: 10,
-  pages: 1,
-  skipOmdb: true,
-  autoDetect: true,
-  collections: ['feature_films'],
-})
-
-const youtubeOptions = reactive({
-  limit: 10,
-  skipOmdb: true,
-  allPages: false,
-  channels: [] as string[],
-})
-
-const posterOptions = reactive({
-  limit: 50,
-  force: false,
-})
-
-const omdbOptions = reactive({
-  limit: 50,
-  onlyUnmatched: true,
-  forceRetryFailed: false,
-})
+// Clear results
+const clearResults = () => {
+  adminStore.results = null
+  adminStore.posterResults = null
+}
 
 onMounted(async () => {
   isDev.value = isLocalhost()
@@ -331,162 +239,13 @@ onMounted(async () => {
     try {
       const initialStats = await $fetch<ScrapeStats>('/data/stats.json')
       if (initialStats) {
-        stats.value = initialStats
+        adminStore.stats = initialStats
       }
     } catch {
       // Fallback to API if file doesn't exist yet
-      await refreshStats()
+      await adminStore.refreshStats()
     }
-    await loadYouTubeChannels()
+    await adminStore.loadYouTubeChannels()
   }
 })
-
-const loadYouTubeChannels = async () => {
-  try {
-    const data = await $fetch<{ channels: YouTubeChannelConfig[] }>('/api/admin/scrape/youtube-channels')
-    youtubeChannels.value = data.channels
-  } catch (e) {
-    console.error('Failed to load YouTube channels', e)
-  }
-}
-
-// Computed properties
-const totalExternalVideos = computed(() => {
-  if (!stats.value) return 0
-  const archiveTotal = stats.value.external.archiveOrg.total || 0
-  const youtubeTotal = stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.total || 0), 0)
-  return archiveTotal + youtubeTotal
-})
-
-const youtubeTotalScraped = computed(() => {
-  if (!stats.value) return 0
-  return stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.scraped || 0), 0)
-})
-
-const youtubeTotalAvailable = computed(() => {
-  if (!stats.value) return 0
-  return stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.total || 0), 0)
-})
-
-const youtubePercent = computed(() => {
-  if (youtubeTotalAvailable.value === 0) return 0
-  return (youtubeTotalScraped.value / youtubeTotalAvailable.value) * 100
-})
-
-const databasePercentOfTotal = computed(() => {
-  if (!stats.value || totalExternalVideos.value === 0) return 0
-  return (stats.value.database.total / totalExternalVideos.value) * 100
-})
-
-const refreshStats = async () => {
-  loading.value = true
-  try {
-    stats.value = await $fetch<ScrapeStats>('/api/admin/scrape/stats')
-  } catch (e) {
-    console.error('Failed to fetch stats', e)
-  } finally {
-    loading.value = false
-  }
-}
-
-const startArchiveScrape = async () => {
-  scraping.value = true
-  results.value = null
-  try {
-    results.value = await ($fetch as any)('/api/admin/scrape/archive', {
-      method: 'POST',
-      body: archiveOptions
-    })
-    await refreshStats()
-  } catch (e: unknown) {
-    console.error('Archive scrape failed', e)
-    results.value = {
-      processed: 0,
-      added: 0,
-      updated: 0,
-      errors: [e instanceof Error ? e.message : String(e)],
-    }
-  } finally {
-    scraping.value = false
-  }
-}
-
-const startYouTubeScrape = async () => {
-  scraping.value = true
-  results.value = null
-  try {
-    results.value = await ($fetch as any)('/api/admin/scrape/youtube', {
-      method: 'POST',
-      body: youtubeOptions
-    })
-    await refreshStats()
-  } catch (e: unknown) {
-    console.error('YouTube scrape failed', e)
-    results.value = {
-      processed: 0,
-      added: 0,
-      updated: 0,
-      errors: [e instanceof Error ? e.message : String(e)],
-    }
-  } finally {
-    scraping.value = false
-  }
-}
-
-const startPosterDownload = async () => {
-  scraping.value = true
-  posterResults.value = null
-  try {
-    posterResults.value = await ($fetch as any)('/api/admin/posters/download', {
-      method: 'POST',
-      body: posterOptions,
-    })
-    await refreshStats()
-  } catch (e: unknown) {
-    console.error('Poster download failed', e)
-    posterResults.value = {
-      processed: 0,
-      successful: 0,
-      failed: 0,
-      errors: [e instanceof Error ? e.message : String(e)],
-    }
-  } finally {
-    scraping.value = false
-  }
-}
-
-const startOMDBEnrichment = async () => {
-  scraping.value = true
-  results.value = null
-  try {
-    results.value = await ($fetch as any)('/api/admin/omdb/enrich', {
-      method: 'POST',
-      body: omdbOptions,
-    })
-    await refreshStats()
-  } catch (e: unknown) {
-    console.error('OMDB enrichment failed', e)
-    results.value = {
-      processed: 0,
-      added: 0,
-      updated: 0,
-      errors: [e instanceof Error ? e.message : String(e)],
-    }
-  } finally {
-    scraping.value = false
-  }
-}
-
-const generateSqlite = async () => {
-  generatingSqlite.value = true
-  try {
-    await $fetch('/api/admin/sqlite/generate', {
-      method: 'POST'
-    })
-  } catch (e) {
-    console.error('SQLite generation failed', e)
-  } finally {
-    generatingSqlite.value = false
-  }
-}
 </script>

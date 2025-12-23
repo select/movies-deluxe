@@ -85,21 +85,16 @@ interface OMDBOptions {
   forceRetryFailed: boolean
 }
 
-const props = defineProps<{
-  modelValue: OMDBOptions
+const options = defineModel<OMDBOptions>({ required: true })
+
+defineProps<{
   loading: boolean
 }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: OMDBOptions]
-  'start': []
+defineEmits<{
+  start: []
 }>()
 
 const adminStore = useAdminStore()
 const progress = computed(() => adminStore.progress.omdb)
-
-const options = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
-})
 </script>
