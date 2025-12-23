@@ -42,11 +42,11 @@
           >
             <div
               v-if="isDark"
-              class="i-mdi-weather-sunny"
+              class="i-material-symbols-light-wb-sunny text-xl text-yellow-500"
             />
             <div
               v-else
-              class="i-mdi-weather-night"
+              class="i-material-symbols-light-dark-mode text-xl"
             />
           </button>
           <NuxtLink
