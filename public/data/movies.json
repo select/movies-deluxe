@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-23T02:35:04.919Z"
+    "lastUpdated": "2025-12-23T03:31:11.420Z"
   },
   "archive-VoyagetothePlanetofPrehistoricWomen": {
     "imdbId": "archive-VoyagetothePlanetofPrehistoricWomen",
@@ -4598,13 +4598,13 @@
         "language": "ru",
         "publishedAt": "3 days ago",
         "duration": 5988,
-        "viewCount": 10231,
+        "viewCount": 10362,
         "thumbnail": "https://i.ytimg.com/vi/zX3IVNrx1Zs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBXQMfIbXCaapyJoPzkZ8bmvf95lg",
-        "addedAt": "2025-12-23T02:34:59.908Z",
+        "addedAt": "2025-12-23T03:31:06.411Z",
         "description": "The film's heroes parted ways at Belorussky Station in the summer of 1945, when the first train carrying front-line soldiers arrived after the victory. A quarter century after the end of the Great Patriotic War, the comrades meet at their friend's funeral. Peacetime had separated them, but the friends retained a sense of frontline brotherhood, mutual assistance, and humanity.\n\nIMDb: 7,7\n\nYear of production: 1970\n\nDirector: Andrey Smirnov\nScreenwriter: Vadim Trunin\nComposers: Bulat Okudzhava, Alfred Schnittke\nDOP: Pavel Lebeshev\nProduction Designer: Vladimir Korovin\n\nCast: Alexey Glazyrin, Yevgeny Leonov, Anatoly Papanov, Vsevolod Safonov, Nina Urgant, Nikolay Volkov Jr., Nikifor Kolofidin, Raisa Kurkina, Yuri Orlov, Lyubov Sokolova, Margarita Terekhova, Aleksandr Yanvarev"
       }
     ],
-    "lastUpdated": "2025-12-23T02:34:59.908Z"
+    "lastUpdated": "2025-12-23T03:31:06.411Z"
   },
   "youtube-3Od9Jh1bLRQ": {
     "imdbId": "youtube-3Od9Jh1bLRQ",
@@ -4619,13 +4619,13 @@
         "language": "ru",
         "publishedAt": "2 weeks ago",
         "duration": 6533,
-        "viewCount": 6505,
+        "viewCount": 6521,
         "thumbnail": "https://i.ytimg.com/vi/3Od9Jh1bLRQ/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAmVs7RyVxPJ8-KZf77J4MFtMh75Q",
-        "addedAt": "2025-12-23T02:35:00.409Z",
+        "addedAt": "2025-12-23T03:31:06.912Z",
         "description": "Karen Shakhnozarov's film \"The Vanished Empire\"\n\nThe film is set in the stagnant seventies. The film's protagonists are students who have no idea that the country of their birth will soon disappear from the world map. Meanwhile, these high school graduates are carefree students at university. The main characters are Sergey, Lyuda, and their mutual friend Stepan. Sergey begins a touching courtship with the kind and trusting Lyuda, and they begin a beautiful romance.\n\nHowever, a new student, a striking girl named Katya, soon appears in the class. Sergey, taking advantage of Lyuda's illness, begins to flirt with her. Lyuda learns of this and considers his behavior betrayal. Stepan, secretly in love with Lyudmila, begins helping her with her studies, showing her affection, and they spend more and more time together...\n\nYear of production: 2006\n\nDirector: Karen Shakhnazarov\nScreenwriters: Sergey Rokotov, Evgeny Nikishov\nComposer: Konstantin Shevelev\nCinematographer: Shandor Berkeshi\nProduction Designer: Lyudmila Kusakova\n\nCast: Armen Dzhigarkhanyan, Tatyana Yakovenko, Olga Tumaykina, Lidiya Milyuzina, Egor Baranovsky, Ivan Kupreenko"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:00.409Z"
+    "lastUpdated": "2025-12-23T03:31:06.912Z"
   },
   "youtube-DQY754QIx6E": {
     "imdbId": "youtube-DQY754QIx6E",
@@ -4640,13 +4640,13 @@
         "language": "ru",
         "publishedAt": "1 month ago",
         "duration": 5697,
-        "viewCount": 26684,
+        "viewCount": 26700,
         "thumbnail": "https://i.ytimg.com/vi/DQY754QIx6E/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDdp8EbfRf9Hzq6cXIZgcS0m9yHbA",
-        "addedAt": "2025-12-23T02:35:00.909Z",
+        "addedAt": "2025-12-23T03:31:07.412Z",
         "description": "La película consta de tres historias cortas, unidas por la figura del protagonista Shurik, un estudiante rústico, pero resiliente e ingenioso. Shurik se distingue por verse constantemente envuelto en historias insólitas, pero gracias a su actitud despreocupada ante la vida, convierte cualquier situación en una divertida aventura.\n\nPuntuación en IMDb: 8.5\n\nAño de producción: 1965\n\nDirector: Leonid Gaidai\nGuionistas: Yakov Kostyukovsky, Leonid Gaidai, Maurice Slobodskoy\nMúsica: Alexander Zatsepin\nDirector de fotografía: Konstantin Brovin\nDiseñador de producción: Artur Berger\n\nReparto: Georgiy Vitsin, Alexei Smirnov, Mikhail Pugovkin, Yuri Nikulin, Alexander Demyanenko, Natalia Selezneva, Evgeny Morgunov, Viktor Pavlov, Vladimir Basov, Vladimir Vladislavsky, Maria Kravchunovskaya, Vladimir Rautbart"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:00.909Z"
+    "lastUpdated": "2025-12-23T03:31:07.412Z"
   },
   "youtube-_OUftHvz_io": {
     "imdbId": "youtube-_OUftHvz_io",
@@ -4663,11 +4663,11 @@
         "duration": 4186,
         "viewCount": 19217,
         "thumbnail": "https://i.ytimg.com/vi/_OUftHvz_io/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAoPwNu0KZ6wONwGrOVrDGnhShNYg",
-        "addedAt": "2025-12-23T02:35:02.912Z",
+        "addedAt": "2025-12-23T03:31:09.416Z",
         "description": "In the North Atlantic, in the area where Soviet Navy ships conduct maneuvers, a U.S. nuclear submarine suffers an accident. A sailor who has lost his mind activates the computer, which launches two missiles toward the Soviet ships. Soviet sailors shoot down the missiles and sink the submarine. A global catastrophe is averted at a high cost.\n\nINCIDENT IN SQUARE 36-80 | Full movie with english subs. \n\nDirector: Mikhail Tumanishvili\nActors: Mikhail Volontir, Ivars Kalniņš, Boris Shcherbakov, Anatoly Kuznetsov, Paul Butkevich, Vladimir Sedov, Omar Volmer, Vytautas Tomkus, Romualds Ancans, Georgiy Gauze, Gunars Dalmanis, Valery Malyshev, Alexander Pashutin, Tatyana Ronami, Boris Tokarev, Evgenia Uralova, Boris (Bob) Chuprov (Tsymba), Lyubov Chirkova-Chernyayeva\n\nGenres: Action\nRelease date: 1982\nDuration: 78 minutes\nDirector: Mikhail Tumanishvili\nScreenwriter: Yevgeny Mesyatsev\nComposer: Viktor Babushkin\nCinematographer: Boris Bondarenko\nProduction designers: Georgiy Koshelev, Gennady Novozhilov"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:02.912Z"
+    "lastUpdated": "2025-12-23T03:31:09.416Z"
   },
   "youtube-7ZR0mrW6qMA": {
     "imdbId": "youtube-7ZR0mrW6qMA",
@@ -4682,13 +4682,13 @@
         "language": "ru",
         "publishedAt": "3 months ago",
         "duration": 4801,
-        "viewCount": 109775,
+        "viewCount": 109779,
         "thumbnail": "https://i.ytimg.com/vi/7ZR0mrW6qMA/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCRho319uHpjW8pJ1WdB-uQ3JU0eQ",
-        "addedAt": "2025-12-23T02:35:03.413Z",
+        "addedAt": "2025-12-23T03:31:09.917Z",
         "description": "The adventurous duology, beginning with the film \"The Detached Mission\"  https://youtu.be/rALCUZv_cyk vividly portrays one of the significant episodes of a major military exercise in the early 1980s, involving marine infantry ships and airborne paratrooper units. Set against the backdrop of intense troop maneuvers, the movie follows elite reconnaissance groups deployed behind enemy lines to execute daring sabotage missions and uncover a disguised command post. The story highlights the intense camaraderie, strategic planning, and high-stakes action typical of Soviet military operations during the Cold War era. Featuring gripping combat sequences, authentic military tactics, and a powerful portrayal of duty and honor, this classic Soviet war movie appeals to fans of military drama, historical adventure, and action-packed films. Ideal for viewers searching for \"Soviet war movies,\" \"military adventure films,\" \"paratrooper action,\" and \"Cold War military exercises,\" this cinematic work continues to captivate audiences with its realism and emotional depth.\n\nCOUNTERMOVE (1981) | Full movie with english subs.\n\nDirector: Mikhail Tumanishvili\n\nThe actors: Mikhail Volontir, Boris Galkin, Vadim Spiridonov, Elena Glebova, Anatoly Kuznetsov, Alexander Pyatkov, Leonid Belozorovich, Vladimir Marenkov, Daniil Netrebin, Laimonas Noreika, Anatoly Romashin, Mikhail Chigarev\n\nWitness the intensity of a **soldier** and **special forces** team preparing for a high-stakes **military** operation. This gripping footage showcases their rigorous **military training** and strategic planning, as they utilize calculated **ambush tactics**. Experience the raw power of the **army** in action, rooted in rich **military history**."
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:03.413Z"
+    "lastUpdated": "2025-12-23T03:31:09.917Z"
   },
   "youtube-vPKtS7FsXLk": {
     "imdbId": "youtube-vPKtS7FsXLk",
@@ -4703,13 +4703,13 @@
         "language": "ru",
         "publishedAt": "4 months ago",
         "duration": 5375,
-        "viewCount": 17918,
+        "viewCount": 17921,
         "thumbnail": "https://i.ytimg.com/vi/vPKtS7FsXLk/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBof65tiNE66vxsBwpPKdz1WTjMCA",
-        "addedAt": "2025-12-23T02:35:04.418Z",
+        "addedAt": "2025-12-23T03:31:10.919Z",
         "description": "🎬 Moscow, My Love (1974) – A Heartbreaking Soviet-Japanese Romance | Full Film \n\n🌟 Why You MUST Watch This Forgotten Masterpiece:  \n\nExperience a rare and emotional blend of Soviet and Japanese storytelling in Moscow, My Love (1974), directed by Alexander Mitta. This visually stunning film tells the poignant story of Yuriko, a gifted young Japanese ballerina invited to study at the prestigious Bolshoi Theatre in Moscow. As she masters her craft, she discovers not only professional success but also true love—only for fate to intervene in the most tragic way.  \n\n💔 A Story of Love, Art, and Tragedy:\nYuriko’s journey is one of passion and perseverance. She thrives in the demanding world of ballet, wins the admiration of her peers, and falls deeply in love. But her happiness is shattered when she is diagnosed with leukemia—a cruel legacy of the Hiroshima bombing, where her mother was exposed to radiation. The film masterfully intertwines personal drama with historical trauma, creating a deeply moving narrative that stays with you long after the credits roll.  \n\n🎥 Why This Film Is Special:\n- Unique Cultural Fusion: A rare Soviet-Japanese co-production, blending delicate emotional storytelling with striking cinematography.  \n- Powerful Performances: Komaki Kurihara delivers a breathtaking performance as Yuriko, capturing both her artistic brilliance and heartbreaking vulnerability.  \n- Historical Depth: A subtle yet profound reflection on the lingering scars of war, making it more than just a romance—it’s a humanitarian statement.  \n- Timeless Themes: Love, sacrifice, and the fleeting nature of life—universal emotions that resonate across generations.  \n\n🔥 Don’t Miss This Hidden Gem!  \nIf you love classic cinema, ballet, or deeply emotional dramas, Moscow, My Love is a must-watch. It’s a film that balances beauty and sorrow, leaving viewers with a lasting impression. Will Yuriko’s love and artistry conquer fate? Press play and find out!  \n\n📌 Like, comment, and subscribe for more rare cinematic treasures!\n\nGenres: melodrama\nRelease date: 1974\nDirectors: Mitta Alexander\nScreenwriters: Mitta Alexander, Kasikura Tashiyuki, Radzinsky Edward\nComposers: Tchaikovsky Boris\nOperators: Nakhabtsev, Vladimir\nProduction designers: Kladiyenko, Yuri\n\n00:00:00 start\n00:00:08 begin"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:04.418Z"
+    "lastUpdated": "2025-12-23T03:31:10.919Z"
   },
   "youtube-Rl8C21m_rNo": {
     "imdbId": "youtube-Rl8C21m_rNo",
@@ -12629,10 +12629,10 @@
         "duration": 5190,
         "viewCount": 13657,
         "thumbnail": "https://i.ytimg.com/vi/WlXPIJX2xwM/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAKHZ5ejkW11omTalPqvpQJSJaBcw",
-        "addedAt": "2025-12-23T02:35:01.410Z"
+        "addedAt": "2025-12-23T03:31:07.914Z"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:01.410Z"
+    "lastUpdated": "2025-12-23T03:31:07.914Z"
   },
   "youtube-Rv4QOG0BeJY": {
     "imdbId": "youtube-Rv4QOG0BeJY",
@@ -12650,10 +12650,10 @@
         "duration": 5291,
         "viewCount": 11545,
         "thumbnail": "https://i.ytimg.com/vi/Rv4QOG0BeJY/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBLof4nBJn0jiY5Vu3Wo-XCedKN7A",
-        "addedAt": "2025-12-23T02:35:01.911Z"
+        "addedAt": "2025-12-23T03:31:08.414Z"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:01.911Z"
+    "lastUpdated": "2025-12-23T03:31:08.414Z"
   },
   "youtube-kuloHDzmVFA": {
     "imdbId": "youtube-kuloHDzmVFA",
@@ -12669,12 +12669,12 @@
         "language": "ru",
         "publishedAt": "2 months ago",
         "duration": 4894,
-        "viewCount": 10630,
+        "viewCount": 10631,
         "thumbnail": "https://i.ytimg.com/vi/kuloHDzmVFA/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBl5qkXTLEG01UgStlBID_Fsqma2w",
-        "addedAt": "2025-12-23T02:35:02.412Z"
+        "addedAt": "2025-12-23T03:31:08.915Z"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:02.412Z"
+    "lastUpdated": "2025-12-23T03:31:08.915Z"
   },
   "youtube-GnQ42es1-gQ": {
     "imdbId": "youtube-GnQ42es1-gQ",
@@ -12692,9 +12692,9 @@
         "duration": 5292,
         "viewCount": 22672,
         "thumbnail": "https://i.ytimg.com/vi/GnQ42es1-gQ/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBLGsW2_CutEJ_Su_QzKbvzRwNSOw",
-        "addedAt": "2025-12-23T02:35:03.914Z"
+        "addedAt": "2025-12-23T03:31:10.418Z"
       }
     ],
-    "lastUpdated": "2025-12-23T02:35:03.914Z"
+    "lastUpdated": "2025-12-23T03:31:10.418Z"
   }
 }

@@ -1,20 +1,20 @@
 {
   "database": {
-    "total": 434,
+    "total": 334,
     "matched": 175,
-    "unmatched": 259,
-    "archiveOrgSources": 275,
+    "unmatched": 159,
+    "archiveOrgSources": 175,
     "youtubeSources": 164,
     "curatedCount": 175,
     "collections": {
-      "feature_films": 275
+      "feature_films": 175
     }
   },
   "external": {
     "archiveOrg": {
       "total": 26779,
-      "scraped": 275,
-      "percent": 1.0269240823032975
+      "scraped": 175,
+      "percent": 0.6534971432839165
     },
     "youtube": {
       "channels": [
@@ -71,22 +71,22 @@
     }
   },
   "curation": {
-    "total": 434,
+    "total": 334,
     "curated": 175,
-    "percent": 40.32258064516129
+    "percent": 52.39520958083832
   },
   "omdb": {
-    "total": 434,
+    "total": 334,
     "matched": 175,
-    "unmatched": 259,
-    "percent": 40.32258064516129
+    "unmatched": 159,
+    "percent": 52.39520958083832
   },
   "posters": {
-    "totalMovies": 434,
+    "totalMovies": 334,
     "withPosterUrl": 172,
     "downloaded": 144,
     "missing": 28,
     "percent": 83.72093023255815
   },
-  "lastUpdated": "2025-12-23T03:13:08.024Z"
+  "lastUpdated": "2025-12-23T03:31:13.140Z"
 }
