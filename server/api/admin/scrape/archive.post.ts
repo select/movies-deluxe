@@ -23,7 +23,6 @@ export default defineEventHandler(async event => {
     await saveMoviesDatabase(db)
     return results
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Archive scrape failed:', error)
     throw createError({
       statusCode: 500,
