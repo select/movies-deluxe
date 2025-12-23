@@ -18,7 +18,6 @@ export async function loadMoviesDatabase(): Promise<MoviesDatabase> {
     const content = await readFile(MOVIES_FILE, 'utf-8')
     return JSON.parse(content) as MoviesDatabase
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Failed to load movies database:', error)
     throw error
   }
@@ -37,7 +36,6 @@ export async function saveMoviesDatabase(db: MoviesDatabase): Promise<void> {
     const content = JSON.stringify(db, null, 2)
     await writeFile(MOVIES_FILE, content, 'utf-8')
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Failed to save movies database:', error)
     throw error
   }

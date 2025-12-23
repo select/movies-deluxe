@@ -59,8 +59,8 @@ export default tseslint.config(
     },
   },
   {
-    // Allow console.log in scripts and tests (Node.js code, not frontend)
-    files: ['scripts/**/*.ts', 'tests/**/*.ts'],
+    // Allow console.log in scripts, tests, and server (Node.js code, not frontend)
+    files: ['scripts/**/*.ts', 'tests/**/*.ts', 'server/**/*.ts'],
     rules: {
       'no-console': 'off',
     },
