@@ -375,7 +375,6 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
     ...primary,
     sources: mergedSources,
     metadata: primary.metadata || secondary.metadata,
-    ai: primary.ai || secondary.ai,
     year: primary.year || secondary.year,
     lastUpdated: new Date().toISOString(),
   }
@@ -470,9 +469,6 @@ export function mergeDuplicates(
 
     // Prefer entries with OMDB metadata
     if (entry.metadata) score += 50
-
-    // Prefer entries with AI metadata
-    if (entry.ai) score += 25
 
     // Prefer entries with more sources
     score += entry.sources.length * 5

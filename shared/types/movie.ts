@@ -91,20 +91,6 @@ export interface MovieMetadata {
 }
 
 /**
- * AI-extracted metadata structure
- * Contains metadata extracted using OpenCode SDK with AI/LLM processing
- */
-export interface AIMetadata {
-  extractedTitle?: string // Cleaned movie title extracted from promotional text
-  confidence?: 'high' | 'medium' | 'low' // Confidence level for the extraction
-  model?: string // Model ID used (e.g., 'claude-3-5-sonnet-20241022')
-  provider?: string // Provider ID (e.g., 'anthropic')
-  sessionId?: string // OpenCode session ID used for extraction
-  extractedAt?: string // ISO 8601 timestamp when AI processing occurred
-  originalTitle?: string // Original title before extraction (for reference)
-}
-
-/**
  * Main movie entry structure
  */
 export interface MovieEntry {
@@ -113,7 +99,6 @@ export interface MovieEntry {
   year?: number
   sources: MovieSource[]
   metadata?: MovieMetadata
-  ai?: AIMetadata // AI-extracted metadata
   verified?: boolean // Whether this entry has been manually verified by a human
   lastUpdated: string // ISO 8601 timestamp
 }

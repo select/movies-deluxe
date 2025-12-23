@@ -133,12 +133,8 @@ export default defineEventHandler(async event => {
 
       const sourceYear = archiveYear || youtubeYear
 
-      // Prioritize AI-extracted title if available
-      const titleToUse = movie.ai?.extractedTitle || movie.title
-      const usingAiTitle = !!movie.ai?.extractedTitle
-
       // Parse title
-      const { name, year: titleYear } = parseTitle(titleToUse)
+      const { name, year: titleYear } = parseTitle(movie.title)
       const yearToUse = sourceYear || titleYear
 
       try {
@@ -152,21 +148,6 @@ export default defineEventHandler(async event => {
         // Strategy 2: If cleaned version failed, try original parsed title
         if (matchResult.confidence === MatchConfidence.NONE) {
           matchResult = await matchMovie(name, yearToUse, apiKey)
-        }
-
-        // Strategy 3: If AI title didn't match and we have a fallback, try original title
-        if (matchResult.confidence === MatchConfidence.NONE && usingAiTitle) {
-          const { name: originalName, year: originalYear } = parseTitle(movie.title)
-          const originalYearToUse = sourceYear || originalYear
-
-          // Try cleaned original
-          const cleanedOriginalName = cleanTitleGeneral(originalName)
-          matchResult = await matchMovie(cleanedOriginalName, originalYearToUse, apiKey)
-
-          // Try uncleaned original
-          if (matchResult.confidence === MatchConfidence.NONE) {
-            matchResult = await matchMovie(originalName, originalYearToUse, apiKey)
-          }
         }
 
         result.processed++
