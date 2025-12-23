@@ -156,6 +156,39 @@
         </div>
       </section>
 
+      <!-- YouTube Channel Stats -->
+      <section
+        v-if="stats?.external.youtube.channels.length"
+        class="space-y-4"
+      >
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <div class="i-mdi-youtube text-red-500" />
+          YouTube Channel Statistics
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            v-for="channel in stats.external.youtube.channels"
+            :key="channel.id"
+            class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold truncate pr-2">{{ channel.name }}</span>
+              <div
+                class="w-2 h-2 rounded-full"
+                :class="channel.enabled ? 'bg-green-500' : 'bg-gray-300'"
+                :title="channel.enabled ? 'Enabled' : 'Disabled'"
+              />
+            </div>
+            <div class="text-xl font-bold">
+              {{ channel.scraped }}
+            </div>
+            <div class="text-xs text-gray-500">
+              movies scraped
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">
         <!-- Archive.org Scraper -->
@@ -563,6 +596,15 @@ interface ScrapeStats {
       total: number
       scraped: number
       percent: number
+    }
+    youtube: {
+      channels: Array<{
+        id: string
+        name: string
+        enabled: boolean
+        scraped: number
+        total: number
+      }>
     }
   }
   curation: {
