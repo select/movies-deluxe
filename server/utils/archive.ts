@@ -12,32 +12,27 @@ export interface ArchiveOrgMovie {
 }
 
 export interface ArchiveOrgResponse {
-  response: {
-    docs: ArchiveOrgMovie[]
-    numFound: number
-  }
+  items: ArchiveOrgMovie[]
+  count: number
+  total: number
+  cursor?: string
 }
 
 /**
- * Fetch movies from Archive.org
+ * Fetch movies from Archive.org using the Scrape API
  */
 export async function fetchArchiveOrgMovies(
   collection: string,
   rows: number,
-  page: number
-): Promise<ArchiveOrgMovie[]> {
-  const start = page * rows
-
-  const url = new URL('https://archive.org/advancedsearch.php')
+  cursor?: string
+): Promise<ArchiveOrgResponse> {
+  const url = new URL('https://archive.org/services/search/v1/scrape')
   url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
-  url.searchParams.set('output', 'json')
-  url.searchParams.set('rows', rows.toString())
-  url.searchParams.set('start', start.toString())
-  url.searchParams.set('sort', 'downloads desc')
-  url.searchParams.set(
-    'fl',
-    'identifier,title,description,date,year,downloads,collection,mediatype'
-  )
+  url.searchParams.set('fields', 'identifier,title,description,date,year,downloads,collection')
+  url.searchParams.set('count', Math.max(100, rows).toString())
+  if (cursor) {
+    url.searchParams.set('cursor', cursor)
+  }
 
   try {
     const response = await fetch(url.toString())
@@ -46,10 +41,10 @@ export async function fetchArchiveOrgMovies(
     }
 
     const data = (await response.json()) as ArchiveOrgResponse
-    return data.response.docs || []
+    return data
   } catch (error) {
     console.error(`Failed to fetch from ${collection}:`, error)
-    return []
+    return { items: [], count: 0, total: 0 }
   }
 }
 

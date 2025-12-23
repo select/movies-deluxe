@@ -79,22 +79,20 @@ export async function scrapeArchiveOrg(
   }
 
   for (const collection of collections) {
-    let startPage = 0
-
     if (autoDetect) {
       const existingCount = countExistingMoviesInCollection(db, collection)
-      const foundPage = await findStartPage(db, collection, rows, existingCount, results.debug)
-      startPage = foundPage
+      await findStartPage(db, collection, rows, existingCount, results.debug)
     }
 
     // Scrape the requested pages
+    let currentCursor: string | undefined = undefined
     for (let p = 0; p < pages; p++) {
-      const currentPage = startPage + p
-      results.debug.push(`Fetching page ${currentPage} (${rows} rows)`)
-      const movies = await fetchArchiveOrgMovies(collection, rows, currentPage)
+      results.debug.push(`Fetching page ${p + 1} (cursor: ${currentCursor || 'start'})`)
+      const response = await fetchArchiveOrgMovies(collection, rows, currentCursor)
+      const movies = response.items
 
-      if (movies.length === 0) {
-        results.debug.push(`No movies found on page ${currentPage}, stopping`)
+      if (!movies || movies.length === 0) {
+        results.debug.push(`No movies found on page ${p + 1}, stopping`)
         break
       }
 
@@ -130,12 +128,11 @@ export async function scrapeArchiveOrg(
         }
       }
 
-      if (movies.length < rows) {
-        results.debug.push(
-          `Received fewer movies than requested (${movies.length} < ${rows}), stopping`
-        )
+      if (!response.cursor || movies.length < rows) {
+        results.debug.push(`No more pages available (${movies.length} items, no cursor), stopping`)
         break
       }
+      currentCursor = response.cursor
     }
   }
 
