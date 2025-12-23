@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { getDatabaseStats, loadMoviesDatabase } from '../../../utils/movieData'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { MovieEntry } from '../../../../shared/types/movie'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()

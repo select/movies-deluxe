@@ -1,4 +1,4 @@
-import type { MoviesDatabase, MovieEntry } from '~/shared/types/movie'
+import type { MoviesDatabase, MovieEntry } from '../../shared/types/movie'
 import { fetchArchiveOrgMovies, processArchiveMovie } from './archive'
 import { upsertMovie } from './movieData'
 
