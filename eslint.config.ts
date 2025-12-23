@@ -1,11 +1,9 @@
-import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import oxlint from 'eslint-plugin-oxlint'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
-  eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   oxlint.configs['flat/recommended'],
