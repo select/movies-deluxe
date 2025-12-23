@@ -1,8 +1,7 @@
 import type { Client } from 'youtubei'
 import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
 import { matchMovie } from './omdb'
-
-// Note: cleanTitle and TITLE_CLEANING_RULES are auto-imported from server/utils/titleCleaner.ts
+import { cleanTitle } from './titleCleaner'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   let cleanTitle = title
