@@ -122,44 +122,53 @@
 
         <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Curation Status</span>
+            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Data Quality</span>
             <div class="i-mdi-check-decagram text-2xl text-green-500" />
           </div>
-          <div class="text-3xl font-bold">
-            {{ stats.curation.curated }}
-          </div>
-          <div class="mt-2 flex flex-col gap-1">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-gray-400">of {{ stats.curation.total }} entries</span>
-              <span class="font-medium">{{ stats.curation.percent.toFixed(1) }}%</span>
+          
+          <!-- Curation Status -->
+          <div class="mb-4">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="i-mdi-check-circle text-sm text-green-500" />
+              <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Curated</span>
             </div>
-            <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div 
-                class="h-full bg-green-500 transition-all duration-1000" 
-                :style="{ width: `${stats.curation.percent}%` }"
-              />
+            <div class="text-2xl font-bold mb-1">
+              {{ stats.curation.curated }}
+            </div>
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-gray-400">of {{ stats.curation.total }} entries</span>
+                <span class="font-medium">{{ stats.curation.percent.toFixed(1) }}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div 
+                  class="h-full bg-green-500 transition-all duration-1000" 
+                  :style="{ width: `${stats.curation.percent}%` }"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="glass p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">OMDB Enrichment</span>
-            <div class="i-mdi-database-sync text-2xl text-blue-600" />
-          </div>
-          <div class="text-3xl font-bold">
-            {{ stats.omdb.matched }}
-          </div>
-          <div class="mt-2 flex flex-col gap-1">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-gray-400">of {{ stats.omdb.total }} movies</span>
-              <span class="font-medium">{{ stats.omdb.percent.toFixed(1) }}%</span>
+          <!-- OMDB Enrichment -->
+          <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="i-mdi-database-sync text-sm text-blue-600" />
+              <span class="text-xs font-medium text-gray-600 dark:text-gray-400">OMDB Matched</span>
             </div>
-            <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div 
-                class="h-full bg-blue-600 transition-all duration-1000" 
-                :style="{ width: `${stats.omdb.percent}%` }"
-              />
+            <div class="text-2xl font-bold mb-1">
+              {{ stats.omdb.matched }}
+            </div>
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-gray-400">of {{ stats.omdb.total }} movies</span>
+                <span class="font-medium">{{ stats.omdb.percent.toFixed(1) }}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div 
+                  class="h-full bg-blue-600 transition-all duration-1000" 
+                  :style="{ width: `${stats.omdb.percent}%` }"
+                />
+              </div>
             </div>
           </div>
         </div>
