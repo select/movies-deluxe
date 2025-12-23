@@ -57,6 +57,38 @@
       "language": "de",
       "enabled": true,
       "notes": "German channel similar to Netzkino with licensed full-length movies"
+    },
+    {
+      "id": "UCE34fwgW7kWr7tc7YiOWtRw",
+      "handle": "@PizzaFLIX",
+      "name": "PizzaFlix",
+      "language": "en",
+      "enabled": true,
+      "notes": "Large library of classic films, serials, B-movies, westerns, and noir from studio and public-domain catalogs (3.6K videos)"
+    },
+    {
+      "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
+      "handle": "@pdmoviestube",
+      "name": "Public Domain Movies - Classic Old Movies",
+      "language": "en",
+      "enabled": true,
+      "notes": "Channel dedicated to classic public-domain films, including film noir and other vintage genres (543 videos)"
+    },
+    {
+      "id": "UCWlLgwn2nfjnefINARfcquA",
+      "handle": "@TimelessClassicFilms",
+      "name": "Timeless Classic Films",
+      "language": "en",
+      "enabled": true,
+      "notes": "Streams older adventure, sci-fi, and other cult classics such as mid-20th-century genre films (25 videos)"
+    },
+    {
+      "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
+      "handle": "@ColorizedPublicDomain",
+      "name": "Colorized Public Domain",
+      "language": "en",
+      "enabled": true,
+      "notes": "A YouTube channel with a fine collection of timeless classic movies (281 videos)"
     }
   ]
 }
