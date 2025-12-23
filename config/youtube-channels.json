@@ -4,6 +4,7 @@
   "channels": [
     {
       "id": "@Netzkino",
+      "channelId": "UCGkHFrwE8KEuOHPVsIOskAg",
       "name": "Netzkino",
       "language": "de",
       "enabled": true,
@@ -11,6 +12,7 @@
     },
     {
       "id": "@FilmRiseMovies",
+      "channelId": "UC8IHAQMuiJdY6ALuhG7iU8Q",
       "name": "FilmRise Movies",
       "language": "en",
       "enabled": true,
@@ -18,6 +20,7 @@
     },
     {
       "id": "@Popcornflix",
+      "channelId": "UCVFYikepF-avelvuIaQ_lHA",
       "name": "Popcornflix",
       "language": "en",
       "enabled": true,
@@ -25,6 +28,7 @@
     },
     {
       "id": "@MovieCentral",
+      "channelId": "UCGBzBkV-MinlBvHBzZawfLQ",
       "name": "Movie Central",
       "language": "en",
       "enabled": true,
@@ -32,6 +36,7 @@
     },
     {
       "id": "@TimelessClassicMovies",
+      "channelId": "UCOg0aMAXmF3o5m243PxhE5g",
       "name": "Timeless Classic Movies",
       "language": "en",
       "enabled": true,
@@ -39,6 +44,7 @@
     },
     {
       "id": "@Mosfilm",
+      "channelId": "UCm5U4zqpahzyNXBv5ZT51Jw",
       "name": "Mosfilm",
       "language": "ru",
       "enabled": true,
@@ -46,6 +52,7 @@
     },
     {
       "id": "@Moviedome",
+      "channelId": "UCh4JH8axA_jUjB8YoRnm0cg",
       "name": "Moviedome",
       "language": "de",
       "enabled": true,

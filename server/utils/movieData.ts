@@ -151,16 +151,26 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
   // Load channel configs
   const channelConfigs = await loadYouTubeChannels()
   const channelStatsMap = new Map<string, ChannelStats>()
+  const channelStatsArray: ChannelStats[] = []
 
   // Initialize channel stats
   for (const config of channelConfigs) {
-    channelStatsMap.set(config.id, {
+    const channelStats: ChannelStats = {
       id: config.id,
       name: config.name,
       language: config.language,
       enabled: config.enabled,
       scraped: 0,
-    })
+    }
+
+    // Store in array (unique)
+    channelStatsArray.push(channelStats)
+
+    // Index by both handle (@id) and actual channelId for lookup
+    channelStatsMap.set(config.id, channelStats)
+    if (config.channelId) {
+      channelStatsMap.set(config.channelId, channelStats)
+    }
   }
 
   entries.forEach(([_, entry]) => {
@@ -181,14 +191,9 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
         // Count per channel
         const youtubeSource = source as any
         const channelId = youtubeSource.channelId
-        const channelName = youtubeSource.channelName
 
-        // Try to match by channelId or @channelName
-        let channelStats = channelStatsMap.get(channelId)
-        if (!channelStats && channelName) {
-          channelStats = channelStatsMap.get(`@${channelName}`)
-        }
-
+        // Match by channelId (works for both UC... IDs and @handles)
+        const channelStats = channelStatsMap.get(channelId)
         if (channelStats) {
           channelStats.scraped++
         }
@@ -204,7 +209,7 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
     }
   })
 
-  stats.youtubeChannels = Array.from(channelStatsMap.values())
+  stats.youtubeChannels = channelStatsArray
 
   return stats
 }
@@ -213,7 +218,7 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
  * Load YouTube channel configurations
  */
 async function loadYouTubeChannels(): Promise<
-  Array<{ id: string; name: string; language?: string; enabled: boolean }>
+  Array<{ id: string; channelId?: string; name: string; language?: string; enabled: boolean }>
 > {
   try {
     const { readFile } = await import('fs/promises')
