@@ -109,7 +109,10 @@
                 :style="{ width: `${stats.external.archiveOrg.percent}%` }"
               />
             </div>
-            <span class="text-xs font-medium">{{ stats.external.archiveOrg.percent.toFixed(0) }}%</span>
+            <span class="text-[10px] font-medium">{{ stats.external.archiveOrg.percent.toFixed(0) }}%</span>
+          </div>
+          <div class="text-[10px] text-gray-400 mt-1">
+            {{ stats.external.archiveOrg.scraped }} / {{ stats.external.archiveOrg.total || '?' }} videos
           </div>
         </div>
 
@@ -141,7 +144,10 @@
                 :style="{ width: `${stats.omdb.percent}%` }"
               />
             </div>
-            <span class="text-xs font-medium">{{ stats.omdb.percent.toFixed(0) }}%</span>
+            <span class="text-[10px] font-medium">{{ stats.omdb.percent.toFixed(0) }}%</span>
+          </div>
+          <div class="text-[10px] text-gray-400 mt-1">
+            {{ stats.omdb.matched }} / {{ stats.omdb.total }} movies
           </div>
         </div>
 
@@ -160,7 +166,10 @@
                 :style="{ width: `${stats.posters.percent}%` }"
               />
             </div>
-            <span class="text-xs font-medium">{{ stats.posters.percent.toFixed(0) }}%</span>
+            <span class="text-[10px] font-medium">{{ stats.posters.percent.toFixed(0) }}%</span>
+          </div>
+          <div class="text-[10px] text-gray-400 mt-1">
+            {{ stats.posters.downloaded }} / {{ stats.posters.withPosterUrl }} posters
           </div>
         </div>
       </section>
