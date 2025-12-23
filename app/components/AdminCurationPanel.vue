@@ -30,14 +30,14 @@
           <div
             v-for="source in movie.sources"
             :key="source.url"
-            class="bg-white dark:bg-gray-900 p-3 rounded border border-yellow-100 dark:border-gray-700 mb-2"
+            class="bg-white dark:bg-gray-800/50 p-3 rounded border border-yellow-100 dark:border-gray-700 mb-2"
           >
             <div class="flex items-center gap-2 mb-1">
               <div
                 :class="source.type === 'youtube' ? 'i-mdi-youtube text-red-600' : 'i-mdi-bank text-blue-600'"
                 class="text-lg"
               />
-              <span class="font-medium">{{ source.type }}</span>
+              <span class="font-medium text-gray-900 dark:text-gray-100">{{ source.type }}</span>
             </div>
             <p
               v-if="source.description"
@@ -63,14 +63,14 @@
               v-model.trim="searchTitle"
               type="text"
               placeholder="Movie Title"
-              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm"
               @keyup.enter="handleSearch"
             >
             <input
               v-model.trim="searchYear"
               type="text"
               placeholder="Year"
-              class="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+              class="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm"
               @keyup.enter="handleSearch"
             >
             <button
@@ -97,7 +97,7 @@
                 v-model.trim="imdbIdInput"
                 type="text"
                 placeholder="tt1234567"
-                class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-mono"
+                class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm font-mono"
                 @keyup.enter="handleDirectImdbFetch"
               >
               <button
@@ -151,7 +151,7 @@
           <div
             v-for="result in searchResults"
             :key="result.imdbID"
-            class="flex gap-3 p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-gray-500 transition-colors group"
+            class="flex gap-3 p-2 bg-white dark:bg-gray-800/50 rounded border border-gray-200 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-gray-500 transition-colors group"
           >
             <img
               :src="result.Poster !== 'N/A' ? result.Poster : '/favicon.ico'"
@@ -159,10 +159,10 @@
               alt="Poster"
             >
             <div class="flex-1 min-w-0">
-              <h4 class="font-bold text-sm truncate">
+              <h4 class="font-bold text-sm truncate text-gray-900 dark:text-gray-100">
                 {{ result.Title }}
               </h4>
-              <p class="text-xs text-gray-500">
+              <p class="text-xs text-gray-500 dark:text-gray-400">
                 {{ result.Year }} • {{ result.Type }}
               </p>
               <p class="text-[10px] font-mono text-gray-400">
