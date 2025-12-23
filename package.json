@@ -23,7 +23,8 @@
     "validate:data": "tsx scripts/validate-data.ts",
     "download-posters": "tsx scripts/download-posters.ts",
     "extract-titles": "tsx scripts/extract-titles-ai.ts",
-    "deduplicate": "tsx scripts/deduplicate.ts"
+    "deduplicate": "tsx scripts/deduplicate.ts",
+    "db:generate": "tsx scripts/generate-sqlite.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
@@ -42,6 +43,7 @@
   "dependencies": {
     "@opencode-ai/sdk": "1.0.160",
     "@pinia/nuxt": "0.11.3",
+    "@sqlite.org/sqlite-wasm": "3.51.1-build2",
     "@vueuse/core": "14.1.0",
     "@vueuse/integrations": "14.1.0",
     "@vueuse/nuxt": "14.1.0",
@@ -67,6 +69,7 @@
     "@unocss/preset-web-fonts": "66.5.10",
     "@unocss/preset-wind4": "66.5.10",
     "@unocss/reset": "66.5.10",
+    "better-sqlite3": "12.5.0",
     "eslint": "9.39.2",
     "eslint-plugin-oxlint": "1.33.0",
     "eslint-plugin-vue": "10.6.2",

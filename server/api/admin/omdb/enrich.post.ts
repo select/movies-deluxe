@@ -11,13 +11,18 @@ import {
   saveMoviesDatabase,
   getUnmatchedMovies,
   migrateMovieId,
+  hasFailedOmdbMatch,
+  markFailedOmdbMatch,
+  clearFailedOmdbMatches,
 } from '../../../../scripts/utils/dataManager'
 import { matchMovie } from '../../../../scripts/utils/omdbMatcher'
 import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../../../../shared/types/movie'
+import { emitProgress } from '../../../utils/progress'
 
 interface EnrichmentOptions {
   limit?: number
   onlyUnmatched?: boolean
+  forceRetryFailed?: boolean
 }
 
 interface EnrichmentResult {
@@ -44,7 +49,7 @@ function parseTitle(title: string): { name: string; year?: number } {
 
 export default defineEventHandler(async event => {
   const body = await readBody<EnrichmentOptions>(event)
-  const { limit = 50, onlyUnmatched = true } = body || {}
+  const { limit = 50, onlyUnmatched = true, forceRetryFailed = false } = body || {}
 
   const apiKey = process.env.OMDB_API_KEY
   if (!apiKey) {
@@ -65,6 +70,10 @@ export default defineEventHandler(async event => {
     // Load movies database
     const db = await loadMoviesDatabase()
 
+    if (forceRetryFailed) {
+      clearFailedOmdbMatches(db)
+    }
+
     // Get movies to process
     let moviesToProcess = onlyUnmatched
       ? getUnmatchedMovies(db)
@@ -73,20 +82,36 @@ export default defineEventHandler(async event => {
             typeof entry === 'object' && entry !== null && 'imdbId' in entry
         )
 
+    // Filter out previously failed matches unless forced
+    if (!forceRetryFailed) {
+      moviesToProcess = moviesToProcess.filter(movie => !hasFailedOmdbMatch(db, movie.imdbId))
+    }
+
     // Apply limit
     if (limit) {
       moviesToProcess = moviesToProcess.slice(0, limit)
     }
 
+    const total = moviesToProcess.length
+
     // Process each movie
     for (const movie of moviesToProcess) {
       const oldId = movie.imdbId
+
+      emitProgress({
+        type: 'omdb',
+        status: 'in_progress',
+        message: `Enriching: ${movie.title}`,
+        current: result.processed,
+        total,
+      })
 
       // Validate title
       if (!movie.title || typeof movie.title !== 'string') {
         result.processed++
         result.failed++
         result.errors.push(`Invalid title for ${oldId}`)
+        markFailedOmdbMatch(db, oldId)
         continue
       }
 
@@ -128,6 +153,8 @@ export default defineEventHandler(async event => {
         if (matchResult.confidence === 'none') {
           result.failed++
           result.errors.push(`No match found for: ${movie.title}`)
+          markFailedOmdbMatch(db, oldId)
+          await saveMoviesDatabase(db)
           continue
         }
 
@@ -156,8 +183,23 @@ export default defineEventHandler(async event => {
       }
     }
 
+    emitProgress({
+      type: 'omdb',
+      status: 'completed',
+      current: result.processed,
+      total: result.processed,
+      message: 'OMDB enrichment completed',
+    })
+
     return result
   } catch (error) {
+    emitProgress({
+      type: 'omdb',
+      status: 'error',
+      current: 0,
+      total: 0,
+      message: error instanceof Error ? error.message : 'Enrichment failed',
+    })
     throw createError({
       statusCode: 500,
       message: error instanceof Error ? error.message : 'Enrichment failed',

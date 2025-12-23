@@ -3,6 +3,7 @@ import { loadMoviesDatabase, saveMoviesDatabase, upsertMovie } from '../../../ut
 import { fetchChannelVideos, processYouTubeVideo } from '../../../utils/youtube'
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { emitProgress } from '../../../utils/progress'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -37,9 +38,19 @@ export default defineEventHandler(async event => {
     const channelResult = { id: channelId, processed: 0, added: 0, updated: 0 }
     results.channels.push(channelResult)
 
+    const channelConfig = channelConfigMap.get(channelId)
+    const channelName = channelConfig?.name || channelId
+
     try {
-      const channelConfig = channelConfigMap.get(channelId)
-      const videos = await fetchChannelVideos(youtube, channelId, limit, allPages)
+      const videos = await fetchChannelVideos(youtube, channelId, limit, allPages, progress => {
+        emitProgress({
+          type: 'youtube',
+          status: 'in_progress',
+          message: `[${channelName}] ${progress.message}`,
+          current: results.processed,
+          total: channelsToProcess.length * limit, // Rough estimate
+        })
+      })
 
       for (const video of videos) {
         try {
@@ -56,6 +67,14 @@ export default defineEventHandler(async event => {
             }
             results.processed++
             channelResult.processed++
+
+            emitProgress({
+              type: 'youtube',
+              status: 'in_progress',
+              message: `[${channelName}] Processed: ${entry.title}`,
+              current: results.processed,
+              total: channelsToProcess.length * limit,
+            })
           }
         } catch (e: unknown) {
           results.errors.push(
@@ -72,5 +91,14 @@ export default defineEventHandler(async event => {
   }
 
   await saveMoviesDatabase(db)
+
+  emitProgress({
+    type: 'youtube',
+    status: 'completed',
+    current: results.processed,
+    total: results.processed,
+    message: 'YouTube scrape completed',
+  })
+
   return results
 })

@@ -1,6 +1,7 @@
 import { loadMoviesDatabase } from '../../../utils/movieData'
 import { downloadPoster } from '../../../utils/posterDownloader'
 import type { MovieEntry } from '../../../../shared/types/movie'
+import { emitProgress } from '../../../utils/progress'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -25,9 +26,19 @@ export default defineEventHandler(async event => {
     return posterUrl && posterUrl !== 'N/A'
   })
 
+  const total = Math.min(toProcess.length, limit)
+
   let count = 0
   for (const movie of toProcess) {
     if (count >= limit) break
+
+    emitProgress({
+      type: 'posters',
+      status: 'in_progress',
+      message: `Downloading poster for: ${movie.title}`,
+      current: count,
+      total,
+    })
 
     const posterUrl = movie.metadata?.Poster as string
 
@@ -51,6 +62,14 @@ export default defineEventHandler(async event => {
     // Small delay to be nice to the server
     await new Promise(resolve => setTimeout(resolve, 100))
   }
+
+  emitProgress({
+    type: 'posters',
+    status: 'completed',
+    current: count,
+    total: count,
+    message: 'Poster download completed',
+  })
 
   return results
 })

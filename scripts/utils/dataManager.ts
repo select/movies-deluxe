@@ -70,6 +70,7 @@ function createEmptyDatabase(): MoviesDatabase {
         'Centralized movie database indexed by imdbId. Temporary IDs use format "archive-{identifier}" or "youtube-{videoId}" until OMDB matching succeeds.',
       lastUpdated: new Date().toISOString(),
     },
+    _failedOmdbMatches: [],
   }
 }
 
@@ -330,4 +331,32 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
     year: primary.year || secondary.year,
     lastUpdated: new Date().toISOString(),
   }
+}
+
+/**
+ * Mark a title/ID as failed for OMDB matching
+ */
+export function markFailedOmdbMatch(db: MoviesDatabase, identifier: string): void {
+  if (!db._failedOmdbMatches) {
+    db._failedOmdbMatches = []
+  }
+  if (!db._failedOmdbMatches.includes(identifier)) {
+    db._failedOmdbMatches.push(identifier)
+    db._schema.lastUpdated = new Date().toISOString()
+  }
+}
+
+/**
+ * Check if a title/ID has previously failed OMDB matching
+ */
+export function hasFailedOmdbMatch(db: MoviesDatabase, identifier: string): boolean {
+  return db._failedOmdbMatches?.includes(identifier) || false
+}
+
+/**
+ * Clear failed OMDB matches
+ */
+export function clearFailedOmdbMatches(db: MoviesDatabase): void {
+  db._failedOmdbMatches = []
+  db._schema.lastUpdated = new Date().toISOString()
 }

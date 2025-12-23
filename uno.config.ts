@@ -178,8 +178,6 @@ export default defineConfig({
       },
     },
   },
-  // Enable dark mode with class strategy
-  darkMode: 'class',
   // Safelist to ensure classes are always generated
   safelist: ['font-sans', 'scrollbar-thin', 'scrollbar-default', 'scrollbar-hidden'],
 })
