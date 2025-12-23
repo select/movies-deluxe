@@ -8,7 +8,7 @@ Set up
 
 - pnpm
 - npm config fixed versions
-- linting with eslint,
+- linting with eslint (`@nuxt/eslint`),
 - oxlint (with eslint plugin),
 - type checking,
 - prettier,
@@ -38,7 +38,7 @@ const model = defineModel({ default: 0 })
 - Utils from `app/utils/`
 - Nuxt/Vue built-ins: `ref`, `computed`, `useState`, `useFetch`, etc.
 
-## Pinia auto import
+### Pinia auto import
 
 Set up autoimport for pinia stores, refactor code to not import after setup is complete.
 Example
@@ -54,11 +54,11 @@ export default defineNuxtConfig({
 })
 ```
 
-## UnoCSS
+### UnoCSS
 
 UnoCSS is a CSS framework similar to Tailwind
 
-### Setup
+#### Setup
 
 Nuxt module `@unocss/nuxt`.
 Use packages: `@unocss/preset-web-fonts`, `@unocss/preset-wind4` (important: version 4), `@unocss/reset`, `unocss`
