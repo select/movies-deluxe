@@ -143,19 +143,19 @@ export default defineEventHandler(async event => {
 
       try {
         // Try multiple cleaning strategies for better OMDB matching
-        let matchResult = { confidence: 'none' as const, imdbId: undefined, metadata: undefined }
+        let matchResult: MatchResult = { confidence: MatchConfidence.NONE }
 
         // Strategy 1: Try with general cleaner (handles Archive.org, foreign titles, etc.)
         const cleanedName = cleanTitleGeneral(name)
         matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
 
         // Strategy 2: If cleaned version failed, try original parsed title
-        if (matchResult.confidence === 'none') {
+        if (matchResult.confidence === MatchConfidence.NONE) {
           matchResult = await matchMovie(name, yearToUse, apiKey)
         }
 
         // Strategy 3: If AI title didn't match and we have a fallback, try original title
-        if (matchResult.confidence === 'none' && usingAiTitle) {
+        if (matchResult.confidence === MatchConfidence.NONE && usingAiTitle) {
           const { name: originalName, year: originalYear } = parseTitle(movie.title)
           const originalYearToUse = sourceYear || originalYear
 
@@ -164,14 +164,14 @@ export default defineEventHandler(async event => {
           matchResult = await matchMovie(cleanedOriginalName, originalYearToUse, apiKey)
 
           // Try uncleaned original
-          if (matchResult.confidence === 'none') {
+          if (matchResult.confidence === MatchConfidence.NONE) {
             matchResult = await matchMovie(originalName, originalYearToUse, apiKey)
           }
         }
 
         result.processed++
 
-        if (matchResult.confidence === 'none') {
+        if (matchResult.confidence === MatchConfidence.NONE) {
           result.failed++
           result.errors.push(`No match found for: ${movie.title}`)
           saveFailedOmdbMatch(oldId, movie.title, 'No OMDB match found')

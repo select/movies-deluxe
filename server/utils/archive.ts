@@ -65,7 +65,7 @@ export function extractYear(date?: string): number | undefined {
 export async function processArchiveMovie(
   movie: ArchiveOrgMovie,
   collection: string,
-  options: { skipOmdb: boolean; omdbApiKey?: string }
+  _options: { skipOmdb: boolean; omdbApiKey?: string }
 ): Promise<MovieEntry | null> {
   const year = extractYear(movie.date || movie.year)
 
@@ -81,26 +81,19 @@ export async function processArchiveMovie(
     addedAt: new Date().toISOString(),
   }
 
-  let imdbId: string = generateArchiveId(movie.identifier)
-  let metadata = undefined
-
-  if (!options.skipOmdb && options.omdbApiKey) {
-    const matchResult = await matchMovie(movie.title, year, options.omdbApiKey)
-
-    if (matchResult.confidence !== 'none' && matchResult.imdbId) {
-      imdbId = matchResult.imdbId
-      metadata = matchResult.metadata
-    }
-  }
+  // Always use generated Archive ID - OMDB enrichment is done separately
+  const imdbId: string = generateArchiveId(movie.identifier)
 
   const entry: MovieEntry = {
     imdbId,
-    title: movie.title,
+    title: movie.title, // Store original title
     year,
     sources: [source],
-    metadata,
+    metadata: undefined, // No metadata during scraping
     lastUpdated: new Date().toISOString(),
   }
+
+  console.log(`[Archive] Created movie entry: "${entry.title}"`)
 
   return entry
 }
