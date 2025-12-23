@@ -6,7 +6,6 @@
 import * as fs from 'node:fs'
 import * as https from 'node:https'
 import * as http from 'node:http'
-import { createLogger } from './logger'
 
 const logger = createLogger('ImageDownloader')
 

@@ -1,7 +1,5 @@
 import type { Client } from 'youtubei'
 import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
-import { matchMovie } from './omdb'
-import { cleanTitle } from './titleCleaner'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   let cleanTitle = title
@@ -52,6 +50,7 @@ export async function fetchChannelVideos(
   }
 
   const channel = searchResults.items[0]
+  console.log('got channel', channel)
   if (!channel || !channel.videos) return []
 
   const results = []
