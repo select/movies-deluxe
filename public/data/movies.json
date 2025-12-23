@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Centralized movie database indexed by imdbId. Temporary IDs use format \"archive-{identifier}\" or \"youtube-{videoId}\" until OMDB matching succeeds.",
-    "lastUpdated": "2025-12-23T20:48:19.427Z"
+    "lastUpdated": "2025-12-23T21:01:26.976Z"
   },
   "archive-3stooges": {
     "imdbId": "archive-3stooges",
