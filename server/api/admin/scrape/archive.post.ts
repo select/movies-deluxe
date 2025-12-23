@@ -1,14 +1,6 @@
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const {
-    collections = ['feature_films'],
-    rows = 100,
-    pages = 1,
-    skipOmdb = false,
-    autoDetect = false,
-  } = body
-
-  const omdbApiKey = process.env.OMDB_API_KEY
+  const { collections = ['feature_films'], rows = 100, pages = 1, autoDetect = false } = body
 
   try {
     const db = await loadMoviesDatabase()
@@ -16,9 +8,7 @@ export default defineEventHandler(async event => {
       collections,
       rows,
       pages,
-      skipOmdb,
       autoDetect,
-      omdbApiKey,
       onProgress: progress => {
         emitProgress({
           type: 'archive',

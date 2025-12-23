@@ -30,14 +30,12 @@ export const useAdminStore = defineStore('admin', () => {
   const archiveOptions = reactive<ArchiveOptions>({
     rows: 10,
     pages: 1,
-    skipOmdb: true,
     autoDetect: true,
     collections: ['feature_films'],
   })
 
   const youtubeOptions = reactive<YouTubeOptions>({
     limit: 10,
-    skipOmdb: true,
     allPages: false,
     channels: [],
   })

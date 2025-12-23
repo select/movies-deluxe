@@ -44,7 +44,7 @@
       >
         <div class="flex items-center justify-between text-xs">
           <span class="text-gray-500 truncate mr-2">{{ progress.message }}</span>
-          <span class="font-mono">{{ progress.current }} / {{ progress.total }}</span>
+          <span class="font-mono text-nowrap">{{ progress.current }} / {{ progress.total }}</span>
         </div>
         <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div

@@ -4,9 +4,7 @@ export interface ScrapeOptions {
   collections?: string[]
   rows?: number
   pages?: number
-  skipOmdb?: boolean
   autoDetect?: boolean
-  omdbApiKey?: string
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 }
 
@@ -60,14 +58,7 @@ export async function scrapeArchiveOrg(
   db: MoviesDatabase,
   options: ScrapeOptions
 ): Promise<ScrapeResult> {
-  const {
-    collections = ['feature_films'],
-    rows = 100,
-    pages = 1,
-    skipOmdb = false,
-    autoDetect = false,
-    omdbApiKey,
-  } = options
+  const { collections = ['feature_films'], rows = 100, pages = 1, autoDetect = false } = options
 
   const results: ScrapeResult = {
     processed: 0,
@@ -105,7 +96,7 @@ export async function scrapeArchiveOrg(
 
       for (const movie of movies) {
         try {
-          const entry = await processArchiveMovie(movie, collection, { skipOmdb, omdbApiKey })
+          const entry = await processArchiveMovie(movie, collection)
           if (!entry) {
             results.processed++
             continue

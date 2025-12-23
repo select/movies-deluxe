@@ -70,14 +70,12 @@ export interface PosterResults {
 export interface ArchiveOptions {
   rows: number
   pages: number
-  skipOmdb: boolean
   autoDetect: boolean
   collections: string[]
 }
 
 export interface YouTubeOptions {
   limit: number
-  skipOmdb: boolean
   allPages: boolean
   channels: string[]
 }
