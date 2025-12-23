@@ -36,6 +36,13 @@ export function sortByYear(movies: MovieEntry[], direction: SortDirection): Movi
     if (yearA === 0) return 1
     if (yearB === 0) return -1
 
+    // Tie-breaker: title then imdbId
+    if (yearA === yearB) {
+      const titleCompare = a.title.localeCompare(b.title)
+      if (titleCompare !== 0) return titleCompare
+      return a.imdbId.localeCompare(b.imdbId)
+    }
+
     return direction === 'asc' ? yearA - yearB : yearB - yearA
   })
 }
@@ -53,6 +60,13 @@ export function sortByRating(movies: MovieEntry[], direction: SortDirection): Mo
     if (ratingA === 0) return 1
     if (ratingB === 0) return -1
 
+    // Tie-breaker: title then imdbId
+    if (ratingA === ratingB) {
+      const titleCompare = a.title.localeCompare(b.title)
+      if (titleCompare !== 0) return titleCompare
+      return a.imdbId.localeCompare(b.imdbId)
+    }
+
     return direction === 'asc' ? ratingA - ratingB : ratingB - ratingA
   })
 }
@@ -66,7 +80,8 @@ export function sortByTitle(movies: MovieEntry[], direction: SortDirection): Mov
     const titleB = b.title.toLowerCase()
 
     const comparison = titleA.localeCompare(titleB)
-    return direction === 'asc' ? comparison : -comparison
+    if (comparison !== 0) return direction === 'asc' ? comparison : -comparison
+    return a.imdbId.localeCompare(b.imdbId)
   })
 }
 
@@ -82,6 +97,13 @@ export function sortByVotes(movies: MovieEntry[], direction: SortDirection): Mov
     if (votesA === 0 && votesB === 0) return 0
     if (votesA === 0) return 1
     if (votesB === 0) return -1
+
+    // Tie-breaker: title then imdbId
+    if (votesA === votesB) {
+      const titleCompare = a.title.localeCompare(b.title)
+      if (titleCompare !== 0) return titleCompare
+      return a.imdbId.localeCompare(b.imdbId)
+    }
 
     return direction === 'asc' ? votesA - votesB : votesB - votesA
   })
