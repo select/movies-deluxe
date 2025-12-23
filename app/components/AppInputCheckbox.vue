@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-undef */
+ 
 interface Props {
   checked: boolean
   value?: string | number | boolean

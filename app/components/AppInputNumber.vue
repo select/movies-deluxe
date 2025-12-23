@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-undef */
+ 
 withDefaults(
   defineProps<{
     modelValue: number

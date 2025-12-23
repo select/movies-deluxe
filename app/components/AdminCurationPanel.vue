@@ -193,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-undef */
+ 
 import type { MovieEntry, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
 
 interface UpdateResponse {

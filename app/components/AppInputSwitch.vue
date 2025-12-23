@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-undef */
+ 
 withDefaults(
   defineProps<{
     checked: boolean
