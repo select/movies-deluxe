@@ -78,7 +78,14 @@ export async function fetchChannelVideos(
 
     for (const video of videoList) {
       if (!allPages && count >= limit) break
-      const title = video.title || ''
+
+      // Defensive: Skip videos with missing critical data
+      if (!video || !video.id || !video.title) {
+        console.warn('Skipping video with missing data:', { id: video?.id, title: video?.title })
+        continue
+      }
+
+      const title = video.title
 
       const progressMsg = `Checking: ${title}`
       onProgress?.({ current: count, total: allPages ? 0 : limit, message: progressMsg })
@@ -96,22 +103,35 @@ export async function fetchChannelVideos(
       const duration = video.duration || 0
       if (duration < 40 * 60) continue
 
-      const fullVideo = await youtube.getVideo(video.id || '')
-      results.push({
-        id: video.id,
-        title,
-        description: fullVideo?.description || '',
-        publishedAt: video.uploadDate || '',
-        channelName: channel.name || '',
-        channelId: channel.id || '',
-        thumbnails: {
-          high:
-            video.thumbnails?.[2]?.url || video.thumbnails?.[1]?.url || video.thumbnails?.[0]?.url,
-        },
-        duration,
-        viewCount: video.viewCount || 0,
-      })
-      count++
+      try {
+        const fullVideo = await youtube.getVideo(video.id)
+
+        // Safely extract thumbnail URL
+        let thumbnailUrl: string | undefined
+        if (video.thumbnails && Array.isArray(video.thumbnails)) {
+          thumbnailUrl =
+            video.thumbnails[2]?.url || video.thumbnails[1]?.url || video.thumbnails[0]?.url
+        }
+
+        results.push({
+          id: video.id,
+          title,
+          description: fullVideo?.description || '',
+          publishedAt: video.uploadDate || '',
+          channelName: channel.name || '',
+          channelId: channel.id || '',
+          thumbnails: {
+            high: thumbnailUrl,
+          },
+          duration,
+          viewCount: video.viewCount || 0,
+        })
+        count++
+      } catch (error) {
+        console.error(`Failed to fetch video ${video.id}:`, error)
+        // Continue with next video instead of failing entire scrape
+      }
+
       await new Promise(resolve => setTimeout(resolve, 200))
     }
   }
