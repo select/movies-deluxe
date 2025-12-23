@@ -2,8 +2,9 @@ import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import oxlint from 'eslint-plugin-oxlint'
+import withNuxt from './.nuxt/eslint.config.mjs'
 
-export default tseslint.config(
+export default withNuxt(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
@@ -15,40 +16,6 @@ export default tseslint.config(
         parser: tseslint.parser,
         ecmaVersion: 'latest',
         sourceType: 'module',
-      },
-      globals: {
-        // Nuxt auto-imports - Stores (from app/stores/)
-        useMovieStore: 'readonly',
-        useFilterStore: 'readonly',
-        useWatchlistStore: 'readonly',
-        useAdminStore: 'readonly',
-        // Nuxt auto-imports - Utils (from app/utils/)
-        getLanguageCode: 'readonly',
-        formatVotes: 'readonly',
-        isLocalhost: 'readonly',
-        SORT_OPTIONS: 'readonly',
-        sortByYear: 'readonly',
-        sortByRating: 'readonly',
-        sortByTitle: 'readonly',
-        sortByVotes: 'readonly',
-        sortMovies: 'readonly',
-        findSortOption: 'readonly',
-        // Nuxt auto-imports - Vue/Nuxt composables
-        ref: 'readonly',
-        computed: 'readonly',
-        onMounted: 'readonly',
-        onUnmounted: 'readonly',
-        watch: 'readonly',
-        // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        setTimeout: 'readonly',
-        localStorage: 'readonly',
-        Event: 'readonly',
-        KeyboardEvent: 'readonly',
-        HTMLImageElement: 'readonly',
-        HTMLElement: 'readonly',
-        IntersectionObserver: 'readonly',
       },
     },
   },

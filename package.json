@@ -62,6 +62,7 @@
     "@iconify-json/carbon": "1.2.15",
     "@iconify-json/material-symbols-light": "1.2.50",
     "@iconify-json/mdi": "1.2.3",
+    "@nuxt/eslint": "1.12.1",
     "@types/node": "25.0.2",
     "@typescript-eslint/eslint-plugin": "8.50.0",
     "@typescript-eslint/parser": "8.50.0",
