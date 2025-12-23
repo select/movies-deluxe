@@ -16,14 +16,6 @@
     "format:check": "prettier --check .",
     "typecheck": "nuxt typecheck",
     "typecheck:watch": "nuxt typecheck --watch",
-    "scrape:archive": "tsx scripts/scrape-archive.ts",
-    "scrape:youtube": "tsx scripts/scrape-youtube.ts",
-    "scrape:all": "pnpm scrape:archive && pnpm scrape:youtube",
-    "enrich:omdb": "tsx scripts/enrich-omdb.ts",
-    "validate:data": "tsx scripts/validate-data.ts",
-    "download-posters": "tsx scripts/download-posters.ts",
-    "extract-titles": "tsx scripts/extract-titles-ai.ts",
-    "deduplicate": "tsx scripts/deduplicate.ts",
     "db:generate": "tsx scripts/generate-sqlite.ts"
   },
   "simple-git-hooks": {
