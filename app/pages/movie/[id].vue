@@ -562,12 +562,12 @@
 import type { MovieEntry, ArchiveOrgSource } from '~/types'
 
 // Nuxt auto-imports
-// eslint-disable-next-line no-undef
+ 
 const route = useRoute()
 const movieStore = useMovieStore()
-// eslint-disable-next-line no-undef
+ 
 const filterStore = useFilterStore()
-// eslint-disable-next-line no-undef
+ 
 const watchlistStore = useWatchlistStore()
 
 // Dark mode state (sync with localStorage)
@@ -730,7 +730,7 @@ const setupKeyboardNavigation = () => {
     switch (event.key) {
       case 'Escape':
         // Go back to home
-        // eslint-disable-next-line no-undef
+         
         navigateTo('/')
         break
 
@@ -777,23 +777,23 @@ const navigateToPrevMovie = () => {
   if (!currentId) return
 
   const movies = filterStore.filteredAndSortedMovies
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Previous - Total filtered movies:', movies.length)
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Previous - Current ID from route:', currentId)
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Previous - First 5 movies:', movies.slice(0, 5).map(m => `${m.title} (${m.year})`))
   
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Previous - Current index:', currentIndex)
   
   if (currentIndex > 0) {
     const prevMovie = movies[currentIndex - 1]
     if (prevMovie) {
-      // eslint-disable-next-line no-console, no-undef
+      // eslint-disable-next-line no-console
       console.log('[NAV] Previous - Navigating to:', prevMovie.title, prevMovie.imdbId)
-      // eslint-disable-next-line no-undef
+       
       navigateTo(`/movie/${prevMovie.imdbId}`)
     }
   }
@@ -806,23 +806,23 @@ const navigateToNextMovie = () => {
   if (!currentId) return
 
   const movies = filterStore.filteredAndSortedMovies
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Next - Total filtered movies:', movies.length)
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Next - Current ID from route:', currentId)
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Next - First 5 movies:', movies.slice(0, 5).map(m => `${m.title} (${m.year})`))
   
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('[NAV] Next - Current index:', currentIndex)
   
   if (currentIndex !== -1 && currentIndex < movies.length - 1) {
     const nextMovie = movies[currentIndex + 1]
     if (nextMovie) {
-      // eslint-disable-next-line no-console, no-undef
+      // eslint-disable-next-line no-console
       console.log('[NAV] Next - Navigating to:', nextMovie.title, nextMovie.imdbId)
-      // eslint-disable-next-line no-undef
+       
       navigateTo(`/movie/${nextMovie.imdbId}`)
     }
   }
@@ -835,7 +835,7 @@ const handleMovieUpdated = async (newId: string) => {
 
   // If ID changed, navigate to new URL
   if (newId !== movie.value?.imdbId) {
-    // eslint-disable-next-line no-undef
+     
     await navigateTo(`/movie/${newId}`)
     // The watcher on route.params.id will handle loading the new movie data
   } else {
@@ -855,7 +855,7 @@ const updateMetaTags = (movie: MovieEntry) => {
   const poster = movie.metadata?.Poster || '/favicon.ico'
   const url = `https://movies-deluxe.app/movie/${movie.imdbId}`
 
-  // eslint-disable-next-line no-undef
+   
   useHead({
     title,
     meta: [
@@ -938,10 +938,10 @@ const shareMovie = async () => {
   const url = `${window.location.origin}/movie/${movie.value.imdbId}`
 
   // Try Web Share API first (mobile and some desktop browsers)
-  // eslint-disable-next-line no-undef
+   
   if (navigator.share) {
     try {
-      // eslint-disable-next-line no-undef
+       
       await navigator.share({
         title,
         text,
@@ -951,7 +951,7 @@ const shareMovie = async () => {
     } catch (err) {
       // User cancelled or error occurred
       if ((err as Error).name !== 'AbortError') {
-        // eslint-disable-next-line no-undef, no-console
+        // eslint-disable-next-line no-console
         console.error('Share failed:', err)
         fallbackCopyToClipboard(url)
       }
@@ -965,11 +965,11 @@ const shareMovie = async () => {
 // Fallback: Copy to clipboard
 const fallbackCopyToClipboard = async (url: string) => {
   try {
-    // eslint-disable-next-line no-undef
+     
     await navigator.clipboard.writeText(url)
     showToast('Link copied to clipboard!')
   } catch (err) {
-    // eslint-disable-next-line no-undef, no-console
+    // eslint-disable-next-line no-console
     console.error('Copy failed:', err)
     showToast('Failed to copy link')
   }
@@ -1001,7 +1001,7 @@ const handlePosterError = (event: Event) => {
  */
 const getYouTubeEmbedUrl = (url: string): string => {
   try {
-    // eslint-disable-next-line no-undef
+     
     const urlObj = new URL(url)
 
     // Handle youtu.be short links
@@ -1044,7 +1044,7 @@ const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
 
   // Try to extract identifier from URL
   try {
-    // eslint-disable-next-line no-undef
+     
     const url = new URL(source.url)
     const pathParts = url.pathname.split('/').filter(Boolean)
 

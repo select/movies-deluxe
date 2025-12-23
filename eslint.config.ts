@@ -1,22 +1,9 @@
-import tseslint from 'typescript-eslint'
-import pluginVue from 'eslint-plugin-vue'
 import oxlint from 'eslint-plugin-oxlint'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
-  ...tseslint.configs.recommended,
-  ...pluginVue.configs['flat/recommended'],
   oxlint.configs['flat/recommended'],
-  {
-    files: ['**/*.vue'],
-    languageOptions: {
-      parserOptions: {
-        parser: tseslint.parser,
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-      },
-    },
-  },
+
   {
     rules: {
       // TypeScript rules
@@ -28,6 +15,7 @@ export default withNuxt(
         },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-dynamic-delete': 'off', // Allow delete with dynamic keys
 
       // Vue rules
       'vue/multi-word-component-names': 'off',

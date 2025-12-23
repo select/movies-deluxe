@@ -1,4 +1,4 @@
-import { Client } from 'youtubei'
+import type { Client } from 'youtubei'
 import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
 import { matchMovie } from './omdb'
 
