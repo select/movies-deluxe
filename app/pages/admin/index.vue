@@ -182,8 +182,17 @@
             <div class="text-xl font-bold">
               {{ channel.scraped }}
             </div>
-            <div class="text-xs text-gray-500">
-              movies scraped
+            <div class="mt-1 flex items-center gap-2">
+              <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-red-500 transition-all duration-1000"
+                  :style="{ width: `${channel.total > 0 ? (channel.scraped / channel.total) * 100 : 0}%` }"
+                />
+              </div>
+              <span class="text-[10px] font-medium">{{ channel.total > 0 ? ((channel.scraped / channel.total) * 100).toFixed(0) : 0 }}%</span>
+            </div>
+            <div class="text-[10px] text-gray-500 mt-1">
+              {{ channel.scraped }} / {{ channel.total || '?' }} videos
             </div>
           </div>
         </div>
@@ -625,6 +634,7 @@ interface ScrapeStats {
     missing: number
     percent: number
   }
+  lastUpdated?: string
 }
 
 interface ScrapeResults {
@@ -690,7 +700,16 @@ const omdbOptions = reactive({
 onMounted(async () => {
   isDev.value = isLocalhost()
   if (isDev.value) {
-    await refreshStats()
+    // Try to load initial stats from static file
+    try {
+      const initialStats = await $fetch<ScrapeStats>('/data/stats.json')
+      if (initialStats) {
+        stats.value = initialStats
+      }
+    } catch {
+      // Fallback to API if file doesn't exist yet
+      await refreshStats()
+    }
     await loadYouTubeChannels()
   }
 })

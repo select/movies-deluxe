@@ -1,10 +1,13 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { Client } from 'youtubei'
+import { loadMoviesDatabase, getDatabaseStats } from '../../../utils/movieData'
 import type { MovieEntry, YouTubeSource } from '../../../../shared/types/movie'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
   const dbStats = getDatabaseStats(db)
+  const youtube = new Client()
 
   // Load channel configs
   const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
@@ -28,18 +31,46 @@ export default defineEventHandler(async _event => {
     console.error('Failed to fetch Archive.org total', e)
   }
 
+  // Fetch YouTube totals
+  const youtubeChannelStats = await Promise.all(
+    channelConfigs.map(async config => {
+      let total = 0
+      try {
+        const searchQuery = config.id.startsWith('@') ? config.id.slice(1) : config.id
+        const searchResults = await youtube.search(searchQuery, { type: 'channel' })
+        const channelResult = searchResults.items[0]
+        if (channelResult) {
+          const channel = await (youtube as any).getChannel(channelResult.id)
+          if (channel) {
+            const countStr = ((channel as any).videoCount as string) || ''
+            // Parse "2.8K videos" or "150 videos" or "1,234 videos"
+            const match = countStr.replace(/,/g, '').match(/([\d.]+)\s*([KM])?/)
+            if (match && match[1]) {
+              total = parseFloat(match[1])
+              if (match[2] === 'K') total *= 1000
+              if (match[2] === 'M') total *= 1000000
+              total = Math.floor(total)
+            }
+          }
+        }
+      } catch (e) {
+        console.error(`Failed to fetch total for channel ${config.id}`, e)
+      }
+
+      return {
+        id: config.id,
+        name: config.name,
+        enabled: config.enabled,
+        scraped: 0,
+        total,
+      }
+    })
+  )
+
   // Poster stats and YouTube channel stats
   const entries = Object.values(db).filter(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
   )
-
-  const youtubeChannelStats = channelConfigs.map(config => ({
-    id: config.id,
-    name: config.name,
-    enabled: config.enabled,
-    scraped: 0,
-    total: 0, // We don't have total per channel easily without extra API calls
-  }))
 
   const postersDir = join(process.cwd(), 'public/posters')
   let totalWithPosterUrl = 0
@@ -71,7 +102,7 @@ export default defineEventHandler(async _event => {
     })
   })
 
-  return {
+  const stats = {
     database: dbStats,
     external: {
       archiveOrg: {
@@ -101,5 +132,19 @@ export default defineEventHandler(async _event => {
       missing: totalWithPosterUrl - totalDownloaded,
       percent: totalWithPosterUrl > 0 ? (totalDownloaded / totalWithPosterUrl) * 100 : 0,
     },
+    lastUpdated: new Date().toISOString(),
   }
+
+  // Save to public/data/stats.json
+  try {
+    const dataDir = resolve(process.cwd(), 'public/data')
+    if (!existsSync(dataDir)) {
+      mkdirSync(dataDir, { recursive: true })
+    }
+    writeFileSync(join(dataDir, 'stats.json'), JSON.stringify(stats, null, 2))
+  } catch (e) {
+    console.error('Failed to save stats.json', e)
+  }
+
+  return stats
 })
