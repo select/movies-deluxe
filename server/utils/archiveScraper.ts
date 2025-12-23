@@ -9,6 +9,7 @@ export interface ScrapeOptions {
   skipOmdb?: boolean
   autoDetect?: boolean
   omdbApiKey?: string
+  onProgress?: (progress: { current: number; total: number; message: string }) => void
 }
 
 export interface ScrapeResult {
@@ -86,8 +87,16 @@ export async function scrapeArchiveOrg(
 
     // Scrape the requested pages
     let currentCursor: string | undefined = undefined
+    const totalItemsToProcess = pages * rows
     for (let p = 0; p < pages; p++) {
-      results.debug.push(`Fetching page ${p + 1} (cursor: ${currentCursor || 'start'})`)
+      const pageMsg = `Fetching page ${p + 1} (cursor: ${currentCursor || 'start'})`
+      results.debug.push(pageMsg)
+      options.onProgress?.({
+        current: results.processed,
+        total: totalItemsToProcess,
+        message: pageMsg,
+      })
+
       const response = await fetchArchiveOrgMovies(collection, rows, currentCursor)
       const movies = response.items
 
@@ -99,7 +108,10 @@ export async function scrapeArchiveOrg(
       for (const movie of movies) {
         try {
           const entry = await processArchiveMovie(movie, collection, { skipOmdb, omdbApiKey })
-          if (!entry) continue
+          if (!entry) {
+            results.processed++
+            continue
+          }
 
           const existing = db[entry.imdbId] as MovieEntry | undefined
           const existingSource = existing?.sources?.find(
@@ -111,6 +123,13 @@ export async function scrapeArchiveOrg(
 
           upsertMovie(db, entry.imdbId, entry)
           results.processed++
+
+          const progressMsg = `Processing: ${movie.title}`
+          options.onProgress?.({
+            current: results.processed,
+            total: totalItemsToProcess,
+            message: progressMsg,
+          })
 
           if (!existing) {
             results.added++
@@ -125,6 +144,7 @@ export async function scrapeArchiveOrg(
           const errorMsg = `Failed to process ${movie.title}: ${e instanceof Error ? e.message : String(e)}`
           results.errors.push(errorMsg)
           results.debug.push(`❌ ${errorMsg}`)
+          results.processed++
         }
       }
 

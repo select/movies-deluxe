@@ -169,7 +169,8 @@ export async function fetchChannelVideos(
   youtube: Client,
   channelIdentifier: string,
   limit: number,
-  allPages: boolean = false
+  allPages: boolean = false,
+  onProgress?: (progress: { current: number; total: number; message: string }) => void
 ) {
   const searchQuery = channelIdentifier.startsWith('@')
     ? channelIdentifier.slice(1)
@@ -197,6 +198,10 @@ export async function fetchChannelVideos(
     for (const video of videoList) {
       if (!allPages && count >= limit) break
       const title = video.title || ''
+
+      const progressMsg = `Checking: ${title}`
+      onProgress?.({ current: count, total: allPages ? 0 : limit, message: progressMsg })
+
       if (
         title.toLowerCase().includes('#shorts') ||
         title.toLowerCase().includes('trailer') ||

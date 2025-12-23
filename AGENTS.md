@@ -423,15 +423,10 @@ For more details, see https://www.conventionalcommits.org/
 - `stores/` - Pinia stores (auto-imported, prefix with `use`)
 - `utils/` - Utility functions (auto-imported)
 - `assets/` - Processed assets (CSS, images)
-
-**`public/`** - Static files served at root (no processing)
-
-- `posters/` - Movie poster images (57 files)
-- `data/movies.json` - Static movie database
-
-**`types/`** - Shared TypeScript types (auto-imported)
-
-**`scripts/`** - Node.js scripts (NOT part of Nuxt build)
+- `types/` - Frotnend TypeScript types (`~/types`)
+- `shared/types/` - TypeScript types that are used on server and frontend (`~/types`)
+  **`public/`** - Static files served at root (no processing)
+  **`scripts/`** - Node.js scripts (NOT part of Nuxt build)
 
 - Run via `pnpm tsx scripts/<name>.ts`
 - Scripts write directly to `public/data/movies.json`
