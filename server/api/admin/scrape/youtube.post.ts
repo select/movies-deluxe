@@ -4,14 +4,21 @@ import { readFileSync } from 'node:fs'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const { channels, limit = 50, allPages = false } = body
+  const { channels } = body
 
   const results = {
     processed: 0,
     added: 0,
     updated: 0,
+    skipped: 0,
     errors: [] as string[],
-    channels: [] as Array<{ id: string; processed: number; added: number; updated: number }>,
+    channels: [] as Array<{
+      id: string
+      processed: number
+      added: number
+      updated: number
+      skipped: number
+    }>,
   }
 
   const db = await loadMoviesDatabase()
@@ -31,54 +38,51 @@ export default defineEventHandler(async event => {
   const channelsToProcess = channels || channelConfigs.filter(c => c.enabled).map(c => c.id)
 
   for (const channelId of channelsToProcess) {
-    const channelResult = { id: channelId, processed: 0, added: 0, updated: 0 }
+    const channelResult = { id: channelId, processed: 0, added: 0, updated: 0, skipped: 0 }
     results.channels.push(channelResult)
 
     const channelConfig = channelConfigMap.get(channelId)
     const channelName = channelConfig?.name || channelId
 
     try {
-      const videos = await fetchChannelVideos(youtube, channelId, limit, allPages, progress => {
-        emitProgress({
-          type: 'youtube',
-          status: 'in_progress',
-          message: `[${channelName}] ${progress.message}`,
-          current: results.processed,
-          total: channelsToProcess.length * limit, // Rough estimate
-        })
-      })
+      // Get total video count for progress tracking
+      const totalVideos = await getChannelVideoCount(youtube, channelId)
 
-      for (const video of videos) {
-        try {
-          const entry = await processYouTubeVideo(video, channelConfig)
-          if (entry) {
-            const existing = db[entry.imdbId]
-            upsertMovie(db, entry.imdbId, entry)
-            if (existing) {
-              results.updated++
-              channelResult.updated++
-            } else {
+      await fetchChannelVideos(
+        youtube,
+        channelId,
+        db,
+        channelConfig,
+        async (video, isNew) => {
+          // Process callback - called for each video after page is fetched
+          if (isNew) {
+            if (isNew === 'added') {
               results.added++
               channelResult.added++
+            } else {
+              results.updated++
+              channelResult.updated++
             }
-            results.processed++
-            channelResult.processed++
-
-            emitProgress({
-              type: 'youtube',
-              status: 'in_progress',
-              message: `[${channelName}] Processed: ${entry.title}`,
-              current: results.processed,
-              total: channelsToProcess.length * limit,
-            })
+          } else {
+            results.skipped++
+            channelResult.skipped++
           }
-        } catch (e: unknown) {
-          results.errors.push(
-            `Failed to process ${video.title}: ${e instanceof Error ? e.message : String(e)}`
-          )
+          results.processed++
+          channelResult.processed++
+
+          emitProgress({
+            type: 'youtube',
+            status: 'in_progress',
+            message: `[${channelName}] ${video.title}`,
+            current: results.processed,
+            total: totalVideos || results.processed,
+          })
+        },
+        async () => {
+          // Save callback - called after each page
+          await saveMoviesDatabase(db)
         }
-        await new Promise(resolve => setTimeout(resolve, 500))
-      }
+      )
     } catch (e: unknown) {
       results.errors.push(
         `Failed to process channel ${channelId}: ${e instanceof Error ? e.message : String(e)}`

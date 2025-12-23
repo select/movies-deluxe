@@ -36,8 +36,13 @@ export function parseMovieTitle(title: string): { title: string; year?: number }
 export async function fetchChannelVideos(
   youtube: Client,
   channelIdentifier: string,
-  limit: number,
-  allPages: boolean = false,
+  db: any, // MoviesDatabase
+  channelConfig: { id: string; language?: string } | undefined,
+  onVideoProcessed: (
+    video: { id: string; title: string },
+    result: 'added' | 'updated' | 'skipped'
+  ) => Promise<void>,
+  onPageComplete: () => Promise<void>,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 ) {
   let channel
@@ -48,28 +53,29 @@ export async function fetchChannelVideos(
     if (!channel) {
       throw new Error(`Channel not found: ${channelIdentifier}`)
     }
-  } else {
-    // For handles (@username) or search terms, use search
-    const searchQuery = channelIdentifier.startsWith('@')
-      ? channelIdentifier.slice(1)
-      : channelIdentifier
-
-    const searchResults = await youtube.search(searchQuery, { type: 'channel' })
-    if (!searchResults.items || searchResults.items.length === 0) {
-      throw new Error(`Channel not found: ${channelIdentifier}`)
-    }
-
-    channel = searchResults.items[0]
   }
 
   console.log('got channel', channel)
-  if (!channel || !channel.videos) return []
+  if (!channel || !channel.videos) return
 
-  const results = []
+  // Build set of already scraped video IDs for this channel
+  const existingVideoIds = new Set<string>()
+  for (const [key, entry] of Object.entries(db)) {
+    if (key.startsWith('_')) continue
+    const movieEntry = entry as any
+    for (const source of movieEntry.sources || []) {
+      if (source.type === 'youtube' && source.channelId === channelIdentifier) {
+        existingVideoIds.add(source.videoId)
+      }
+    }
+  }
+
+  console.log(`Found ${existingVideoIds.size} already scraped videos from this channel`)
+
   let count = 0
   let hasMore = true
 
-  while (hasMore && (allPages || count < limit)) {
+  while (hasMore) {
     const videoList = await channel.videos.next()
     if (!videoList || videoList.length === 0) {
       hasMore = false
@@ -77,8 +83,6 @@ export async function fetchChannelVideos(
     }
 
     for (const video of videoList) {
-      if (!allPages && count >= limit) break
-
       // Defensive: Skip videos with missing critical data
       if (!video || !video.id || !video.title) {
         console.warn('Skipping video with missing data:', { id: video?.id, title: video?.title })
@@ -88,8 +92,16 @@ export async function fetchChannelVideos(
       const title = video.title
 
       const progressMsg = `Checking: ${title}`
-      onProgress?.({ current: count, total: allPages ? 0 : limit, message: progressMsg })
+      onProgress?.({ current: count, total: 0, message: progressMsg })
 
+      // Skip if already scraped
+      if (existingVideoIds.has(video.id)) {
+        await onVideoProcessed({ id: video.id, title }, null as any)
+        count++
+        continue
+      }
+
+      // Filter out shorts, trailers, clips
       if (
         title.toLowerCase().includes('#shorts') ||
         title.toLowerCase().includes('trailer') ||
@@ -100,6 +112,7 @@ export async function fetchChannelVideos(
         continue
       }
 
+      // Filter by duration (minimum 40 minutes)
       const duration = video.duration || 0
       if (duration < 40 * 60) continue
 
@@ -113,7 +126,7 @@ export async function fetchChannelVideos(
             video.thumbnails[2]?.url || video.thumbnails[1]?.url || video.thumbnails[0]?.url
         }
 
-        results.push({
+        const videoData = {
           id: video.id,
           title,
           description: fullVideo?.description || '',
@@ -125,7 +138,20 @@ export async function fetchChannelVideos(
           },
           duration,
           viewCount: video.viewCount || 0,
-        })
+        }
+
+        // Process video into movie entry
+        const movieEntry = await processYouTubeVideo(videoData, channelConfig)
+        if (movieEntry) {
+          const existing = db[movieEntry.imdbId]
+          const { upsertMovie } = await import('./movieData')
+          upsertMovie(db, movieEntry.imdbId, movieEntry)
+
+          const result = existing ? 'updated' : 'added'
+          await onVideoProcessed({ id: video.id, title }, result)
+          existingVideoIds.add(video.id)
+        }
+
         count++
       } catch (error) {
         console.error(`Failed to fetch video ${video.id}:`, error)
@@ -134,9 +160,10 @@ export async function fetchChannelVideos(
 
       await new Promise(resolve => setTimeout(resolve, 200))
     }
-  }
 
-  return results
+    // Save after each page
+    await onPageComplete()
+  }
 }
 
 export async function getChannelVideoCount(
