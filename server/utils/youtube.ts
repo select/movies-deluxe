@@ -40,16 +40,28 @@ export async function fetchChannelVideos(
   allPages: boolean = false,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 ) {
-  const searchQuery = channelIdentifier.startsWith('@')
-    ? channelIdentifier.slice(1)
-    : channelIdentifier
+  let channel
 
-  const searchResults = await youtube.search(searchQuery, { type: 'channel' })
-  if (!searchResults.items || searchResults.items.length === 0) {
-    throw new Error(`Channel not found: ${channelIdentifier}`)
+  // If it's a channel ID (starts with UC), use getChannel() directly
+  if (channelIdentifier.startsWith('UC')) {
+    channel = await youtube.getChannel(channelIdentifier)
+    if (!channel) {
+      throw new Error(`Channel not found: ${channelIdentifier}`)
+    }
+  } else {
+    // For handles (@username) or search terms, use search
+    const searchQuery = channelIdentifier.startsWith('@')
+      ? channelIdentifier.slice(1)
+      : channelIdentifier
+
+    const searchResults = await youtube.search(searchQuery, { type: 'channel' })
+    if (!searchResults.items || searchResults.items.length === 0) {
+      throw new Error(`Channel not found: ${channelIdentifier}`)
+    }
+
+    channel = searchResults.items[0]
   }
 
-  const channel = searchResults.items[0]
   console.log('got channel', channel)
   if (!channel || !channel.videos) return []
 
