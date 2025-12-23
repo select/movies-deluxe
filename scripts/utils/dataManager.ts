@@ -219,15 +219,20 @@ export function findPotentialDuplicates(
 
   for (let i = 0; i < entries.length; i++) {
     for (let j = i + 1; j < entries.length; j++) {
-      const title1 = entries[i].title.toLowerCase()
-      const title2 = entries[j].title.toLowerCase()
+      const entryI = entries[i]
+      const entryJ = entries[j]
+
+      if (!entryI || !entryJ) continue
+
+      const title1 = entryI.title.toLowerCase()
+      const title2 = entryJ.title.toLowerCase()
 
       // Simple similarity check (can be improved with Levenshtein distance)
       const similarity = calculateSimilarity(title1, title2)
 
       if (similarity >= threshold) {
         duplicates.push({
-          entries: [entries[i], entries[j]],
+          entries: [entryI, entryJ],
           similarity,
         })
       }
@@ -241,6 +246,7 @@ export function findPotentialDuplicates(
  * Calculate simple similarity between two strings
  */
 function calculateSimilarity(str1: string, str2: string): number {
+  if (!str1 || !str2) return 0
   const longer = str1.length > str2.length ? str1 : str2
   const shorter = str1.length > str2.length ? str2 : str1
 
@@ -254,6 +260,7 @@ function calculateSimilarity(str1: string, str2: string): number {
  * Calculate edit distance (Levenshtein distance)
  */
 function getEditDistance(str1: string, str2: string): number {
+  if (!str1 || !str2) return Math.max(str1?.length || 0, str2?.length || 0)
   const costs: number[] = []
   for (let i = 0; i <= str1.length; i++) {
     let lastValue = i
@@ -261,9 +268,9 @@ function getEditDistance(str1: string, str2: string): number {
       if (i === 0) {
         costs[j] = j
       } else if (j > 0) {
-        let newValue = costs[j - 1]
+        let newValue = costs[j - 1] as number
         if (str1.charAt(i - 1) !== str2.charAt(j - 1)) {
-          newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1
+          newValue = Math.min(Math.min(newValue, lastValue), costs[j] as number) + 1
         }
         costs[j - 1] = lastValue
         lastValue = newValue
@@ -273,7 +280,7 @@ function getEditDistance(str1: string, str2: string): number {
       costs[str2.length] = lastValue
     }
   }
-  return costs[str2.length]
+  return costs[str2.length] as number
 }
 
 /**

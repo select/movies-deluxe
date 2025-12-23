@@ -89,7 +89,9 @@ export const useMovieStore = defineStore('movie', () => {
    * @returns Filtered array of movies
    */
   const filterBySource = (sourceType: MovieSourceType): MovieEntry[] => {
-    return movies.value.filter(movie => movie.sources.some(source => source.type === sourceType))
+    return movies.value.filter((movie: MovieEntry) =>
+      movie.sources.some((source: MovieSource) => source.type === sourceType)
+    )
   }
 
   /**
@@ -107,7 +109,7 @@ export const useMovieStore = defineStore('movie', () => {
 
     // Fallback to simple search if Fuse is not initialized
     const lowerQuery = query.toLowerCase()
-    return movies.value.filter(movie => {
+    return movies.value.filter((movie: MovieEntry) => {
       // Search in title
       if (movie.title.toLowerCase().includes(lowerQuery)) return true
 
@@ -136,7 +138,7 @@ export const useMovieStore = defineStore('movie', () => {
    * @returns Movie entry or undefined
    */
   const getMovieById = (imdbId: string): MovieEntry | undefined => {
-    return movies.value.find(movie => movie.imdbId === imdbId)
+    return movies.value.find((movie: MovieEntry) => movie.imdbId === imdbId)
   }
 
   /**
@@ -144,7 +146,7 @@ export const useMovieStore = defineStore('movie', () => {
    * @returns Array of movies with metadata
    */
   const getEnrichedMovies = (): MovieEntry[] => {
-    return movies.value.filter(movie => movie.metadata !== undefined)
+    return movies.value.filter((movie: MovieEntry) => movie.metadata !== undefined)
   }
 
   /**
@@ -152,7 +154,7 @@ export const useMovieStore = defineStore('movie', () => {
    * @returns Array of movies without metadata
    */
   const getUnenrichedMovies = (): MovieEntry[] => {
-    return movies.value.filter(movie => movie.metadata === undefined)
+    return movies.value.filter((movie: MovieEntry) => movie.metadata === undefined)
   }
 
   /**
@@ -263,7 +265,7 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
     return movie.sources.reduce(
-      (grouped, source) => {
+      (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
         grouped[source.type].push(source)
         return grouped
       },
@@ -283,10 +285,10 @@ export const useMovieStore = defineStore('movie', () => {
     if (movie.sources.length === 0) return undefined
 
     // Prefer archive.org sources (usually higher quality)
-    const archiveSources = movie.sources.filter(s => s.type === 'archive.org')
+    const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
     if (archiveSources.length > 0) {
       // Sort by downloads if available
-      const sorted = [...archiveSources].sort((a, b) => {
+      const sorted = [...archiveSources].sort((a: MovieSource, b: MovieSource) => {
         const aDownloads = 'downloads' in a ? a.downloads || 0 : 0
         const bDownloads = 'downloads' in b ? b.downloads || 0 : 0
         return bDownloads - aDownloads
@@ -334,7 +336,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       // Update the movie in our local state
-      const movieIndex = movies.value.findIndex(m => m.imdbId === movie.imdbId)
+      const movieIndex = movies.value.findIndex((m: MovieEntry) => m.imdbId === movie.imdbId)
       if (movieIndex !== -1 && movies.value[movieIndex]) {
         movies.value[movieIndex]!.metadata = metadata
       }
