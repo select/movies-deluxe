@@ -1,9 +1,6 @@
 import { Client } from 'youtubei'
-import { loadMoviesDatabase, saveMoviesDatabase, upsertMovie } from '../../../utils/movieData'
-import { fetchChannelVideos, processYouTubeVideo } from '../../../utils/youtube'
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
-import { emitProgress } from '../../../utils/progress'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)

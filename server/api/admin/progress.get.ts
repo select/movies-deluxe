@@ -1,5 +1,3 @@
-import { progressEmitter } from '../../utils/progress'
-
 export default defineEventHandler(async event => {
   const setHeader = (name: string, value: string) => event.node.res.setHeader(name, value)
 
