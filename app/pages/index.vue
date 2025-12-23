@@ -320,11 +320,7 @@ const toggleDarkMode = () => {
 
 // Computed properties
 const filteredAndSortedMovies = computed(() => {
-  // 1. Apply search first (using Fuse.js in movieStore)
-  const searchedMovies = movieStore.searchMovies(filterStore.filters.searchQuery)
-  
-  // 2. Apply other filters and sorting
-  return filterStore.applyFilters(searchedMovies)
+  return filterStore.filteredAndSortedMovies
 })
 
 const displayedMovies = computed(() => {

@@ -72,6 +72,7 @@ export const useMovieStore = defineStore('movie', () => {
           ([, value]) => value && typeof value === 'object' && 'imdbId' in value && 'title' in value
         )
         .map(([, value]) => value as MovieEntry)
+        .sort((a, b) => a.imdbId.localeCompare(b.imdbId))
 
       movies.value = movieEntries
     } catch (err) {

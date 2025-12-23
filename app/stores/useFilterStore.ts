@@ -399,7 +399,8 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const filteredAndSortedMovies = computed((): MovieEntry[] => {
     const movieStore = useMovieStore()
-    return applyFilters(movieStore.movies)
+    const searchedMovies = movieStore.searchMovies(filters.value.searchQuery)
+    return applyFilters(searchedMovies)
   })
 
   return {
