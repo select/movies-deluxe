@@ -9,7 +9,7 @@
       <img
         v-if="movie.imdbId.startsWith('tt')"
         :src="`/posters/${movie.imdbId}.jpg`"
-        :alt="movie.title"
+        :alt="getPrimaryTitle(movie)"
         class="w-full h-full object-cover"
         loading="lazy"
         @error="handlePosterError"
@@ -51,7 +51,7 @@
     <!-- Movie Info -->
     <div class="p-3">
       <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug">
-        {{ movie.title }}
+        {{ getPrimaryTitle(movie) }}
       </h3>
       
       <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 font-medium">

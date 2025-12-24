@@ -28,7 +28,8 @@ export const useMovieStore = defineStore('movie', () => {
       if (newMovies.length > 0) {
         fuse.value = new Fuse(newMovies, {
           keys: [
-            { name: 'title', weight: 1.0 },
+            { name: 'title', weight: 1.0 }, // Fuse.js can handle both string and string[] automatically
+            { name: 'sources.title', weight: 0.9 }, // Original titles from sources
             { name: 'metadata.Actors', weight: 0.7 },
             { name: 'metadata.Director', weight: 0.7 },
             { name: 'metadata.Genre', weight: 0.5 },
@@ -67,11 +68,26 @@ export const useMovieStore = defineStore('movie', () => {
       // Convert object to array, filtering out metadata entries
       const movieEntries: MovieEntry[] = Object.entries(response)
         .filter(([key]) => !key.startsWith('_'))
-        .filter(
-          ([, value]) => value && typeof value === 'object' && 'imdbId' in value && 'title' in value
-        )
+        .filter(([, value]) => {
+          if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
+            return false
+          }
+
+          const movie = value as any
+
+          // Validate imdbId is string
+          if (typeof movie.imdbId !== 'string') return false
+
+          // Validate title is string or array of strings
+          if (typeof movie.title === 'string') return true
+          if (Array.isArray(movie.title)) {
+            return movie.title.every(t => typeof t === 'string')
+          }
+
+          return false
+        })
         .map(([, value]) => value as MovieEntry)
-        .sort((a, b) => a.imdbId.localeCompare(b.imdbId))
+        .sort((a, b) => (a.imdbId || '').localeCompare(b.imdbId || ''))
 
       movies.value = movieEntries
     } catch (err) {
@@ -109,8 +125,21 @@ export const useMovieStore = defineStore('movie', () => {
     // Fallback to simple search if Fuse is not initialized
     const lowerQuery = query.toLowerCase()
     return movies.value.filter((movie: MovieEntry) => {
-      // Search in title
-      if (movie.title.toLowerCase().includes(lowerQuery)) return true
+      // Search in title(s) - handle both string and string[] titles
+      const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
+      const titleMatch = titles.some(
+        title => typeof title === 'string' && title.toLowerCase().includes(lowerQuery)
+      )
+      if (titleMatch) return true
+
+      // Search in original titles from sources
+      const originalTitleMatch = movie.sources.some(
+        source =>
+          source.title &&
+          typeof source.title === 'string' &&
+          source.title.toLowerCase().includes(lowerQuery)
+      )
+      if (originalTitleMatch) return true
 
       // Search in year
       if (movie.year?.toString().includes(lowerQuery)) return true

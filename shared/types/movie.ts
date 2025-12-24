@@ -16,6 +16,7 @@ export type MovieSourceType = 'archive.org' | 'youtube'
 export interface MovieSourceBase {
   type: MovieSourceType
   url: string
+  title?: string // Original title from the source (before cleaning/processing)
   label?: string // Custom label for this source (e.g., "Widescreen", "HD")
   quality?: string // Quality indicator (e.g., "720p", "1080p", "SD")
   description?: string // Original source description (e.g., YouTube description)
@@ -95,7 +96,7 @@ export interface MovieMetadata {
  */
 export interface MovieEntry {
   imdbId: string // IMDB ID (e.g., 'tt0012345') or temporary ID (e.g., 'archive-xyz', 'youtube-abc')
-  title: string
+  title: string | string[] // Can be array when merging entries with different titles
   year?: number
   sources: MovieSource[]
   metadata?: MovieMetadata

@@ -32,9 +32,13 @@ export function sortByYear(movies: MovieEntry[], direction: SortDirection): Movi
 
     // Tie-breaker: title then imdbId
     if (yearA === yearB) {
-      const titleCompare = a.title.localeCompare(b.title)
+      const titleA = getPrimaryTitle(a)
+      const titleB = getPrimaryTitle(b)
+      const titleCompare = titleA.localeCompare(titleB)
       if (titleCompare !== 0) return titleCompare
-      return a.imdbId.localeCompare(b.imdbId)
+      const imdbIdA = a.imdbId || ''
+      const imdbIdB = b.imdbId || ''
+      return imdbIdA.localeCompare(imdbIdB)
     }
 
     return direction === 'asc' ? yearA - yearB : yearB - yearA
@@ -56,9 +60,13 @@ export function sortByRating(movies: MovieEntry[], direction: SortDirection): Mo
 
     // Tie-breaker: title then imdbId
     if (ratingA === ratingB) {
-      const titleCompare = a.title.localeCompare(b.title)
+      const titleA = getPrimaryTitle(a)
+      const titleB = getPrimaryTitle(b)
+      const titleCompare = titleA.localeCompare(titleB)
       if (titleCompare !== 0) return titleCompare
-      return a.imdbId.localeCompare(b.imdbId)
+      const imdbIdA = a.imdbId || ''
+      const imdbIdB = b.imdbId || ''
+      return imdbIdA.localeCompare(imdbIdB)
     }
 
     return direction === 'asc' ? ratingA - ratingB : ratingB - ratingA
@@ -70,12 +78,14 @@ export function sortByRating(movies: MovieEntry[], direction: SortDirection): Mo
  */
 export function sortByTitle(movies: MovieEntry[], direction: SortDirection): MovieEntry[] {
   return [...movies].sort((a, b) => {
-    const titleA = a.title.toLowerCase()
-    const titleB = b.title.toLowerCase()
+    const titleA = getPrimaryTitle(a).toLowerCase()
+    const titleB = getPrimaryTitle(b).toLowerCase()
 
     const comparison = titleA.localeCompare(titleB)
     if (comparison !== 0) return direction === 'asc' ? comparison : -comparison
-    return a.imdbId.localeCompare(b.imdbId)
+    const imdbIdA = a.imdbId || ''
+    const imdbIdB = b.imdbId || ''
+    return imdbIdA.localeCompare(imdbIdB)
   })
 }
 
@@ -94,9 +104,13 @@ export function sortByVotes(movies: MovieEntry[], direction: SortDirection): Mov
 
     // Tie-breaker: title then imdbId
     if (votesA === votesB) {
-      const titleCompare = a.title.localeCompare(b.title)
+      const titleA = getPrimaryTitle(a)
+      const titleB = getPrimaryTitle(b)
+      const titleCompare = titleA.localeCompare(titleB)
       if (titleCompare !== 0) return titleCompare
-      return a.imdbId.localeCompare(b.imdbId)
+      const imdbIdA = a.imdbId || ''
+      const imdbIdB = b.imdbId || ''
+      return imdbIdA.localeCompare(imdbIdB)
     }
 
     return direction === 'asc' ? votesA - votesB : votesB - votesA

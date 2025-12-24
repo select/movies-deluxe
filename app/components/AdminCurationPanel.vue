@@ -39,6 +39,15 @@
               />
               <span class="font-medium text-gray-900 dark:text-gray-100">{{ source.type }}</span>
             </div>
+            
+            <!-- Original title from source -->
+            <div
+              v-if="source.title"
+              class="mb-2 p-2 bg-gray-50 dark:bg-gray-700/50 rounded text-xs"
+            >
+              <span class="font-medium text-gray-700 dark:text-gray-300">Original title:</span>
+              <span class="text-gray-600 dark:text-gray-400 ml-1">{{ source.title }}</span>
+            </div>
             <p
               v-if="source.description"
               class="text-xs text-gray-600 dark:text-gray-400 line-clamp-4 whitespace-pre-wrap"
@@ -219,13 +228,13 @@ const searchError = ref('')
 
 onMounted(() => {
   isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  searchTitle.value = props.movie.title
+  searchTitle.value = getPrimaryTitle(props.movie)
   searchYear.value = props.movie.year?.toString() || ''
 })
 
 // Watch for movie changes to update search fields
 watch(() => props.movie.imdbId, () => {
-  searchTitle.value = props.movie.title
+  searchTitle.value = getPrimaryTitle(props.movie)
   searchYear.value = props.movie.year?.toString() || ''
   imdbIdInput.value = ''
   searchResults.value = []
