@@ -136,7 +136,7 @@
                   min="0"
                   step="100"
                   placeholder="0"
-                  class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   @input="(e) => filterStore.setMinVotes(Number((e.target as HTMLInputElement).value))"
                 >
                 <p class="text-xs text-gray-500 dark:text-gray-500">

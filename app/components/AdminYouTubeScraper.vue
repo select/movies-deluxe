@@ -10,7 +10,6 @@
     <div class="space-y-6">
       <div class="space-y-2">
         <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Select Channels</label>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-2 space-y-1">
           <label
             v-for="channel in channels"
             :key="channel.id"
@@ -25,7 +24,7 @@
             <span>{{ channel.name }}</span>
             <span class="text-xs text-gray-400">({{ channel.language }})</span>
           </label>
-        </div>
+
         <p class="text-[10px] text-gray-400">
           If none selected, all enabled channels will be processed.
         </p>
