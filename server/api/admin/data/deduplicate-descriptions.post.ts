@@ -47,13 +47,6 @@ const BOILERPLATE_PATTERNS = [
     description: 'Very short generic descriptions',
   },
 
-  // URL-heavy descriptions (likely promotional)
-  {
-    pattern: 'url_heavy',
-    regex: /https?:\/\/[^\s]+.*?https?:\/\/[^\s]+.*?https?:\/\/[^\s]+/i,
-    description: 'Descriptions with 3+ URLs (promotional)',
-  },
-
   // Silent Hall of Fame boilerplate
   {
     pattern: 'silent_hall_fame',
