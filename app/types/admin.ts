@@ -94,12 +94,12 @@ export interface OMDBOptions {
 export interface DeduplicationResult {
   totalSources: number
   sourcesWithDescriptions: number
-  duplicatesFound: number
+  boilerplateRemoved: number
   sourcesProcessed: number
   descriptionsRemoved: number
-  topDuplicates: Array<{
-    description: string
+  patterns: Array<{
+    pattern: string
     count: number
-    preview: string
+    description: string
   }>
 }
