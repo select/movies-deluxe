@@ -1,11 +1,11 @@
 {
   "database": {
     "total": 22905,
-    "matched": 1011,
-    "unmatched": 21894,
+    "matched": 1015,
+    "unmatched": 21890,
     "archiveOrgSources": 18055,
     "youtubeSources": 5005,
-    "curatedCount": 1011,
+    "curatedCount": 1015,
     "collections": {
       "feature_films": 18055
     },
@@ -165,7 +165,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 30,
-          "total": 606
+          "total": 607
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -220,24 +220,24 @@
   },
   "curation": {
     "total": 22905,
-    "curated": 1011,
-    "percent": 4.413883431565161
+    "curated": 1015,
+    "percent": 4.431346867496179
   },
   "omdb": {
     "total": 22905,
-    "matched": 1011,
-    "unmatched": 21894,
-    "percent": 4.413883431565161
+    "matched": 1015,
+    "unmatched": 21890,
+    "percent": 4.431346867496179
   },
   "posters": {
     "totalMovies": 22905,
-    "withPosterUrl": 956,
-    "downloaded": 238,
-    "missing": 718,
-    "percentOfMoviesWithUrl": 24.89539748953975,
-    "percentOfAllMovies": 1.039074437895656,
-    "filesInDirectory": 253,
-    "matchedPosters": 238
+    "withPosterUrl": 960,
+    "downloaded": 241,
+    "missing": 719,
+    "percentOfMoviesWithUrl": 25.104166666666668,
+    "percentOfAllMovies": 1.0521720148439206,
+    "filesInDirectory": 256,
+    "matchedPosters": 241
   },
-  "lastUpdated": "2025-12-24T01:48:08.980Z"
+  "lastUpdated": "2025-12-24T13:58:24.830Z"
 }
