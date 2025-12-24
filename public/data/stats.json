@@ -1,11 +1,11 @@
 {
   "database": {
-    "total": 20872,
-    "matched": 873,
-    "unmatched": 19999,
+    "total": 22905,
+    "matched": 1011,
+    "unmatched": 21894,
     "archiveOrgSources": 18055,
-    "youtubeSources": 2970,
-    "curatedCount": 873,
+    "youtubeSources": 5005,
+    "curatedCount": 1011,
     "collections": {
       "feature_films": 18055
     },
@@ -15,7 +15,7 @@
         "name": "Netzkino",
         "language": "de",
         "enabled": true,
-        "scraped": 2241
+        "scraped": 2311
       },
       {
         "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -36,7 +36,7 @@
         "name": "Movie Central",
         "language": "en",
         "enabled": true,
-        "scraped": 11
+        "scraped": 918
       },
       {
         "id": "UCOg0aMAXmF3o5m243PxhE5g",
@@ -64,35 +64,35 @@
         "name": "PizzaFlix",
         "language": "en",
         "enabled": true,
-        "scraped": 0
+        "scraped": 482
       },
       {
         "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
         "name": "Public Domain Movies - Classic Old Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 0
+        "scraped": 173
       },
       {
         "id": "UCWlLgwn2nfjnefINARfcquA",
         "name": "Timeless Classic Films",
         "language": "en",
         "enabled": true,
-        "scraped": 0
+        "scraped": 25
       },
       {
         "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
         "name": "Colorized Public Domain",
         "language": "en",
         "enabled": true,
-        "scraped": 0
+        "scraped": 229
       },
       {
         "id": "UCycDFnpMeWzaITQSD1dWsOA",
         "name": "Cult Cinema Classics",
         "language": "en",
         "enabled": true,
-        "scraped": 0
+        "scraped": 149
       },
       {
         "id": "UCzTv6CLT4g5V5HPbTbRmpAA",
@@ -116,7 +116,7 @@
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 2241,
+          "scraped": 2311,
           "total": 2800
         },
         {
@@ -140,7 +140,7 @@
           "name": "Movie Central",
           "language": "en",
           "enabled": true,
-          "scraped": 11,
+          "scraped": 918,
           "total": 2500
         },
         {
@@ -172,7 +172,7 @@
           "name": "PizzaFlix",
           "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 482,
           "total": 3600
         },
         {
@@ -180,7 +180,7 @@
           "name": "Public Domain Movies - Classic Old Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 173,
           "total": 543
         },
         {
@@ -188,7 +188,7 @@
           "name": "Timeless Classic Films",
           "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 25,
           "total": 25
         },
         {
@@ -196,7 +196,7 @@
           "name": "Colorized Public Domain",
           "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 229,
           "total": 281
         },
         {
@@ -204,7 +204,7 @@
           "name": "Cult Cinema Classics",
           "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 149,
           "total": 5000
         },
         {
@@ -219,25 +219,25 @@
     }
   },
   "curation": {
-    "total": 20872,
-    "curated": 873,
-    "percent": 4.182637025680338
+    "total": 22905,
+    "curated": 1011,
+    "percent": 4.413883431565161
   },
   "omdb": {
-    "total": 20872,
-    "matched": 873,
-    "unmatched": 19999,
-    "percent": 4.182637025680338
+    "total": 22905,
+    "matched": 1011,
+    "unmatched": 21894,
+    "percent": 4.413883431565161
   },
   "posters": {
-    "totalMovies": 20872,
-    "withPosterUrl": 843,
+    "totalMovies": 22905,
+    "withPosterUrl": 956,
     "downloaded": 238,
-    "missing": 605,
-    "percentOfMoviesWithUrl": 28.23250296559905,
-    "percentOfAllMovies": 1.1402836335760829,
+    "missing": 718,
+    "percentOfMoviesWithUrl": 24.89539748953975,
+    "percentOfAllMovies": 1.039074437895656,
     "filesInDirectory": 253,
     "matchedPosters": 238
   },
-  "lastUpdated": "2025-12-24T00:15:50.503Z"
+  "lastUpdated": "2025-12-24T01:48:08.980Z"
 }
