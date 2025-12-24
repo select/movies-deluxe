@@ -189,6 +189,21 @@
               @start="adminStore.startPosterDownload"
             />
           </div>
+          
+          <!-- Data Cleanup Section -->
+          <div class="mt-8">
+            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+              <div class="i-mdi-broom text-orange-600" />
+              Data Cleanup
+            </h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <AdminDataDeduplication
+                :loading="adminStore.deduplicating"
+                :results="adminStore.deduplicationResults"
+                @start="adminStore.deduplicateDescriptions"
+              />
+            </div>
+          </div>
         </section>
       </div>
 
@@ -219,6 +234,7 @@ const toggleDark = useToggle(isDark)
 const clearResults = () => {
   adminStore.results = null
   adminStore.posterResults = null
+  adminStore.deduplicationResults = null
 }
 
 onMounted(async () => {
