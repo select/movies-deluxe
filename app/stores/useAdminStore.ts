@@ -7,6 +7,7 @@ import type {
   YouTubeOptions,
   PosterOptions,
   OMDBOptions,
+  DeduplicationResult,
 } from '~/types/admin'
 
 export interface ProgressUpdate {
@@ -21,9 +22,11 @@ export const useAdminStore = defineStore('admin', () => {
   const loading = ref(false)
   const scraping = ref(false)
   const generatingSqlite = ref(false)
+  const deduplicating = ref(false)
   const stats = ref<ScrapeStats | null>(null)
   const results = ref<ScrapeResults | null>(null)
   const posterResults = ref<PosterResults | null>(null)
+  const deduplicationResults = ref<DeduplicationResult | null>(null)
   const youtubeChannels = ref<YouTubeChannelConfig[]>([])
   const progress = ref<Record<string, ProgressUpdate>>({})
 
@@ -213,13 +216,41 @@ export const useAdminStore = defineStore('admin', () => {
     return (stats.value.database.total / totalExternalVideos.value) * 100
   })
 
+  const deduplicateDescriptions = async () => {
+    deduplicating.value = true
+    deduplicationResults.value = null
+    try {
+      deduplicationResults.value = await $fetch<DeduplicationResult>(
+        '/api/admin/data/deduplicate-descriptions',
+        {
+          method: 'POST',
+        }
+      )
+      await refreshStats()
+    } catch (e: unknown) {
+      console.error('Description deduplication failed', e)
+      deduplicationResults.value = {
+        totalSources: 0,
+        sourcesWithDescriptions: 0,
+        duplicatesFound: 0,
+        sourcesProcessed: 0,
+        descriptionsRemoved: 0,
+        topDuplicates: [],
+      }
+    } finally {
+      deduplicating.value = false
+    }
+  }
+
   return {
     loading,
     scraping,
     generatingSqlite,
+    deduplicating,
     stats,
     results,
     posterResults,
+    deduplicationResults,
     youtubeChannels,
     progress,
     archiveOptions,
@@ -235,6 +266,7 @@ export const useAdminStore = defineStore('admin', () => {
     startPosterDownload,
     startOMDBEnrichment,
     generateSqlite,
+    deduplicateDescriptions,
     totalExternalVideos,
     youtubeTotalScraped,
     youtubeTotalAvailable,

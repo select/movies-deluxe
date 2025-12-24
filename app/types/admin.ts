@@ -90,3 +90,16 @@ export interface OMDBOptions {
   onlyUnmatched: boolean
   forceRetryFailed: boolean
 }
+
+export interface DeduplicationResult {
+  totalSources: number
+  sourcesWithDescriptions: number
+  duplicatesFound: number
+  sourcesProcessed: number
+  descriptionsRemoved: number
+  topDuplicates: Array<{
+    description: string
+    count: number
+    preview: string
+  }>
+}
