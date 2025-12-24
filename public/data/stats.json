@@ -1,11 +1,11 @@
 {
   "database": {
-    "total": 18324,
-    "matched": 874,
-    "unmatched": 17450,
+    "total": 20872,
+    "matched": 873,
+    "unmatched": 19999,
     "archiveOrgSources": 18055,
-    "youtubeSources": 422,
-    "curatedCount": 874,
+    "youtubeSources": 2970,
+    "curatedCount": 873,
     "collections": {
       "feature_films": 18055
     },
@@ -15,21 +15,21 @@
         "name": "Netzkino",
         "language": "de",
         "enabled": true,
-        "scraped": 39
+        "scraped": 2241
       },
       {
         "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
         "name": "FilmRise Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 5
+        "scraped": 32
       },
       {
         "id": "UCVFYikepF-avelvuIaQ_lHA",
         "name": "Popcornflix",
         "language": "en",
         "enabled": true,
-        "scraped": 29
+        "scraped": 190
       },
       {
         "id": "UCGBzBkV-MinlBvHBzZawfLQ",
@@ -43,7 +43,7 @@
         "name": "Timeless Classic Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 29
+        "scraped": 187
       },
       {
         "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
@@ -58,6 +58,48 @@
         "language": "de",
         "enabled": true,
         "scraped": 30
+      },
+      {
+        "id": "UCE34fwgW7kWr7tc7YiOWtRw",
+        "name": "PizzaFlix",
+        "language": "en",
+        "enabled": true,
+        "scraped": 0
+      },
+      {
+        "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
+        "name": "Public Domain Movies - Classic Old Movies",
+        "language": "en",
+        "enabled": true,
+        "scraped": 0
+      },
+      {
+        "id": "UCWlLgwn2nfjnefINARfcquA",
+        "name": "Timeless Classic Films",
+        "language": "en",
+        "enabled": true,
+        "scraped": 0
+      },
+      {
+        "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
+        "name": "Colorized Public Domain",
+        "language": "en",
+        "enabled": true,
+        "scraped": 0
+      },
+      {
+        "id": "UCycDFnpMeWzaITQSD1dWsOA",
+        "name": "Cult Cinema Classics",
+        "language": "en",
+        "enabled": true,
+        "scraped": 0
+      },
+      {
+        "id": "UCzTv6CLT4g5V5HPbTbRmpAA",
+        "name": "Korean Classic Film",
+        "language": "ko",
+        "enabled": true,
+        "scraped": 0
       }
     ]
   },
@@ -74,7 +116,7 @@
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 39,
+          "scraped": 2241,
           "total": 2800
         },
         {
@@ -82,7 +124,7 @@
           "name": "FilmRise Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 5,
+          "scraped": 32,
           "total": 443
         },
         {
@@ -90,7 +132,7 @@
           "name": "Popcornflix",
           "language": "en",
           "enabled": true,
-          "scraped": 29,
+          "scraped": 190,
           "total": 751
         },
         {
@@ -106,7 +148,7 @@
           "name": "Timeless Classic Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 29,
+          "scraped": 187,
           "total": 174
         },
         {
@@ -124,30 +166,78 @@
           "enabled": true,
           "scraped": 30,
           "total": 606
+        },
+        {
+          "id": "UCE34fwgW7kWr7tc7YiOWtRw",
+          "name": "PizzaFlix",
+          "language": "en",
+          "enabled": true,
+          "scraped": 0,
+          "total": 3600
+        },
+        {
+          "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
+          "name": "Public Domain Movies - Classic Old Movies",
+          "language": "en",
+          "enabled": true,
+          "scraped": 0,
+          "total": 543
+        },
+        {
+          "id": "UCWlLgwn2nfjnefINARfcquA",
+          "name": "Timeless Classic Films",
+          "language": "en",
+          "enabled": true,
+          "scraped": 0,
+          "total": 25
+        },
+        {
+          "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
+          "name": "Colorized Public Domain",
+          "language": "en",
+          "enabled": true,
+          "scraped": 0,
+          "total": 281
+        },
+        {
+          "id": "UCycDFnpMeWzaITQSD1dWsOA",
+          "name": "Cult Cinema Classics",
+          "language": "en",
+          "enabled": true,
+          "scraped": 0,
+          "total": 5000
+        },
+        {
+          "id": "UCzTv6CLT4g5V5HPbTbRmpAA",
+          "name": "Korean Classic Film",
+          "language": "ko",
+          "enabled": true,
+          "scraped": 0,
+          "total": 52
         }
       ]
     }
   },
   "curation": {
-    "total": 18324,
-    "curated": 874,
-    "percent": 4.769700938659682
+    "total": 20872,
+    "curated": 873,
+    "percent": 4.182637025680338
   },
   "omdb": {
-    "total": 18324,
-    "matched": 874,
-    "unmatched": 17450,
-    "percent": 4.769700938659682
+    "total": 20872,
+    "matched": 873,
+    "unmatched": 19999,
+    "percent": 4.182637025680338
   },
   "posters": {
-    "totalMovies": 18324,
-    "withPosterUrl": 844,
-    "downloaded": 236,
-    "missing": 608,
-    "percentOfMoviesWithUrl": 27.96208530805687,
-    "percentOfAllMovies": 1.287928399912683,
-    "filesInDirectory": 246,
-    "matchedPosters": 236
+    "totalMovies": 20872,
+    "withPosterUrl": 843,
+    "downloaded": 238,
+    "missing": 605,
+    "percentOfMoviesWithUrl": 28.23250296559905,
+    "percentOfAllMovies": 1.1402836335760829,
+    "filesInDirectory": 253,
+    "matchedPosters": 238
   },
-  "lastUpdated": "2025-12-23T21:01:29.454Z"
+  "lastUpdated": "2025-12-24T00:15:50.503Z"
 }

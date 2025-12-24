@@ -274,5 +274,11 @@
     "url": "https://m.media-amazon.com/images/M/MV5BMDAwM2U0ZWItYTcyNi00YTFjLTg2YTgtZjI4MzY5NDBhMjIzXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
     "failedAt": "2025-12-23T20:38:49.592Z",
     "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0191755",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjRjZDVmNDctMGZhZi00MmZjLWE5MDQtYmIwODJlNjllYmZmXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-23T23:06:52.502Z",
+    "error": "HTTP 404: Not Found"
   }
 ]
