@@ -99,14 +99,6 @@
       "notes": "Large catalog of public-domain and cult movies including horror, sci-fi, and drive-in style B-movies (5K videos)"
     },
     {
-      "id": "UCxxxxxxxxMCMTV",
-      "handle": "@MCMTV",
-      "name": "MCM-TV (Public Domain Classics)",
-      "language": "en",
-      "enabled": false,
-      "notes": "Channel not found - no valid MCM-TV public domain classics channel exists on YouTube. Disabled until correct channel is identified."
-    },
-    {
       "id": "UCzTv6CLT4g5V5HPbTbRmpAA",
       "handle": "@Koreanclassicfilm",
       "name": "Korean Classic Film",
