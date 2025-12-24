@@ -73,12 +73,18 @@ export async function fetchChannelVideos(
   console.log(`Found ${existingVideoIds.size} already scraped videos from this channel`)
 
   let count = 0
-  let hasMore = true
+  let pageNum = 0
+  const channelVideos = channel.videos
 
-  while (hasMore) {
-    const videoList = await channel.videos.next()
+  while (channelVideos) {
+    pageNum++
+
+    // Fetch next page of videos
+    const videoList = await channelVideos.next()
+    console.log(`Page ${pageNum}: Fetched ${videoList?.length || 0} videos`)
+
     if (!videoList || videoList.length === 0) {
-      hasMore = false
+      console.log('No more videos available')
       break
     }
 
@@ -164,6 +170,8 @@ export async function fetchChannelVideos(
     // Save after each page
     await onPageComplete()
   }
+
+  console.log(`Finished scraping channel. Total processed: ${count}`)
 }
 
 export async function getChannelVideoCount(
