@@ -232,10 +232,10 @@ export const useAdminStore = defineStore('admin', () => {
       deduplicationResults.value = {
         totalSources: 0,
         sourcesWithDescriptions: 0,
-        duplicatesFound: 0,
+        boilerplateRemoved: 0,
         sourcesProcessed: 0,
         descriptionsRemoved: 0,
-        topDuplicates: [],
+        patterns: [],
       }
     } finally {
       deduplicating.value = false

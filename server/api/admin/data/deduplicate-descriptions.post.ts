@@ -5,14 +5,99 @@ import type { MovieEntry } from '~/shared/types/movie'
 interface DeduplicationResult {
   totalSources: number
   sourcesWithDescriptions: number
-  duplicatesFound: number
+  boilerplateRemoved: number
   sourcesProcessed: number
   descriptionsRemoved: number
-  topDuplicates: Array<{
-    description: string
+  patterns: Array<{
+    pattern: string
     count: number
-    preview: string
+    description: string
   }>
+}
+
+// Smart boilerplate detection patterns
+const BOILERPLATE_PATTERNS = [
+  // Netzkino German boilerplate (most common)
+  {
+    pattern: 'netzkino_social',
+    regex: /💙.*?(bit\.ly\/NetzkinoAbo|Netzkino).*?(facebook|instagram|tiktok|twitter)/is,
+    description: 'Netzkino social media boilerplate',
+  },
+  {
+    pattern: 'netzkino_subscription',
+    regex: /💙.*?Ganze Filme.*?(abonnieren|streamen).*?bit\.ly/is,
+    description: 'Netzkino subscription boilerplate',
+  },
+
+  // Generic boilerplate patterns
+  {
+    pattern: 'public_domain_generic',
+    regex:
+      /^(this film has fallen into the public domain|for academic.*?educational use only|public domain movies)\.?\s*$/i,
+    description: 'Generic public domain notices',
+  },
+  {
+    pattern: 'imdb_reference',
+    regex: /^you can find more information regarding this film on its imdb page\.?\s*$/i,
+    description: 'Generic IMDB references',
+  },
+  {
+    pattern: 'short_generic',
+    regex: /^(tr|assista clicando aqui|cine clásico|cine negro|drama|acción)\.?\s*$/i,
+    description: 'Very short generic descriptions',
+  },
+
+  // URL-heavy descriptions (likely promotional)
+  {
+    pattern: 'url_heavy',
+    regex: /https?:\/\/[^\s]+.*?https?:\/\/[^\s]+.*?https?:\/\/[^\s]+/i,
+    description: 'Descriptions with 3+ URLs (promotional)',
+  },
+
+  // Silent Hall of Fame boilerplate
+  {
+    pattern: 'silent_hall_fame',
+    regex:
+      /this gem is presented by silent hall of fame.*?please visit.*?silent-hall-of-fame\.org/i,
+    description: 'Silent Hall of Fame boilerplate',
+  },
+
+  // Very short descriptions that are likely not useful
+  {
+    pattern: 'too_short',
+    regex: /^.{1,15}$/,
+    description: 'Extremely short descriptions (< 16 chars)',
+  },
+]
+
+function normalizeDescription(desc: unknown): string {
+  if (typeof desc === 'string') {
+    return desc.trim()
+  } else if (Array.isArray(desc)) {
+    return desc.join(' ').trim()
+  } else {
+    return String(desc).trim()
+  }
+}
+
+function isBoilerplate(description: string): {
+  isBoilerplate: boolean
+  pattern?: string
+  patternDesc?: string
+} {
+  // Skip empty or very short descriptions
+  if (!description || description.length < 3) {
+    return { isBoilerplate: true, pattern: 'empty', patternDesc: 'Empty or too short' }
+  }
+
+  // Check against all patterns
+  for (const { pattern, regex, description: patternDesc } of BOILERPLATE_PATTERNS) {
+    if (regex.test(description)) {
+      return { isBoilerplate: true, pattern, patternDesc }
+    }
+  }
+
+  return { isBoilerplate: false }
 }
 
 export default defineEventHandler(async (event): Promise<DeduplicationResult> => {
@@ -30,78 +115,47 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
       (item: unknown) => (item as MovieEntry).imdbId
     ) as MovieEntry[]
 
-    // Analyze descriptions to find duplicates
-    const descriptionCounts: Record<string, number> = {}
     let totalSources = 0
     let sourcesWithDescriptions = 0
+    let sourcesProcessed = 0
+    let descriptionsRemoved = 0
+    const patternCounts: Record<string, { count: number; description: string }> = {}
 
-    // First pass: count all descriptions
+    // Process all descriptions
     movies.forEach(movie => {
       movie.sources?.forEach(source => {
         totalSources++
+
         if (source.description) {
-          let desc = ''
-          if (typeof source.description === 'string') {
-            desc = source.description.trim()
-          } else if (Array.isArray(source.description)) {
-            desc = source.description.join(' ').trim()
-          } else {
-            desc = String(source.description).trim()
-          }
+          const desc = normalizeDescription(source.description)
+          sourcesWithDescriptions++
 
-          if (desc) {
-            sourcesWithDescriptions++
-            descriptionCounts[desc] = (descriptionCounts[desc] || 0) + 1
-          }
-        }
-      })
-    })
+          const { isBoilerplate: isBoiler, pattern, patternDesc } = isBoilerplate(desc)
 
-    // Find duplicates (descriptions used more than once)
-    const duplicates = Object.entries(descriptionCounts)
-      .filter(([_desc, count]) => count > 1)
-      .sort((a, b) => b[1] - a[1])
-
-    // Get top duplicates for reporting
-    const topDuplicates = duplicates.slice(0, 10).map(([desc, count]) => ({
-      description: desc,
-      count,
-      preview: desc.substring(0, 100) + (desc.length > 100 ? '...' : ''),
-    }))
-
-    // Second pass: remove duplicate descriptions
-    let sourcesProcessed = 0
-    let descriptionsRemoved = 0
-    const duplicateDescriptions = new Set(duplicates.map(([desc]) => desc))
-    const processedDescriptions = new Set<string>()
-
-    movies.forEach(movie => {
-      movie.sources?.forEach(source => {
-        if (source.description) {
-          let desc = ''
-          if (typeof source.description === 'string') {
-            desc = source.description.trim()
-          } else if (Array.isArray(source.description)) {
-            desc = source.description.join(' ').trim()
-          } else {
-            desc = String(source.description).trim()
-          }
-
-          if (desc && duplicateDescriptions.has(desc)) {
-            sourcesProcessed++
-
-            // If we've already seen this description, remove it
-            if (processedDescriptions.has(desc)) {
-              delete source.description
-              descriptionsRemoved++
-            } else {
-              // First occurrence, keep it and mark as processed
-              processedDescriptions.add(desc)
+          if (isBoiler && pattern && patternDesc) {
+            // Track pattern statistics
+            if (!patternCounts[pattern]) {
+              patternCounts[pattern] = { count: 0, description: patternDesc }
             }
+            patternCounts[pattern].count++
+
+            // Remove the boilerplate description
+            delete source.description
+            sourcesProcessed++
+            descriptionsRemoved++
           }
         }
       })
     })
+
+    // Prepare pattern statistics for response
+    const patterns = Object.entries(patternCounts)
+      .map(([pattern, { count, description }]) => ({
+        pattern,
+        count,
+        description,
+      }))
+      .sort((a, b) => b.count - a.count)
 
     // Write the updated data back to the file
     const updatedData = {
@@ -119,10 +173,10 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
     return {
       totalSources,
       sourcesWithDescriptions,
-      duplicatesFound: duplicates.length,
+      boilerplateRemoved: descriptionsRemoved,
       sourcesProcessed,
       descriptionsRemoved,
-      topDuplicates,
+      patterns,
     }
   } catch (error) {
     console.error('Error deduplicating descriptions:', error)
