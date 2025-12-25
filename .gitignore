@@ -31,4 +31,6 @@ public/posters/*.webp
 
 # Backup files
 *.backup.json
+*.backup-*.json
+*-before-migration.json
 *.bak
