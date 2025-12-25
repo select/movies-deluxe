@@ -1,14 +1,11 @@
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const { collections = ['feature_films'], rows = 100, pages = 1, autoDetect = false } = body
+  const { collections = ['feature_films'] } = body
 
   try {
     const db = await loadMoviesDatabase()
     const results = await scrapeArchiveOrg(db, {
       collections,
-      rows,
-      pages,
-      autoDetect,
       onProgress: progress => {
         emitProgress({
           type: 'archive',

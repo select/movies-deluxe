@@ -31,9 +31,6 @@ export const useAdminStore = defineStore('admin', () => {
   const progress = ref<Record<string, ProgressUpdate>>({})
 
   const archiveOptions = reactive<ArchiveOptions>({
-    rows: 10,
-    pages: 1,
-    autoDetect: true,
     collections: ['feature_films'],
   })
 

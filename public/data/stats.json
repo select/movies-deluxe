@@ -1,13 +1,13 @@
 {
   "database": {
-    "total": 22905,
+    "total": 22906,
     "matched": 1015,
-    "unmatched": 21890,
-    "archiveOrgSources": 18055,
+    "unmatched": 21891,
+    "archiveOrgSources": 18155,
     "youtubeSources": 5005,
     "curatedCount": 1015,
     "collections": {
-      "feature_films": 18055
+      "feature_films": 18155
     },
     "youtubeChannels": [
       {
@@ -105,9 +105,9 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 26777,
-      "scraped": 18055,
-      "percent": 67.4272696717332
+      "total": 26779,
+      "scraped": 18155,
+      "percent": 67.7956607789686
     },
     "youtube": {
       "channels": [
@@ -125,7 +125,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 32,
-          "total": 443
+          "total": 446
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -165,7 +165,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 30,
-          "total": 607
+          "total": 608
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -181,7 +181,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 173,
-          "total": 543
+          "total": 545
         },
         {
           "id": "UCWlLgwn2nfjnefINARfcquA",
@@ -219,25 +219,25 @@
     }
   },
   "curation": {
-    "total": 22905,
+    "total": 22906,
     "curated": 1015,
-    "percent": 4.431346867496179
+    "percent": 4.431153409587008
   },
   "omdb": {
-    "total": 22905,
+    "total": 22906,
     "matched": 1015,
-    "unmatched": 21890,
-    "percent": 4.431346867496179
+    "unmatched": 21891,
+    "percent": 4.431153409587008
   },
   "posters": {
-    "totalMovies": 22905,
+    "totalMovies": 22906,
     "withPosterUrl": 960,
     "downloaded": 241,
     "missing": 719,
     "percentOfMoviesWithUrl": 25.104166666666668,
-    "percentOfAllMovies": 1.0521720148439206,
-    "filesInDirectory": 256,
+    "percentOfAllMovies": 1.0521260805029249,
+    "filesInDirectory": 257,
     "matchedPosters": 241
   },
-  "lastUpdated": "2025-12-24T14:30:11.846Z"
+  "lastUpdated": "2025-12-25T22:55:22.974Z"
 }
