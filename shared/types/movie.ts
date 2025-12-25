@@ -28,7 +28,7 @@ export interface MovieSourceBase {
  */
 export interface ArchiveOrgSource extends MovieSourceBase {
   type: 'archive.org'
-  identifier: string // Archive.org identifier
+  id: string // Archive.org identifier (e.g., "HeartsOfHumanity")
   collection?: string // e.g., 'feature_films'
   downloads?: number
   thumbnail?: string
@@ -40,7 +40,7 @@ export interface ArchiveOrgSource extends MovieSourceBase {
  */
 export interface YouTubeSource extends MovieSourceBase {
   type: 'youtube'
-  videoId: string
+  id: string // YouTube video ID (e.g., "dQw4w9WgXcQ")
   channelName: string
   channelId?: string
   releaseYear?: number // Extracted from video title - REQUIRED for OMDB year validation

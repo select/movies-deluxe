@@ -52,11 +52,46 @@ function createEmptyDatabase(): MoviesDatabase {
 }
 
 /**
+ * Find a movie entry that contains a specific source
+ * Returns [movieId, entry] if found, undefined otherwise
+ */
+function findMovieBySource(
+  db: MoviesDatabase,
+  sourceType: 'archive.org' | 'youtube',
+  sourceId: string
+): [string, MovieEntry] | undefined {
+  for (const [key, value] of Object.entries(db)) {
+    if (key.startsWith('_')) continue
+    const entry = value as MovieEntry
+    const hasSource = entry.sources?.some(s => s.type === sourceType && s.id === sourceId)
+    if (hasSource) {
+      return [key, entry]
+    }
+  }
+  return undefined
+}
+
+/**
  * Add or update a movie entry in the database
  * If the movie exists, merges sources and updates metadata
+ * Also checks if any source already exists in another entry (e.g., after OMDB enrichment)
  */
 export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEntry): void {
-  const existing = db[movieId] as MovieEntry | undefined
+  // First, check if this exact movieId exists
+  let existing = db[movieId] as MovieEntry | undefined
+  let existingKey = movieId
+
+  // If not found by movieId, check if any of the sources already exist in the database
+  // This handles the case where a movie was enriched and got a new IMDb ID
+  if (!existing && entry.sources && entry.sources.length > 0) {
+    for (const source of entry.sources) {
+      const found = findMovieBySource(db, source.type, source.id)
+      if (found) {
+        ;[existingKey, existing] = found
+        break
+      }
+    }
+  }
 
   if (existing) {
     // Movie exists - merge sources and update metadata
@@ -71,10 +106,8 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
           s.type === newSource.type &&
           ((s.type === 'archive.org' &&
             newSource.type === 'archive.org' &&
-            s.identifier === newSource.identifier) ||
-            (s.type === 'youtube' &&
-              newSource.type === 'youtube' &&
-              s.videoId === newSource.videoId))
+            s.id === newSource.id) ||
+            (s.type === 'youtube' && newSource.type === 'youtube' && s.id === newSource.id))
       )
 
       const existingSource = mergedSources[existingIndex]
@@ -93,7 +126,12 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
       }
     }
 
-    // Update entry
+    // If the key changed (e.g., from temp ID to IMDb ID), delete the old entry
+    if (existingKey !== movieId) {
+      delete db[existingKey]
+    }
+
+    // Update entry at the new key
     db[movieId] = {
       ...existing,
       ...entry,
@@ -349,10 +387,10 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
         s.type === secondarySource.type &&
         ((s.type === 'archive.org' &&
           secondarySource.type === 'archive.org' &&
-          s.identifier === secondarySource.identifier) ||
+          s.id === secondarySource.id) ||
           (s.type === 'youtube' &&
             secondarySource.type === 'youtube' &&
-            s.videoId === secondarySource.videoId))
+            s.id === secondarySource.id))
     )
 
     const existingSource = mergedSources[existingIndex]
@@ -488,8 +526,7 @@ export function mergeDuplicates(
 
   // Track existing sources
   for (const source of best.sources) {
-    const key =
-      source.type === 'archive.org' ? `archive:${source.identifier}` : `youtube:${source.videoId}`
+    const key = source.type === 'archive.org' ? `archive:${source.id}` : `youtube:${source.id}`
     seenSources.add(key)
   }
 
@@ -498,8 +535,7 @@ export function mergeDuplicates(
     if (entry.imdbId === best.imdbId) continue
 
     for (const source of entry.sources) {
-      const key =
-        source.type === 'archive.org' ? `archive:${source.identifier}` : `youtube:${source.videoId}`
+      const key = source.type === 'archive.org' ? `archive:${source.id}` : `youtube:${source.id}`
 
       if (!seenSources.has(key)) {
         mergedSources.push(source)

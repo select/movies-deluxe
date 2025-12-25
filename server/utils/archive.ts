@@ -70,7 +70,7 @@ export async function processArchiveMovie(
 
   const source: ArchiveOrgSource = {
     type: 'archive.org',
-    identifier: movie.identifier,
+    id: movie.identifier,
     url: `https://archive.org/details/${movie.identifier}`,
     collection,
     downloads: movie.downloads,
