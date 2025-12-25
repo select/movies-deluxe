@@ -1,13 +1,13 @@
 {
   "database": {
-    "total": 22906,
+    "total": 32621,
     "matched": 1015,
-    "unmatched": 21891,
-    "archiveOrgSources": 18155,
-    "youtubeSources": 5005,
+    "unmatched": 31606,
+    "archiveOrgSources": 27636,
+    "youtubeSources": 4991,
     "curatedCount": 1015,
     "collections": {
-      "feature_films": 18155
+      "feature_films": 27636
     },
     "youtubeChannels": [
       {
@@ -29,7 +29,7 @@
         "name": "Popcornflix",
         "language": "en",
         "enabled": true,
-        "scraped": 190
+        "scraped": 187
       },
       {
         "id": "UCGBzBkV-MinlBvHBzZawfLQ",
@@ -50,14 +50,14 @@
         "name": "Mosfilm",
         "language": "ru",
         "enabled": true,
-        "scraped": 279
+        "scraped": 269
       },
       {
         "id": "UCh4JH8axA_jUjB8YoRnm0cg",
         "name": "Moviedome",
         "language": "de",
         "enabled": true,
-        "scraped": 30
+        "scraped": 29
       },
       {
         "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -106,8 +106,8 @@
   "external": {
     "archiveOrg": {
       "total": 26779,
-      "scraped": 18155,
-      "percent": 67.7956607789686
+      "scraped": 27636,
+      "percent": 103.20026886739609
     },
     "youtube": {
       "channels": [
@@ -132,7 +132,7 @@
           "name": "Popcornflix",
           "language": "en",
           "enabled": true,
-          "scraped": 190,
+          "scraped": 187,
           "total": 751
         },
         {
@@ -156,7 +156,7 @@
           "name": "Mosfilm",
           "language": "ru",
           "enabled": true,
-          "scraped": 279,
+          "scraped": 269,
           "total": 291
         },
         {
@@ -164,7 +164,7 @@
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 30,
+          "scraped": 29,
           "total": 608
         },
         {
@@ -219,25 +219,25 @@
     }
   },
   "curation": {
-    "total": 22906,
+    "total": 32621,
     "curated": 1015,
-    "percent": 4.431153409587008
+    "percent": 3.1114925967934766
   },
   "omdb": {
-    "total": 22906,
+    "total": 32621,
     "matched": 1015,
-    "unmatched": 21891,
-    "percent": 4.431153409587008
+    "unmatched": 31606,
+    "percent": 3.1114925967934766
   },
   "posters": {
-    "totalMovies": 22906,
+    "totalMovies": 32621,
     "withPosterUrl": 960,
     "downloaded": 241,
     "missing": 719,
     "percentOfMoviesWithUrl": 25.104166666666668,
-    "percentOfAllMovies": 1.0521260805029249,
+    "percentOfAllMovies": 0.738787897366727,
     "filesInDirectory": 257,
     "matchedPosters": 241
   },
-  "lastUpdated": "2025-12-25T22:55:22.974Z"
+  "lastUpdated": "2025-12-25T23:23:44.670Z"
 }
