@@ -20,10 +20,13 @@ export default defineEventHandler(async event => {
 
   const postersDir = join(process.cwd(), 'public/posters')
 
-  // Filter movies that have a poster URL and don't have a downloaded poster yet
+  // Filter movies that have a poster URL OR source thumbnails and don't have a downloaded poster yet
   const toProcess = entries.filter(movie => {
     const posterUrl = movie.metadata?.Poster
-    if (!posterUrl || posterUrl === 'N/A') return false
+    const hasThumbnails = movie.sources?.some(s => s.thumbnail)
+
+    // Need either OMDB poster or source thumbnails
+    if ((!posterUrl || posterUrl === 'N/A') && !hasThumbnails) return false
 
     // Skip if already downloaded (unless force)
     if (!force) {
@@ -52,8 +55,23 @@ export default defineEventHandler(async event => {
 
     const posterUrl = movie.metadata?.Poster as string
 
+    // Collect fallback URLs from sources (archive.org and youtube thumbnails)
+    const fallbackUrls: string[] = []
+    if (movie.sources) {
+      for (const source of movie.sources) {
+        if (source.thumbnail) {
+          fallbackUrls.push(source.thumbnail)
+        }
+      }
+    }
+
     try {
-      const success = await downloadPoster(posterUrl, movie.imdbId, force)
+      const success = await downloadPoster(
+        posterUrl || fallbackUrls[0] || '',
+        movie.imdbId,
+        force,
+        fallbackUrls.slice(1)
+      )
       if (success) {
         results.successful++
       } else {
