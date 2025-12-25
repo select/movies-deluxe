@@ -8,24 +8,10 @@
     </h2>
 
     <div class="space-y-6">
-      <div class="grid grid-cols-2 gap-4">
-        <AppInputNumber
-          v-model="options.rows"
-          label="Rows per page"
-        />
-        <AppInputNumber
-          v-model="options.pages"
-          label="Pages to fetch"
-        />
-      </div>
-
-      <div class="flex flex-col gap-3">
-        <AppInputSwitch
-          :checked="options.autoDetect"
-          label="Auto-detect starting page"
-          @change="options.autoDetect = $event"
-        />
-      </div>
+      <p class="text-gray-600 dark:text-gray-400 text-sm">
+        Scrapes all available movies from Archive.org's "Feature Films" collection.
+        Always fetches 500 rows per page to minimize API calls and scrapes all pages until completion.
+      </p>
 
       <button
         class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -64,9 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ArchiveOptions } from '~/types/admin'
-
-const options = defineModel<ArchiveOptions>({ required: true })
+// Options are passed from parent but not used in this simplified UI
+defineModel<{ [key: string]: unknown }>({ required: true })
 
 defineProps<{
   loading: boolean
