@@ -107,7 +107,7 @@ export async function scrapeArchiveOrg(
             s =>
               s.type === 'archive.org' &&
               entry.sources?.[0]?.type === 'archive.org' &&
-              s.identifier === entry.sources[0].identifier
+              s.id === entry.sources[0].id
           )
 
           upsertMovie(db, entry.imdbId, entry)

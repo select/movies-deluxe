@@ -1034,12 +1034,12 @@ const getYouTubeEmbedUrl = (url: string): string => {
 
 /**
  * Create Archive.org embed URL from source
- * Uses the identifier from the source or extracts from URL
+ * Uses the id from the source or extracts from URL
  */
 const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
-  // If source has identifier field, use it directly
-  if (source.identifier) {
-    return `https://archive.org/embed/${source.identifier}`
+  // If source has id field, use it directly
+  if (source.id) {
+    return `https://archive.org/embed/${source.id}`
   }
 
   // Try to extract identifier from URL

@@ -159,8 +159,8 @@ async function generateSQLite(
             source.quality || null,
             source.addedAt,
             source.description || null,
-            source.type === 'archive.org' ? source.identifier : null,
-            source.type === 'youtube' ? source.videoId : null,
+            source.type === 'archive.org' ? source.id : null,
+            source.type === 'youtube' ? source.id : null,
             source.type === 'youtube' ? source.channelName : null,
             source.type === 'youtube' ? source.channelId : null,
             source.type === 'youtube' ? source.language : null

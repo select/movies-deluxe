@@ -146,8 +146,7 @@ function mergeSources(entries: Array<[string, MovieEntry]>): MovieSource[] {
 
   for (const [_, entry] of entries) {
     for (const source of entry.sources) {
-      const key =
-        source.type === 'archive.org' ? `archive:${source.identifier}` : `youtube:${source.videoId}`
+      const key = source.type === 'archive.org' ? `archive:${source.id}` : `youtube:${source.id}`
 
       if (!seen.has(key)) {
         sources.push(source)

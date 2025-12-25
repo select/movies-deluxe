@@ -65,7 +65,7 @@ export async function fetchChannelVideos(
     const movieEntry = entry as any
     for (const source of movieEntry.sources || []) {
       if (source.type === 'youtube' && source.channelId === channelIdentifier) {
-        existingVideoIds.add(source.videoId)
+        existingVideoIds.add(source.id)
       }
     }
   }
@@ -231,7 +231,7 @@ export async function processYouTubeVideo(
 
   const source: YouTubeSource = {
     type: 'youtube',
-    videoId: video.id,
+    id: video.id,
     url: `https://www.youtube.com/watch?v=${video.id}`,
     channelName: video.channelName,
     channelId: video.channelId,
