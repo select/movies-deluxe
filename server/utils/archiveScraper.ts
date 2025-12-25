@@ -2,9 +2,6 @@ import type { MoviesDatabase, MovieEntry } from '../../shared/types/movie'
 
 export interface ScrapeOptions {
   collections?: string[]
-  rows?: number
-  pages?: number
-  autoDetect?: boolean
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 }
 
@@ -17,48 +14,15 @@ export interface ScrapeResult {
 }
 
 /**
- * Count existing movies from a specific collection
- */
-function countExistingMoviesInCollection(db: MoviesDatabase, collection: string): number {
-  return Object.values(db).filter((entry: unknown) => {
-    if ((entry as { _schema?: unknown })._schema) return false
-    const movieEntry = entry as MovieEntry
-    return movieEntry.sources?.some(
-      s =>
-        s.type === 'archive.org' &&
-        (Array.isArray(s.collection)
-          ? s.collection.includes(collection)
-          : s.collection === collection)
-    )
-  }).length
-}
-
-/**
- * Find the first page with new movies (autodetect)
- * NOTE: Archive.org API has pagination limits - it returns the same results after ~100-200 items
- * So we always start from page 0 and skip existing movies
- */
-async function findStartPage(
-  db: MoviesDatabase,
-  collection: string,
-  rows: number,
-  existingCount: number,
-  debug: string[]
-): Promise<number> {
-  debug.push(`[AutoDetect] Collection: ${collection}, Existing: ${existingCount} movies`)
-  debug.push(`⚠️  Archive.org API limitation: pagination only works for first ~100-200 results`)
-  debug.push(`Starting from page 0 and skipping existing movies`)
-  return 0
-}
-
-/**
  * Scrape movies from Archive.org
+ * Always fetches 500 rows per page (maximum) and scrapes all pages until completion
  */
 export async function scrapeArchiveOrg(
   db: MoviesDatabase,
   options: ScrapeOptions
 ): Promise<ScrapeResult> {
-  const { collections = ['feature_films'], rows = 100, pages = 1, autoDetect = false } = options
+  const { collections = ['feature_films'] } = options
+  const ROWS_PER_PAGE = 500 // Maximum allowed by Archive.org API
 
   const results: ScrapeResult = {
     processed: 0,
@@ -69,30 +33,44 @@ export async function scrapeArchiveOrg(
   }
 
   for (const collection of collections) {
-    if (autoDetect) {
-      const existingCount = countExistingMoviesInCollection(db, collection)
-      await findStartPage(db, collection, rows, existingCount, results.debug)
-    }
+    results.debug.push(`Starting scrape of collection: ${collection}`)
+    results.debug.push(
+      `Fetching ${ROWS_PER_PAGE} rows per page, scraping all pages until completion`
+    )
 
-    // Scrape the requested pages
+    // Scrape all pages until no more results
     let currentCursor: string | undefined = undefined
-    const totalItemsToProcess = pages * rows
-    for (let p = 0; p < pages; p++) {
-      const pageMsg = `Fetching page ${p + 1} (cursor: ${currentCursor || 'start'})`
+    let pageNum = 0
+    let totalFromApi = 0 // Will be set from first API response
+
+    while (true) {
+      pageNum++
+      const pageMsg = `Fetching page ${pageNum} (cursor: ${currentCursor || 'start'})`
       results.debug.push(pageMsg)
+
+      // Use totalFromApi if we have it, otherwise show processed count
       options.onProgress?.({
         current: results.processed,
-        total: totalItemsToProcess,
+        total: totalFromApi || results.processed,
         message: pageMsg,
       })
 
-      const response = await fetchArchiveOrgMovies(collection, rows, currentCursor)
+      const response = await fetchArchiveOrgMovies(collection, ROWS_PER_PAGE, currentCursor)
+
+      // Set total from first API response
+      if (pageNum === 1 && response.total) {
+        totalFromApi = response.total
+        results.debug.push(`Archive.org reports ${totalFromApi} total items in collection`)
+      }
+
       const movies = response.items
 
       if (!movies || movies.length === 0) {
-        results.debug.push(`No movies found on page ${p + 1}, stopping`)
+        results.debug.push(`No movies found on page ${pageNum}, stopping`)
         break
       }
+
+      results.debug.push(`Processing ${movies.length} movies from page ${pageNum}`)
 
       for (const movie of movies) {
         try {
@@ -116,7 +94,7 @@ export async function scrapeArchiveOrg(
           const progressMsg = `Processing: ${movie.title}`
           options.onProgress?.({
             current: results.processed,
-            total: totalItemsToProcess,
+            total: totalFromApi || results.processed,
             message: progressMsg,
           })
 
@@ -137,12 +115,23 @@ export async function scrapeArchiveOrg(
         }
       }
 
-      if (!response.cursor || movies.length < rows) {
-        results.debug.push(`No more pages available (${movies.length} items, no cursor), stopping`)
+      // Check if we should continue to next page
+      if (!response.cursor) {
+        results.debug.push(`No more pages available (no cursor), stopping`)
         break
       }
+
+      if (movies.length < ROWS_PER_PAGE) {
+        results.debug.push(
+          `Received ${movies.length} items (less than ${ROWS_PER_PAGE}), likely last page`
+        )
+        break
+      }
+
       currentCursor = response.cursor
     }
+
+    results.debug.push(`Completed scraping ${collection}: processed ${results.processed} items`)
   }
 
   return results

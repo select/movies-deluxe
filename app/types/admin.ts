@@ -68,9 +68,6 @@ export interface PosterResults {
 }
 
 export interface ArchiveOptions {
-  rows: number
-  pages: number
-  autoDetect: boolean
   collections: string[]
 }
 
