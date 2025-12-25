@@ -80,7 +80,8 @@ function removeFailedDownload(imdbId: string): void {
 export async function downloadPoster(
   url: string,
   imdbId: string,
-  force: boolean = false
+  force: boolean = false,
+  fallbackUrls: string[] = []
 ): Promise<boolean> {
   if (!url || url === 'N/A' || !imdbId) return false
 
@@ -105,21 +106,45 @@ export async function downloadPoster(
     }
   }
 
-  try {
-    await downloadImageOnce(url, filepath, 30000)
-    // Remove from failed downloads if it was there
-    removeFailedDownload(imdbId)
-    return true
-  } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error)
-    console.error(`Failed to download poster for ${imdbId}:`, errorMsg)
-    if (fs.existsSync(filepath)) {
-      fs.unlinkSync(filepath)
+  // Try primary URL first, then fallbacks
+  const urlsToTry = [url, ...fallbackUrls].filter(u => u && u !== 'N/A')
+
+  let lastError: string = ''
+  for (let i = 0; i < urlsToTry.length; i++) {
+    const currentUrl = urlsToTry[i]!
+    const isFallback = i > 0
+
+    try {
+      if (isFallback) {
+        console.log(`Trying fallback URL ${i} for ${imdbId}: ${currentUrl}`)
+      }
+      await downloadImageOnce(currentUrl, filepath, 30000)
+      // Remove from failed downloads if it was there
+      removeFailedDownload(imdbId)
+      if (isFallback) {
+        console.log(`✅ Successfully downloaded from fallback URL ${i} for ${imdbId}`)
+      }
+      return true
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error)
+      if (isFallback) {
+        console.error(`Failed fallback ${i} for ${imdbId}:`, lastError)
+      }
+      if (fs.existsSync(filepath)) {
+        fs.unlinkSync(filepath)
+      }
+      // Continue to next URL
     }
-    // Track failed download
-    saveFailedDownload(imdbId, url, errorMsg)
-    return false
   }
+
+  // All URLs failed
+  console.error(
+    `Failed to download poster for ${imdbId} (tried ${urlsToTry.length} URLs):`,
+    lastError
+  )
+  // Track failed download with primary URL
+  saveFailedDownload(imdbId, url, lastError)
+  return false
 }
 
 function downloadImageOnce(url: string, filepath: string, timeout: number): Promise<void> {
