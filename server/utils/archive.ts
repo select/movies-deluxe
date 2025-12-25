@@ -72,6 +72,7 @@ export async function processArchiveMovie(
     type: 'archive.org',
     id: movie.identifier,
     url: `https://archive.org/details/${movie.identifier}`,
+    title: movie.title, // Original title from Archive.org
     collection,
     downloads: movie.downloads,
     description: movie.description,
