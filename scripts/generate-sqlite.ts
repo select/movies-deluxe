@@ -72,12 +72,11 @@ async function generateSQLite(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         movieId TEXT NOT NULL,
         type TEXT NOT NULL,
-        url TEXT NOT NULL,
+        identifier TEXT NOT NULL,
         label TEXT,
         quality TEXT,
         addedAt TEXT,
         description TEXT,
-        identifier TEXT,
         language TEXT,
         youtube_channelName TEXT,
         youtube_channelId TEXT,
@@ -118,9 +117,9 @@ async function generateSQLite(
 
     const insertSource = sqlite.prepare(`
       INSERT INTO sources (
-        movieId, type, url, label, quality, addedAt, description,
-        identifier, language, youtube_channelName, youtube_channelId
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        movieId, type, identifier, label, quality, addedAt, description,
+        language, youtube_channelName, youtube_channelId
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertFts = sqlite.prepare(`
@@ -190,15 +189,17 @@ async function generateSQLite(
             // Normalize source language
             const sourceLanguage = normalizeLanguageCode((source as any).language)
 
+            // Get identifier - handle both 'id' and 'videoId' fields for YouTube sources
+            const identifier = (source as any).id || (source as any).videoId || null
+
             insertSource.run(
               movie.imdbId,
               source.type,
-              source.url,
+              identifier,
               source.label || null,
               source.quality || null,
               source.addedAt,
               description,
-              (source as any).id || null,
               sourceLanguage,
               source.type === 'youtube' ? (source as any).channelName : null,
               source.type === 'youtube' ? (source as any).channelId : null

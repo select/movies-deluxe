@@ -29,7 +29,7 @@
           </h3>
           <div
             v-for="source in movie.sources"
-            :key="source.url"
+            :key="source.id"
             class="bg-white dark:bg-gray-800/50 p-3 rounded border border-yellow-100 dark:border-gray-700 mb-2"
           >
             <div class="flex items-center gap-2 mb-1">
