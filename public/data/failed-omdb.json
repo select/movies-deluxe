@@ -11932,5 +11932,806 @@
     "failedAt": "2025-12-26T14:29:03.378Z",
     "lastAttempt": "2025-12-26T14:29:03.378Z",
     "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1924LesRapacesGreedDeErichVonStroheimFreeDownload",
+    "originalTitle": "1924 - Les Rapaces (Greed) - De Erich Von Stroheim",
+    "year": 1924,
+    "attempts": [
+      {
+        "query": "- Les Rapaces (Greed) - De Erich Von Stroheim",
+        "year": 1924
+      },
+      {
+        "query": "1924 - Les Rapaces (Greed) - De Erich Von Stroheim",
+        "year": 1924
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:09.771Z",
+    "lastAttempt": "2025-12-26T14:41:09.771Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1927-underworld-la-ley-del-hampa-josef-von-sternberg-intertitulos-en-ingles",
+    "originalTitle": "1927 - Underworld - La ley del hampa - Josef von Sternberg - Intertítulos en inglés",
+    "year": 1927,
+    "attempts": [
+      {
+        "query": "- Underworld",
+        "year": 1927
+      },
+      {
+        "query": "1927 - Underworld - La ley del hampa - Josef von Sternberg - Intertítulos en inglés",
+        "year": 1927
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:11.144Z",
+    "lastAttempt": "2025-12-26T14:41:11.144Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1928-the-dock-of-new-york-josef-von-sternberg-intertitulos-en-ingles-y-espanol",
+    "originalTitle": "1928 - The Dock of New York - Josef von Sternberg - Intertítulos en inglés y español",
+    "year": 1928,
+    "attempts": [
+      {
+        "query": "- The Dock of New York",
+        "year": 1928
+      },
+      {
+        "query": "1928 - The Dock of New York - Josef von Sternberg - Intertítulos en inglés y español",
+        "year": 1928
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:12.860Z",
+    "lastAttempt": "2025-12-26T14:41:12.860Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1928-the-racket-la-horda-lewis-milestone-vose",
+    "originalTitle": "1928 - The Racket - La horda - Lewis Milestone - VOSE",
+    "year": 1928,
+    "attempts": [
+      {
+        "query": "- The Racket",
+        "year": 1928
+      },
+      {
+        "query": "1928 - The Racket - La horda - Lewis Milestone - VOSE",
+        "year": 1928
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:14.524Z",
+    "lastAttempt": "2025-12-26T14:41:14.524Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1929-behind-that-curtain-tras-la-cortina-irving-cummings-vose",
+    "originalTitle": "1929 - Behind That Curtain -Tras la cortina - Irving Cummings - VOSE",
+    "year": 1929,
+    "attempts": [
+      {
+        "query": "- Behind That Curtain",
+        "year": 1929
+      },
+      {
+        "query": "1929 - Behind That Curtain -Tras la cortina - Irving Cummings - VOSE",
+        "year": 1929
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:16.026Z",
+    "lastAttempt": "2025-12-26T14:41:16.026Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1931-Der-Weisse-Rausch",
+    "originalTitle": "1931 - Der Weisse Rausch (1h 16m, 320x240)",
+    "attempts": [
+      {
+        "query": "- Der Weisse Rausch (1h 16m, 320x240)"
+      },
+      {
+        "query": "1931 - Der Weisse Rausch (1h 16m, 320x240)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:17.176Z",
+    "lastAttempt": "2025-12-26T14:41:17.176Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1931-city-streets-las-calles-de-la-ciudad-rouben-mamoulian-vose",
+    "originalTitle": "1931 - City Streets - Las calles de la ciudad - Rouben Mamoulian - VOSE",
+    "year": 1931,
+    "attempts": [
+      {
+        "query": "- City Streets",
+        "year": 1931
+      },
+      {
+        "query": "1931 - City Streets - Las calles de la ciudad - Rouben Mamoulian - VOSE",
+        "year": 1931
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:18.929Z",
+    "lastAttempt": "2025-12-26T14:41:18.929Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1931-grief-street-richard-thorpe-vo",
+    "originalTitle": "1931 - Grief Street - Richard Thorpe - VO",
+    "year": 1931,
+    "attempts": [
+      {
+        "query": "- Grief Street - Richard Thorpe - VO",
+        "year": 1931
+      },
+      {
+        "query": "1931 - Grief Street - Richard Thorpe - VO",
+        "year": 1931
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:20.504Z",
+    "lastAttempt": "2025-12-26T14:41:20.504Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1931-the-criminal-code-el-codigo-criminal-howard-hawks-ve",
+    "originalTitle": "1931 - The Criminal Code - El código criminal - Howard Hawks - VE",
+    "year": 1931,
+    "attempts": [
+      {
+        "query": "- The Criminal Code",
+        "year": 1931
+      },
+      {
+        "query": "1931 - The Criminal Code - El código criminal - Howard Hawks - VE",
+        "year": 1931
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:22.213Z",
+    "lastAttempt": "2025-12-26T14:41:22.213Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1931-the-criminal-code-el-codigo-criminal-howard-hawks-vo",
+    "originalTitle": "1931 - The Criminal Code - El código criminal - Howard Hawks - VO",
+    "year": 1931,
+    "attempts": [
+      {
+        "query": "- The Criminal Code",
+        "year": 1931
+      },
+      {
+        "query": "1931 - The Criminal Code - El código criminal - Howard Hawks - VO",
+        "year": 1931
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:23.832Z",
+    "lastAttempt": "2025-12-26T14:41:23.832Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1931-the-vice-squad-john-cromwell-vo",
+    "originalTitle": "1931 - The Vice Squad - John Cromwell - VO",
+    "year": 1931,
+    "attempts": [
+      {
+        "query": "- The Vice Squad - John Cromwell - VO",
+        "year": 1931
+      },
+      {
+        "query": "1931 - The Vice Squad - John Cromwell - VO",
+        "year": 1931
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:25.485Z",
+    "lastAttempt": "2025-12-26T14:41:25.485Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1932-Adolf-Hitler-Wahlkampfrede-in-Eberswalde",
+    "originalTitle": "1932 - Adolf Hitler - Wahlkampfrede in Eberswalde am 27. Juli 1932 (12m 48s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Adolf Hitler"
+      },
+      {
+        "query": "1932 - Adolf Hitler - Wahlkampfrede in Eberswalde am 27. Juli 1932 (12m 48s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:26.610Z",
+    "lastAttempt": "2025-12-26T14:41:26.610Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1932-Hitlerjugend-in-den-Bergen",
+    "originalTitle": "1932 - Hitlerjugend in den Bergen (20m 15s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Hitlerjugend in den Bergen (20m 15s, 512x384)"
+      },
+      {
+        "query": "1932 - Hitlerjugend in den Bergen (20m 15s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:27.737Z",
+    "lastAttempt": "2025-12-26T14:41:27.737Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1932-Zinsknechtschaft",
+    "originalTitle": "1932 - Zinsknechtschaft - Ein Tonfilm im Auftrage der NSDAP (11m 42s, 352x288)",
+    "attempts": [
+      {
+        "query": "- Zinsknechtschaft"
+      },
+      {
+        "query": "1932 - Zinsknechtschaft - Ein Tonfilm im Auftrage der NSDAP (11m 42s, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:28.940Z",
+    "lastAttempt": "2025-12-26T14:41:28.940Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1932-hells-house-casa-correccional-howard-higgin-vose",
+    "originalTitle": "1932 - Hell's House - Casa correccional - Howard Higgin - VOSE",
+    "year": 1932,
+    "attempts": [
+      {
+        "query": "- Hell's House",
+        "year": 1932
+      },
+      {
+        "query": "1932 - Hell's House - Casa correccional - Howard Higgin - VOSE",
+        "year": 1932
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:30.612Z",
+    "lastAttempt": "2025-12-26T14:41:30.612Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1932-night-world-hobart-henley-vose",
+    "originalTitle": "1932 - Night World - Hobart Henley - VOSE",
+    "year": 1932,
+    "attempts": [
+      {
+        "query": "- Night World - Hobart Henley - VOSE",
+        "year": 1932
+      },
+      {
+        "query": "1932 - Night World - Hobart Henley - VOSE",
+        "year": 1932
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:32.279Z",
+    "lastAttempt": "2025-12-26T14:41:32.279Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Adolf-Hitler-Rede-an-die-SA-und-SS",
+    "originalTitle": "1933 - Adolf Hitler - Rede an die SA und SS-Maenner im Berliner Sportpalast am 8. April (5m 03s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Adolf Hitler"
+      },
+      {
+        "query": "1933 - Adolf Hitler - Rede an die SA und SS-Maenner im Berliner Sportpalast am 8. April (5m 03s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:33.380Z",
+    "lastAttempt": "2025-12-26T14:41:33.380Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Adolf-Hitler-Regierungserklaerung",
+    "originalTitle": "1933 - Adolf Hitler - Regierungserklaerung am 17. Mai im Deutschen Reichstag (8m 45s, 400x300)",
+    "attempts": [
+      {
+        "query": "- Adolf Hitler"
+      },
+      {
+        "query": "1933 - Adolf Hitler - Regierungserklaerung am 17. Mai im Deutschen Reichstag (8m 45s, 400x300)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:34.701Z",
+    "lastAttempt": "2025-12-26T14:41:34.701Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Bildbericht-der-NSDAP",
+    "originalTitle": "1933 - Bildbericht der NSDAP - Schutzhaftlager Rossplatzkaserne in Halle (10m 26s, 384x288, ohne Ton)",
+    "attempts": [
+      {
+        "query": "- Bildbericht der NSDAP"
+      },
+      {
+        "query": "1933 - Bildbericht der NSDAP - Schutzhaftlager Rossplatzkaserne in Halle (10m 26s, 384x288, ohne Ton)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:35.826Z",
+    "lastAttempt": "2025-12-26T14:41:35.826Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Blut-und-Boden",
+    "originalTitle": "1933 - Blut und Boden - Grundlagen zum neuen Reich (28m 24s, 352x288)",
+    "attempts": [
+      {
+        "query": "- Blut und Boden"
+      },
+      {
+        "query": "1933 - Blut und Boden - Grundlagen zum neuen Reich (28m 24s, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:37.083Z",
+    "lastAttempt": "2025-12-26T14:41:37.083Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Der-Deutsche-Reichstag-zu-Nuernberg",
+    "originalTitle": "1933 - Der Deutsche Reichstag zu Nuernberg (5m 12s, 676x508)",
+    "attempts": [
+      {
+        "query": "- Der Deutsche Reichstag zu Nuernberg (5m 12s, 676x508)"
+      },
+      {
+        "query": "1933 - Der Deutsche Reichstag zu Nuernberg (5m 12s, 676x508)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:38.456Z",
+    "lastAttempt": "2025-12-26T14:41:38.456Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Der-Fuehrer-spricht-im-Berliner-Sportpalast",
+    "originalTitle": "1933 - Der Fuehrer spricht im Berliner Sportpalast am 10. Februar 1933 (38m 13s, 352x240)",
+    "attempts": [
+      {
+        "query": "- Der Fuehrer spricht im Berliner Sportpalast am 10. Februar 1933 (38m 13s, 352x240)"
+      },
+      {
+        "query": "1933 - Der Fuehrer spricht im Berliner Sportpalast am 10. Februar 1933 (38m 13s, 352x240)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:39.921Z",
+    "lastAttempt": "2025-12-26T14:41:39.921Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Der-Sieg-des-Glaubens",
+    "originalTitle": "1933 - Der Sieg des Glaubens - Reichsparteitag 1933 (1h 01m, 720x576, EN Untertitel)",
+    "attempts": [
+      {
+        "query": "- Der Sieg des Glaubens"
+      },
+      {
+        "query": "1933 - Der Sieg des Glaubens - Reichsparteitag 1933 (1h 01m, 720x576, EN Untertitel)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:41.139Z",
+    "lastAttempt": "2025-12-26T14:41:41.139Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Deutschland-erwacht",
+    "originalTitle": "1933 - Deutschland erwacht - Ein Dokument von der Wiedergeburt Deutschlands (54m 14s, 352x288)",
+    "attempts": [
+      {
+        "query": "- Deutschland erwacht"
+      },
+      {
+        "query": "1933 - Deutschland erwacht - Ein Dokument von der Wiedergeburt Deutschlands (54m 14s, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:42.428Z",
+    "lastAttempt": "2025-12-26T14:41:42.428Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-DeutschlandErwacht-EinDokumentVonDerWiedergeburtDeutschlands",
+    "originalTitle": "1933 - Deutschland erwacht - Ein Dokument von der Wiedergeburt Deutschlands",
+    "attempts": [
+      {
+        "query": "- Deutschland erwacht"
+      },
+      {
+        "query": "1933 - Deutschland erwacht - Ein Dokument von der Wiedergeburt Deutschlands"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:43.722Z",
+    "lastAttempt": "2025-12-26T14:41:43.722Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Die-Nuernberger-Reichsparteitage",
+    "originalTitle": "1933 - Die Nuernberger Reichsparteitage der NSDAP aus den Jahren 1927, 1929 und 1933 (1h 26m, 352x272)",
+    "attempts": [
+      {
+        "query": "- Die Nuernberger Reichsparteitage der NSDAP aus den Jahren 1927, 1929 und 1933 (1h 26m, 352x272)"
+      },
+      {
+        "query": "1933 - Die Nuernberger Reichsparteitage der NSDAP aus den Jahren 1927, 1929 und 1933 (1h 26m, 352x272)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:45.151Z",
+    "lastAttempt": "2025-12-26T14:41:45.151Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-DieNuernbergerReichsparteitageDerNsdapAusDenJahren19271929Und",
+    "originalTitle": "1933 - Die Nuernberger Reichsparteitage der NSDAP aus den Jahren 1927, 1929 und 1933",
+    "attempts": [
+      {
+        "query": "- Die Nuernberger Reichsparteitage der NSDAP aus den Jahren 1927, 1929 und 1933"
+      },
+      {
+        "query": "1933 - Die Nuernberger Reichsparteitage der NSDAP aus den Jahren 1927, 1929 und 1933"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:46.490Z",
+    "lastAttempt": "2025-12-26T14:41:46.490Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Filmaufnahmen-vom-Tag-der-Machtergreifung",
+    "originalTitle": "1933 - Filmaufnahme vom Tag der Machtergreifung am 30. Januar (2m 47s, 320x240)",
+    "attempts": [
+      {
+        "query": "- Filmaufnahme vom Tag der Machtergreifung am 30. Januar (2m 47s, 320x240)"
+      },
+      {
+        "query": "1933 - Filmaufnahme vom Tag der Machtergreifung am 30. Januar (2m 47s, 320x240)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:47.915Z",
+    "lastAttempt": "2025-12-26T14:41:47.915Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Fritz-Todt-Zum-Bau-der-Reichsautobahnen",
+    "originalTitle": "1933 - Fritz Todt - Zum Bau der Reichsautobahnen (1m 42s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Fritz Todt"
+      },
+      {
+        "query": "1933 - Fritz Todt - Zum Bau der Reichsautobahnen (1m 42s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:49.245Z",
+    "lastAttempt": "2025-12-26T14:41:49.245Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Fuer-uns-Zum-Appell",
+    "originalTitle": "1933 - Fuer uns - Zum Appell (13m 26s, 352x288)",
+    "attempts": [
+      {
+        "query": "- Fuer uns"
+      },
+      {
+        "query": "1933 - Fuer uns - Zum Appell (13m 26s, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:50.579Z",
+    "lastAttempt": "2025-12-26T14:41:50.579Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Hans-Westmar-Einer-von-vielen",
+    "originalTitle": "1933 - Hans Westmar - Einer von vielen (1h 32m, 352x288)",
+    "attempts": [
+      {
+        "query": "- Hans Westmar"
+      },
+      {
+        "query": "1933 - Hans Westmar - Einer von vielen (1h 32m, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:51.810Z",
+    "lastAttempt": "2025-12-26T14:41:51.810Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Joseph-Goebbels",
+    "originalTitle": "1933 - Joseph Goebbels spricht als Vorredner Adolf Hitlers am 10. Februar 1933 im Berliner Sportpalast (8m 24s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Joseph Goebbels spricht als Vorredner Adolf Hitlers am 10. Februar 1933 im Berliner Sportpalast (8m 24s, 512x384)"
+      },
+      {
+        "query": "1933 - Joseph Goebbels spricht als Vorredner Adolf Hitlers am 10. Februar 1933 im Berliner Sportpalast (8m 24s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:53.179Z",
+    "lastAttempt": "2025-12-26T14:41:53.179Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Landesbildstelle-der-NSDAP",
+    "originalTitle": "1933 - Landesbildstelle der NSDAP - Bilder vom Wahlkampf 1932-1933 (19m 55s, 352x240, Stummfilm)",
+    "attempts": [
+      {
+        "query": "- Landesbildstelle der NSDAP"
+      },
+      {
+        "query": "1933 - Landesbildstelle der NSDAP - Bilder vom Wahlkampf 1932-1933 (19m 55s, 352x240, Stummfilm)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:54.375Z",
+    "lastAttempt": "2025-12-26T14:41:54.375Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-Parteitag-der-NSDAP-Sondersendung",
+    "originalTitle": "1933 - Parteitag der NSDAP - Sondersendung der FOX-Wochenschau (6m 16s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Parteitag der NSDAP"
+      },
+      {
+        "query": "1933 - Parteitag der NSDAP - Sondersendung der FOX-Wochenschau (6m 16s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:55.665Z",
+    "lastAttempt": "2025-12-26T14:41:55.665Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-SA-Mann-Brand",
+    "originalTitle": "1933 - SA-Mann Brand - Ein Lebensbild aus unseren Tagen (1h 34m, 640x480)",
+    "attempts": [
+      {
+        "query": "- SA"
+      },
+      {
+        "query": "1933 - SA-Mann Brand - Ein Lebensbild aus unseren Tagen (1h 34m, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:57.029Z",
+    "lastAttempt": "2025-12-26T14:41:57.029Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-the-kiss-before-the-mirror-un-beso-ante-el-espejo-james-whale-vose",
+    "originalTitle": "1933 - The Kiss before The Mirror - Un beso ante el espejo - James Whale - VOSE",
+    "year": 1933,
+    "attempts": [
+      {
+        "query": "- The Kiss before The Mirror",
+        "year": 1933
+      },
+      {
+        "query": "1933 - The Kiss before The Mirror - Un beso ante el espejo - James Whale - VOSE",
+        "year": 1933
+      }
+    ],
+    "failedAt": "2025-12-26T14:41:58.981Z",
+    "lastAttempt": "2025-12-26T14:41:58.981Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1933-this-day-and-age-la-juventud-manda-cecil-b.-de-mille-vo",
+    "originalTitle": "1933 - This Day and Age - La juventud manda - Cecil B. DeMille - VO",
+    "year": 1933,
+    "attempts": [
+      {
+        "query": "- This Day and Age",
+        "year": 1933
+      },
+      {
+        "query": "1933 - This Day and Age - La juventud manda - Cecil B. DeMille - VO",
+        "year": 1933
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:00.812Z",
+    "lastAttempt": "2025-12-26T14:42:00.812Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1934-Die-Reiter-von-Deutsch-Ostafrika",
+    "originalTitle": "1934 - Die Reiter von Deutsch-Ostafrika - Unter der Schirmherrschaft des Reichskolonialbundes (1h 17m, 640x480)",
+    "attempts": [
+      {
+        "query": "- Die Reiter von Deutsch"
+      },
+      {
+        "query": "1934 - Die Reiter von Deutsch-Ostafrika - Unter der Schirmherrschaft des Reichskolonialbundes (1h 17m, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:02.040Z",
+    "lastAttempt": "2025-12-26T14:42:02.040Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1934-Ich-fuer-dich",
+    "originalTitle": "1934 - Ich fuer dich - Du fuer mich (1h 24m, 512x384)",
+    "attempts": [
+      {
+        "query": "- Ich fuer dich"
+      },
+      {
+        "query": "1934 - Ich fuer dich - Du fuer mich (1h 24m, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:03.189Z",
+    "lastAttempt": "2025-12-26T14:42:03.189Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1934-Um-das-Menschenrecht",
+    "originalTitle": "1934 - Um das Menschenrecht (1h 22m, 640x464)",
+    "attempts": [
+      {
+        "query": "- Um das Menschenrecht (1h 22m, 640x464)"
+      },
+      {
+        "query": "1934 - Um das Menschenrecht (1h 22m, 640x464)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:04.335Z",
+    "lastAttempt": "2025-12-26T14:42:04.335Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1934-crime-without-passion-ben-hecht-charles-mac-arthur-vose",
+    "originalTitle": "1934 - Crime Without Passion - Ben Hecht-Charles MacArthur - VOSE",
+    "year": 1934,
+    "attempts": [
+      {
+        "query": "- Crime Without Passion",
+        "year": 1934
+      },
+      {
+        "query": "1934 - Crime Without Passion - Ben Hecht-Charles MacArthur - VOSE",
+        "year": 1934
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:06.142Z",
+    "lastAttempt": "2025-12-26T14:42:06.142Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1934-midnight-chester-erskine-ve",
+    "originalTitle": "1934 - Midnight - Chester Erskine - VE",
+    "year": 1934,
+    "attempts": [
+      {
+        "query": "- Midnight - Chester Erskine - VE",
+        "year": 1934
+      },
+      {
+        "query": "1934 - Midnight - Chester Erskine - VE",
+        "year": 1934
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:07.875Z",
+    "lastAttempt": "2025-12-26T14:42:07.875Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1934-midnight-chester-erskine-vo",
+    "originalTitle": "1934 - Midnight - Chester Erskine - VO",
+    "year": 1934,
+    "attempts": [
+      {
+        "query": "- Midnight - Chester Erskine - VO",
+        "year": 1934
+      },
+      {
+        "query": "1934 - Midnight - Chester Erskine - VO",
+        "year": 1934
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:09.515Z",
+    "lastAttempt": "2025-12-26T14:42:09.515Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Adolf-Hitler-Rede-am-15-September",
+    "originalTitle": "1935 - Adolf Hitler - Rede am 15. September zu den Nuernberger Gesetzen (1m 34s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Adolf Hitler"
+      },
+      {
+        "query": "1935 - Adolf Hitler - Rede am 15. September zu den Nuernberger Gesetzen (1m 34s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:10.558Z",
+    "lastAttempt": "2025-12-26T14:42:10.558Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Die-Jahrhundertfeier-der-Deutschen-Eisenbahnen",
+    "originalTitle": "1935 - Die Jahrhundertfeier der Deutschen Eisenbahnen (20m 02s, 464x352)",
+    "attempts": [
+      {
+        "query": "- Die Jahrhundertfeier der Deutschen Eisenbahnen (20m 02s, 464x352)"
+      },
+      {
+        "query": "1935 - Die Jahrhundertfeier der Deutschen Eisenbahnen (20m 02s, 464x352)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:11.768Z",
+    "lastAttempt": "2025-12-26T14:42:11.768Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Ein-Dorf-im-roten-Sturm",
+    "originalTitle": "1935 - Ein Dorf im roten Sturm - Friesennot (1h 29m, 640x480)",
+    "attempts": [
+      {
+        "query": "- Ein Dorf im roten Sturm"
+      },
+      {
+        "query": "1935 - Ein Dorf im roten Sturm - Friesennot (1h 29m, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:12.893Z",
+    "lastAttempt": "2025-12-26T14:42:12.893Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Gaubildstelle-der-NSDAP-Halle",
+    "originalTitle": "1935 - Gaubildstelle der NSDAP-Halle - Ein Besuch im Jungvolklager bei Haym (10m 49s, 352x288, ohne Ton)",
+    "attempts": [
+      {
+        "query": "- Gaubildstelle der NSDAP"
+      },
+      {
+        "query": "1935 - Gaubildstelle der NSDAP-Halle - Ein Besuch im Jungvolklager bei Haym (10m 49s, 352x288, ohne Ton)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:14.139Z",
+    "lastAttempt": "2025-12-26T14:42:14.139Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Haende-am-Werk",
+    "originalTitle": "1935 - Haende am Werk - Ein Lied von deutscher Arbeit (47m 50s, 352x272)",
+    "attempts": [
+      {
+        "query": "- Haende am Werk"
+      },
+      {
+        "query": "1935 - Haende am Werk - Ein Lied von deutscher Arbeit (47m 50s, 352x272)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:15.261Z",
+    "lastAttempt": "2025-12-26T14:42:15.261Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Im-Lande-Widukinds",
+    "originalTitle": "1935 - Im Lande Widukinds (13m 39s, 352x288)",
+    "attempts": [
+      {
+        "query": "- Im Lande Widukinds (13m 39s, 352x288)"
+      },
+      {
+        "query": "1935 - Im Lande Widukinds (13m 39s, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:16.589Z",
+    "lastAttempt": "2025-12-26T14:42:16.589Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-Tag-der-Freiheit",
+    "originalTitle": "1935 - Tag der Freiheit - Unsere Wehrmacht (26m 46s, 352x288)",
+    "attempts": [
+      {
+        "query": "- Tag der Freiheit"
+      },
+      {
+        "query": "1935 - Tag der Freiheit - Unsere Wehrmacht (26m 46s, 352x288)"
+      }
+    ],
+    "failedAt": "2025-12-26T14:42:17.954Z",
+    "lastAttempt": "2025-12-26T14:42:17.954Z",
+    "reason": "No OMDB match found"
   }
 ]
