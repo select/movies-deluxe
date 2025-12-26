@@ -1,105 +1,14 @@
 <template>
   <div
-    :class="isDark ? 'dark' : ''"
+    :class="darkModeToggle?.isDark ? 'dark' : ''"
     class="min-h-screen transition-colors"
   >
     <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
-      <header class="sticky top-0 z-30 border-b border-gray-200 dark:border-gray-800 transition-all duration-300 bg-gradient-to-r from-white/80 via-white/70 to-white/80 dark:from-gray-900/80 dark:via-gray-900/70 dark:to-gray-900/80 backdrop-blur-xl">
-        <div
-          :class="[
-            'max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between transition-all duration-300',
-            windowScrollY > 50 ? 'py-3' : 'py-6'
-          ]"
-        >
-          <div>
-            <h1
-              :class="[
-                'font-bold transition-all duration-300',
-                windowScrollY > 50 ? 'text-xl' : 'text-3xl'
-              ]"
-            >
-              Movies Deluxe
-            </h1>
-            <p
-              v-if="windowScrollY <= 50"
-              class="text-sm text-gray-600 dark:text-gray-400 mt-1 transition-all duration-300"
-            >
-              Free legal movie streams from Archive.org and YouTube
-            </p>
-          </div>
-
-          <!-- Search Bar -->
-          <div
-            :class="[
-              'flex-1 max-w-md mx-8 hidden md:block transition-all duration-300',
-              windowScrollY > 50 ? 'scale-95' : 'scale-100'
-            ]"
-          >
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <div class="i-mdi-magnify text-gray-400" />
-              </div>
-              <input
-                :value="filterStore.filters.searchQuery"
-                type="text"
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-                placeholder="Search movies, actors, directors..."
-                @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
-              >
-              <button
-                v-if="filterStore.filters.searchQuery"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center"
-                @click="filterStore.setSearchQuery('')"
-              >
-                <div class="i-mdi-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
-              </button>
-            </div>
-          </div>
-
-          <!-- Dark Mode Toggle -->
-          <button
-            :class="[
-              'rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300',
-              windowScrollY > 50 ? 'p-1.5' : 'p-2'
-            ]"
-            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-            @click="toggleDarkMode"
-          >
-            <div
-              v-if="isDark"
-              class="i-material-symbols-light-wb-sunny text-xl text-yellow-500"
-            />
-            <div
-              v-else
-              class="i-material-symbols-light-dark-mode text-xl"
-            />
-          </button>
-        </div>
-      </header>
+      <AppHeader ref="darkModeToggle" :scroll-y="windowScrollY" />
 
       <!-- Mobile Search Bar -->
-      <div class="md:hidden px-4 py-4 border-b border-gray-200 dark:border-gray-800">
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-gray-400" />
-          </div>
-          <input
-            :value="filterStore.filters.searchQuery"
-            type="text"
-            class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-            placeholder="Search movies, actors..."
-            @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
-          >
-          <button
-            v-if="filterStore.filters.searchQuery"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center"
-            @click="filterStore.setSearchQuery('')"
-          >
-            <div class="i-mdi-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
-          </button>
-        </div>
-      </div>
+      <AppMobileSearchBar />
 
       <!-- Mobile Menu Button -->
       <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
@@ -116,48 +25,22 @@
       <!-- Main Content -->
       <main class="max-w-none mx-auto px-4 lg:px-[6%] py-8 md:ml-16">
         <!-- Loading State -->
-        <div
-          v-if="movieStore.isInitialLoading"
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-        >
-          <MovieCardSkeleton
-            v-for="i in 12"
-            :key="i"
-          />
-        </div>
+        <MovieGridSkeleton v-if="movieStore.isInitialLoading" />
 
         <!-- Movie Stats -->
-        <div
+        <MovieStats
           v-else-if="movieStore.movies.length > 0"
-          class="mb-8"
-        >
-          <div class="flex flex-wrap gap-6 text-sm">
-            <div class="">
-              <span class="text-gray-500">Total Movies:</span> {{ filteredAndSortedMovies.length }}
-            </div>
-            <div class="">
-              <span class="text-gray-500">Archive.org:</span> {{ archiveCount }}
-            </div>
-            <div class="">
-              <span class="text-gray-500">YouTube:</span> {{ youtubeCount }}
-            </div>
-            <div class="">
-              <span class="text-gray-500">With Metadata:</span> {{ enrichedCount }}
-            </div>
-          </div>
-        </div>
+          :total-count="filteredAndSortedMovies.length"
+          :archive-count="archiveCount"
+          :youtube-count="youtubeCount"
+          :enriched-count="enrichedCount"
+        />
 
         <!-- Movie Grid -->
-        <div
+        <MovieGrid
           v-if="movieStore.movies.length > 0"
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
-        >
-          <MovieCard
-            v-for="movie in displayedMovies"
-            :key="movie.imdbId"
-            :movie="movie"
-          />
-        </div>
+          :movies="displayedMovies"
+        />
 
         <!-- Empty State -->
         <div
@@ -170,16 +53,7 @@
         </div>
 
         <!-- Infinite Scroll Sentinel -->
-        <div
-          v-if="hasMore"
-          ref="sentinelRef"
-          class="text-center mt-8 py-4"
-        >
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100" />
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Loading more movies...
-          </p>
-        </div>
+        <InfiniteScrollSentinel v-if="hasMore" ref="sentinelRef" />
 
         <!-- End of List Message -->
         <div
@@ -191,11 +65,7 @@
       </main>
 
       <!-- Footer -->
-      <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
-        <div class="max-w-none mx-auto px-4 lg:px-[6%] py-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>All movies are legally available from Archive.org and YouTube</p>
-        </div>
-      </footer>
+      <AppFooter />
     </div>
   </div>
 </template>
@@ -208,18 +78,8 @@ const movieStore = useMovieStore()
 const filterStore = useFilterStore()
 const { y: windowScrollY } = useWindowScroll()
 
-// Search handling
-const handleSearchInput = (query: string) => {
-  filterStore.setSearchQuery(query)
-  
-  // If searching, switch to relevance sort if not already
-  if (query && filterStore.filters.sort.field !== 'relevance') {
-    filterStore.setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
-  }
-}
-
-// Dark mode state (default to dark)
-const isDark = ref(true)
+// Dark mode toggle ref
+const darkModeToggle = ref<{ isDark: Ref<boolean> } | null>(null)
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
@@ -233,12 +93,6 @@ const sentinelRef = ref<HTMLElement | null>(null)
 // Load movies on mount
 onMounted(async () => {
   await movieStore.loadFromFile()
-
-  // Check for saved dark mode preference, default to dark
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme ? savedTheme === 'dark' : true
-  }
 
   // Set up intersection observer for infinite scroll
   setupInfiniteScroll()
@@ -308,14 +162,6 @@ onKeyStroke('k', (e) => {
   }
 })
 
-// Toggle dark mode
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  }
-}
-
 // Computed properties
 const filteredAndSortedMovies = computed(() => {
   return filterStore.filteredAndSortedMovies
@@ -375,15 +221,3 @@ const loadMore = () => {
   filterStore.setCurrentPage(filterStore.filters.currentPage + 1)
 }
 </script>
-
-<style scoped>
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-</style>
