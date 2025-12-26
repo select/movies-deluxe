@@ -351,6 +351,10 @@ export function cleanTitleGeneral(title: string): string {
   // 3. Remove year prefix at start: "1934 Pipin Der Kurze" → "Pipin Der Kurze"
   cleaned = cleaned.replace(/^(19|20)\d{2}\s+/, '')
 
+  // 3b. Remove leading "- " prefix again (in case year removal exposed it)
+  // Example: "1937 - Damals zu Hause" → "1937 " removed → "- Damals zu Hause" → "Damals zu Hause"
+  cleaned = cleaned.replace(/^-\s+/, '')
+
   // 4. Remove "Director Unknown" prefix: "Director Unknown Title" → "Title"
   // Common in Archive.org metadata when director information is not available
   cleaned = cleaned.replace(/^Director\s+Unknown\s+/i, '')
