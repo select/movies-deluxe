@@ -16,7 +16,7 @@
 
     <div
       v-if="results"
-      class="grid grid-cols-3 gap-4 mb-6"
+      class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
     >
       <div
         class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800"
@@ -34,22 +34,57 @@
         <div
           class="text-xs text-green-600 dark:text-green-400 uppercase font-bold tracking-wider mb-1"
         >
-          Added
+          Success
         </div>
         <div class="text-2xl font-bold text-green-700 dark:text-green-300">
-          {{ results.added }}
+          {{ results.added + results.updated }}
+        </div>
+        <div class="text-[10px] text-green-600/70 dark:text-green-400/70 mt-1">
+          {{ results.added }} added, {{ results.updated }} updated
         </div>
       </div>
       <div
-        class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-2xl border border-purple-100 dark:border-purple-800"
+        class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-100 dark:border-orange-800"
       >
         <div
-          class="text-xs text-purple-600 dark:text-purple-400 uppercase font-bold tracking-wider mb-1"
+          class="text-xs text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider mb-1"
         >
-          Updated
+          Failed
         </div>
-        <div class="text-2xl font-bold text-purple-700 dark:text-purple-300">
-          {{ results.updated }}
+        <div class="text-2xl font-bold text-orange-700 dark:text-orange-300">
+          {{ results.failed || 0 }}
+        </div>
+      </div>
+      <div
+        class="p-4 bg-gray-50 dark:bg-gray-900/20 rounded-2xl border border-gray-100 dark:border-gray-800"
+      >
+        <div
+          class="text-xs text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider mb-1"
+        >
+          Skipped
+        </div>
+        <div class="text-2xl font-bold text-gray-700 dark:text-gray-300">
+          {{ results.skipped || 0 }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Failure Reasons Breakdown -->
+    <div
+      v-if="results?.failureReasons && Object.keys(results.failureReasons).length > 0"
+      class="mb-6 p-4 bg-orange-50/50 dark:bg-orange-900/10 rounded-2xl border border-orange-100 dark:border-orange-900/30"
+    >
+      <h3 class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-3">
+        Failure Reasons
+      </h3>
+      <div class="flex flex-wrap gap-4">
+        <div
+          v-for="(count, reason) in results.failureReasons"
+          :key="reason"
+          class="flex items-center gap-2"
+        >
+          <span class="text-xs font-medium text-gray-700 dark:text-gray-300 capitalize">{{ reason.replace('_', ' ') }}:</span>
+          <span class="text-sm font-bold text-orange-600 dark:text-orange-400">{{ count }}</span>
         </div>
       </div>
     </div>
@@ -96,18 +131,22 @@
           <div class="font-bold text-sm mb-1 truncate">
             {{ chan.id }}
           </div>
-          <div class="flex gap-3 text-xs text-gray-500">
+          <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500">
             <span>Processed:
               <span class="text-blue-600 dark:text-blue-400 font-medium">{{
                 chan.processed
               }}</span></span>
-            <span>Added:
+            <span>Success:
               <span class="text-green-600 dark:text-green-400 font-medium">{{
-                chan.added
+                chan.added + chan.updated
               }}</span></span>
-            <span>Updated:
-              <span class="text-purple-600 dark:text-purple-400 font-medium">{{
-                chan.updated
+            <span v-if="chan.failed">Failed:
+              <span class="text-orange-600 dark:text-orange-400 font-medium">{{
+                chan.failed
+              }}</span></span>
+            <span v-if="chan.skipped">Skipped:
+              <span class="text-gray-600 dark:text-gray-400 font-medium">{{
+                chan.skipped
               }}</span></span>
           </div>
         </div>

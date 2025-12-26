@@ -18,20 +18,38 @@
             :title="channel.enabled ? 'Enabled' : 'Disabled'"
           />
         </div>
-        <div class="text-xl font-bold">
+        <div class="text-xl font-bold flex items-baseline gap-2">
           {{ channel.scraped }}
+          <span
+            v-if="channel.failed"
+            class="text-xs font-medium text-orange-500"
+            :title="`${channel.failed} failed videos`"
+          >
+            +{{ channel.failed }} failed
+          </span>
         </div>
         <div class="mt-1 flex items-center gap-2">
-          <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
             <div
               class="h-full bg-red-500 transition-all duration-1000"
               :style="{ width: `${channel.total > 0 ? (channel.scraped / channel.total) * 100 : 0}%` }"
             />
+            <div
+              v-if="channel.failed"
+              class="h-full bg-orange-400 transition-all duration-1000"
+              :style="{ width: `${channel.total > 0 ? (channel.failed / channel.total) * 100 : 0}%` }"
+            />
           </div>
           <span class="text-[10px] font-medium">{{ channel.total > 0 ? ((channel.scraped / channel.total) * 100).toFixed(0) : 0 }}%</span>
         </div>
-        <div class="text-[10px] text-gray-500 mt-1">
-          {{ channel.scraped }} / {{ channel.total || '?' }} videos
+        <div class="flex items-center justify-between text-[10px] text-gray-500 mt-1">
+          <span>{{ channel.scraped }} / {{ channel.total || '?' }} videos</span>
+          <span
+            v-if="channel.failureRate"
+            :class="channel.failureRate > 20 ? 'text-red-500 font-bold' : 'text-orange-500'"
+          >
+            {{ channel.failureRate.toFixed(1) }}% fail
+          </span>
         </div>
       </div>
     </div>
@@ -45,6 +63,8 @@ interface YouTubeChannelStats {
   enabled: boolean
   scraped: number
   total: number
+  failed?: number
+  failureRate?: number
 }
 
 defineProps<{

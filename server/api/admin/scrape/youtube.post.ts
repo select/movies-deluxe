@@ -1,6 +1,7 @@
 import { Client } from 'youtubei'
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -11,6 +12,8 @@ export default defineEventHandler(async event => {
     added: 0,
     updated: 0,
     skipped: 0,
+    failed: 0,
+    failureReasons: {} as Record<string, number>,
     errors: [] as string[],
     channels: [] as Array<{
       id: string
@@ -18,11 +21,15 @@ export default defineEventHandler(async event => {
       added: number
       updated: number
       skipped: number
+      failed: number
     }>,
   }
 
   const db = await loadMoviesDatabase()
   const youtube = new Client()
+
+  // Load previous failures for stats
+  const previousFailures = loadFailedYouTubeVideos()
 
   // Load channel configs for language lookup
   const configPath = resolve(process.cwd(), 'config/youtube-channels.json')
@@ -38,11 +45,21 @@ export default defineEventHandler(async event => {
   const channelsToProcess = channels || channelConfigs.filter(c => c.enabled).map(c => c.id)
 
   for (const channelId of channelsToProcess) {
-    const channelResult = { id: channelId, processed: 0, added: 0, updated: 0, skipped: 0 }
+    const channelResult = {
+      id: channelId,
+      processed: 0,
+      added: 0,
+      updated: 0,
+      skipped: 0,
+      failed: 0,
+    }
     results.channels.push(channelResult)
 
     const channelConfig = channelConfigMap.get(channelId)
     const channelName = channelConfig?.name || channelId
+
+    // Count previous failures for this channel
+    const channelPreviousFailures = previousFailures.filter(f => f.channelId === channelId).length
 
     try {
       // Get total video count for progress tracking
@@ -53,20 +70,24 @@ export default defineEventHandler(async event => {
         channelId,
         db,
         channelConfig,
-        async (video, isNew) => {
+        async (video, result) => {
           // Process callback - called for each video after page is fetched
-          if (isNew) {
-            if (isNew === 'added') {
-              results.added++
-              channelResult.added++
-            } else {
-              results.updated++
-              channelResult.updated++
-            }
-          } else {
+          if (result === 'added') {
+            results.added++
+            channelResult.added++
+          } else if (result === 'updated') {
+            results.updated++
+            channelResult.updated++
+          } else if (result === 'already_scraped') {
             results.skipped++
             channelResult.skipped++
+          } else {
+            // It's a failure reason
+            results.failed++
+            channelResult.failed++
+            results.failureReasons[result] = (results.failureReasons[result] || 0) + 1
           }
+
           results.processed++
           channelResult.processed++
 
@@ -76,6 +97,10 @@ export default defineEventHandler(async event => {
             message: `[${channelName}] ${video.title}`,
             current: results.processed,
             total: totalVideos || results.processed,
+            successCurrent: results.added + results.updated,
+            successPrevious: 0, // We don't track this globally yet
+            failedCurrent: results.failed,
+            failedPrevious: channelPreviousFailures,
           })
         },
         async () => {
@@ -98,6 +123,8 @@ export default defineEventHandler(async event => {
     current: results.processed,
     total: results.processed,
     message: 'YouTube scrape completed',
+    successCurrent: results.added + results.updated,
+    failedCurrent: results.failed,
   })
 
   return results
