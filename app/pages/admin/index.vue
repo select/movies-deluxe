@@ -95,36 +95,14 @@
         />
 
         <AdminStatsCard
-          title="Archive.org"
-          :value="adminStore.stats.external.archiveOrg.scraped"
-          icon="i-mdi-archive"
-          icon-color="text-amber-500"
+          title="Curated"
+          :value="adminStore.stats.curation.curated"
+          icon="i-mdi-star"
+          icon-color="text-yellow-500"
           show-progress
-          :percent="adminStore.stats.external.archiveOrg.percent"
-          progress-color="bg-amber-500"
-          :subtitle="`${adminStore.stats.external.archiveOrg.scraped} / ${adminStore.stats.external.archiveOrg.total || '?'} videos`"
-        />
-
-        <AdminStatsCard
-          title="YouTube"
-          :value="adminStore.youtubeTotalScraped"
-          icon="i-mdi-youtube"
-          icon-color="text-red-500"
-          show-progress
-          :percent="adminStore.youtubePercent"
-          progress-color="bg-red-500"
-          :subtitle="`${adminStore.youtubeTotalScraped} / ${adminStore.youtubeTotalAvailable || '?'} videos`"
-        />
-
-        <AdminStatsCard
-          title="OMDB"
-          :value="adminStore.stats.omdb.matched"
-          icon="i-mdi-database-sync"
-          icon-color="text-green-500"
-          show-progress
-          :percent="adminStore.stats.omdb.percent"
-          progress-color="bg-green-500"
-          :subtitle="`${adminStore.stats.omdb.matched} / ${adminStore.stats.omdb.total} movies`"
+          :percent="adminStore.stats.curation.percent"
+          progress-color="bg-yellow-500"
+          :subtitle="`${adminStore.stats.curation.curated} / ${adminStore.stats.curation.total} movies`"
         />
 
         <AdminStatsCard
@@ -138,6 +116,14 @@
           :subtitle="`${adminStore.stats.posters.downloaded} / ${adminStore.stats.posters.withPosterUrl} posters`"
         />
       </section>
+
+      <!-- Overall Statistics -->
+      <AdminOverallStats
+        v-if="adminStore.stats"
+        :archive-org="adminStore.stats.external.archiveOrg"
+        :youtube="adminStore.stats.external.youtube"
+        :omdb="adminStore.stats.omdb"
+      />
 
       <!-- YouTube Channel Stats -->
       <AdminYouTubeChannelStats

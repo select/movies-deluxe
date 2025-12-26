@@ -190,26 +190,8 @@ export const useAdminStore = defineStore('admin', () => {
   const totalExternalVideos = computed(() => {
     if (!stats.value) return 0
     const archiveTotal = stats.value.external.archiveOrg.total || 0
-    const youtubeTotal = stats.value.external.youtube.channels.reduce(
-      (sum, c) => sum + (c.total || 0),
-      0
-    )
+    const youtubeTotal = stats.value.external.youtube.totalAvailable || 0
     return archiveTotal + youtubeTotal
-  })
-
-  const youtubeTotalScraped = computed(() => {
-    if (!stats.value) return 0
-    return stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.scraped || 0), 0)
-  })
-
-  const youtubeTotalAvailable = computed(() => {
-    if (!stats.value) return 0
-    return stats.value.external.youtube.channels.reduce((sum, c) => sum + (c.total || 0), 0)
-  })
-
-  const youtubePercent = computed(() => {
-    if (youtubeTotalAvailable.value === 0) return 0
-    return (youtubeTotalScraped.value / youtubeTotalAvailable.value) * 100
   })
 
   const databasePercentOfTotal = computed(() => {
@@ -269,9 +251,6 @@ export const useAdminStore = defineStore('admin', () => {
     generateSqlite,
     deduplicateDescriptions,
     totalExternalVideos,
-    youtubeTotalScraped,
-    youtubeTotalAvailable,
-    youtubePercent,
     databasePercentOfTotal,
   }
 })

@@ -12,8 +12,15 @@ export interface ScrapeStats {
       total: number
       scraped: number
       percent: number
+      failed?: number
+      failureRate?: number
     }
     youtube: {
+      totalScraped: number
+      totalAvailable: number
+      totalFailed: number
+      failureRate: number
+      percent: number
       channels: Array<{
         id: string
         name: string
@@ -35,6 +42,8 @@ export interface ScrapeStats {
     matched: number
     unmatched: number
     percent: number
+    failed?: number
+    failureRate?: number
   }
   posters: {
     totalMovies: number
@@ -42,6 +51,10 @@ export interface ScrapeStats {
     downloaded: number
     missing: number
     percent: number
+    percentOfMoviesWithUrl: number
+    percentOfAllMovies: number
+    filesInDirectory: number
+    matchedPosters: number
   }
   lastUpdated?: string
 }
