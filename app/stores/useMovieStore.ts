@@ -133,8 +133,8 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     const { result, totalCount } = await db.extendedQuery({
-      select: `m.*, GROUP_CONCAT(s.type || '|' || COALESCE(s.identifier, '') || '|' || COALESCE(s.label, '') || '|' || COALESCE(s.quality, '') || '|' || s.addedAt || '|' || COALESCE(s.description, '') || '|' || COALESCE(s.youtube_channelName, ''), '###') as sources_raw`,
-      from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId`,
+      select: `m.*, GROUP_CONCAT(s.type || '|' || COALESCE(s.identifier, '') || '|' || COALESCE(s.label, '') || '|' || COALESCE(s.quality, '') || '|' || s.addedAt || '|' || COALESCE(s.description, '') || '|' || COALESCE(c.name, ''), '###') as sources_raw`,
+      from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId LEFT JOIN channels c ON s.channelId = c.id`,
       where: finalWhere,
       params,
       groupBy: 'm.imdbId',
@@ -313,9 +313,10 @@ export const useMovieStore = defineStore('movie', () => {
       try {
         const results = await db.query(
           `
-          SELECT m.*, GROUP_CONCAT(s.type || '|' || COALESCE(s.identifier, '') || '|' || COALESCE(s.label, '') || '|' || COALESCE(s.quality, '') || '|' || s.addedAt || '|' || COALESCE(s.description, '') || '|' || COALESCE(s.youtube_channelName, ''), '###') as sources_raw
+          SELECT m.*, GROUP_CONCAT(s.type || '|' || COALESCE(s.identifier, '') || '|' || COALESCE(s.label, '') || '|' || COALESCE(s.quality, '') || '|' || s.addedAt || '|' || COALESCE(s.description, '') || '|' || COALESCE(c.name, ''), '###') as sources_raw
           FROM movies m
           LEFT JOIN sources s ON m.imdbId = s.movieId
+          LEFT JOIN channels c ON s.channelId = c.id
           WHERE m.imdbId = ?
           GROUP BY m.imdbId
         `,

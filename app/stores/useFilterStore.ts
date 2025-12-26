@@ -248,7 +248,7 @@ export const useFilterStore = defineStore('filter', () => {
         const youtubeChannels = filters.value.sources.filter(s => s !== 'archive.org')
         if (youtubeChannels.length > 0) {
           sourceConditions.push(
-            `(s.type = 'youtube' AND s.youtube_channelName IN (${youtubeChannels.map(() => '?').join(',')}))`
+            `(s.type = 'youtube' AND c.name IN (${youtubeChannels.map(() => '?').join(',')}))`
           )
           params.push(...youtubeChannels)
         }

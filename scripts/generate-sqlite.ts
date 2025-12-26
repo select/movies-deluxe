@@ -68,19 +68,25 @@ async function generateSQLite(
         imdbVotes INTEGER
       );
 
+      CREATE TABLE channels (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+
       CREATE TABLE sources (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         movieId TEXT NOT NULL,
         type TEXT NOT NULL,
         identifier TEXT NOT NULL,
+        channelId TEXT,
         label TEXT,
         quality TEXT,
         addedAt TEXT,
         description TEXT,
         language TEXT,
-        youtube_channelName TEXT,
-        youtube_channelId TEXT,
-        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE
+        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (channelId) REFERENCES channels (id)
       );
 
       -- FTS5 Virtual Table for Search
@@ -103,7 +109,7 @@ async function generateSQLite(
       
       CREATE INDEX idx_sources_movieId ON sources(movieId);
       CREATE INDEX idx_sources_type ON sources(type);
-      CREATE INDEX idx_sources_channel ON sources(youtube_channelName);
+      CREATE INDEX idx_sources_channelId ON sources(channelId);
     `)
 
     // 5. Prepare Statements
@@ -115,11 +121,15 @@ async function generateSQLite(
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
+    const insertChannel = sqlite.prepare(`
+      INSERT OR IGNORE INTO channels (id, name, created_at)
+      VALUES (?, ?, ?)
+    `)
+
     const insertSource = sqlite.prepare(`
       INSERT INTO sources (
-        movieId, type, identifier, label, quality, addedAt, description,
-        language, youtube_channelName, youtube_channelId
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        movieId, type, identifier, channelId, label, quality, addedAt, description, language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertFts = sqlite.prepare(`
@@ -192,17 +202,27 @@ async function generateSQLite(
             // Get identifier - handle both 'id' and 'videoId' fields for YouTube sources
             const identifier = (source as any).id || (source as any).videoId || null
 
+            // Insert channel if YouTube source
+            let channelId = null
+            if (source.type === 'youtube') {
+              const ytChannelId = (source as any).channelId
+              const ytChannelName = (source as any).channelName
+              if (ytChannelId && ytChannelName) {
+                insertChannel.run(ytChannelId, ytChannelName, new Date().toISOString())
+                channelId = ytChannelId
+              }
+            }
+
             insertSource.run(
               movie.imdbId,
               source.type,
               identifier,
+              channelId,
               source.label || null,
               source.quality || null,
               source.addedAt,
               description,
-              sourceLanguage,
-              source.type === 'youtube' ? (source as any).channelName : null,
-              source.type === 'youtube' ? (source as any).channelId : null
+              sourceLanguage
             )
           } catch (err) {
             logger.error(`Failed to insert source for movie ${movie.imdbId}:`, err)

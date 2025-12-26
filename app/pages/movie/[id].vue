@@ -853,7 +853,7 @@ const updateMetaTags = (movie: MovieEntry) => {
               ...(movie.metadata.imdbVotes && { ratingCount: movie.metadata.imdbVotes.replace(/,/g, '') })
             }
           }),
-          ...(movie.imdbId.startsWith('tt') && { sameAs: `https://www.imdb.com/title/${movie.imdbId}/` })
+          ...(movie.imdbId?.startsWith('tt') && { sameAs: `https://www.imdb.com/title/${movie.imdbId}/` })
         })
       }
     ]
