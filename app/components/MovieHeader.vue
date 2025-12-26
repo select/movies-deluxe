@@ -35,14 +35,14 @@
             <div class="i-mdi-magnify text-gray-400" />
           </div>
           <input
-            :value="filterStore.filters.searchQuery"
+            :value="filters.searchQuery"
             type="text"
             class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
             placeholder="Search movies, actors, directors..."
             @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
           >
           <button
-            v-if="filterStore.filters.searchQuery"
+            v-if="filters.searchQuery"
             class="absolute inset-y-0 right-0 pr-3 flex items-center"
             @click="filterStore.setSearchQuery('')"
           >
@@ -61,11 +61,12 @@
 import { useWindowScroll } from '@vueuse/core'
 
 const filterStore = useFilterStore()
+const { filters } = storeToRefs(filterStore)
 const { y: windowScrollY } = useWindowScroll()
 
 const handleSearchInput = (query: string) => {
   filterStore.setSearchQuery(query)
-  if (query && filterStore.filters.sort.field !== 'relevance') {
+  if (query && filters.value.sort.field !== 'relevance') {
     filterStore.setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
   }
 }
