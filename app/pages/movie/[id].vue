@@ -777,23 +777,11 @@ const navigateToPrevMovie = () => {
   if (!currentId) return
 
   const movies = filterStore.filteredAndSortedMovies
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Previous - Total filtered movies:', movies.length)
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Previous - Current ID from route:', currentId)
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Previous - First 5 movies:', movies.slice(0, 5).map(m => `${m.title} (${m.year})`))
-  
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Previous - Current index:', currentIndex)
   
   if (currentIndex > 0) {
     const prevMovie = movies[currentIndex - 1]
     if (prevMovie) {
-      // eslint-disable-next-line no-console
-      console.log('[NAV] Previous - Navigating to:', prevMovie.title, prevMovie.imdbId)
-       
       navigateTo(`/movie/${prevMovie.imdbId}`)
     }
   }
@@ -806,23 +794,11 @@ const navigateToNextMovie = () => {
   if (!currentId) return
 
   const movies = filterStore.filteredAndSortedMovies
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Next - Total filtered movies:', movies.length)
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Next - Current ID from route:', currentId)
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Next - First 5 movies:', movies.slice(0, 5).map(m => `${m.title} (${m.year})`))
-  
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
-  // eslint-disable-next-line no-console
-  console.log('[NAV] Next - Current index:', currentIndex)
   
   if (currentIndex !== -1 && currentIndex < movies.length - 1) {
     const nextMovie = movies[currentIndex + 1]
     if (nextMovie) {
-      // eslint-disable-next-line no-console
-      console.log('[NAV] Next - Navigating to:', nextMovie.title, nextMovie.imdbId)
-       
       navigateTo(`/movie/${nextMovie.imdbId}`)
     }
   }
