@@ -1,10 +1,10 @@
 {
   "database": {
-    "total": 32621,
+    "total": 33408,
     "matched": 1015,
-    "unmatched": 31606,
+    "unmatched": 32393,
     "archiveOrgSources": 27636,
-    "youtubeSources": 4991,
+    "youtubeSources": 5819,
     "curatedCount": 1015,
     "collections": {
       "feature_films": 27636
@@ -15,7 +15,7 @@
         "name": "Netzkino",
         "language": "de",
         "enabled": true,
-        "scraped": 2311
+        "scraped": 2324
       },
       {
         "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -57,7 +57,7 @@
         "name": "Moviedome",
         "language": "de",
         "enabled": true,
-        "scraped": 29
+        "scraped": 531
       },
       {
         "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -78,7 +78,7 @@
         "name": "Timeless Classic Films",
         "language": "en",
         "enabled": true,
-        "scraped": 25
+        "scraped": 50
       },
       {
         "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
@@ -95,11 +95,11 @@
         "scraped": 149
       },
       {
-        "id": "UCzTv6CLT4g5V5HPbTbRmpAA",
+        "id": "UCvH6u_Qzn5RQdz9W198umDw",
         "name": "Korean Classic Film",
         "language": "ko",
         "enabled": true,
-        "scraped": 0
+        "scraped": 288
       }
     ]
   },
@@ -116,8 +116,10 @@
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 2311,
-          "total": 2800
+          "scraped": 2324,
+          "total": 2800,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -125,7 +127,9 @@
           "language": "en",
           "enabled": true,
           "scraped": 32,
-          "total": 446
+          "total": 446,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -133,7 +137,9 @@
           "language": "en",
           "enabled": true,
           "scraped": 187,
-          "total": 751
+          "total": 751,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCGBzBkV-MinlBvHBzZawfLQ",
@@ -141,7 +147,9 @@
           "language": "en",
           "enabled": true,
           "scraped": 918,
-          "total": 2500
+          "total": 2500,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCOg0aMAXmF3o5m243PxhE5g",
@@ -149,7 +157,9 @@
           "language": "en",
           "enabled": true,
           "scraped": 187,
-          "total": 174
+          "total": 174,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
@@ -157,15 +167,19 @@
           "language": "ru",
           "enabled": true,
           "scraped": 269,
-          "total": 291
+          "total": 291,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCh4JH8axA_jUjB8YoRnm0cg",
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 29,
-          "total": 608
+          "scraped": 531,
+          "total": 608,
+          "failed": 1,
+          "failureRate": 0.18796992481203006
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -173,7 +187,9 @@
           "language": "en",
           "enabled": true,
           "scraped": 482,
-          "total": 3600
+          "total": 3600,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
@@ -181,15 +197,19 @@
           "language": "en",
           "enabled": true,
           "scraped": 173,
-          "total": 545
+          "total": 545,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCWlLgwn2nfjnefINARfcquA",
           "name": "Timeless Classic Films",
           "language": "en",
           "enabled": true,
-          "scraped": 25,
-          "total": 25
+          "scraped": 50,
+          "total": 25,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
@@ -197,7 +217,9 @@
           "language": "en",
           "enabled": true,
           "scraped": 229,
-          "total": 281
+          "total": 281,
+          "failed": 0,
+          "failureRate": 0
         },
         {
           "id": "UCycDFnpMeWzaITQSD1dWsOA",
@@ -205,39 +227,43 @@
           "language": "en",
           "enabled": true,
           "scraped": 149,
-          "total": 5000
+          "total": 5000,
+          "failed": 0,
+          "failureRate": 0
         },
         {
-          "id": "UCzTv6CLT4g5V5HPbTbRmpAA",
+          "id": "UCvH6u_Qzn5RQdz9W198umDw",
           "name": "Korean Classic Film",
           "language": "ko",
           "enabled": true,
-          "scraped": 0,
-          "total": 52
+          "scraped": 288,
+          "total": 597,
+          "failed": 9,
+          "failureRate": 3.0303030303030303
         }
       ]
     }
   },
   "curation": {
-    "total": 32621,
+    "total": 33408,
     "curated": 1015,
-    "percent": 3.1114925967934766
+    "percent": 3.038194444444444
   },
   "omdb": {
-    "total": 32621,
+    "total": 33408,
     "matched": 1015,
-    "unmatched": 31606,
-    "percent": 3.1114925967934766
+    "unmatched": 32393,
+    "percent": 3.038194444444444
   },
   "posters": {
-    "totalMovies": 32621,
+    "totalMovies": 33408,
     "withPosterUrl": 960,
     "downloaded": 241,
     "missing": 719,
     "percentOfMoviesWithUrl": 25.104166666666668,
-    "percentOfAllMovies": 0.738787897366727,
+    "percentOfAllMovies": 0.7213840996168582,
     "filesInDirectory": 257,
     "matchedPosters": 241
   },
-  "lastUpdated": "2025-12-25T23:23:44.670Z"
+  "lastUpdated": "2025-12-26T00:36:44.640Z"
 }
