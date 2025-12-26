@@ -1,13 +1,13 @@
 {
   "database": {
-    "total": 33408,
-    "matched": 1015,
-    "unmatched": 32393,
-    "archiveOrgSources": 27636,
+    "total": 33405,
+    "matched": 1312,
+    "unmatched": 32093,
+    "archiveOrgSources": 27635,
     "youtubeSources": 5842,
-    "curatedCount": 1015,
+    "curatedCount": 1312,
     "collections": {
-      "feature_films": 27636
+      "feature_films": 27635
     },
     "youtubeChannels": [
       {
@@ -106,10 +106,17 @@
   "external": {
     "archiveOrg": {
       "total": 26779,
-      "scraped": 27636,
-      "percent": 103.20026886739609
+      "scraped": 27635,
+      "percent": 103.19653459800591,
+      "failed": 0,
+      "failureRate": 0
     },
     "youtube": {
+      "totalScraped": 5842,
+      "totalAvailable": 17621,
+      "totalFailed": 11,
+      "failureRate": 0.18793780967025456,
+      "percent": 33.153623517394024,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -167,7 +174,7 @@
           "language": "ru",
           "enabled": true,
           "scraped": 269,
-          "total": 291,
+          "total": 292,
           "failed": 0,
           "failureRate": 0
         },
@@ -177,7 +184,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 531,
-          "total": 608,
+          "total": 609,
           "failed": 1,
           "failureRate": 0.18796992481203006
         },
@@ -237,7 +244,7 @@
           "language": "ko",
           "enabled": true,
           "scraped": 288,
-          "total": 597,
+          "total": 598,
           "failed": 9,
           "failureRate": 3.0303030303030303
         }
@@ -245,25 +252,29 @@
     }
   },
   "curation": {
-    "total": 33408,
-    "curated": 1015,
-    "percent": 3.038194444444444
+    "total": 33405,
+    "curated": 1312,
+    "percent": 3.927555755126478
   },
   "omdb": {
-    "total": 33408,
-    "matched": 1015,
-    "unmatched": 32393,
-    "percent": 3.038194444444444
+    "total": 33405,
+    "matched": 1312,
+    "unmatched": 32093,
+    "percent": 3.927555755126478,
+    "failed": 1452,
+    "failureRate": 52.532561505065125
   },
   "posters": {
-    "totalMovies": 33408,
-    "withPosterUrl": 960,
-    "downloaded": 241,
-    "missing": 719,
-    "percentOfMoviesWithUrl": 25.104166666666668,
-    "percentOfAllMovies": 0.7213840996168582,
-    "filesInDirectory": 257,
-    "matchedPosters": 241
+    "totalMovies": 33405,
+    "withPosterUrl": 1221,
+    "downloaded": 608,
+    "missing": 613,
+    "failed": 356,
+    "failureRate": 36.92946058091287,
+    "percentOfMoviesWithUrl": 49.795249795249795,
+    "percentOfAllMovies": 1.8200868133512946,
+    "filesInDirectory": 639,
+    "matchedPosters": 608
   },
-  "lastUpdated": "2025-12-26T00:41:46.353Z"
+  "lastUpdated": "2025-12-26T14:32:48.984Z"
 }
