@@ -64,7 +64,6 @@ async function generateSQLite(
         language TEXT,
         country TEXT,
         awards TEXT,
-        poster TEXT,
         imdbRating REAL,
         imdbVotes INTEGER
       );
@@ -112,9 +111,9 @@ async function generateSQLite(
     const insertMovie = sqlite.prepare(`
       INSERT INTO movies (
         imdbId, title, year, verified, is_curated, lastUpdated, rated, runtime, genre,
-        director, writer, actors, plot, language, country, awards, poster,
+        director, writer, actors, plot, language, country, awards,
         imdbRating, imdbVotes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertSource = sqlite.prepare(`
@@ -174,7 +173,6 @@ async function generateSQLite(
           language,
           m.Country || null,
           m.Awards || null,
-          m.Poster || null,
           imdbRating,
           imdbVotes
         )
