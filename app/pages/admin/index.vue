@@ -45,20 +45,20 @@
           </NuxtLink>
           <button
             class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            :disabled="adminStore.loading || adminStore.generatingSqlite"
+            :disabled="loading || generatingSqlite"
             @click="adminStore.generateSqlite"
           >
             <div
-              :class="['i-mdi-database-export', adminStore.generatingSqlite ? 'animate-spin' : '']"
+              :class="['i-mdi-database-export', generatingSqlite ? 'animate-spin' : '']"
             />
             Generate SQLite
           </button>
           <button
             class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            :disabled="adminStore.loading"
+            :disabled="loading"
             @click="adminStore.refreshStats"
           >
-            <div :class="['i-mdi-refresh', adminStore.loading ? 'animate-spin' : '']" />
+            <div :class="['i-mdi-refresh', loading ? 'animate-spin' : '']" />
             Refresh Stats
           </button>
         </div>
@@ -66,81 +66,81 @@
 
       <!-- Stats Overview -->
       <section
-        v-if="adminStore.stats"
+        v-if="stats"
         class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
       >
         <AdminStatsCard
           title="Total Movies"
-          :value="adminStore.stats.database.total"
+          :value="stats.database.total"
           icon="i-mdi-movie-open"
           icon-color="text-blue-500"
           show-progress
-          :percent="adminStore.databasePercentOfTotal"
+          :percent="databasePercentOfTotal"
           progress-color="bg-blue-500"
           :percent-precision="1"
-          :subtitle="`of ${adminStore.totalExternalVideos.toLocaleString()} available`"
+          :subtitle="`of ${totalExternalVideos.toLocaleString()} available`"
         />
 
         <AdminStatsCard
           title="Archive.org"
-          :value="adminStore.stats.external.archiveOrg.scraped"
-          :failed="adminStore.stats.external.archiveOrg.failed"
-          :failure-rate="adminStore.stats.external.archiveOrg.failureRate"
+          :value="stats.external.archiveOrg.scraped"
+          :failed="stats.external.archiveOrg.failed"
+          :failure-rate="stats.external.archiveOrg.failureRate"
           icon="i-mdi-archive"
           icon-color="text-amber-500"
           show-progress
-          :percent="adminStore.stats.external.archiveOrg.percent"
+          :percent="stats.external.archiveOrg.percent"
           progress-color="bg-amber-500"
-          :subtitle="`${adminStore.stats.external.archiveOrg.scraped} / ${adminStore.stats.external.archiveOrg.total || '?'} videos`"
+          :subtitle="`${stats.external.archiveOrg.scraped} / ${stats.external.archiveOrg.total || '?'} videos`"
         />
 
         <AdminStatsCard
           title="YouTube"
-          :value="adminStore.youtubeTotalScraped"
-          :failed="adminStore.stats.external.youtube.totalFailed"
-          :failure-rate="adminStore.stats.external.youtube.failureRate"
-          :failed-percent="adminStore.youtubeFailedPercent"
+          :value="youtubeTotalScraped"
+          :failed="stats.external.youtube.totalFailed"
+          :failure-rate="stats.external.youtube.failureRate"
+          :failed-percent="youtubeFailedPercent"
           icon="i-mdi-youtube"
           icon-color="text-red-500"
           show-progress
-          :percent="adminStore.youtubePercent"
+          :percent="youtubePercent"
           progress-color="bg-red-500"
-          :subtitle="`${adminStore.youtubeTotalScraped} / ${adminStore.youtubeTotalAvailable || '?'} videos`"
+          :subtitle="`${youtubeTotalScraped} / ${youtubeTotalAvailable || '?'} videos`"
         />
 
         <AdminStatsCard
           title="OMDB"
-          :value="adminStore.stats.omdb.matched"
-          :failed="adminStore.stats.omdb.failed"
-          :failure-rate="adminStore.stats.omdb.failureRate"
-          :failed-percent="adminStore.omdbFailedPercent"
+          :value="stats.omdb.matched"
+          :failed="stats.omdb.failed"
+          :failure-rate="stats.omdb.failureRate"
+          :failed-percent="omdbFailedPercent"
           icon="i-mdi-database-sync"
           icon-color="text-green-500"
           show-progress
-          :percent="adminStore.stats.omdb.percent"
+          :percent="stats.omdb.percent"
           progress-color="bg-green-500"
-          :subtitle="`${adminStore.stats.omdb.matched} / ${adminStore.stats.omdb.total} movies`"
+          :subtitle="`${stats.omdb.matched} / ${stats.omdb.total} movies`"
         />
 
         <AdminStatsCard
           title="Posters"
-          :value="adminStore.stats.posters.downloaded"
-          :failed="adminStore.stats.posters.failed"
-          :failure-rate="adminStore.stats.posters.failureRate"
-          :failed-percent="adminStore.postersFailedPercent"
+          :value="stats.posters.downloaded"
+          :failed="stats.posters.failed"
+          :failure-rate="stats.posters.failureRate"
+          :failed-percent="postersFailedPercent"
           icon="i-mdi-image-multiple"
           icon-color="text-purple-500"
           show-progress
-          :percent="adminStore.stats.posters.percentOfMoviesWithUrl"
+          :percent="stats.posters.percentOfMoviesWithUrl"
           progress-color="bg-purple-500"
-          :subtitle="`${adminStore.stats.posters.downloaded} / ${adminStore.stats.posters.withPosterUrl} posters`"
+          :subtitle="`${stats.posters.downloaded} / ${stats.posters.withPosterUrl} posters`"
         />
       </section>
 
       <!-- YouTube Channel Stats -->
       <AdminYouTubeChannelStats
-        v-if="adminStore.stats?.external.youtube.channels.length"
-        :channels="adminStore.stats.external.youtube.channels"
+        v-if="stats?.external.youtube.channels.length"
+        :channels="stats.external.youtube.channels"
       />
 
 
@@ -154,15 +154,15 @@
           </h2>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <AdminArchiveScraper
-              v-model="adminStore.archiveOptions"
-              :loading="adminStore.scraping"
+              v-model="archiveOptions"
+              :loading="scraping"
               @start="adminStore.startArchiveScrape"
             />
 
             <AdminYouTubeScraper
-              v-model="adminStore.youtubeOptions"
-              :channels="adminStore.youtubeChannels"
-              :loading="adminStore.scraping"
+              v-model="youtubeOptions"
+              :channels="youtubeChannels"
+              :loading="scraping"
               @start="adminStore.startYouTubeScrape"
             />
           </div>
@@ -176,14 +176,14 @@
           </h2>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <AdminOMDBEnrichment
-              v-model="adminStore.omdbOptions"
-              :loading="adminStore.scraping"
+              v-model="omdbOptions"
+              :loading="scraping"
               @start="adminStore.startOMDBEnrichment"
             />
 
             <AdminPosterDownloader
-              v-model="adminStore.posterOptions"
-              :loading="adminStore.scraping"
+              v-model="posterOptions"
+              :loading="scraping"
               @start="adminStore.startPosterDownload"
             />
           </div>
@@ -196,8 +196,8 @@
             </h3>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <AdminDataDeduplication
-                :loading="adminStore.deduplicating"
-                :results="adminStore.deduplicationResults"
+                :loading="deduplicating"
+                :results="deduplicationResults"
                 @start="adminStore.deduplicateDescriptions"
               />
             </div>
@@ -207,9 +207,9 @@
 
       <!-- Results Log -->
       <AdminResultsLog
-        v-if="adminStore.results || adminStore.posterResults"
-        :results="adminStore.results"
-        :poster-results="adminStore.posterResults"
+        v-if="results || posterResults"
+        :results="results"
+        :poster-results="posterResults"
         @clear="clearResults"
       />
     </div>
@@ -223,6 +223,31 @@ import type { ScrapeStats } from '~/types/admin'
 const isDev = ref(false)
 const adminStore = useAdminStore()
 const { connect: connectProgress } = useProgress()
+
+// Extract reactive state from store
+const {
+  loading,
+  generatingSqlite,
+  stats,
+  archiveOptions,
+  scraping,
+  youtubeOptions,
+  youtubeChannels,
+  omdbOptions,
+  posterOptions,
+  deduplicating,
+  deduplicationResults,
+  results,
+  posterResults,
+  databasePercentOfTotal,
+  totalExternalVideos,
+  youtubeTotalScraped,
+  youtubeFailedPercent,
+  youtubePercent,
+  youtubeTotalAvailable,
+  omdbFailedPercent,
+  postersFailedPercent
+} = storeToRefs(adminStore)
 
 // Clear results
 const clearResults = () => {
