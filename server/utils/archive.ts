@@ -8,6 +8,7 @@ export interface ArchiveOrgMovie {
   year?: string
   downloads?: number
   collection?: string[]
+  language?: string // 2-letter language code from Archive.org metadata
 }
 
 export interface ArchiveOrgResponse {
@@ -27,7 +28,10 @@ export async function fetchArchiveOrgMovies(
 ): Promise<ArchiveOrgResponse> {
   const url = new URL('https://archive.org/services/search/v1/scrape')
   url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
-  url.searchParams.set('fields', 'identifier,title,description,date,year,downloads,collection')
+  url.searchParams.set(
+    'fields',
+    'identifier,title,description,date,year,downloads,collection,language'
+  )
   url.searchParams.set('count', Math.max(100, rows).toString())
   if (cursor) {
     url.searchParams.set('cursor', cursor)
@@ -78,6 +82,7 @@ export async function processArchiveMovie(
     description: movie.description,
     thumbnail: `https://archive.org/services/img/${movie.identifier}`,
     releaseDate: movie.date || movie.year,
+    language: movie.language, // 2-letter language code from Archive.org metadata
     addedAt: new Date().toISOString(),
   }
 

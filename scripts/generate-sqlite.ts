@@ -78,9 +78,9 @@ async function generateSQLite(
         addedAt TEXT,
         description TEXT,
         identifier TEXT,
+        language TEXT,
         youtube_channelName TEXT,
         youtube_channelId TEXT,
-        youtube_language TEXT,
         FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE
       );
 
@@ -119,7 +119,7 @@ async function generateSQLite(
     const insertSource = sqlite.prepare(`
       INSERT INTO sources (
         movieId, type, url, label, quality, addedAt, description,
-        identifier, youtube_channelName, youtube_channelId, youtube_language
+        identifier, language, youtube_channelName, youtube_channelId
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
@@ -140,6 +140,22 @@ async function generateSQLite(
         const imdbVotes =
           m.imdbVotes && m.imdbVotes !== 'N/A' ? parseInt(m.imdbVotes.replace(/,/g, ''), 10) : null
 
+        // Determine language priority: Archive.org language > YouTube language > OMDB language
+        let language: string | null = null
+        for (const source of movie.sources) {
+          if (source.type === 'archive.org' && (source as any).language) {
+            language = (source as any).language
+            break // Archive.org language has highest priority
+          } else if (source.type === 'youtube' && (source as any).language) {
+            language = (source as any).language
+            // Don't break - keep looking for Archive.org language
+          }
+        }
+        // Fallback to OMDB metadata language if no source language found
+        if (!language && m.Language) {
+          language = m.Language
+        }
+
         insertMovie.run(
           movie.imdbId,
           Array.isArray(movie.title) ? movie.title[0] : movie.title,
@@ -154,7 +170,7 @@ async function generateSQLite(
           m.Writer || null,
           m.Actors || null,
           m.Plot || null,
-          m.Language || null,
+          language,
           m.Country || null,
           m.Awards || null,
           m.Poster || null,
@@ -181,9 +197,9 @@ async function generateSQLite(
               source.addedAt,
               description,
               (source as any).id || null,
+              (source as any).language || null,
               source.type === 'youtube' ? (source as any).channelName : null,
-              source.type === 'youtube' ? (source as any).channelId : null,
-              source.type === 'youtube' ? (source as any).language : null
+              source.type === 'youtube' ? (source as any).channelId : null
             )
           } catch (err) {
             logger.error(`Failed to insert source for movie ${movie.imdbId}:`, err)
