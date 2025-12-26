@@ -1,5 +1,10 @@
 import type { Client } from 'youtubei'
 import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
+import {
+  saveFailedYouTubeVideo,
+  removeFailedYouTubeVideo,
+  type FailureReason,
+} from './failedYoutube'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   let cleanTitle = title
@@ -37,10 +42,10 @@ export async function fetchChannelVideos(
   youtube: Client,
   channelIdentifier: string,
   db: any, // MoviesDatabase
-  channelConfig: { id: string; language?: string } | undefined,
+  channelConfig: { id: string; language?: string; name?: string } | undefined,
   onVideoProcessed: (
     video: { id: string; title: string },
-    result: 'added' | 'updated' | 'skipped'
+    result: 'added' | 'updated' | 'skipped' | FailureReason
   ) => Promise<void>,
   onPageComplete: () => Promise<void>,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
@@ -102,28 +107,66 @@ export async function fetchChannelVideos(
 
       // Skip if already scraped
       if (existingVideoIds.has(video.id)) {
-        await onVideoProcessed({ id: video.id, title }, null as any)
+        await onVideoProcessed({ id: video.id, title }, 'already_scraped')
         count++
         continue
       }
 
       // Filter out shorts, trailers, clips
-      if (
-        title.toLowerCase().includes('#shorts') ||
+      let skipReason: FailureReason | null = null
+      if (video.isShort || title.toLowerCase().includes('#shorts')) {
+        skipReason = 'shorts'
+      } else if (
         title.toLowerCase().includes('trailer') ||
         title.toLowerCase().includes('clip') ||
-        title.toLowerCase().includes('preview') ||
-        video.isShort
+        title.toLowerCase().includes('preview')
       ) {
+        skipReason = 'trailer_clip'
+      }
+
+      if (skipReason) {
+        saveFailedYouTubeVideo({
+          videoId: video.id,
+          channelId: channel.id || '',
+          channelName: channel.name || '',
+          title,
+          reason: skipReason,
+          duration: video.duration,
+        })
+        await onVideoProcessed({ id: video.id, title }, skipReason)
         continue
       }
 
       // Filter by duration (minimum 40 minutes)
       const duration = video.duration || 0
-      if (duration < 40 * 60) continue
+      if (duration < 40 * 60) {
+        saveFailedYouTubeVideo({
+          videoId: video.id,
+          channelId: channel.id || '',
+          channelName: channel.name || '',
+          title,
+          reason: 'duration',
+          duration,
+        })
+        await onVideoProcessed({ id: video.id, title }, 'duration')
+        continue
+      }
 
       try {
         const fullVideo = await youtube.getVideo(video.id)
+
+        if (!fullVideo) {
+          saveFailedYouTubeVideo({
+            videoId: video.id,
+            channelId: channel.id || '',
+            channelName: channel.name || '',
+            title,
+            reason: 'missing_data',
+            duration,
+          })
+          await onVideoProcessed({ id: video.id, title }, 'missing_data')
+          continue
+        }
 
         // Safely extract thumbnail URL
         let thumbnailUrl: string | undefined
@@ -156,11 +199,23 @@ export async function fetchChannelVideos(
           const result = existing ? 'updated' : 'added'
           await onVideoProcessed({ id: video.id, title }, result)
           existingVideoIds.add(video.id)
+
+          // Remove from failed list if it was there
+          removeFailedYouTubeVideo(video.id)
         }
 
         count++
       } catch (error) {
         console.error(`Failed to fetch video ${video.id}:`, error)
+        saveFailedYouTubeVideo({
+          videoId: video.id,
+          channelId: channel.id || '',
+          channelName: channel.name || '',
+          title,
+          reason: 'api_error',
+          duration: video.duration,
+        })
+        await onVideoProcessed({ id: video.id, title }, 'api_error')
         // Continue with next video instead of failing entire scrape
       }
 

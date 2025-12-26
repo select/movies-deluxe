@@ -1,11 +1,15 @@
 import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { Client } from 'youtubei'
+import { loadFailedYouTubeVideos } from '../../utils/failedYoutube'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
   const dbStats = await getDatabaseStats(db)
   const youtube = new Client()
+
+  // Load failed YouTube videos for stats
+  const failedVideos = loadFailedYouTubeVideos()
 
   // Fetch Archive.org total (feature_films collection as default)
   let archiveTotal = 0
@@ -29,9 +33,14 @@ export default defineEventHandler(async _event => {
         console.error(`Failed to fetch total for channel ${channelStat.id}`, e)
       }
 
+      const failedCount = failedVideos.filter(f => f.channelId === channelStat.id).length
+      const totalProcessed = channelStat.scraped + failedCount
+
       return {
         ...channelStat,
         total,
+        failed: failedCount,
+        failureRate: totalProcessed > 0 ? (failedCount / totalProcessed) * 100 : 0,
       }
     })
   )

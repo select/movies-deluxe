@@ -20,6 +20,8 @@ export interface ScrapeStats {
         enabled: boolean
         scraped: number
         total: number
+        failed?: number
+        failureRate?: number
       }>
     }
   }
@@ -48,9 +50,17 @@ export interface ScrapeResults {
   processed: number
   added: number
   updated: number
+  failed?: number
+  failureReasons?: Record<string, number>
   errors: string[]
   debug?: string[]
-  channels?: Array<{ id: string; processed: number; added: number; updated: number }>
+  channels?: Array<{
+    id: string
+    processed: number
+    added: number
+    updated: number
+    failed?: number
+  }>
 }
 
 export interface YouTubeChannelConfig {

@@ -8,6 +8,10 @@ export interface ProgressUpdate {
   current: number
   total: number
   message: string
+  successCurrent?: number
+  successPrevious?: number
+  failedCurrent?: number
+  failedPrevious?: number
 }
 
 export const emitProgress = (update: ProgressUpdate) => {
