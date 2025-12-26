@@ -4,7 +4,7 @@
     "matched": 1015,
     "unmatched": 32393,
     "archiveOrgSources": 27636,
-    "youtubeSources": 5819,
+    "youtubeSources": 5842,
     "curatedCount": 1015,
     "collections": {
       "feature_films": 27636
@@ -22,7 +22,7 @@
         "name": "FilmRise Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 32
+        "scraped": 55
       },
       {
         "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -126,10 +126,10 @@
           "name": "FilmRise Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 32,
+          "scraped": 55,
           "total": 446,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 1,
+          "failureRate": 1.7857142857142856
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -265,5 +265,5 @@
     "filesInDirectory": 257,
     "matchedPosters": 241
   },
-  "lastUpdated": "2025-12-26T00:36:44.640Z"
+  "lastUpdated": "2025-12-26T00:41:46.353Z"
 }
