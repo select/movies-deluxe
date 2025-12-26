@@ -31,17 +31,17 @@
 
       <!-- Progress -->
       <div
-        v-if="progress && progress.status === 'in_progress'"
+        v-if="progress.archive && progress.archive.status === 'in_progress'"
         class="mt-4 space-y-2"
       >
         <div class="flex items-center justify-between text-xs">
-          <span class="text-gray-500 truncate mr-2">{{ progress.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.current }} / {{ progress.total }}</span>
+          <span class="text-gray-500 truncate mr-2">{{ progress.archive.message }}</span>
+          <span class="font-mono text-nowrap">{{ progress.archive.current }} / {{ progress.archive.total }}</span>
         </div>
         <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
             class="h-full bg-amber-500 transition-all duration-300"
-            :style="{ width: `${(progress.current / progress.total) * 100}%` }"
+            :style="{ width: `${(progress.archive.current / progress.archive.total) * 100}%` }"
           />
         </div>
       </div>
@@ -61,6 +61,5 @@ defineEmits<{
   start: []
 }>()
 
-const adminStore = useAdminStore()
-const progress = computed(() => adminStore.progress.archive)
+const { progress } = storeToRefs(useAdminStore())
 </script>

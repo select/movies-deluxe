@@ -54,7 +54,7 @@
                 <AppInputRadio
                   v-for="option in sortOptions"
                   :key="`${option.field}-${option.direction}`"
-                  :checked="currentSort.field === option.field && currentSort.direction === option.direction"
+                  :checked="currentSortOption.field === option.field && currentSortOption.direction === option.direction"
                   :label="option.label"
                   name="sort"
                   :value="`${option.field}-${option.direction}`"
@@ -74,16 +74,16 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="text-gray-600 dark:text-gray-400">Min:</span>
-                  <span class="font-medium">{{ filterStore.filters.minRating.toFixed(1) }}+</span>
+                  <span class="font-medium">{{ filters.minRating.toFixed(1) }}+</span>
                 </div>
                 <input
-                  :value="filterStore.filters.minRating"
+                  :value="filters.minRating"
                   type="range"
                   min="0"
                   max="10"
                   step="0.5"
                   class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                  @input="(e) => filterStore.setMinRating(Number((e.target as HTMLInputElement).value))"
+                  @input="(e) => setMinRating(Number((e.target as HTMLInputElement).value))"
                 >
                 <div class="flex justify-between text-xs text-gray-500 dark:text-gray-500">
                   <span>0</span>
@@ -101,16 +101,16 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="text-gray-600 dark:text-gray-400">From:</span>
-                  <span class="font-medium">{{ filterStore.filters.minYear || '1910' }}+</span>
+                  <span class="font-medium">{{ filters.minYear || '1910' }}+</span>
                 </div>
                 <input
-                  :value="filterStore.filters.minYear"
+                  :value="filters.minYear"
                   type="range"
                   min="1910"
                   max="2025"
                   step="1"
                   class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                  @input="(e) => filterStore.setMinYear(Number((e.target as HTMLInputElement).value))"
+                  @input="(e) => setMinYear(Number((e.target as HTMLInputElement).value))"
                 >
                 <div class="flex justify-between text-xs text-gray-500 dark:text-gray-500">
                   <span>1910</span>
@@ -128,16 +128,16 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="text-gray-600 dark:text-gray-400">Min:</span>
-                  <span class="font-medium">{{ filterStore.filters.minVotes.toLocaleString() }}+</span>
+                  <span class="font-medium">{{ filters.minVotes.toLocaleString() }}+</span>
                 </div>
                 <input
-                  :value="filterStore.filters.minVotes"
+                  :value="filters.minVotes"
                   type="number"
                   min="0"
                   step="100"
                   placeholder="0"
                   class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  @input="(e) => filterStore.setMinVotes(Number((e.target as HTMLInputElement).value))"
+                  @input="(e) => setMinVotes(Number((e.target as HTMLInputElement).value))"
                 >
                 <p class="text-xs text-gray-500 dark:text-gray-500">
                   IMDB votes
@@ -156,9 +156,9 @@
               <div class="space-y-3">
                 <!-- Archive.org -->
                 <AppInputCheckbox
-                  :checked="filterStore.filters.sources.includes('archive.org')"
+                  :checked="filters.sources.includes('archive.org')"
                   label="Archive.org"
-                  @change="filterStore.toggleSource('archive.org')"
+                  @change="toggleSource('archive.org')"
                 />
 
                 <!-- YouTube Channels -->
@@ -169,9 +169,9 @@
                   <AppInputCheckbox
                     v-for="channel in youtubeChannels"
                     :key="channel"
-                    :checked="filterStore.filters.sources.includes(channel)"
+                    :checked="filters.sources.includes(channel)"
                     :label="channel"
-                    @change="filterStore.toggleSource(channel)"
+                    @change="toggleSource(channel)"
                   />
                 </div>
               </div>
@@ -185,9 +185,9 @@
             >
               <div class="space-y-3">
                 <AppInputCheckbox
-                  :checked="filterStore.filters.showMissingMetadataOnly"
+                  :checked="filters.showMissingMetadataOnly"
                   label="Show Missing Metadata Only"
-                  @change="filterStore.toggleMissingMetadata()"
+                  @change="toggleMissingMetadata()"
                 />
               </div>
             </FilterSection>
@@ -205,11 +205,11 @@
                     :key="genre"
                     :class="[
                       'px-3 py-1.5 text-sm rounded-full transition-colors',
-                      filterStore.filters.genres.includes(genre)
+                      filters.genres.includes(genre)
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     ]"
-                    @click="filterStore.toggleGenre(genre)"
+                    @click="toggleGenre(genre)"
                   >
                     {{ genre }}
                   </button>
@@ -227,11 +227,11 @@
                     :key="country"
                     :class="[
                       'px-3 py-1.5 text-sm rounded-full transition-colors',
-                      filterStore.filters.countries.includes(country)
+                      filters.countries.includes(country)
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     ]"
-                    @click="filterStore.toggleCountry(country)"
+                    @click="toggleCountry(country)"
                   >
                     {{ country }}
                   </button>
@@ -262,7 +262,8 @@ const emit = defineEmits<{
 }>()
 
 // Use filter store
-const filterStore = useFilterStore()
+const { filters, currentSortOption } = storeToRefs(useFilterStore())
+const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort } = useFilterStore()
 
 // Get sort options from utils
 const sortOptions = SORT_OPTIONS
@@ -278,12 +279,9 @@ onMounted(() => {
   isDev.value = isLocalhost()
 })
 
-// Safe access to current sort (handles SSR and undefined cases)
-const currentSort = computed(() => filterStore.currentSortOption)
-
 // Handle sort change
 const handleSortChange = (option: SortOption) => {
-  filterStore.setSort(option)
+  setSort(option)
   // User can continue adjusting filters - manual close via X button or overlay
 }
 
