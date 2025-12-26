@@ -1,5 +1,5 @@
 // @ts-expect-error - SQLite WASM library is loaded via importScripts
-importScripts('/sqlite-wasm/sqlite3.js')
+importScripts(`${self.location.origin}/sqlite-wasm/sqlite3.js`)
 
 let db: any = null
 let sqlite3: any = null
@@ -13,8 +13,8 @@ async function init() {
       print: () => {},
       printErr: () => {},
       locateFile: (file: string) => {
-        // Ensure WASM files are loaded from the correct path
-        return `/sqlite-wasm/${file}`
+        // Ensure WASM files are loaded from the correct path using absolute URL
+        return `${self.location.origin}/sqlite-wasm/${file}`
       },
     })
 
