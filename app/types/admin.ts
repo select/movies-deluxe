@@ -50,6 +50,8 @@ export interface ScrapeStats {
     withPosterUrl: number
     downloaded: number
     missing: number
+    failed: number
+    failureRate: number
     percent: number
     percentOfMoviesWithUrl: number
     percentOfAllMovies: number

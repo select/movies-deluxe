@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path'
 import { Client } from 'youtubei'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 import { getFailedOmdbMatches } from '../../../utils/failedOmdb'
+import { getFailedPosterDownloads } from '../../../utils/posterDownloader'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
@@ -12,6 +13,7 @@ export default defineEventHandler(async _event => {
   // Load failed YouTube videos for stats
   const failedVideos = loadFailedYouTubeVideos()
   const failedOmdb = getFailedOmdbMatches()
+  const failedPosters = getFailedPosterDownloads()
 
   // Calculate YouTube totals
   const youtubeTotalScraped = dbStats.youtubeChannels.reduce((sum, c) => sum + c.scraped, 0)
@@ -131,6 +133,11 @@ export default defineEventHandler(async _event => {
       withPosterUrl: totalWithPosterUrl,
       downloaded: totalDownloaded,
       missing: totalWithPosterUrl - totalDownloaded,
+      failed: failedPosters.length,
+      failureRate:
+        totalDownloaded + failedPosters.length > 0
+          ? (failedPosters.length / (totalDownloaded + failedPosters.length)) * 100
+          : 0,
       percentOfMoviesWithUrl:
         totalWithPosterUrl > 0 ? (totalDownloaded / totalWithPosterUrl) * 100 : 0,
       percentOfAllMovies: entries.length > 0 ? (matchedPosters.length / entries.length) * 100 : 0,

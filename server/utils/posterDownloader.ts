@@ -77,6 +77,21 @@ function removeFailedDownload(imdbId: string): void {
   }
 }
 
+/**
+ * Get all failed poster downloads with details
+ */
+export function getFailedPosterDownloads(): FailedDownload[] {
+  try {
+    if (fs.existsSync(FAILED_DOWNLOADS_FILE)) {
+      const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
+      return JSON.parse(data)
+    }
+  } catch (error) {
+    console.error('Failed to load failed poster downloads:', error)
+  }
+  return []
+}
+
 export async function downloadPoster(
   url: string,
   imdbId: string,

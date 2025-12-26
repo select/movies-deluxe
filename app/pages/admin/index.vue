@@ -136,6 +136,8 @@
         <AdminStatsCard
           title="Posters"
           :value="adminStore.stats.posters.downloaded"
+          :failed="adminStore.stats.posters.failed"
+          :failure-rate="adminStore.stats.posters.failureRate"
           icon="i-mdi-image-multiple"
           icon-color="text-purple-500"
           show-progress
