@@ -340,63 +340,63 @@ export function testCleaningRules(): {
 export function cleanTitleGeneral(title: string): string {
   let cleaned = title
 
-  // 1. Remove file extensions: ".3gp", ".mp4", ".avi", etc.
+  // 1. Remove leading "- " prefix: "- Sleep My Love" → "Sleep My Love"
+  // Common in Archive.org metadata where titles have this prefix
+  cleaned = cleaned.replace(/^-\s+/, '')
+
+  // 2. Remove file extensions: ".3gp", ".mp4", ".avi", etc.
   // Also handles cases with space before extension: "Title. 3gp" → "Title"
   cleaned = cleaned.replace(/\.\s*\w{2,4}$/i, '').trim()
 
-  // 2. Remove year prefix at start: "1934 Pipin Der Kurze" → "Pipin Der Kurze"
+  // 3. Remove year prefix at start: "1934 Pipin Der Kurze" → "Pipin Der Kurze"
   cleaned = cleaned.replace(/^(19|20)\d{2}\s+/, '')
 
-  // 3. Remove "Director Unknown" prefix: "Director Unknown Title" → "Title"
+  // 4. Remove "Director Unknown" prefix: "Director Unknown Title" → "Title"
   // Common in Archive.org metadata when director information is not available
   cleaned = cleaned.replace(/^Director\s+Unknown\s+/i, '')
 
-  // 3. Remove "Director Unknown" prefix: "Director Unknown Title" → "Title"
-  // Common in Archive.org metadata when director information is not available
-  cleaned = cleaned.replace(/^Director\s+Unknown\s+/i, '')
-
-  // 4. Remove possessive forms with quotes: Charlie Chaplin's "Title" → Title
+  // 5. Remove possessive forms with quotes: Charlie Chaplin's "Title" → Title
   cleaned = cleaned.replace(/^[^"]+['']s\s*[""]([^""]+)[""].*$/, '$1')
 
-  // 5. Remove actor/director promotional text: "ACTOR NAME is/in TITLE" → TITLE
+  // 6. Remove actor/director promotional text: "ACTOR NAME is/in TITLE" → TITLE
   // Match: "FIRSTNAME LASTNAME is/in TITLE" or "FIRSTNAME LASTNAME & FIRSTNAME LASTNAME in TITLE"
   cleaned = cleaned.replace(/^[A-Z][A-Z\s&]+\s+(?:is|in)\s+(.+)$/i, '$1')
 
-  // 6. Remove pipe-separated promotional text (keep first part before pipe)
+  // 7. Remove pipe-separated promotional text (keep first part before pipe)
   // Examples: "Title | WAR MOVIE", "Title | Full Movie"
   cleaned = cleaned.replace(
     /\s*\|\s*(?:WAR|ROMANTIC|DRAMA|COMEDY|HORROR|THRILLER|ACTION|SCI-FI|SCIENCE FICTION|SPY|FULL|FREE|HD|4K|MOVIE|FILM|BASED ON|BASADA EN|Subtitulos|subtítulos|with|con|مع|ترجمة|by|por|dir\.).*$/i,
     ''
   )
 
-  // 7. Remove actor lists in parentheses: "Title ( Actor1, Actor2, Actor3 )"
+  // 8. Remove actor lists in parentheses: "Title ( Actor1, Actor2, Actor3 )"
   // Pattern: Parentheses containing multiple capitalized names separated by commas
   // This handles cases like "Heute Abend Bei Mir ( Jenny Jugo, Paul Hörbiger, ... )"
-  // Must be done BEFORE step 8 to avoid extracting actor names as titles
+  // Must be done BEFORE step 9 to avoid extracting actor names as titles
   cleaned = cleaned.replace(/\s*\(\s*[A-Z][^,)]+(?:,\s*[A-Z][^,)]+)+\s*\)\s*$/, '')
 
-  // 8. Remove foreign language translations in parentheses (keep English if present)
+  // 9. Remove foreign language translations in parentheses (keep English if present)
   // "Foreign Title (English Title)" → "English Title"
   // But NOT if parens contain commas (actor lists), metadata like "German: ...", or colons
   // Only extract if it's a single capitalized phrase without commas
   cleaned = cleaned.replace(/^[^(]+\(\s*([A-Z][^):,]+)\s*\)$/, '$1')
 
-  // 9. Remove metadata in parentheses: (German: ...), (1974, dir. Name)
+  // 10. Remove metadata in parentheses: (German: ...), (1974, dir. Name)
   cleaned = cleaned.replace(
     /\s*\([^)]*(?:German|French|Spanish|Italian|Russian|dir\.|directed by)[^)]*\)/gi,
     ''
   )
 
-  // 10. Remove genre/type descriptors in parentheses: (the grindhouse experience)
+  // 11. Remove genre/type descriptors in parentheses: (the grindhouse experience)
   cleaned = cleaned.replace(/\s*\([^)]*(?:experience|thriller|drama|comedy|horror)\s*\)/gi, '')
 
-  // 11. Remove years in parentheses: (1999), (2000)
+  // 12. Remove years in parentheses: (1999), (2000)
   cleaned = cleaned.replace(/\s*\(\s*\d{4}\s*\)\s*/g, ' ')
 
-  // 12. Remove actor names from title: "Title - Actor Name (Year)"
+  // 13. Remove actor names from title: "Title - Actor Name (Year)"
   cleaned = cleaned.replace(/\s*[-–—]\s*[A-Z][a-z]+\s+[A-Z][a-z]+\s*\(\d{4}\)\s*$/, '')
 
-  // 13. Remove descriptive subtitles after dash/colon (common in Archive.org)
+  // 14. Remove descriptive subtitles after dash/colon (common in Archive.org)
   // But preserve if it's part of the actual title (hyphenated titles)
   // Strategy: Only remove if the part after dash starts with certain words or is very long
   const dashMatch = cleaned.match(/^(.+?)\s*[-–—:]\s*(.+)$/)
@@ -415,16 +415,16 @@ export function cleanTitleGeneral(title: string): string {
     }
   }
 
-  // 14. Remove quotes around entire title or parts
+  // 15. Remove quotes around entire title or parts
   cleaned = cleaned.replace(/^[""](.+)[""]$/, '$1')
   cleaned = cleaned.replace(/[""]([^""]+)[""]/, '$1')
 
-  // 15. Remove trailing punctuation and descriptors
+  // 16. Remove trailing punctuation and descriptors
   cleaned = cleaned.replace(/[.,!?;:]\s*$/, '')
 
-  // 16. Clean up whitespace
+  // 17. Clean up whitespace
   cleaned = cleaned.replace(/\s+/g, ' ').trim()
 
-  // 17. If cleaning resulted in empty string, return original
+  // 18. If cleaning resulted in empty string, return original
   return cleaned || title.trim()
 }
