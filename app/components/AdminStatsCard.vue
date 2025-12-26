@@ -21,11 +21,16 @@
       v-if="showProgress"
       class="mt-1 flex items-center gap-2"
     >
-      <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
         <div
           class="h-full transition-all duration-1000"
           :class="progressColor"
           :style="{ width: `${percent}%` }"
+        />
+        <div
+          v-if="failed && failed > 0 && failedPercent !== undefined"
+          class="h-full bg-orange-400 transition-all duration-1000"
+          :style="{ width: `${failedPercent}%` }"
         />
       </div>
       <span class="text-[10px] font-medium">{{ percent?.toFixed(percentPrecision) }}%</span>
@@ -62,6 +67,7 @@ withDefaults(defineProps<{
   progressColor?: string
   percentPrecision?: number
   failed?: number
+  failedPercent?: number
   failureRate?: number
 }>(), {
   iconColor: 'text-blue-500',
@@ -71,6 +77,7 @@ withDefaults(defineProps<{
   percentPrecision: 0,
   subtitle: undefined,
   failed: undefined,
+  failedPercent: undefined,
   failureRate: undefined,
 })
 </script>

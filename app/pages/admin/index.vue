@@ -112,6 +112,7 @@
           :value="adminStore.youtubeTotalScraped"
           :failed="adminStore.stats.external.youtube.totalFailed"
           :failure-rate="adminStore.stats.external.youtube.failureRate"
+          :failed-percent="adminStore.youtubeFailedPercent"
           icon="i-mdi-youtube"
           icon-color="text-red-500"
           show-progress
@@ -125,6 +126,7 @@
           :value="adminStore.stats.omdb.matched"
           :failed="adminStore.stats.omdb.failed"
           :failure-rate="adminStore.stats.omdb.failureRate"
+          :failed-percent="adminStore.omdbFailedPercent"
           icon="i-mdi-database-sync"
           icon-color="text-green-500"
           show-progress
@@ -138,6 +140,7 @@
           :value="adminStore.stats.posters.downloaded"
           :failed="adminStore.stats.posters.failed"
           :failure-rate="adminStore.stats.posters.failureRate"
+          :failed-percent="adminStore.postersFailedPercent"
           icon="i-mdi-image-multiple"
           icon-color="text-purple-500"
           show-progress
