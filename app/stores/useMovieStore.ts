@@ -1,6 +1,6 @@
-import type { MovieEntry, MovieSource } from '~/types'
-import { useDatabase } from '~/composables/useDatabase'
+import type { MovieEntry, MovieSource, MovieSourceType, MovieMetadata } from '~/types'
 
+// Frontend-specific loading state type
 export interface LoadingState {
   movies: boolean
   movieDetails: boolean
@@ -8,11 +8,9 @@ export interface LoadingState {
 }
 
 export const useMovieStore = defineStore('movie', () => {
-  const { query, init: initDb } = useDatabase()
-
   // State
-  const movies = ref<MovieEntry[]>([]) // This will now hold the currently visible/loaded movies
-  const totalCount = ref(0)
+  const movies = ref<MovieEntry[]>([])
+  const movieDetailsCache = ref<Map<string, MovieEntry>>(new Map())
   const isLoading = ref<LoadingState>({
     movies: false,
     movieDetails: false,
@@ -20,236 +18,360 @@ export const useMovieStore = defineStore('movie', () => {
   })
   const isInitialLoading = ref(true)
 
+  // Database composable
+  const db = useDatabase()
+
   // Cached poster existence checks
   const posterCache = ref<Map<string, boolean>>(new Map())
 
   /**
-   * Initialize the database
+   * Map SQL row to MovieEntry
    */
-  const init = async () => {
-    await initDb()
-    isInitialLoading.value = false
+  const mapRowToMovie = (row: any): MovieEntry => {
+    const sourcesRaw = row.sources_raw || ''
+    const sources: MovieSource[] = sourcesRaw
+      ? sourcesRaw
+          .split('###')
+          .filter((s: string) => s.trim())
+          .map((s: string) => {
+            const [type, url, id, label, quality, addedAt, description, channelName] = s.split('|')
+            const base = {
+              type: type as MovieSourceType,
+              url,
+              id,
+              label: label || undefined,
+              quality: quality || undefined,
+              addedAt,
+              description: description || undefined,
+            }
+
+            if (type === 'youtube') {
+              return {
+                ...base,
+                channelName: channelName || '',
+              } as any
+            }
+            return base as any
+          })
+      : []
+
+    const metadata: MovieMetadata | undefined = row.is_curated
+      ? {
+          Rated: row.rated,
+          Runtime: row.runtime,
+          Genre: row.genre,
+          Director: row.director,
+          Writer: row.writer,
+          Actors: row.actors,
+          Plot: row.plot,
+          Language: row.language,
+          Country: row.country,
+          Awards: row.awards,
+          Poster: row.poster,
+          imdbRating: row.imdbRating?.toString(),
+          imdbVotes: row.imdbVotes?.toLocaleString(),
+          imdbID: row.imdbId,
+        }
+      : undefined
+
+    return {
+      imdbId: row.imdbId,
+      title: row.title,
+      year: row.year,
+      verified: !!row.verified,
+      lastUpdated: row.lastUpdated,
+      sources,
+      metadata,
+    }
   }
 
   /**
-   * Fetch movies with filters, sorting, and pagination
+   * Load movies from SQLite database (initialization only)
    */
-  const fetchMovies = async (options: {
-    offset: number
-    limit: number
-    filters: any
-    sort: { field: string; direction: string }
-  }) => {
+  const loadFromFile = async () => {
     isLoading.value.movies = true
 
     try {
-      const { offset, limit, filters, sort } = options
+      // Initialize database from remote file
+      await db.init('/data/movies.db')
 
-      // Build WHERE clause
-      const whereClauses: string[] = []
-      const params: any[] = []
-
-      if (filters.searchQuery) {
-        whereClauses.push('imdbId IN (SELECT imdbId FROM fts_movies WHERE fts_movies MATCH ?)')
-        params.push(filters.searchQuery)
-      }
-
-      if (filters.minRating > 0) {
-        whereClauses.push('imdbRating >= ?')
-        params.push(filters.minRating)
-      }
-
-      if (filters.minYear > 0) {
-        whereClauses.push('year >= ?')
-        params.push(filters.minYear)
-      }
-
-      if (filters.minVotes > 0) {
-        whereClauses.push('imdbVotes >= ?')
-        params.push(filters.minVotes)
-      }
-
-      if (filters.sources.length > 0) {
-        const sourcePlaceholders = filters.sources.map(() => '?').join(',')
-        whereClauses.push(
-          `imdbId IN (SELECT movieId FROM sources WHERE type IN (${sourcePlaceholders}) OR youtube_channelName IN (${sourcePlaceholders}))`
-        )
-        params.push(...filters.sources, ...filters.sources)
-      }
-
-      if (filters.genres.length > 0) {
-        filters.genres.forEach((genre: string) => {
-          whereClauses.push('genre LIKE ?')
-          params.push(`%${genre}%`)
-        })
-      }
-
-      const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
-
-      // Get total count
-      const countResult = await query<{ count: number }>(
-        `SELECT COUNT(*) as count FROM movies ${whereSql}`,
-        params
-      )
-      totalCount.value = countResult[0]?.count || 0
-
-      // Build ORDER BY
-      let orderBy = ''
-      if (filters.searchQuery && sort.field === 'relevance') {
-        // FTS5 relevance is handled by the MATCH but we can use rank
-        orderBy = 'ORDER BY rank'
-      } else {
-        const direction = sort.direction.toUpperCase()
-        switch (sort.field) {
-          case 'year':
-            orderBy = `ORDER BY year ${direction}, title ASC`
-            break
-          case 'rating':
-            orderBy = `ORDER BY imdbRating ${direction}, imdbVotes ${direction}`
-            break
-          case 'votes':
-            orderBy = `ORDER BY imdbVotes ${direction}`
-            break
-          case 'title':
-            orderBy = `ORDER BY title ${direction}`
-            break
-          default:
-            orderBy = 'ORDER BY year DESC, title ASC'
-        }
-      }
-
-      // Fetch page
-      const sql = `
-        SELECT * FROM movies 
-        ${whereSql} 
-        ${orderBy} 
-        LIMIT ? OFFSET ?
-      `
-      const movieRows = await query<any>(sql, [...params, limit, offset])
-
-      // Map rows to MovieEntry
-      // Note: We need to fetch sources for these movies too
-      const movieIds = movieRows.map((r: any) => r.imdbId)
-      const sourcesMap: Record<string, MovieSource[]> = {}
-
-      if (movieIds.length > 0) {
-        const sourcePlaceholders = movieIds.map(() => '?').join(',')
-        const sourceRows = await query<any>(
-          `SELECT * FROM sources WHERE movieId IN (${sourcePlaceholders})`,
-          movieIds
-        )
-
-        sourceRows.forEach((s: any) => {
-          if (!sourcesMap[s.movieId]) sourcesMap[s.movieId] = []
-          sourcesMap[s.movieId].push({
-            type: s.type,
-            url: s.url,
-            label: s.label,
-            quality: s.quality,
-            addedAt: s.addedAt,
-            description: s.description,
-            id: s.type === 'archive.org' ? s.archive_identifier : s.youtube_videoId,
-            channelName: s.youtube_channelName,
-            channelId: s.youtube_channelId,
-            language: s.youtube_language,
-          } as any)
-        })
-      }
-
-      const movieEntries: MovieEntry[] = movieRows.map((r: any) => ({
-        imdbId: r.imdbId,
-        title: r.title,
-        year: r.year,
-        verified: !!r.verified,
-        lastUpdated: r.lastUpdated,
-        sources: sourcesMap[r.imdbId] || [],
-        metadata: {
-          Title: r.title,
-          Year: r.year?.toString(),
-          Rated: r.rated,
-          Runtime: r.runtime,
-          Genre: r.genre,
-          Director: r.director,
-          Writer: r.writer,
-          Actors: r.actors,
-          Plot: r.plot,
-          Language: r.language,
-          Country: r.country,
-          Awards: r.awards,
-          Poster: r.poster,
-          imdbRating: r.imdbRating?.toString(),
-          imdbVotes: r.imdbVotes?.toLocaleString(),
-          imdbID: r.imdbId,
-        },
-      }))
-
-      movies.value = movieEntries
-      return movieEntries
-    } catch {
-      return []
+      // We don't load all movies anymore, just initialize
+      isInitialLoading.value = false
+    } catch (err) {
+      console.error('Failed to initialize SQLite:', err)
+      // Fallback to JSON API if SQLite fails
+      await loadFromJson()
     } finally {
       isLoading.value.movies = false
+      isInitialLoading.value = false
+    }
+  }
+
+  /**
+   * Fetch movies with filtering and pagination
+   */
+  const fetchMovies = async (options: {
+    where?: string
+    params?: any[]
+    orderBy?: string
+    limit?: number
+    offset?: number
+    includeCount?: boolean
+    searchQuery?: string
+  }) => {
+    if (!db.isReady.value) return { result: [], totalCount: 0 }
+
+    const { searchQuery, where, params = [], orderBy, limit, offset, includeCount } = options
+
+    let from = 'movies m'
+    let finalWhere = where || ''
+
+    if (searchQuery?.trim()) {
+      from = 'fts_movies f JOIN movies m ON f.imdbId = m.imdbId'
+      const searchWhere = 'fts_movies MATCH ?'
+      finalWhere = finalWhere ? `(${finalWhere}) AND (${searchWhere})` : searchWhere
+      params.push(searchQuery)
+    }
+
+    const { result, totalCount } = await db.extendedQuery({
+      select: `m.*, GROUP_CONCAT(s.type || '|' || s.url || '|' || s.id || '|' || COALESCE(s.label, '') || '|' || COALESCE(s.quality, '') || '|' || s.addedAt || '|' || COALESCE(s.description, '') || '|' || COALESCE(s.youtube_channelName, ''), '###') as sources_raw`,
+      from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId`,
+      where: finalWhere,
+      params,
+      groupBy: 'm.imdbId',
+      orderBy: orderBy ? `${orderBy}, m.imdbId` : 'm.imdbId',
+      limit,
+      offset,
+      includeCount,
+    })
+
+    return {
+      result: result.map(mapRowToMovie),
+      totalCount,
+    }
+  }
+
+  /**
+   * Fetch full movie details for specific IDs (with caching)
+   */
+  const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
+    if (!db.isReady.value) return []
+    if (!imdbIds || imdbIds.length === 0) return []
+
+    // Ensure cache is initialized
+    if (!movieDetailsCache.value) {
+      movieDetailsCache.value = new Map()
+    }
+
+    // Filter out IDs that are already cached
+    const uncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
+
+    if (uncachedIds.length === 0) {
+      // All movies are cached, return from cache
+      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+    }
+
+    console.log('[MovieStore] Fetching details for', uncachedIds.length, 'uncached movies')
+
+    try {
+      const results = await db.queryByIds(uncachedIds)
+      const movies = results.map(mapRowToMovie)
+
+      // Cache the results
+      movies.forEach(movie => {
+        movieDetailsCache.value.set(movie.imdbId, movie)
+      })
+
+      // Return all requested movies (cached + newly fetched)
+      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+    } catch (err) {
+      console.error('[MovieStore] Failed to fetch movies by IDs:', err)
+      return []
+    }
+  }
+
+  /**
+   * Get a single movie from cache or fetch it
+   */
+  const getMovieDetails = async (imdbId: string): Promise<MovieEntry | undefined> => {
+    // Check cache first
+    if (movieDetailsCache.value.has(imdbId)) {
+      return movieDetailsCache.value.get(imdbId)
+    }
+
+    // Fetch from database
+    const movies = await fetchMoviesByIds([imdbId])
+    return movies[0]
+  }
+
+  /**
+   * Fallback: Load movies from JSON API
+   */
+  const loadFromJson = async () => {
+    try {
+      const response = await $fetch<Record<string, unknown>>('/api/movies')
+
+      if (response.error) {
+        console.error('Failed to load movies from JSON:', response.message)
+        return
+      }
+
+      const movieEntries: MovieEntry[] = Object.entries(response)
+        .filter(([key]) => !key.startsWith('_'))
+        .filter(([, value]) => {
+          if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
+            return false
+          }
+          const movie = value as any
+          if (typeof movie.imdbId !== 'string') return false
+          if (typeof movie.title === 'string') return true
+          if (Array.isArray(movie.title)) {
+            return movie.title.every(t => typeof t === 'string')
+          }
+          return false
+        })
+        .map(([, value]) => value as MovieEntry)
+        .sort((a, b) => (a.imdbId || '').localeCompare(b.imdbId || ''))
+
+      movies.value = movieEntries
+    } catch (err) {
+      console.error('Failed to load movies from JSON fallback:', err)
+    }
+  }
+
+  /**
+   * Load movies from JSON API (for Admin interface)
+   */
+  const loadFromApi = async () => {
+    isLoading.value.movies = true
+    try {
+      await loadFromJson()
+    } finally {
+      isLoading.value.movies = false
+      isInitialLoading.value = false
+    }
+  }
+
+  /**
+   * Filter movies by source type
+   * @param sourceType - Type of source to filter by ('archive.org' or 'youtube')
+   * @returns Filtered array of movies
+   */
+  const filterBySource = (sourceType: MovieSourceType): MovieEntry[] => {
+    return movies.value.filter((movie: MovieEntry) =>
+      movie.sources.some((source: MovieSource) => source.type === sourceType)
+    )
+  }
+
+  /**
+   * Search movies by title, actors, director, or plot using SQLite FTS5
+   * @param query - Search query string
+   * @returns Filtered array of movies matching the query
+   */
+  const searchMovies = async (searchQuery: string): Promise<MovieEntry[]> => {
+    if (!searchQuery || !searchQuery.trim()) return movies.value
+
+    if (!db.isReady.value) {
+      // Fallback to simple JS search if DB is not ready
+      const lowerQuery = searchQuery.toLowerCase()
+      return movies.value.filter((movie: MovieEntry) => {
+        const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
+        return titles.some(t => t.toLowerCase().includes(lowerQuery))
+      })
+    }
+
+    try {
+      const results = await db.query(
+        `
+        SELECT m.imdbId
+        FROM fts_movies f
+        JOIN movies m ON f.imdbId = m.imdbId
+        WHERE fts_movies MATCH ?
+        ORDER BY rank
+      `,
+        [searchQuery]
+      )
+
+      const matchedIds = new Set(results.map((r: any) => r.imdbId))
+      return movies.value.filter(m => matchedIds.has(m.imdbId))
+    } catch (err) {
+      console.error('FTS5 search failed:', err)
+      return movies.value
     }
   }
 
   /**
    * Get a single movie by imdbId
+   * @param imdbId - IMDB ID or temporary ID
+   * @returns Movie entry or undefined
    */
   const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
-    const rows = await query<any>('SELECT * FROM movies WHERE imdbId = ?', [imdbId])
-    if (rows.length === 0) return undefined
+    // Check local state first
+    const existing = movies.value.find((movie: MovieEntry) => movie.imdbId === imdbId)
+    if (existing) return existing
 
-    const r = rows[0]
-    const sourceRows = await query<any>('SELECT * FROM sources WHERE movieId = ?', [imdbId])
-    const sources = sourceRows.map(
-      (s: any) =>
-        ({
-          type: s.type,
-          url: s.url,
-          label: s.label,
-          quality: s.quality,
-          addedAt: s.addedAt,
-          description: s.description,
-          id: s.type === 'archive.org' ? s.archive_identifier : s.youtube_videoId,
-          channelName: s.youtube_channelName,
-          channelId: s.youtube_channelId,
-          language: s.youtube_language,
-        }) as any
-    )
+    if (db.isReady.value) {
+      try {
+        const results = await db.query(
+          `
+          SELECT m.*, GROUP_CONCAT(s.type || '|' || s.url || '|' || s.id || '|' || COALESCE(s.label, '') || '|' || COALESCE(s.quality, '') || '|' || s.addedAt || '|' || COALESCE(s.description, '') || '|' || COALESCE(s.youtube_channelName, ''), '###') as sources_raw
+          FROM movies m
+          LEFT JOIN sources s ON m.imdbId = s.movieId
+          WHERE m.imdbId = ?
+          GROUP BY m.imdbId
+        `,
+          [imdbId]
+        )
 
-    return {
-      imdbId: r.imdbId,
-      title: r.title,
-      year: r.year,
-      verified: !!r.verified,
-      lastUpdated: r.lastUpdated,
-      sources,
-      metadata: {
-        Title: r.title,
-        Year: r.year?.toString(),
-        Rated: r.rated,
-        Runtime: r.runtime,
-        Genre: r.genre,
-        Director: r.director,
-        Writer: r.writer,
-        Actors: r.actors,
-        Plot: r.plot,
-        Language: r.language,
-        Country: r.country,
-        Awards: r.awards,
-        Poster: r.poster,
-        imdbRating: r.imdbRating?.toString(),
-        imdbVotes: r.imdbVotes?.toLocaleString(),
-        imdbID: r.imdbId,
-      },
+        if (results.length > 0) {
+          return mapRowToMovie(results[0])
+        }
+      } catch (err) {
+        console.error('SQL getMovieById failed:', err)
+      }
+    }
+
+    // Fallback to JSON API for single movie
+    try {
+      const movie = await $fetch<MovieEntry>(`/api/movie/${imdbId}`)
+      return movie
+    } catch {
+      return undefined
     }
   }
 
-  // Poster utilities (keep existing ones but adapt if needed)
+  /**
+   * Get movies that have OMDB metadata
+   * @returns Array of movies with metadata
+   */
+  const getEnrichedMovies = (): MovieEntry[] => {
+    return movies.value.filter((movie: MovieEntry) => movie.metadata !== undefined)
+  }
+
+  /**
+   * Get movies without OMDB metadata (need enrichment)
+   * @returns Array of movies without metadata
+   */
+  const getUnenrichedMovies = (): MovieEntry[] => {
+    return movies.value.filter((movie: MovieEntry) => movie.metadata === undefined)
+  }
+
+  /**
+   * Check if a local poster exists for the given imdbId
+   * Uses cache to avoid repeated network requests
+   * @param imdbId - IMDB ID to check
+   * @returns Promise<boolean> indicating whether the poster exists locally
+   */
   const posterExists = async (imdbId: string): Promise<boolean> => {
     if (!imdbId) return false
-    if (posterCache.value.has(imdbId)) return posterCache.value.get(imdbId)!
+
+    // Check cache first
+    if (posterCache.value.has(imdbId)) {
+      return posterCache.value.get(imdbId)!
+    }
+
     try {
+      // Try to fetch the local poster with HEAD request to avoid downloading
       const response = await fetch(`/posters/${imdbId}.jpg`, { method: 'HEAD' })
       const exists = response.ok
       posterCache.value.set(imdbId, exists)
@@ -260,34 +382,205 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
+  /**
+   * Get the best available poster URL with fallback logic
+   * Priority: local cache -> OMDB URL -> placeholder
+   * @param movie - Movie entry
+   * @returns Promise<string> - URL to the poster image
+   */
   const getPosterUrl = async (movie: MovieEntry): Promise<string> => {
     const placeholder = '/images/poster-placeholder.jpg'
+
     if (!movie.imdbId) return placeholder
+
+    // Check for local poster first (best performance)
     const hasLocal = await posterExists(movie.imdbId)
-    if (hasLocal) return `/posters/${movie.imdbId}.jpg`
+    if (hasLocal) {
+      return `/posters/${movie.imdbId}.jpg`
+    }
+
+    // Fallback to OMDB poster URL if available
     const omdbPoster = movie.metadata?.Poster
-    if (omdbPoster && omdbPoster !== 'N/A') return omdbPoster
+    if (omdbPoster && omdbPoster !== 'N/A') {
+      return omdbPoster
+    }
+
+    // Final fallback to placeholder
     return placeholder
   }
 
+  /**
+   * Get poster URL synchronously (for SSR or when you know the status)
+   * This version doesn't check if the local file exists - assumes you've already checked
+   * @param movie - Movie entry
+   * @param preferLocal - Whether to prefer local path (default: true)
+   * @returns string - URL to the poster image
+   */
   const getPosterUrlSync = (movie: MovieEntry, preferLocal: boolean = true): string => {
     const placeholder = '/images/poster-placeholder.jpg'
+
     if (!movie.imdbId) return placeholder
-    if (preferLocal) return `/posters/${movie.imdbId}.jpg`
+
+    // If preferLocal, return local path (browser will handle 404 gracefully)
+    if (preferLocal) {
+      return `/posters/${movie.imdbId}.jpg`
+    }
+
+    // Otherwise use OMDB poster URL
     const omdbPoster = movie.metadata?.Poster
-    if (omdbPoster && omdbPoster !== 'N/A') return omdbPoster
+    if (omdbPoster && omdbPoster !== 'N/A') {
+      return omdbPoster
+    }
+
     return placeholder
+  }
+
+  /**
+   * Preload posters for multiple movies (batch check)
+   * @param imdbIds - Array of IMDB IDs to check
+   * @returns Promise<Map<string, boolean>> - Map of imdbId to existence status
+   */
+  const preloadPosters = async (imdbIds: string[]): Promise<Map<string, boolean>> => {
+    const results = new Map<string, boolean>()
+
+    // Check all posters in parallel (but limit concurrency to avoid overwhelming the server)
+    const batchSize = 10
+    for (let i = 0; i < imdbIds.length; i += batchSize) {
+      const batch = imdbIds.slice(i, i + batchSize)
+      const promises = batch.map(async imdbId => {
+        const exists = await posterExists(imdbId)
+        results.set(imdbId, exists)
+      })
+      await Promise.all(promises)
+    }
+
+    return results
+  }
+
+  /**
+   * Get all sources for a movie grouped by type
+   * @param movie - Movie entry
+   * @returns Object with sources grouped by type
+   */
+  const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
+    return movie.sources.reduce(
+      (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
+        grouped[source.type].push(source)
+        return grouped
+      },
+      {
+        'archive.org': [],
+        youtube: [],
+      } as Record<MovieSourceType, MovieSource[]>
+    )
+  }
+
+  /**
+   * Get the primary source for a movie (first source, or highest quality)
+   * @param movie - Movie entry
+   * @returns Primary movie source
+   */
+  const getPrimarySource = (movie: MovieEntry): MovieSource | undefined => {
+    if (movie.sources.length === 0) return undefined
+
+    // Prefer archive.org sources (usually higher quality)
+    const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
+    if (archiveSources.length > 0) {
+      // Sort by downloads if available
+      const sorted = [...archiveSources].sort((a: MovieSource, b: MovieSource) => {
+        const aDownloads = 'downloads' in a ? a.downloads || 0 : 0
+        const bDownloads = 'downloads' in b ? b.downloads || 0 : 0
+        return bDownloads - aDownloads
+      })
+      return sorted[0]
+    }
+
+    // Otherwise return first YouTube source
+    return movie.sources[0]
+  }
+
+  /**
+   * Runtime OMDB enrichment (optional, for movies without metadata)
+   * This can be used to fetch metadata on-demand for movies that don't have it yet
+   * @param movie - Movie entry to enrich
+   * @returns Updated movie metadata or null if failed
+   */
+  const enrichMovieMetadata = async (movie: MovieEntry) => {
+    isLoading.value.imdbFetch = true
+
+    const apiKey = useRuntimeConfig().public.OMDB_API_KEY
+    if (!apiKey) {
+      isLoading.value.imdbFetch = false
+      return null
+    }
+
+    try {
+      // Only enrich if we have a valid IMDB ID (not temporary)
+      if (!movie.imdbId.startsWith('tt')) {
+        isLoading.value.imdbFetch = false
+        return null
+      }
+
+      const metadata = await $fetch<MovieMetadata>('https://www.omdbapi.com/', {
+        params: {
+          apikey: apiKey,
+          i: movie.imdbId,
+          plot: 'full',
+        },
+      })
+
+      if (metadata && 'Error' in metadata) {
+        isLoading.value.imdbFetch = false
+        return null
+      }
+
+      // Update the movie in our local state
+      const movieIndex = movies.value.findIndex((m: MovieEntry) => m.imdbId === movie.imdbId)
+      if (movieIndex !== -1 && movies.value[movieIndex]) {
+        movies.value[movieIndex]!.metadata = metadata
+      }
+
+      isLoading.value.imdbFetch = false
+      return metadata
+    } catch {
+      isLoading.value.imdbFetch = false
+      return null
+    }
   }
 
   return {
+    // State
     movies,
-    totalCount,
+    movieDetailsCache,
     isLoading,
     isInitialLoading,
-    init,
+
+    // Data loading
+    loadFromFile,
+    loadFromApi,
     fetchMovies,
+    fetchMoviesByIds,
+    getMovieDetails,
+    mapRowToMovie,
+
+    // Filtering & search
+    filterBySource,
+    searchMovies,
     getMovieById,
+    getEnrichedMovies,
+    getUnenrichedMovies,
+
+    // Source utilities
+    getSourcesByType,
+    getPrimarySource,
+
+    // Poster utilities
+    posterExists,
     getPosterUrl,
     getPosterUrlSync,
+    preloadPosters,
+
+    // Runtime enrichment (optional)
+    enrichMovieMetadata,
   }
 })

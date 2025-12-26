@@ -34,3 +34,6 @@ public/posters/*.webp
 *.backup-*.json
 *-before-migration.json
 *.bak
+
+# SQLite WASM files (copied from node_modules)
+public/sqlite-wasm/

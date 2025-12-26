@@ -1,79 +1,137 @@
-export const useDatabase = () => {
+// Singleton instance
+let dbInstance: ReturnType<typeof createDatabase> | null = null
+
+function createDatabase() {
   const worker = ref<Worker | null>(null)
-  const isInitialized = ref(false)
+  const isReady = ref(false)
   const pendingQueries = new Map<
     string,
     { resolve: (value: any) => void; reject: (reason?: any) => void }
   >()
 
-  const init = async () => {
-    if (isInitialized.value) return
+  const init = async (url?: string) => {
+    if (worker.value) return
 
-    return new Promise((resolve, reject) => {
-      // Create worker
-      worker.value = new Worker(new URL('../workers/database.worker.ts', import.meta.url))
+    // @ts-expect-error
+    const DatabaseWorker = await import('~/workers/database.worker?worker')
+    worker.value = new DatabaseWorker.default()
 
-      worker.value.onmessage = event => {
-        const { type, payload, error, id } = event.data
+    worker.value!.onmessage = e => {
+      const { id, error } = e.data
+      const pending = pendingQueries.get(id)
 
-        if (type === 'init') {
-          if (error) {
-            reject(new Error(error))
-          } else {
-            isInitialized.value = true
-            resolve(payload)
-          }
-          return
+      if (pending) {
+        if (error) {
+          pending.reject(new Error(error))
+        } else {
+          pending.resolve(e.data)
         }
-
-        const pending = pendingQueries.get(id)
-        if (pending) {
-          if (error) {
-            pending.reject(new Error(error))
-          } else {
-            pending.resolve(payload)
-          }
-          pendingQueries.delete(id)
-        }
+        pendingQueries.delete(id)
       }
-
-      worker.value.onerror = err => {
-        reject(err)
-      }
-
-      // Send init message
-      worker.value.postMessage({ type: 'init', id: 'init' })
-    })
-  }
-
-  const query = async <T>(sql: string, params: any[] = []): Promise<T[]> => {
-    if (!isInitialized.value) {
-      await init()
     }
 
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, { resolve, reject })
-      worker.value?.postMessage({ type: 'query', id, payload: { sql, params } })
+      worker.value!.postMessage({ type: 'init', id, url })
+    }).then(() => {
+      isReady.value = true
     })
   }
 
-  const exec = async (sql: string, params: any[] = []): Promise<{ success: boolean }> => {
-    if (!isInitialized.value) {
-      await init()
+  const query = async <T = any>(sql: string, params: any[] = []): Promise<T[]> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
     }
 
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
-      pendingQueries.set(id, { resolve, reject })
-      worker.value?.postMessage({ type: 'exec', id, payload: { sql, params } })
+      pendingQueries.set(id, {
+        resolve: (data: any) => resolve(data.result),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'exec', id, sql, params })
+    })
+  }
+
+  const extendedQuery = async <T = any>(options: {
+    select?: string
+    from: string
+    where?: string
+    params?: any[]
+    groupBy?: string
+    orderBy?: string
+    limit?: number
+    offset?: number
+    includeCount?: boolean
+  }): Promise<{ result: T[]; totalCount?: number }> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: any) => resolve({ result: data.result, totalCount: data.totalCount }),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'query', id, ...options })
+    })
+  }
+
+  const lightweightQuery = async (options: {
+    where?: string
+    params?: any[]
+    orderBy?: string
+    limit?: number
+    offset?: number
+    includeCount?: boolean
+  }): Promise<{
+    result: Array<{ imdbId: string; title: string | string[]; year: number }>
+    totalCount?: number
+  }> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: any) => resolve({ result: data.result, totalCount: data.totalCount }),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'query-lightweight', id, ...options })
+    })
+  }
+
+  const queryByIds = async (imdbIds: string[]): Promise<any[]> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: any) => resolve(data.result),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'query-by-ids', id, imdbIds })
     })
   }
 
   return {
     init,
     query,
-    exec,
-    isInitialized,
+    extendedQuery,
+    lightweightQuery,
+    queryByIds,
+    isReady,
   }
+}
+
+export function useDatabase() {
+  if (!dbInstance) {
+    dbInstance = createDatabase()
+  }
+  return dbInstance
 }

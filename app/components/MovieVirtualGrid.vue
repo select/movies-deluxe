@@ -1,86 +1,212 @@
 <template>
-  <div ref="containerRef" class="relative" :style="{ height: `${totalHeight}px` }">
+  <div
+    ref="gridRef"
+    :style="{ height: `${totalHeight}px`, position: 'relative' }"
+    class="w-full"
+  >
     <div
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 absolute top-0 left-0 right-0"
-      :style="{ transform: `translateY(${offsetY}px)` }"
+      v-for="row in visibleRows"
+      :key="row.index"
+      :style="{
+        position: 'absolute',
+        top: `${row.top}px`,
+        left: 0,
+        right: 0,
+        height: `${rowHeight}px`
+      }"
+      class="grid gap-4 px-4 lg:px-[6%]"
+      :class="gridClass"
     >
       <MovieCard
-        v-for="movie in visibleMovies"
+        v-for="movie in row.movies"
         :key="movie.imdbId"
-        :movie="movie"
+        :movie="getMovieEntry(movie)"
       />
+    </div>
+
+    <!-- Loading Sentinel for Infinite Scroll -->
+    <div
+      v-if="hasMore"
+      :style="{
+        position: 'absolute',
+        top: `${totalHeight}px`,
+        left: 0,
+        right: 0
+      }"
+      class="text-center py-8"
+    >
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100" />
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        Loading more movies...
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useWindowScroll, useWindowSize } from '@vueuse/core'
-import type { MovieEntry } from '~/types'
+import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize } from '@vueuse/core'
+import type { MovieEntry, LightweightMovieEntry } from '~/types'
+
+const props = defineProps<{
+  movies: LightweightMovieEntry[]
+  totalMovies: number
+  hasMore: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'load-more'): void
+}>()
 
 const movieStore = useMovieStore()
-const filterStore = useFilterStore()
-
-const containerRef = ref<HTMLElement | null>(null)
 const { y: windowScrollY } = useWindowScroll()
-const { width: windowWidth } = useWindowSize()
+const { height: windowHeight } = useWindowSize()
+const breakpoints = useBreakpoints(breakpointsTailwind)
 
-// Constants for layout
-const ROW_HEIGHT = 380 // Estimated height of a row including gap
-const BUFFER_ROWS = 3 // Number of rows to render above/below visible area
+// Map to store loaded movie details
+const loadedMovies = ref<Map<string, MovieEntry>>(new Map())
+const loadingIds = ref<Set<string>>(new Set())
 
-const columnCount = computed(() => {
-  const w = windowWidth.value
-  if (w >= 1280) return 6
-  if (w >= 1024) return 5
-  if (w >= 768) return 4
-  if (w >= 640) return 3
+const cols = computed(() => {
+  if (breakpoints.xl.value) return 6
+  if (breakpoints.lg.value) return 5
+  if (breakpoints.md.value) return 4
+  if (breakpoints.sm.value) return 3
   return 2
 })
 
-const totalRows = computed(() => Math.ceil(movieStore.totalCount / columnCount.value))
-const totalHeight = computed(() => totalRows.value * ROW_HEIGHT)
+const gridClass = computed(() => {
+  if (breakpoints.xl.value) return 'grid-cols-6'
+  if (breakpoints.lg.value) return 'grid-cols-5'
+  if (breakpoints.md.value) return 'grid-cols-4'
+  if (breakpoints.sm.value) return 'grid-cols-3'
+  return 'grid-cols-2'
+})
 
-const visibleRange = computed(() => {
-  if (!containerRef.value) return { start: 0, end: 20 }
+// Approximate height of a MovieCard + gap
+const rowHeight = 420 
+const buffer = 3 // Number of rows to render above/below viewport
 
-  const containerTop = containerRef.value.offsetTop
-  const relativeScrollY = Math.max(0, windowScrollY.value - containerTop)
+const totalRows = computed(() => Math.ceil(props.totalMovies / cols.value))
+const totalHeight = computed(() => totalRows.value * rowHeight)
+
+// We need to account for the offset of the grid from the top of the page
+const gridOffsetTop = ref(0)
+const gridRef = ref<HTMLElement | null>(null)
+
+const updateOffset = () => {
+  if (gridRef.value) {
+    const rect = gridRef.value.getBoundingClientRect()
+    gridOffsetTop.value = rect.top + window.scrollY
+  }
+}
+
+onMounted(() => {
+  updateOffset()
+  window.addEventListener('resize', updateOffset)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateOffset)
+})
+
+const visibleRows = computed(() => {
+  if (!props.movies || props.movies.length === 0) {
+    return []
+  }
+
+  const relativeScrollTop = Math.max(0, windowScrollY.value - gridOffsetTop.value)
   
-  const startRow = Math.floor(relativeScrollY / ROW_HEIGHT)
-  const visibleRows = Math.ceil(window.innerHeight / ROW_HEIGHT)
-  
-  const start = Math.max(0, (startRow - BUFFER_ROWS) * columnCount.value)
-  const end = Math.min(
-    movieStore.totalCount,
-    (startRow + visibleRows + BUFFER_ROWS) * columnCount.value
+  const startRow = Math.max(0, Math.floor(relativeScrollTop / rowHeight) - buffer)
+  const endRow = Math.min(
+    totalRows.value - 1,
+    Math.ceil((relativeScrollTop + windowHeight.value) / rowHeight) + buffer
   )
-  
-  return { start, end }
-})
 
-const offsetY = computed(() => {
-  const startRow = Math.floor(visibleRange.value.start / columnCount.value)
-  return startRow * ROW_HEIGHT
-})
-
-const visibleMovies = ref<MovieEntry[]>([])
-
-// Fetch movies when visible range or filters change
-watch(
-  [visibleRange, () => filterStore.filters],
-  async ([range, filters]) => {
-    const limit = range.end - range.start
-    if (limit <= 0) return
-
-    const fetched = await movieStore.fetchMovies({
-      offset: range.start,
-      limit,
-      filters,
-      sort: filters.sort
-    })
+  const rows = []
+  for (let i = startRow; i <= endRow; i++) {
+    const startIndex = i * cols.value
+    const rowMovies = props.movies.slice(startIndex, startIndex + cols.value)
     
-    visibleMovies.value = fetched
-  },
-  { immediate: true, deep: true }
-)
+    if (rowMovies.length > 0) {
+      rows.push({
+        index: i,
+        top: i * rowHeight,
+        movies: rowMovies
+      })
+    }
+  }
+  return rows
+})
+
+// Get visible movie IDs
+const visibleMovieIds = computed(() => {
+  const ids = new Set<string>()
+  visibleRows.value.forEach(row => {
+    row.movies.forEach(movie => {
+      ids.add(movie.imdbId)
+    })
+  })
+  return Array.from(ids)
+})
+
+// Lazy load movie details for visible items
+watch(visibleMovieIds, async (newIds) => {
+  // Filter out IDs that are already loaded or being loaded
+  const idsToLoad = newIds.filter(id => 
+    !loadedMovies.value.has(id) && !loadingIds.value.has(id)
+  )
+
+  if (idsToLoad.length === 0) return
+
+  // Mark as loading
+  idsToLoad.forEach(id => loadingIds.value.add(id))
+
+  try {
+    const movies = await movieStore.fetchMoviesByIds(idsToLoad)
+    movies.forEach(movie => {
+      loadedMovies.value.set(movie.imdbId, movie)
+    })
+  } catch (err) {
+    console.error('Failed to load movie details:', err)
+  } finally {
+    // Remove from loading set
+    idsToLoad.forEach(id => loadingIds.value.delete(id))
+  }
+}, { immediate: true })
+
+// Get full movie entry or create a placeholder
+const getMovieEntry = (lightweight: LightweightMovieEntry): MovieEntry => {
+  const loaded = loadedMovies.value.get(lightweight.imdbId)
+  if (loaded) return loaded
+
+  // Return a minimal movie entry as placeholder
+  return {
+    imdbId: lightweight.imdbId,
+    title: lightweight.title,
+    year: lightweight.year,
+    sources: [],
+    lastUpdated: new Date().toISOString(),
+  }
+}
+
+// Infinite scroll check
+watch(windowScrollY, (y) => {
+  if (y + windowHeight.value >= document.documentElement.scrollHeight - 1000) {
+    if (props.hasMore) {
+      emit('load-more')
+    }
+  }
+})
 </script>
+
+<style scoped>
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+</style>

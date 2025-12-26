@@ -45,7 +45,7 @@ export async function fetchChannelVideos(
   channelConfig: { id: string; language?: string; name?: string } | undefined,
   onVideoProcessed: (
     video: { id: string; title: string },
-    result: 'added' | 'updated' | 'skipped' | FailureReason
+    result: 'added' | 'updated' | 'skipped' | 'already_scraped' | FailureReason
   ) => Promise<void>,
   onPageComplete: () => Promise<void>,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
@@ -162,8 +162,9 @@ export async function fetchChannelVideos(
             channelName: channel.name || '',
             title,
             reason: 'missing_data',
-            duration,
+            duration: duration || undefined,
           })
+
           await onVideoProcessed({ id: video.id, title }, 'missing_data')
           continue
         }
@@ -288,6 +289,7 @@ export async function processYouTubeVideo(
     type: 'youtube',
     id: video.id,
     url: `https://www.youtube.com/watch?v=${video.id}`,
+    title: originalTitle, // Store original title in source
     channelName: video.channelName,
     channelId: video.channelId,
     description: video.description,

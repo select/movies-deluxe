@@ -53,6 +53,16 @@ export {
  */
 
 /**
+ * Lightweight movie entry with only essential data for virtual scrolling
+ * Used for initial load to minimize memory usage
+ */
+export interface LightweightMovieEntry {
+  imdbId: string
+  title: string | string[]
+  year: number
+}
+
+/**
  * Loading state for async operations in stores
  *
  * @example
