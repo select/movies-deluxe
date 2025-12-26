@@ -22,18 +22,38 @@ export default defineNuxtConfig({
       bodyAttrs: {
         class: 'font-sans',
       },
-      script: [
+      style: [
         {
           children: `
-            (function() {
-              const theme = localStorage.getItem('theme');
-              const isDark = theme ? theme === 'dark' : true;
-              if (isDark) {
-                document.documentElement.classList.add('dark');
-              }
-            })();
+            /* Splash screen to prevent FOUC during hydration */
+            #app-splash {
+              position: fixed;
+              inset: 0;
+              z-index: 9999;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #1a1a1a;
+              transition: opacity 0.3s ease-out;
+            }
+            #app-splash.hidden {
+              opacity: 0;
+              pointer-events: none;
+            }
+            /* Spinner animation */
+            .splash-spinner {
+              width: 48px;
+              height: 48px;
+              border: 4px solid rgba(255, 255, 255, 0.1);
+              border-top-color: #00DC82;
+              border-radius: 50%;
+              animation: spin 0.8s linear infinite;
+            }
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
           `,
-          type: 'text/javascript',
+          type: 'text/css',
         },
       ],
     },
