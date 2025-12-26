@@ -927,8 +927,6 @@ const shareMovie = async () => {
     } catch (err) {
       // User cancelled or error occurred
       if ((err as Error).name !== 'AbortError') {
-        // eslint-disable-next-line no-console
-        console.error('Share failed:', err)
         fallbackCopyToClipboard(url)
       }
     }
@@ -943,11 +941,10 @@ const fallbackCopyToClipboard = async (url: string) => {
   try {
      
     await navigator.clipboard.writeText(url)
-    showToast('Link copied to clipboard!')
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Copy failed:', err)
-    showToast('Failed to copy link')
+    copied.value = true
+    setTimeout(() => (copied.value = false), 2000)
+  } catch {
+    // Copy failed
   }
 }
 
