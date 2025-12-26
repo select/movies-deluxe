@@ -1,5 +1,6 @@
+// Load SQLite WASM library with sqlite3.dir parameter to specify WASM location
 // @ts-expect-error - SQLite WASM library is loaded via importScripts
-importScripts(`${self.location.origin}/sqlite-wasm/sqlite3.js`)
+importScripts('/sqlite-wasm/sqlite3.js?sqlite3.dir=/sqlite-wasm')
 
 let db: any = null
 let sqlite3: any = null
