@@ -29,6 +29,12 @@ export default defineNuxtConfig({
   vite: {
     worker: {
       format: 'es',
+      rollupOptions: {
+        output: {
+          // Prevent Vite from transforming importScripts paths
+          inlineDynamicImports: false,
+        },
+      },
     },
     optimizeDeps: {
       exclude: ['@sqlite.org/sqlite-wasm'],
@@ -46,13 +52,6 @@ export default defineNuxtConfig({
 
   // Nitro configuration for serving WASM files with correct MIME type
   nitro: {
-    publicAssets: [
-      {
-        dir: 'public/sqlite-wasm',
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-        baseURL: '/sqlite-wasm',
-      },
-    ],
     routeRules: {
       '/sqlite-wasm/*.wasm': {
         headers: {
