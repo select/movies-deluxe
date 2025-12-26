@@ -298,5 +298,11 @@
     "url": "https://m.media-amazon.com/images/M/MV5BZTIwZmQ2Y2YtY2JhMy00NWViLTkyZTgtNDM1NTU2ZjUwNGQ2XkEyXkFqcGc@._V1_SX300.jpg",
     "failedAt": "2025-12-25T23:08:49.624Z",
     "error": "Request timeout"
+  },
+  {
+    "imdbId": "tt0178515",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWE2M2IyNGYtYjRkMy00NDJmLTk0YzUtZDkxMzA1MjYzZTFmXkEyXkFqcGdeQXVyNDUxNjc5NjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-26T02:10:41.882Z",
+    "error": "HTTP 404: Not Found"
   }
 ]

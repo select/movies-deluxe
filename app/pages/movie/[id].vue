@@ -679,7 +679,7 @@ const loadMovieData = async (movieId: string) => {
     await movieStore.loadFromFile()
   }
 
-  const foundMovie = movieStore.getMovieById(movieId)
+  const foundMovie = await movieStore.getMovieById(movieId)
 
   if (foundMovie) {
     movie.value = foundMovie

@@ -1,14 +1,14 @@
 <template>
   <div
-    :class="darkModeToggle?.isDark ? 'dark' : ''"
+    :class="isDark ? 'dark' : ''"
     class="min-h-screen transition-colors"
   >
     <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
-      <AppHeader ref="darkModeToggle" :scroll-y="windowScrollY" />
-
-      <!-- Mobile Search Bar -->
-      <AppMobileSearchBar />
+      <MovieHeader
+        :is-dark="isDark"
+        @toggle-dark-mode="toggleDarkMode"
+      />
 
       <!-- Mobile Menu Button -->
       <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
@@ -23,86 +23,82 @@
       />
 
       <!-- Main Content -->
-      <main class="max-w-none mx-auto px-4 lg:px-[6%] py-8 md:ml-16">
-        <!-- Loading State -->
-        <MovieGridSkeleton v-if="movieStore.isInitialLoading" />
+      <main class="md:ml-16">
+        <div class="px-4 lg:px-[6%] py-8">
+          <MovieStats
+            v-if="!movieStore.isInitialLoading && !isFiltering && safeTotalMovies > 0"
+            :total-movies="safeTotalMovies"
+          />
+        </div>
 
-        <!-- Movie Stats -->
-        <MovieStats
-          v-else-if="movieStore.totalCount > 0"
-          :total-count="movieStore.totalCount"
-          :archive-count="0"
-          :youtube-count="0"
-          :enriched-count="0"
-        />
+        <div class="relative">
+          <template v-if="movieStore.isInitialLoading || isFiltering">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4 lg:px-[6%]">
+              <MovieCardSkeleton
+                v-for="i in 12"
+                :key="i"
+              />
+            </div>
+          </template>
 
-        <!-- Movie Grid -->
-        <MovieVirtualGrid
-          v-if="movieStore.totalCount > 0"
-        />
+          <template v-else-if="safeLightweightMovies.length > 0">
+            <MovieVirtualGrid
+              :movies="safeLightweightMovies"
+              :total-movies="safeTotalMovies"
+              :has-more="hasMore"
+              @load-more="loadMore"
+            />
+          </template>
 
-        <!-- Empty State -->
-        <div
-          v-else-if="!movieStore.isInitialLoading"
-          class="text-center py-12"
-        >
-          <p class="text-gray-600 dark:text-gray-400">
-            No movies found.
-          </p>
+          <div
+            v-else
+            class="text-center py-12"
+          >
+            <p class="text-gray-600 dark:text-gray-400">
+              No movies found.
+            </p>
+          </div>
         </div>
       </main>
-
-      <!-- Footer -->
-      <AppFooter />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useMagicKeys, whenever, useWindowScroll, onKeyStroke } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 import { onBeforeRouteLeave } from 'vue-router'
 
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
-const { y: windowScrollY } = useWindowScroll()
+const { filteredMovies, lightweightMovies, totalMovies, isFiltering } = storeToRefs(filterStore)
 
-// Dark mode toggle ref
-const darkModeToggle = ref<{ isDark: Ref<boolean> } | null>(null)
+// Ensure lightweightMovies is always an array
+const safeLightweightMovies = computed(() => lightweightMovies.value || [])
+const safeFilteredMovies = computed(() => filteredMovies.value || [])
+const safeTotalMovies = computed(() => totalMovies.value || 0)
+
+// Dark mode state (default to dark)
+const isDark = ref(true)
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
 
 // Load movies on mount
 onMounted(async () => {
-  await movieStore.init()
+  await movieStore.loadFromFile()
 
-  // Restore scroll position after a short delay to ensure DOM is rendered
-  if (filterStore.filters.lastScrollY > 0) {
-    setTimeout(() => {
-      window.scrollTo({
-        top: filterStore.filters.lastScrollY,
-        behavior: 'instant'
-      })
-    }, 100)
+  // Check for saved dark mode preference, default to dark
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme')
+    isDark.value = savedTheme ? savedTheme === 'dark' : true
   }
 })
 
-// Save scroll position before leaving
+// Save scroll position before leaving (might need adjustment for virtual grid)
 onBeforeRouteLeave(() => {
-  filterStore.setScrollY(windowScrollY.value)
+  // filterStore.setScrollY(windowScrollY.value)
 })
-
-// Reset pagination when filters change (excluding currentPage itself)
-watch(
-  () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { currentPage, lastScrollY, ...rest } = filterStore.filters
-    return JSON.stringify(rest)
-  },
-  () => {
-    filterStore.setScrollY(0)
-  }
-)
 
 // Keyboard shortcuts
 const keys = useMagicKeys()
@@ -118,31 +114,37 @@ if (Escape) {
 }
 
 // 'K' key toggles filter menu (with Ctrl/Cmd modifier)
-// Using onKeyStroke to prevent default browser behavior
 onKeyStroke('k', (e) => {
-  // Only trigger with Ctrl (Windows/Linux) or Cmd (Mac)
   if (e.ctrlKey || e.metaKey) {
-    // Check if user is typing in an input/textarea
     const activeElement = window.document.activeElement
     const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
     
     if (!isTyping) {
-      e.preventDefault() // Prevent browser's default Ctrl+K behavior
+      e.preventDefault()
       isFilterMenuOpen.value = !isFilterMenuOpen.value
     }
   }
 })
 
-// Computed properties (prefixed with _ to indicate intentionally unused)
-const _archiveCount = computed(() => {
-  return 0 // TODO: Implement in store if needed
+// Toggle dark mode
+const toggleDarkMode = () => {
+  isDark.value = !isDark.value
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  }
+}
+
+// Computed properties
+const hasMore = computed(() => {
+  return safeLightweightMovies.value.length < safeTotalMovies.value
 })
 
-const _youtubeCount = computed(() => {
-  return 0 // TODO: Implement in store if needed
-})
-
-const _enrichedCount = computed(() => {
-  return 0 // TODO: Implement in store if needed
-})
+// Load more movies
+const loadMore = () => {
+  filterStore.setCurrentPage(filterStore.filters.currentPage + 1)
+}
 </script>
+
+<style scoped>
+/* No extra styles needed for now */
+</style>

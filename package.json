@@ -7,7 +7,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "nuxt prepare && tsx scripts/copy-sqlite-wasm.ts",
     "prepare": "simple-git-hooks",
     "commitlint": "commitlint --edit",
     "lint": "oxlint && eslint .",
