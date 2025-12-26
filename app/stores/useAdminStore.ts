@@ -214,6 +214,25 @@ export const useAdminStore = defineStore('admin', () => {
     return (stats.value.database.total / totalExternalVideos.value) * 100
   })
 
+  // Failed percentage calculations for stacked bars
+  const youtubeFailedPercent = computed(() => {
+    if (!stats.value || youtubeTotalAvailable.value === 0) return 0
+    const failed = stats.value.external.youtube.totalFailed || 0
+    return (failed / youtubeTotalAvailable.value) * 100
+  })
+
+  const omdbFailedPercent = computed(() => {
+    if (!stats.value || stats.value.omdb.total === 0) return 0
+    const failed = stats.value.omdb.failed || 0
+    return (failed / stats.value.omdb.total) * 100
+  })
+
+  const postersFailedPercent = computed(() => {
+    if (!stats.value || stats.value.posters.withPosterUrl === 0) return 0
+    const failed = stats.value.posters.failed || 0
+    return (failed / stats.value.posters.withPosterUrl) * 100
+  })
+
   const deduplicateDescriptions = async () => {
     deduplicating.value = true
     deduplicationResults.value = null
@@ -270,5 +289,8 @@ export const useAdminStore = defineStore('admin', () => {
     youtubeTotalAvailable,
     youtubePercent,
     databasePercentOfTotal,
+    youtubeFailedPercent,
+    omdbFailedPercent,
+    postersFailedPercent,
   }
 })
