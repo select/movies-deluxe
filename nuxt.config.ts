@@ -22,6 +22,20 @@ export default defineNuxtConfig({
       bodyAttrs: {
         class: 'font-sans',
       },
+      script: [
+        {
+          children: `
+            (function() {
+              const theme = localStorage.getItem('theme');
+              const isDark = theme ? theme === 'dark' : true;
+              if (isDark) {
+                document.documentElement.classList.add('dark');
+              }
+            })();
+          `,
+          type: 'text/javascript',
+        },
+      ],
     },
   },
 
