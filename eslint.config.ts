@@ -34,6 +34,14 @@ export default withNuxt(
     },
   },
   {
-    ignores: ['.nuxt', '.output', 'dist', 'node_modules', '*.config.js', 'commitlint.config.js'],
+    ignores: [
+      '.nuxt',
+      '.output',
+      'dist',
+      'node_modules',
+      '*.config.js',
+      'commitlint.config.js',
+      'public/sqlite-wasm/**',
+    ],
   }
 )
