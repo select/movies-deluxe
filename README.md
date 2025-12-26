@@ -19,108 +19,9 @@ pnpm install
 - `pnpm generate` - Generate static site
 - `pnpm preview` - Preview production build locally
 
-### Data Collection
+### Database
 
-#### Archive.org Scraper
-
-`pnpm scrape:archive` - Scrape movies from Archive.org's feature films collection
-
-Available flags:
-
-- `--limit <number>` - Maximum number of movies to scrape (default: 50)
-- `--offset <number>` - Skip first N results (for pagination)
-- `--dry-run` - Preview results without saving to database
-- `--verbose` - Show detailed progress and debug information
-
-Example: `pnpm scrape:archive --limit 100 --verbose`
-
-#### YouTube Scraper
-
-`pnpm scrape:youtube` - Scrape movies from configured YouTube channels
-
-Available flags:
-
-- `--limit <number>` - Maximum videos per channel (default: 50)
-- `--dry-run` - Preview results without saving to database
-- `--verbose` - Show detailed progress and API responses
-- `--channel <id>` - Scrape specific channel only (by channel ID)
-
-Configuration: Edit `config/youtube-channels.json` to add/remove channels
-
-Example: `pnpm scrape:youtube --limit 25 --channel UCxKJ3RQQYlDmI8JLpt5HvWg`
-
-#### Batch Collection
-
-`pnpm scrape:all` - Run both archive and YouTube scrapers sequentially
-
-### Data Processing
-
-#### AI Title Extraction
-
-`pnpm extract-titles` - Extract clean movie titles using AI (requires AWS Bedrock or OpenAI)
-
-Available flags:
-
-- `--dry-run` - Preview extractions without saving
-- `--limit <number>` - Process only N movies
-- `--stats` - Show statistics only, no processing
-- `--verbose` - Show detailed extraction progress
-- `--min-confidence <level>` - Filter by confidence: high, medium, or low (default: high)
-- `--filter <source>` - Process specific source: archive, youtube, or all (default: all)
-
-Example: `pnpm extract-titles --limit 10 --min-confidence high --verbose`
-
-#### OMDB Enrichment
-
-`pnpm enrich:omdb` - Enrich movie metadata from OMDB API (requires OMDB_API_KEY)
-
-Available flags:
-
-- `--dry-run` - Preview matches without saving
-- `--limit <number>` - Process only N movies
-- `--force` - Re-enrich movies that already have OMDB data
-- `--verbose` - Show detailed matching progress
-- `--delay <ms>` - Delay between API requests (default: 200ms)
-
-Example: `pnpm enrich:omdb --limit 20 --force --verbose`
-
-#### Poster Download
-
-`pnpm download-posters` - Download movie posters to local cache
-
-Available flags:
-
-- `--dry-run` - Preview downloads without saving files
-- `--limit <number>` - Download only N posters
-- `--force` - Re-download existing posters
-- `--verbose` - Show detailed download progress
-- `--delay <ms>` - Delay between downloads (default: 100ms)
-
-Example: `pnpm download-posters --limit 50 --verbose`
-
-#### Deduplication
-
-`pnpm deduplicate` - Remove duplicate movie entries
-
-Available flags:
-
-- `--dry-run` - Preview duplicates without removing
-- `--verbose` - Show detailed duplicate analysis
-- `--strategy <method>` - Deduplication strategy: imdb, title, or url (default: imdb)
-
-Example: `pnpm deduplicate --strategy title --verbose`
-
-#### Data Validation
-
-`pnpm validate:data` - Validate movie data structure
-
-Available flags:
-
-- `--verbose` - Show detailed validation results
-- `--fix` - Automatically fix common issues
-- `--strict` - Enable strict validation rules
-
-Example: `pnpm validate:data --verbose --fix`
+- `pnpm db:generate` - Generate SQLite database from movies.json
 
 ### Code Quality
 
@@ -128,6 +29,8 @@ Example: `pnpm validate:data --verbose --fix`
 - `pnpm lint:fix` - Fix linting issues automatically
 - `pnpm format` - Format code with prettier
 - `pnpm format:check` - Check code formatting without changes
+- `pnpm typecheck` - Run TypeScript type checking
+- `pnpm typecheck:watch` - Run TypeScript type checking in watch mode
 
 ### Git Hooks
 
@@ -139,10 +42,10 @@ Example: `pnpm validate:data --verbose --fix`
 Create a `.env` file in the project root:
 
 ```bash
-# Required for OMDB metadata enrichment (pnpm enrich:omdb)
+# Required for OMDB metadata enrichment
 OMDB_API_KEY=your-omdb-key-here
 
-# Required for AI title extraction (pnpm extract-titles)
+# Required for AI title extraction
 # Option 1: AWS Bedrock (recommended)
 AWS_REGION=eu-central-1
 AWS_ACCESS_KEY_ID=your-access-key
@@ -160,6 +63,7 @@ OPENAI_API_KEY=sk-your-api-key-here
 movies-deluxe/
 ├── app/                    # Frontend application (Nuxt 4)
 │   ├── components/         # Vue components (auto-imported)
+│   ├── composables/        # Composables (auto-imported)
 │   ├── pages/              # File-based routing
 │   ├── stores/             # Pinia stores (auto-imported)
 │   ├── types/              # Frontend TypeScript types
@@ -169,9 +73,14 @@ movies-deluxe/
 ├── public/                 # Static assets (served at root)
 │   ├── data/               # Movie database (movies.json)
 │   └── posters/            # Downloaded poster images
-├── scripts/                # Data collection and processing scripts
-│   └── utils/              # Script utilities
-├── types/                  # Shared TypeScript types
+├── scripts/                # Maintenance and migration scripts
+├── server/                 # Backend API (Nuxt server)
+│   ├── api/                # API endpoints
+│   │   ├── admin/          # Admin API (scraping, enrichment, etc.)
+│   │   └── movies.get.ts   # Public movie data API
+│   └── utils/              # Server utilities
+├── shared/                 # Shared code between frontend and backend
+│   └── types/              # Shared TypeScript types
 └── tests/                  # Test files
 ```
 
@@ -185,51 +94,51 @@ Edit `config/youtube-channels.json` to configure which YouTube channels to scrap
     {
       "id": "UCxKJ3RQQYlDmI8JLpt5HvWg",
       "name": "FilmRise Movies",
-      "enabled": true
+      "enabled": true,
+      "language": "en"
     }
   ]
 }
 ```
 
-## Production Workflow
+## Admin Dashboard
 
-Recommended workflow for collecting and processing movies:
+The application includes an admin dashboard at `/admin` for managing movie data:
 
-1. **Scrape movies from sources**
+### Data Collection
 
-   ```bash
-   pnpm scrape:archive --limit 100 --verbose
-   pnpm scrape:youtube --limit 50 --verbose
-   ```
+- **Archive.org Scraper**: Scrape movies from Archive.org's feature films collection
+- **YouTube Scraper**: Scrape movies from configured YouTube channels
+- **Scraping Stats**: View scraping progress and statistics
 
-2. **Extract clean titles using AI** (optional, improves OMDB matching)
+### Data Processing
 
-   ```bash
-   pnpm extract-titles --min-confidence high --verbose
-   ```
+- **OMDB Enrichment**: Enrich movie metadata with ratings, plot, cast, etc.
+- **Poster Download**: Download and cache movie posters locally
+- **Data Validation**: Validate movie data structure and fix common issues
+- **Deduplication**: Remove duplicate movie entries and sources
+- **Description Deduplication**: Remove duplicate descriptions from sources
 
-3. **Enrich with OMDB metadata**
+### Database
 
-   ```bash
-   pnpm enrich:omdb --verbose --delay 200
-   ```
+- **SQLite Generation**: Generate SQLite database from movies.json for offline use
 
-4. **Download poster images**
+All operations include progress tracking and detailed logging.
 
-   ```bash
-   pnpm download-posters --verbose
-   ```
+## Maintenance Scripts
 
-5. **Validate data structure**
+The `scripts/` directory contains maintenance and migration scripts:
 
-   ```bash
-   pnpm validate:data --verbose --fix
-   ```
+- `remove-duplicate-sources.ts` - Remove duplicate sources from movie entries
+- `fix-duplicate-archive-sources.ts` - Fix duplicate archive.org sources
+- `migrate-archive-source-titles.ts` - Migrate archive source titles
+- `migrate-failed-omdb.ts` - Migrate failed OMDB entries
+- `analyze-failed-omdb.ts` - Analyze failed OMDB matches
+- `generate-sqlite.ts` - Generate SQLite database
+- `lookup-youtube-channels.ts` - Lookup YouTube channel information
+- `test-*.ts` - Various test scripts
 
-6. **Remove duplicates** (if needed)
-   ```bash
-   pnpm deduplicate --strategy imdb --verbose
-   ```
+Run scripts with: `pnpm tsx scripts/<script-name>.ts`
 
 ## Features
 
