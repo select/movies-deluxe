@@ -35,20 +35,7 @@
           </p>
         </div>
         <div class="flex items-center gap-3">
-          <button
-            class="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
-            title="Toggle dark mode"
-            @click="toggleDark()"
-          >
-            <div
-              v-if="isDark"
-              class="i-material-symbols-light-wb-sunny text-xl text-yellow-500"
-            />
-            <div
-              v-else
-              class="i-material-symbols-light-dark-mode text-xl"
-            />
-          </button>
+          <AppDarkModeToggle />
           <NuxtLink
             to="/"
             class="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
@@ -236,10 +223,6 @@ import type { ScrapeStats } from '~/types/admin'
 const isDev = ref(false)
 const adminStore = useAdminStore()
 const { connect: connectProgress } = useProgress()
-
-// Dark mode toggle
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
 
 // Clear results
 const clearResults = () => {

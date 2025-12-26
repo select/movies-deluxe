@@ -23,23 +23,13 @@ defineProps<{
   compact?: boolean
 }>()
 
-// Dark mode state (default to dark)
-const isDark = ref(true)
+// Use centralized UI store for dark mode
+const uiStore = useUiStore()
+const { isDark } = storeToRefs(uiStore)
 
-// Initialize dark mode from localStorage
-onMounted(() => {
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme ? savedTheme === 'dark' : true
-  }
-})
-
-// Toggle dark mode
+// Toggle dark mode via store
 const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  }
+  uiStore.toggleDarkMode()
 }
 
 // Expose isDark for parent components if needed
