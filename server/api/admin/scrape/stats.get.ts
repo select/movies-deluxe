@@ -1,6 +1,6 @@
 import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
-import { Client } from 'youtubei'
+import { getChannelVideoCount } from '../../../utils/youtubeDataApi'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 import { getFailedOmdbMatches } from '../../../utils/failedOmdb'
 import { getFailedPosterDownloads } from '../../../utils/posterDownloader'
@@ -8,7 +8,14 @@ import { getFailedPosterDownloads } from '../../../utils/posterDownloader'
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
   const dbStats = await getDatabaseStats(db)
-  const youtube = new Client()
+
+  // Get YouTube API key from environment
+  const youtubeApiKey = process.env.YOUTUBE_API_KEY
+  if (!youtubeApiKey) {
+    throw new Error(
+      'YOUTUBE_API_KEY environment variable is required. Get one from https://console.cloud.google.com/apis/credentials'
+    )
+  }
 
   // Load failed YouTube videos for stats
   const failedVideos = loadFailedYouTubeVideos()
@@ -36,7 +43,7 @@ export default defineEventHandler(async _event => {
     dbStats.youtubeChannels.map(async channelStat => {
       let total = 0
       try {
-        total = await getChannelVideoCount(youtube, channelStat.id)
+        total = await getChannelVideoCount(youtubeApiKey, channelStat.id)
       } catch (e) {
         console.error(`Failed to fetch total for channel ${channelStat.id}`, e)
       }

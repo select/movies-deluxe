@@ -42,6 +42,9 @@ pnpm install
 Create a `.env` file in the project root:
 
 ```bash
+# Required for YouTube scraping (NEW!)
+YOUTUBE_API_KEY=your-youtube-api-key-here
+
 # Required for OMDB metadata enrichment
 OMDB_API_KEY=your-omdb-key-here
 
@@ -54,6 +57,29 @@ AWS_SECRET_ACCESS_KEY=your-secret-key
 # Option 2: OpenAI API
 OPENAI_API_KEY=sk-your-api-key-here
 ```
+
+### Getting API Keys
+
+**YouTube Data API v3 Key** (Required for scraping):
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create a new project or select existing
+3. Enable "YouTube Data API v3"
+4. Create credentials → API Key
+5. Copy the key to `.env`
+
+See [YouTube Data API Integration Guide](./docs/youtube-data-api-integration.md) for detailed setup.
+
+**OMDB API Key** (Optional, for metadata enrichment):
+
+1. Go to [OMDb API](http://www.omdbapi.com/apikey.aspx)
+2. Request a free API key
+3. Copy the key to `.env`
+
+**AWS/OpenAI Keys** (Optional, for AI title extraction):
+
+- AWS Bedrock: Use IAM credentials with Bedrock access
+- OpenAI: Get key from [OpenAI Platform](https://platform.openai.com/api-keys)
 
 ## Configuration
 

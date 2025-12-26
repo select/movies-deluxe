@@ -1,4 +1,4 @@
-import type { Client } from 'youtubei'
+import type { Innertube } from 'youtubei.js'
 import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
 import {
   saveFailedYouTubeVideo,
@@ -7,39 +7,25 @@ import {
 } from './failedYoutube'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
-  let cleanTitle = title
-    .replace(/\s*\|\s*Full Movie.*$/i, '')
-    .replace(/\s*-\s*Full Movie.*$/i, '')
-    .replace(/\s*\[Full Movie\].*$/i, '')
-    .replace(/\s*\(Full Movie\).*$/i, '')
-    .replace(/\s*Full HD.*$/i, '')
-    .replace(/\s*4K.*$/i, '')
-
   const yearPatterns = [/\((\d{4})\)/, /\[(\d{4})\]/, /\|\s*(\d{4})/, /-\s*(\d{4})/, /\s+(\d{4})$/]
 
   let year: number | undefined
   for (const pattern of yearPatterns) {
-    const match = cleanTitle.match(pattern)
+    const match = title.match(pattern)
     if (match && match[1]) {
       const parsedYear = parseInt(match[1])
       if (parsedYear >= 1900 && parsedYear <= 2030) {
         year = parsedYear
-        cleanTitle = cleanTitle.replace(pattern, '').trim()
         break
       }
     }
   }
 
-  cleanTitle = cleanTitle
-    .replace(/\s+/g, ' ')
-    .replace(/[|-]\s*$/, '')
-    .trim()
-
-  return { title: cleanTitle, year }
+  return { year }
 }
 
 export async function fetchChannelVideos(
-  youtube: Client,
+  youtube: Innertube,
   channelIdentifier: string,
   db: any, // MoviesDatabase
   channelConfig: { id: string; language?: string; name?: string } | undefined,
@@ -50,9 +36,17 @@ export async function fetchChannelVideos(
   onPageComplete: () => Promise<void>,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 ) {
-  let channel
+  // Get YouTube Data API key from environment
+  const youtubeApiKey = process.env.YOUTUBE_API_KEY
 
-  // If it's a channel ID (starts with UC), use getChannel() directly
+  if (!youtubeApiKey) {
+    throw new Error(
+      'YOUTUBE_API_KEY environment variable is required. Get one from https://console.cloud.google.com/apis/credentials'
+    )
+  }
+
+  // Get channel info using youtubei.js
+  let channel
   if (channelIdentifier.startsWith('UC')) {
     channel = await youtube.getChannel(channelIdentifier)
     if (!channel) {
@@ -60,8 +54,7 @@ export async function fetchChannelVideos(
     }
   }
 
-  console.log('got channel', channel)
-  if (!channel || !channel.videos) return
+  console.log('Channel:', channel?.name || channelIdentifier)
 
   // Build set of already scraped video IDs for this channel
   const existingVideoIds = new Set<string>()
@@ -77,44 +70,55 @@ export async function fetchChannelVideos(
 
   console.log(`Found ${existingVideoIds.size} already scraped videos from this channel`)
 
+  // Use YouTube Data API v3 to get ALL video IDs (no pagination limit)
+  const { getChannelVideoIds } = await import('./youtubeDataApi')
+  const allVideoIds = await getChannelVideoIds(youtubeApiKey, channelIdentifier)
+  console.log(`Total videos in channel: ${allVideoIds.length}`)
+
+  // Filter out already scraped videos
+  const newVideoIds = allVideoIds.filter(id => !existingVideoIds.has(id))
+  console.log(`New videos to process: ${newVideoIds.length}`)
+
   let count = 0
-  let pageNum = 0
-  const channelVideos = channel.videos
 
-  while (channelVideos) {
-    pageNum++
+  // Process each video using youtubei.js for detailed metadata
+  for (const videoId of allVideoIds) {
+    onProgress?.({
+      current: count,
+      total: allVideoIds.length,
+      message: `Processing video ${count + 1}/${allVideoIds.length}`,
+    })
 
-    // Fetch next page of videos
-    const videoList = await channelVideos.next()
-    console.log(`Page ${pageNum}: Fetched ${videoList?.length || 0} videos`)
-
-    if (!videoList || videoList.length === 0) {
-      console.log('No more videos available')
-      break
+    // Skip if already scraped
+    if (existingVideoIds.has(videoId)) {
+      await onVideoProcessed({ id: videoId, title: 'Already scraped' }, 'already_scraped')
+      count++
+      continue
     }
 
-    for (const video of videoList) {
-      // Defensive: Skip videos with missing critical data
-      if (!video || !video.id || !video.title) {
-        console.warn('Skipping video with missing data:', { id: video?.id, title: video?.title })
-        continue
-      }
+    try {
+      // Fetch full video details using youtubei.js
+      const fullVideo = await youtube.getBasicInfo(videoId)
 
-      const title = video.title
-
-      const progressMsg = `Checking: ${title}`
-      onProgress?.({ current: count, total: 0, message: progressMsg })
-
-      // Skip if already scraped
-      if (existingVideoIds.has(video.id)) {
-        await onVideoProcessed({ id: video.id, title }, 'already_scraped')
+      if (!fullVideo || !fullVideo.basic_info) {
+        saveFailedYouTubeVideo({
+          videoId,
+          channelId: channelIdentifier,
+          channelName: channel?.name || '',
+          title: 'Unknown',
+          reason: 'missing_data',
+        })
+        await onVideoProcessed({ id: videoId, title: 'Unknown' }, 'missing_data')
         count++
         continue
       }
 
+      const title = fullVideo.basic_info.title || 'Unknown'
+      const duration = fullVideo.basic_info.duration || 0
+
       // Filter out shorts, trailers, clips
       let skipReason: FailureReason | null = null
-      if (video.isShort || title.toLowerCase().includes('#shorts')) {
+      if (fullVideo.basic_info.is_short || title.toLowerCase().includes('#shorts')) {
         skipReason = 'shorts'
       } else if (
         title.toLowerCase().includes('trailer') ||
@@ -126,145 +130,92 @@ export async function fetchChannelVideos(
 
       if (skipReason) {
         saveFailedYouTubeVideo({
-          videoId: video.id,
-          channelId: channel.id || '',
-          channelName: channel.name || '',
+          videoId,
+          channelId: channelIdentifier,
+          channelName: channel?.name || '',
           title,
           reason: skipReason,
-          duration: video.duration,
+          duration,
         })
-        await onVideoProcessed({ id: video.id, title }, skipReason)
+        await onVideoProcessed({ id: videoId, title }, skipReason)
+        count++
         continue
       }
 
       // Filter by duration (minimum 40 minutes)
-      const duration = video.duration || 0
       if (duration < 40 * 60) {
         saveFailedYouTubeVideo({
-          videoId: video.id,
-          channelId: channel.id || '',
-          channelName: channel.name || '',
+          videoId,
+          channelId: channelIdentifier,
+          channelName: channel?.name || '',
           title,
           reason: 'duration',
           duration,
         })
-        await onVideoProcessed({ id: video.id, title }, 'duration')
+        await onVideoProcessed({ id: videoId, title }, 'duration')
+        count++
         continue
       }
 
-      try {
-        const fullVideo = await youtube.getVideo(video.id)
+      // Extract thumbnail URL
+      const thumbnailUrl = fullVideo.basic_info.thumbnail?.[0]?.url
 
-        if (!fullVideo) {
-          saveFailedYouTubeVideo({
-            videoId: video.id,
-            channelId: channel.id || '',
-            channelName: channel.name || '',
-            title,
-            reason: 'missing_data',
-            duration: duration || undefined,
-          })
-
-          await onVideoProcessed({ id: video.id, title }, 'missing_data')
-          continue
-        }
-
-        // Safely extract thumbnail URL
-        let thumbnailUrl: string | undefined
-        if (video.thumbnails && Array.isArray(video.thumbnails)) {
-          thumbnailUrl =
-            video.thumbnails[2]?.url || video.thumbnails[1]?.url || video.thumbnails[0]?.url
-        }
-
-        const videoData = {
-          id: video.id,
-          title,
-          description: fullVideo?.description || '',
-          publishedAt: video.uploadDate || '',
-          channelName: channel.name || '',
-          channelId: channel.id || '',
-          thumbnails: {
-            high: thumbnailUrl,
-          },
-          duration,
-          viewCount: video.viewCount || 0,
-        }
-
-        // Process video into movie entry
-        const movieEntry = await processYouTubeVideo(videoData, channelConfig)
-        if (movieEntry) {
-          const existing = db[movieEntry.imdbId]
-          const { upsertMovie } = await import('./movieData')
-          upsertMovie(db, movieEntry.imdbId, movieEntry)
-
-          const result = existing ? 'updated' : 'added'
-          await onVideoProcessed({ id: video.id, title }, result)
-          existingVideoIds.add(video.id)
-
-          // Remove from failed list if it was there
-          removeFailedYouTubeVideo(video.id)
-        }
-
-        count++
-      } catch (error) {
-        console.error(`Failed to fetch video ${video.id}:`, error)
-        saveFailedYouTubeVideo({
-          videoId: video.id,
-          channelId: channel.id || '',
-          channelName: channel.name || '',
-          title,
-          reason: 'api_error',
-          duration: video.duration,
-        })
-        await onVideoProcessed({ id: video.id, title }, 'api_error')
-        // Continue with next video instead of failing entire scrape
+      const videoData = {
+        id: videoId,
+        title,
+        description: fullVideo.basic_info.short_description || '',
+        publishedAt: fullVideo.basic_info.upload_date || '',
+        channelName: fullVideo.basic_info.author || channel?.name || '',
+        channelId: fullVideo.basic_info.channel_id || channelIdentifier,
+        thumbnails: {
+          high: thumbnailUrl,
+        },
+        duration,
+        viewCount: fullVideo.basic_info.view_count || 0,
       }
 
-      await new Promise(resolve => setTimeout(resolve, 200))
+      // Process video into movie entry
+      const movieEntry = await processYouTubeVideo(videoData, channelConfig)
+      if (movieEntry) {
+        const existing = db[movieEntry.imdbId]
+        const { upsertMovie } = await import('./movieData')
+        upsertMovie(db, movieEntry.imdbId, movieEntry)
+
+        const result = existing ? 'updated' : 'added'
+        await onVideoProcessed({ id: videoId, title }, result)
+        existingVideoIds.add(videoId)
+
+        // Remove from failed list if it was there
+        removeFailedYouTubeVideo(videoId)
+      }
+
+      count++
+    } catch (error) {
+      console.error(`Failed to fetch video ${videoId}:`, error)
+      saveFailedYouTubeVideo({
+        videoId,
+        channelId: channelIdentifier,
+        channelName: channel?.name || '',
+        title: 'Error',
+        reason: 'api_error',
+      })
+      await onVideoProcessed({ id: videoId, title: 'Error' }, 'api_error')
+      count++
     }
 
-    // Save after each page
-    await onPageComplete()
+    // Rate limiting
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    // Save progress every 10 videos
+    if (count % 10 === 0) {
+      await onPageComplete()
+    }
   }
+
+  // Final save
+  await onPageComplete()
 
   console.log(`Finished scraping channel. Total processed: ${count}`)
-}
-
-export async function getChannelVideoCount(
-  youtube: Client,
-  channelIdentifier: string
-): Promise<number> {
-  try {
-    let channelId = channelIdentifier
-
-    // If it's a handle (starts with @), search for the channel first
-    if (channelIdentifier.startsWith('@')) {
-      const searchQuery = channelIdentifier.slice(1)
-      const searchResults = await youtube.search(searchQuery, { type: 'channel' })
-      const channelResult = searchResults.items[0]
-      if (!channelResult) {
-        console.error(`Channel not found: ${channelIdentifier}`)
-        return 0
-      }
-      channelId = channelResult.id || ''
-    }
-
-    const channel = await (youtube as any).getChannel(channelId)
-    if (channel && 'videoCount' in channel) {
-      const countStr = (channel as any).videoCount as string
-      // Parse "2.8K videos" or "150 videos" or "1,234 videos"
-      const match = countStr.replace(/,/g, '').match(/([\d.]+)\s*([KM])?/)
-      if (match && match[1]) {
-        let total = parseFloat(match[1])
-        if (match[2] === 'K') total *= 1000
-        if (match[2] === 'M') total *= 1000000
-        return Math.floor(total)
-      }
-    }
-  } catch (e) {
-    console.error(`Failed to fetch total for channel ${channelIdentifier}`, e)
-  }
-  return 0
 }
 
 export async function processYouTubeVideo(

@@ -62,12 +62,32 @@ export default defineEventHandler(async event => {
   }
 
   try {
+    console.log('Loading database...')
+    emitProgress({
+      type: 'omdb',
+      status: 'starting',
+      message: 'Loading database...',
+      current: 0,
+      total: 0,
+      successCurrent: 0,
+      failedCurrent: 0,
+    })
     // Load movies database
     const db = await loadMoviesDatabase()
 
     if (forceRetryFailed) {
       clearFailedOmdbMatches()
     }
+    console.log('Getting unmatched...')
+    emitProgress({
+      type: 'omdb',
+      status: 'starting',
+      message: 'Getting unmatched...',
+      current: 0,
+      total: 0,
+      successCurrent: 0,
+      failedCurrent: 0,
+    })
 
     // Get movies to process
     let moviesToProcess = onlyUnmatched
@@ -107,7 +127,7 @@ export default defineEventHandler(async event => {
       emitProgress({
         type: 'omdb',
         status: 'in_progress',
-        message: `Enriching: ${movie.title}`,
+        message: `${movie.title}`,
         current: result.processed + 1,
         total,
         successCurrent: result.matched,

@@ -16,7 +16,9 @@
     "format:check": "prettier --check .",
     "typecheck": "nuxt typecheck",
     "typecheck:watch": "nuxt typecheck --watch",
-    "db:generate": "tsx scripts/generate-sqlite.ts"
+    "db:generate": "tsx scripts/generate-sqlite.ts",
+    "youtube:setup": "tsx scripts/setup-youtube-api.ts",
+    "youtube:test": "tsx scripts/test-youtube-data-api.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
@@ -42,6 +44,7 @@
     "dotenv": "17.2.3",
     "focus-trap": "7.7.0",
     "fuse.js": "7.1.0",
+    "googleapis": "169.0.0",
     "nuxt": "^4.2.2",
     "openai": "6.13.0",
     "pinia": "3.0.4",
@@ -75,7 +78,6 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.50.0",
     "unocss": "66.5.10",
-    "youtubei": "1.8.3",
-    "youtubei.js": "^10.5.0"
+    "youtubei.js": "^16.0.1"
   }
 }

@@ -102,12 +102,7 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
 
     for (const newSource of newSources) {
       const existingIndex = mergedSources.findIndex(
-        s =>
-          s.type === newSource.type &&
-          ((s.type === 'archive.org' &&
-            newSource.type === 'archive.org' &&
-            s.id === newSource.id) ||
-            (s.type === 'youtube' && newSource.type === 'youtube' && s.id === newSource.id))
+        s => s.type === newSource.type && s.id === newSource.id
       )
 
       const existingSource = mergedSources[existingIndex]
@@ -383,14 +378,7 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
 
   for (const secondarySource of secondary.sources) {
     const existingIndex = mergedSources.findIndex(
-      s =>
-        s.type === secondarySource.type &&
-        ((s.type === 'archive.org' &&
-          secondarySource.type === 'archive.org' &&
-          s.id === secondarySource.id) ||
-          (s.type === 'youtube' &&
-            secondarySource.type === 'youtube' &&
-            s.id === secondarySource.id))
+      s => s.type === secondarySource.type && s.id === secondarySource.id
     )
 
     const existingSource = mergedSources[existingIndex]
