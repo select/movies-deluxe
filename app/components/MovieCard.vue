@@ -89,12 +89,21 @@ const props = defineProps<Props>()
 
 // Computed language code
 const languageCode = computed(() => {
-  const metadataLang = getLanguageCode(props.movie.metadata?.Language)
-  if (metadataLang) return metadataLang
+  // Get language from metadata (already normalized to 2-letter code in database)
+  const lang = props.movie.metadata?.Language
+  if (lang) {
+    // If it's already a 2-letter code, just uppercase it
+    if (lang.length === 2) {
+      return lang.toUpperCase()
+    }
+    // Otherwise use getLanguageCode for legacy data
+    return getLanguageCode(lang)
+  }
   
-  // Fallback to YouTube source language
-  if (props.movie.sources[0]?.type === 'youtube') {
-    return props.movie.sources[0].language?.toUpperCase() || ''
+  // Fallback to source language (also normalized)
+  const sourceLang = props.movie.sources[0]?.language
+  if (sourceLang && sourceLang.length === 2) {
+    return sourceLang.toUpperCase()
   }
   
   return ''
