@@ -77,8 +77,7 @@ async function generateSQLite(
         quality TEXT,
         addedAt TEXT,
         description TEXT,
-        archive_identifier TEXT,
-        youtube_videoId TEXT,
+        identifier TEXT,
         youtube_channelName TEXT,
         youtube_channelId TEXT,
         youtube_language TEXT,
@@ -120,9 +119,8 @@ async function generateSQLite(
     const insertSource = sqlite.prepare(`
       INSERT INTO sources (
         movieId, type, url, label, quality, addedAt, description,
-        archive_identifier, youtube_videoId, youtube_channelName,
-        youtube_channelId, youtube_language
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        identifier, youtube_channelName, youtube_channelId, youtube_language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertFts = sqlite.prepare(`
@@ -182,8 +180,7 @@ async function generateSQLite(
               source.quality || null,
               source.addedAt,
               description,
-              source.type === 'archive.org' ? (source as any).id : null,
-              source.type === 'youtube' ? (source as any).id : null,
+              (source as any).id || null,
               source.type === 'youtube' ? (source as any).channelName : null,
               source.type === 'youtube' ? (source as any).channelId : null,
               source.type === 'youtube' ? (source as any).language : null
