@@ -71,15 +71,22 @@ import { onBeforeRouteLeave } from 'vue-router'
 
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
-const { filteredMovies, lightweightMovies, totalMovies, isFiltering } = storeToRefs(filterStore)
+const { lightweightMovies, totalMovies, isFiltering } = storeToRefs(filterStore)
 
 // Ensure lightweightMovies is always an array
 const safeLightweightMovies = computed(() => lightweightMovies.value || [])
-const safeFilteredMovies = computed(() => filteredMovies.value || [])
 const safeTotalMovies = computed(() => totalMovies.value || 0)
 
-// Dark mode state (default to dark)
-const isDark = ref(true)
+// Dark mode state - initialize immediately from localStorage
+const getInitialDarkMode = () => {
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme')
+    return savedTheme ? savedTheme === 'dark' : true
+  }
+  return true // Default to dark for SSR
+}
+
+const isDark = ref(getInitialDarkMode())
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
@@ -87,12 +94,6 @@ const isFilterMenuOpen = ref(false)
 // Load movies on mount
 onMounted(async () => {
   await movieStore.loadFromFile()
-
-  // Check for saved dark mode preference, default to dark
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme ? savedTheme === 'dark' : true
-  }
 })
 
 // Save scroll position before leaving (might need adjustment for virtual grid)
@@ -133,6 +134,17 @@ const toggleDarkMode = () => {
     localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
   }
 }
+
+// Watch isDark and update document class for better compatibility
+watch(isDark, (newValue) => {
+  if (typeof window !== 'undefined') {
+    if (newValue) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
+}, { immediate: true })
 
 // Computed properties
 const hasMore = computed(() => {
