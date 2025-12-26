@@ -7912,5 +7912,638 @@
     "failedAt": "2025-12-24T00:45:03.892Z",
     "lastAttempt": "2025-12-24T00:45:03.892Z",
     "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-waldwinter",
+    "originalTitle": "1936 Waldwinter",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      },
+      {
+        "query": "1936 Waldwinter",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:42:35.482Z",
+    "lastAttempt": "2025-12-25T23:42:35.482Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-waldwinter-viktor-staal-hansi-knotek-eduard-von-winterstein",
+    "originalTitle": "1936 Waldwinter ( Viktor Staal, Hansi Knotek, Eduard Von Winterstein)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      },
+      {
+        "query": "1936 Waldwinter ( Viktor Staal, Hansi Knotek, Eduard Von Winterstein)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:42:38.587Z",
+    "lastAttempt": "2025-12-25T23:42:38.587Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-weiberregiment",
+    "originalTitle": "1936 Weiberregiment",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Weiberregiment",
+        "year": 1936
+      },
+      {
+        "query": "1936 Weiberregiment",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:42:42.119Z",
+    "lastAttempt": "2025-12-25T23:42:42.119Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-wenn-der-hahn-kraht-heinrich-george-hans-brausewetter-marianne-hoppe",
+    "originalTitle": "1936 Wenn Der Hahn Kräht ( Heinrich George, Hans Brausewetter, Marianne Hoppe)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Wenn Der Hahn Kräht",
+        "year": 1936
+      },
+      {
+        "query": "1936 Wenn Der Hahn Kräht ( Heinrich George, Hans Brausewetter, Marianne Hoppe)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:42:47.578Z",
+    "lastAttempt": "2025-12-25T23:42:47.578Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-wenn-wir-alle-englein-waren",
+    "originalTitle": "1936 Wenn Wir Alle Englein Wären",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Wenn Wir Alle Englein Wären",
+        "year": 1936
+      },
+      {
+        "query": "1936 Wenn Wir Alle Englein Wären",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:42:51.685Z",
+    "lastAttempt": "2025-12-25T23:42:51.685Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-wo-die-lerche-singt-martha-eggerth-lucie-englisch-hans-sohnker",
+    "originalTitle": "1936 Wo Die Lerche Singt (martha Eggerth, Lucie Englisch, Hans Söhnker)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Wo Die Lerche Singt (martha Eggerth, Lucie Englisch, Hans Söhnker)",
+        "year": 1936
+      },
+      {
+        "query": "1936 Wo Die Lerche Singt (martha Eggerth, Lucie Englisch, Hans Söhnker)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:42:57.627Z",
+    "lastAttempt": "2025-12-25T23:42:57.627Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-zwischen-moskau-und-shanghai-pola-negri-gustav-diessl",
+    "originalTitle": "1936 Zwischen Moskau Und Shanghai ( Pola Negri, Gustav Diessl)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Zwischen Moskau Und Shanghai",
+        "year": 1936
+      },
+      {
+        "query": "1936 Zwischen Moskau Und Shanghai ( Pola Negri, Gustav Diessl)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:03.571Z",
+    "lastAttempt": "2025-12-25T23:43:03.571Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936HarryFraserGhostTownHarryCareyRuthFindlay",
+    "originalTitle": "1936 Harry Fraser Ghost Town ( Harry Carey, Ruth Findlay)",
+    "attempts": [
+      {
+        "query": "Harry Fraser Ghost Town"
+      },
+      {
+        "query": "1936 Harry Fraser Ghost Town ( Harry Carey, Ruth Findlay)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:08.292Z",
+    "lastAttempt": "2025-12-25T23:43:08.292Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-7-ohrfeigen-willy-fritsch-lilian-harvey-alfred-abel-erich-fiedler-oscar-sima",
+    "originalTitle": "1937 7 Ohrfeigen ( Willy Fritsch, Lilian Harvey, Alfred Abel, Erich Fiedler, Oscar Sima)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "7 Ohrfeigen",
+        "year": 1937
+      },
+      {
+        "query": "1937 7 Ohrfeigen ( Willy Fritsch, Lilian Harvey, Alfred Abel, Erich Fiedler, Oscar Sima)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:13.141Z",
+    "lastAttempt": "2025-12-25T23:43:13.141Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-9.-Reichsparteitag-der-NSDAP",
+    "originalTitle": "1937 - 9. Reichsparteitag der NSDAP vom 6.-13. September (8m 27s, 688x512)",
+    "attempts": [
+      {
+        "query": "- 9. Reichsparteitag der NSDAP vom 6"
+      },
+      {
+        "query": "1937 - 9. Reichsparteitag der NSDAP vom 6.-13. September (8m 27s, 688x512)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:17.241Z",
+    "lastAttempt": "2025-12-25T23:43:17.241Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Damals-zu-Hause-Elbing",
+    "originalTitle": "1937 - Damals zu Hause - Elbing - Land an der Weichsel (10m 55s, 352x240)",
+    "attempts": [
+      {
+        "query": "- Damals zu Hause"
+      },
+      {
+        "query": "1937 - Damals zu Hause - Elbing - Land an der Weichsel (10m 55s, 352x240)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:22.099Z",
+    "lastAttempt": "2025-12-25T23:43:22.099Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Der-Fuehrer-eroeffnet-das-Winterhilfswerk",
+    "originalTitle": "1937 - Der Fuehrer eroeffnet das Winterhilfswerk im Oktober 1937 (2m 08s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Der Fuehrer eroeffnet das Winterhilfswerk im Oktober 1937 (2m 08s, 512x384)"
+      },
+      {
+        "query": "1937 - Der Fuehrer eroeffnet das Winterhilfswerk im Oktober 1937 (2m 08s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:26.460Z",
+    "lastAttempt": "2025-12-25T23:43:26.460Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Deutsche-Frauenkolonialschule-Rendsburg",
+    "originalTitle": "1937 - Deutsche Frauenkolonialschule Rendsburg (20m 29s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Deutsche Frauenkolonialschule Rendsburg (20m 29s, 512x384)"
+      },
+      {
+        "query": "1937 - Deutsche Frauenkolonialschule Rendsburg (20m 29s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:30.614Z",
+    "lastAttempt": "2025-12-25T23:43:30.614Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Die-Kamera-faehrt-mit",
+    "originalTitle": "1937 - Die Kamera faehrt mit - Aus der Arbeit der Wochenschau (12m 19s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Die Kamera faehrt mit"
+      },
+      {
+        "query": "1937 - Die Kamera faehrt mit - Aus der Arbeit der Wochenschau (12m 19s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:35.593Z",
+    "lastAttempt": "2025-12-25T23:43:35.593Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Die-Schlacht-um-Miggershausen",
+    "originalTitle": "1937 - Die Schlacht um Miggershausen (12m 28s, 720 x 480)",
+    "attempts": [
+      {
+        "query": "- Die Schlacht um Miggershausen (12m 28s, 720 x 480)"
+      },
+      {
+        "query": "1937 - Die Schlacht um Miggershausen (12m 28s, 720 x 480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:40.716Z",
+    "lastAttempt": "2025-12-25T23:43:40.716Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Echo-der-Heimat-Ein-Tatsachenbericht-aus-Deutschland",
+    "originalTitle": "1937 - Echo der Heimat - Ein Tatsachenbericht aus Deutschland - Fuenfte Folge (42m 40s, 352x256)",
+    "attempts": [
+      {
+        "query": "- Echo der Heimat"
+      },
+      {
+        "query": "1937 - Echo der Heimat - Ein Tatsachenbericht aus Deutschland - Fuenfte Folge (42m 40s, 352x256)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:45.534Z",
+    "lastAttempt": "2025-12-25T23:43:45.534Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Echo-der-Heimat-Folge-5",
+    "originalTitle": "1937 - Echo der Heimat - Folge 5 (19m 52s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Echo der Heimat"
+      },
+      {
+        "query": "1937 - Echo der Heimat - Folge 5 (19m 52s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:49.347Z",
+    "lastAttempt": "2025-12-25T23:43:49.347Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Echo-der-Heimat-V.-Bericht",
+    "originalTitle": "1937 - Echo der Heimat - V. Bericht 2. Folge (37m 22s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Echo der Heimat"
+      },
+      {
+        "query": "1937 - Echo der Heimat - V. Bericht 2. Folge (37m 22s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:54.487Z",
+    "lastAttempt": "2025-12-25T23:43:54.487Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Echo-der-Heimaz-VI.-Bericht",
+    "originalTitle": "1937 - Echo der Heimat - VI. Bericht (14m 20s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Echo der Heimat"
+      },
+      {
+        "query": "1937 - Echo der Heimat - VI. Bericht (14m 20s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:43:59.470Z",
+    "lastAttempt": "2025-12-25T23:43:59.470Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Farbaufnahmen-vom-Erntedankfest",
+    "originalTitle": "1937 - Farbaufnahmen vom Erntedankfest (2m 17s, 320x240)",
+    "attempts": [
+      {
+        "query": "- Farbaufnahmen vom Erntedankfest (2m 17s, 320x240)"
+      },
+      {
+        "query": "1937 - Farbaufnahmen vom Erntedankfest (2m 17s, 320x240)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:05.244Z",
+    "lastAttempt": "2025-12-25T23:44:05.244Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Festliches-Nuernberg",
+    "originalTitle": "1937 - Festliches Nuernberg - Ein Film aus der Stadt der Reichsparteitage (20m 22s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Festliches Nuernberg"
+      },
+      {
+        "query": "1937 - Festliches Nuernberg - Ein Film aus der Stadt der Reichsparteitage (20m 22s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:14.568Z",
+    "lastAttempt": "2025-12-25T23:44:14.568Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Flieger-Funker-Kanoniere",
+    "originalTitle": "1937 - Flieger, Funker, Kanoniere - Hermann Goering erklaert die neue Luftwaffe (10m 48s, 640x480, EN Untertitel)",
+    "attempts": [
+      {
+        "query": "- Flieger, Funker, Kanoniere"
+      },
+      {
+        "query": "1937 - Flieger, Funker, Kanoniere - Hermann Goering erklaert die neue Luftwaffe (10m 48s, 640x480, EN Untertitel)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:20.712Z",
+    "lastAttempt": "2025-12-25T23:44:20.712Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Gardetag-in-Duesseldorf",
+    "originalTitle": "1937 - Gardetag in Duesseldorf (7m 03s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Gardetag in Duesseldorf (7m 03s, 640x480)"
+      },
+      {
+        "query": "1937 - Gardetag in Duesseldorf (7m 03s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:24.378Z",
+    "lastAttempt": "2025-12-25T23:44:24.378Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Gebt-mir-4-Zeit",
+    "originalTitle": "1937 - Gebt mir 4 Jahre Zeit - Des Fuehrers Kampf fuer Volk und Reich (16m 25s, 384x288)",
+    "attempts": [
+      {
+        "query": "- Gebt mir 4 Jahre Zeit"
+      },
+      {
+        "query": "1937 - Gebt mir 4 Jahre Zeit - Des Fuehrers Kampf fuer Volk und Reich (16m 25s, 384x288)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:28.285Z",
+    "lastAttempt": "2025-12-25T23:44:28.285Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Joseph-Goebbels-und-Adolf-Hitler",
+    "originalTitle": "1937 - Joseph Goebbels und Adolf Hitler sprechen zur HJ im Berliner Olympiastadion - September 1937 (3m 18s, 512x384)",
+    "attempts": [
+      {
+        "query": "- Joseph Goebbels und Adolf Hitler sprechen zur HJ im Berliner Olympiastadion"
+      },
+      {
+        "query": "1937 - Joseph Goebbels und Adolf Hitler sprechen zur HJ im Berliner Olympiastadion - September 1937 (3m 18s, 512x384)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:32.427Z",
+    "lastAttempt": "2025-12-25T23:44:32.427Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Juden-ohne-Maske",
+    "originalTitle": "1937 - Juden ohne Maske (13m 02s, 448x336, ohne Ton)",
+    "attempts": [
+      {
+        "query": "- Juden ohne Maske (13m 02s, 448x336, ohne Ton)"
+      },
+      {
+        "query": "1937 - Juden ohne Maske (13m 02s, 448x336, ohne Ton)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:36.845Z",
+    "lastAttempt": "2025-12-25T23:44:36.845Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Kavalleristen-Tag-1937-in-Duesseldorf",
+    "originalTitle": "1937 - Kavalleristen-Tag 1937 in Duesseldorf (6m 03s, 640x480)",
+    "attempts": [
+      {
+        "query": "- Kavalleristen"
+      },
+      {
+        "query": "1937 - Kavalleristen-Tag 1937 in Duesseldorf (6m 03s, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:40.242Z",
+    "lastAttempt": "2025-12-25T23:44:40.242Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Panzerkreuzer-Sebastopol",
+    "originalTitle": "1937 - Panzerkreuzer Sebastopol - Weisse Sklaven (1h 47m, 416x320)",
+    "attempts": [
+      {
+        "query": "- Panzerkreuzer Sebastopol"
+      },
+      {
+        "query": "1937 - Panzerkreuzer Sebastopol - Weisse Sklaven (1h 47m, 416x320)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:42.544Z",
+    "lastAttempt": "2025-12-25T23:44:42.544Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Patrioten",
+    "originalTitle": "1937 - Patrioten (1h 17m, 640x480)",
+    "attempts": [
+      {
+        "query": "- Patrioten (1h 17m, 640x480)"
+      },
+      {
+        "query": "1937 - Patrioten (1h 17m, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:45.256Z",
+    "lastAttempt": "2025-12-25T23:44:45.256Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Rassenpolitisches-Amt-der-NSDAP",
+    "originalTitle": "1937 - Rassenpolitisches Amt der NSDAP - Alles Leben ist Kampf (25m 11s, 352x240, Stummfilm)",
+    "attempts": [
+      {
+        "query": "- Rassenpolitisches Amt der NSDAP"
+      },
+      {
+        "query": "1937 - Rassenpolitisches Amt der NSDAP - Alles Leben ist Kampf (25m 11s, 352x240, Stummfilm)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:47.867Z",
+    "lastAttempt": "2025-12-25T23:44:47.867Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Unternehmen-Michael",
+    "originalTitle": "1937 - Unternehmen Michael (1h 16m, 640x480)",
+    "attempts": [
+      {
+        "query": "- Unternehmen Michael (1h 16m, 640x480)"
+      },
+      {
+        "query": "1937 - Unternehmen Michael (1h 16m, 640x480)"
+      }
+    ],
+    "failedAt": "2025-12-25T23:44:51.095Z",
+    "lastAttempt": "2025-12-25T23:44:51.095Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-autobus-s-ein-mann-kam-nicht-nach-hause",
+    "originalTitle": "1937 Autobus S Ein Mann Kam Nicht Nach Hause",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Autobus S Ein Mann Kam Nicht Nach Hause",
+        "year": 1937
+      },
+      {
+        "query": "1937 Autobus S Ein Mann Kam Nicht Nach Hause",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:04.566Z",
+    "lastAttempt": "2025-12-25T23:45:04.566Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-beco-sem-saida-william-wyler",
+    "originalTitle": "( 1937) Beco Sem Saída ( William Wyler)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Beco Sem Saída ( William Wyler)",
+        "year": 1937
+      },
+      {
+        "query": "( 1937) Beco Sem Saída ( William Wyler)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:11.430Z",
+    "lastAttempt": "2025-12-25T23:45:11.430Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-damals-zu-hause-elbing-land-an-der-weichsel",
+    "originalTitle": "1937 Damals Zu Hause Elbing Land An Der Weichsel",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Damals Zu Hause Elbing Land An Der Weichsel",
+        "year": 1937
+      },
+      {
+        "query": "1937 Damals Zu Hause Elbing Land An Der Weichsel",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:14.731Z",
+    "lastAttempt": "2025-12-25T23:45:14.731Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-das-quartett-paul-kemp-kurzfilm",
+    "originalTitle": "1937 Das Quartett ( Paul Kemp) Kurzfilm",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Das Quartett ( Paul Kemp) Kurzfilm",
+        "year": 1937
+      },
+      {
+        "query": "1937 Das Quartett ( Paul Kemp) Kurzfilm",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:28.560Z",
+    "lastAttempt": "2025-12-25T23:45:28.560Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-das-schone-fraulein-schragg-otto-gebuhr-hansi-knotek-paul-klinger-hans-adal",
+    "originalTitle": "1937 Das Schöne Fräulein Schragg ( Otto Gebühr, Hansi Knotek, Paul Klinger, Hans Adalbert Von Schlettow, Eduard Von Winterstein)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Das Schöne Fräulein Schragg",
+        "year": 1937
+      },
+      {
+        "query": "1937 Das Schöne Fräulein Schragg ( Otto Gebühr, Hansi Knotek, Paul Klinger, Hans Adalbert Von Schlettow, Eduard Von Winterstein)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:31.874Z",
+    "lastAttempt": "2025-12-25T23:45:31.874Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-der-gestiefelte-kater-zeichentrick-stummfilm",
+    "originalTitle": "1937 Der Gestiefelte Kater( Zeichentrick, Stummfilm)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Der Gestiefelte Kater",
+        "year": 1937
+      },
+      {
+        "query": "1937 Der Gestiefelte Kater( Zeichentrick, Stummfilm)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:38.551Z",
+    "lastAttempt": "2025-12-25T23:45:38.551Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-der-kleine-kavallier-szoke-szakall-otto-walburg-hans-holt-sigurd-lohde",
+    "originalTitle": "1937 Der Kleine Kavallier ( Szöke Szakall, Otto Walburg, Hans Holt, Sigurd Lohde)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Der Kleine Kavallier",
+        "year": 1937
+      },
+      {
+        "query": "1937 Der Kleine Kavallier ( Szöke Szakall, Otto Walburg, Hans Holt, Sigurd Lohde)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:47.237Z",
+    "lastAttempt": "2025-12-25T23:45:47.237Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-deutsche-frauenkolonialschule-rendsburg-filmdokument",
+    "originalTitle": "1937 Deutsche Frauenkolonialschule Rendsburg ( Filmdokument)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Filmdokument",
+        "year": 1937
+      },
+      {
+        "query": "1937 Deutsche Frauenkolonialschule Rendsburg ( Filmdokument)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2025-12-25T23:45:56.074Z",
+    "lastAttempt": "2025-12-25T23:45:56.074Z",
+    "reason": "No OMDB match found"
   }
 ]
