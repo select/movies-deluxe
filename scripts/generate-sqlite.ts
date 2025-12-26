@@ -10,6 +10,7 @@ import { join } from 'path'
 import { existsSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from '../server/utils/movieData'
 import { createLogger } from '../server/utils/logger'
+import { normalizeLanguageCode } from '../shared/utils/languageNormalizer'
 import type { MovieEntry } from '../shared/types/movie'
 
 const logger = createLogger('SQLiteGen')
@@ -144,16 +145,16 @@ async function generateSQLite(
         let language: string | null = null
         for (const source of movie.sources) {
           if (source.type === 'archive.org' && (source as any).language) {
-            language = (source as any).language
+            language = normalizeLanguageCode((source as any).language)
             break // Archive.org language has highest priority
           } else if (source.type === 'youtube' && (source as any).language) {
-            language = (source as any).language
+            language = normalizeLanguageCode((source as any).language)
             // Don't break - keep looking for Archive.org language
           }
         }
         // Fallback to OMDB metadata language if no source language found
         if (!language && m.Language) {
-          language = m.Language
+          language = normalizeLanguageCode(m.Language)
         }
 
         insertMovie.run(
@@ -188,6 +189,9 @@ async function generateSQLite(
                 : source.description
               : null
 
+            // Normalize source language
+            const sourceLanguage = normalizeLanguageCode((source as any).language)
+
             insertSource.run(
               movie.imdbId,
               source.type,
@@ -197,7 +201,7 @@ async function generateSQLite(
               source.addedAt,
               description,
               (source as any).id || null,
-              (source as any).language || null,
+              sourceLanguage,
               source.type === 'youtube' ? (source as any).channelName : null,
               source.type === 'youtube' ? (source as any).channelId : null
             )
