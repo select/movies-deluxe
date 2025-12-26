@@ -7,8 +7,15 @@
         class="text-xl"
       />
     </div>
-    <div class="text-2xl font-bold">
-      {{ value }}
+    <div class="text-2xl font-bold flex items-baseline gap-2">
+      {{ value.toLocaleString() }}
+      <span
+        v-if="failed && failed > 0"
+        class="text-xs font-medium text-orange-500"
+        :title="`${failed} failed`"
+      >
+        +{{ failed }} failed
+      </span>
     </div>
     <div
       v-if="showProgress"
@@ -24,10 +31,21 @@
       <span class="text-[10px] font-medium">{{ percent?.toFixed(percentPrecision) }}%</span>
     </div>
     <div
-      v-if="subtitle"
-      class="text-[10px] text-gray-400 mt-1"
+      v-if="subtitle || (failureRate !== undefined && failureRate > 0)"
+      class="flex items-center justify-between text-[10px] mt-1"
     >
-      {{ subtitle }}
+      <span
+        v-if="subtitle"
+        class="text-gray-400"
+      >
+        {{ subtitle }}
+      </span>
+      <span
+        v-if="failureRate !== undefined && failureRate > 0"
+        :class="failureRate > 20 ? 'text-red-500 font-bold' : 'text-orange-500'"
+      >
+        {{ failureRate.toFixed(1) }}% fail
+      </span>
     </div>
   </div>
 </template>
@@ -43,6 +61,8 @@ withDefaults(defineProps<{
   percent?: number
   progressColor?: string
   percentPrecision?: number
+  failed?: number
+  failureRate?: number
 }>(), {
   iconColor: 'text-blue-500',
   showProgress: false,
@@ -50,5 +70,7 @@ withDefaults(defineProps<{
   progressColor: 'bg-blue-500',
   percentPrecision: 0,
   subtitle: undefined,
+  failed: undefined,
+  failureRate: undefined,
 })
 </script>
