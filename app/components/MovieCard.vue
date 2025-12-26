@@ -1,10 +1,10 @@
 <template>
   <NuxtLink
     :to="`/movie/${movie.imdbId}`"
-    class="block border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
+    class="flex flex-col border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
   >
     <!-- Poster -->
-    <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative">
+    <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative flex-shrink-0">
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
         v-if="movie.imdbId.startsWith('tt')"
@@ -49,8 +49,8 @@
     </div>
 
     <!-- Movie Info -->
-    <div class="p-3">
-      <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug">
+    <div class="p-3 flex-shrink-0">
+      <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem]">
         {{ getPrimaryTitle(movie) }}
       </h3>
       

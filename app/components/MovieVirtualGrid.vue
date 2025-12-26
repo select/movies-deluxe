@@ -1,20 +1,20 @@
 <template>
   <div
     ref="gridRef"
-    :style="{ height: `${totalHeight}px`, position: 'relative' }"
     class="w-full"
   >
+    <!-- Spacer for rows before visible range -->
+    <div
+      v-if="visibleRows.length > 0 && visibleRows[0].index > 0"
+      :style="{ height: `${visibleRows[0].top}px` }"
+    />
+
+    <!-- Visible rows -->
     <div
       v-for="row in visibleRows"
       :key="row.index"
-      :style="{
-        position: 'absolute',
-        top: `${row.top}px`,
-        left: 0,
-        right: 0,
-        height: `${rowHeight}px`
-      }"
-      class="grid gap-4 px-4 lg:px-[6%]"
+      :ref="row.index === 0 ? (el) => firstRowRef = el as HTMLElement : undefined"
+      class="grid gap-4 px-4 lg:px-[6%] mb-4"
       :class="gridClass"
     >
       <MovieCard
@@ -24,15 +24,15 @@
       />
     </div>
 
+    <!-- Spacer for rows after visible range -->
+    <div
+      v-if="visibleRows.length > 0"
+      :style="{ height: `${totalHeight - (visibleRows[visibleRows.length - 1].top + rowHeight)}px` }"
+    />
+
     <!-- Loading Sentinel for Infinite Scroll -->
     <div
       v-if="hasMore"
-      :style="{
-        position: 'absolute',
-        top: `${totalHeight}px`,
-        left: 0,
-        right: 0
-      }"
       class="text-center py-8"
     >
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100" />
@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize } from '@vueuse/core'
+import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize, useElementSize } from '@vueuse/core'
 import type { MovieEntry, LightweightMovieEntry } from '~/types'
 
 const props = defineProps<{
@@ -59,7 +59,7 @@ const emit = defineEmits<{
 
 const movieStore = useMovieStore()
 const { y: windowScrollY } = useWindowScroll()
-const { height: windowHeight } = useWindowSize()
+const { height: windowHeight, width: windowWidth } = useWindowSize()
 const breakpoints = useBreakpoints(breakpointsTailwind)
 
 // Map to store loaded movie details
@@ -82,12 +82,41 @@ const gridClass = computed(() => {
   return 'grid-cols-2'
 })
 
-// Approximate height of a MovieCard + gap
-const rowHeight = 420 
+// Reference to first rendered row for measurement
+const firstRowRef = ref<HTMLElement | null>(null)
+const { height: firstRowHeight } = useElementSize(firstRowRef)
+
+// Calculate row height dynamically - use measured height if available, otherwise estimate
+const rowHeight = computed(() => {
+  // Use measured height from first row if available (includes mb-4)
+  if (firstRowHeight.value > 0) {
+    return firstRowHeight.value + 16 // Add mb-4 (16px) margin
+  }
+  
+  // Fallback estimation based on screen width
+  const w = windowWidth.value || 1024
+  
+  // Account for padding (px-4 = 32px, lg:px-[6%] varies)
+  const horizontalPadding = breakpoints.lg.value ? w * 0.12 : 32
+  const availableWidth = w - horizontalPadding
+  
+  // Calculate card width (subtract gaps between cards)
+  const gapWidth = 16 // gap-4 = 16px
+  const totalGaps = (cols.value - 1) * gapWidth
+  const cardWidth = (availableWidth - totalGaps) / cols.value
+  
+  // Card height = poster height (width * 1.5 for 2:3 ratio) + info section (80px) + row margin (16px)
+  const posterHeight = cardWidth * 1.5
+  const infoHeight = 80
+  const rowMargin = 16 // mb-4
+  
+  return Math.ceil(posterHeight + infoHeight + rowMargin)
+})
+
 const buffer = 3 // Number of rows to render above/below viewport
 
 const totalRows = computed(() => Math.ceil(props.totalMovies / cols.value))
-const totalHeight = computed(() => totalRows.value * rowHeight)
+const totalHeight = computed(() => totalRows.value * rowHeight.value)
 
 // We need to account for the offset of the grid from the top of the page
 const gridOffsetTop = ref(0)
@@ -109,6 +138,13 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateOffset)
 })
 
+// Log measured height changes
+watch(firstRowHeight, (newHeight) => {
+  if (newHeight > 0) {
+    console.log('[VirtualGrid] Measured row height:', newHeight)
+  }
+})
+
 const visibleRows = computed(() => {
   if (!props.movies || props.movies.length === 0) {
     return []
@@ -116,10 +152,10 @@ const visibleRows = computed(() => {
 
   const relativeScrollTop = Math.max(0, windowScrollY.value - gridOffsetTop.value)
   
-  const startRow = Math.max(0, Math.floor(relativeScrollTop / rowHeight) - buffer)
+  const startRow = Math.max(0, Math.floor(relativeScrollTop / rowHeight.value) - buffer)
   const endRow = Math.min(
     totalRows.value - 1,
-    Math.ceil((relativeScrollTop + windowHeight.value) / rowHeight) + buffer
+    Math.ceil((relativeScrollTop + windowHeight.value) / rowHeight.value) + buffer
   )
 
   const rows = []
@@ -130,7 +166,7 @@ const visibleRows = computed(() => {
     if (rowMovies.length > 0) {
       rows.push({
         index: i,
-        top: i * rowHeight,
+        top: i * rowHeight.value,
         movies: rowMovies
       })
     }
