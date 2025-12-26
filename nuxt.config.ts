@@ -46,10 +46,24 @@ export default defineNuxtConfig({
 
   // Nitro configuration for serving WASM files with correct MIME type
   nitro: {
+    publicAssets: [
+      {
+        dir: 'public/sqlite-wasm',
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        baseURL: '/sqlite-wasm',
+      },
+    ],
     routeRules: {
-      '/sqlite-wasm/**': {
+      '/sqlite-wasm/*.wasm': {
         headers: {
           'Content-Type': 'application/wasm',
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+        },
+      },
+      '/sqlite-wasm/*.js': {
+        headers: {
+          'Content-Type': 'text/javascript',
           'Cross-Origin-Embedder-Policy': 'require-corp',
           'Cross-Origin-Opener-Policy': 'same-origin',
         },
