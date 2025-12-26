@@ -96,6 +96,8 @@ export default defineEventHandler(async event => {
       message: 'Starting OMDB enrichment...',
       current: 0,
       total,
+      successCurrent: 0,
+      failedCurrent: 0,
     })
 
     // Process each movie
@@ -108,6 +110,8 @@ export default defineEventHandler(async event => {
         message: `Enriching: ${movie.title}`,
         current: result.processed + 1,
         total,
+        successCurrent: result.matched,
+        failedCurrent: result.failed,
       })
 
       // Validate title
@@ -202,6 +206,8 @@ export default defineEventHandler(async event => {
       current: result.processed,
       total: result.processed,
       message: 'OMDB enrichment completed',
+      successCurrent: result.matched,
+      failedCurrent: result.failed,
     })
 
     return result
