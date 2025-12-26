@@ -67,7 +67,6 @@ export const useMovieStore = defineStore('movie', () => {
           Language: row.language,
           Country: row.country,
           Awards: row.awards,
-          Poster: row.poster,
           imdbRating: row.imdbRating?.toString(),
           imdbVotes: row.imdbVotes?.toLocaleString(),
           imdbID: row.imdbId,
