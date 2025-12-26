@@ -8,8 +8,8 @@
 import Database from 'better-sqlite3'
 import { join } from 'path'
 import { existsSync, unlinkSync } from 'fs'
-import { loadMoviesDatabase } from './utils/dataManager'
-import { createLogger } from './utils/logger'
+import { loadMoviesDatabase } from '../server/utils/movieData'
+import { createLogger } from '../server/utils/logger'
 import type { MovieEntry } from '../shared/types/movie'
 
 const logger = createLogger('SQLiteGen')
@@ -93,6 +93,13 @@ async function generateSQLite(
         plot,
         tokenize='unicode61'
       );
+
+      -- Indexes for faster filtering and sorting
+      CREATE INDEX idx_movies_year ON movies(year);
+      CREATE INDEX idx_movies_rating ON movies(imdbRating);
+      CREATE INDEX idx_movies_votes ON movies(imdbVotes);
+      CREATE INDEX idx_movies_verified ON movies(verified);
+      CREATE INDEX idx_movies_title ON movies(title);
     `)
 
     // 5. Prepare Statements
@@ -109,7 +116,11 @@ async function generateSQLite(
         movieId, type, url, label, quality, addedAt, description,
         archive_identifier, youtube_videoId, youtube_channelName,
         youtube_channelId, youtube_language
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (
+        :movieId, :type, :url, :label, :quality, :addedAt, :description,
+        :archive_identifier, :youtube_videoId, :youtube_channelName,
+        :youtube_channelId, :youtube_language
+      )
     `)
 
     const insertFts = sqlite.prepare(`
@@ -119,56 +130,75 @@ async function generateSQLite(
 
     // 6. Insert Data in a Transaction
     logger.info('Inserting data...')
+    const clean = (val: any) => {
+      if (val === undefined || val === null) return null
+      if (Array.isArray(val)) return val.join(' ')
+      if (typeof val === 'object') return JSON.stringify(val)
+      return val
+    }
+
     const transaction = sqlite.transaction((movieEntries: MovieEntry[]) => {
       let count = 0
       for (const movie of movieEntries) {
+        if (count === 0) {
+          console.log('First movie:', JSON.stringify(movie, null, 2))
+        }
         // Map metadata fields
         const m = movie.metadata || {}
         const imdbRating = m.imdbRating && m.imdbRating !== 'N/A' ? parseFloat(m.imdbRating) : null
         const imdbVotes =
           m.imdbVotes && m.imdbVotes !== 'N/A' ? parseInt(m.imdbVotes.replace(/,/g, ''), 10) : null
 
+        const title = Array.isArray(movie.title) ? movie.title[0] : movie.title
+
         insertMovie.run(
-          movie.imdbId,
-          movie.title,
-          movie.year || null,
+          clean(movie.imdbId),
+          clean(title),
+          clean(movie.year),
           movie.verified ? 1 : 0,
-          movie.lastUpdated,
-          m.Rated || null,
-          m.Runtime || null,
-          m.Genre || null,
-          m.Director || null,
-          m.Writer || null,
-          m.Actors || null,
-          m.Plot || null,
-          m.Language || null,
-          m.Country || null,
-          m.Awards || null,
-          m.Poster || null,
-          imdbRating,
-          imdbVotes
+          clean(movie.lastUpdated),
+          clean(m.Rated),
+          clean(m.Runtime),
+          clean(m.Genre),
+          clean(m.Director),
+          clean(m.Writer),
+          clean(m.Actors),
+          clean(m.Plot),
+          clean(m.Language),
+          clean(m.Country),
+          clean(m.Awards),
+          clean(m.Poster),
+          clean(imdbRating),
+          clean(imdbVotes)
         )
 
         // Insert sources
         for (const source of movie.sources) {
-          insertSource.run(
-            movie.imdbId,
-            source.type,
-            source.url,
-            source.label || null,
-            source.quality || null,
-            source.addedAt,
-            source.description || null,
-            source.type === 'archive.org' ? source.id : null,
-            source.type === 'youtube' ? source.id : null,
-            source.type === 'youtube' ? source.channelName : null,
-            source.type === 'youtube' ? source.channelId : null,
-            source.type === 'youtube' ? source.language : null
-          )
+          const s = source as any
+          try {
+            insertSource.run({
+              movieId: clean(movie.imdbId),
+              type: clean(source.type),
+              url: clean(source.url),
+              label: clean(source.label),
+              quality: clean(source.quality),
+              addedAt: clean(source.addedAt),
+              description: clean(source.description),
+              archive_identifier: source.type === 'archive.org' ? clean(s.id) : null,
+              youtube_videoId: source.type === 'youtube' ? clean(s.id) : null,
+              youtube_channelName: source.type === 'youtube' ? clean(s.channelName) : null,
+              youtube_channelId: source.type === 'youtube' ? clean(s.channelId) : null,
+              youtube_language: source.type === 'youtube' ? clean(s.language) : null,
+            })
+          } catch (e) {
+            console.error('Failed on movie:', JSON.stringify(movie, null, 2))
+            console.error('Failed on source:', JSON.stringify(source, null, 2))
+            throw e
+          }
         }
 
         // Insert into FTS
-        insertFts.run(movie.imdbId, movie.title, m.Actors || '', m.Director || '', m.Plot || '')
+        insertFts.run(movie.imdbId, title, m.Actors || '', m.Director || '', m.Plot || '')
 
         count++
         if (count % 100 === 0) {
@@ -186,7 +216,7 @@ async function generateSQLite(
     // 7. Optimize
     logger.info('Optimizing database...')
     onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing database' })
-    sqlite.exec('INSERT INTO fts_movies(fts_movies) VALUES("optimize")')
+    sqlite.exec("INSERT INTO fts_movies(fts_movies) VALUES('optimize')")
     sqlite.exec('VACUUM')
     sqlite.exec('ANALYZE')
 

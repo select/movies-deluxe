@@ -24,4 +24,36 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  // Vite configuration for SQLite WASM and workers
+  vite: {
+    worker: {
+      format: 'es',
+    },
+    optimizeDeps: {
+      exclude: ['@sqlite.org/sqlite-wasm'],
+    },
+    server: {
+      fs: {
+        allow: ['..'],
+      },
+      headers: {
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+        'Cross-Origin-Opener-Policy': 'same-origin',
+      },
+    },
+  },
+
+  // Nitro configuration for serving WASM files with correct MIME type
+  nitro: {
+    routeRules: {
+      '/sqlite-wasm/**': {
+        headers: {
+          'Content-Type': 'application/wasm',
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+        },
+      },
+    },
+  },
 })

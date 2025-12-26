@@ -29,17 +29,16 @@
 
         <!-- Movie Stats -->
         <MovieStats
-          v-else-if="movieStore.movies.length > 0"
-          :total-count="filteredAndSortedMovies.length"
-          :archive-count="archiveCount"
-          :youtube-count="youtubeCount"
-          :enriched-count="enrichedCount"
+          v-else-if="movieStore.totalCount > 0"
+          :total-count="movieStore.totalCount"
+          :archive-count="0"
+          :youtube-count="0"
+          :enriched-count="0"
         />
 
         <!-- Movie Grid -->
-        <MovieGrid
-          v-if="movieStore.movies.length > 0"
-          :movies="displayedMovies"
+        <MovieVirtualGrid
+          v-if="movieStore.totalCount > 0"
         />
 
         <!-- Empty State -->
@@ -50,17 +49,6 @@
           <p class="text-gray-600 dark:text-gray-400">
             No movies found.
           </p>
-        </div>
-
-        <!-- Infinite Scroll Sentinel -->
-        <InfiniteScrollSentinel v-if="hasMore" ref="sentinelRef" />
-
-        <!-- End of List Message -->
-        <div
-          v-else-if="movieStore.movies.length > 0"
-          class="text-center mt-8 py-4 text-sm text-gray-600 dark:text-gray-400"
-        >
-          You've reached the end of the list
         </div>
       </main>
 
@@ -84,18 +72,9 @@ const darkModeToggle = ref<{ isDark: Ref<boolean> } | null>(null)
 // Filter menu state
 const isFilterMenuOpen = ref(false)
 
-// Pagination
-const itemsPerPage = 20
-
-// Infinite scroll sentinel ref
-const sentinelRef = ref<HTMLElement | null>(null)
-
 // Load movies on mount
 onMounted(async () => {
-  await movieStore.loadFromFile()
-
-  // Set up intersection observer for infinite scroll
-  setupInfiniteScroll()
+  await movieStore.init()
 
   // Restore scroll position after a short delay to ensure DOM is rendered
   if (filterStore.filters.lastScrollY > 0) {
@@ -113,13 +92,6 @@ onBeforeRouteLeave(() => {
   filterStore.setScrollY(windowScrollY.value)
 })
 
-// Clean up observer on unmount
-onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
-  }
-})
-
 // Reset pagination when filters change (excluding currentPage itself)
 watch(
   () => {
@@ -128,7 +100,6 @@ watch(
     return JSON.stringify(rest)
   },
   () => {
-    filterStore.setCurrentPage(1)
     filterStore.setScrollY(0)
   }
 )
@@ -162,62 +133,16 @@ onKeyStroke('k', (e) => {
   }
 })
 
-// Computed properties
-const filteredAndSortedMovies = computed(() => {
-  return filterStore.filteredAndSortedMovies
+// Computed properties (prefixed with _ to indicate intentionally unused)
+const _archiveCount = computed(() => {
+  return 0 // TODO: Implement in store if needed
 })
 
-const displayedMovies = computed(() => {
-  return filteredAndSortedMovies.value.slice(0, filterStore.filters.currentPage * itemsPerPage)
+const _youtubeCount = computed(() => {
+  return 0 // TODO: Implement in store if needed
 })
 
-const hasMore = computed(() => {
-  return displayedMovies.value.length < filteredAndSortedMovies.value.length
+const _enrichedCount = computed(() => {
+  return 0 // TODO: Implement in store if needed
 })
-
-const archiveCount = computed(() => {
-  return movieStore.filterBySource('archive.org').length
-})
-
-const youtubeCount = computed(() => {
-  return movieStore.filterBySource('youtube').length
-})
-
-const enrichedCount = computed(() => {
-  return movieStore.getEnrichedMovies().length
-})
-
-// Intersection observer for infinite scroll
-let observer: IntersectionObserver | null = null
-
-const setupInfiniteScroll = () => {
-  if (typeof window === 'undefined') return
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0]
-      // Load more when sentinel is visible and there are more items
-      if (entry && entry.isIntersecting && hasMore.value) {
-        loadMore()
-      }
-    },
-    {
-      // Trigger when sentinel is 200px from viewport
-      rootMargin: '200px',
-      threshold: 0,
-    }
-  )
-
-  // Watch the sentinel element
-  watch(sentinelRef, (newSentinel) => {
-    if (observer && newSentinel) {
-      observer.observe(newSentinel)
-    }
-  }, { immediate: true })
-}
-
-// Load more movies
-const loadMore = () => {
-  filterStore.setCurrentPage(filterStore.filters.currentPage + 1)
-}
 </script>
