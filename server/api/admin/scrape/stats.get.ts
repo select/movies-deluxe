@@ -2,6 +2,7 @@ import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { Client } from 'youtubei'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
+import { getFailedOmdbMatches } from '../../../utils/failedOmdb'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
@@ -10,6 +11,11 @@ export default defineEventHandler(async _event => {
 
   // Load failed YouTube videos for stats
   const failedVideos = loadFailedYouTubeVideos()
+  const failedOmdb = getFailedOmdbMatches()
+
+  // Calculate YouTube totals
+  const youtubeTotalScraped = dbStats.youtubeChannels.reduce((sum, c) => sum + c.scraped, 0)
+  const youtubeTotalFailed = failedVideos.length
 
   // Fetch Archive.org total (feature_films collection as default)
   let archiveTotal = 0
@@ -84,8 +90,23 @@ export default defineEventHandler(async _event => {
         total: archiveTotal,
         scraped: dbStats.archiveOrgSources,
         percent: archiveTotal > 0 ? (dbStats.archiveOrgSources / archiveTotal) * 100 : 0,
+        failed: 0, // Archive.org doesn't track failures currently
+        failureRate: 0,
       },
       youtube: {
+        totalScraped: youtubeTotalScraped,
+        totalAvailable: youtubeChannelStats.reduce((sum, c) => sum + (c.total || 0), 0),
+        totalFailed: youtubeTotalFailed,
+        failureRate:
+          youtubeTotalScraped + youtubeTotalFailed > 0
+            ? (youtubeTotalFailed / (youtubeTotalScraped + youtubeTotalFailed)) * 100
+            : 0,
+        percent:
+          youtubeChannelStats.reduce((sum, c) => sum + (c.total || 0), 0) > 0
+            ? (youtubeTotalScraped /
+                youtubeChannelStats.reduce((sum, c) => sum + (c.total || 0), 0)) *
+              100
+            : 0,
         channels: youtubeChannelStats,
       },
     },
@@ -99,6 +120,11 @@ export default defineEventHandler(async _event => {
       matched: dbStats.matched,
       unmatched: dbStats.unmatched,
       percent: dbStats.total > 0 ? (dbStats.matched / dbStats.total) * 100 : 0,
+      failed: failedOmdb.length,
+      failureRate:
+        dbStats.matched + failedOmdb.length > 0
+          ? (failedOmdb.length / (dbStats.matched + failedOmdb.length)) * 100
+          : 0,
     },
     posters: {
       totalMovies: entries.length,
