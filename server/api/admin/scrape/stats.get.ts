@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { Client } from 'youtubei'
-import { loadFailedYouTubeVideos } from '../../utils/failedYoutube'
+import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
