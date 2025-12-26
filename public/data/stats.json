@@ -1,10 +1,10 @@
 {
   "database": {
-    "total": 33306,
+    "total": 33870,
     "matched": 1682,
-    "unmatched": 31624,
+    "unmatched": 32188,
     "archiveOrgSources": 27634,
-    "youtubeSources": 5842,
+    "youtubeSources": 6406,
     "curatedCount": 1682,
     "collections": {
       "feature_films": 27634
@@ -22,14 +22,14 @@
         "name": "FilmRise Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 55
+        "scraped": 335
       },
       {
         "id": "UCVFYikepF-avelvuIaQ_lHA",
         "name": "Popcornflix",
         "language": "en",
         "enabled": true,
-        "scraped": 187
+        "scraped": 471
       },
       {
         "id": "UCGBzBkV-MinlBvHBzZawfLQ",
@@ -112,11 +112,11 @@
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 5842,
-      "totalAvailable": 17622,
-      "totalFailed": 11,
-      "failureRate": 0.18793780967025456,
-      "percent": 33.15174214050619,
+      "totalScraped": 6406,
+      "totalAvailable": 17841,
+      "totalFailed": 725,
+      "failureRate": 10.166877015846305,
+      "percent": 35.90605907740598,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -124,7 +124,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2324,
-          "total": 2800,
+          "total": 2828,
           "failed": 0,
           "failureRate": 0
         },
@@ -133,20 +133,20 @@
           "name": "FilmRise Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 55,
+          "scraped": 335,
           "total": 446,
-          "failed": 1,
-          "failureRate": 1.7857142857142856
+          "failed": 138,
+          "failureRate": 29.175475687103592
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
           "name": "Popcornflix",
           "language": "en",
           "enabled": true,
-          "scraped": 187,
+          "scraped": 471,
           "total": 751,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 276,
+          "failureRate": 36.94779116465863
         },
         {
           "id": "UCGBzBkV-MinlBvHBzZawfLQ",
@@ -154,7 +154,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 918,
-          "total": 2500,
+          "total": 2593,
           "failed": 0,
           "failureRate": 0
         },
@@ -194,7 +194,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 482,
-          "total": 3600,
+          "total": 3643,
           "failed": 0,
           "failureRate": 0
         },
@@ -234,7 +234,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 149,
-          "total": 5000,
+          "total": 5055,
           "failed": 0,
           "failureRate": 0
         },
@@ -245,36 +245,36 @@
           "enabled": true,
           "scraped": 288,
           "total": 598,
-          "failed": 9,
-          "failureRate": 3.0303030303030303
+          "failed": 310,
+          "failureRate": 51.83946488294314
         }
       ]
     }
   },
   "curation": {
-    "total": 33306,
+    "total": 33870,
     "curated": 1682,
-    "percent": 5.050141115714886
+    "percent": 4.966046648951875
   },
   "omdb": {
-    "total": 33306,
+    "total": 33870,
     "matched": 1682,
-    "unmatched": 31624,
-    "percent": 5.050141115714886,
-    "failed": 2060,
-    "failureRate": 55.05077498663816
+    "unmatched": 32188,
+    "percent": 4.966046648951875,
+    "failed": 2082,
+    "failureRate": 55.3134962805526
   },
   "posters": {
-    "totalMovies": 33306,
+    "totalMovies": 33870,
     "withPosterUrl": 1572,
     "downloaded": 609,
     "missing": 963,
     "failed": 356,
     "failureRate": 36.89119170984456,
     "percentOfMoviesWithUrl": 38.74045801526718,
-    "percentOfAllMovies": 1.8284993694829759,
+    "percentOfAllMovies": 1.7980513728963685,
     "filesInDirectory": 639,
     "matchedPosters": 609
   },
-  "lastUpdated": "2025-12-26T18:27:42.875Z"
+  "lastUpdated": "2025-12-26T21:55:53.778Z"
 }

@@ -31117,5 +31117,353 @@
     "failedAt": "2025-12-26T18:27:40.181Z",
     "lastAttempt": "2025-12-26T18:27:40.181Z",
     "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-Execution-EedamokhtapusFt.ShahinNajafi_MajidKazemi.mp4",
+    "originalTitle": "Execution - Eedam (Okhtapus ft. Shahin Najafi _ Majid Kazemi.mp4",
+    "attempts": [
+      {
+        "query": "Execution - Eedam (Okhtapus ft. Shahin Najafi _ Majid Kazemi"
+      },
+      {
+        "query": "Execution - Eedam (Okhtapus ft. Shahin Najafi _ Majid Kazemi.mp4"
+      }
+    ],
+    "failedAt": "2025-12-26T19:48:58.887Z",
+    "lastAttempt": "2025-12-26T19:48:58.887Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-ExileExpressupgraded_901",
+    "originalTitle": "Exile Express (upgraded)",
+    "attempts": [
+      {
+        "query": "Exile Express (upgraded)"
+      },
+      {
+        "query": "Exile Express (upgraded)"
+      }
+    ],
+    "failedAt": "2025-12-26T19:49:02.987Z",
+    "lastAttempt": "2025-12-26T19:49:02.987Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-Exposure1932",
+    "originalTitle": "Exposure 1932",
+    "attempts": [
+      {
+        "query": "Exposure 1932"
+      },
+      {
+        "query": "Exposure 1932"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:31.062Z",
+    "lastAttempt": "2025-12-26T19:54:31.062Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-F00000",
+    "originalTitle": "F00000",
+    "attempts": [
+      {
+        "query": "F00000"
+      },
+      {
+        "query": "F00000"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:42.119Z",
+    "lastAttempt": "2025-12-26T19:54:42.119Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FAITHFUL1910BiographMackSennettD.W.Griffith",
+    "originalTitle": "FAITHFUL ( 1910) Biograph, Mack Sennett, D. W. Griffith",
+    "attempts": [
+      {
+        "query": "FAITHFUL Biograph, Mack Sennett, D. W. Griffith"
+      },
+      {
+        "query": "FAITHFUL ( 1910) Biograph, Mack Sennett, D. W. Griffith"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:43.350Z",
+    "lastAttempt": "2025-12-26T19:54:43.350Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FAKH-Khor-Shaz-Ehtej",
+    "originalTitle": "FAKH-Khor-Shaz-Ehtej",
+    "attempts": [
+      {
+        "query": "FAKH-Khor-Shaz-Ehtej"
+      },
+      {
+        "query": "FAKH-Khor-Shaz-Ehtej"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:45.908Z",
+    "lastAttempt": "2025-12-26T19:54:45.908Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FATTYANDMABELADRIFT1916RoscoeArbuckleMabelNormandAlSt.JohnWaylandTrask",
+    "originalTitle": "FATTY AND MABEL ADRIFT ( 1916) Roscoe Arbuckle, Mabel Normand, Al St. John, Wayland Trask",
+    "attempts": [
+      {
+        "query": "FATTY AND MABEL ADRIFT Roscoe Arbuckle, Mabel Normand, Al St. John, Wayland Trask"
+      },
+      {
+        "query": "FATTY AND MABEL ADRIFT ( 1916) Roscoe Arbuckle, Mabel Normand, Al St. John, Wayland Trask"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:47.139Z",
+    "lastAttempt": "2025-12-26T19:54:47.139Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FATTYJOINSTHEFORCE1913RoscoeArbuckle",
+    "originalTitle": "FATTY JOINS THE FORCE ( 1913) Roscoe Arbuckle",
+    "attempts": [
+      {
+        "query": "FATTY JOINS THE FORCE Roscoe Arbuckle"
+      },
+      {
+        "query": "FATTY JOINS THE FORCE ( 1913) Roscoe Arbuckle"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:48.369Z",
+    "lastAttempt": "2025-12-26T19:54:48.369Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FENSTER_HOF",
+    "originalTitle": "1996 Fenster zum Hof (window to the yard)",
+    "year": 1996,
+    "attempts": [
+      {
+        "query": "Fenster zum Hof (window to the yard)",
+        "year": 1996
+      },
+      {
+        "query": "1996 Fenster zum Hof (window to the yard)",
+        "year": 1996
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:50.118Z",
+    "lastAttempt": "2025-12-26T19:54:50.118Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FESTEBILDS",
+    "originalTitle": "1992 Fensterbild (Window Picture)",
+    "year": 1992,
+    "attempts": [
+      {
+        "query": "Window Picture",
+        "year": 1992
+      },
+      {
+        "query": "1992 Fensterbild (Window Picture)",
+        "year": 1992
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:51.964Z",
+    "lastAttempt": "2025-12-26T19:54:51.964Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FFF000",
+    "originalTitle": "FFF000",
+    "attempts": [
+      {
+        "query": "FFF000"
+      },
+      {
+        "query": "FFF000"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:53.705Z",
+    "lastAttempt": "2025-12-26T19:54:53.705Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FILM-Sarkub-Mandegar-177604043",
+    "originalTitle": "FILM-Sarkub-Mandegar-177604043",
+    "attempts": [
+      {
+        "query": "FILM-Sarkub-Mandegar-177604043"
+      },
+      {
+        "query": "FILM-Sarkub-Mandegar-177604043"
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:55.654Z",
+    "lastAttempt": "2025-12-26T19:54:55.654Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FLUEGELSCHLAGEN",
+    "originalTitle": "1975 Flügelschlagen (wing flapping)",
+    "year": 1975,
+    "attempts": [
+      {
+        "query": "Flügelschlagen (wing flapping)",
+        "year": 1975
+      },
+      {
+        "query": "1975 Flügelschlagen (wing flapping)",
+        "year": 1975
+      }
+    ],
+    "failedAt": "2025-12-26T19:54:59.118Z",
+    "lastAttempt": "2025-12-26T19:54:59.118Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FROMHANDTOMOUTH1919HaroldLloydMildredDavidSnubPollard",
+    "originalTitle": "FROM HAND TO MOUTH ( 1919) Harold Lloyd, Mildred David, Snub Pollard",
+    "attempts": [
+      {
+        "query": "FROM HAND TO MOUTH Harold Lloyd, Mildred David, Snub Pollard"
+      },
+      {
+        "query": "FROM HAND TO MOUTH ( 1919) Harold Lloyd, Mildred David, Snub Pollard"
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:00.361Z",
+    "lastAttempt": "2025-12-26T19:55:00.361Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FS-JLG-2010",
+    "originalTitle": "FS-JLG-2010",
+    "attempts": [
+      {
+        "query": "FS-JLG-2010"
+      },
+      {
+        "query": "FS-JLG-2010"
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:02.000Z",
+    "lastAttempt": "2025-12-26T19:55:02.000Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FZG76",
+    "originalTitle": "FZG 76 - V-1 (flying bomb)",
+    "year": 1944,
+    "attempts": [
+      {
+        "query": "FZG 76 - V-1 (flying bomb)",
+        "year": 1944
+      },
+      {
+        "query": "FZG 76 - V-1 (flying bomb)",
+        "year": 1944
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:03.798Z",
+    "lastAttempt": "2025-12-26T19:55:03.798Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FaithLoveAndWhiskey2012",
+    "originalTitle": "Faith, Love and Whiskey (2012)",
+    "year": 2012,
+    "attempts": [
+      {
+        "query": "Faith, Love and Whiskey",
+        "year": 2012
+      },
+      {
+        "query": "Faith, Love and Whiskey",
+        "year": 2012
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:11.624Z",
+    "lastAttempt": "2025-12-26T19:55:11.624Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FajrInternationalFilmFestival",
+    "originalTitle": "36th Fajr International Film Festival",
+    "attempts": [
+      {
+        "query": "36th Fajr International Film Festival"
+      },
+      {
+        "query": "36th Fajr International Film Festival"
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:13.782Z",
+    "lastAttempt": "2025-12-26T19:55:13.782Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FamilyEnforcer",
+    "originalTitle": "Family Enforcer",
+    "year": 1976,
+    "attempts": [
+      {
+        "query": "Family Enforcer",
+        "year": 1976
+      },
+      {
+        "query": "Family Enforcer",
+        "year": 1976
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:26.880Z",
+    "lastAttempt": "2025-12-26T19:55:26.880Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FannyByGaslight",
+    "originalTitle": "Fanny by Gaslight",
+    "attempts": [
+      {
+        "query": "Fanny by Gaslight"
+      },
+      {
+        "query": "Fanny by Gaslight"
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:31.398Z",
+    "lastAttempt": "2025-12-26T19:55:31.398Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-Fantasmagori",
+    "originalTitle": "Fantasmagori",
+    "attempts": [
+      {
+        "query": "Fantasmagori"
+      },
+      {
+        "query": "Fantasmagori"
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:33.449Z",
+    "lastAttempt": "2025-12-26T19:55:33.449Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-FarhadiOscar2012",
+    "originalTitle": "Farhadi Oscar 2012",
+    "attempts": [
+      {
+        "query": "Farhadi Oscar 2012"
+      },
+      {
+        "query": "Farhadi Oscar 2012"
+      }
+    ],
+    "failedAt": "2025-12-26T19:55:39.415Z",
+    "lastAttempt": "2025-12-26T19:55:39.415Z",
+    "reason": "No OMDB match found"
   }
 ]
