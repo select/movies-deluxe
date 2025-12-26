@@ -42,18 +42,45 @@
 
       <!-- Progress -->
       <div
-        v-if="progress && progress.status === 'in_progress'"
-        class="mt-4 space-y-2"
+        v-if="progress && (progress.status === 'in_progress' || progress.status === 'starting')"
+        class="mt-4 space-y-3"
       >
         <div class="flex items-center justify-between text-xs">
           <span class="text-gray-500 truncate mr-2">{{ progress.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.current }} / {{ progress.total }}</span>
+          <span class="font-mono text-nowrap">{{ progress.current }} / {{ progress.total || '?' }}</span>
         </div>
-        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+
+        <!-- Dual Progress Bar -->
+        <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
           <div
+            v-if="progress.total"
             class="h-full bg-green-500 transition-all duration-300"
-            :style="{ width: `${(progress.current / progress.total) * 100}%` }"
+            :style="{ width: `${((progress.successCurrent || 0) / progress.total) * 100}%` }"
+            title="Success"
           />
+          <div
+            v-if="progress.total"
+            class="h-full bg-orange-500 transition-all duration-300"
+            :style="{ width: `${((progress.failedCurrent || 0) / progress.total) * 100}%` }"
+            title="Failed"
+          />
+          <div
+            v-if="progress.total"
+            class="h-full bg-red-600/20 transition-all duration-300"
+            :style="{ width: `${((Math.max(0, progress.current - (progress.successCurrent || 0) - (progress.failedCurrent || 0))) / progress.total) * 100}%` }"
+          />
+        </div>
+
+        <!-- Stats Breakdown -->
+        <div class="grid grid-cols-2 gap-2 text-[10px] font-medium">
+          <div class="flex items-center gap-1 text-green-600 dark:text-green-400">
+            <div class="i-mdi-check-circle" />
+            Success: {{ progress.successCurrent || 0 }}
+          </div>
+          <div class="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+            <div class="i-mdi-alert-circle" />
+            Failed: {{ progress.failedCurrent || 0 }}
+          </div>
         </div>
       </div>
     </div>
@@ -77,6 +104,6 @@ defineEmits<{
   start: []
 }>()
 
-const adminStore = useAdminStore()
-const progress = computed(() => adminStore.progress.omdb)
+const { progress: storeProgress } = storeToRefs(useAdminStore())
+const progress = computed(() => storeProgress.value.omdb)
 </script>
