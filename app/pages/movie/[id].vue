@@ -274,7 +274,7 @@
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="(source, index) in movie.sources"
-                :key="source.url"
+                :key="source.id"
                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
                 :class="[
                   selectedSourceIndex === index
@@ -339,7 +339,7 @@
           >
             <div
               v-for="(source, index) in movie.sources"
-              :key="source.url"
+              :key="source.id"
               class="flex items-center gap-3 text-sm"
               :class="{ 'opacity-100': selectedSourceIndex === index, 'opacity-60': selectedSourceIndex !== index }"
             >
@@ -969,30 +969,16 @@ const getYouTubeEmbedUrl = (url: string): string => {
 
 /**
  * Create Archive.org embed URL from source
- * Uses the id from the source or extracts from URL
+ * Uses the id from the source
  */
 const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
-  // If source has id field, use it directly
+  // Source always has id field with the identifier
   if (source.id) {
     return `https://archive.org/embed/${source.id}`
   }
 
-  // Try to extract identifier from URL
-  try {
-     
-    const url = new URL(source.url)
-    const pathParts = url.pathname.split('/').filter(Boolean)
-
-    // URL format: https://archive.org/details/IDENTIFIER
-    if (pathParts[0] === 'details' && pathParts[1]) {
-      return `https://archive.org/embed/${pathParts[1]}`
-    }
-
-    // Fallback: return original URL
-    return source.url
-  } catch {
-    return source.url
-  }
+  // Fallback: return original URL (should not happen with new data structure)
+  return source.url
 }
 </script>
 

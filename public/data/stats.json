@@ -261,8 +261,8 @@
     "matched": 1312,
     "unmatched": 32093,
     "percent": 3.927555755126478,
-    "failed": 928,
-    "failureRate": 41.42857142857143
+    "failed": 978,
+    "failureRate": 42.70742358078603
   },
   "posters": {
     "totalMovies": 33405,
@@ -276,5 +276,5 @@
     "filesInDirectory": 639,
     "matchedPosters": 608
   },
-  "lastUpdated": "2025-12-26T14:42:21.280Z"
+  "lastUpdated": "2025-12-26T14:46:13.530Z"
 }
