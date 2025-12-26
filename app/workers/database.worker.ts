@@ -12,6 +12,10 @@ async function init() {
     sqlite3 = await sqlite3InitModule({
       print: () => {},
       printErr: () => {},
+      locateFile: (file: string) => {
+        // Ensure WASM files are loaded from the correct path
+        return `/sqlite-wasm/${file}`
+      },
     })
 
     // Fetch the database file
