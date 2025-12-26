@@ -1,9 +1,5 @@
 <template>
-  <div
-    :class="isDark ? 'dark' : ''"
-    class="min-h-screen transition-colors"
-  >
-    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
       <header class="border-b border-gray-200 dark:border-gray-800">
         <div class="max-w-7xl mx-auto px-4 py-6">
@@ -24,20 +20,7 @@
             </div>
 
             <!-- Dark Mode Toggle -->
-            <button
-              class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-              @click="toggleDarkMode"
-            >
-              <div
-                v-if="isDark"
-                class="i-mdi-weather-sunny text-xl text-yellow-500"
-              />
-              <div
-                v-else
-                class="i-mdi-weather-night text-xl"
-              />
-            </button>
+            <AppDarkModeToggle />
           </div>
         </div>
       </header>
@@ -555,23 +538,16 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
 import type { MovieEntry, ArchiveOrgSource } from '~/types'
 
 // Nuxt auto-imports
- 
 const route = useRoute()
 const movieStore = useMovieStore()
- 
 const filterStore = useFilterStore()
- 
 const watchlistStore = useWatchlistStore()
-
-// Dark mode state (sync with localStorage)
-const isDark = ref(true)
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
@@ -693,12 +669,6 @@ const loadMovieData = async (movieId: string) => {
 
 // Load movie on mount
 onMounted(async () => {
-  // Load dark mode preference
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme ? savedTheme === 'dark' : true
-  }
-
   // Get movie by ID from route params
   const movieId = route.params.id as string
   await loadMovieData(movieId)
@@ -888,14 +858,6 @@ const updateMetaTags = (movie: MovieEntry) => {
       }
     ]
   })
-}
-
-// Toggle dark mode
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  }
 }
 
 // Toggle watchlist

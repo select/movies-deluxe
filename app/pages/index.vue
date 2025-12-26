@@ -1,14 +1,7 @@
 <template>
-  <div
-    :class="isDark ? 'dark' : ''"
-    class="min-h-screen transition-colors"
-  >
-    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <!-- Header -->
-      <MovieHeader
-        :is-dark="isDark"
-        @toggle-dark-mode="toggleDarkMode"
-      />
+      <MovieHeader />
 
       <!-- Mobile Menu Button -->
       <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
@@ -61,7 +54,6 @@
         </div>
       </main>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -76,17 +68,6 @@ const { lightweightMovies, totalMovies, isFiltering } = storeToRefs(filterStore)
 // Ensure lightweightMovies is always an array
 const safeLightweightMovies = computed(() => lightweightMovies.value || [])
 const safeTotalMovies = computed(() => totalMovies.value || 0)
-
-// Dark mode state - initialize immediately from localStorage
-const getInitialDarkMode = () => {
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme')
-    return savedTheme ? savedTheme === 'dark' : true
-  }
-  return true // Default to dark for SSR
-}
-
-const isDark = ref(getInitialDarkMode())
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
@@ -126,25 +107,6 @@ onKeyStroke('k', (e) => {
     }
   }
 })
-
-// Toggle dark mode
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  }
-}
-
-// Watch isDark and update document class for better compatibility
-watch(isDark, (newValue) => {
-  if (typeof window !== 'undefined') {
-    if (newValue) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }
-}, { immediate: true })
 
 // Computed properties
 const hasMore = computed(() => {
