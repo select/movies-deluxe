@@ -1,6 +1,4 @@
-import { Client } from 'youtubei'
-
-const youtube = new Client()
+import { Innertube } from 'youtubei.js'
 
 const mcmChannels = [
   { id: 'UCsOqLb9_cPFIBKt1eJi8Jew', name: 'MCM TV2' },
@@ -9,6 +7,8 @@ const mcmChannels = [
 ]
 
 async function checkMCMChannels() {
+  const youtube = await Innertube.create()
+
   console.log('Checking MCM channels for movie content...\n')
 
   for (const channelInfo of mcmChannels) {

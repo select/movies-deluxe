@@ -1,7 +1,8 @@
-import { Client } from 'youtubei'
+import { Innertube } from 'youtubei.js'
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
+import { getChannelVideoCount as getChannelVideoCountDataApi } from '../../../utils/youtubeDataApi'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -26,7 +27,7 @@ export default defineEventHandler(async event => {
   }
 
   const db = await loadMoviesDatabase()
-  const youtube = new Client()
+  const youtube = await Innertube.create()
 
   // Load previous failures for stats
   const previousFailures = loadFailedYouTubeVideos()
@@ -62,8 +63,15 @@ export default defineEventHandler(async event => {
     const channelPreviousFailures = previousFailures.filter(f => f.channelId === channelId).length
 
     try {
-      // Get total video count for progress tracking
-      const totalVideos = await getChannelVideoCount(youtube, channelId)
+      // Get total video count for progress tracking using Data API v3
+      const youtubeApiKey = process.env.YOUTUBE_API_KEY
+      if (!youtubeApiKey) {
+        throw new Error(
+          'YOUTUBE_API_KEY environment variable is required. Get one from https://console.cloud.google.com/apis/credentials'
+        )
+      }
+
+      const totalVideos = await getChannelVideoCountDataApi(youtubeApiKey, channelId)
 
       await fetchChannelVideos(
         youtube,
