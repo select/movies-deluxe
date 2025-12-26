@@ -241,9 +241,6 @@ onMounted(async () => {
   isDev.value = isLocalhost()
   if (isDev.value) {
     connectProgress()
-    
-    // Load movies from JSON API for admin
-    await movieStore.loadFromApi()
 
     // Try to load initial stats from static file
     try {
