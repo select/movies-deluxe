@@ -24,8 +24,8 @@ export default defineNuxtConfig({
       },
       script: [
         {
+          // Apply dark mode immediately to prevent flash
           innerHTML: `
-            // Apply dark mode immediately to prevent flash
             (function() {
               const isDark = localStorage.getItem('movies-deluxe-theme-dark');
               const prefersDark = isDark === null ? true : isDark === 'true';
