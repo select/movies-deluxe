@@ -113,10 +113,10 @@
     },
     "youtube": {
       "totalScraped": 11270,
-      "totalAvailable": 17857,
+      "totalAvailable": 17858,
       "totalFailed": 6022,
       "failureRate": 34.82535276428406,
-      "percent": 63.1125049000392,
+      "percent": 63.10897076940307,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -154,7 +154,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2380,
-          "total": 2595,
+          "total": 2596,
           "failed": 205,
           "failureRate": 7.930367504835589
         },
@@ -267,14 +267,14 @@
   "posters": {
     "totalMovies": 38031,
     "withPosterUrl": 3805,
-    "downloaded": 968,
-    "missing": 2837,
-    "failed": 600,
-    "failureRate": 38.265306122448976,
-    "percentOfMoviesWithUrl": 25.440210249671484,
-    "percentOfAllMovies": 2.5452919986326945,
-    "filesInDirectory": 995,
-    "matchedPosters": 968
+    "downloaded": 1297,
+    "missing": 2508,
+    "failed": 824,
+    "failureRate": 38.84959924563885,
+    "percentOfMoviesWithUrl": 34.086727989487514,
+    "percentOfAllMovies": 3.4103757461018644,
+    "filesInDirectory": 1324,
+    "matchedPosters": 1297
   },
-  "lastUpdated": "2025-12-27T22:27:54.726Z"
+  "lastUpdated": "2025-12-27T23:14:54.882Z"
 }
