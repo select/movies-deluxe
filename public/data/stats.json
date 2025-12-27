@@ -1,10 +1,10 @@
 {
   "database": {
-    "total": 33870,
+    "total": 38720,
     "matched": 1682,
-    "unmatched": 32188,
+    "unmatched": 37038,
     "archiveOrgSources": 27634,
-    "youtubeSources": 6406,
+    "youtubeSources": 11256,
     "curatedCount": 1682,
     "collections": {
       "feature_films": 27634
@@ -36,7 +36,7 @@
         "name": "Movie Central",
         "language": "en",
         "enabled": true,
-        "scraped": 918
+        "scraped": 2380
       },
       {
         "id": "UCOg0aMAXmF3o5m243PxhE5g",
@@ -64,14 +64,14 @@
         "name": "PizzaFlix",
         "language": "en",
         "enabled": true,
-        "scraped": 482
+        "scraped": 1971
       },
       {
         "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
         "name": "Public Domain Movies - Classic Old Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 173
+        "scraped": 179
       },
       {
         "id": "UCWlLgwn2nfjnefINARfcquA",
@@ -92,7 +92,7 @@
         "name": "Cult Cinema Classics",
         "language": "en",
         "enabled": true,
-        "scraped": 149
+        "scraped": 2042
       },
       {
         "id": "UCvH6u_Qzn5RQdz9W198umDw",
@@ -112,11 +112,11 @@
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 6406,
-      "totalAvailable": 17841,
-      "totalFailed": 725,
-      "failureRate": 10.166877015846305,
-      "percent": 35.90605907740598,
+      "totalScraped": 11256,
+      "totalAvailable": 17844,
+      "totalFailed": 5435,
+      "failureRate": 32.5624588101372,
+      "percent": 63.08002689979825,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -153,10 +153,10 @@
           "name": "Movie Central",
           "language": "en",
           "enabled": true,
-          "scraped": 918,
-          "total": 2593,
-          "failed": 0,
-          "failureRate": 0
+          "scraped": 2380,
+          "total": 2594,
+          "failed": 205,
+          "failureRate": 7.930367504835589
         },
         {
           "id": "UCOg0aMAXmF3o5m243PxhE5g",
@@ -193,20 +193,20 @@
           "name": "PizzaFlix",
           "language": "en",
           "enabled": true,
-          "scraped": 482,
-          "total": 3643,
-          "failed": 0,
-          "failureRate": 0
+          "scraped": 1971,
+          "total": 3644,
+          "failed": 1656,
+          "failureRate": 45.6575682382134
         },
         {
           "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
           "name": "Public Domain Movies - Classic Old Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 173,
+          "scraped": 179,
           "total": 545,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 350,
+          "failureRate": 66.1625708884688
         },
         {
           "id": "UCWlLgwn2nfjnefINARfcquA",
@@ -233,10 +233,10 @@
           "name": "Cult Cinema Classics",
           "language": "en",
           "enabled": true,
-          "scraped": 149,
-          "total": 5055,
-          "failed": 0,
-          "failureRate": 0
+          "scraped": 2042,
+          "total": 5056,
+          "failed": 2499,
+          "failureRate": 55.03193129266681
         },
         {
           "id": "UCvH6u_Qzn5RQdz9W198umDw",
@@ -252,29 +252,29 @@
     }
   },
   "curation": {
-    "total": 33870,
+    "total": 38720,
     "curated": 1682,
-    "percent": 4.966046648951875
+    "percent": 4.3440082644628095
   },
   "omdb": {
-    "total": 33870,
+    "total": 38720,
     "matched": 1682,
-    "unmatched": 32188,
-    "percent": 4.966046648951875,
+    "unmatched": 37038,
+    "percent": 4.3440082644628095,
     "failed": 2082,
     "failureRate": 55.3134962805526
   },
   "posters": {
-    "totalMovies": 33870,
+    "totalMovies": 38720,
     "withPosterUrl": 1572,
     "downloaded": 609,
     "missing": 963,
     "failed": 356,
     "failureRate": 36.89119170984456,
     "percentOfMoviesWithUrl": 38.74045801526718,
-    "percentOfAllMovies": 1.7980513728963685,
+    "percentOfAllMovies": 1.5728305785123968,
     "filesInDirectory": 639,
     "matchedPosters": 609
   },
-  "lastUpdated": "2025-12-26T21:55:53.778Z"
+  "lastUpdated": "2025-12-27T00:54:35.165Z"
 }
