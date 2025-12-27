@@ -92,24 +92,24 @@ const rowHeight = computed(() => {
   if (firstRowHeight.value > 0) {
     return firstRowHeight.value + 16 // Add mb-4 (16px) margin
   }
-  
+
   // Fallback estimation based on screen width
   const w = windowWidth.value || 1024
-  
+
   // Account for padding (px-4 = 32px, lg:px-[6%] varies)
   const horizontalPadding = breakpoints.lg.value ? w * 0.12 : 32
   const availableWidth = w - horizontalPadding
-  
+
   // Calculate card width (subtract gaps between cards)
   const gapWidth = 16 // gap-4 = 16px
   const totalGaps = (cols.value - 1) * gapWidth
   const cardWidth = (availableWidth - totalGaps) / cols.value
-  
+
   // Card height = poster height (width * 1.5 for 2:3 ratio) + info section (80px) + row margin (16px)
   const posterHeight = cardWidth * 1.5
   const infoHeight = 80
   const rowMargin = 16 // mb-4
-  
+
   return Math.ceil(posterHeight + infoHeight + rowMargin)
 })
 
@@ -138,12 +138,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateOffset)
 })
 
-// Log measured height changes
-watch(firstRowHeight, (newHeight) => {
-  if (newHeight > 0) {
-    console.log('[VirtualGrid] Measured row height:', newHeight)
-  }
-})
 
 const visibleRows = computed(() => {
   if (!props.movies || props.movies.length === 0) {
@@ -151,7 +145,7 @@ const visibleRows = computed(() => {
   }
 
   const relativeScrollTop = Math.max(0, windowScrollY.value - gridOffsetTop.value)
-  
+
   const startRow = Math.max(0, Math.floor(relativeScrollTop / rowHeight.value) - buffer)
   const endRow = Math.min(
     totalRows.value - 1,
@@ -162,7 +156,7 @@ const visibleRows = computed(() => {
   for (let i = startRow; i <= endRow; i++) {
     const startIndex = i * cols.value
     const rowMovies = props.movies.slice(startIndex, startIndex + cols.value)
-    
+
     if (rowMovies.length > 0) {
       rows.push({
         index: i,
@@ -188,7 +182,7 @@ const visibleMovieIds = computed(() => {
 // Lazy load movie details for visible items
 watch(visibleMovieIds, async (newIds) => {
   // Filter out IDs that are already loaded or being loaded
-  const idsToLoad = newIds.filter(id => 
+  const idsToLoad = newIds.filter(id =>
     !loadedMovies.value.has(id) && !loadingIds.value.has(id)
   )
 
@@ -203,7 +197,7 @@ watch(visibleMovieIds, async (newIds) => {
       loadedMovies.value.set(movie.imdbId, movie)
     })
   } catch (err) {
-    console.error('Failed to load movie details:', err)
+    window.console.error('Failed to load movie details:', err)
   } finally {
     // Remove from loading set
     idsToLoad.forEach(id => loadingIds.value.delete(id))
