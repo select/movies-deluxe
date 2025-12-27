@@ -1,16 +1,10 @@
 <template>
-
-  <div
-    :class="isDark ? 'dark' : ''"
-    class="min-h-screen transition-colors"
-  >
+  <div class="min-h-screen transition-colors">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-
-const uiStore = useUiStore()
-const { isDark } = storeToRefs(uiStore)
+// Dark mode is now handled by the dark-mode.client.ts plugin
+// which applies the 'dark' class to document.documentElement
 </script>
