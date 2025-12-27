@@ -1,5 +1,3 @@
-import { defineEventHandler, getQuery, createError } from 'h3'
-
 export default defineEventHandler(async event => {
   const query = getQuery(event)
   const id = query.i as string
