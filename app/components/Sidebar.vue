@@ -1,7 +1,7 @@
 <template>
   <!-- Desktop: Icon-Only Sidebar (hidden on mobile) -->
   <aside
-    class="hidden md:block fixed left-4 top-24 z-40 glass shadow-2xl rounded-full w-12 border-white/30 dark:border-gray-700/50"
+    class="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-40 glass shadow-2xl rounded-full w-12 border-white/30 dark:border-gray-700/50"
   >
     <div class="flex flex-col items-center gap-2 py-2">
       <!-- Home -->

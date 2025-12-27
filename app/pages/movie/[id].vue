@@ -25,8 +25,20 @@
         </div>
       </header>
 
+      <!-- Mobile Menu Button -->
+      <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
+
+      <!-- Desktop Sidebar -->
+      <Sidebar @open-filters="isFilterMenuOpen = true" />
+
+      <!-- Filter Menu -->
+      <FilterMenu
+        :is-open="isFilterMenuOpen"
+        @close="isFilterMenuOpen = false"
+      />
+
       <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8">
+      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
         <!-- Loading State - Skeleton -->
         <div
           v-if="isLoading"
@@ -519,6 +531,10 @@
               <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
             </div>
             <div class="flex items-center justify-between">
+              <span class="text-gray-700 dark:text-gray-300">Toggle filters</span>
+              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Ctrl+K</kbd>
+            </div>
+            <div class="flex items-center justify-between">
               <span class="text-gray-700 dark:text-gray-300">Toggle liked</span>
               <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
             </div>
@@ -548,6 +564,9 @@ const route = useRoute()
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
 const likedMoviesStore = useLikedMoviesStore()
+
+// Filter menu state
+const isFilterMenuOpen = ref(false)
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
@@ -642,9 +661,20 @@ const setupKeyboardNavigation = () => {
 
     switch (event.key) {
       case 'Escape':
-        // Go back to home
-         
-        navigateTo('/')
+        // Close filter menu if open, otherwise go back to home
+        if (isFilterMenuOpen.value) {
+          isFilterMenuOpen.value = false
+        } else {
+          navigateTo('/')
+        }
+        break
+
+      case 'k':
+        // Toggle filter menu with Ctrl/Cmd+K
+        if (event.ctrlKey || event.metaKey) {
+          event.preventDefault()
+          isFilterMenuOpen.value = !isFilterMenuOpen.value
+        }
         break
 
       case ' ':
