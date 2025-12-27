@@ -1,10 +1,10 @@
 {
   "database": {
-    "total": 38720,
+    "total": 38734,
     "matched": 1682,
-    "unmatched": 37038,
+    "unmatched": 37052,
     "archiveOrgSources": 27634,
-    "youtubeSources": 11256,
+    "youtubeSources": 11270,
     "curatedCount": 1682,
     "collections": {
       "feature_films": 27634
@@ -15,7 +15,7 @@
         "name": "Netzkino",
         "language": "de",
         "enabled": true,
-        "scraped": 2324
+        "scraped": 2332
       },
       {
         "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -57,7 +57,7 @@
         "name": "Moviedome",
         "language": "de",
         "enabled": true,
-        "scraped": 531
+        "scraped": 532
       },
       {
         "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -85,7 +85,7 @@
         "name": "Colorized Public Domain",
         "language": "en",
         "enabled": true,
-        "scraped": 229
+        "scraped": 234
       },
       {
         "id": "UCycDFnpMeWzaITQSD1dWsOA",
@@ -112,21 +112,21 @@
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11256,
+      "totalScraped": 11270,
       "totalAvailable": 17844,
-      "totalFailed": 5435,
-      "failureRate": 32.5624588101372,
-      "percent": 63.08002689979825,
+      "totalFailed": 6022,
+      "failureRate": 34.82535276428406,
+      "percent": 63.1584846446985,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 2324,
+          "scraped": 2332,
           "total": 2828,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 435,
+          "failureRate": 15.720997470184313
         },
         {
           "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -183,10 +183,10 @@
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 531,
+          "scraped": 532,
           "total": 609,
-          "failed": 1,
-          "failureRate": 0.18796992481203006
+          "failed": 106,
+          "failureRate": 16.614420062695924
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -223,10 +223,10 @@
           "name": "Colorized Public Domain",
           "language": "en",
           "enabled": true,
-          "scraped": 229,
+          "scraped": 234,
           "total": 281,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 47,
+          "failureRate": 16.72597864768683
         },
         {
           "id": "UCycDFnpMeWzaITQSD1dWsOA",
@@ -252,29 +252,29 @@
     }
   },
   "curation": {
-    "total": 38720,
+    "total": 38734,
     "curated": 1682,
-    "percent": 4.3440082644628095
+    "percent": 4.342438168017762
   },
   "omdb": {
-    "total": 38720,
+    "total": 38734,
     "matched": 1682,
-    "unmatched": 37038,
-    "percent": 4.3440082644628095,
+    "unmatched": 37052,
+    "percent": 4.342438168017762,
     "failed": 2082,
     "failureRate": 55.3134962805526
   },
   "posters": {
-    "totalMovies": 38720,
+    "totalMovies": 38734,
     "withPosterUrl": 1572,
     "downloaded": 609,
     "missing": 963,
     "failed": 356,
     "failureRate": 36.89119170984456,
     "percentOfMoviesWithUrl": 38.74045801526718,
-    "percentOfAllMovies": 1.5728305785123968,
+    "percentOfAllMovies": 1.572262095316776,
     "filesInDirectory": 639,
     "matchedPosters": 609
   },
-  "lastUpdated": "2025-12-27T00:54:35.165Z"
+  "lastUpdated": "2025-12-27T01:11:08.740Z"
 }
