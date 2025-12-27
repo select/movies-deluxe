@@ -14,8 +14,9 @@ interface FailedDownload {
 
 /**
  * Load failed downloads from disk
+ * Returns a Set of imdbIds that have previously failed
  */
-function loadFailedDownloads(): Set<string> {
+export function loadFailedPosterIds(): Set<string> {
   try {
     if (fs.existsSync(FAILED_DOWNLOADS_FILE)) {
       const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
@@ -110,15 +111,6 @@ export async function downloadPoster(
   // Skip if already exists
   if (!force && fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
     return true
-  }
-
-  // Skip if previously failed (unless force)
-  if (!force) {
-    const failedDownloads = loadFailedDownloads()
-    if (failedDownloads.has(imdbId)) {
-      console.log(`Skipping ${imdbId} - previously failed`)
-      return false
-    }
   }
 
   // Try primary URL first, then fallbacks
