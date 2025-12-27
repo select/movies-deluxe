@@ -203,7 +203,6 @@ export default defineEventHandler(async event => {
           result.failed++
           result.errors.push(`No match found for: ${primaryTitle}`)
           saveFailedOmdbMatch(oldId, primaryTitle, 'No OMDB match found', attempts, yearToUse)
-          await saveMoviesDatabase(db)
           continue
         }
 
@@ -227,16 +226,21 @@ export default defineEventHandler(async event => {
         if (oldId !== newId) {
           migrateMovieId(db, oldId, newId)
         }
-
-        // Save progress after each successful match
-        await saveMoviesDatabase(db)
       } catch (error) {
         result.failed++
         result.errors.push(
           `Error processing ${movie.title}: ${error instanceof Error ? error.message : 'Unknown error'}`
         )
       }
+
+      // Save progress after every 5 steps
+      if (result.processed % 5 === 0) {
+        await saveMoviesDatabase(db)
+      }
     }
+
+    // Save at the very end
+    await saveMoviesDatabase(db)
 
     emitProgress({
       type: 'omdb',
