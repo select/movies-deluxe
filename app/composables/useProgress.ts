@@ -3,6 +3,7 @@ export const useProgress = () => {
   const eventSource = useState<EventSource | null>('eventSource', () => null)
   const isConnected = useState<boolean>('eventSourceConnected', () => false)
   const isReconnecting = useState<boolean>('eventSourceReconnecting', () => false)
+  const reconnectTimer = useState<NodeJS.Timeout | null>('reconnectTimer', () => null)
 
   const connect = () => {
     if (eventSource.value) return
@@ -31,15 +32,30 @@ export const useProgress = () => {
       es.close()
       eventSource.value = null
 
+      // Clear any existing reconnect timer
+      if (reconnectTimer.value) {
+        clearTimeout(reconnectTimer.value)
+        reconnectTimer.value = null
+      }
+
       // Try to reconnect after 5 seconds
       isReconnecting.value = true
-      setTimeout(connect, 5000)
+      reconnectTimer.value = setTimeout(() => {
+        reconnectTimer.value = null
+        connect()
+      }, 5000)
     }
 
     eventSource.value = es
   }
 
   const disconnect = () => {
+    // Clear reconnect timer if exists
+    if (reconnectTimer.value) {
+      clearTimeout(reconnectTimer.value)
+      reconnectTimer.value = null
+    }
+
     if (eventSource.value) {
       eventSource.value.close()
       eventSource.value = null
