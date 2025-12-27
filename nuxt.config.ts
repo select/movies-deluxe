@@ -22,6 +22,21 @@ export default defineNuxtConfig({
       bodyAttrs: {
         class: 'font-sans',
       },
+      script: [
+        {
+          innerHTML: `
+            // Apply dark mode immediately to prevent flash
+            (function() {
+              const isDark = localStorage.getItem('movies-deluxe-theme-dark');
+              const prefersDark = isDark === null ? true : isDark === 'true';
+              if (prefersDark) {
+                document.documentElement.classList.add('dark');
+              }
+            })();
+          `,
+          type: 'text/javascript',
+        },
+      ],
       style: [
         {
           innerHTML: `
@@ -33,8 +48,11 @@ export default defineNuxtConfig({
               display: flex;
               align-items: center;
               justify-content: center;
-              background: #1a1a1a;
+              background: white;
               transition: opacity 0.3s ease-out;
+            }
+            .dark #app-splash {
+              background: #171717;
             }
             #app-splash.hidden {
               opacity: 0;
@@ -44,10 +62,14 @@ export default defineNuxtConfig({
             .splash-spinner {
               width: 48px;
               height: 48px;
-              border: 4px solid rgba(255, 255, 255, 0.1);
-              border-top-color: #00DC82;
+              border: 4px solid rgba(0, 0, 0, 0.1);
+              border-top-color: #525252;
               border-radius: 50%;
               animation: spin 0.8s linear infinite;
+            }
+            .dark .splash-spinner {
+              border-color: rgba(255, 255, 255, 0.1);
+              border-top-color: #00DC82;
             }
             @keyframes spin {
               to { transform: rotate(360deg); }
