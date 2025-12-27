@@ -267,14 +267,14 @@
   "posters": {
     "totalMovies": 38734,
     "withPosterUrl": 1572,
-    "downloaded": 609,
-    "missing": 963,
-    "failed": 356,
-    "failureRate": 36.89119170984456,
-    "percentOfMoviesWithUrl": 38.74045801526718,
-    "percentOfAllMovies": 1.572262095316776,
-    "filesInDirectory": 639,
-    "matchedPosters": 609
+    "downloaded": 965,
+    "missing": 607,
+    "failed": 600,
+    "failureRate": 38.33865814696485,
+    "percentOfMoviesWithUrl": 61.38676844783715,
+    "percentOfAllMovies": 2.4913512676201788,
+    "filesInDirectory": 995,
+    "matchedPosters": 965
   },
-  "lastUpdated": "2025-12-27T16:44:29.781Z"
+  "lastUpdated": "2025-12-27T16:50:08.271Z"
 }

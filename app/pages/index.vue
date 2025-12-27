@@ -61,6 +61,32 @@ import { storeToRefs } from 'pinia'
 import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 import { onBeforeRouteLeave } from 'vue-router'
 
+// Set page title and meta
+useHead({
+  title: 'Movies Deluxe - Free Public Domain Movies',
+  meta: [
+    {
+      name: 'description',
+      content:
+        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more - all legally available to watch online.',
+    },
+    { property: 'og:title', content: 'Movies Deluxe - Free Public Domain Movies' },
+    {
+      property: 'og:description',
+      content:
+        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more - all legally available to watch online.',
+    },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Movies Deluxe - Free Public Domain Movies' },
+    {
+      name: 'twitter:description',
+      content:
+        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more - all legally available to watch online.',
+    },
+  ],
+})
+
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
 const { lightweightMovies, totalMovies, isFiltering } = storeToRefs(filterStore)

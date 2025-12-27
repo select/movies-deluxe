@@ -244,6 +244,14 @@
 
 import type { ScrapeStats } from '~/types/admin'
 
+// Set page title
+useHead({
+  title: 'Admin Dashboard - Movies Deluxe',
+  meta: [
+    { name: 'robots', content: 'noindex, nofollow' },
+  ],
+})
+
 const isDev = ref(false)
 const adminStore = useAdminStore()
 const { connect: connectProgress, isConnected, isReconnecting } = useProgress()
