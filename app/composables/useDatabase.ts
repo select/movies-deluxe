@@ -12,7 +12,6 @@ function createDatabase() {
   const init = async (url?: string) => {
     if (worker.value) return
 
-    // @ts-expect-error
     const DatabaseWorker = await import('~/workers/database.worker?worker')
     worker.value = new DatabaseWorker.default()
 
@@ -87,7 +86,7 @@ function createDatabase() {
     offset?: number
     includeCount?: boolean
   }): Promise<{
-    result: Array<{ imdbId: string; title: string | string[]; year: number }>
+    result: Array<{ imdbId: string; title: string; year: number }>
     totalCount?: number
   }> => {
     if (!isReady.value) {
@@ -119,12 +118,28 @@ function createDatabase() {
     })
   }
 
+  const queryRelatedMovies = async (imdbId: string, limit: number = 8): Promise<any[]> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: any) => resolve(data.result),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'query-related', id, imdbId, limit })
+    })
+  }
+
   return {
     init,
     query,
     extendedQuery,
     lightweightQuery,
     queryByIds,
+    queryRelatedMovies,
     isReady,
   }
 }

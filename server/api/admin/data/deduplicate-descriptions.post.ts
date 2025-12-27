@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { MovieEntry } from '../../../../shared/types/movie'
 
 interface DeduplicationResult {
   totalSources: number
@@ -116,7 +116,7 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
 
     // Process all descriptions
     movies.forEach(movie => {
-      movie.sources?.forEach(source => {
+      movie.sources?.forEach((source: any) => {
         totalSources++
 
         if (source.description) {

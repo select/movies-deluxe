@@ -551,6 +551,7 @@ const watchlistStore = useWatchlistStore()
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
+const relatedMovies = ref<MovieEntry[]>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 const selectedSourceIndex = ref(0)
@@ -564,84 +565,11 @@ const currentSource = computed(() => {
 // Share functionality state
 const showShareToast = ref(false)
 const shareToastMessage = ref('')
+const copied = ref(false)
 
 // Watchlist computed
 const isInWatchlist = computed(() => {
   return movie.value ? watchlistStore.isInWatchlist(movie.value.imdbId) : false
-})
-
-// Related movies computed
-const relatedMovies = computed(() => {
-  if (!movie.value) return []
-
-  const currentMovie = movie.value
-  const allMovies = movieStore.movies
-
-  /**
-   * Score each movie based on similarity to current movie.
-   * 
-   * Scoring criteria (in order of weight):
-   * - Genre match: 10 points per shared genre (can stack, e.g., 30 for 3 shared genres)
-   * - Director match: 15 points (binary - same director or not)
-   * - Actor match: 5 points per shared actor (balanced to prevent dominance)
-   * - Year proximity: 2-10 points (closer years = higher score, ±5 years max)
-   * - Metadata presence: 1 point (prefer enriched movies)
-   * 
-   * Actor scoring rationale:
-   * - 5 points per actor balances well with other criteria
-   * - 2 shared actors (10 pts) ≈ 1 genre match (10 pts)
-   * - Prevents actor-heavy movies from dominating recommendations
-   * - Still meaningful enough to surface cast-based similarities
-   */
-  const scored = allMovies
-    .filter((m: MovieEntry) => m.imdbId !== currentMovie.imdbId) // Exclude current movie
-    .map((m: MovieEntry) => {
-      let score = 0
-
-      // Genre match (highest priority)
-      if (currentMovie.metadata?.Genre && m.metadata?.Genre) {
-        const currentGenres = currentMovie.metadata.Genre.split(',').map((g: string) => g.trim().toLowerCase())
-        const movieGenres = m.metadata.Genre.split(',').map((g: string) => g.trim().toLowerCase())
-        const commonGenres = currentGenres.filter((g: string) => movieGenres.includes(g))
-        score += commonGenres.length * 10 // 10 points per matching genre
-      }
-
-      // Year similarity (±5 years)
-      if (currentMovie.year && m.year) {
-        const yearDiff = Math.abs(currentMovie.year - m.year)
-        if (yearDiff <= 5) {
-          score += (5 - yearDiff) * 2 // 2-10 points based on proximity
-        }
-      }
-
-      // Director match
-      if (currentMovie.metadata?.Director && m.metadata?.Director) {
-        if (currentMovie.metadata.Director === m.metadata.Director) {
-          score += 15 // 15 points for same director
-        }
-      }
-
-      // Actor matches
-      if (currentMovie.metadata?.Actors && m.metadata?.Actors) {
-        const currentActors = currentMovie.metadata.Actors.split(',').map((a: string) => a.trim().toLowerCase())
-        const movieActors = m.metadata.Actors.split(',').map((a: string) => a.trim().toLowerCase())
-        const commonActors = currentActors.filter((a: string) => movieActors.includes(a))
-        score += commonActors.length * 5 // 5 points per shared actor
-      }
-
-      // Prefer movies with metadata
-      if (m.metadata) {
-        score += 1
-      }
-
-      return { movie: m, score }
-    })
-    .filter((item: { movie: MovieEntry; score: number }) => item.score > 0) // Only include movies with some similarity
-    .sort((a: { score: number }, b: { score: number }) => b.score - a.score) // Sort by score descending
-    .slice(0, 8) // Limit to 8 movies
-    .map((item: { movie: MovieEntry; score: number }) => item.movie)
-
-  return scored
 })
 
 // Load movie data
@@ -649,6 +577,7 @@ const loadMovieData = async (movieId: string) => {
   isLoading.value = true
   error.value = null
   selectedSourceIndex.value = 0
+  relatedMovies.value = []
 
   // Ensure movies are loaded in store
   if (movieStore.movies.length === 0) {
@@ -660,6 +589,11 @@ const loadMovieData = async (movieId: string) => {
   if (foundMovie) {
     movie.value = foundMovie
     updateMetaTags(foundMovie)
+    
+    // Fetch related movies from database
+    movieStore.fetchRelatedMovies(movieId).then(related => {
+      relatedMovies.value = related
+    })
   } else {
     error.value = `Movie with ID "${movieId}" not found.`
   }
@@ -786,7 +720,7 @@ const handleMovieUpdated = async (newId: string) => {
     // The watcher on route.params.id will handle loading the new movie data
   } else {
     // Just refresh current movie data from store
-    const foundMovie = movieStore.getMovieById(newId)
+    const foundMovie = await movieStore.getMovieById(newId)
     if (foundMovie) {
       movie.value = foundMovie
       updateMetaTags(foundMovie)

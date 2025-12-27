@@ -170,7 +170,7 @@ async function removeDuplicateSources() {
       if (examples.length < 5) {
         examples.push({
           imdbId: movieEntry.imdbId,
-          title: Array.isArray(movieEntry.title) ? movieEntry.title[0] : movieEntry.title,
+          title: movieEntry.title,
           before: originalCount,
           after: deduplicated.length,
           removed: removedCount,

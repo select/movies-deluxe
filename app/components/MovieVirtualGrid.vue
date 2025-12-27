@@ -5,7 +5,7 @@
   >
     <!-- Spacer for rows before visible range -->
     <div
-      v-if="visibleRows.length > 0 && visibleRows[0].index > 0"
+      v-if="visibleRows.length > 0 && visibleRows[0] && visibleRows[0].index > 0"
       :style="{ height: `${visibleRows[0].top}px` }"
     />
 
@@ -26,8 +26,8 @@
 
     <!-- Spacer for rows after visible range -->
     <div
-      v-if="visibleRows.length > 0"
-      :style="{ height: `${totalHeight - (visibleRows[visibleRows.length - 1].top + rowHeight)}px` }"
+      v-if="visibleRows.length > 0 && visibleRows[visibleRows.length - 1]"
+      :style="{ height: `${totalHeight - (visibleRows[visibleRows.length - 1]!.top + rowHeight)}px` }"
     />
 
     <!-- Loading Sentinel for Infinite Scroll -->

@@ -35,13 +35,15 @@ export const useMovieStore = defineStore('movie', () => {
           .filter((s: string) => s.trim())
           .map((s: string) => {
             const [type, id, label, quality, addedAt, description, channelName] = s.split('|')
+            if (!type || !id) return null
+
             const base = {
               type: type as MovieSourceType,
               url: generateSourceUrl(type as any, id),
               id,
               label: label || undefined,
               quality: quality || undefined,
-              addedAt,
+              addedAt: addedAt || new Date().toISOString(),
               description: description || undefined,
             }
 
@@ -53,6 +55,7 @@ export const useMovieStore = defineStore('movie', () => {
             }
             return base as any
           })
+          .filter((s: any) => s !== null)
       : []
 
     const metadata: MovieMetadata | undefined = row.is_curated
@@ -204,6 +207,25 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Fetch related movies for a specific ID from the database
+   */
+  const fetchRelatedMovies = async (imdbId: string, limit: number = 8): Promise<MovieEntry[]> => {
+    if (!db.isReady.value) return []
+
+    try {
+      const results = await db.queryRelatedMovies(imdbId, limit)
+      if (results.length === 0) return []
+
+      // Fetch full details for these movies
+      const relatedIds = results.map((r: any) => r.imdbId)
+      return await fetchMoviesByIds(relatedIds)
+    } catch (err) {
+      console.error('[MovieStore] Failed to fetch related movies:', err)
+      return []
+    }
+  }
+
+  /**
    * Fallback: Load movies from JSON API
    */
   const loadFromJson = async () => {
@@ -225,7 +247,7 @@ export const useMovieStore = defineStore('movie', () => {
           if (typeof movie.imdbId !== 'string') return false
           if (typeof movie.title === 'string') return true
           if (Array.isArray(movie.title)) {
-            return movie.title.every(t => typeof t === 'string')
+            return movie.title.every((t: any) => typeof t === 'string')
           }
           return false
         })
@@ -561,6 +583,7 @@ export const useMovieStore = defineStore('movie', () => {
     fetchMovies,
     fetchMoviesByIds,
     getMovieDetails,
+    fetchRelatedMovies,
     mapRowToMovie,
 
     // Filtering & search

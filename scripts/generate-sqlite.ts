@@ -89,6 +89,15 @@ async function generateSQLite(
         FOREIGN KEY (channelId) REFERENCES channels (id)
       );
 
+      CREATE TABLE related_movies (
+        movieId TEXT NOT NULL,
+        relatedMovieId TEXT NOT NULL,
+        score INTEGER NOT NULL,
+        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (relatedMovieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        PRIMARY KEY (movieId, relatedMovieId)
+      );
+
       -- FTS5 Virtual Table for Search
       CREATE VIRTUAL TABLE fts_movies USING fts5(
         imdbId UNINDEXED,
@@ -110,6 +119,8 @@ async function generateSQLite(
       CREATE INDEX idx_sources_movieId ON sources(movieId);
       CREATE INDEX idx_sources_type ON sources(type);
       CREATE INDEX idx_sources_channelId ON sources(channelId);
+      CREATE INDEX idx_related_movies_movieId ON related_movies(movieId);
+      CREATE INDEX idx_related_movies_score ON related_movies(movieId, score DESC);
     `)
 
     // 5. Prepare Statements
@@ -135,6 +146,11 @@ async function generateSQLite(
     const insertFts = sqlite.prepare(`
       INSERT INTO fts_movies (imdbId, title, actors, director, plot)
       VALUES (?, ?, ?, ?, ?)
+    `)
+
+    const insertRelated = sqlite.prepare(`
+      INSERT INTO related_movies (movieId, relatedMovieId, score)
+      VALUES (?, ?, ?)
     `)
 
     // 6. Insert Data in a Transaction
@@ -244,13 +260,125 @@ async function generateSQLite(
           })
         }
       }
+
+      // 7. Calculate Related Movies
+      logger.info('Calculating related movies...')
+      onProgress?.({ current: 0, total: movies.length, message: 'Calculating related movies' })
+
+      // Pre-process metadata for faster scoring
+      const processedMovies = movies.map(m => ({
+        imdbId: m.imdbId,
+        year: m.year,
+        hasMetadata: !!m.metadata,
+        genres: m.metadata?.Genre
+          ? m.metadata.Genre.split(',')
+              .map(g => g.trim().toLowerCase())
+              .filter(Boolean)
+          : [],
+        actors: m.metadata?.Actors
+          ? m.metadata.Actors.split(',')
+              .map(a => a.trim().toLowerCase())
+              .filter(Boolean)
+          : [],
+        director: m.metadata?.Director ? m.metadata.Director.toLowerCase() : null,
+      }))
+
+      // Create maps for fast lookup
+      const genreMap = new Map<string, string[]>()
+      const actorMap = new Map<string, string[]>()
+      const directorMap = new Map<string, string[]>()
+
+      for (const m of processedMovies) {
+        for (const g of m.genres) {
+          if (!genreMap.has(g)) genreMap.set(g, [])
+          genreMap.get(g)!.push(m.imdbId)
+        }
+        for (const a of m.actors) {
+          if (!actorMap.has(a)) actorMap.set(a, [])
+          actorMap.get(a)!.push(m.imdbId)
+        }
+        if (m.director) {
+          if (!directorMap.has(m.director)) directorMap.set(m.director, [])
+          directorMap.get(m.director)!.push(m.imdbId)
+        }
+      }
+
+      const movieMap = new Map(processedMovies.map(m => [m.imdbId, m]))
+
+      for (let i = 0; i < processedMovies.length; i++) {
+        const m1 = processedMovies[i]!
+        const candidateScores = new Map<string, number>()
+
+        // 1. Genre match (10 pts each)
+        for (const g of m1.genres) {
+          for (const id of genreMap.get(g) || []) {
+            if (id === m1.imdbId) continue
+            candidateScores.set(id, (candidateScores.get(id) || 0) + 10)
+          }
+        }
+
+        // 2. Director match (15 pts)
+        if (m1.director) {
+          for (const id of directorMap.get(m1.director) || []) {
+            if (id === m1.imdbId) continue
+            candidateScores.set(id, (candidateScores.get(id) || 0) + 15)
+          }
+        }
+
+        // 3. Actor match (5 pts each)
+        for (const a of m1.actors) {
+          for (const id of actorMap.get(a) || []) {
+            if (id === m1.imdbId) continue
+            candidateScores.set(id, (candidateScores.get(id) || 0) + 5)
+          }
+        }
+
+        // 4. Refine scores with year and metadata
+        const finalScores: { id: string; score: number }[] = []
+        for (const [id2, baseScore] of candidateScores.entries()) {
+          const m2 = movieMap.get(id2)!
+          let score = baseScore
+
+          // Year proximity (±5 years, 2-10 pts)
+          if (m1.year && m2.year) {
+            const yearDiff = Math.abs(m1.year - m2.year)
+            if (yearDiff <= 5) {
+              score += (5 - yearDiff) * 2
+            }
+          }
+
+          // Metadata presence (1 pt)
+          if (m2.hasMetadata) {
+            score += 1
+          }
+
+          finalScores.push({ id: id2, score })
+        }
+
+        // Sort and take top 12
+        finalScores.sort((a, b) => b.score - a.score)
+        const topRelated = finalScores.slice(0, 12)
+
+        for (const related of topRelated) {
+          insertRelated.run(m1.imdbId, related.id, related.score)
+        }
+
+        if ((i + 1) % 1000 === 0) {
+          onProgress?.({
+            current: i + 1,
+            total: movies.length,
+            message: `Calculated related movies for ${i + 1} movies`,
+          })
+        }
+      }
+
       sqlite.exec('COMMIT')
     } catch (err) {
       sqlite.exec('ROLLBACK')
       throw err
     }
 
-    // 7. Optimize
+    // 8. Optimize
     logger.info('Optimizing database...')
     onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing database' })
     sqlite.exec("INSERT INTO fts_movies(fts_movies) VALUES('optimize')")

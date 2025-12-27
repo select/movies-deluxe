@@ -58,7 +58,7 @@ export {
  */
 export interface LightweightMovieEntry {
   imdbId: string
-  title: string | string[]
+  title: string
   year: number
 }
 

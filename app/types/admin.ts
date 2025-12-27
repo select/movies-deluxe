@@ -66,6 +66,7 @@ export interface ScrapeResults {
   added: number
   updated: number
   failed?: number
+  skipped?: number
   failureReasons?: Record<string, number>
   errors: string[]
   debug?: string[]
@@ -75,6 +76,7 @@ export interface ScrapeResults {
     added: number
     updated: number
     failed?: number
+    skipped?: number
   }>
 }
 
