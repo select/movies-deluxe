@@ -30,62 +30,62 @@
         <!-- Loading State - Skeleton -->
         <div
           v-if="isLoading"
-          class="space-y-8 animate-pulse"
+          class="space-y-8"
         >
           <!-- Movie Header Skeleton -->
           <div class="flex flex-col md:flex-row gap-8">
             <!-- Poster Skeleton -->
             <div class="flex-shrink-0">
-              <div class="w-full md:w-80 aspect-[2/3] bg-gray-300 dark:bg-gray-700 rounded-lg shimmer" />
+              <div class="w-full md:w-80 aspect-[2/3] skeleton rounded-lg" />
             </div>
 
             <!-- Movie Info Skeleton -->
             <div class="flex-1 space-y-6">
               <!-- Title -->
-              <div class="h-10 bg-gray-300 dark:bg-gray-700 rounded-lg w-3/4 shimmer" />
+              <div class="h-10 skeleton rounded-lg w-3/4" />
 
               <!-- Metadata Row -->
               <div class="flex gap-4">
-                <div class="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
-                <div class="h-8 w-16 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
-                <div class="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                <div class="h-8 w-20 skeleton rounded-full" />
+                <div class="h-8 w-16 skeleton rounded-full" />
+                <div class="h-8 w-24 skeleton rounded-full" />
               </div>
 
               <!-- Rating -->
               <div class="flex items-center gap-2">
-                <div class="h-8 w-8 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
-                <div class="h-8 w-16 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                <div class="h-8 w-8 skeleton rounded-full" />
+                <div class="h-8 w-16 skeleton rounded-md" />
               </div>
 
               <!-- Action Buttons -->
               <div class="flex gap-3">
-                <div class="h-10 w-40 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
-                <div class="h-10 w-28 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                <div class="h-10 w-40 skeleton rounded-full" />
+                <div class="h-10 w-28 skeleton rounded-full" />
               </div>
 
               <!-- Genre -->
               <div class="space-y-2">
-                <div class="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                <div class="h-4 w-16 skeleton rounded-md" />
                 <div class="flex gap-2">
-                  <div class="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
-                  <div class="h-8 w-24 bg-gray-300 dark:bg-gray-700 rounded-full shimmer" />
+                  <div class="h-8 w-20 skeleton rounded-full" />
+                  <div class="h-8 w-24 skeleton rounded-full" />
                 </div>
               </div>
 
               <!-- Plot -->
               <div class="space-y-2">
-                <div class="h-4 w-12 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
+                <div class="h-4 w-12 skeleton rounded-md" />
                 <div class="space-y-2">
-                  <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
-                  <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded shimmer" />
-                  <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4 shimmer" />
+                  <div class="h-4 skeleton rounded-md" />
+                  <div class="h-4 skeleton rounded-md" />
+                  <div class="h-4 skeleton rounded-md w-3/4" />
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Video Player Skeleton -->
-          <div class="aspect-video bg-gray-300 dark:bg-gray-700 rounded-lg shimmer" />
+          <div class="aspect-video skeleton rounded-lg" />
         </div>
 
         <!-- Error State -->
@@ -934,26 +934,5 @@ const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
 
 .animate-spin {
   animation: spin 1s linear infinite;
-}
-
-/* Shimmer animation for skeleton loaders */
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    currentColor 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    currentColor 100%
-  );
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite linear;
 }
 </style>

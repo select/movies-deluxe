@@ -40,6 +40,9 @@ export default defineConfig({
     card: 'p-4 rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700',
     glass:
       'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border border-white/20 dark:border-gray-800/30',
+    // Skeleton loading styles
+    skeleton: 'bg-gray-100 dark:bg-gray-800/50 shimmer',
+    'skeleton-border': 'border-gray-100 dark:border-gray-800/50',
   },
   preflights: [
     {
@@ -155,6 +158,41 @@ export default defineConfig({
         .scrollbar-hidden::-webkit-scrollbar {
           display: none;
         }
+
+        /* Modern shimmer animation for skeleton loaders */
+        @keyframes shimmer {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+
+        .shimmer {
+          background: linear-gradient(
+            110deg,
+            transparent 0%,
+            transparent 40%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 60%,
+            transparent 100%
+          );
+          background-size: 200% 100%;
+          animation: shimmer 2.5s ease-in-out infinite;
+        }
+
+        .dark .shimmer {
+          background: linear-gradient(
+            110deg,
+            transparent 0%,
+            transparent 40%,
+            rgba(255, 255, 255, 0.03) 50%,
+            transparent 60%,
+            transparent 100%
+          );
+          background-size: 200% 100%;
+        }
       `,
     },
   ],
@@ -179,5 +217,13 @@ export default defineConfig({
     },
   },
   // Safelist to ensure classes are always generated
-  safelist: ['font-sans', 'scrollbar-thin', 'scrollbar-default', 'scrollbar-hidden'],
+  safelist: [
+    'font-sans',
+    'scrollbar-thin',
+    'scrollbar-default',
+    'scrollbar-hidden',
+    'skeleton',
+    'skeleton-border',
+    'shimmer',
+  ],
 })
