@@ -41,6 +41,7 @@ export const useMovieStore = defineStore('movie', () => {
               type: type as MovieSourceType,
               url: generateSourceUrl(type as any, id),
               id,
+              title: '', // Title not stored in sources table, use movie title
               label: label || undefined,
               quality: quality || undefined,
               addedAt: addedAt || new Date().toISOString(),
