@@ -38,7 +38,7 @@
             :value="filters.searchQuery"
             type="text"
             class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-full leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-            placeholder="Search movies, actors, directors..."
+            placeholder="Search movie titles, actors, directors..."
             @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
           >
           <button

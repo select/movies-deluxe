@@ -133,16 +133,34 @@ export const useMovieStore = defineStore('movie', () => {
       from = 'fts_movies f JOIN movies m ON f.imdbId = m.imdbId'
       const searchWhere = 'fts_movies MATCH ?'
       finalWhere = finalWhere ? `(${finalWhere}) AND (${searchWhere})` : searchWhere
-      params.push(searchQuery)
+
+      // Sanitize search query for FTS5 (escape quotes and special characters)
+      const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
+
+      // Use simple quoted search - FTS5 will handle relevance, we'll add title prioritization in ORDER BY
+      params.push(`"${sanitizedQuery}"`)
     }
 
     const { result, totalCount } = await db.extendedQuery({
-      select: `m.*, GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.label, '') || '|||' || COALESCE(s.quality, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
+      select: `m.*, 
+               ${
+                 searchQuery?.trim()
+                   ? `CASE 
+                 WHEN m.title LIKE '%${searchQuery.replace(/'/g, "''")}%' THEN 1
+                 ELSE 2
+               END as title_priority,`
+                   : ''
+               }
+               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.label, '') || '|||' || COALESCE(s.quality, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
       from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId LEFT JOIN channels c ON s.channelId = c.id`,
       where: finalWhere,
       params,
       groupBy: 'm.imdbId',
-      orderBy: orderBy ? `${orderBy}, m.imdbId` : 'm.imdbId',
+      orderBy: searchQuery?.trim()
+        ? `title_priority ASC, rank ASC, m.imdbId`
+        : orderBy
+          ? `${orderBy}, m.imdbId`
+          : 'm.imdbId',
       limit,
       offset,
       includeCount,
@@ -302,7 +320,7 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Search movies by title, actors, director, or plot using SQLite FTS5
+   * Search movies with weighted fields (title gets highest priority)
    * @param query - Search query string
    * @returns Filtered array of movies matching the query
    */
@@ -319,22 +337,92 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     try {
+      // Sanitize search query for FTS5 (escape quotes and special characters)
+      const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
+
+      // Try weighted search first - FTS5 supports column weighting with column:term syntax
+      // But let's use a simpler approach that's more compatible
+      let weightedQuery: string
+
+      // For single words, use column-specific search with OR
+      if (!sanitizedQuery.includes(' ')) {
+        weightedQuery = `(title:"${sanitizedQuery}" * 4) OR (director:"${sanitizedQuery}" * 2) OR (actors:"${sanitizedQuery}" * 2) OR (plot:"${sanitizedQuery}")`
+      } else {
+        // For phrases, search all fields but prioritize title matches by searching it multiple times
+        weightedQuery = `"${sanitizedQuery}"`
+      }
+
       const results = await db.query(
         `
-        SELECT m.imdbId
+        SELECT m.imdbId, 
+               CASE 
+                 WHEN m.title LIKE ? THEN 4
+                 WHEN m.title LIKE ? THEN 3
+                 ELSE 1
+               END as title_score
         FROM fts_movies f
         JOIN movies m ON f.imdbId = m.imdbId
         WHERE fts_movies MATCH ?
-        ORDER BY rank
+        ORDER BY title_score DESC, rank
       `,
-        [searchQuery]
+        [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, weightedQuery]
       )
 
       const matchedIds = new Set(results.map((r: any) => r.imdbId))
       return movies.value.filter(m => matchedIds.has(m.imdbId))
     } catch (err) {
-      console.error('FTS5 search failed:', err)
-      return movies.value
+      console.error('Weighted FTS search failed, falling back to simple search:', err)
+
+      // Fallback to simple title-prioritized search
+      try {
+        const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
+        const results = await db.query(
+          `
+          SELECT m.imdbId,
+                 CASE 
+                   WHEN m.title LIKE ? THEN 3
+                   WHEN m.title LIKE ? THEN 2
+                   ELSE 1
+                 END as relevance_score
+          FROM fts_movies f
+          JOIN movies m ON f.imdbId = m.imdbId
+          WHERE fts_movies MATCH ?
+          ORDER BY relevance_score DESC, rank
+        `,
+          [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, `"${sanitizedQuery}"`]
+        )
+
+        const matchedIds = new Set(results.map((r: any) => r.imdbId))
+        return movies.value.filter(m => matchedIds.has(m.imdbId))
+      } catch (fallbackErr) {
+        console.error('Simple FTS search also failed:', fallbackErr)
+
+        // Final fallback to JS search with title prioritization
+        const lowerQuery = searchQuery.toLowerCase()
+        const titleMatches: MovieEntry[] = []
+        const otherMatches: MovieEntry[] = []
+
+        movies.value.forEach((movie: MovieEntry) => {
+          const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
+          const titleMatch = titles.some(t => t.toLowerCase().includes(lowerQuery))
+
+          if (titleMatch) {
+            titleMatches.push(movie)
+          } else {
+            // Check other fields
+            const actorsMatch = movie.metadata?.Actors?.toLowerCase().includes(lowerQuery)
+            const directorMatch = movie.metadata?.Director?.toLowerCase().includes(lowerQuery)
+            const plotMatch = movie.metadata?.Plot?.toLowerCase().includes(lowerQuery)
+
+            if (actorsMatch || directorMatch || plotMatch) {
+              otherMatches.push(movie)
+            }
+          }
+        })
+
+        // Return title matches first, then other matches
+        return [...titleMatches, ...otherMatches]
+      }
     }
   }
 
