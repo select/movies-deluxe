@@ -7,7 +7,7 @@ import { join } from 'path'
 
 interface FailedOmdbEntry {
   identifier: string
-  title: string | string[]
+  title: string
   failedAt: string
   reason: string
 }
@@ -28,11 +28,6 @@ const hasEmoji = new Map<string, number>()
 const hasYear = new Map<string, number>()
 
 failed.forEach(entry => {
-  // Handle array titles (skip for now)
-  if (Array.isArray(entry.title)) {
-    return
-  }
-
   const title = entry.title
 
   // Detect prefixes (before first dash or colon)
@@ -123,11 +118,8 @@ console.log(`Titles with parentheses: ${hasParens.size}`)
 console.log(`Titles with brackets:    ${hasBrackets.size}`)
 
 console.log('\n=== SAMPLE PROBLEMATIC TITLES ===')
-failed
-  .filter(e => !Array.isArray(e.title))
-  .slice(0, 20)
-  .forEach(entry => {
-    console.log(`"${entry.title}"`)
-  })
+failed.slice(0, 20).forEach(entry => {
+  console.log(`"${entry.title}"`)
+})
 
 console.log('\n✅ Analysis complete!\n')

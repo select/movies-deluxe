@@ -21,7 +21,7 @@ export function parseMovieTitle(title: string): { title: string; year?: number }
     }
   }
 
-  return { year }
+  return { title, year }
 }
 
 export async function fetchChannelVideos(
@@ -54,7 +54,7 @@ export async function fetchChannelVideos(
     }
   }
 
-  console.log('Channel:', channel?.name || channelIdentifier)
+  console.log('Channel:', (channel as any)?.header?.author?.name || channelIdentifier)
 
   // Build set of already scraped video IDs for this channel
   const existingVideoIds = new Set<string>()
@@ -104,7 +104,6 @@ export async function fetchChannelVideos(
         saveFailedYouTubeVideo({
           videoId,
           channelId: channelIdentifier,
-          channelName: channel?.name || '',
           title: 'Unknown',
           reason: 'missing_data',
         })
@@ -118,7 +117,7 @@ export async function fetchChannelVideos(
 
       // Filter out shorts, trailers, clips
       let skipReason: FailureReason | null = null
-      if (fullVideo.basic_info.is_short || title.toLowerCase().includes('#shorts')) {
+      if ((fullVideo.basic_info as any).is_short || title.toLowerCase().includes('#shorts')) {
         skipReason = 'shorts'
       } else if (
         title.toLowerCase().includes('trailer') ||
@@ -132,7 +131,6 @@ export async function fetchChannelVideos(
         saveFailedYouTubeVideo({
           videoId,
           channelId: channelIdentifier,
-          channelName: channel?.name || '',
           title,
           reason: skipReason,
           duration,
@@ -142,12 +140,13 @@ export async function fetchChannelVideos(
         continue
       }
 
-      // Filter by duration (minimum 40 minutes)
-      if (duration < 40 * 60) {
+      // Filter by duration (configurable minimum)
+      const config = useRuntimeConfig()
+      const minDuration = (config.minMovieDurationMinutes as number) * 60
+      if (duration < minDuration) {
         saveFailedYouTubeVideo({
           videoId,
           channelId: channelIdentifier,
-          channelName: channel?.name || '',
           title,
           reason: 'duration',
           duration,
@@ -164,8 +163,8 @@ export async function fetchChannelVideos(
         id: videoId,
         title,
         description: fullVideo.basic_info.short_description || '',
-        publishedAt: fullVideo.basic_info.upload_date || '',
-        channelName: fullVideo.basic_info.author || channel?.name || '',
+        publishedAt: (fullVideo.basic_info as any).upload_date || '',
+        channelName: fullVideo.basic_info.author || (channel as any)?.header?.author?.name || '',
         channelId: fullVideo.basic_info.channel_id || channelIdentifier,
         thumbnails: {
           high: thumbnailUrl,
@@ -195,7 +194,6 @@ export async function fetchChannelVideos(
       saveFailedYouTubeVideo({
         videoId,
         channelId: channelIdentifier,
-        channelName: channel?.name || '',
         title: 'Error',
         reason: 'api_error',
       })

@@ -1,43 +1,5 @@
 import type { MovieEntry } from '~/types'
-
-/**
- * Get the primary title from a movie entry (handles both string and string[] titles)
- */
-export function getPrimaryTitle(movie: MovieEntry): string {
-  if (!movie || !movie.title) {
-    return ''
-  }
-
-  if (typeof movie.title === 'string') {
-    return movie.title
-  }
-
-  if (Array.isArray(movie.title) && movie.title.length > 0) {
-    const firstTitle = movie.title[0]
-    return typeof firstTitle === 'string' ? firstTitle : ''
-  }
-
-  return ''
-}
-
-/**
- * Get all titles from a movie entry as an array
- */
-export function getAllTitles(movie: MovieEntry): string[] {
-  if (!movie || !movie.title) {
-    return []
-  }
-
-  if (typeof movie.title === 'string') {
-    return [movie.title]
-  }
-
-  if (Array.isArray(movie.title)) {
-    return movie.title.filter(t => typeof t === 'string' && t.length > 0)
-  }
-
-  return []
-}
+export { getPrimaryTitle, getAllTitles, normalizeTitle } from '../../shared/utils/movieTitle'
 
 /**
  * Get original titles from movie sources
@@ -82,11 +44,4 @@ export function hasMultipleTitles(movie: MovieEntry): boolean {
  */
 export function hasOriginalTitles(movie: MovieEntry): boolean {
   return getOriginalTitles(movie).length > 0
-}
-
-/**
- * Normalize title for comparison (lowercase, trimmed)
- */
-export function normalizeTitle(title: string): string {
-  return (title || '').toLowerCase().trim()
 }

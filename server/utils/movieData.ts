@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
+import { getPrimaryTitle } from '../../shared/utils/movieTitle'
 import type { MoviesDatabase, MovieEntry, MovieSource } from '../../shared/types/movie'
 
 const DATA_DIR = join(process.cwd(), 'public/data')
@@ -306,8 +307,8 @@ export function findPotentialDuplicates(
 
       if (!entryI || !entryJ) continue
 
-      const title1 = entryI.title.toLowerCase()
-      const title2 = entryJ.title.toLowerCase()
+      const title1 = getPrimaryTitle(entryI).toLowerCase()
+      const title2 = getPrimaryTitle(entryJ).toLowerCase()
 
       // Simple similarity check (can be improved with Levenshtein distance)
       const similarity = calculateSimilarity(title1, title2)
@@ -439,7 +440,7 @@ export function findDuplicates(db: MoviesDatabase): Map<string, MovieEntry[]> {
   const titleGroups = new Map<string, MovieEntry[]>()
 
   for (const entry of entries) {
-    const normalized = normalizeTitle(entry.title)
+    const normalized = normalizeTitle(getPrimaryTitle(entry))
     if (!titleGroups.has(normalized)) {
       titleGroups.set(normalized, [])
     }

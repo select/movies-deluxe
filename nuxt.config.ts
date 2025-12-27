@@ -24,7 +24,7 @@ export default defineNuxtConfig({
       },
       style: [
         {
-          children: `
+          innerHTML: `
             /* Splash screen to prevent FOUC during hydration */
             #app-splash {
               position: fixed;
@@ -53,7 +53,6 @@ export default defineNuxtConfig({
               to { transform: rotate(360deg); }
             }
           `,
-          type: 'text/css',
         },
       ],
     },
@@ -84,5 +83,10 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+
+  runtimeConfig: {
+    // Server-side only
+    minMovieDurationMinutes: 40,
   },
 })

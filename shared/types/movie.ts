@@ -32,6 +32,7 @@ export interface ArchiveOrgSource extends MovieSourceBase {
   collection?: string // e.g., 'feature_films'
   downloads?: number
   thumbnail?: string
+  duration?: number // Duration in seconds
   releaseDate?: string // ISO date from Archive.org metadata - REQUIRED for OMDB year validation
   language?: string // Language code from Archive.org metadata (e.g., 'en', 'es', 'fr')
 }
@@ -97,7 +98,7 @@ export interface MovieMetadata {
  */
 export interface MovieEntry {
   imdbId: string // IMDB ID (e.g., 'tt0012345') or temporary ID (e.g., 'archive-xyz', 'youtube-abc')
-  title: string | string[] // Can be array when merging entries with different titles
+  title: string
   year?: number
   sources: MovieSource[]
   metadata?: MovieMetadata

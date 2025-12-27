@@ -127,7 +127,7 @@ export default defineEventHandler(async event => {
       emitProgress({
         type: 'omdb',
         status: 'in_progress',
-        message: `${movie.title}`,
+        message: `${Array.isArray(movie.title) ? movie.title[0] : movie.title}`,
         current: result.processed + 1,
         total,
         successCurrent: result.matched,
@@ -135,11 +135,12 @@ export default defineEventHandler(async event => {
       })
 
       // Validate title
-      if (!movie.title || typeof movie.title !== 'string') {
+      const primaryTitle = Array.isArray(movie.title) ? movie.title[0] : movie.title
+      if (!primaryTitle || typeof primaryTitle !== 'string') {
         result.processed++
         result.failed++
         result.errors.push(`Invalid title for ${oldId}`)
-        saveFailedOmdbMatch(oldId, movie.title || 'Unknown', 'Invalid title')
+        saveFailedOmdbMatch(oldId, primaryTitle || 'Unknown', 'Invalid title')
         continue
       }
 
@@ -158,7 +159,7 @@ export default defineEventHandler(async event => {
       const sourceYear = archiveYear || youtubeYear
 
       // Parse title
-      const { name, year: titleYear } = parseTitle(movie.title)
+      const { name, year: titleYear } = parseTitle(primaryTitle)
       const yearToUse = sourceYear || titleYear
 
       // Track all attempts for enhanced failure tracking
@@ -183,8 +184,8 @@ export default defineEventHandler(async event => {
 
         if (matchResult.confidence === MatchConfidence.NONE) {
           result.failed++
-          result.errors.push(`No match found for: ${movie.title}`)
-          saveFailedOmdbMatch(oldId, movie.title, 'No OMDB match found', attempts, yearToUse)
+          result.errors.push(`No match found for: ${primaryTitle}`)
+          saveFailedOmdbMatch(oldId, primaryTitle, 'No OMDB match found', attempts, yearToUse)
           await saveMoviesDatabase(db)
           continue
         }

@@ -80,6 +80,24 @@ export async function scrapeArchiveOrg(
             continue
           }
 
+          // Filter by duration (configurable minimum)
+          const config = useRuntimeConfig()
+          const minDuration = (config.minMovieDurationMinutes as number) * 60
+          const duration =
+            entry.sources[0]?.type === 'archive.org' ? entry.sources[0].duration : null
+
+          if (duration && duration < minDuration) {
+            results.debug.push(
+              `Skipping ${movie.identifier}: too short (${Math.round(duration / 60)} minutes, minimum: ${config.minMovieDurationMinutes})`
+            )
+            results.processed++
+            continue
+          }
+
+          if (!duration) {
+            results.debug.push(`⚠️ No duration found for ${movie.identifier}, including anyway`)
+          }
+
           const existing = db[entry.imdbId] as MovieEntry | undefined
           const existingSource = existing?.sources?.find(
             s =>

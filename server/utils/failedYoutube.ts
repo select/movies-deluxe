@@ -8,7 +8,6 @@ export type FailureReason = 'shorts' | 'duration' | 'trailer_clip' | 'missing_da
 export interface FailedYouTubeVideo {
   videoId: string
   channelId: string
-  channelName: string
   title: string
   reason: FailureReason
   duration?: number

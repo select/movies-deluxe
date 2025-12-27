@@ -29,7 +29,7 @@ interface Source {
 interface MovieEntry {
   id: string | null
   imdbId: string
-  title: string | string[]
+  title: string
   sources?: Source[]
   [key: string]: unknown
 }

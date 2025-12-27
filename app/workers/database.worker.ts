@@ -295,6 +295,36 @@ self.onmessage = async e => {
       console.log('Worker query-by-ids result length:', result.length)
 
       self.postMessage({ id, result })
+    } else if (type === 'query-related') {
+      // Query related movies for a specific ID
+      if (!db) {
+        throw new Error('Database not initialized. Call init first.')
+      }
+
+      const { imdbId, limit = 8 } = e.data
+
+      const sql = `
+        SELECT m.imdbId, m.title, m.year, r.score
+        FROM related_movies r
+        JOIN movies m ON r.relatedMovieId = m.imdbId
+        WHERE r.movieId = ?
+        ORDER BY r.score DESC
+        LIMIT ?
+      `
+
+      console.log('Worker executing query-related SQL:', sql)
+      console.log('Worker params:', [imdbId, limit])
+
+      const result = db.exec({
+        sql,
+        bind: [imdbId, limit],
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      console.log('Worker query-related result length:', result.length)
+
+      self.postMessage({ id, result })
     }
   } catch (err: any) {
     console.error('Worker error:', err)
