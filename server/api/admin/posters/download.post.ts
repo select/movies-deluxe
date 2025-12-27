@@ -20,33 +20,28 @@ export default defineEventHandler(async event => {
 
   const postersDir = join(process.cwd(), 'public/posters')
 
-  // Filter movies that have OMDB metadata and don't have a downloaded poster yet
-  const toProcess = entries.filter(movie => {
-    // Only process entries with OMDB metadata
-    if (!movie.metadata) return false
+  // Load failed posters once at the start
+  const failedPosters = force ? new Set<string>() : loadFailedPosterIds()
 
-    const posterUrl = movie.metadata.Poster
-
-    // Need a valid OMDB poster URL
-    if (!posterUrl || posterUrl === 'N/A') return false
-
-    // Skip if already downloaded (unless force)
-    if (!force) {
+  // Filter pipeline (functional composition)
+  const toProcess = entries
+    .filter(movie => movie.metadata) // Has OMDB metadata
+    .filter(movie => {
+      const posterUrl = movie.metadata!.Poster
+      return posterUrl && posterUrl !== 'N/A' // Valid poster URL
+    })
+    .filter(movie => {
+      if (force) return true
       const filepath = join(postersDir, `${movie.imdbId}.jpg`)
-      if (existsSync(filepath)) {
-        return false
-      }
-    }
+      return !existsSync(filepath) // Not already downloaded
+    })
+    .filter(movie => !failedPosters.has(movie.imdbId)) // Not previously failed
+    .slice(0, limit) // Take only limit items
 
-    return true
-  })
-
-  const total = Math.min(toProcess.length, limit)
+  const total = toProcess.length
 
   let count = 0
   for (const movie of toProcess) {
-    if (count >= limit) break
-
     emitProgress({
       type: 'posters',
       status: 'in_progress',
