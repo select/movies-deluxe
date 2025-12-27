@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import { getPrimaryTitle } from '../../shared/utils/movieTitle'
+import { getPrimaryTitle, normalizeTitleForComparison } from '../../shared/utils/movieTitle'
 import type { MoviesDatabase, MovieEntry, MovieSource } from '../../shared/types/movie'
 
 const DATA_DIR = join(process.cwd(), 'public/data')
@@ -418,17 +418,6 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
  */
 
 /**
- * Normalize title for comparison (remove punctuation, lowercase, trim)
- */
-export function normalizeTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s]/g, '') // Remove punctuation
-    .replace(/\s+/g, ' ') // Normalize whitespace
-    .trim()
-}
-
-/**
  * Find duplicate movies grouped by normalized title
  * Returns a Map where keys are normalized titles and values are arrays of movie entries
  */
@@ -440,7 +429,7 @@ export function findDuplicates(db: MoviesDatabase): Map<string, MovieEntry[]> {
   const titleGroups = new Map<string, MovieEntry[]>()
 
   for (const entry of entries) {
-    const normalized = normalizeTitle(getPrimaryTitle(entry))
+    const normalized = normalizeTitleForComparison(getPrimaryTitle(entry))
     if (!titleGroups.has(normalized)) {
       titleGroups.set(normalized, [])
     }
