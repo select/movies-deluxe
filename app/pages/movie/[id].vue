@@ -180,18 +180,18 @@
 
               <!-- Action Buttons -->
               <div class="flex flex-wrap gap-3 mb-6">
-                <!-- Watchlist Button -->
+                <!-- Liked Button -->
                 <button
                   class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-700 dark:bg-gray-800 text-white hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors"
-                  @click="toggleWatchlist"
+                  @click="toggleLiked"
                 >
                   <div
                     :class="[
                       'i-mdi-heart text-lg',
-                      isInWatchlist ? 'text-red-500' : ''
+                      isLiked ? 'text-red-500' : ''
                     ]"
                   />
-                  {{ isInWatchlist ? 'In Watchlist' : 'Add to Watchlist' }}
+                  {{ isLiked ? 'Liked' : 'Like' }}
                 </button>
 
                 <!-- Share Button -->
@@ -519,7 +519,7 @@
               <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Toggle watchlist</span>
+              <span class="text-gray-700 dark:text-gray-300">Toggle liked</span>
               <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
             </div>
             <div class="flex items-center justify-between">
@@ -547,7 +547,7 @@ import type { MovieEntry, ArchiveOrgSource } from '~/types'
 const route = useRoute()
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
-const watchlistStore = useWatchlistStore()
+const likedMoviesStore = useLikedMoviesStore()
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
@@ -567,9 +567,9 @@ const showShareToast = ref(false)
 const shareToastMessage = ref('')
 const copied = ref(false)
 
-// Watchlist computed
-const isInWatchlist = computed(() => {
-  return movie.value ? watchlistStore.isInWatchlist(movie.value.imdbId) : false
+// Liked computed
+const isLiked = computed(() => {
+  return movie.value ? likedMoviesStore.isLiked(movie.value.imdbId) : false
 })
 
 // Load related movies
@@ -577,8 +577,8 @@ const loadRelatedMovies = async (movieId: string) => {
   relatedMovies.value = []
   try {
     relatedMovies.value = await movieStore.getRelatedMovies(movieId, 8)
-  } catch (err) {
-    console.error('Failed to load related movies:', err)
+  } catch (_err) {
+    console.error('Failed to load related movies:', _err)
     relatedMovies.value = []
   }
 }
@@ -649,10 +649,10 @@ const setupKeyboardNavigation = () => {
 
       case ' ':
       case 'Enter':
-        // Toggle watchlist (only if Space or Enter)
+        // Toggle liked (only if Space or Enter)
         if (event.key === ' ' || event.key === 'Enter') {
           event.preventDefault() // Prevent page scroll on Space
-          toggleWatchlist()
+          toggleLiked()
         }
         break
 
@@ -803,10 +803,10 @@ const updateMetaTags = (movie: MovieEntry) => {
   })
 }
 
-// Toggle watchlist
-const toggleWatchlist = () => {
+// Toggle liked
+const toggleLiked = () => {
   if (!movie.value) return
-  watchlistStore.toggle(movie.value.imdbId)
+  likedMoviesStore.toggle(movie.value.imdbId)
 }
 
 // Share movie
