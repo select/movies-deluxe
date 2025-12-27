@@ -41,7 +41,7 @@ export default defineConfig({
     glass:
       'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border border-white/20 dark:border-gray-800/30',
     // Skeleton loading styles
-    skeleton: 'bg-gray-100 dark:bg-gray-800/50 shimmer',
+    skeleton: 'bg-gray-100 dark:bg-gray-800/50',
     'skeleton-border': 'border-gray-100 dark:border-gray-800/50',
   },
   preflights: [
