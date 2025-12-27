@@ -74,6 +74,20 @@ async function generateSQLite(
         created_at TEXT NOT NULL
       );
 
+      CREATE TABLE genres (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        movie_count INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE countries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        movie_count INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      );
+
       CREATE TABLE sources (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         movieId TEXT NOT NULL,
@@ -119,6 +133,10 @@ async function generateSQLite(
       CREATE INDEX idx_sources_movieId ON sources(movieId);
       CREATE INDEX idx_sources_type ON sources(type);
       CREATE INDEX idx_sources_channelId ON sources(channelId);
+      CREATE INDEX idx_genres_name ON genres(name);
+      CREATE INDEX idx_genres_count ON genres(movie_count DESC);
+      CREATE INDEX idx_countries_name ON countries(name);
+      CREATE INDEX idx_countries_count ON countries(movie_count DESC);
       CREATE INDEX idx_related_movies_movieId ON related_movies(movieId);
       CREATE INDEX idx_related_movies_score ON related_movies(movieId, score DESC);
     `)
@@ -134,6 +152,16 @@ async function generateSQLite(
 
     const insertChannel = sqlite.prepare(`
       INSERT OR IGNORE INTO channels (id, name, created_at)
+      VALUES (?, ?, ?)
+    `)
+
+    const insertGenre = sqlite.prepare(`
+      INSERT OR IGNORE INTO genres (name, movie_count, created_at)
+      VALUES (?, ?, ?)
+    `)
+
+    const insertCountry = sqlite.prepare(`
+      INSERT OR IGNORE INTO countries (name, movie_count, created_at)
       VALUES (?, ?, ?)
     `)
 
@@ -260,6 +288,53 @@ async function generateSQLite(
           })
         }
       }
+
+      // 6.5. Populate Genres and Countries
+      logger.info('Populating genres and countries...')
+      onProgress?.({
+        current: movies.length,
+        total: movies.length,
+        message: 'Populating genres and countries',
+      })
+
+      const genreCounts = new Map<string, number>()
+      const countryCounts = new Map<string, number>()
+
+      for (const movie of movies) {
+        if (movie.metadata?.Genre) {
+          const genres = movie.metadata.Genre.split(',').map(g => g.trim())
+          genres.forEach(genre => {
+            if (genre && genre !== 'N/A') {
+              genreCounts.set(genre, (genreCounts.get(genre) || 0) + 1)
+            }
+          })
+        }
+
+        if (movie.metadata?.Country) {
+          const countries = movie.metadata.Country.split(',').map(c => c.trim())
+          countries.forEach(country => {
+            if (country && country !== 'N/A') {
+              // Normalize country names
+              let normalizedCountry = country
+              if (country === 'USA') normalizedCountry = 'United States'
+              if (country === 'UK') normalizedCountry = 'United Kingdom'
+
+              countryCounts.set(normalizedCountry, (countryCounts.get(normalizedCountry) || 0) + 1)
+            }
+          })
+        }
+      }
+
+      const now = new Date().toISOString()
+      for (const [name, count] of genreCounts) {
+        insertGenre.run(name, count, now)
+      }
+
+      for (const [name, count] of countryCounts) {
+        insertCountry.run(name, count, now)
+      }
+
+      logger.info(`Inserted ${genreCounts.size} genres and ${countryCounts.size} countries`)
 
       // 7. Calculate Related Movies
       logger.info('Calculating related movies...')

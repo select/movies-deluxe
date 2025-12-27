@@ -194,9 +194,9 @@ export const useFilterStore = defineStore('filter', () => {
         totalMovies.value = totalCount
       }
     } catch (err: any) {
-      console.error('[FilterStore] Lightweight query failed:', err)
-      if (err.message) console.error('Error message:', err.message)
-      if (err.stack) console.error('Stack:', err.stack)
+      window.console.error('[FilterStore] Lightweight query failed:', err)
+      if (err.message) window.console.error('Error message:', err.message)
+      if (err.stack) window.console.error('Stack:', err.stack)
       lightweightMovies.value = []
     } finally {
       isFiltering.value = false
@@ -323,8 +323,8 @@ export const useFilterStore = defineStore('filter', () => {
         totalMovies.value = totalCount
       }
     } catch (err: any) {
-      console.error('[FilterStore] SQL filtering failed:', err)
-      if (err.message) console.error('Error message:', err.message)
+      window.console.error('[FilterStore] SQL filtering failed:', err)
+      if (err.message) window.console.error('Error message:', err.message)
       filteredMovies.value = []
     } finally {
       isFiltering.value = false

@@ -48,6 +48,18 @@ export {
   MatchConfidence,
 } from '~~/shared/types/movie'
 
+export type {
+  Genre,
+  Country,
+  YouTubeChannel,
+  GenreOption,
+  CountryOption,
+  ChannelOption,
+  GenresResponse,
+  CountriesResponse,
+  ChannelsResponse,
+} from '~~/shared/types/filters'
+
 /**
  * Frontend-specific types
  */

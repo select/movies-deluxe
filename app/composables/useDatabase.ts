@@ -133,6 +133,30 @@ function createDatabase() {
     })
   }
 
+  const getFilterOptions = async (): Promise<{
+    genres: any[]
+    countries: any[]
+    channels: any[]
+  }> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: any) =>
+          resolve({
+            genres: data.genres,
+            countries: data.countries,
+            channels: data.channels,
+          }),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'get-filter-options', id })
+    })
+  }
+
   return {
     init,
     query,
@@ -140,6 +164,7 @@ function createDatabase() {
     lightweightQuery,
     queryByIds,
     getRelatedMovies,
+    getFilterOptions,
     isReady,
   }
 }
