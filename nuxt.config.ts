@@ -31,13 +31,11 @@ export default defineNuxtConfig({
               const prefersDark = isDark === null ? true : isDark === 'true';
               if (prefersDark) {
                 document.documentElement.classList.add('dark');
-                // Set body background immediately before CSS loads
+                // Set background immediately before CSS loads
                 document.documentElement.style.backgroundColor = '#171717';
-                document.body.style.backgroundColor = '#171717';
               } else {
                 // Set light mode background
                 document.documentElement.style.backgroundColor = '#ffffff';
-                document.body.style.backgroundColor = '#ffffff';
               }
             })();
           `,
@@ -48,9 +46,13 @@ export default defineNuxtConfig({
         {
           innerHTML: `
             /* Prevent flash of unstyled content */
-            html, body {
+            html {
+              background-color: inherit;
+            }
+            body {
               margin: 0;
               padding: 0;
+              background-color: inherit;
             }
             /* Splash screen to prevent FOUC during hydration */
             #app-splash {
@@ -60,7 +62,7 @@ export default defineNuxtConfig({
               display: flex;
               align-items: center;
               justify-content: center;
-              background: inherit; /* Inherit from body inline style */
+              background: inherit; /* Inherit from html inline style */
               transition: opacity 0.3s ease-out;
             }
             #app-splash.hidden {
