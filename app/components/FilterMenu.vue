@@ -166,12 +166,16 @@
                   <p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-2">
                     YouTube Channels
                   </p>
+                  <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+                    Loading channels...
+                  </div>
                   <AppInputCheckbox
-                    v-for="channel in youtubeChannels"
-                    :key="channel"
-                    :checked="filters.sources.includes(channel)"
-                    :label="channel"
-                    @change="toggleSource(channel)"
+                    v-for="channel in channels"
+                    v-else
+                    :key="channel.id"
+                    :checked="filters.sources.includes(channel.name)"
+                    :label="`${channel.name} (${channel.count})`"
+                    @change="toggleSource(channel.name)"
                   />
                 </div>
               </div>
@@ -199,19 +203,22 @@
                 title="Genres"
                 icon="i-mdi-movie-filter"
               >
-                <div class="flex flex-wrap gap-2">
+                <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+                  Loading genres...
+                </div>
+                <div v-else class="flex flex-wrap gap-2">
                   <button
-                    v-for="genre in availableGenres"
-                    :key="genre"
+                    v-for="genre in genres"
+                    :key="genre.name"
                     :class="[
                       'px-3 py-1.5 text-sm rounded-full transition-colors',
-                      filters.genres.includes(genre)
+                      filters.genres.includes(genre.name)
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     ]"
-                    @click="toggleGenre(genre)"
+                    @click="toggleGenre(genre.name)"
                   >
-                    {{ genre }}
+                    {{ genre.name }} ({{ genre.count }})
                   </button>
                 </div>
               </FilterSection>
@@ -221,23 +228,31 @@
                 title="Countries"
                 icon="i-mdi-earth"
               >
-                <div class="flex flex-wrap gap-2">
+                <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+                  Loading countries...
+                </div>
+                <div v-else class="flex flex-wrap gap-2">
                   <button
-                    v-for="country in availableCountries"
-                    :key="country"
+                    v-for="country in countries"
+                    :key="country.name"
                     :class="[
                       'px-3 py-1.5 text-sm rounded-full transition-colors',
-                      filters.countries.includes(country)
+                      filters.countries.includes(country.name)
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     ]"
-                    @click="toggleCountry(country)"
+                    @click="toggleCountry(country.name)"
                   >
-                    {{ country }}
+                    {{ country.name }} ({{ country.count }})
                   </button>
                 </div>
               </FilterSection>
             </div>
+          </div>
+          <!-- Error state -->
+          <div v-if="filterLoadError" class="text-sm text-red-500 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            {{ filterLoadError }}
+            <button class="underline ml-2 font-medium" @click="fetchFilterOptions">Retry</button>
           </div>
         </div>
       </div>
@@ -246,8 +261,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SortOption } from '~/types'
-import { YOUTUBE_CHANNELS, AVAILABLE_GENRES, AVAILABLE_COUNTRIES } from '@/constants/filters'
+import type { SortOption, GenreOption, CountryOption, ChannelOption } from '~/types'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { onClickOutside, useScrollLock } from '@vueuse/core'
 
@@ -268,15 +282,47 @@ const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetada
 // Get sort options from utils
 const sortOptions = SORT_OPTIONS
 
-// Import filter constants
-const youtubeChannels = YOUTUBE_CHANNELS
-const availableGenres = AVAILABLE_GENRES
-const availableCountries = AVAILABLE_COUNTRIES
+// Dynamic filter options
+const genres = ref<GenreOption[]>([])
+const countries = ref<CountryOption[]>([])
+const channels = ref<ChannelOption[]>([])
+const isLoadingFilters = ref(true)
+const filterLoadError = ref<string | null>(null)
+
+const fetchFilterOptions = async () => {
+  isLoadingFilters.value = true
+  filterLoadError.value = null
+
+  try {
+    const db = useDatabase()
+    if (db.isReady.value) {
+      console.log('[FilterMenu] Fetching filter options from SQLite...')
+      const options = await db.getFilterOptions()
+      genres.value = options.genres
+      countries.value = options.countries
+      channels.value = options.channels
+    }
+  } catch (error) {
+    console.error('Failed to load filter options:', error)
+    filterLoadError.value = 'Failed to load filter options'
+  } finally {
+    isLoadingFilters.value = false
+  }
+}
+
+// Watch for DB ready to refresh filters from SQLite
+const db = useDatabase()
+watch(() => db.isReady.value, (ready) => {
+  if (ready) {
+    fetchFilterOptions()
+  }
+})
 
 // Developer mode detection (localhost only)
 const isDev = ref(false)
 onMounted(() => {
   isDev.value = isLocalhost()
+  fetchFilterOptions()
 })
 
 // Handle sort change

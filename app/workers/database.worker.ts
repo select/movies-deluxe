@@ -325,6 +325,36 @@ self.onmessage = async e => {
       console.log('Worker query-related result length:', result.length)
 
       self.postMessage({ id, result })
+    } else if (type === 'get-filter-options') {
+      if (!db) {
+        throw new Error('Database not initialized. Call init first.')
+      }
+
+      const genres = db.exec({
+        sql: 'SELECT name, movie_count as count FROM genres ORDER BY movie_count DESC, name ASC',
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      const countries = db.exec({
+        sql: 'SELECT name, movie_count as count FROM countries ORDER BY movie_count DESC, name ASC',
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      const channels = db.exec({
+        sql: `
+          SELECT c.id, c.name, COUNT(s.id) as count
+          FROM channels c
+          LEFT JOIN sources s ON s.channelId = c.id
+          GROUP BY c.id, c.name
+          ORDER BY c.name ASC
+        `,
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      self.postMessage({ id, genres, countries, channels })
     }
   } catch (err: any) {
     console.error('Worker error:', err)
