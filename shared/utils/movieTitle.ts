@@ -42,8 +42,22 @@ export function getAllTitles(movie: MovieEntry | { title: string }): string[] {
 }
 
 /**
- * Normalize title for comparison (lowercase, trimmed)
+ * Normalize title for basic comparison (lowercase, trimmed)
+ * Use this for simple case-insensitive comparisons
  */
 export function normalizeTitle(title: string): string {
   return (title || '').toLowerCase().trim()
+}
+
+/**
+ * Normalize title for fuzzy comparison (remove punctuation, lowercase, trim)
+ * Use this for deduplication and fuzzy matching where you want to ignore
+ * punctuation differences (e.g., "Spider-Man" vs "Spider Man")
+ */
+export function normalizeTitleForComparison(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '') // Remove punctuation
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim()
 }

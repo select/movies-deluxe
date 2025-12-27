@@ -6,7 +6,7 @@
  */
 
 import { defineEventHandler, readBody, createError } from 'h3'
-import { getPrimaryTitle } from '../../../../shared/utils/movieTitle'
+import { getPrimaryTitle, normalizeTitleForComparison } from '../../../../shared/utils/movieTitle'
 
 interface DeduplicateOptions {
   dryRun?: boolean
@@ -66,17 +66,6 @@ function similarityRatio(str1: string, str2: string): number {
 }
 
 /**
- * Normalize title for comparison
- */
-function normalizeTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-/**
  * Find duplicate groups by title similarity
  */
 function findDuplicateGroups(
@@ -94,7 +83,7 @@ function findDuplicateGroups(
 
     const group: Array<[string, MovieEntry]> = [[key1, entry1]]
     processed.add(key1)
-    const normalized1 = normalizeTitle(getPrimaryTitle(entry1))
+    const normalized1 = normalizeTitleForComparison(getPrimaryTitle(entry1))
 
     for (let j = i + 1; j < entries.length; j++) {
       const entry2 = entries[j]
@@ -102,7 +91,7 @@ function findDuplicateGroups(
       const [key2, entry2Data] = entry2
       if (processed.has(key2)) continue
 
-      const normalized2 = normalizeTitle(getPrimaryTitle(entry2Data))
+      const normalized2 = normalizeTitleForComparison(getPrimaryTitle(entry2Data))
       const similarity = similarityRatio(normalized1, normalized2)
 
       if (similarity >= threshold) {
