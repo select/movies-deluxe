@@ -77944,5 +77944,107 @@
     "failedAt": "2025-12-27T16:38:27.307Z",
     "lastAttempt": "2025-12-27T16:38:27.307Z",
     "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-TheSunSetsAtDawn",
+    "originalTitle": "The Sun Sets At Dawn",
+    "year": 1950,
+    "attempts": [
+      {
+        "query": "The Sun Sets At Dawn",
+        "year": 1950
+      },
+      {
+        "query": "The Sun Sets At Dawn",
+        "year": 1950
+      }
+    ],
+    "failedAt": "2025-12-27T20:59:20.367Z",
+    "lastAttempt": "2025-12-27T20:59:20.367Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-TheSunShinesBright1953",
+    "originalTitle": "The Sun Shines Bright",
+    "year": 1953,
+    "attempts": [
+      {
+        "query": "The Sun Shines Bright",
+        "year": 1953
+      },
+      {
+        "query": "The Sun Shines Bright",
+        "year": 1953
+      }
+    ],
+    "failedAt": "2025-12-27T20:59:52.195Z",
+    "lastAttempt": "2025-12-27T20:59:52.195Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-TheSunbeam",
+    "originalTitle": "The Sunbeam",
+    "attempts": [
+      {
+        "query": "The Sunbeam"
+      },
+      {
+        "query": "The Sunbeam"
+      }
+    ],
+    "failedAt": "2025-12-27T21:19:07.219Z",
+    "lastAttempt": "2025-12-27T21:19:07.219Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-TheSunbeam_201507",
+    "originalTitle": "\"The Sunbeam\" (1912) director D. W. Griffith, cinematographer Billy Bitzer",
+    "year": 1912,
+    "attempts": [
+      {
+        "query": "The Sunbeam",
+        "year": 1912
+      },
+      {
+        "query": "\"The Sunbeam\"",
+        "year": 1912
+      }
+    ],
+    "failedAt": "2025-12-27T21:19:13.704Z",
+    "lastAttempt": "2025-12-27T21:19:13.704Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-TheSwap",
+    "originalTitle": "The Swap",
+    "year": 1979,
+    "attempts": [
+      {
+        "query": "The Swap",
+        "year": 1979
+      },
+      {
+        "query": "The Swap",
+        "year": 1979
+      }
+    ],
+    "failedAt": "2025-12-27T21:19:20.147Z",
+    "lastAttempt": "2025-12-27T21:19:20.147Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-TheSwap_201511",
+    "originalTitle": "The Swap",
+    "attempts": [
+      {
+        "query": "The Swap"
+      },
+      {
+        "query": "The Swap"
+      }
+    ],
+    "failedAt": "2025-12-27T21:19:26.586Z",
+    "lastAttempt": "2025-12-27T21:19:26.586Z",
+    "reason": "No OMDB match found"
   }
 ]

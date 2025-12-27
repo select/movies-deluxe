@@ -1,94 +1,66 @@
 # Agent Instructions
 
-## Issue Tracking with bd (beads)
-
-**IMPORTANT**: This project uses **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs, task lists, or other tracking methods.
-
-### Why bd?
-
-- Dependency-aware: Track blockers and relationships between issues
-- Git-friendly: Auto-syncs to JSONL for version control
-- Agent-optimized: JSON output, ready work detection, discovered-from links
-- Prevents duplicate tracking systems and confusion
-
-### Auto-Sync
-
-bd automatically syncs with git:
-
-- Exports to `.beads/issues.jsonl` after changes (5s debounce)
-- Imports from JSONL when newer (e.g., after `git pull`)
-- No manual export/import needed!
-- Always commit `.beads/issues.jsonl` together with code changes so issue state stays in sync with code state
-
-### GitHub Copilot Integration
-
-If using GitHub Copilot, also create `.github/copilot-instructions.md` for automatic instruction loading.
-Run `bd onboard` to get the content, or see step 2 of the onboard instructions.
-
-### MCP Server (Recommended)
-
-If using Claude or MCP-compatible clients, install the beads MCP server:
+## Commands
 
 ```bash
-pip install beads-mcp
+# Development
+pnpm dev                    # Dev server (port 3003)
+pnpm build                  # Production build
+pnpm tsx scripts/<name>.ts  # Run scripts
+
+# Code Quality
+pnpm lint                   # Run oxlint + eslint
+pnpm lint:fix               # Auto-fix issues
+pnpm format                 # Format with Prettier
+pnpm typecheck              # TypeScript checking
+
+# Database
+pnpm db:generate            # Generate SQLite from movies.json
 ```
 
-Add to MCP config (e.g., `~/.config/claude/config.json`):
+**Testing**: ❌ No test framework configured. Do NOT run tests.
 
-```json
-{
-  "beads": {
-    "command": "beads-mcp",
-    "args": []
-  }
-}
-```
+## Code Style
 
-Then use `mcp__beads__*` functions instead of CLI commands.
+**Formatting**: No semicolons, single quotes, 2 spaces, 100 char width, LF line endings
 
-### Managing AI-Generated Planning Documents
+**Linting**:
 
-AI assistants often create planning and design documents during development:
+- Unused vars start with `_`
+- `console.log` warning in frontend, allowed in `scripts/`, `server/`
+- Prefer `const` over `let`
 
-- PLAN.md, IMPLEMENTATION.md, ARCHITECTURE.md
-- DESIGN.md, CODEBASE_SUMMARY.md, INTEGRATION_PLAN.md
-- TESTING_GUIDE.md, TECHNICAL_DESIGN.md, and similar files
+**Auto-imports**: Components, composables, utils, Vue/Nuxt built-ins (no import needed)
+**Manual imports**: Types (`import type { ... }`), external packages
 
-**Best Practice: Use a dedicated directory for these ephemeral files**
+**Naming**:
 
-**Recommended approach:**
+- Components: `PascalCase.vue`
+- Pages: `kebab-case.vue`
+- Composables/Stores: `useCamelCase.ts`
+- Utils: `camelCase.ts`
+- Types: `PascalCase`
+- Constants: `UPPER_SNAKE_CASE`
 
-- Create a `history/` directory in the project root
-- Store ALL AI-generated planning/design docs in `history/`
-- Keep the repository root clean and focused on permanent project files
-- Only access `history/` when explicitly asked to review past planning
+**Error Handling**: Always use try/catch for async operations, return fallback values
 
-**Example .gitignore entry (optional):**
+**Vue**: Use `<script setup lang="ts">`, `ref()` for primitives, `reactive()` for objects
 
-```
-# AI planning documents (ephemeral)
-history/
-```
+## Issue Tracking with bd (beads)
 
-**Benefits:**
+**IMPORTANT**: Use **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs or task lists.
 
-- ✅ Clean repository root
-- ✅ Clear separation between ephemeral and permanent documentation
-- ✅ Easy to exclude from version control if desired
-- ✅ Preserves planning history for archeological research
-- ✅ Reduces noise when browsing the project
+**Why bd?** Dependency-aware, git-friendly (auto-syncs to `.beads/issues.jsonl`), agent-optimized with JSON output.
+
+**Auto-Sync**: Exports to JSONL after changes (5s debounce), imports on `git pull`. Always commit `.beads/issues.jsonl` with code changes.
+
+**MCP Server** (optional): `pip install beads-mcp`, then add to MCP config for `mcp__beads__*` functions.
+
+**AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean.
 
 ## Commit Message Format (Conventional Commits)
 
 **IMPORTANT**: This project uses **Conventional Commits** for ALL commit messages. Commits are automatically validated using commitlint and git hooks.
-
-### Why Conventional Commits?
-
-- **Automated changelogs**: Generate release notes automatically
-- **Semantic versioning**: Determine version bumps from commit history
-- **Clear history**: Understand changes at a glance
-- **Better collaboration**: Consistent format across all contributors
-- **CI/CD integration**: Trigger builds/deployments based on commit types
 
 ### Format Specification
 
@@ -103,21 +75,8 @@ history/
 **Header (required)**: `<type>(<scope>): <subject>`
 
 - Maximum 120 characters
-- Type and subject are required
-- Scope is optional but recommended
+- Type and subject are required, scope is optional
 - Subject must be lowercase, no period at end
-
-**Body (optional)**: Detailed description
-
-- Separated from header by blank line
-- Maximum 120 characters per line
-- Explain the "why" not the "what"
-
-**Footer (optional)**: Metadata
-
-- Separated from body by blank line
-- Breaking changes: `BREAKING CHANGE: description`
-- Issue references: `Closes #123`, `Fixes #456`
 
 ### Commit Types
 
@@ -135,200 +94,34 @@ history/
 | `chore`    | Maintenance tasks         | `chore: update dependencies`                          |
 | `revert`   | Revert previous commit    | `revert: feat(scraper): add youtube scraping`         |
 
-### Scope Usage (Optional)
+### Common Scopes
 
-Scopes provide context about what part of the codebase changed:
-
-**Common scopes for this project:**
-
-- `scraper` - Scraping scripts (archive, youtube)
-- `validation` - Data validation
-- `enrichment` - OMDB enrichment
-- `store` - Pinia store
-- `types` - TypeScript types
-- `utils` - Utility functions
-- `config` - Configuration files
-- `deps` - Dependencies
-
-**Examples:**
-
-```bash
-feat(scraper): add archive.org movie scraping
-fix(validation): correct imdb id format check
-docs(readme): add scraping instructions
-refactor(store): simplify movie loading logic
-```
-
-**No scope is also valid:**
-
-```bash
-feat: add movie search functionality
-fix: correct data validation logic
-```
+`scraper`, `validation`, `enrichment`, `store`, `types`, `utils`, `config`, `deps`
 
 ### Breaking Changes
 
-Breaking changes MUST be indicated in the commit footer using `BREAKING CHANGE:` followed by a description.
-
-**Format:**
+Use `BREAKING CHANGE:` in footer:
 
 ```
 feat(api): change movie data structure
 
-BREAKING CHANGE: Movie entries now use nested source objects instead of flat structure. Update all consumers to use movie.sources[0].url instead of movie.url.
-```
-
-**Alternative (NOT recommended):**
-
-```
-feat(api)!: change movie data structure
+BREAKING CHANGE: Movie entries now use nested source objects instead of flat structure.
 ```
 
 ### Good Examples
 
 ```bash
-# Simple feature
 feat(scraper): add youtube channel scraping
-
-# Bug fix with scope
 fix(validation): handle missing imdb ids correctly
-
-# Feature with body
 feat(enrichment): add omdb api integration
 
 Integrate OMDB API to enrich movie metadata with ratings,
-plot summaries, and additional details. Includes rate limiting
-and error handling for API failures.
+plot summaries, and additional details.
 
-# Breaking change
-refactor(types)!: restructure movie entry interface
-
-BREAKING CHANGE: MovieEntry interface now requires 'sources' array
-instead of single 'url' field. Migration guide in docs/migration.md.
-
-Closes #42
-
-# Multiple issues
-fix(validation): improve duplicate detection
-
-Fixes #123, #124, #125
+Closes movies-deluxe-uq0.12
 ```
 
-### Bad Examples
-
-```bash
-# ❌ Missing type
-Add youtube scraping
-
-# ❌ Uppercase subject
-feat(scraper): Add YouTube scraping
-
-# ❌ Period at end
-feat(scraper): add youtube scraping.
-
-# ❌ Too vague
-fix: bug fix
-
-# ❌ Wrong type
-update: add new feature
-
-# ❌ No subject
-feat(scraper):
-
-# ❌ Breaking change in subject (use footer instead)
-feat(api): BREAKING: change data structure
-```
-
-### Validation
-
-Commits are automatically validated on every commit using:
-
-- **commitlint**: Validates commit message format
-- **git hooks**: Runs validation before commit is created
-
-**What gets validated:**
-
-- ✅ Type is one of the allowed types
-- ✅ Subject is lowercase and doesn't end with period
-- ✅ Header is max 120 characters
-- ✅ Body lines are max 120 characters
-- ✅ Proper blank lines between sections
-
-**If validation fails:**
-
-```bash
-$ git commit -m "Add feature"
-⧗   input: Add feature
-✖   type must be one of [feat, fix, docs, ...] [type-enum]
-✖   found 1 problems, 0 warnings
-```
-
-### Emergency Bypass
-
-**Use sparingly!** If you absolutely must bypass validation:
-
-```bash
-git commit --no-verify -m "emergency fix"
-```
-
-**When to use `--no-verify`:**
-
-- ✅ Emergency hotfixes in production
-- ✅ Reverting broken commits
-- ✅ Fixing broken git hooks
-
-**When NOT to use:**
-
-- ❌ "I don't want to write a proper message"
-- ❌ Regular development work
-- ❌ "It's faster this way"
-
-### Testing the Setup
-
-**Test invalid commit (should fail):**
-
-```bash
-echo "invalid message" | npx commitlint
-# Expected: ✖ type must be one of [feat, fix, ...]
-```
-
-**Test valid commit (should pass):**
-
-```bash
-echo "feat: add new feature" | npx commitlint
-# Expected: (no output, exit code 0)
-```
-
-**Test with git:**
-
-```bash
-# This should fail
-git commit --allow-empty -m "invalid message"
-
-# This should succeed
-git commit --allow-empty -m "feat: test conventional commits"
-```
-
-### CI/CD Integration
-
-**GitHub Actions example:**
-
-```yaml
-- name: Validate commit messages
-  run: |
-    pnpm commitlint --from=HEAD~1 --to=HEAD
-```
-
-**Pre-push validation:**
-
-```bash
-# Validate all commits since main
-git log main..HEAD --format=%s | while read msg; do
-  echo "$msg" | npx commitlint
-done
-```
-
-### Rules and Best Practices
+### Rules
 
 **DO:**
 
@@ -336,9 +129,7 @@ done
 - ✅ Use imperative mood: "fix bug" not "fixes bug"
 - ✅ Be specific: "fix validation for imdb ids" not "fix bug"
 - ✅ Reference issues: "Closes #123" in footer
-- ✅ Explain WHY in body, not WHAT (code shows what)
-- ✅ Use scopes to provide context
-- ✅ Keep subject under 72 chars (120 is max, but shorter is better)
+- ✅ Explain WHY in body, not WHAT
 
 **DON'T:**
 
@@ -346,66 +137,32 @@ done
 - ❌ Use vague descriptions: "update", "change", "modify"
 - ❌ Capitalize subject
 - ❌ End subject with period
-- ❌ Mix multiple unrelated changes in one commit
 - ❌ Use `--no-verify` for regular commits
-- ❌ Forget to reference related issues
 
-### Integration with bd (beads)
-
-When closing beads issues, reference them in commit footer:
+### Emergency Bypass
 
 ```bash
-feat(scraper): add youtube channel scraping
-
-Implements youtube scraping for configured channels.
-Includes rate limiting and error handling.
-
-Closes movies-deluxe-uq0.12
+git commit --no-verify -m "emergency fix"
 ```
 
-### Tools and Resources
+Use ONLY for emergency hotfixes, reverting broken commits, or fixing broken git hooks.
 
-**Installed packages:**
+### Validation
 
-- `@commitlint/cli` - Commit message linter
-- `@commitlint/config-conventional` - Conventional commits rules
-- `simple-git-hooks` - Git hooks manager
-- `lint-staged` - Run linters on staged files
-
-**Configuration files:**
-
-- `commitlint.config.js` - Commitlint rules
-- `package.json` - Git hooks and lint-staged config
-
-**Useful commands:**
+Commits are validated on every commit. If validation fails:
 
 ```bash
-# Validate last commit
-git log -1 --pretty=%B | npx commitlint
-
-# Validate commit range
-npx commitlint --from=HEAD~5 --to=HEAD
-
-# Reinstall git hooks
-pnpm simple-git-hooks
-
-# Check hook status
-ls -la .git/hooks/commit-msg .git/hooks/pre-commit
+$ git commit -m "Add feature"
+⧗   input: Add feature
+✖   type must be one of [feat, fix, docs, ...] [type-enum]
 ```
 
-### Important Rules
+**Test your setup:**
 
-- ✅ Use conventional commits for ALL commits
-- ✅ Always include a type (feat, fix, docs, etc.)
-- ✅ Keep subject lowercase and concise
-- ✅ Use body to explain WHY, not WHAT
-- ✅ Reference issues in footer
-- ✅ Use `BREAKING CHANGE:` footer for breaking changes
-- ✅ Test your commit message before committing
-- ❌ Do NOT use `--no-verify` for regular commits
-- ❌ Do NOT use vague commit messages
-- ❌ Do NOT mix unrelated changes
-- ❌ Do NOT forget to explain breaking changes
+```bash
+echo "feat: add new feature" | npx commitlint  # Should pass
+echo "invalid message" | npx commitlint        # Should fail
+```
 
 For more details, see https://www.conventionalcommits.org/
 
@@ -427,7 +184,6 @@ For more details, see https://www.conventionalcommits.org/
 - `shared/types/` - TypeScript types that are used on server and frontend (`~/types`)
   **`public/`** - Static files served at root (no processing)
   **`scripts/`** - Node.js scripts (NOT part of Nuxt build)
-
 - Run via `pnpm tsx scripts/<name>.ts`
 - Scripts write directly to `public/data/movies.json`
 

@@ -30,8 +30,32 @@
             <div class="i-mdi-shield-crown text-blue-600" />
             Admin Dashboard
           </h1>
-          <p class="text-gray-500 mt-1">
+          <p class="text-gray-500 mt-1 flex items-center gap-2">
             Manage movie scraping and curation
+            <span
+              v-if="isConnected"
+              class="flex items-center gap-1 text-xs text-green-600 dark:text-green-400"
+              title="EventSource connected"
+            >
+              <div class="i-mdi-circle text-8px animate-pulse" />
+              Live
+            </span>
+            <span
+              v-else-if="isReconnecting"
+              class="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+              title="Reconnecting..."
+            >
+              <div class="i-mdi-circle text-8px animate-pulse" />
+              Reconnecting
+            </span>
+            <span
+              v-else
+              class="flex items-center gap-1 text-xs text-red-600 dark:text-red-400"
+              title="EventSource disconnected"
+            >
+              <div class="i-mdi-circle text-8px" />
+              Offline
+            </span>
           </p>
         </div>
         <div class="flex items-center gap-3">
@@ -222,7 +246,7 @@ import type { ScrapeStats } from '~/types/admin'
 
 const isDev = ref(false)
 const adminStore = useAdminStore()
-const { connect: connectProgress } = useProgress()
+const { connect: connectProgress, isConnected, isReconnecting } = useProgress()
 
 // Extract reactive state from store
 const {
