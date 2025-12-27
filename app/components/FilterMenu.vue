@@ -32,13 +32,22 @@
           <div class="i-mdi-filter-variant text-xl" />
           Filters
         </h2>
-        <button
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          aria-label="Close filters"
-          @click="emit('close')"
-        >
-          <div class="i-mdi-close text-xl" />
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            v-if="hasActiveFilters || filters.searchQuery"
+            class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+            @click="resetFilters"
+          >
+            Clear All
+          </button>
+          <button
+            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            aria-label="Close filters"
+            @click="emit('close')"
+          >
+            <div class="i-mdi-close text-xl" />
+          </button>
+        </div>
       </div>
 
       <!-- Filter Content -->
@@ -52,7 +61,7 @@
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <AppInputRadio
-                  v-for="option in sortOptions"
+                  v-for="option in sortOptions.filter(opt => opt.field !== 'relevance' || filters.searchQuery)"
                   :key="`${option.field}-${option.direction}`"
                   :checked="currentSortOption.field === option.field && currentSortOption.direction === option.direction"
                   :label="option.label"
@@ -174,9 +183,18 @@
                     v-else
                     :key="channel.id"
                     :checked="filters.sources.includes(channel.name)"
-                    :label="`${channel.name} (${channel.count})`"
                     @change="toggleSource(channel.name)"
-                  />
+                  >
+                    <span class="flex items-center justify-between gap-2 flex-1">
+                      <span>{{ channel.name }}</span>
+                      <span 
+                        class="text-xs text-gray-500 dark:text-gray-400"
+                        :title="`${formatCountExact(channel.count)} movies`"
+                      >
+                        {{ formatCount(channel.count) }}
+                      </span>
+                    </span>
+                  </AppInputCheckbox>
                 </div>
               </div>
             </FilterSection>
@@ -211,14 +229,24 @@
                     v-for="genre in genres"
                     :key="genre.name"
                     :class="[
-                      'px-3 py-1.5 text-sm rounded-full transition-colors',
+                      'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
                       filters.genres.includes(genre.name)
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     ]"
+                    :title="`${formatCountExact(genre.count)} movies`"
                     @click="toggleGenre(genre.name)"
                   >
-                    {{ genre.name }} ({{ genre.count }})
+                    <span>{{ genre.name }}</span>
+                    <span
+:class="[
+                      'text-xs font-normal',
+                      filters.genres.includes(genre.name)
+                        ? 'text-blue-100'
+                        : 'text-gray-500 dark:text-gray-400'
+                    ]">
+                      {{ formatCount(genre.count) }}
+                    </span>
                   </button>
                 </div>
               </FilterSection>
@@ -236,14 +264,24 @@
                     v-for="country in countries"
                     :key="country.name"
                     :class="[
-                      'px-3 py-1.5 text-sm rounded-full transition-colors',
+                      'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
                       filters.countries.includes(country.name)
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                     ]"
+                    :title="`${formatCountExact(country.count)} movies`"
                     @click="toggleCountry(country.name)"
                   >
-                    {{ country.name }} ({{ country.count }})
+                    <span>{{ country.name }}</span>
+                    <span
+:class="[
+                      'text-xs font-normal',
+                      filters.countries.includes(country.name)
+                        ? 'text-blue-100'
+                        : 'text-gray-500 dark:text-gray-400'
+                    ]">
+                      {{ formatCount(country.count) }}
+                    </span>
                   </button>
                 </div>
               </FilterSection>
@@ -276,8 +314,8 @@ const emit = defineEmits<{
 }>()
 
 // Use filter store
-const { filters, currentSortOption } = storeToRefs(useFilterStore())
-const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort } = useFilterStore()
+const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useFilterStore())
+const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, resetFilters } = useFilterStore()
 
 // Get sort options from utils
 const sortOptions = SORT_OPTIONS
