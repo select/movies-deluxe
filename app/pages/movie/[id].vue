@@ -572,6 +572,17 @@ const isInWatchlist = computed(() => {
   return movie.value ? watchlistStore.isInWatchlist(movie.value.imdbId) : false
 })
 
+// Load related movies
+const loadRelatedMovies = async (movieId: string) => {
+  relatedMovies.value = []
+  try {
+    relatedMovies.value = await movieStore.getRelatedMovies(movieId, 8)
+  } catch (err) {
+    console.error('Failed to load related movies:', err)
+    relatedMovies.value = []
+  }
+}
+
 // Load movie data
 const loadMovieData = async (movieId: string) => {
   isLoading.value = true
@@ -590,10 +601,8 @@ const loadMovieData = async (movieId: string) => {
     movie.value = foundMovie
     updateMetaTags(foundMovie)
     
-    // Fetch related movies from database
-    movieStore.fetchRelatedMovies(movieId).then(related => {
-      relatedMovies.value = related
-    })
+    // Load related movies
+    loadRelatedMovies(movieId)
   } else {
     error.value = `Movie with ID "${movieId}" not found.`
   }

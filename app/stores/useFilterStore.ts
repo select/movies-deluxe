@@ -331,12 +331,18 @@ export const useFilterStore = defineStore('filter', () => {
     }
   }
 
+  // Throttled search query for performance
+  const throttledSearchQuery = refThrottled(
+    computed(() => filters.value.searchQuery),
+    500
+  )
+
   // Watch for filter changes and fetch
   watch(
     () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { currentPage, lastScrollY, ...rest } = filters.value
-      return JSON.stringify(rest)
+      const { currentPage, lastScrollY, searchQuery, ...rest } = filters.value
+      return JSON.stringify({ ...rest, searchQuery: throttledSearchQuery.value })
     },
     () => {
       console.log('[FilterStore] Filters changed, resetting page and fetching...')

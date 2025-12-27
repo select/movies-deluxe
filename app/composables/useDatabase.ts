@@ -118,7 +118,7 @@ function createDatabase() {
     })
   }
 
-  const queryRelatedMovies = async (imdbId: string, limit: number = 8): Promise<any[]> => {
+  const getRelatedMovies = async (imdbId: string, limit: number = 8): Promise<any[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -139,7 +139,7 @@ function createDatabase() {
     extendedQuery,
     lightweightQuery,
     queryByIds,
-    queryRelatedMovies,
+    getRelatedMovies,
     isReady,
   }
 }

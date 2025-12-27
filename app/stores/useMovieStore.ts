@@ -207,18 +207,34 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fetch related movies for a specific ID from the database
+   * Get related movies for a given movie ID
+   * Returns full MovieEntry objects by querying the database
    */
-  const fetchRelatedMovies = async (imdbId: string, limit: number = 8): Promise<MovieEntry[]> => {
-    if (!db.isReady.value) return []
-
+  const getRelatedMovies = async (movieId: string, limit: number = 8): Promise<MovieEntry[]> => {
     try {
-      const results = await db.queryRelatedMovies(imdbId, limit)
-      if (results.length === 0) return []
+      // Fetch related movie IDs and basic info from database
+      const relatedRows = await db.getRelatedMovies(movieId, limit)
 
-      // Fetch full details for these movies
-      const relatedIds = results.map((r: any) => r.imdbId)
-      return await fetchMoviesByIds(relatedIds)
+      if (!relatedRows || relatedRows.length === 0) {
+        return []
+      }
+
+      // Fetch full movie data for each related movie
+      const relatedMovieIds = relatedRows.map(row => row.imdbId)
+      const fullMovies = await db.queryByIds(relatedMovieIds)
+
+      // Map to MovieEntry objects
+      const movies = fullMovies.map(mapRowToMovie)
+
+      // Sort by original score order (preserve database ordering)
+      const scoreMap = new Map(relatedRows.map(row => [row.imdbId, row.score]))
+      movies.sort((a, b) => {
+        const scoreA = scoreMap.get(a.imdbId) || 0
+        const scoreB = scoreMap.get(b.imdbId) || 0
+        return scoreB - scoreA
+      })
+
+      return movies
     } catch (err) {
       console.error('[MovieStore] Failed to fetch related movies:', err)
       return []
@@ -583,7 +599,7 @@ export const useMovieStore = defineStore('movie', () => {
     fetchMovies,
     fetchMoviesByIds,
     getMovieDetails,
-    fetchRelatedMovies,
+    getRelatedMovies,
     mapRowToMovie,
 
     // Filtering & search
