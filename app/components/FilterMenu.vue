@@ -58,6 +58,7 @@
             <FilterSection
               title="Sort By"
               icon="i-mdi-sort"
+              :default-expanded="true"
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <AppInputRadio
