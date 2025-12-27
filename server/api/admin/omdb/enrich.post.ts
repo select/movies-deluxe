@@ -5,8 +5,6 @@
  * or re-enriching existing movies.
  */
 
-import { defineEventHandler, readBody, createError } from 'h3'
-
 // Note: The following functions are auto-imported from server/utils/:
 // - loadMoviesDatabase, saveMoviesDatabase, getUnmatchedMovies, migrateMovieId (from movieData.ts)
 // - hasFailedOmdbMatch, saveFailedOmdbMatch, clearFailedOmdbMatches, removeFailedOmdbMatch (from failedOmdb.ts)
@@ -89,22 +87,39 @@ export default defineEventHandler(async event => {
       failedCurrent: 0,
     })
 
-    // Get movies to process
-    let moviesToProcess = onlyUnmatched
-      ? getUnmatchedMovies(db)
-      : Object.values(db).filter(
-          (entry): entry is MovieEntry =>
-            typeof entry === 'object' && entry !== null && 'imdbId' in entry
-        )
+    // Get movies to process - optimized to stop early when limit is reached
+    const moviesToProcess: MovieEntry[] = []
+    const targetLimit = limit || Infinity
 
-    // Filter out previously failed matches unless forced
-    if (!forceRetryFailed) {
-      moviesToProcess = moviesToProcess.filter(movie => !hasFailedOmdbMatch(movie.imdbId))
-    }
+    let count = 0
+    const failed = loadFailedOmdbMatches()
 
-    // Apply limit
-    if (limit) {
-      moviesToProcess = moviesToProcess.slice(0, limit)
+    const keys = onlyUnmatched
+      ? await extractMovieKeys('unmatched', key => !failed.has(key))
+      : await extractMovieKeys()
+    const processingTotal = targetLimit || keys.length
+    for (const key of keys) {
+      const value = db[key] as MovieEntry
+      emitProgress({
+        type: 'omdb',
+        status: 'starting',
+        message: `Processing ${key}`,
+        current: count++,
+        total: processingTotal,
+        successCurrent: 0,
+        failedCurrent: 0,
+      })
+      console.log(`Processing ${key}`)
+
+      // Check if we've reached the limit
+      if (moviesToProcess.length >= targetLimit) break
+
+      // Validate it's a movie entry
+      if (typeof value !== 'object' || value === null || !('imdbId' in value)) continue
+
+      const entry = value as MovieEntry
+
+      moviesToProcess.push(entry)
     }
 
     const total = moviesToProcess.length
@@ -119,6 +134,8 @@ export default defineEventHandler(async event => {
       successCurrent: 0,
       failedCurrent: 0,
     })
+
+    console.log('Starting to process movies...')
 
     // Process each movie
     for (const movie of moviesToProcess) {

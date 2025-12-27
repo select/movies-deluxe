@@ -101,14 +101,6 @@ export function saveFailedOmdbMatch(
 }
 
 /**
- * Check if identifier has previously failed OMDB matching
- */
-export function hasFailedOmdbMatch(identifier: string): boolean {
-  const failed = loadFailedOmdbMatches()
-  return failed.has(identifier)
-}
-
-/**
  * Remove from failed OMDB matches (successful retry)
  */
 export function removeFailedOmdbMatch(identifier: string): void {
