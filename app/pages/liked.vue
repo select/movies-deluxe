@@ -33,9 +33,9 @@
         </div>
 
         <!-- Movies Grid -->
-        <template v-else-if="filteredLikedMovies.length > 0 || movieStore.hasActiveFilters">
+        <template v-else-if="filteredLikedMovies.length > 0 || hasActiveFilters">
           <MovieStats
-            v-if="!isLoadingLiked && !movieStore.hasActiveFilters"
+            v-if="!isLoadingLiked && !hasActiveFilters"
             :total-movies="likedCount"
             :filtered-movies="filteredLikedMovies.length"
           />
@@ -93,7 +93,8 @@ useHead({
   ],
 })
 
-const movieStore = useMovieStore()
+const { filters, hasActiveFilters } = storeToRefs(useMovieStore())
+const { loadFromFile, fetchMoviesByIds, resetFilters } = useMovieStore()
 
 // Local state for liked movies (since store uses lazy loading)
 const likedMoviesData = ref<ExtendedMovieEntry[]>([])
@@ -103,7 +104,7 @@ const isLoadingLiked = ref(true)
 onMounted(async () => {
   try {
     // Initialize database if not already loaded
-    await movieStore.loadFromFile()
+    await loadFromFile()
     
     // Get liked movie IDs from localStorage
     const stored = localStorage.getItem('movies-deluxe-liked')
@@ -111,7 +112,7 @@ onMounted(async () => {
       const likedIds: string[] = JSON.parse(stored)
       if (likedIds.length > 0) {
         // Fetch full movie details for liked IDs
-        likedMoviesData.value = await movieStore.fetchMoviesByIds(likedIds)
+        likedMoviesData.value = await fetchMoviesByIds(likedIds)
       }
     }
   } catch (err) {
@@ -133,54 +134,53 @@ const filteredLikedMovies = computed(() => {
   let filtered = liked
   
   // Apply search query
-  const searchQuery = movieStore.filters.searchQuery?.toLowerCase().trim()
+  const searchQuery = filters.value.searchQuery?.toLowerCase().trim()
   if (searchQuery) {
-    filtered = filtered.filter(movie => 
-      movie.title.toLowerCase().includes(searchQuery) ||
-      movie.description?.toLowerCase().includes(searchQuery)
-    )
+    filtered = filtered.filter(movie => {
+      const title = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
+      const plot = movie.metadata?.Plot || ''
+      return title.toLowerCase().includes(searchQuery) || plot.toLowerCase().includes(searchQuery)
+    })
   }
   
   // Apply genre filter
-  if (movieStore.filters.genres && movieStore.filters.genres.length > 0) {
-    filtered = filtered.filter(movie => 
-      movie.genres?.some(genre => movieStore.filters.genres?.includes(genre))
-    )
+  if (filters.value.genres && filters.value.genres.length > 0) {
+    filtered = filtered.filter(movie => {
+      const movieGenres = movie.metadata?.Genre?.split(', ').map(g => g.trim()) || []
+      return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
+    })
   }
   
-  // Apply year range filter
-  if (movieStore.filters.yearRange) {
-    const { min, max } = movieStore.filters.yearRange
+  // Apply year filter
+  if (filters.value.minYear > 0) {
     filtered = filtered.filter(movie => {
-      const year = movie.year
-      return year >= min && year <= max
+      return (movie.year || 0) >= filters.value.minYear
     })
   }
   
   // Apply rating filter
-  if (movieStore.filters.ratingRange) {
-    const { min, max } = movieStore.filters.ratingRange
+  if (filters.value.minRating > 0) {
     filtered = filtered.filter(movie => {
-      const rating = movie.rating || 0
-      return rating >= min && rating <= max
+      const rating = parseFloat(movie.metadata?.imdbRating || '0')
+      return rating >= filters.value.minRating
     })
   }
   
   // Apply source filter
-  if (movieStore.filters.sources && movieStore.filters.sources.length > 0) {
+  if (filters.value.sources && filters.value.sources.length > 0) {
     filtered = filtered.filter(movie => 
-      movie.sources?.some(source => 
-        // Check both label (for Archive.org) and channelName (for YouTube)
-        movieStore.filters.sources?.includes(source.label || source.channelName || '')
-      )
+      movie.sources?.some(source => {
+        if (source.type === 'archive.org') {
+          return filters.value.sources.includes('archive.org')
+        }
+        if (source.type === 'youtube') {
+          return filters.value.sources.includes(source.channelName || '')
+        }
+        return false
+      })
     )
   }
   
   return filtered
 })
-
-// Reset filters
-const resetFilters = () => {
-  movieStore.resetFilters()
-}
 </script>

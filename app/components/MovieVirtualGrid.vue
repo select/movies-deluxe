@@ -55,7 +55,7 @@ const emit = defineEmits<{
   (e: 'load-more'): void
 }>()
 
-const movieStore = useMovieStore()
+const { fetchMoviesByIds } = useMovieStore()
 const { y: windowScrollY } = useWindowScroll()
 const { height: windowHeight, width: windowWidth } = useWindowSize()
 const breakpoints = useBreakpoints(breakpointsTailwind)
@@ -204,7 +204,7 @@ watch(visibleMovieIds, async (newIds) => {
   idsToLoad.forEach(id => loadingIds.value.add(id))
 
   try {
-    const movies = await movieStore.fetchMoviesByIds(idsToLoad)
+    const movies = await fetchMoviesByIds(idsToLoad)
     movies.forEach(movie => {
       loadedMovies.value.set(movie.imdbId, movie)
       // Mark as fully loaded immediately after loading

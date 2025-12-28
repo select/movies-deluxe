@@ -95,10 +95,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const movieStore = useMovieStore()
+const { isLiked: isLikedFn } = useMovieStore()
 
 // Check if movie is liked
-const isMovieLiked = computed(() => movieStore.isLiked(props.movie.imdbId))
+const isMovieLiked = computed(() => isLikedFn(props.movie.imdbId))
 
 // Computed language code
 const languageCode = computed(() => {
