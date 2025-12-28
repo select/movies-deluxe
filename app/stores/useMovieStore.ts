@@ -953,7 +953,7 @@ export const useMovieStore = defineStore('movie', () => {
           ...result.map(m => ({
             imdbId: m.imdbId,
             title: m.title,
-            year: m.year,
+            year: m.year || 0,
           })),
         ]
       } else {
@@ -962,7 +962,7 @@ export const useMovieStore = defineStore('movie', () => {
         lightweightMovies.value = result.map(m => ({
           imdbId: m.imdbId,
           title: m.title,
-          year: m.year,
+          year: m.year || 0,
         }))
       }
 

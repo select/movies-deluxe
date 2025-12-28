@@ -44,7 +44,7 @@
           <button
             v-if="hasActiveFilters || filters.searchQuery"
             class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
-            @click="clearAllFilters"
+            @click="resetFilters"
           >
             Clear All
           </button>
@@ -316,7 +316,7 @@ const emit = defineEmits<{
 
 // Use unified movie store
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
-const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, clearAllFilters } = useMovieStore()
+const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, resetFilters } = useMovieStore()
 
 // Dynamic filter options
 const genres = ref<GenreOption[]>([])

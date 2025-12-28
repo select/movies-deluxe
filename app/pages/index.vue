@@ -3,13 +3,13 @@
   <main class="md:ml-16">
         <div class="px-4 lg:px-[6%] py-8">
           <MovieStats
-            v-if="!movieStore.isInitialLoading && safeTotalMovies > 0"
+            v-if="!isInitialLoading && safeTotalMovies > 0"
             :total-movies="safeTotalMovies"
           />
         </div>
 
         <div class="relative">
-          <template v-if="movieStore.isInitialLoading">
+          <template v-if="isInitialLoading">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4 lg:px-[6%]">
               <MovieCardSkeleton
                 v-for="i in 12"
@@ -68,15 +68,16 @@ useHead({
   ],
 })
 
-const movieStore = useMovieStore()
+const { isInitialLoading, lightweightMovies, totalFiltered, filters } = storeToRefs(useMovieStore())
+const { loadFromFile, setCurrentPage } = useMovieStore()
 
-// Ensure lightweightMovies is always an array
-const safeLightweightMovies = computed(() => movieStore.lightweightMovies || [])
-const safeTotalMovies = computed(() => movieStore.totalFiltered || 0)
+// Ensure lightweightMovies is always an array (convert readonly to mutable)
+const safeLightweightMovies = computed(() => [...(lightweightMovies.value || [])])
+const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
 // Load movies on mount
 onMounted(async () => {
-  await movieStore.loadFromFile()
+  await loadFromFile()
 })
 
 // Save scroll position before leaving (might need adjustment for virtual grid)
@@ -91,7 +92,7 @@ const hasMore = computed(() => {
 
 // Load more movies
 const loadMore = () => {
-  movieStore.setCurrentPage(movieStore.filters.currentPage + 1)
+  setCurrentPage(filters.value.currentPage + 1)
 }
 </script>
 

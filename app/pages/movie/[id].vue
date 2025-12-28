@@ -564,7 +564,7 @@ import type { MovieEntry, ArchiveOrgSource } from '~/types'
 
 // Nuxt auto-imports
 const route = useRoute()
-const movieStore = useMovieStore()
+const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile } = useMovieStore()
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
@@ -589,14 +589,14 @@ const copied = ref(false)
 
 // Liked computed
 const isLiked = computed(() => {
-  return movie.value ? movieStore.isLiked(movie.value.imdbId) : false
+  return movie.value ? isLikedFn(movie.value.imdbId) : false
 })
 
 // Load related movies
 const loadRelatedMovies = async (movieId: string) => {
   relatedMovies.value = []
   try {
-    relatedMovies.value = await movieStore.getRelatedMovies(movieId, 8)
+    relatedMovies.value = await getRelatedMovies(movieId, 8)
   } catch (_err) {
     console.error('Failed to load related movies:', _err)
     relatedMovies.value = []
@@ -611,11 +611,12 @@ const loadMovieData = async (movieId: string) => {
   relatedMovies.value = []
 
   // Ensure movies are loaded in store
-  if (movieStore.totalMovies === 0) {
-    await movieStore.loadFromFile()
+  const { totalMovies } = storeToRefs(useMovieStore())
+  if (totalMovies.value === 0) {
+    await loadFromFile()
   }
 
-  const foundMovie = await movieStore.getMovieById(movieId)
+  const foundMovie = await getMovieById(movieId)
 
   if (foundMovie) {
     movie.value = foundMovie
@@ -720,7 +721,8 @@ const navigateToPrevMovie = () => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const movies = movieStore.filteredAndSortedMovies
+  const { filteredAndSortedMovies } = storeToRefs(useMovieStore())
+  const movies = filteredAndSortedMovies.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
   
   if (currentIndex > 0) {
@@ -737,7 +739,8 @@ const navigateToNextMovie = () => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const movies = movieStore.filteredAndSortedMovies
+  const { filteredAndSortedMovies } = storeToRefs(useMovieStore())
+  const movies = filteredAndSortedMovies.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
   
   if (currentIndex !== -1 && currentIndex < movies.length - 1) {
@@ -751,7 +754,7 @@ const navigateToNextMovie = () => {
 // Handle movie updated from curation panel
 const handleMovieUpdated = async (newId: string) => {
   // Always reload the database from file first to get the latest changes
-  await movieStore.loadFromFile()
+  await loadFromFile()
 
   // If ID changed, navigate to new URL
   if (newId !== movie.value?.imdbId) {
@@ -760,7 +763,7 @@ const handleMovieUpdated = async (newId: string) => {
     // The watcher on route.params.id will handle loading the new movie data
   } else {
     // Just refresh current movie data from store
-    const foundMovie = await movieStore.getMovieById(newId)
+    const foundMovie = await getMovieById(newId)
     if (foundMovie) {
       movie.value = foundMovie
       updateMetaTags(foundMovie)
@@ -837,7 +840,8 @@ const updateMetaTags = (movie: MovieEntry) => {
 // Toggle liked
 const toggleLiked = () => {
   if (!movie.value) return
-  movieStore.toggleLike(movie.value.imdbId)
+  const { toggleLike } = useMovieStore()
+  toggleLike(movie.value.imdbId)
 }
 
 // Share movie
