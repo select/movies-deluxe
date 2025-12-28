@@ -32,11 +32,18 @@
 
       <!-- Filters -->
       <button
-        class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors relative"
         title="Filters"
+        :class="{ 'bg-blue-100 dark:bg-blue-900/30': activeFiltersCount > 0 }"
         @click="openFilters"
       >
-        <div class="i-mdi-filter-variant text-xl" />
+        <div class="i-mdi-filter-variant text-xl" :class="{ 'text-blue-500': activeFiltersCount > 0 }" />
+        <span
+          v-if="activeFiltersCount > 0"
+          class="absolute top-0 -right-1 bg-blue-500 text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
+        >
+          {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
+        </span>
       </button>
     </div>
   </aside>
@@ -48,7 +55,9 @@ const emit = defineEmits<{
 }>()
 
 const likedMoviesStore = useLikedMoviesStore()
+const filterStore = useFilterStore()
 const { count: likedCount } = storeToRefs(likedMoviesStore)
+const { activeFiltersCount } = storeToRefs(filterStore)
 
 const openFilters = () => {
   emit('openFilters')

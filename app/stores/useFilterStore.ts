@@ -583,6 +583,20 @@ export const useFilterStore = defineStore('filter', () => {
   })
 
   /**
+   * Count of active filters (excluding sort)
+   */
+  const activeFiltersCount = computed(() => {
+    let count = 0
+    if (filters.value.sources.length > 0) count++
+    if (filters.value.minRating > 0) count++
+    if (filters.value.minYear > 0) count++
+    if (filters.value.minVotes > 0) count++
+    if (filters.value.genres.length > 0) count++
+    if (filters.value.countries.length > 0) count++
+    return count
+  })
+
+  /**
    * Apply all filters to a list of movies
    */
   const applyFilters = (movies: MovieEntry[]): MovieEntry[] => {
@@ -713,6 +727,7 @@ export const useFilterStore = defineStore('filter', () => {
 
     // Computed
     hasActiveFilters,
+    activeFiltersCount,
     currentSortOption,
     filteredAndSortedMovies,
 
