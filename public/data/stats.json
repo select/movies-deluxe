@@ -1,13 +1,13 @@
 {
   "database": {
-    "total": 38031,
-    "matched": 4103,
-    "unmatched": 33928,
-    "archiveOrgSources": 27629,
-    "youtubeSources": 11270,
-    "curatedCount": 4103,
+    "total": 36914,
+    "matched": 8050,
+    "unmatched": 28864,
+    "archiveOrgSources": 27603,
+    "youtubeSources": 11234,
+    "curatedCount": 8050,
     "collections": {
-      "feature_films": 27629
+      "feature_films": 27603
     },
     "youtubeChannels": [
       {
@@ -15,14 +15,14 @@
         "name": "Netzkino",
         "language": "de",
         "enabled": true,
-        "scraped": 2332
+        "scraped": 2328
       },
       {
         "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
         "name": "FilmRise Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 335
+        "scraped": 327
       },
       {
         "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -43,7 +43,7 @@
         "name": "Timeless Classic Movies",
         "language": "en",
         "enabled": true,
-        "scraped": 187
+        "scraped": 163
       },
       {
         "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
@@ -106,37 +106,37 @@
   "external": {
     "archiveOrg": {
       "total": 26779,
-      "scraped": 27629,
-      "percent": 103.17412898166474,
+      "scraped": 27603,
+      "percent": 103.07703797751971,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11270,
+      "totalScraped": 11234,
       "totalAvailable": 17858,
       "totalFailed": 6022,
-      "failureRate": 34.82535276428406,
-      "percent": 63.10897076940307,
+      "failureRate": 34.89800649049606,
+      "percent": 62.9073804457386,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 2332,
+          "scraped": 2328,
           "total": 2831,
           "failed": 435,
-          "failureRate": 15.720997470184313
+          "failureRate": 15.743756786102061
         },
         {
           "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
           "name": "FilmRise Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 335,
+          "scraped": 327,
           "total": 446,
           "failed": 138,
-          "failureRate": 29.175475687103592
+          "failureRate": 29.677419354838708
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -163,7 +163,7 @@
           "name": "Timeless Classic Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 187,
+          "scraped": 163,
           "total": 174,
           "failed": 0,
           "failureRate": 0
@@ -194,7 +194,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 1971,
-          "total": 3644,
+          "total": 3642,
           "failed": 1656,
           "failureRate": 45.6575682382134
         },
@@ -234,7 +234,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5059,
+          "total": 5060,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -244,7 +244,7 @@
           "language": "ko",
           "enabled": true,
           "scraped": 288,
-          "total": 597,
+          "total": 598,
           "failed": 310,
           "failureRate": 51.83946488294314
         }
@@ -252,29 +252,29 @@
     }
   },
   "curation": {
-    "total": 38031,
-    "curated": 4103,
-    "percent": 10.788567221477216
+    "total": 36914,
+    "curated": 8050,
+    "percent": 21.807444330064474
   },
   "omdb": {
-    "total": 38031,
-    "matched": 4103,
-    "unmatched": 33928,
-    "percent": 10.788567221477216,
-    "failed": 4957,
-    "failureRate": 54.71302428256071
+    "total": 36914,
+    "matched": 8050,
+    "unmatched": 28864,
+    "percent": 21.807444330064474,
+    "failed": 9943,
+    "failureRate": 55.260379036291894
   },
   "posters": {
-    "totalMovies": 38031,
-    "withPosterUrl": 3807,
-    "downloaded": 1887,
-    "missing": 1920,
-    "failed": 1236,
-    "failureRate": 39.577329490874156,
-    "percentOfMoviesWithUrl": 49.5665878644602,
-    "percentOfAllMovies": 4.961741737004023,
-    "filesInDirectory": 1915,
-    "matchedPosters": 1887
+    "totalMovies": 36914,
+    "withPosterUrl": 7258,
+    "downloaded": 1921,
+    "missing": 5337,
+    "failed": 1252,
+    "failureRate": 39.457926252757645,
+    "percentOfMoviesWithUrl": 26.467346376412237,
+    "percentOfAllMovies": 5.203987646963212,
+    "filesInDirectory": 1949,
+    "matchedPosters": 1921
   },
-  "lastUpdated": "2025-12-28T01:14:35.828Z"
+  "lastUpdated": "2025-12-28T07:32:54.963Z"
 }
