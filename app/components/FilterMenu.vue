@@ -315,13 +315,8 @@ const emit = defineEmits<{
 }>()
 
 // Use unified movie store
-const movieStore = useMovieStore()
-const filters = computed(() => movieStore.activeFilters)
-const currentSortOption = computed(() => movieStore.currentSortOption)
-const hasActiveFilters = computed(() => movieStore.hasActiveFilters)
-
-// Store methods
-const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, clearAllFilters } = movieStore
+const { activeFilters: filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
+const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, clearAllFilters } = useMovieStore()
 
 // Dynamic filter options
 const genres = ref<GenreOption[]>([])

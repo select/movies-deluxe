@@ -29,6 +29,5 @@ const emit = defineEmits<{
   openFilters: []
 }>()
 
-const filterStore = useFilterStore()
-const { activeFiltersCount } = storeToRefs(filterStore)
+const { activeFiltersCount } = storeToRefs(useMovieStore())
 </script>

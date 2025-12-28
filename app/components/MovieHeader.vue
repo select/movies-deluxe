@@ -44,7 +44,7 @@
           <button
             v-if="filters.searchQuery"
             class="absolute inset-y-0 right-0 pr-3 flex items-center"
-            @click="filterStore.setSearchQuery('')"
+            @click="setSearchQuery('')"
           >
             <div class="i-mdi-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" />
           </button>
@@ -60,14 +60,14 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
 
-const filterStore = useFilterStore()
-const { filters } = storeToRefs(filterStore)
+const { activeFilters: filters } = storeToRefs(useMovieStore())
+const { setSearchQuery, setSort } = useMovieStore()
 const { y: windowScrollY } = useWindowScroll()
 
 const handleSearchInput = (query: string) => {
-  filterStore.setSearchQuery(query)
+  setSearchQuery(query)
   if (query && filters.value.sort.field !== 'relevance') {
-    filterStore.setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
+    setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
   }
 }
 </script>
