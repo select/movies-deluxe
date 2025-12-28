@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4">
+  <div >
     <!-- Filter Title / Header (clickable on mobile) -->
     <button
       class="flex items-center justify-between w-full px-2 py-1 rounded-md bg-gradient-to-r from-gray-100 to-transparent dark:from-gray-800 dark:to-transparent text-left group transition-colors hover:from-gray-200 dark:hover:from-gray-700 md:cursor-default md:hover:from-gray-100 md:dark:hover:from-gray-800"
