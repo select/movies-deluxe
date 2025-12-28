@@ -4,21 +4,21 @@ description: Check for correct vue reactivity usage
 
 BAD
 
-```
+```ts
 const adminStore = useAdminStore()
 const progress = computed(() => adminStore.progress.archive)
 ```
 
 GOOD
 
-```
+```ts
 const { progress } = storeToRefs(useAdminStore())
 const progress = computed(() => progress.value.archive)
 ```
 
 BAD
 
-```
+```vue
 <script setup lang="ts">
 const { progress: storeProgress } = storeToRefs(useAdminStore())
 const progress = computed(() => storeProgress.value.omdb)
@@ -33,7 +33,7 @@ const progress = computed(() => storeProgress.value.omdb)
 
 GOOD
 
-```
+```vue
 <script setup lang="ts">
 const { progress } = storeToRefs(useAdminStore())
 </script>
@@ -47,9 +47,11 @@ const { progress } = storeToRefs(useAdminStore())
 
 with functions
 
-```
+```ts
 const { progress } = storeToRefs(useAdminStore())
 const { setProgress } = useAdminStore()
 const progress = computed(() => progress.value.archive)
-function onUpdate(event: string){ setProgress(event); }
+function onUpdate(event: string) {
+  setProgress(event)
+}
 ```
