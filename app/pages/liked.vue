@@ -33,9 +33,9 @@
         </div>
 
         <!-- Movies Grid -->
-        <template v-else-if="filteredLikedMovies.length > 0 || hasActiveFilters">
+        <template v-else-if="filteredLikedMovies.length > 0">
           <MovieStats
-            v-if="!isLoadingLiked && !hasActiveFilters"
+            v-if="!isLoadingLiked"
             :total-movies="likedCount"
             :filtered-movies="filteredLikedMovies.length"
           />
@@ -93,7 +93,7 @@ useHead({
   ],
 })
 
-const { filters, hasActiveFilters } = storeToRefs(useMovieStore())
+const { filters } = storeToRefs(useMovieStore())
 const { loadFromFile, fetchMoviesByIds, resetFilters } = useMovieStore()
 
 // Local state for liked movies (since store uses lazy loading)
@@ -115,8 +115,8 @@ onMounted(async () => {
         likedMoviesData.value = await fetchMoviesByIds(likedIds)
       }
     }
-  } catch (err) {
-    console.error('[liked.vue] Failed to load liked movies:', err)
+  } catch {
+    // Failed to load liked movies, continue with empty state
   } finally {
     isLoadingLiked.value = false
   }
