@@ -60,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 import { onBeforeRouteLeave } from 'vue-router'
 
@@ -91,12 +90,10 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const filterStore = useFilterStore()
-const { lightweightMovies, totalMovies } = storeToRefs(filterStore)
 
 // Ensure lightweightMovies is always an array
-const safeLightweightMovies = computed(() => lightweightMovies.value || [])
-const safeTotalMovies = computed(() => totalMovies.value || 0)
+const safeLightweightMovies = computed(() => movieStore.lightweightMovies || [])
+const safeTotalMovies = computed(() => movieStore.totalFiltered || 0)
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
@@ -144,7 +141,7 @@ const hasMore = computed(() => {
 
 // Load more movies
 const loadMore = () => {
-  filterStore.setCurrentPage(filterStore.filters.currentPage + 1)
+  movieStore.setCurrentPage(movieStore.filters.currentPage + 1)
 }
 </script>
 
