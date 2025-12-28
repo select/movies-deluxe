@@ -61,7 +61,8 @@ const { height: windowHeight, width: windowWidth } = useWindowSize()
 const breakpoints = useBreakpoints(breakpointsTailwind)
 
 // Map to store loaded movie details
-const loadedMovies = ref<Map<string, MovieEntry>>(new Map())
+// Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
+const loadedMovies = shallowRef<Map<string, MovieEntry>>(new Map())
 const loadingIds = ref<Set<string>>(new Set())
 
 // Track which cards should show full content

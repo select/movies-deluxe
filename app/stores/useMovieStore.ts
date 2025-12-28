@@ -119,10 +119,12 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   // Single source of truth - all movies stored here
-  const allMovies = ref<Map<string, ExtendedMovieEntry>>(new Map())
+  // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
+  const allMovies = shallowRef<Map<string, ExtendedMovieEntry>>(new Map())
 
   // Cache for movie details
-  const movieDetailsCache = ref<Map<string, ExtendedMovieEntry>>(new Map())
+  // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
+  const movieDetailsCache = shallowRef<Map<string, ExtendedMovieEntry>>(new Map())
 
   // Loading states
   const isLoading = ref<LoadingState>({
