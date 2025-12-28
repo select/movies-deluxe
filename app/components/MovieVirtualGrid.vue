@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize, useElementSize, useDebounceFn } from '@vueuse/core'
+import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize, useElementSize } from '@vueuse/core'
 import type { MovieEntry, LightweightMovieEntry } from '~/types'
 
 const props = defineProps<{
@@ -64,11 +64,8 @@ const breakpoints = useBreakpoints(breakpointsTailwind)
 const loadedMovies = ref<Map<string, MovieEntry>>(new Map())
 const loadingIds = ref<Set<string>>(new Set())
 
-// Track which cards should show full content (debounced)
+// Track which cards should show full content
 const fullyLoadedCards = ref<Set<string>>(new Set())
-const pendingLoads = ref<Set<string>>(new Set())
-
-const DEBOUNCE_DELAY = 200 // ms
 
 const cols = computed(() => {
   if (breakpoints.xl.value) return 6
@@ -184,33 +181,23 @@ const visibleMovieIds = computed(() => {
   return Array.from(ids)
 })
 
-// Debounced function to mark cards as fully loaded
-const markCardsAsLoaded = useDebounceFn(() => {
-  // Move all pending loads to fully loaded
-  pendingLoads.value.forEach(id => {
-    fullyLoadedCards.value.add(id)
-  })
-  pendingLoads.value.clear()
-}, DEBOUNCE_DELAY)
 
 // Lazy load movie details for visible items
 watch(visibleMovieIds, async (newIds) => {
-  // Schedule full card load for newly visible items
-  newIds.forEach(id => {
-    if (!fullyLoadedCards.value.has(id) && !pendingLoads.value.has(id)) {
-      pendingLoads.value.add(id)
-    }
-  })
-
-  // Trigger debounced load
-  markCardsAsLoaded()
-
   // Filter out IDs that are already loaded or being loaded
   const idsToLoad = newIds.filter(id =>
     !loadedMovies.value.has(id) && !loadingIds.value.has(id)
   )
 
-  if (idsToLoad.length === 0) return
+  if (idsToLoad.length === 0) {
+    // All visible movies are already loaded, mark them as fully loaded
+    newIds.forEach(id => {
+      if (loadedMovies.value.has(id)) {
+        fullyLoadedCards.value.add(id)
+      }
+    })
+    return
+  }
 
   // Mark as loading
   idsToLoad.forEach(id => loadingIds.value.add(id))
@@ -219,6 +206,8 @@ watch(visibleMovieIds, async (newIds) => {
     const movies = await movieStore.fetchMoviesByIds(idsToLoad)
     movies.forEach(movie => {
       loadedMovies.value.set(movie.imdbId, movie)
+      // Mark as fully loaded immediately after loading
+      fullyLoadedCards.value.add(movie.imdbId)
     })
   } catch (err) {
     window.console.error('Failed to load movie details:', err)
