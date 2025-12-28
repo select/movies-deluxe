@@ -22,13 +22,13 @@
       <main class="md:ml-16">
         <div class="px-4 lg:px-[6%] py-8">
           <MovieStats
-            v-if="!movieStore.isInitialLoading && !isFiltering && safeTotalMovies > 0"
+            v-if="!movieStore.isInitialLoading && safeTotalMovies > 0"
             :total-movies="safeTotalMovies"
           />
         </div>
 
         <div class="relative">
-          <template v-if="movieStore.isInitialLoading || isFiltering">
+          <template v-if="movieStore.isInitialLoading">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4 lg:px-[6%]">
               <MovieCardSkeleton
                 v-for="i in 12"
@@ -92,7 +92,7 @@ useHead({
 
 const movieStore = useMovieStore()
 const filterStore = useFilterStore()
-const { lightweightMovies, totalMovies, isFiltering } = storeToRefs(filterStore)
+const { lightweightMovies, totalMovies } = storeToRefs(filterStore)
 
 // Ensure lightweightMovies is always an array
 const safeLightweightMovies = computed(() => lightweightMovies.value || [])

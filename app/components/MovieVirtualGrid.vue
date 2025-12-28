@@ -38,17 +38,6 @@
       v-if="visibleRows.length > 0 && visibleRows[visibleRows.length - 1]"
       :style="{ height: `${totalHeight - (visibleRows[visibleRows.length - 1]!.top + rowHeight)}px` }"
     />
-
-    <!-- Loading Sentinel for Infinite Scroll -->
-    <div
-      v-if="hasMore"
-      class="text-center py-8"
-    >
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100" />
-      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-        Loading more movies...
-      </p>
-    </div>
   </div>
 </template>
 
@@ -130,7 +119,8 @@ const rowHeight = computed(() => {
 
 const buffer = 3 // Number of rows to render above/below viewport
 
-const totalRows = computed(() => Math.ceil(props.totalMovies / cols.value))
+// Use currently loaded movies for virtual scroll calculations, not total
+const totalRows = computed(() => Math.ceil(props.movies.length / cols.value))
 const totalHeight = computed(() => totalRows.value * rowHeight.value)
 
 // We need to account for the offset of the grid from the top of the page
@@ -253,14 +243,20 @@ const getMovieEntry = (lightweight: LightweightMovieEntry): MovieEntry => {
   }
 }
 
-// Infinite scroll check
-watch(windowScrollY, (y) => {
-  if (y + windowHeight.value >= document.documentElement.scrollHeight - 2000) {
-    if (props.hasMore) {
-      emit('load-more')
-    }
+// Load more when approaching end of currently loaded content
+watch(visibleRows, () => {
+  if (!props.hasMore) return
+  
+  // Calculate rows based on currently loaded movies, not total
+  const loadedRows = Math.ceil(props.movies.length / cols.value)
+  
+  // Check if we're rendering the last few rows of loaded content
+  const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
+  if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
+    window.console.log('[VirtualGrid] Load more triggered - lastVisibleRow:', lastVisibleRow.index, 'loadedRows:', loadedRows, 'buffer:', buffer)
+    emit('load-more')
   }
-})
+}, { deep: true })
 </script>
 
 <style scoped>

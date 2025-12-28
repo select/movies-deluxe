@@ -223,7 +223,10 @@ export const useFilterStore = defineStore('filter', () => {
     }
 
     console.log('Fetching filtered movies from SQLite...')
-    isFiltering.value = true
+    // Only set isFiltering for initial load, not for pagination (append)
+    if (!append) {
+      isFiltering.value = true
+    }
     try {
       const params: any[] = []
       const where: string[] = []
