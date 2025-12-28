@@ -19,15 +19,23 @@
         // Mobile: Bottom sheet (< md breakpoint)
         'bottom-0 left-0 right-0 rounded-t-2xl border-t border-gray-200 dark:border-gray-700 max-h-[90vh]',
         // Desktop: Left sidebar (>= md breakpoint)
-        'md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-t-0 md:border-r md:border-gray-200 md:dark:border-gray-700 md:max-h-full',
+        'md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:dark:border-gray-700 md:max-h-full',
         // Animation: translateY for mobile, translateX for desktop
         isOpen
           ? 'translate-y-0 md:translate-x-0'
           : 'translate-y-full md:translate-y-0 md:-translate-x-full',
       ]"
     >
+      <!-- Mobile Close Button (fixed position, same as menu button) -->
+      <button
+        class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gray-700 dark:bg-gray-600 text-white shadow-lg hover:bg-gray-600 dark:hover:bg-gray-500 transition-all flex items-center justify-center z-[60]"
+        aria-label="Close filters"
+        @click="emit('close')"
+      >
+        <div class="i-mdi-close text-2xl" />
+      </button>
       <!-- Header -->
-      <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between ">
         <h2 class="text-lg font-semibold flex items-center gap-2">
           <div class="i-mdi-filter-variant text-xl" />
           Filters
@@ -50,29 +58,23 @@
         </div>
       </div>
 
+      <!-- seperator -->
+      <hr class="mx-4 my-4 border-gray-300 dark:border-gray-600" >
       <!-- Filter Content -->
       <div class="overflow-y-auto scrollbar-thin flex-1 md:h-[calc(100vh-4rem)] p-4">
-        <div class="max-w-7xl mx-auto space-y-4">
+        <div class="max-w-7xl mx-auto space-y-4 flex flex-col gap-4">
           <!-- Sort Section (Top) -->
-          <div class="pb-4 border-b-2 border-gray-300 dark:border-gray-600">
             <FilterSection
               title="Sort By"
               icon="i-mdi-sort"
               :default-expanded="true"
             >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                <AppInputRadio
-                  v-for="option in sortOptions.filter(opt => opt.field !== 'relevance' || filters.searchQuery)"
-                  :key="`${option.field}-${option.direction}`"
-                  :checked="currentSortOption.field === option.field && currentSortOption.direction === option.direction"
-                  :label="option.label"
-                  name="sort"
-                  :value="`${option.field}-${option.direction}`"
-                  @change="handleSortChange(option)"
-                />
-              </div>
+              <SortButtonGroup
+                :current-sort="currentSortOption"
+                :show-relevance="!!filters.searchQuery"
+                @select="handleSortChange"
+              />
             </FilterSection>
-          </div>
 
           <!-- Row 1: Rating, Year, Votes -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -149,14 +151,85 @@
                   class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   @input="(e) => setMinVotes(Number((e.target as HTMLInputElement).value))"
                 >
-                <p class="text-xs text-gray-500 dark:text-gray-500">
-                  IMDB votes
-                </p>
+
               </div>
             </FilterSection>
           </div>
 
-          <!-- Row 2: Source and Genres+Countries -->
+          <!-- Row 2: Genres and Countries (Full Width, Before Sources) -->
+            <!-- Genre Filter -->
+            <FilterSection
+              title="Genres"
+              icon="i-mdi-movie-filter"
+            >
+              <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+                Loading genres...
+              </div>
+              <CollapsibleFilterItems v-else ref="genresCollapsible" :max-lines="2">
+                <button
+                  v-for="genre in genres"
+                  :key="genre.name"
+                  :class="[
+                    'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
+                    filters.genres.includes(genre.name)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  ]"
+                  :title="`${formatCountExact(genre.count)} movies`"
+                  @click="toggleGenre(genre.name)"
+                >
+                  <span>{{ genre.name }}</span>
+                  <span
+                    :class="[
+                      'text-xs font-normal',
+                      filters.genres.includes(genre.name)
+                        ? 'text-blue-100'
+                        : 'text-gray-500 dark:text-gray-400'
+                    ]"
+                  >
+                    {{ formatCount(genre.count) }}
+                  </span>
+                </button>
+              </CollapsibleFilterItems>
+            </FilterSection>
+
+            <!-- Country Filter -->
+            <FilterSection
+              title="Countries"
+              icon="i-mdi-earth"
+            >
+              <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+                Loading countries...
+              </div>
+              <CollapsibleFilterItems v-else ref="countriesCollapsible" :max-lines="2">
+                <button
+                  v-for="country in countries"
+                  :key="country.name"
+                  :class="[
+                    'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
+                    filters.countries.includes(country.name)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  ]"
+                  :title="`${formatCountExact(country.count)} movies`"
+                  @click="toggleCountry(country.name)"
+                >
+                  <span>{{ country.name }}</span>
+                  <span
+                    :class="[
+                      'text-xs font-normal',
+                      filters.countries.includes(country.name)
+                        ? 'text-blue-100'
+                        : 'text-gray-500 dark:text-gray-400'
+                    ]"
+                  >
+                    {{ formatCount(country.count) }}
+                  </span>
+                </button>
+              </CollapsibleFilterItems>
+            </FilterSection>
+
+          <!-- Row 3: Source and Developer Tools -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Source Filter -->
             <FilterSection
@@ -188,7 +261,7 @@
                   >
                     <span class="flex items-center justify-between gap-2 flex-1">
                       <span>{{ channel.name }}</span>
-                      <span 
+                      <span
                         class="text-xs text-gray-500 dark:text-gray-400"
                         :title="`${formatCountExact(channel.count)} movies`"
                       >
@@ -214,79 +287,6 @@
                 />
               </div>
             </FilterSection>
-
-            <!-- Genres and Countries Combined -->
-            <div class="space-y-4">
-              <!-- Genre Filter -->
-              <FilterSection
-                title="Genres"
-                icon="i-mdi-movie-filter"
-              >
-                <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
-                  Loading genres...
-                </div>
-                <div v-else class="flex flex-wrap gap-2">
-                  <button
-                    v-for="genre in genres"
-                    :key="genre.name"
-                    :class="[
-                      'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
-                      filters.genres.includes(genre.name)
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    ]"
-                    :title="`${formatCountExact(genre.count)} movies`"
-                    @click="toggleGenre(genre.name)"
-                  >
-                    <span>{{ genre.name }}</span>
-                    <span
-:class="[
-                      'text-xs font-normal',
-                      filters.genres.includes(genre.name)
-                        ? 'text-blue-100'
-                        : 'text-gray-500 dark:text-gray-400'
-                    ]">
-                      {{ formatCount(genre.count) }}
-                    </span>
-                  </button>
-                </div>
-              </FilterSection>
-
-              <!-- Country Filter -->
-              <FilterSection
-                title="Countries"
-                icon="i-mdi-earth"
-              >
-                <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
-                  Loading countries...
-                </div>
-                <div v-else class="flex flex-wrap gap-2">
-                  <button
-                    v-for="country in countries"
-                    :key="country.name"
-                    :class="[
-                      'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
-                      filters.countries.includes(country.name)
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    ]"
-                    :title="`${formatCountExact(country.count)} movies`"
-                    @click="toggleCountry(country.name)"
-                  >
-                    <span>{{ country.name }}</span>
-                    <span
-:class="[
-                      'text-xs font-normal',
-                      filters.countries.includes(country.name)
-                        ? 'text-blue-100'
-                        : 'text-gray-500 dark:text-gray-400'
-                    ]">
-                      {{ formatCount(country.count) }}
-                    </span>
-                  </button>
-                </div>
-              </FilterSection>
-            </div>
           </div>
           <!-- Error state -->
           <div v-if="filterLoadError" class="text-sm text-red-500 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -318,15 +318,16 @@ const emit = defineEmits<{
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useFilterStore())
 const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, resetFilters } = useFilterStore()
 
-// Get sort options from utils
-const sortOptions = SORT_OPTIONS
-
 // Dynamic filter options
 const genres = ref<GenreOption[]>([])
 const countries = ref<CountryOption[]>([])
 const channels = ref<ChannelOption[]>([])
 const isLoadingFilters = ref(true)
 const filterLoadError = ref<string | null>(null)
+
+// Collapsible component refs
+const genresCollapsible = ref()
+const countriesCollapsible = ref()
 
 const fetchFilterOptions = async () => {
   isLoadingFilters.value = true
@@ -340,6 +341,12 @@ const fetchFilterOptions = async () => {
       genres.value = options.genres
       countries.value = options.countries
       channels.value = options.channels
+
+      // Trigger overflow check for collapsible components after data loads
+      nextTick(() => {
+        genresCollapsible.value?.checkOverflow()
+        countriesCollapsible.value?.checkOverflow()
+      })
     }
   } catch (error) {
     console.error('Failed to load filter options:', error)

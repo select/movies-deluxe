@@ -24,7 +24,7 @@
         <div class="i-mdi-heart text-xl" :class="{ 'text-red-500': $route.path === '/liked' }" />
         <span
           v-if="likedCount > 0"
-          class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium"
+          class="absolute top-0 -right-1 bg-red-500 text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
         >
           {{ likedCount > 99 ? '99+' : likedCount }}
         </span>

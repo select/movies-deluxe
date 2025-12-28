@@ -26,7 +26,10 @@
       </header>
 
       <!-- Mobile Menu Button -->
-      <MobileMenuButton @open-filters="isFilterMenuOpen = true" />
+      <MobileMenuButton 
+        :is-open="isFilterMenuOpen"
+        @open-filters="isFilterMenuOpen = true" 
+      />
 
       <!-- Desktop Sidebar -->
       <Sidebar @open-filters="isFilterMenuOpen = true" />
