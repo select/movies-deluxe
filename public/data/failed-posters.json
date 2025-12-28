@@ -7510,5 +7510,3845 @@
     "url": "https://m.media-amazon.com/images/M/MV5BMDkwN2Y1OTAtYTYwZS00NzA1LThkODItZjM2MzQ4NDYzYTBhXkEyXkFqcGdeQXVyNDE5MTU2MDE@._V1_SX300.jpg",
     "failedAt": "2025-12-28T05:39:32.209Z",
     "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0215749",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDMyYTQxNGYtODZlMS00ZDEzLWE0YmYtMDg3MmQyOTk1ZTM2XkEyXkFqcGdeQXVyNDE5MTU2MDE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:39.224Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032457",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGJkZGZjMjEtYWNkMy00ODlkLTgyNzQtN2QxYzI3NmQxNWVjXkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:39.493Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0010195",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDZjMjM1NTMtYzBmZS00OTc4LTliYjItYjllZjZiODA4ZTU2XkEyXkFqcGdeQXVyNjc5NjEzNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:39.906Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0000153",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2FlNmVlNWMtYTJlYS00NzBlLWI1MDAtZjU0ZDEwOWIxNWZhXkEyXkFqcGdeQXVyOTUzMjk0NDE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:40.285Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0135122",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTc4M2FlZDEtMWNmMy00MThlLTk1NWQtNmE2MmZmZGM1ZDZhXkEyXkFqcGdeQXVyNDE5MTU2MDE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:40.480Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0225797",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjY1ODk3NmYtNDVkZC00YTk4LWIwZDEtNjg2NWE4YWE3MWEwXkEyXkFqcGdeQXVyNTI2NTY2MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:41.535Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0316226",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzJlNDIyMWEtMGMwMy00NjNjLWJlYzctMWVmMjdjZGYyN2UyXkEyXkFqcGdeQXVyMzUwMTgwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:41.896Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0223291",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGZlNTU3N2UtZjRhMS00ZmVjLWIzYjQtZDA3YzBiNTVkYzI3XkEyXkFqcGdeQXVyNTI2NTY2MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:42.921Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022265",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmQwNzlmNTUtZjJlYS00NjAxLTg4MTMtYTc4NTA1YTZjMDFlXkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:43.302Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024962",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTkxYjczMjYtNjYyZS00NmZiLTk0ZjYtYTRlOTE3NWVhOTE1XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:43.652Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023583",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzI3YTc1MDMtYzMyOS00NmVmLWE4N2EtYmU2YjBiMTVjMWNiXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:44.207Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0223586",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmFmYjQ1Y2YtZTNkOC00MDk5LWJjNjctNTNjMmVjYmMyOWNhXkEyXkFqcGdeQXVyNTI2NTY2MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:44.864Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0001463",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzc4YjYxNzEtZjJhNi00ZWRjLTk1MDgtMjMwY2U5MTc3ZDdhXkEyXkFqcGdeQXVyNzMwOTY2NTI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:45.382Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0006150",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDYxYmVlZDEtMzhmMC00MDIxLTgzYmQtZGE2MGNiMzY4ODJhXkEyXkFqcGdeQXVyNjQwMjYzNjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:45.600Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034279",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjlhMzQ0ZDMtNTdjZi00OGQ1LWIwZWQtNWZkYzNjMmFkZTg5XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:46.586Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038161",
+    "url": "https://m.media-amazon.com/images/M/MV5BODE2Mjg5NTktMGRjZS00OGI1LWE1MTItOTM5ZjdlZDkxOTVhXkEyXkFqcGdeQXVyMzc5ODc1MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:46.952Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0004691",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjgyYzE2NjYtNzM2My00YWM2LWFjMzMtYjQ5ZWVlMjRhZWVlL2ltYWdlXkEyXkFqcGdeQXVyMjA4MDk3Mjg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:48.479Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028375",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjI1ZmQwZjEtNjQ3Mi00M2VjLTk4MWItMmRlOTBhZDhmZWNlXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:50.091Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029670",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGFjZDQ0ZTgtZTBjMy00NDFmLTg4MzQtN2U2MTEyYTJhZjQ4XkEyXkFqcGdeQXVyMDI2NDg0NQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:50.620Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035441",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTgwMzMxMDktYmFjOS00ZWU2LTkzZjAtNzVlMWY3MzZlMTA0XkEyXkFqcGdeQXVyMDY4MzkyNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:50.818Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036439",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWM0NTk2NzEtZGM1Yi00N2I5LTgyZmYtY2FjNTc5MWFkNThlXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:51.479Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0076826",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTEyN2JkNzAtOWQ4ZS00MmMxLWE5M2QtMWVkMWZhMjM2YmJjXkEyXkFqcGdeQXVyMTY1MTcxMzc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:52.272Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035448",
+    "url": "https://m.media-amazon.com/images/M/MV5BODlmODk0OTAtZjU0Ni00YTJjLTljZmUtOTJiMWUyZmVkMGZjXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:52.688Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024679",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTg2NTMzOTk1MV5BMl5BanBnXkFtZTcwNTY1MzcyMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:54.294Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032047",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2E1MzZhMjYtODc0MC00MDI5LTg1YjEtMWIwMTkwYWRiNDFjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:58.392Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0075343",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2U2YmZiMmEtYTY1Yi00ODk1LWIzZDMtZTVmMTkyM2ZhMmI2L2ltYWdlXkEyXkFqcGdeQXVyMTYxNjkxOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:58.581Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0056611",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjk3MDkzZWItNDBhYi00YTcxLWExODgtNWI3ZDIyOTBjOGI0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:59.692Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038055",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjMyMWY4NzYtYzUyOC00YzhkLTg1M2EtZmVjZjYzMDFlYzhhXkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:42:59.957Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037399",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWJkOTQxZGYtYjBmMC00ZWE2LTk5MTMtNDJhZjc5MzYwN2M1XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:00.308Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt2767896",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjE2MjRlMzQtYjkzNS00MTlmLTlmYmItZTMxN2UzZDcwMjJlXkEyXkFqcGdeQXVyNjc0MDkzMjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:01.409Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0202640",
+    "url": "https://m.media-amazon.com/images/M/MV5BODc4NGJmYWEtMjMzYy00ZmY3LWE2YzUtYzdiZWNkMzgwM2U4XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:03.247Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0135694",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTMyNDAxMDgtNWEzNy00MWVjLTlkNzAtMjBhMWZlNzFiZDNjXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:03.575Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021496",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWVhYmViYWMtYmFjZS00NDVlLWEyYjgtZDA0NjQzYWQwMGFlXkEyXkFqcGdeQXVyMjc3MjgzOTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:03.867Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034334",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTcwODAwMmQtODFhYy00N2ViLWE4OWUtOGE4NzZhNTlkMjI0XkEyXkFqcGdeQXVyMzU0NzkwMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:05.834Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0013719",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjA2ZWZjMmEtMzFkOC00MTdhLWE1YjQtNGNmMzZmZmZiMDNmL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:06.360Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030910",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjUxOGExZmYtMGYzOC00MGY3LTg2ZGItNDZjNjlhNjkwZGIzXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:06.555Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035487",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmE0OTg5YjctYjA1YS00MjMwLWIyNTMtMzA4MTkxNWQ2YTM0XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:06.749Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023641",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2JjMzdjZjYtZjM4Mi00NmI5LTk5ZWUtNzFiN2U0ZjQ2NTg3XkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:07.307Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0044167",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2E0YTEyZDEtMDE2OC00ZGNiLTljYzgtZTZhYzUzOWMwNmRhXkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:07.566Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035494",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzRhY2MxZTgtOGI1ZC00NjJjLTk0OTYtNjViYmZmMzM1OTQzXkEyXkFqcGdeQXVyMDY4MzkyNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:07.832Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt7690310",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmZhZDUwM2EtOWJkNi00Mjk0LWJmNmYtMTBkODUyODk1NDllXkEyXkFqcGdeQXVyNjYyODE4MjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:08.484Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038212",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzA5Y2ZhZDktNTJjNS00ZWQ1LTk2NzQtMzA3MDYwN2ZmNzMzXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:08.681Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt7295854",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjkwMDA2YTctNGNlNS00ODFjLTljNWYtMjFjM2JlMGE1YjI4XkEyXkFqcGdeQXVyMjQ3NzUxOTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:09.240Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027165",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWIyZDI4MWMtMTQzOC00NWE0LTkwY2EtZTU3NzU5NTk1OTE3XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:09.502Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0006210",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWYyMGE5YzYtYTBhYy00MjM0LTllMzMtYTgwN2Q0MjRkZWJiXkEyXkFqcGdeQXVyNjA5MTAzODY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:09.976Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0075059",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzY4MzBiOWItYWNkMy00ZmQwLThhOGMtZjViYjg3ZjU2NTkxXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:10.886Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0168239",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2ZlODdjYjktZjlkZi00OTEwLWJhYzctOWMyZDcwZDM4OTM1L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:11.235Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0056656",
+    "url": "https://m.media-amazon.com/images/M/MV5BODJhYjM3MTYtYTQ3Ni00MGNkLTgxMWItNjI1NmJlMTE5NDgxL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMjI4MjA5MzA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:11.520Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0055609",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzc1MjRlYzAtZTMzMy00YTVkLTg0MTYtMmJlZjIzNzI0OTEyXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:12.586Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0025955",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzljNzYyMzEtMjg0My00M2JlLWFhZGQtMGI5Yjc5NTVkMGIxXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:14.539Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016497",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTIzYzZjNjktN2U3NS00YWFkLTk1OTQtNGQyYTFjZjU4ZWY0XkEyXkFqcGdeQXVyMDI3OTIzOA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:14.736Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0049932",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmY2MmFlODctMTgzZC00ZTZhLWE5YjQtYzM3N2FjYmYzMGE1XkEyXkFqcGdeQXVyMjM0NDkyMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:14.998Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0000357",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmJmNWIyYmUtYTgzYy00ODkzLWIxOWYtNzJhZDc1YjY0N2QzXkEyXkFqcGdeQXVyMzU3NzExNTc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:15.939Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt13877410",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmM0ZmFiOWMtMTg1Yy00MWVjLTg3OTUtMzViZTJlNTNiYzc3XkEyXkFqcGdeQXVyMTIyNjQ1OTMy._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:16.515Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028483",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjQ1YTY2ZGYtZDhiYy00NWZlLWE5ZDMtM2YzYzc4ZWExYzdmXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:17.648Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036516",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDlkOTBiMzUtNjI2Ni00ZjRkLWE4OTctMzg0N2UxY2U1NWEzL2ltYWdlXkEyXkFqcGdeQXVyNjQzNDI3NzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:17.845Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023677",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzBkYmMyNDctZWU0Ni00N2ExLTg2MDctYjJkZTFhYjhmYTlkXkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:18.110Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028170",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmM1NDAyOTItNjcwMy00YWRhLTk0YzQtMGEwMWEwZWY4MmMxXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:18.626Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035544",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGRiMTJlODItNzRjZi00OGNjLTg3YWItMzJhYzIzNzkwZGFiXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:19.195Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0043127",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTgwNDhmMzItNDkxNi00ZDkxLWFhNjgtYTE5ODRhMTlkMjdhXkEyXkFqcGdeQXVyMTYzNTE3NDA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:19.547Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0001973",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDM2OGNhZWYtZmIzMi00N2UzLTk4NjAtYWVlZGU3ZDY0N2VhXkEyXkFqcGdeQXVyMzc1NTUwNjM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:20.867Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029728",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzBkYjVmOGEtMWQwZS00OTJjLTk4YmYtZmVkNTBhMWRkZDIxXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:21.187Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027202",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTYyMzkwMTkxM15BMl5BanBnXkFtZTgwMjg4Njk1MDE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:21.451Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0013750",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDE0N2IyNGYtNWEyNC00ZGFlLWEzMzctMWJhNWFlNGQ1YjY3XkEyXkFqcGdeQXVyNDU3NjYwOTI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:21.645Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030968",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzJkODVjNjQtMjRkNS00M2ZkLWI4ZTctNDUyMjdlMmQ3MjQ1L2ltYWdlXkEyXkFqcGdeQXVyNTUyNzA5ODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:21.911Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029764",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmEwNGY5MzAtMTAzZC00M2UxLWFkNWMtYjc4NGFjMTY5OGUzXkEyXkFqcGdeQXVyMDI2NDg0NQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:22.173Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032125",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjQxOWJjODctZmVhYy00YjJjLTg5MzEtZWZiMGZmMGE1YTBjXkEyXkFqcGdeQXVyMDY4MzkyNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:22.846Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030969",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjQzOTE4MTgtNmM5Yi00NTc1LWI2OGYtOGRhY2Y1ZTc0ZDVjXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:23.119Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028503",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGQxMzQwYzQtMDQ5OC00MTNjLWFmMjgtOWJhOWU4NGU3NjA4XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:23.533Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0040966",
+    "url": "https://m.media-amazon.com/images/M/MV5BMThhNTg5OTYtYmUxYy00OTc2LWI3OTQtNTBlMmZhOWYxODE4L2ltYWdlXkEyXkFqcGdeQXVyMTYxNjkxOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:23.866Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0011865",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2I3OTVlMTQtNGIyNi00MzkwLTllNjEtNTRkZWI4MjUyYjgwXkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:24.510Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0056693",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTZkMDNmYmYtOTc5OC00NjVkLWFjYmEtZjQwNWIxZTA5MTQ3XkEyXkFqcGdeQXVyMjUyNDk2ODc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:25.129Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037464",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTBhYjQzZTEtZjNhMy00NDAzLWJhZTUtMjdlY2MzYjdjZTgxXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:25.396Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028508",
+    "url": "https://m.media-amazon.com/images/M/MV5BODk3NzE3MjgtODFlYi00MGJkLWE5ZTYtY2Y0NzZiMDJkZGIxXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:26.340Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038254",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWQ0NzNhODQtYjkwYS00NDljLWEyMTQtYTBlNGVlZTkzNDEzXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:26.534Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0001458",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjUzNGU4OGYtYzMzYS00NzViLTgyNWQtYmE0ODc0NDk0ZGI5XkEyXkFqcGdeQXVyMjcxNjI4NTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:26.797Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028511",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDllNzRmNjgtODU5ZC00ODk0LWEyMzUtM2YzZDI2YWY1OWUzXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:27.766Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0049957",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzQ5MGY3NDQtMWY1Zi00N2VjLWE2MGMtMTA1MzAzZTBmMTY1XkEyXkFqcGdeQXVyMjkxNzM0MjM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:27.961Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0006296",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmY4MGE3OTktYjU4Yi00Mzk1LTk2MTEtODM3MThmMzQ2OWQzXkEyXkFqcGdeQXVyMTk2MzI2Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:28.162Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023703",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTMzMzE0OTAtNjk2YS00NjI3LTlhYTUtYzkyODM4ODcxZDJjXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:28.586Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0059920",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmRkZTNlOGUtNmRlYy00YjNlLWE1MzAtZWY5YmEyYWE0ZjcxXkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:28.954Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036543",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWQ1MDQyMWQtYzhhOC00ODQwLWE5ZTUtYTk0ZThmODk1NWRiXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:29.178Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0020602",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmE3Mzk2ZDYtYTdiYS00MWZkLTg4ZWQtMzlkMTFkZjQ1YmExXkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:29.447Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042051",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTg3NmYxZWEtMGVkYi00YTQ3LWJiNzQtYmMxNGQzMTE5ODczXkEyXkFqcGdeQXVyMTY1MzIzNTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:29.647Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035569",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTJjNTUyNTctZmNkYS00OTIzLWIwNjMtZmNhNjY1N2RiYzhiXkEyXkFqcGdeQXVyMzQwNDk2ODM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:30.218Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0048818",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2NkOGMyNDQtOWE5Yi00NmU5LTg2NDktOWE4MTk4MWE0ODc5XkEyXkFqcGdeQXVyNTEwNDcxNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:31.353Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029801",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjU2YWZlZDctZjJiNi00NThlLWExOWEtYTJhZDZmOWNhMWVjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:31.798Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039114",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2VjYjViOTMtYTM1NC00NDdiLWJkOWItMDY4MGZhYzU0OTYwXkEyXkFqcGdeQXVyNTk1MTk0MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:33.817Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034410",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTE3MjA5OWQtNGZmZC00ZTc5LThkMTQtM2VhYjBjMTRmYTAxXkEyXkFqcGdeQXVyNTUyNzA5ODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:34.175Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0170826",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmI2OTU0ZDItY2M3Zi00NzgzLTlmYTItODcyNmZmODQ3Y2ZmXkEyXkFqcGdeQXVyNTAxMTUwNDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:34.590Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032159",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDQwYWRkZDktMGE3Yy00NzQ3LThiMzItZTE1NTY2YWJmMzM5XkEyXkFqcGdeQXVyMTQ3Njg3MQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:34.999Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149981",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjJmOTJmODYtM2FkZi00YzY5LTljMmItYWRmODc4MGRlMDEyXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:36.622Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028692",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2NjMzgzODQtOTY2NS00ZmExLWExMjktNWJmZGEyM2UzN2I3XkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:36.974Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0013917",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTQ5MDE2NTktZTAyOC00OTg3LWEwMmYtOWJiMDg0OGNhNTU2XkEyXkFqcGdeQXVyNDY1NzU5NjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:37.237Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027448",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmY1OGRmZmUtNWNhYS00YzliLThkN2YtYjhhYTE4NGFmYjFmXkEyXkFqcGdeQXVyMTE2NzA0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:37.503Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0443314",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTU0OTNmNjktOTIzNC00MjJlLWFkMDItMWFjMjQzNjg5MTRkXkEyXkFqcGdeQXVyMzI2MDEwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:37.981Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035754",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTNhZGNkYWQtMWFlNi00NDBlLTgyZTItZGVmYjg2NjgxMTVkXkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:38.602Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031213",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTI0ZTJiOWUtMTcwMi00YzU5LWE0ODItMTcyZDQxYTc3MjNjXkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:39.080Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150362",
+    "url": "https://m.media-amazon.com/images/M/MV5BYThkNTlhNTYtZmUyYy00OTQ1LWIxOWQtZDZiNWI3NzVlMTkyXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:39.275Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0025071",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjQ0YzRjOGItMzdlMC00ZWFkLWJmOTEtMTBmZjQwM2U1MDZmL2ltYWdlXkEyXkFqcGdeQXVyMDM0NzcxMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:39.622Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0430088",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzcwZDM1ZmItZWQ5Mi00ODYxLTlmMWYtYWQ4YmUyN2FjNTYxXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:41.145Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017926",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTcwMGY4YzYtMjZhZi00NjNjLWJjMWQtNzA4ZTQzMTg5MDcyXkEyXkFqcGdeQXVyNjEwMTA0NTc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:42.610Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022960",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWI2NDdhNmItYWRmNi00MmNhLTk5ZjAtNjJkMmQ5YTFlNjUzXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:43.050Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150842",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTliNTY2NDItZWI5ZS00MjEwLTllY2YtZWEzNzMzMDA2NjQ3XkEyXkFqcGdeQXVyMDY3OTcyOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:43.310Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0040505",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjEyNmNmYWUtM2M0ZS00N2I5LWJlNTMtYzY0MmQ0NmMzYWMwXkEyXkFqcGdeQXVyMTc0MTEzMzM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:43.476Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148294",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjlkYTQ3NjMtNGRiMi00YzQ1LWJhM2QtZTRhMWI1N2RkMTQ1XkEyXkFqcGdeQXVyODkxNjQyNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:44.013Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147804",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTI0MDA2M2EtMjQxZC00NzNjLWJiNTItY2VlYmJiZTMzZGQxXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:44.205Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0244374",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGNjY2M4MDgtMmI4Mi00MGMzLWIxZTMtYjI0OWZmM2U2NThmXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:44.767Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021044",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjRmMTEwYmUtNDI0MC00M2JmLWJkY2MtNmM5ODk4Y2Q5MDA5XkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:45.422Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0151428",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGU3MThjZmUtOTk3NS00MjE4LTliMTktYmYxNzU2MTMzNzEwXkEyXkFqcGdeQXVyNTUwNjUwNg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:45.910Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0048336",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWQ2OTExZmMtOGYzMC00NjA4LWE0NTEtMWFhOGU3YmQ4MWRlXkEyXkFqcGdeQXVyNTk1MTk0MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:46.172Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148463",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGNlNjRiNWMtMDQxYS00YzUzLTg5ZTgtOTIzNWMzNWQ3OTUyXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:46.540Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0174101",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmYzNWYzYzUtYzJkYy00MTRjLTg0Y2QtMDFhNmRmMjQ0MTIyXkEyXkFqcGdeQXVyMTg2NjYzOA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:46.949Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017268",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGQyNzc1ZTEtYjcwOC00YmZjLWEyOWItYTkyODQ2ZTU1MTIxXkEyXkFqcGdeQXVyMDM1MzIyMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:48.139Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0189039",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGIwMjIxYjctMjU1YS00YjdjLTk0NzctZmYwZGNiMzNjNDdjXkEyXkFqcGdeQXVyMTI0Nzk5NTQ2._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:48.456Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt1020989",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDI3NGZkMjAtYmI0My00ZTc3LThlNzEtMDgyMGQ1ZDQ4Y2M0XkEyXkFqcGdeQXVyNjQwMjYzNjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:49.022Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0152236",
+    "url": "https://m.media-amazon.com/images/M/MV5BODZlNWUyNmQtN2RkMC00Yjc5LTlmN2QtZGJlMGZmZWE1ZTRlXkEyXkFqcGdeQXVyNDg4MTYxMA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:49.522Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0201411",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGY5M2YxYTItM2UzZC00NmRlLWEyOGItZGQ1ZjA1ZTJlYzEyXkEyXkFqcGdeQXVyNDM1NzQzODA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:49.719Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0152312",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzk1ODkyYjctOGE2NC00M2E3LTlhMWMtZmQyODcxYWRkOTNjXkEyXkFqcGdeQXVyMTI0MjQ3OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:49.916Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038099",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTZlMjJkMDYtNGE5My00MGQxLTg5N2EtYmYyNmM5ZWIzZGEzXkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:50.625Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0152550",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDRlZTBiMDgtMjAwMC00ODk2LWI2YjktODdmZGM1ZGE1ZjE5XkEyXkFqcGdeQXVyNDg4MTYxMA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:51.048Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0006115",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjM5MDA1MGUtOTkwZi00Mzc3LWI4ZTgtZWI5MmNhMDk0MmRkXkEyXkFqcGdeQXVyMTE2NzA0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:51.589Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0025845",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjFjNzA3Y2QtMzllYy00Y2NiLWFkZmMtZDdmZGI3MjgwMmYwXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:51.791Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0152780",
+    "url": "https://m.media-amazon.com/images/M/MV5BODY5NjFkM2YtNWU0NS00ZjE0LTk2M2MtYTgxZjFlZjIxNjQyXkEyXkFqcGdeQXVyOTMxMjU2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:52.224Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0153194",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGJhY2M1NTQtY2I5Yy00NWFlLTk4Y2ItNTM4OWMzY2NkNTlhXkEyXkFqcGdeQXVyNTUwNjUwNg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:53.160Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0153448",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2VkNDM4MzMtMDY3MS00N2FhLThhODAtM2Q1NzgzNTM1ODgxXkEyXkFqcGdeQXVyMTQ3Njg3MQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:53.738Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0153892",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDQzN2ViM2EtZThhMi00ZWJmLWE4N2MtNjE4ZWFjMGMyYjkyXkEyXkFqcGdeQXVyMTI0NTc1OTYz._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:54.500Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017896",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjUzODEzN2YtY2I4OS00Zjg1LWFmNTctZDE4YzY4MGYwMzE4XkEyXkFqcGdeQXVyMTU0MjI4NzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:55.538Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023740",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmVmMzYxNDUtM2MzNi00ZTUxLTljYTEtYTAyMzg0ZWE3NmVmXkEyXkFqcGdeQXVyMTIxMDUyOTI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:56.205Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023744",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTM3YTMxYWUtZjIxYy00MTEwLWFkZGQtMGFlMjY5YzY0NTcwXkEyXkFqcGdeQXVyNjUyMTgxNjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:56.481Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031058",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjc4ODkwOWEtZjUwNC00NTY2LWJjZmEtMWM3ZDMyZWIyZGY3XkEyXkFqcGdeQXVyMDY4MzkyNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:56.678Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0329729",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmJjMjNjODQtZmU5ZC00YjAyLWE3NWMtZTZjZDU1OGYwMDYzXkEyXkFqcGdeQXVyMTU0MjI4NzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:58.500Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0179066",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmFmYThjNGUtMWU4NC00OTYyLThiMDYtZDIzZmQ0NGRhODZmXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:58.848Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0018710",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmQ0Y2FiOTYtY2ViOC00YjBmLThmZDgtMDM1NjhjMzY1YmMzXkEyXkFqcGdeQXVyMzk3NTUwOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:43:59.109Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038285",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGJlNDZlNTEtNWUxMS00MjdjLTkwMjItZTc3OGY1ZTFkYjAwXkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:00.282Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt9552352",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTBhMDMzZjYtYjYyYi00NGU3LWEwZDgtNmY3YmVlODBlNTcyXkEyXkFqcGdeQXVyNjc3MjQzNTI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:00.547Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027255",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWMwZDA1YjAtYTNlNi00NjRjLWIyMDYtYjVjZWYwNDdhZDI2XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:01.011Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0135746",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjJlN2MzZjgtNzBkMi00NzlkLWExY2UtNmY1OWIxMDlmMzY5XkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:01.277Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0184187",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmMxYjNhYmUtODA5YS00NTRmLWJlMTQtYmQ2MTcyNTgwZjQ1XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:01.950Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0167756",
+    "url": "https://m.media-amazon.com/images/M/MV5BYThkZDdlZTQtNGU4OC00MjA3LWI1NzUtN2Q0ZTAxOWExZjUwXkEyXkFqcGdeQXVyMjM5NDM1MTE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:02.211Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0201414",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzVkOWIwNWQtN2RiZC00OTkzLWIyZjEtZmE3YTlkODk0OGI3XkEyXkFqcGdeQXVyODgxMDAxMjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:02.405Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0197212",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjg5MmNlMGQtYTI0Ni00YjUyLWJlM2EtZDI4MGMwZDVmNTA2XkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:02.687Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0068174",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGI5MjYyY2YtMzRmOC00YzY2LThlOWUtOWI4MTFkNjk2MzA1XkEyXkFqcGdeQXVyMzU0NzkwMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:02.880Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032183",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzEwNDk1MjItYWZjMS00MzEwLWE4N2ItZGEzNDc1MWI1MjMwXkEyXkFqcGdeQXVyMDI2NDg0NQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:03.071Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035610",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDNlMmY1NGMtOTQ1Ni00MzMwLWE5ZjYtNWJhZmQxNjc0NjY4XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:03.267Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149590",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGJjZmY0MGQtNDk4My00NDU1LTkzOGEtNDg2YTIzYzkyMzJiXkEyXkFqcGdeQXVyMjI5NDczMjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:03.833Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148487",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWQwOGQ5MjUtY2EyZS00NTI3LWJmM2YtYmRjNmNlMjZmODE4XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:04.025Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0050103",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWFkMzBlMTYtY2NlYy00NTM0LWFhODctNjIxMDM0ZDdiMDk3XkEyXkFqcGdeQXVyNTk1MTk0MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:04.223Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0018628",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWYzZDM0NGItNTA3MC00Yjk0LTgyMGUtMDYwODAwZmZkZjRjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:04.567Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149595",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmIwNTBmNmQtNTdmMC00NDA1LWEyZWItYjZmMzIzYjJmM2U5XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:04.760Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt1706294",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDc5MzA4ZjEtMzU2ZC00MTA0LWI5NDgtODYwNzUxZGY5NWM3XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:05.328Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0058209",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTkxMzhmMTEtYjhhMC00N2MyLWFiY2YtYzYyMjI0NWZlOGFkXkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:07.275Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034548",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzQ5MTIzYWEtNjVjYi00YmU1LWIwYjQtMzhlNTVjZjEyODJjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:07.669Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021590",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDQ2NmNiODQtZDk4YS00OTkxLTk0NmEtYTM3NGM5NTNiNzg2XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:07.865Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023749",
+    "url": "https://m.media-amazon.com/images/M/MV5BODQzNjJhZjItNDJkMy00Njk0LThkMWItMjZhZTU2NWFjYWVkXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:08.288Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0062531",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTk5ZjQ1NTItNWEzZC00NTE4LWE2NTctODUwYWYzODY3Njc5XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:08.776Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0043272",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGRiMmNhYmQtMDIzYS00MjBmLWJmZWItYjViMDRjNzQwN2UwXkEyXkFqcGdeQXVyMTMxMTY0OTQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:08.967Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0204796",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmQyOGEyNTUtNjM5ZC00ZjljLTkyNjctZmRlMmNlMzI5ZTI2L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:09.162Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031025",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjU2OGY1MDktOTYxYy00OTFiLWE3ZjQtY2QzNjQwMDMzZTYyL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjYyODY4NDU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:09.422Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0161222",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2UzZmRkNzAtOTY4NS00YzNiLWFhOGMtNWVkZDNjMmQ0ZDI3XkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:09.616Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0182689",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGEzNDU4OGItNWIyZi00Yzk4LWIzNzctYzEwZGRkZGVhMWI3XkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:09.811Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0046692",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTI1MGJjNzEtMTk5Ni00MjM4LWFkN2EtMTdkZWZkMWQzODZmL2ltYWdlXkEyXkFqcGdeQXVyNjQzNDI3NzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:10.005Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039137",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTExNGM4M2QtYTVkMS00Yzc1LTkzOTAtYWNhOTBhYzE5YjY3XkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:10.199Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0191772",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzUyMGJmNTgtMTRmMi00MWUzLWIyOTItMDQ4OGNkMmMwNjgxXkEyXkFqcGdeQXVyODcyNTYzMTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:10.463Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0000416",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjMwMjZmODAtNjFjMi00ZjM3LTk4M2EtYTQ1OGU1MjFhYzgzXkEyXkFqcGdeQXVyMTYzMjc0Nzc3._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:10.727Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0189346",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGNiZTA2ZGItOGNkZC00OGQwLWE0MzktYjU3MjJhMGRhMjRjXkEyXkFqcGdeQXVyNDM1NzQzODA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:10.920Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0055736",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjllYmY5ZjMtMGIxYy00YmEwLTk5ZmYtYzEyNDVkM2NhMzVjXkEyXkFqcGdeQXVyMzY2MDk0MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:11.429Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0041108",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTc3YjYyOTUtZmJiNC00NTIyLTlkMGYtZThlNmY2Yzc4NzY0XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:11.697Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015551",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzcyZDUxZGEtNTc5Mi00MjdmLWIxYmQtODE4ZDdlYzRlZTM1XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:12.351Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015552",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTA3NWM2MTAtZGQyNC00NTE0LWEzOTQtMWUwNjcwNjdlM2YyXkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:12.548Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0014656",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGZiNTQ2OTktODM2MS00OTcwLTg0YWEtNWJkZTI3NWQwODNmXkEyXkFqcGdeQXVyMjA0NzcwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:12.812Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015553",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzNiZjkzZWYtZDQxZS00YjkxLTg5MjYtYTljODQ1NmQ0ODA1XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:13.007Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017604",
+    "url": "https://m.media-amazon.com/images/M/MV5BODk4MjFkOWQtZDMyNS00NmU4LTg0ZDgtY2RiZmE2MjI4MTAwXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:13.470Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015555",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjcxMjY2ZTUtMjA4Mi00ODJmLTk4OGQtMDgyMThhMTNhYWU5XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:14.053Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016583",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjNmMTA2NzMtOGRlNS00Y2NjLWE5NzYtYzMyNDc1YmMyMTRkXkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:14.781Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016587",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTQ0ODgzNzctMDIxZC00MGFkLTkyOWYtMmJlZDEwZTA3ZjFlXkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:15.124Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0014658",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDA5YTg0ODktMjA5My00ODE5LWE2OGItYzJlYzdhNGZhM2M1XkEyXkFqcGdeQXVyMjA0NzcwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:15.621Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015562",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGY4ZTI2NWUtOTgxZC00YzVhLThkYzUtMzM0ODNjMjJkODE2XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:18.339Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015559",
+    "url": "https://m.media-amazon.com/images/M/MV5BODE3YmE3NTctOTdhZC00MDUxLWE2ZTktMDA3N2E3NGY0OTU1XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:18.530Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017610",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTQxMTViZjYtZTlkNi00ZjE1LWExZjUtZWZiYWI5NDQ3OTI3XkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:19.781Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016589",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjA0YTQ3YWQtY2JlMC00OTdlLWI4ZjAtNTQ4ZjQ4YTZiZjdjXkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:19.973Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016590",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDgxYTRkMGEtMjViYS00Y2Q2LWI5MjMtZDZiMWZiZWU1NzA3XkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:20.161Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017612",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2U3MzkyYzItYTU3YS00YjIwLThhMjgtYTllODY3YmFkNGI5XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:20.354Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0014663",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjIyMDIzYjgtYTIwZi00Y2EyLWFkYjQtMjljYjBhMzZiNjdlXkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:21.854Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016591",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWVjMDljZTYtMTcyYS00YjhmLTlmYjctYTRkMjg0MzQyZTM3XkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:22.055Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016593",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzRjZTU2M2UtMDFiNy00NWFlLWEwNDctZDUxY2Y0YjgzOTQ5XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:22.248Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015564",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmU3Mzg2ZWMtZmNmOC00ZTMyLWJlYjgtYjZhNGY4NWIyOTVjL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMjA0NzcwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:22.442Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149616",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWFmODBkYmQtNjNlYS00YWQwLTgyYWEtZTcyZGEzYzRlN2I4XkEyXkFqcGdeQXVyMDY3OTcyOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:23.125Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0075659",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDBiZmMzMzYtZWM2MS00MGQyLTgzZDMtNmQ0YzkyMzhkOWU5XkEyXkFqcGdeQXVyMDM3ODU0Nw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:23.388Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034448",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWQzODkxMDUtOTEyMy00NWUyLWE5NGMtOGU3OWEyNTEwNGU1XkEyXkFqcGdeQXVyMzI5NjUyMDM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:23.739Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0167760",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTc1ZjcyN2MtOWE1NC00NzI2LWIzZjAtNzA4MDY0MTM4ZmEwXkEyXkFqcGdeQXVyMDM0MzU2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:24.309Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0175437",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjc0Y2Y5MTAtZWFlMi00NzJlLTg5MzktYjk3NTlhMDczZjAwXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:25.088Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037505",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2YwYzc5YWEtODVlYy00NTIxLWFlM2ItMzYwYzRkNzM0OGVkXkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:25.424Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033326",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjc4YzI5ZmItZTkzZC00OGQwLTk5ZjUtOTBmZmY1ODMzYjA2XkEyXkFqcGdeQXVyOTM5NDUyMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:25.840Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0198296",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDZmZDMwMzEtOWU3Yy00YTM5LWI5ZWUtOThiMTEyNTczNmE2XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:27.463Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0146423",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTU5MDRmNWUtODFjNi00ZWM0LWExZDYtNmU1OWM5ZmI5NWYxXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:28.159Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031036",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjI4MDUxZDUtOWU3MS00N2FiLWFjYzEtZTgxZjBmMzExYTQyXkEyXkFqcGdeQXVyOTM5NDUyMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:28.944Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017623",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTJiOWVkNTEtYjFmOC00MmVjLWFkMTktMDY5OTI3ZmIyYTVlXkEyXkFqcGdeQXVyMjI3MDczMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:29.146Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194654",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjllNGYwOTQtYjM5ZC00NWZiLTk0YjAtNDg1MzI0MmFlMjRhXkEyXkFqcGdeQXVyNDg5MjMyMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:29.417Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0182701",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGU3NjY5MDctOGI1Ny00YjJmLTk5NjAtNWZlYTlhYzM1OTE4XkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:29.619Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021606",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWFkMzZiMzctZjFiOC00ZDZlLWE5MmMtMjZlMTliNDYyM2NiXkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:29.884Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0122901",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTI4MWY2NTgtMjYxMC00YzI1LWFhYzUtNDMxMDEzN2FmZWY2XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:30.075Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034455",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGQ3MWQ5NTYtNzllYS00MmRhLThkN2ItOGM0M2M4YzUwZjA0XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:30.600Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193711",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTMxZjJjZTMtMmIyNS00ODIzLWFiNWItMjA2YTM1ZjlhNzYxXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:31.178Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178236",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTIyZWJmZjQtZGNhNS00NGZlLWFlNTktZDkwYWJiZjg4ZjcwXkEyXkFqcGdeQXVyNTUyMTMyMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:31.680Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026310",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjA5YTRkN2QtZjc1Ni00NDNlLWEyOTQtZDE5MGNlNWMxYjcxXkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:32.462Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0290418",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTEwNjcyMTMtNDllNS00YjgyLTlhYTMtMzdlOTUxYTI1MThmXkEyXkFqcGdeQXVyNzM0MDY3NTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:33.846Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019639",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzg4MDlkOWQtNTRjNi00YzBmLTllZjItMWM5YjdhYjU2ZDAyXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:34.232Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038704",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmM2YWI3NDEtZDZhYy00NGI1LWIxZjctY2UxNjY1ZGMxYjg2XkEyXkFqcGdeQXVyMjM5NDQzNTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:34.750Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036603",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTBiMjQ1MTAtOGFmZS00OGUyLWIwZjctYWI3NmIwMTI5M2Y0XkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:35.435Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0065602",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmIxMzNhNmQtMWU3Yy00NjU3LWI4ODEtMjlkMTJkOTRlNzkwXkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:35.754Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147841",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDA4NjI3ZjItOGIzMS00ZTQ3LWJiZTktOTExYWU1YmZmOTE3XkEyXkFqcGdeQXVyMjA1MjQzNDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:36.350Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149683",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGVhZTBiMTMtN2JhMy00NmEyLThkYmQtZGMyZTUyYmRlMmRlXkEyXkFqcGdeQXVyMjA1MjQzNDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:49.672Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149685",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWM3ZTZiM2UtNGFkZC00OTVlLTllYmUtYzA2NzZkNmRiYmNiXkEyXkFqcGdeQXVyMTY4MjQ0NzU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:50.129Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0140812",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTc0YzI4MGQtNGNhMi00M2Q2LThjNjAtZWUzMWQyN2VkNmUzXkEyXkFqcGdeQXVyNTE1NjY5Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:50.330Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0130153",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGVmZDZkMDktZTE4Mi00M2QzLWIyZDgtYWI4ZDdhNDEzMzhkXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:50.693Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt6189898",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmRkZWY4MmUtMzQ1Yy00ZDY0LTliNDEtY2U3ODJkMGFhN2JhXkEyXkFqcGdeQXVyMjM0NTE4MjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:51.047Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0056377",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTM2OGFhZDEtNTY4Ny00YTI4LWI5NTAtNmNlN2JhZmJmY2EwXkEyXkFqcGdeQXVyNDQ3NDM5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:51.250Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037701",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjAwOTQ5OGMtMzE3YS00ZTFhLWEwNWMtZTExN2E0ZTRkYzNhL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNzA4NTMyNzc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:52.842Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015577",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTJiZmJlMjctMmU5Mi00MjQ5LTgzMzQtNDMwMTk5MWM3OTM3XkEyXkFqcGdeQXVyNjg2NjExMzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:54.596Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034469",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzA1NDY0YjAtNTA3Yi00NWJiLThhYTktOGQ5YjAzMmMzMTRjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:55.213Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0184223",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzU4NWYyYjQtNjAyMi00NjFjLWI5N2UtMjFmZmZjYTMyMDhiXkEyXkFqcGdeQXVyMzIwMTAyNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:55.409Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037227",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzczZWM1ZDgtMzg0Ny00Yjg1LWE4M2QtMDhiY2Q1ZGFkYTAwXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:55.604Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045487",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDZmOTgzZDEtMGM3Ny00MTBiLWIyZDItYWMzZmM3ODAyOWYwXkEyXkFqcGdeQXVyMjIyNjE2NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:55.796Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186828",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWRiZDllNDAtODBiZS00YzMyLWIwNzMtOGY5MDNhMjEyNTIxL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:55.992Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0199332",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGM0NGE0NjItNjVlMi00ZjAyLTgyOTUtZjc2NWEwYmU3ODZhXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:56.183Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029885",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzNkYjI2OWItMmUzMy00ZThhLTlkNTQtOTRkZDQ3YjQyZTJlXkEyXkFqcGdeQXVyNjA5MTAzODY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:56.742Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149719",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTU5ODljZjgtMWFiNy00NWNhLTgwMzQtN2YyM2U5ZGU4ZWIyXkEyXkFqcGdeQXVyMjA1MjQzNDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:57.167Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0086915",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGJiMGYzMmEtMjYzZi00MmJhLThjNTItN2E0MGI0YTJmODgxXkEyXkFqcGdeQXVyMTk0NDExMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:57.863Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt1866919",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjhhYjRmMjQtY2JiZi00NzBmLThjZWUtMDg2ZWY3NzY5MzI3XkEyXkFqcGdeQXVyNzQ5MzY0NjM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:58.068Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0168469",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzljMzgyOWUtNzg5Ni00MjNlLTllMDAtMjFlY2JkY2MzNWYzXkEyXkFqcGdeQXVyMjU4MzA2Mjc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:58.271Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0349106",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjk5ZTMzNDYtZmFhYi00NDU3LWFjMjEtNTVkNGM4ZjUwOTczXkEyXkFqcGdeQXVyNTUyMTMyMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:58.543Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0044379",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzE2MDVhOGItODRiOS00ODRmLTg0MTEtMTE3ZjJjNzYyMDQ5XkEyXkFqcGdeQXVyOTc5MDI5NjE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:59.243Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt1893199",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGM2NmFjYTItNGRlMy00ODA1LWE1ZjktYTBlZWJmNzY0OGQ0XkEyXkFqcGdeQXVyNzc3OTEzOTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:44:59.947Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0430596",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjgzY2E0YTYtOTcwYy00NTc3LWFiMGQtYzlkMDZlMGFlOGFmXkEyXkFqcGdeQXVyMDE5MDI1MA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:00.869Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0290431",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjk0NGQzM2MtNDQ3Ni00OGMxLTk1NDUtMGIyYTllZTdjY2IwXkEyXkFqcGdeQXVyMzU0NzkwMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:01.500Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0198316",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmQwYmY1NTktNTQ4YS00YmQwLWI5ZGMtOTk4MGIzODIzZWIyXkEyXkFqcGdeQXVyMzU1ODUxOTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:01.765Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0181968",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWI2MmNkOGEtYWYzYy00YTNhLWFlMGYtZjZkNGM3NzFkMzkyXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:02.433Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024850",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGY2ZWUyYTUtMWRiMi00M2Q1LWJjMzQtODNkN2MxZDJmYjQ2XkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:02.853Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0047848",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzUyNmYyNGUtNTliYi00NjgzLWFkYjktYmEwYTM4ZTdlZmI4XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:03.048Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042220",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWM4Njc4M2YtZmZlZC00ZDc4LWIzMmUtNWU2YzkyMGE3OTQ4XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:03.240Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022648",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDMyZWEwNzAtNDA5NS00YTFiLTlhYmEtNTk4ZDlhNjFlNjhiXkEyXkFqcGdeQXVyNTUyMTMyMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:03.436Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149756",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDc4YzM0MGYtZmI4Ny00N2ZmLTljZGUtMjA0YjBmM2Q3YjNkXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:03.699Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0122388",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTFjZDk4ZTMtOTcyNy00NDc1LTk5YzEtZmE2Y2Q5YjJjYWEzXkEyXkFqcGdeQXVyNjQwMjYzNjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:03.893Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034487",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2ZhMzI5NDMtZDZhZC00YjNmLWE4MzctMGE4ZmM4NjQxZDM4XkEyXkFqcGdeQXVyOTM5NDUyMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:04.088Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0189380",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjM1MDE4ODQtOTgwYS00MzQ1LTljMzYtZDE4MmFjZDBlNzU0XkEyXkFqcGdeQXVyMTA3NzE5MzE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:04.279Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149769",
+    "url": "https://m.media-amazon.com/images/M/MV5BODczYTg5YWQtNGYyZi00ZWEyLTg1YmItOTU1OTQwYzQ0MTM0XkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:05.199Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031070",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzI2N2VlNGUtNjBkYi00NTQwLWE2MDEtZTc2ODQxMDY0NThmXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:06.503Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149775",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTY0ZDYxNDEtNzkxOS00YjI0LTllMzEtYjFkNzMyN2RiY2U5L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:07.652Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0192994",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGE0YzJiYWMtYTcyOS00Y2JhLTlhN2QtYjcwYmM3YzlkM2Q2XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:07.998Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178258",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGM4NDk0ZGEtZmVjMC00ODRiLWIzMWUtZjMzYjNmYzMwZDRhXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:08.189Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193746",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2UyZWQwODMtNWZmYy00YWUyLThhNTQtMGU4NzAzOThhYjMxXkEyXkFqcGdeQXVyMjM5NDM1MTE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:08.380Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0046746",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTVjYTVjYTItYmVmMi00ZDllLWIxNDUtNWQ1YzgzNjE2NjM2XkEyXkFqcGdeQXVyMjA0MzYwMDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:09.319Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045539",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmJlZDg5NDAtY2Y0MS00NzI3LTk1ZDAtNWU3YWMzZmU2OTg4XkEyXkFqcGdeQXVyMjU5OTg5NDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:09.732Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027331",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzRmYjlkNzMtOGQ0Mi00YmE5LWIzZTAtZDZjMmI4NTRhZGE1XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:09.924Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028607",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGQwNjQzNzItOWVhZS00MDQ0LWE3MTUtZmRlYmVhNjE5NWQ2XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:10.116Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017662",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDM2ZGY4MGQtMDQyYi00MzgwLTg2NDMtY2RlMDlkZmE5YTkyXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:11.445Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0055775",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzQwNDljYmUtZDViNC00ZDU0LTkyMjQtZjA2YjIyOGNkMzI0XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:11.632Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019676",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjcwNDM4ZGYtOWM5MC00MTBjLTk5OTQtODViNjM2OTBiNmM2XkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:12.940Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149797",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjU3NzllODYtYTcwZS00NjVjLThhYTItYzQ5ODI0YWNhNDUxXkEyXkFqcGdeQXVyMjA1MjQzNDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:13.152Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149798",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDUwNmZkODQtYWZhOC00MTU3LWI1NzgtMjk5MGY5NmJjZjZkXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:13.339Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022653",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGEyMGY5NWYtODU3MS00NjBjLWIzZDEtNWQyZjQxNmRhZWI3XkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:13.598Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0200468",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTg2ZWRjZTktM2FkNC00YTdkLTk5YjQtMTdlZTAyMjRmYTVmXkEyXkFqcGdeQXVyMzY2MDk0MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:14.580Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149805",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWZiMzIzNTctZmRmNC00OGJlLWE5N2MtOGZhMDBkMWI4MjkxXkEyXkFqcGdeQXVyNjc2NjkzNTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:14.768Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031083",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2Q2NTdjOGEtMWE3Yy00YjY3LTllOGEtMDVkNDNmYzc2NmEwL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:14.958Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178263",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDRiOTQxYzEtMmY1ZS00ZjQ1LThmYzctMWRhNzQ3NjIxYmEyXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:15.148Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt23862118",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWNmYTYxNWUtZTA1Yy00N2Q3LWExNzMtNWMwYzRkYWZiMTNiXkEyXkFqcGdeQXVyMTIwODg3NTEy._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:15.337Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022657",
+    "url": "https://m.media-amazon.com/images/M/MV5BODZmZTNiMzQtNWZhMC00YjU3LWE2NTgtYzk2OWI0NzIwZDQ4XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:16.431Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016630",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzc1ODMxMDYtNWFhMS00MmIyLTlkYWMtYWQ5NDE0ODAzYTk1XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:16.622Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019688",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDRlY2FmYTYtZWNiZi00YmZjLWI2N2EtYjRkNDEwYjU3M2UyXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:16.885Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024928",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjhjOWU0YTgtYzY0ZS00ZjViLWIwMWEtZDBmODczOGJlZjI2XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:17.075Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023852",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzViNTBkNTQtYzhjZS00NjY5LTgxNTgtNWQzMDU1NjFiMmZjXkEyXkFqcGdeQXVyNDgyODgxNjE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:17.623Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147875",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWU2ZTlkNmUtYmNlNi00OTc5LTk2M2MtMjQ3YjA5M2FkY2E1XkEyXkFqcGdeQXVyMDY3OTcyOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:17.956Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149831",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmZiODVkOGEtZmUzOC00YmU5LWFjOTAtZDY1NzQzMTQ4OGRhXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:18.731Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023790",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjY0OTdiNmItNzY5Yi00NjI3LWE0OGQtMGUyZmNkNzMxMTEwL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:19.083Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024868",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2QyMTE3NzMtMzFkOC00YmZkLThiNDEtYWYwOTJmNzUxOThiXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:19.291Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039178",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWYxZWM5MTktNWU4ZC00ZTE4LTk2MjgtZGU2ZDVhZDg4OWRmXkEyXkFqcGdeQXVyMTYzNTE3NDA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:19.976Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034500",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWI3MTNjZjktYmYzOC00NTE5LWIyYWMtOWE4NjNhNGEwODI3XkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:21.130Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0040153",
+    "url": "https://m.media-amazon.com/images/M/MV5BYThmYTQ1YzAtYWYzNy00NTJlLWExNTktMDY3NmRlMzZhZTQ0XkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:21.843Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039180",
+    "url": "https://m.media-amazon.com/images/M/MV5BODIzOThmNmItYWY4OS00ZWIzLWFkNmEtMTg1Mzk5ZDNiZmUwXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:22.254Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027348",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjYxYWI0MDQtMWIzZi00ZWRhLTk3ZjAtMTg3Y2MxY2Q0YjZjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:22.448Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038349",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDkzZmRmNTQtNDhmYS00ZGYwLWI2MGMtMzZkNmVlNmYyYzU3XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:22.640Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0179672",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTRkYTdiYzYtODAzNS00ZWU2LWE0YWQtZDQwY2E2Zjk2YmZjXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:22.836Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0047872",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWIxY2QyYWUtYjc0Zi00OWMyLTgxNDEtODJlZjcwNTg3M2I1XkEyXkFqcGdeQXVyNTY4NjI2OTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:23.025Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0418497",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTE1OGMwYWYtZDQ5NS00YWQ2LTg1YWQtYzc5NWQ1MGYzYWI1XkEyXkFqcGdeQXVyMjkyMDI4NTQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:23.437Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0200480",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjVlOTU0ZjItODg4Yi00N2VmLWI3YzktMDNmYjg5Y2JhMjY2XkEyXkFqcGdeQXVyNjg2NjExMzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:23.773Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0040157",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTVlYWMyODUtZjljMy00NDI1LTkwNWEtY2Q4YjM5YWRmMDQ4XkEyXkFqcGdeQXVyNDY3MzU2MDM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:23.966Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037538",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGNkYWEwMWEtMTgzMS00NjZlLWFjMDktM2Q3YjI1ZGEwMTc0XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:24.228Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149847",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDM0MDc0MjM2N15BMl5BanBnXkFtZTcwOTU2MzA0MQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:24.508Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0185921",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDM3YzE4NzUtZDFiOS00ZjRmLTkyMTUtNDdmMzJkZmU3ODIzXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:25.512Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022669",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTlmNmY0NDAtNDkyZC00MWE1LTg5MTctY2VkMjVhYzA4MDZiXkEyXkFqcGdeQXVyODgzNDIwODA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:26.558Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023799",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjhhZWY0M2EtNjM4ZC00NzdmLTlhYmUtY2I4MjFjYjZlOTk4XkEyXkFqcGdeQXVyNTU2OTQ2Njk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:28.542Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022670",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjg5OTE4ZGQtNGU0MC00NjY0LWFkMWMtYjc4Zjk0Y2QzNGUxXkEyXkFqcGdeQXVyNTcwNjUwNzk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:29.026Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024882",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWU5N2RkY2YtNDljYS00NTllLTlmOTItMTVhMjYyYjhiMWFmXkEyXkFqcGdeQXVyNTcwNjUwNzk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:29.212Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0016646",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDYxZWYzODItMTdlMC00NzM2LTgwYTgtMTVmODBkODA2ZDgwXkEyXkFqcGdeQXVyNjA5MTAzODY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:30.131Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0126214",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmIxOTMyYzItNTliZC00ZmFmLWExZjMtZmFhYTgxMTljMGRkXkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:31.591Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt2609170",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDBlY2IwYzAtZWJiZS00MTNkLWE0ZmMtZDM2NzkwMDE5OGVhXkEyXkFqcGdeQXVyNTA4NjMyNjE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:31.786Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0041204",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmQ2OWE0ZGQtYjgwNy00ZmQwLWJiNDQtMTI1OGRlMWQyN2NmXkEyXkFqcGdeQXVyMDY4MzkyNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:31.981Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178269",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTY4NmUwMDktZGNkZi00MjFiLTg1NjMtZmExMDhjNzExMDZiXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:32.174Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026113",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjdiNTlhMjMtN2RkOC00YzQyLWI5NGItOTkwMDc4NjZmNDI1XkEyXkFqcGdeQXVyNDY3MzU2MDM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:32.367Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029913",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWFjYzc2MzItZmEzNC00ZDhmLWJmYzAtMjVjMjQ1OGMxYmI3XkEyXkFqcGdeQXVyOTM5NDUyMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:32.560Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021659",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2Q0ZWQ2N2QtY2RhMy00YzkxLWJlNjgtN2RiM2FlYjFlYTQyXkEyXkFqcGdeQXVyNDY3MzU2MDM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:32.820Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0146484",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjMxNjc1MDUtZDhhZS00NzVlLThlOTUtMGZiODFjMjE5NTg1XkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:33.082Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022679",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDc2MDQ0NzEtYWJjMi00MzE5LTliNjctZDAwZjhkOWVkZGQxXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:33.295Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021660",
+    "url": "https://m.media-amazon.com/images/M/MV5BODIzMDhlMmQtOTVmNC00YzU4LTkwNzctNjQzY2NjYmJiMDU1XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:33.756Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039186",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2ZjYzQ0ZWItNGU5ZC00ZGE2LWJlN2MtMGIwZTVkNTFjMjJmXkEyXkFqcGdeQXVyNzQzNDEyOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:34.357Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037541",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTI2MjdjMDEtNDU0Yi00OWQ3LWE2MjAtYWI4Y2Q3MzRmYTViXkEyXkFqcGdeQXVyMTQ3Njg3MQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:34.950Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0228063",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjRhZDcwNzctNWQ1My00MjQ1LWFlMDAtODk2YTZhZWM0YTIzXkEyXkFqcGdeQXVyMzM0ODU2ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:35.543Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0266242",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDhhNmNlZDMtYTEyNC00NmJmLThhNjItOTdiMWI3MmUwZDcxXkEyXkFqcGdeQXVyMTU3NjcyNjgz._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:36.686Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023830",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzc5ZmYxZmEtN2I0Ni00ZDVkLTk3NzYtZWI0M2JiNTQ1Y2M1XkEyXkFqcGdeQXVyNDgyODgxNjE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:36.955Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026118",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGUzOGNmY2UtYzEyMi00MTNiLWExNjUtY2E1MjAwNzJhMDg2XkEyXkFqcGdeQXVyNTMxNTUyMTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:37.151Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019701",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzZjYjBmODktMTAxZC00YWI5LWFiZTgtNThhYTM5NWRkNjQyXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:37.853Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032257",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWQ4NDA4OWMtMWU4Zi00ZDU1LWI5NDktYzg5YzI1YjdhODU0XkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:38.225Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193013",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTE4ODc1OTEtZjQxZC00NGU5LThjZGEtMmYxMzY0NjE4ZDNiXkEyXkFqcGdeQXVyODIxNjk4NzQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:39.575Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039194",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDE5MDk3NjktYjNlOS00YzhiLTgxYzYtOGY3N2M1ZTU2MzIzXkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:40.458Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0057155",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmZkYjExNTYtZjc5ZS00MGQ1LThlZjQtZGIzYzYwMGQ3M2NjXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:41.529Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0077243",
+    "url": "https://m.media-amazon.com/images/M/MV5BODBiZjNkOWItMDA3Zi00M2FiLWJmM2YtZmY2ZTNhNTJmMGUyXkEyXkFqcGdeQXVyMzU0NzkwMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:41.962Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0007709",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWNiZTUxOGMtMjgwOC00MmZkLWI0NWMtZWM4ZmQ0NmFkNjU3XkEyXkFqcGdeQXVyMDY3OTcyOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:42.294Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042261",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjU0YzcxOGYtMjkyNi00N2M2LTk5NTAtZjA3YTg4YWRiMDY2XkEyXkFqcGdeQXVyNzUxMjg5OTc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:43.816Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023819",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjRkN2U1N2MtZGU0Ni00ZGYzLTg1M2ItNmVhNjVjZTdmOGJlXkEyXkFqcGdeQXVyNTcwNjUwNzk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:44.936Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0007711",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTRmYTk0M2MtZTMzZS00ODc2LWIxMTUtNWZhNjUxZGMxNjEzXkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:45.310Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029929",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTYzMWM1MjAtNTcwOC00YTU1LWI2MzktNWU4OWEwZTYwNGE2XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:45.792Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147903",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTg3YTZiZGItNDI2Yi00MjZkLTgwMWQtODhkMTRlYmRmMGJhXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:46.056Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194709",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTczNWQzZjctN2VkYS00ZjViLTgyMDgtMTEzZWIxMDI2MTg3XkEyXkFqcGdeQXVyNjU1Mjc2NTI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:46.252Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045562",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2YyOTA3MTQtY2VmNS00Njc1LWI0YmItZGM0MmI2YjhiZTIzXkEyXkFqcGdeQXVyMDM0NzcxMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:47.079Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033414",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDk1YWI1Y2EtNGYwZC00NzVhLWI4YmEtOTc3NDk0MDZmZTYwXkEyXkFqcGdeQXVyMzU0NzkwMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:47.564Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0288455",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmU5MWE5YTEtNjY5ZS00YTU3LTgzMWUtOGFjOTU0ZDg3YzdjXkEyXkFqcGdeQXVyNzg5OTk2OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:47.934Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0140862",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTM4MzdjNzEtZTE5NS00ZTkxLTg0YjktNGRhY2MwN2MwNjYyXkEyXkFqcGdeQXVyMDY3OTcyOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:48.202Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0143144",
+    "url": "https://m.media-amazon.com/images/M/MV5BODlhM2NkM2MtNWI4YS00NDhjLWFmNTQtYWRlMjMyNWMwYmJiXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:48.407Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034537",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzBlMzUxNjAtZjZjYi00MjQ4LTkwNTUtODA0MzdlMWFkYTBkXkEyXkFqcGdeQXVyMzc5ODc1MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:48.603Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147911",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTNiZjM0M2MtZmY3ZS00NTEzLWJjM2YtYTlkYmZiMTY3Y2ExXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:50.378Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147913",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjY5N2I0ZjctMDNkNS00NmEyLWI4ZjQtNGMxNDg5ZTgyZjI3XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:50.637Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147914",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGYxNjI5MzQtZDE2MC00N2U1LWE0NTItZjUzZDM4MTQyNjE0XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:50.894Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0140864",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDQ0YmU2YTUtMTNhZS00ZGM2LThkYWYtNDJmMGYwNDA5ZjQwXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:51.087Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027381",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2QxZjE1NzktYTQyMy00MjQzLTgwN2UtYWI4NzU1NDQ5MzUyXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:51.277Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147915",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTBmZDRjNTQtMGNmNi00NDhkLThhNTMtZmI4MWMyYTZhMGU3XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:51.472Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147916",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjU3ZWJjM2YtNmE0ZS00YTE0LWExNGItOWU2MjdiNmFhMTZhXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:51.661Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019711",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjdhMTI3ZTItYjZmNy00MGQ3LTgxMzEtMzdhMmNlNDY0YjllXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:52.660Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027382",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDgxNmMyMjktYTQwOC00NTlkLTkwM2EtNzIwYzQxZGMwMDVkXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:52.850Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0176564",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTE1YzYyYmYtOTU3My00NDYyLWJkNGYtOWRjNGRjNjhhY2ZkXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:53.602Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0211971",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGVkNjA2ZTgtMDFkOS00MTkyLThlNDAtNTZjNDQwOWRiODk0XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:54.073Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045573",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2ZiODE0NGUtZTE0YS00ZDIyLThiMTMtNzdhNGU1MjVlZTVlXkEyXkFqcGdeQXVyMzQwNDk2ODM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:54.865Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022707",
+    "url": "https://m.media-amazon.com/images/M/MV5BZThmNGMzZWYtYzZiOC00YTc1LWI4YWMtNmYzOWZiMGNiZDU4XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:55.290Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022708",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWM1OTZmMzctYWMyOS00ZjliLWI3ODUtZDk0ODFkMDE2NGY3XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:55.480Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021685",
+    "url": "https://m.media-amazon.com/images/M/MV5BODQzYzc5ZWMtNTA2ZS00MjcwLWExMjgtY2VhMTY1YmM0NDgxXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:55.816Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022710",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTE2NzQ1YzItYjIzOC00YzViLTg1ZTMtMDM5OGIyZWI1N2ZlXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:56.174Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022711",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWMyMzdiNTUtZDQzNS00YjFlLTkzODQtZmZjMzAyMTMwYjM3XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:56.373Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019714",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjE0MDdkNzAtNTIxZC00ZGI3LTk4YWItYWIzNTY1OGIwMGQxXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:56.567Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021686",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjM2OGRhMDItM2FjZS00YjQ0LThhNDktMDFjOGY0MTcyY2QzXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:56.762Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022713",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjg5YTRkZjgtOWY0MS00NGI4LTgxODMtNzMzZWM0NzUxOWEyXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:56.953Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021689",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjEwNWZiM2EtZTlhNC00NTJiLWEyOGQtZjdjOTFiMzc5MjJjXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:57.287Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0021690",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGIwYWI3MDItMWZmMS00OWMwLWI1NTgtMjczZmYzODIzZWM0XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:57.635Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022715",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTM0MDFiNDQtZGExNy00Nzc1LTlmZjgtMGJjZjQ1NTg5MTUwXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:57.828Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022716",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjVhNzQzNTItMGRjMy00ODIzLWI2NTMtZGE0NmNkYzBlNTMxXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:58.021Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019715",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjg3ZTg4M2ItY2M0NS00ZTYzLWI0ODItMTZlOTRmOWEyYWYxXkEyXkFqcGdeQXVyNTcwNjUwNzk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:58.885Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033429",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTFiODQxMzEtNWM2Yi00NTEzLWI0MmUtMDlhZDlmZmZiZWNiL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzAwOTU1MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:59.249Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0020705",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjEzNmJhNTAtYWU4Yi00ZjhlLTk1MmYtZWYyMGY1MjQ2OGM5XkEyXkFqcGdeQXVyNTEyOTA3ODI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:59.460Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019716",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDVkNTcwMjktZTkwZi00ZjAxLWFkMjYtOTM4NzA1Nzc4ZTAyXkEyXkFqcGdeQXVyNTcwNjUwNzk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:45:59.654Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0135169",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDkyNzhhYTgtOTdmYS00NDUxLTg4NDUtNDI5OWU5MjQ3NTBhXkEyXkFqcGdeQXVyMTYzMTY1MjQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:00.771Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0259898",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDBhZWQ1NjMtZTE1OS00NmM0LTk4MTItMmJiMjJkMjA0YTg0XkEyXkFqcGdeQXVyMDY4MzkyNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:00.963Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032277",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWUwZjVhZWUtNzg2ZC00NDEwLWFhNTgtNTcwZWJiYTI2NjQ1XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:01.154Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0235245",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzcxZjE1MjItNzEzMi00MzRmLWExMmUtNmEzOGI0MmQ1ZDQwXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:01.583Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038608",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmY2ZGVhZDctNTE1OS00MzU2LWI5MGYtYjYxNGQ5ZWZkZDE3XkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:02.531Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt5191424",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWVjMzYyYzUtYTI4My00OGFmLThkZDMtNGFlZTQ3NDA2NGMwXkEyXkFqcGdeQXVyMzUwMTgwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:02.723Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0144119",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjY1OWJhMWItMGY4My00NWIzLThiNTItZGMxZTIyMDBjNGExXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:03.420Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028662",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzVmNzdjODMtNGVmMS00N2JiLTg2ZTgtYzE3YTQ1ODZlNjE4XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:03.838Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027398",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWMxM2JmNjktODQyOS00OWYzLTlkOGEtMjQ4MTM1MTQ3NjM0XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:04.357Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0018721",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjA3MTE5MTMtM2I3Yi00ZWMyLWI5YzItNDA1Yjk5YWUzYmI4XkEyXkFqcGdeQXVyODAyNTA0MDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:04.779Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149960",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTU5MTBjZmUtMTc4MC00ZjNjLWFmNGQtNjVmOTY0ODU3NWY0XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:04.974Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0017706",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTU4NGM0ZGQtY2JhMC00ZTRlLWJjOTgtNzZhYjYyYWUzNzFmXkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:05.313Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022727",
+    "url": "https://m.media-amazon.com/images/M/MV5BODJkYzRiNmMtYzViYS00OGQwLWEyNTctMGU1ZGFlZWEzNzhkXkEyXkFqcGdeQXVyNjc4NTQxNjg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:05.968Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027401",
+    "url": "https://m.media-amazon.com/images/M/MV5BODA4NDZjYTMtZDVhMC00MGY2LWE5NDEtNDVlYTczMTM3ZjJlXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:06.325Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0053650",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2EwNDFiZGMtZDEzMC00ZGZlLTkwOTctYTRkZGQ3ZWZmZjNhXkEyXkFqcGdeQXVyNDQ3NDM5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:06.525Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0833949",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzlkOTI5Y2YtNjExNi00MWZiLTkyM2YtOGMyM2JiMWIzZjc1L2ltYWdlXkEyXkFqcGdeQXVyMTYxNjkxOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:07.283Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032289",
+    "url": "https://m.media-amazon.com/images/M/MV5BODk1MGY2MTItYzAxOC00ZjZiLWIzZDEtNzkxNmVmYWY5ZTU3XkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:07.622Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0180584",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjM0OWJhMmMtZDFlMC00MTU1LTg4NDgtNzMxNzUzNjJlYzQwL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:07.816Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0309401",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDZmYzE2ZDMtY2JmYy00YmQyLTk4OGEtY2EyMDZiMjVlNDJiXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:08.011Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147934",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWRmYWFiMzYtYTkyNC00YjU5LWE5YTYtMGE2ZGNmZGJiMzk4XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:14.241Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029953",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDE1NmYwMjgtMzc5MC00YTY2LWI3Y2UtYzA3OWFjMzAwYzc2XkEyXkFqcGdeQXVyNjg2NjExMzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:15.106Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147936",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTdkNzM3YzYtNjQ0Ni00YjI4LTk5ZmUtZmU1MTU3ODg1ODEyXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:15.372Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149980",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTIxN2NkY2QtYWFlYi00OGFiLTgxMzgtZWJiNjY3YzIwZjk2XkEyXkFqcGdeQXVyNzk2NzU3MTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:16.386Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0149988",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjU2YmVlYjQtN2E2OC00MWNjLWEyNTItZmIwZmNmM2ZkM2I0XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:18.879Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0161337",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzMzNmQyZTMtMThmMC00OTljLWIyZDYtOTY2OTg1NjQzNzM3XkEyXkFqcGdeQXVyNTUwNjUwNg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:19.971Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt8020616",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDE0NzNiODUtYTc0OC00ZmY1LWEzNTgtMTYwYTgwNjg2M2MwXkEyXkFqcGdeQXVyMjkyMDI4NTQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:20.161Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150003",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWYwNTM3ZWYtZWU4YS00MzU5LThiMjItNmYzNTIzMDA2MjFhXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:20.643Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0003734",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjU2NmJjNTEtNjg5NS00NDE0LWJlYjMtNDdlMzcyYjEyMjI3XkEyXkFqcGdeQXVyNzk3ODM4NQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:21.297Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038398",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTQ0Zjc5NmEtMDQ3My00YjhmLWEyMWMtNDM2N2Y3N2E3MzBlXkEyXkFqcGdeQXVyNDY3MzU2MDM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:21.493Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193032",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmQ4ZTYxZWItMTg1Ny00Y2IyLWIwZDUtZGM0NDQ2MWE5YzYwXkEyXkFqcGdeQXVyOTc2Mzg5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:22.116Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150014",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDVlZTE0ZmMtNDcxNi00YzdkLWFlMTUtYTk4N2FmZjhiMTNkXkEyXkFqcGdeQXVyMzM4MDQ2MjE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:22.323Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0181335",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDlhZjNmMDQtYjI3NC00NGI3LWE2NWYtMWZkMGI3ZWUwNzdmXkEyXkFqcGdeQXVyODcyNTYzMTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:22.584Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0053689",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTAyMTE3ZmItZDA2Zi00YWZiLTk3MzUtNmMwNzZiMDFiNjM2XkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:23.063Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178312",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmYxMWNiY2ItNjI5MS00M2Y2LTg5OTAtZTdiMWRjMjg5ZTQxXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:24.653Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039236",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2ZkNDRiNDUtMmJhOC00Y2M0LWE3YmItYzZiZDM2YjQ0ZGZiXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:25.870Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036690",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWVkODA2YzctZWEzMS00YzNlLWFkOWUtNTgwMTI3Y2E2ZjQ0XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:26.347Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029961",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzQ1MjdlMWMtZWMyZi00MjUzLThiZGMtMjQ1Y2VlY2U3NTcxXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:26.538Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032298",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTI1ZjJiNzgtNmNkOS00MjcxLTk5MGMtODEwMGUyM2RkNWQ0XkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:27.092Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027416",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmMxNGYwNTMtNmJjYi00MjI1LWJlZDYtYmYyZjEyZDQ1YmVmXkEyXkFqcGdeQXVyNjg1NzcwODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:27.284Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0315356",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjg0MzFlNDgtYmE2OC00Y2UxLWIxNzItYTQ5OTQ3NTI0MzZmXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:27.542Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0199394",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmYzMzY0ZGEtMzlkYy00OTcxLThjNGYtNjI5Yjg4NGQ3OWJhXkEyXkFqcGdeQXVyODcyNTYzMTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:27.733Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150028",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDkwOGY2NjYtODNiZi00YjMxLTk1NmMtMjE2M2RiMTFjN2U3XkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:28.606Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034572",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWMwMzBjMmQtM2M3Zi00MWZiLWE1NzktNWFhM2U4NDIyZTllXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:28.798Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033447",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzgwZjgyZjEtZWIxZi00OTJkLTkyZTktZTY4Y2RlNjhmMTU3XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:28.991Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0325152",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWM5ZDRmMGMtYmYzNi00OTgwLWEzMWEtZTZiNTUyZDk2ZTMwXkEyXkFqcGdeQXVyOTc2Mzg5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:29.252Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0188479",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzI0NzYyNmUtNmI3OC00OWZkLWJlYjItNTJmNmVmZTMxMWU5XkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:30.264Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0047917",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjkyNDJmOTYtYTRiNi00YmRkLTkyMzMtNWRkNjM1MmExNTkxXkEyXkFqcGdeQXVyNTk1MTk0MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:30.457Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178294",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTY0NjM4M2YtY2Q5MS00ZDgzLWJkYmItZmVmOGRlZTViMTc4XkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:30.804Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186912",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzhiNDJjYjUtMTc4NC00NWM1LTk4N2QtYmVlNDE1NTdkZmM3XkEyXkFqcGdeQXVyODgxMDAxMjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:31.014Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0009986",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzliMjUwZWYtYTJmMi00MGNkLTgyMjEtMjQ3MDU4NzEwOWY3XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:32.086Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0288468",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWUzMDliYTktMzA1Yi00NjFhLTgxZGYtMTVjMDc2NTIyOTY4XkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:33.231Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178299",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWJhNjhkZWMtYmI4MC00ZmU0LWIwNTQtYTNhZmJiMmEwMDhiXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:33.428Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0146537",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTliMmQ5ZmUtYzU4OC00MGIxLTllZjctMDUxM2Q3YzQwMjU5XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:33.695Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032309",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjYyOTc4MDEtODBiZC00YTc2LTg0ZTQtNjk5ZDI1ZjM3ZDNkXkEyXkFqcGdeQXVyODgxMDAxMjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:33.892Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0018750",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGNkNWZjZmUtNjAzZi00ZjdmLTk5NjYtMzlmNzFiNzg0MzBjXkEyXkFqcGdeQXVyMDk1ODM3MA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:35.646Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193798",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDU3ZGYwN2UtYWZhMy00NGI4LTg5MjEtNzRlOWNhOTMyZmJjXkEyXkFqcGdeQXVyODcyNTYzMTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:35.926Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027425",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDExYzIzN2ItZmNlYS00MzA5LTllNGYtM2M5ZDhiZDAzYTY2XkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:36.873Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178303",
+    "url": "https://m.media-amazon.com/images/M/MV5BZThhNDY3NDEtZjhjYy00OTMwLTllZTUtMzE0Yzc3MDE5NzU3XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:37.137Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0040214",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWNmZTZhODMtMzcxNy00YjgwLWIyYzItNGRjOGFlYjZiMjc3XkEyXkFqcGdeQXVyNTk1MTk0MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:38.097Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034585",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWJmYzA0NTAtNjdlZS00ZWFkLWFlNTctMjk0M2QyZGQwZWY0XkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:38.858Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147961",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWE0ZWVjNWQtZmVlNi00NTVjLTgxNDYtNjUzYzFhZDY1ZTM1XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:39.532Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147962",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTQ5YWMxYzYtMzIzZC00YjYzLTllOTAtYzQ1NWNmZWFhNjkwXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:39.730Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147964",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGM4ZmMxMGQtMDEwZS00ZWM5LThiMzYtN2FiZTk5NjM5MDQ4XkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:40.140Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178308",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTg0MzVlNzEtYTc2YS00MDg1LWIyMzYtODBkYmYzOWNhZDI0XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:40.756Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0069855",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTUwOGMwNzYtN2E0ZC00MTg2LTlkYjEtOTg1NzUyYjA2MzcwXkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:41.115Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150061",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDAwODcxMjEtZjUxMy00YzFlLTlmNzctZGIxNmJhNTI1OTc3XkEyXkFqcGdeQXVyMTE3MjAyODEz._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:41.465Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150062",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzQ3YTZjNjAtOTFmYy00Mzk4LWE1ZjItYWY2YmVjZDdiZjIwXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:41.693Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0147968",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTFiZGUwY2EtMTk1ZC00NjgyLTk4MTgtNWY3MzM2N2U3NzAwXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:41.886Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0080506",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGIzMDFmMTItNmU3NS00OTkzLWI1NmEtNDg2MjIzZDE0OGQyXkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:42.144Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178310",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzc0ODdjMDUtZGU5My00MGU0LTgwYzUtYjE5ZjY2OGViNDQ1XkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:42.512Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0161403",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjY3YzA4YmItNDE3My00ZGNkLWI1ZjUtNDRmOTE4NGVmOWY2XkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:42.706Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150073",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzI0MjVlNWItYWNkOS00N2NmLTgxNDQtZWZiZjE3Y2Y2NDM4XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:42.897Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150074",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGVlZjBiYzgtNGZmNS00ZDE5LTlhOTUtZmRkN2VkY2I5OWI1XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:43.087Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0051461",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTRjN2I4Y2QtYTRiMC00ZTA3LTkwNDgtNWUyY2M2NzZlOWY0XkEyXkFqcGdeQXVyNTUxODQ0MDk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:43.347Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027434",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTBjOTA4NjMtMDhlMS00NDMzLTlhY2YtOTlmNzFiZjI2MDNkXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:45.417Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0054851",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzdjYjQxYTktMzNhMC00MDAzLWFjZjEtYjRjNGIwYTdjZWUwXkEyXkFqcGdeQXVyMTAwMzUyMzUy._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:45.992Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0132024",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTI3MmEzMjQtNjdlNy00YzRhLWE1MGQtZWYxODJmOTY4ZmM0XkEyXkFqcGdeQXVyMDM1MzIyMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:46.406Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038376",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDE5ZWE4NGYtODc3Zi00NWEyLWI4NDgtM2VkNmMzNTViNGYxXkEyXkFqcGdeQXVyNTUyMTMyMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:46.598Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178316",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzg1YWRlNjctZTEyNC00NzM3LWIxMTItYTAzYmFmNDZhYjcwXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:48.174Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027437",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWQ4YzkxYWYtMGM0OC00MmRkLWIyY2UtZDAwNmM2YzZhMTg3L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNTUyNzA5ODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:48.663Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt4860278",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmFlZjk1MzAtNWQ2NC00MTU3LWIwNzgtYTc1ZDJmOGIwMTJhXkEyXkFqcGdeQXVyMTIyNjIyODU3._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:49.103Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026982",
+    "url": "https://m.media-amazon.com/images/M/MV5BZGYyYTYxMmEtN2RiMC00ZTk3LTk1Y2QtYzc0NDhkY2E1NjY5XkEyXkFqcGdeQXVyNjc0MzMzNjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:49.966Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032329",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjY1NGY3YWEtODg0YS00ZWNjLTkzNmEtN2Y1ZTI1NmRkZWRhXkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:50.707Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0204202",
+    "url": "https://m.media-amazon.com/images/M/MV5BODQ2NWViNWEtYWJmZC00MGFjLWEwMjEtOTBkZDZhZTQ5NTExXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:51.066Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045354",
+    "url": "https://m.media-amazon.com/images/M/MV5BODI1NjNjMmYtNDRkYi00OTlkLTk3ZDYtNGNlYjlkYjRhOGZlL2ltYWdlXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:51.268Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031152",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDMzZjNhMzItNjA0Ni00YjNhLWE1NWQtM2ViM2JiZmI3NWIwXkEyXkFqcGdeQXVyMzI5NDcxNzI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:51.534Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026202",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDQ0ZTFlMmMtZmM4Ni00OGJmLWFhNDUtZjBkZmM5Njk3MjMyXkEyXkFqcGdeQXVyNjg1NzcwODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:51.767Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0135836",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWM0MTlkOTgtODA0MC00YzlhLThhMjctM2ZiNzg0MWQwMWRkXkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:53.541Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0000284",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWI4MDkzNmYtMmNjYy00Yjc0LTgzZDEtYWMxMjI5NjViNjM5XkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:53.732Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0995033",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTY4OWJiNzgtZjUwMS00NTk5LThkYTUtZDg1Njc2MGI4MWYwXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:54.058Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028713",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjNiODMwZGMtN2JlZC00N2IyLWE4ZDMtMTcxMTg0YWFmNjMyXkEyXkFqcGdeQXVyNTM3MDMyMDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:54.392Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031153",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWVhMmQyYmUtNTViMC00MmViLTg4ZGEtNDUzZGM2YTA2MzJkXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:54.588Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033461",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzkzNzdjNjQtYTc4YS00ZTM1LWI3MTQtOWFhNGQzMDY5ZjEwXkEyXkFqcGdeQXVyOTM5NDUyMTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:54.851Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019939",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzhhYmMzODYtMDZlNy00ODlkLTk3NjMtNTBmNGZlNzdjMTc2L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjMxMjkwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:56.662Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034593",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2ZiYzU1NTMtZTVhMy00YjkwLWEwMzctOWUyOGUyZjM2MzFjXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:57.017Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028715",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjY2YWVhYTMtMjcwOS00ODk3LThjNjQtNTFmMjNiODJhM2VlXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:57.221Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0041246",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDk1NjA3ZDgtMzM4YS00OTlmLTkzODItMDU0MjgyMGY3NzMwXkEyXkFqcGdeQXVyMzk3NTUwOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:58.409Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026206",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzI4ZmZiYWUtZWNkZC00Njk3LTg5MzItNjlkOGFkYWM2NWViXkEyXkFqcGdeQXVyMzI2MDEwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:58.605Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032335",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjgzYmNkNWUtMmUyYy00ZDk4LTg0N2QtOTlmMDI0ZWVjZmM3XkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:59.472Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193814",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjNmOWYwMDgtOGUwOC00ODU4LThkMDgtMmNiYmYzOTMxN2RiXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:46:59.739Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150118",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjNhNWI0OWYtZGYwOC00M2QyLWFkMTEtODgwZmQ2NzRjN2FkXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:00.470Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026210",
+    "url": "https://m.media-amazon.com/images/M/MV5BMWQwNjdlMjctZmZlYi00Zjg4LThkZGMtMTFhNDE1ODRkYTk3XkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:00.667Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0115895",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWFlY2RiYjctYzlmZC00ZjFmLWE5NGQtMzJiOTk1ODA3ZWNkXkEyXkFqcGdeQXVyMjMyMzI4MzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:02.210Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037588",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWQzYjVhNDQtYTRjNS00YTdlLTg3NzQtNjZiNDQ2MGIyMmRjXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:02.411Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0199416",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2U1MTgwZjctZWI5Yi00MDVlLWI3ODUtZTYzYWUyZGJjZDAwXkEyXkFqcGdeQXVyNTUyMTMyMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:02.633Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0184342",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjVmZTRjZDYtNWMxZi00YjEwLTg5MjYtNTAzMWM3ZjQ5MjRiXkEyXkFqcGdeQXVyNTkyMzkxODQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:02.899Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150130",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGY4YzVhMGMtMDkwNi00ZDhjLWJkNGQtNzBlNzg4YjE5M2Q2XkEyXkFqcGdeQXVyNDg4MTYxMA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:03.304Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0029994",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTk0ZDRlNzctOTZhNy00Y2NiLThmM2QtNjA3NTQxZGViYzFiXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:03.502Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178335",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzUyOWM3YjUtOGZjYS00NzY5LTgwMDMtY2IxZTEzMTY0N2NmXkEyXkFqcGdeQXVyMzAxOTk3Nzg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:03.696Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037598",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWExZmRlYmYtZjQyZS00YzNjLWFhZWMtYTI5ZWZmZGRhMWU4XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:03.962Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023893",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2Y0NzU0MTMtMWE3OS00ZDE0LWI5OWYtYWIwNmRhNjM2MzcyXkEyXkFqcGdeQXVyMzc5ODc1MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:04.494Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178336",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWMyZjIxYzgtMTM2Yi00NjMxLTk3MDItNDMxYjEzOGFiMDkzXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:04.853Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0041251",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjIxMDliNjAtMjM3Ni00ZGI4LTgzNWEtMmQyMTlkYWE5MDkxXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:05.157Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033469",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjIzM2FhY2UtY2Q4ZS00NTcwLTg2MjgtMGI2M2QxMzkxNzlhXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:05.574Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037030",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWZmYjhhYTctYTJhMS00MTkxLWE5YTctYWIyNzBhNGIxZWM3XkEyXkFqcGdeQXVyNzEzMDAyNTI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:05.917Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178338",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWJlMDBjNDctM2YwMC00Y2U1LWFmZjgtNmYxMTRhYTFlYWE4XkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:06.265Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0041252",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDJmYzc0M2ItNjk1Yy00MjUyLTkxNTEtNWQ0MjU0ZTQ3OGFiXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:06.640Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028724",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjA4MWU0NmQtODllOC00ZGE0LWI2OTUtOGRjMmI3MzE4MTk0XkEyXkFqcGdeQXVyMTU5NjQzMzU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:06.836Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178339",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDk2OTJkNWEtZGU2OS00MzliLThkZGQtNmY5NWMxNTUwNzdhXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:07.643Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150147",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjUxMjgxMzctNzY2MC00OWUxLWFiMDUtYzgxMGM5MzJkZDkzXkEyXkFqcGdeQXVyMTQ3MzU2NzUx._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:07.840Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028725",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjMxOGM1YjQtNDdmZS00MDJhLTgzZWMtZGU0NmVmNzMwNWY4XkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:08.106Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150155",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2U3ZTc1NGYtYmQxOS00MDc4LThhZjQtNzM2Zjg5ZjZkMTE1XkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:08.877Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0007809",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWFlYmI2MDYtNjIxYS00ZmM5LThmZGMtNDljZjA5MWMwYjk4XkEyXkFqcGdeQXVyNjQwMjYzNjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:09.811Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0381088",
+    "url": "https://m.media-amazon.com/images/M/MV5BODJlMzEyNGYtYzg1NC00NTI2LWJjY2ItZDEyMTM0ZTUwMTMyXkEyXkFqcGdeQXVyNjk4OTEwMzk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:10.073Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035743",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGFiODZhZWMtNjZmYS00ZmJkLWEwNWQtZDYyNDI3ZGE3NGQzXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:10.340Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0040239",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWFjZmZkNGQtNjc3ZS00MmU5LWE0MmMtZjEwNmFiYTQ2NjAyXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:10.603Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194759",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmQ4MGNmNTItZDYzMy00ZmRjLWE2NDItN2M5MmIxYjllMTdjXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:10.938Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148001",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDVjZGQ1NzgtMDE5YS00OTRmLTgyZDYtYWQ4Yzg5YjljZTI4XkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:11.203Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150160",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2Y5ZjMzM2EtMGU4My00ZDE0LWJlNDItOTYxY2NmODRmYjYyXkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:11.398Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031164",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWE3NzI1MTAtYmMxMS00Njg3LTgzNTgtZmEwMjUyZWMyYmRhXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:11.661Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0146570",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTY4OWVlY2YtY2JlYy00YWYwLTlkMzAtZDUwMmUzYzkxNjU4XkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:13.015Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030005",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTg2NTg5YjEtNDNiZC00NWU0LTllNDQtMjFlMmI0ZjExNWVhXkEyXkFqcGdeQXVyMTAxMDQ0ODk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:13.676Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0182009",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWU1MjljNjYtNjliMS00YTE2LThmZjItYzllZmE4MzA1ZGYzL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:14.172Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045665",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2YzNDFjNzgtNzU3OC00NmIyLWEzZDktOTFmODc5OGRjMWJkXkEyXkFqcGdeQXVyMTA0MjU0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:14.551Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0154347",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmVmZDE2OWQtMDkyNS00ODI0LWFmZmMtNDQzZmExNGUxYmI5XkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:14.820Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0061546",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWIwNjhjMTktZjc4Yy00YzMzLWFiNDctMDBjYmI1YmY0NWY5XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:15.283Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0185998",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGE5ZTllNWQtYWVmOS00MGU5LTljZDgtZGJjNDU5ODcxMjYzXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:15.551Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0144143",
+    "url": "https://m.media-amazon.com/images/M/MV5BNWJmOTZhMDEtODg2OS00MWRlLThmNTQtNmJmYmY4YmM0ZGYxXkEyXkFqcGdeQXVyMzAzODY0NzE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:15.972Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0184352",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTViNTZlNGItMTgxYy00MThlLWJiZjAtNTFmOTNlMWM0ODA5XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:16.585Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0180615",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjMzM2JkYzEtZjI4Ni00ZDZhLTkzNzUtZjMyNGUwMDJiOGFkXkEyXkFqcGdeQXVyOTc2Mzg5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:17.476Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0143188",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTQ1ZDI0MTMtMzEyOS00YTNlLWJjODEtNDVlMDM1MzRkNmJhXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:17.684Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150181",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWRkNmE1NGEtNWNlOC00Nzc3LThmZjMtYjQ1ZGZjZTNhZDQxXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:17.878Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148009",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTg5MGQ2NWItNzUzYy00MjQyLTg0ZTQtMjMyY2ZjODhkMmEyXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:18.144Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186929",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjU4MDFiMjMtOGNlMy00NzdlLWJiOGQtMGM4MzdmOTljN2Y0XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:18.339Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194768",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmVhYTc3MmMtZTk1Ny00MTQ2LTkyZmQtYTUzMTliNTRmZjdlXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:19.349Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194769",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmU0NzdiM2EtNjc4NC00NGU3LWJhYjYtZjM1ODJlZGUyMWQzXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:19.700Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0035750",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2Y1MzI1N2QtNWRkNy00NDI4LWJhYTAtOTE2OGY5NmEyNDRmXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:20.119Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0020784",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmNhZjIxNzItNjY2Ny00NGZmLWE4MzgtZmJhNzk2MjE1MTZlXkEyXkFqcGdeQXVyNDgyODgxNjE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:20.381Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186003",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzU3ZTFlNzItZmRhMS00YzliLWEzMmItOTc5Mzc2NTg1ODRkXkEyXkFqcGdeQXVyODU4MjAxOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:21.315Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031179",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWYwNDM2NjctYmU0MC00NGY3LWIxYTUtNTFkM2ZmMmJmMTM3XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:21.697Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0051488",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmJhYmU3ODItYmIyMS00ZWU0LTlkYWYtYjYzOTVkZWY2ZGU2XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:22.821Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0323649",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2FmOTg3ZGEtMDBmZS00MmNhLWI2NmEtOTdlYjI3NDViM2NjXkEyXkFqcGdeQXVyNDI2ODQxMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:23.155Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0181416",
+    "url": "https://m.media-amazon.com/images/M/MV5BODYwNzIzNzYtMTA1Mi00NTk1LWI2YmEtYzVmODg3MTc3OTU2XkEyXkFqcGdeQXVyMzcwMzQ3MzM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:23.882Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0201541",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjBhYTE1NWQtOWMxZC00OWE0LWE1N2YtYjg0OTNkMjI1NTlkXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:24.150Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023909",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjc0ZDdkYTAtMDNiMi00MDg1LTgyMTYtOWE2Nzc2MDcxODQ1XkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:24.343Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0185244",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTU1MzQyMmQtYmRmMi00YmMzLThmOTctZTkxYzJjYzc0ZTE1XkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:24.955Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0325200",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDEwYmQwM2UtY2MzNS00OGVmLWFjM2QtOGQ3MDYzYTEwZjFiXkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:25.152Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023912",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjk1YWJkYjYtYTA1NS00MzdlLWE5MjUtNzdlMjBmZGViNjI3XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:25.925Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0146584",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjA4ZGNiZWMtNWUyZS00NjBiLWFlNjMtYmExOTc0ZDM5ZWMxXkEyXkFqcGdeQXVyNDg4MTYxMA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:26.428Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030023",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjg1N2Q5ZTgtNWQ5NC00MzViLWIwZGMtNTViYmY4MGIyODdkXkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:26.935Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0049105",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjA2YzMxMDEtZWUxOS00OGJmLTgzMWEtYmExYWUyMzAwMjE1XkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:27.893Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038431",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDJmMjJjN2YtN2M5OS00MzU4LTgwYmMtMjNhMmFhNDIwYWY0XkEyXkFqcGdeQXVyNjA5MTAzODY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:28.162Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030025",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjEyNjRkMGQtNmFjYy00YmU1LWIyODItMDU3ZWQ5OTNmZmEyXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:28.427Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0188526",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDU5OTJiM2YtZTY1ZC00ZDgxLWJjZTctYWE4MzQ1MGNjYTljXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:28.972Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0022788",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzY1Y2FlNjQtNTM1NS00ODI2LTg4N2YtZWVhNDE3MWNiNGMxXkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:29.717Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0140921",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTNmYWNmNGMtZTBlNC00MDAyLWI1MDEtYzFlYjY1ZjJkOTJkXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:30.690Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0025015",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjE3MWUxN2UtZmEyYS00NzcyLWI2M2UtYTU0OGE3MGFjMzliXkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:31.030Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0049109",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmQwODViYTctODNkZi00Nzg3LWI4NjYtMWQ4NTc3N2JkOGFkXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:32.327Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194782",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTBlZDE0ZTEtMWIwYi00NTI3LWI2YjEtN2MzZTdmMTBhMGRkXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:32.526Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0065596",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzJmYzk1NWEtMjZjNS00MmNlLTk5MzktNzJkNTViOTk2ZjFlXkEyXkFqcGdeQXVyMzM5NzIwNjM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:32.800Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0071372",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTI0OWI1YmItNGE0ZC00YTc2LTkxMTUtNGM5YmI1OWFmN2VhL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjE5MjUyOTM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:33.217Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0199436",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmEwMjFmMjgtOTdmMS00MjM2LWE3OTYtN2M1Y2E1YTgyMzk2XkEyXkFqcGdeQXVyNTc5NDE0MDA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:37.600Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0181433",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGY3MTRjYzMtYjhmNy00MjQ2LWI0MTMtODBmY2ZlOGQzYTQ3XkEyXkFqcGdeQXVyMTMyMTkzODA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:37.864Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186934",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTkzNWNlODItNzdjZS00MWM1LWFhYjUtNmE5MGQyYmY1MWFmXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:38.072Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0083776",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTZjZWRmN2YtMWZhMC00NWJkLTk5YjEtNDE3OTA4ZmNiOTA5XkEyXkFqcGdeQXVyMTk0NjM1ODQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:38.265Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031193",
+    "url": "https://m.media-amazon.com/images/M/MV5BZmRhYjU5YzctY2YzMS00ZGZkLWI1M2EtYzEzZjEyZGM3ZTUzXkEyXkFqcGdeQXVyODgxMDAxMjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:38.457Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0188529",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDhiZTI3YTMtYmQ5OS00MTFmLThlMDMtNTAxNWZmM2RlMjg3XkEyXkFqcGdeQXVyOTY2MDcwNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:38.652Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148036",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTUwODU1Mjg3NF5BMl5BanBnXkFtZTcwMDEzNTUxMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:38.844Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0049114",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTcxMjU4M2EtNDMxMS00OTEwLTlkNTUtZGVmNTY2YTdjOGRjXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:39.617Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186012",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWFiZDgyNTYtNjkwMC00NTRjLWIyOWEtMmJmZjJkNjE0ODFlXkEyXkFqcGdeQXVyOTc2Mzg5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:39.964Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0198395",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDVjY2ViNTQtYzQ3Ny00N2Y4LTgxNTItZjY1Nzg1YjI1MTM5XkEyXkFqcGdeQXVyMDEyNzI0OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:40.321Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150243",
+    "url": "https://m.media-amazon.com/images/M/MV5BODZiNGU0ZTgtNmI4NS00YzIzLWIyZjgtYzEyY2FjYzk1MWJiXkEyXkFqcGdeQXVyMjgyMzA4OTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:40.517Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032373",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjcxMmU4MjYtMjBmZC00MTY2LWI0ZTItYzQ0NjljNmMzY2M0XkEyXkFqcGdeQXVyMTYzNTE3NDA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:40.941Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0146596",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTM1YWI0NDgtODZkYi00ZDY1LWJjZDgtZGY3NGMwYjQyNTMzXkEyXkFqcGdeQXVyNzQ1NjM2MDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:41.608Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042366",
+    "url": "https://m.media-amazon.com/images/M/MV5BODdhNmU4ZmYtNGNhZC00ZmIyLWE0NzYtMzJmMWNmYTgzOGE4XkEyXkFqcGdeQXVyMDI2NDg0NQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:41.964Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0395983",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDA2NDdlOGYtNzRlZi00YjViLTlkZWUtZjZmNmI5ODAwMjcyXkEyXkFqcGdeQXVyNDE5MTU2MDE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:42.388Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031202",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGM4OGJmZGItMjg1My00ZmY3LTgwZTItNjllMjBhY2M2YzViXkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:43.189Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038446",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzU1YWNiZmUtYzEwYi00ZGM4LThjZmEtNmJiMTE1YjRlMTA1XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:44.959Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026259",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2FhODY2NDktYzA0Ny00NGE2LTlkNjgtMTRhMTlmYTBjZjBiXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:45.160Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031204",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjQ1OGI3MTItYzZkZS00ZThmLThlNjktYWI4OTE2OGI0OTNkXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:45.357Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033509",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWVjOTUzODUtNWQ0OC00OGZkLTgzM2QtNTllYTVkZjU5NzRhXkEyXkFqcGdeQXVyMzc5ODc1MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:46.128Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0020810",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjIwYTFlM2MtMWMxOC00NmE4LTk5ZjQtZDQ5NDQ4Mzk2NmI2XkEyXkFqcGdeQXVyNDY1NzU5NjY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:47.015Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036741",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTQ3MDM2YjktMDAyMC00ZWUyLWIwMTYtODNiYWU2MWM1NGM2XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:47.280Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027498",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGE2MmY1OWQtODQyNS00YTE3LTg5MzItYjNjNTlhMzRlOTVmXkEyXkFqcGdeQXVyMDMxMjQwMw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:47.639Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0121184",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzUxZWE2YzUtYzE4Ny00MTIxLTg3OTctNTBlMDQwZTQxZjExXkEyXkFqcGdeQXVyMDM0NzcxMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:48.435Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033514",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTI1OGMyOWItMDljYS00NTQ3LTg4OTktZmQzZjdlMmViZGU2XkEyXkFqcGdeQXVyMzc5ODc1MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:49.249Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036745",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjQ5ODc1YzMtMDQ5Zi00NWQ2LWEyMGMtMTI4ZmFhOWY0ZjU5XkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:49.521Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019806",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGEyMTY2NmMtNmIzMy00MzQ4LTk4ZTItNmRiNDIwMmUyM2Y3XkEyXkFqcGdeQXVyMDI2NDg0NQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:50.042Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0015739",
+    "url": "https://m.media-amazon.com/images/M/MV5BODRmYThiOTItM2JlOS00ZjQ3LTkyOTEtZDQ2MzZiMjM1OTI0XkEyXkFqcGdeQXVyMzI2MDEwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:51.470Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0185262",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDk4NWVkODMtNjliYS00YmRiLTk2YjItNTk2YzA0MWViZGNmXkEyXkFqcGdeQXVyNDQxOTAyNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:52.922Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0182035",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTVhZDE1ZWItYjY4YS00Y2I4LWJiMmQtZjE3MmNhY2ZiN2ZmXkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:53.274Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0182956",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmNmNjgyYjgtYTAyNy00ZGNjLWFmMDMtMDZhMTc3MmU5MWNlXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:53.541Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186946",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzA3M2ZjNzctMDRkMy00ODM4LTljMmEtNDU0YTQxYTYyYTljXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:54.243Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0060286",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzE2YzM2ZmUtZWMxZC00NWIyLWFiNzAtMmJkOGIxNWIwM2ZhXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:54.445Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0059093",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDYyZjYwYzAtZGUxZS00MjNmLWFhOGQtYzZlNGY4N2MwMWNiXkEyXkFqcGdeQXVyNjU5MjcxOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:56.247Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0083804",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzY2YmU2NWMtMTE4Zi00MjYxLWE0ZmEtNzA3MTVmMjExOGJkXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:56.676Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0157516",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGNhNGM5ODQtYzZmOC00OTM2LTk3OTAtNzhiYTU2ZDBkYjhjXkEyXkFqcGdeQXVyNjg1NzcwODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:56.876Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0176684",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGJlNDA3YmMtYzFjZS00MGZmLWFlMGQtNWI2ZDQ2NzU0NjUyXkEyXkFqcGdeQXVyMTU5MDgzNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:59.692Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0319275",
+    "url": "https://m.media-amazon.com/images/M/MV5BNDc3ZjdjMDYtZjg5ZS00NjFjLWI5ZTUtZTk0Y2U3NGZjMWFjXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:47:59.959Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0051526",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2ZiNGNiYWUtMzZlMC00ZTEwLWJiNmYtYTZhZGI2MmY5NjVlXkEyXkFqcGdeQXVyNzA4ODc3ODU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:00.157Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0194797",
+    "url": "https://m.media-amazon.com/images/M/MV5BODlmYTgwNDUtNzhlYi00NDE1LTk3OTgtZjc5YjhhNmNiODMxXkEyXkFqcGdeQXVyODcyNTYzMTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:00.424Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0037636",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjUwZDIwOWItMGZiYS00ZTIwLWE3ODMtMmI0OGRiZjMxODliXkEyXkFqcGdeQXVyNDcxNDkxMjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:00.691Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0023888",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGU1MWU3YWUtMTFlZS00MmNkLWJlYjktZjUyYWJlNjM0MjBlXkEyXkFqcGdeQXVyMDM1MzIyMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:01.267Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019811",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2ZlNjRiOWItZWI0MS00OWUyLTg0NDAtZTU2YjFhNDg2NGI3XkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:02.128Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0175562",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmQ2MzM3ZjMtNGExNy00NjlkLWFlNzItZDg3OTFmMWU2M2Y4XkEyXkFqcGdeQXVyMjQ0NzgwNzY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:02.558Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0201561",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTM5YWY2ZjMtZWMzMy00MDg5LWJkZjMtYjM4YTg3YTVlNmE5XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:02.755Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0200572",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTZkNmNmZWQtZjM4YS00YmM0LTkwNGItYjIwOWQwMmQwMzQ0XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:02.953Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0186026",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjU0OWFjNjAtMWMyMy00OTZkLTg5YWItNTExMDlhYjEwZWFiXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:03.339Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042392",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTJiY2U4OTgtNDNjMC00ODVlLTgxYTAtNTkwMzVlNjI2NmRhXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:03.537Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150308",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzU5ZGEzYzctM2E5OC00OTdlLThjMzktNDhiNTc4OTIxZDZjXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:03.897Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034647",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjNjZTY1YTEtZDI2Zi00ZDIyLWE4NzEtNmE5NTRkMDNkYzZkXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:04.189Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0199457",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTA3YjRkZjQtY2U1Ni00NjE4LTg3ZTEtOWNiOTZlNjA1MzQwXkEyXkFqcGdeQXVyMjM5NDM1MTE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:04.686Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0018825",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWFjZjJiMmItODljMS00OGUzLWFlNGUtZGFjZDI4ZmZkMWQ3XkEyXkFqcGdeQXVyMjU4NzU2OTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:04.887Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0247283",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGM2YTY2MjctOGY1My00MWMzLWI0MzctMmRhYmFlZjYxMWM5XkEyXkFqcGdeQXVyNzM2MTg0NA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:05.235Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0066991",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGMyMjlhYzgtYzU2ZS00MWNjLTlkYzktNmUzM2IwZjk1MDY3XkEyXkFqcGdeQXVyNTUyNzA5ODE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:05.433Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0033531",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTgxZTA5MGItNzFkOC00ODVhLWIxNzItNTc0NGEwMWUyYjhkXkEyXkFqcGdeQXVyMzI5NjUyMDM@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:05.700Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0027517",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmVkMDEwNGUtNzYxZS00YmY5LWIzNmQtNTU5ODk4YWJmZDgzXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:05.894Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0054806",
+    "url": "https://m.media-amazon.com/images/M/MV5BN2I1N2YyZTgtNDgzZS00ZTlhLTk2MmUtMDA3ZGQ0MDkyZDdlXkEyXkFqcGdeQXVyMzYyMzU2OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:06.339Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0038471",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTI4MjRlNDgtZTUwZS00NmI5LTgxZDgtOGNjYTNkZWFhYjVlXkEyXkFqcGdeQXVyMzI2MDEwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:06.537Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032392",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTZiNTgzZTktOTQ3NC00MzRiLTkxZmMtODQzM2JhZmQ1MmYwXkEyXkFqcGdeQXVyNTk1MTk0MDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:06.803Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019797",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmE4NDA3NDQtYjBhNC00YWNlLWEzYzItNzg0ODc1ZDgxMTY1XkEyXkFqcGdeQXVyMTcyODY2NDQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:07.145Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0220221",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTZkZGVlMTYtYWRlZC00OTEwLThlZDEtNjExMTNkYzU5NzJkXkEyXkFqcGdeQXVyOTc2Mzg5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:07.349Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0011960",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTI3NWZhYjYtZjRhZS00ZmZhLTk5YzgtYTI3YTM2MTA3YjU2XkEyXkFqcGdeQXVyMjcxNjI4NTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:08.710Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0049143",
+    "url": "https://m.media-amazon.com/images/M/MV5BZWJmY2I5NGEtMmRhNC00YzU3LTgxNDItNjQ4MTc2Zjg1MDhlXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:09.761Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034654",
+    "url": "https://m.media-amazon.com/images/M/MV5BZjQ5NDg1MTItZDlkNC00NTgxLTlmZGQtNzgwYTMxN2M1MjgyXkEyXkFqcGdeQXVyNjMxMzM3NDI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:10.038Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0043516",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2QzOTNkNDMtYzA5Yy00YjdhLThmMTEtODc5NWQ5NzY4MzJmXkEyXkFqcGdeQXVyMTQ3Njg3MQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:10.692Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt1114679",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjI1ZjlmNjctNTkyYy00YWY0LWI1NGQtMDg5MGFkYjM1OWM2XkEyXkFqcGdeQXVyMTA1NzMzMjAz._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:12.347Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt31867154",
+    "url": "https://m.media-amazon.com/images/M/MV5BMjRkYmQ4NjAtYTNhYy00N2M3LThmZjQtOTc2NmNjNmYxNTUwXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:17.105Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt3593922",
+    "url": "https://m.media-amazon.com/images/M/MV5BYWVkMGM0ZDAtNzcxYS00ZjY3LWJmZDQtYWMwMTE0ODJmYjNjL2ltYWdlXkEyXkFqcGdeQXVyODY3MjAwOQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:25.966Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt3132220",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTg0Yzk2OWQtZWNhMS00MTFhLTkyYjctZTQzZGRhM2RkMjIyXkEyXkFqcGdeQXVyNzg5OTk2OA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:29.144Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt5734328",
+    "url": "https://m.media-amazon.com/images/M/MV5BODIyNTZjNTEtMTdkZi00N2NjLTg1N2QtOTMyZTM1NmQxMDNhXkEyXkFqcGdeQXVyMjIxMjc5ODk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:29.567Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt2938070",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjA3ZmM2MzItZDFjYS00N2JiLThiMWEtNjhiYWFkOWQ2NGQ1XkEyXkFqcGdeQXVyNDIzMDA0Njg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:30.386Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150334",
+    "url": "https://m.media-amazon.com/images/M/MV5BNGQ4OWQwN2QtNzA0MS00YjJkLTgzZGItYzIyODBlY2VjM2MwXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:31.209Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0031232",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2VkNDk2OWItMzliZS00MGUzLWFmZjYtOTQ0ZDkzZDg5NjMxXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:31.588Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0299763",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTM4ODk5N2MtZTJiZi00MDFmLTllNGEtYmMyNmIyNGJkZjViXkEyXkFqcGdeQXVyOTY2MDcwNw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:32.145Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0191090",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTYwYjY1OTUtMTlmNC00ZDk5LWFiYzMtYzY4ZTk4NGQ5NjhiXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:32.750Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178380",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTQxYjA4ODQtZDM3ZS00ZmMzLTg3YjMtNGJiMDhmZDVhNGY1XkEyXkFqcGdeQXVyMTc3MDAzMQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:33.731Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036762",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjIyMTdkYjAtNTA2Yi00YTI3LTg5MTUtMzk4MTU1MWFkZWRjXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:34.023Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0026283",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWIzNGVlMTMtZWIwOC00ZTgzLTk0OTMtZDRhOWZhNmQxYjNjXkEyXkFqcGdeQXVyNDcwNDI2MTk@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:34.232Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0064240",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGE4NDdkNWQtYmFjNC00N2I5LWFlY2QtM2Q3ZTM2N2EwYzU2XkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:34.674Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0028810",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmNmYmJiNzgtM2NkMS00MmQwLThiYWEtMWE1NDRhZDUzOTIzXkEyXkFqcGdeQXVyMDUyOTUyNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:35.042Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0045681",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzdjMDU4ZjgtZWExYi00YTk4LTkwZTktNjhmODM3NDM2NTkxXkEyXkFqcGdeQXVyMTA3NzE5MzE@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:35.250Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148075",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDZmZTE5YmEtOGU1Yy00MTM3LWI5NjgtOWJhM2I5YTA0MWExXkEyXkFqcGdeQXVyNTMyODM3MTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:35.633Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0216718",
+    "url": "https://m.media-amazon.com/images/M/MV5BZDIxOTc5N2EtMmYxYy00MDk1LWJjMDQtOTk0MzYxMTBlY2FmL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjMxMjkwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:35.849Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0418640",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzM3ZmM5ODktYjM1Mi00MjQyLWJiN2UtNmYyYmUyZWZlZGVjXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:36.077Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0036764",
+    "url": "https://m.media-amazon.com/images/M/MV5BNjlmMDBiOGQtNzNlMi00NGE1LThlZTQtMDUzMDUyMTZjZTRjXkEyXkFqcGdeQXVyMjA0NzcwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:36.593Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0150352",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzlhOTVkN2UtY2QyMS00Y2JlLWEwOTMtNGVlZDMzNTU1NWJiXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:36.792Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0032398",
+    "url": "https://m.media-amazon.com/images/M/MV5BMmNkOWY5MjAtMzY5Yi00NmMzLTg4NGYtZjQ3MzEwN2QwNzUwXkEyXkFqcGdeQXVyNzU3NTk0NjA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:37.014Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0161510",
+    "url": "https://m.media-amazon.com/images/M/MV5BM2FjMTFlYzItNWU5Yy00ZmQwLWI1MDAtZTY4MDM1ZDU5Y2EzXkEyXkFqcGdeQXVyMDU4MTQ0Ng@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:37.211Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019026",
+    "url": "https://m.media-amazon.com/images/M/MV5BYzk0YTgwNTUtMTE1Mi00ZWVlLWFjMTEtOTQ1OTlmOTMxNjliL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjMxMjkwMjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:39.466Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178383",
+    "url": "https://m.media-amazon.com/images/M/MV5BMTQxMjI4ZjYtMmQ2ZS00ZWNmLTk4YTItYTA3ODVmYzA1NTE5XkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:39.884Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0185288",
+    "url": "https://m.media-amazon.com/images/M/MV5BOWE0YmI2ZTEtYWVhYy00YTY3LWEwMjEtNzFkMWM4YjYzZThkXkEyXkFqcGdeQXVyOTc2Mzg5OQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:40.293Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0182048",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjUwZjhlMjAtNGRjNC00OWExLWFjOTAtZWQ2ZDg0ZTljYTA3XkEyXkFqcGdeQXVyNDQxOTAyNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:40.489Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0315164",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmI2Njg2NGMtMTc4Mi00NzBlLTg1YzQtOTczNWNhZTlmYTRhXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:40.752Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0010072",
+    "url": "https://m.media-amazon.com/images/M/MV5BNTU4MjRiZjQtODljZC00OGZlLTk2OWYtNDY4Nzk5MzQ5ZDhhXkEyXkFqcGdeQXVyMjUxODE0MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:41.103Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0130629",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGM2NTM5MDItM2U2Mi00NDk0LThkNjMtZTNlYWRkMWQ3ZDgyXkEyXkFqcGdeQXVyNjc1MjA0OTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:41.308Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0030071",
+    "url": "https://m.media-amazon.com/images/M/MV5BOTFkYmUwMGYtNGZkZi00NTRlLTllMjItMzliMTYxM2IzNzQ4XkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:42.275Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0178387",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzE0NzFhMDktZmQ1YS00YjRlLWI5NGMtMTIyY2QyODg1OTVjXkEyXkFqcGdeQXVyMDMyNzk2Mg@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:42.540Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0144177",
+    "url": "https://m.media-amazon.com/images/M/MV5BYTE2YjIzZTEtM2EzYy00MGM3LWI4ZGUtNjVhYWFlOTY3ZDViXkEyXkFqcGdeQXVyNjU0ODkwMTU@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:42.737Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0193109",
+    "url": "https://m.media-amazon.com/images/M/MV5BNzlmM2ExZDAtNWUwZS00YjUxLWExOGEtNDgyZGU2MWIwZmY0XkEyXkFqcGdeQXVyMTk4MDgwNA@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:42.935Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042412",
+    "url": "https://m.media-amazon.com/images/M/MV5BMGEzOTliZTQtYWM4OS00MDUwLWFjODAtYTk0NjYxMjJiZTY5XkEyXkFqcGdeQXVyNzM0MDQ1Mw@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:44.741Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0046927",
+    "url": "https://m.media-amazon.com/images/M/MV5BZTlkNjUyMjctZDI5Zi00YmNiLWFiMzktYjc3NzM4N2I4ZGUxXkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:44.942Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0075956",
+    "url": "https://m.media-amazon.com/images/M/MV5BODQxMjllNDQtYzc1Yi00YzEzLWE4ZGQtNmJhNWNiNTllMzZkXkEyXkFqcGdeQXVyMjUyNDk2ODc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:45.219Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0019832",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmNiMjkxZWEtZDJmMS00Njc2LTk3YzktMzIwYjM2ZWJlNmFhXkEyXkFqcGdeQXVyODI1OTk4MTQ@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:45.418Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0161518",
+    "url": "https://m.media-amazon.com/images/M/MV5BY2NhZmE1ZjAtZDU2Zi00NGMyLTk2MTMtNDYyZDZiYmY3Mzc0XkEyXkFqcGdeQXVyNjgwNDU3NTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:46.161Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0148087",
+    "url": "https://m.media-amazon.com/images/M/MV5BYjBlZWExNGUtMzkzZC00MzUxLWE3MTAtOTQ4YWE2N2U2MTdkXkEyXkFqcGdeQXVyODUyMTkwOTg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:46.539Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0145751",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzhkNmZjOGItYjI1NC00NGRjLThlMjktNGY1M2JiZjkzODkxXkEyXkFqcGdeQXVyNTAzMjQ4MTA@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:46.744Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0034681",
+    "url": "https://m.media-amazon.com/images/M/MV5BMDA0YzljNGEtMzUwMS00OTgzLWJlYjAtM2NjYTYxOWE1Y2NlXkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:48.453Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0445212",
+    "url": "https://m.media-amazon.com/images/M/MV5BODczMjg0OGQtZGZjNy00MTNkLTllOTctMGYzZjBhM2M5ZTdjXkEyXkFqcGdeQXVyOTIwMDQxNjI@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:49.042Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0050335",
+    "url": "https://m.media-amazon.com/images/M/MV5BOGM5NWFjOWUtZmU4MS00ZGNmLWE2MzEtZDhkZjZiMGY2OGQ5XkEyXkFqcGdeQXVyNTA4NzExMDg@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:49.244Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0039339",
+    "url": "https://m.media-amazon.com/images/M/MV5BMzE2ZjdjMmMtYTM1Zi00MmQ1LWEzNTEtOGU4OGQ0OThlODU3XkEyXkFqcGdeQXVyMTY5Nzc4MDY@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:49.441Z",
+    "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0024120",
+    "url": "https://m.media-amazon.com/images/M/MV5BNmQzYzAxYzUtYzI1Ny00M2I2LWEwYTQtYjI0MjMxMmU3MGFmXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-28T15:48:49.708Z",
+    "error": "HTTP 404: Not Found"
   }
 ]
