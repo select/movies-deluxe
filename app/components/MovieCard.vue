@@ -46,6 +46,14 @@
           {{ languageCode }}
         </span>
       </div>
+
+      <!-- Like Indicator -->
+      <div
+        v-if="isMovieLiked"
+        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center"
+      >
+        <div class="i-mdi-heart text-red-500 text-lg" />
+      </div>
     </div>
 
     <!-- Movie Info -->
@@ -86,6 +94,11 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const movieStore = useMovieStore()
+
+// Check if movie is liked
+const isMovieLiked = computed(() => movieStore.isLiked(props.movie.imdbId))
 
 // Computed language code
 const languageCode = computed(() => {
