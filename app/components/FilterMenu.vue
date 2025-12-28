@@ -315,7 +315,7 @@ const emit = defineEmits<{
 }>()
 
 // Use unified movie store
-const { activeFilters: filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
+const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
 const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, clearAllFilters } = useMovieStore()
 
 // Dynamic filter options

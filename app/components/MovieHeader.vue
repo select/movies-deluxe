@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
 
-const { activeFilters: filters } = storeToRefs(useMovieStore())
+const { filters } = storeToRefs(useMovieStore())
 const { setSearchQuery, setSort } = useMovieStore()
 const { y: windowScrollY } = useWindowScroll()
 

@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { refThrottled } from '@vueuse/core'
 
-const { activeFilters: filters } = storeToRefs(useMovieStore())
+const { filters } = storeToRefs(useMovieStore())
 const { setSearchQuery, setSort } = useMovieStore()
 
 withDefaults(defineProps<{
