@@ -1,22 +1,140 @@
-import type { MovieEntry, MovieSource, MovieSourceType, MovieMetadata } from '~/types'
+import type {
+  MovieEntry,
+  MovieSource,
+  MovieSourceType,
+  MovieMetadata,
+  LightweightMovieEntry,
+} from '~/types'
+import {
+  SORT_OPTIONS,
+  sortMovies,
+  type SortOption,
+  type SortField,
+  type SortDirection,
+} from '~/utils/movieSort'
 
-// Frontend-specific loading state type
+/**
+ * Extended MovieEntry with user metadata (likes/watchlist)
+ * This embeds user-specific data directly in the movie object
+ */
+export interface ExtendedMovieEntry extends MovieEntry {
+  // User metadata (embedded in movie object)
+  isLiked?: boolean
+  likedAt?: number
+  inWatchlist?: boolean
+  addedToWatchlistAt?: number
+}
+
+/**
+ * Serializable sort state (for localStorage)
+ */
+export interface SortState {
+  field: SortField
+  direction: SortDirection
+}
+
+/**
+ * Filter state interface
+ */
+export interface FilterState {
+  // Sorting (stored as field + direction for localStorage compatibility)
+  sort: SortState
+
+  // Remember previous sort when searching
+  previousSort?: SortState
+
+  // Source filter (can be 'archive.org' or YouTube channel names)
+  sources: string[]
+
+  // Rating filter
+  minRating: number
+
+  // Year filter
+  minYear: number
+
+  // Votes filter
+  minVotes: number
+
+  // Genre filter
+  genres: string[]
+
+  // Country filter
+  countries: string[]
+
+  // Search query
+  searchQuery: string
+
+  // Localhost-only filters
+  showMissingMetadataOnly: boolean
+
+  // Pagination
+  currentPage: number
+  lastScrollY: number
+}
+
+/**
+ * Frontend-specific loading state type
+ */
 export interface LoadingState {
   movies: boolean
   movieDetails: boolean
   imdbFetch: boolean
 }
 
+/**
+ * Default filter state
+ */
+const DEFAULT_FILTERS: FilterState = {
+  sort: { field: 'year', direction: 'desc' }, // Year (Newest)
+  sources: [],
+  minRating: 0,
+  minYear: 0,
+  minVotes: 0,
+  genres: [],
+  countries: [],
+  searchQuery: '',
+  showMissingMetadataOnly: false,
+  currentPage: 1,
+  lastScrollY: 0,
+}
+
+/**
+ * Unified Movie Store
+ *
+ * Consolidates useMovieStore, useFilterStore, useLikedMoviesStore, and useWatchlistStore
+ * into a single source of truth with computed views for filtered/liked/watchlist movies.
+ *
+ * Key Features:
+ * - Single Map<string, ExtendedMovieEntry> for all movies (O(1) lookups)
+ * - Computed properties for filtered views (no duplicate arrays)
+ * - Embedded like/watchlist metadata in movie objects
+ * - Reactive filters with automatic recomputation
+ * - localStorage persistence for user data and filters
+ */
 export const useMovieStore = defineStore('movie', () => {
-  // State
-  const movies = ref<MovieEntry[]>([])
-  const movieDetailsCache = ref<Map<string, MovieEntry>>(new Map())
+  console.log('[MovieStore] Initializing unified movie store')
+
+  // ============================================
+  // STATE
+  // ============================================
+
+  // Single source of truth - all movies stored here
+  const allMovies = ref<Map<string, ExtendedMovieEntry>>(new Map())
+
+  // Cache for movie details
+  const movieDetailsCache = ref<Map<string, ExtendedMovieEntry>>(new Map())
+
+  // Loading states
   const isLoading = ref<LoadingState>({
     movies: false,
     movieDetails: false,
     imdbFetch: false,
   })
   const isInitialLoading = ref(true)
+  const isFiltering = ref(false)
+
+  // Filter state
+  const filters = ref<FilterState>(getInitialFilters())
 
   // Database composable
   const db = useDatabase()
@@ -24,10 +142,250 @@ export const useMovieStore = defineStore('movie', () => {
   // Cached poster existence checks
   const posterCache = ref<Map<string, boolean>>(new Map())
 
+  // ============================================
+  // INITIALIZATION HELPERS
+  // ============================================
+
   /**
-   * Map SQL row to MovieEntry
+   * Get initial filters from localStorage
    */
-  const mapRowToMovie = (row: any): MovieEntry => {
+  function getInitialFilters(): FilterState {
+    if (typeof window === 'undefined') {
+      return DEFAULT_FILTERS
+    }
+
+    try {
+      const stored = localStorage.getItem('movies-deluxe-filters')
+      if (stored) {
+        return {
+          ...DEFAULT_FILTERS,
+          ...JSON.parse(stored),
+        }
+      }
+    } catch {
+      // Failed to parse localStorage
+    }
+
+    return DEFAULT_FILTERS
+  }
+
+  /**
+   * Load persisted likes from localStorage
+   */
+  function loadPersistedLikes(): void {
+    if (typeof window === 'undefined') return
+
+    try {
+      const stored = localStorage.getItem('movies-deluxe-liked')
+      if (stored) {
+        const likedIds: string[] = JSON.parse(stored)
+        likedIds.forEach(id => {
+          const movie = allMovies.value.get(id)
+          if (movie) {
+            movie.isLiked = true
+            movie.likedAt = Date.now() // We don't have timestamp from old format
+          }
+        })
+      }
+    } catch (err) {
+      console.error('[MovieStore] Failed to load persisted likes:', err)
+    }
+  }
+
+  /**
+   * Load persisted watchlist from localStorage
+   */
+  function loadPersistedWatchlist(): void {
+    if (typeof window === 'undefined') return
+
+    try {
+      const stored = localStorage.getItem('movies-deluxe-watchlist')
+      if (stored) {
+        const watchlistIds: string[] = JSON.parse(stored)
+        watchlistIds.forEach(id => {
+          const movie = allMovies.value.get(id)
+          if (movie) {
+            movie.inWatchlist = true
+            movie.addedToWatchlistAt = Date.now()
+          }
+        })
+      }
+    } catch (err) {
+      console.error('[MovieStore] Failed to load persisted watchlist:', err)
+    }
+  }
+
+  /**
+   * Persist likes to localStorage
+   */
+  function persistLikes(): void {
+    if (typeof window === 'undefined') return
+
+    try {
+      const likedIds = Array.from(allMovies.value.values())
+        .filter(m => m.isLiked)
+        .map(m => m.imdbId)
+      localStorage.setItem('movies-deluxe-liked', JSON.stringify(likedIds))
+    } catch (err) {
+      console.error('[MovieStore] Failed to persist likes:', err)
+    }
+  }
+
+  /**
+   * Persist watchlist to localStorage
+   */
+  function persistWatchlist(): void {
+    if (typeof window === 'undefined') return
+
+    try {
+      const watchlistIds = Array.from(allMovies.value.values())
+        .filter(m => m.inWatchlist)
+        .map(m => m.imdbId)
+      localStorage.setItem('movies-deluxe-watchlist', JSON.stringify(watchlistIds))
+    } catch (err) {
+      console.error('[MovieStore] Failed to persist watchlist:', err)
+    }
+  }
+
+  /**
+   * Persist filters to localStorage
+   */
+  function persistFilters(): void {
+    if (typeof window === 'undefined') return
+
+    try {
+      localStorage.setItem('movies-deluxe-filters', JSON.stringify(filters.value))
+    } catch (err) {
+      console.error('[MovieStore] Failed to persist filters:', err)
+    }
+  }
+
+  // ============================================
+  // COMPUTED PROPERTIES - Data Views
+  // ============================================
+
+  /**
+   * Lightweight movies for virtual scrolling
+   * Only includes essential fields (imdbId, title, year)
+   */
+  const lightweightMovies = ref<LightweightMovieEntry[]>([])
+
+  /**
+   * Filtered and sorted movies based on current filters
+   * This is the primary computed property that applies all filters
+   */
+  const filteredAndSortedMovies = ref<ExtendedMovieEntry[]>([])
+
+  /**
+   * Paginated movies for display (subset of filteredAndSortedMovies)
+   * Includes movies up to currentPage * ITEMS_PER_PAGE
+   */
+  const paginatedMovies = computed((): ExtendedMovieEntry[] => {
+    const itemsPerPage = 50
+    const limit = filters.value.currentPage * itemsPerPage
+    return filteredAndSortedMovies.value.slice(0, limit)
+  })
+
+  /**
+   * Liked movies sorted by likedAt timestamp (newest first)
+   */
+  const likedMovies = computed((): ExtendedMovieEntry[] => {
+    return Array.from(allMovies.value.values())
+      .filter(m => m.isLiked)
+      .sort((a, b) => (b.likedAt || 0) - (a.likedAt || 0))
+  })
+
+  /**
+   * Watchlist movies sorted by addedToWatchlistAt timestamp (newest first)
+   */
+  const watchlistMovies = computed((): ExtendedMovieEntry[] => {
+    return Array.from(allMovies.value.values())
+      .filter(m => m.inWatchlist)
+      .sort((a, b) => (b.addedToWatchlistAt || 0) - (a.addedToWatchlistAt || 0))
+  })
+
+  // ============================================
+  // COMPUTED PROPERTIES - Statistics
+  // ============================================
+
+  /**
+   * Total number of movies in the database
+   */
+  const totalMovies = computed((): number => allMovies.value.size)
+
+  /**
+   * Number of movies after applying filters
+   */
+  const totalFiltered = ref(0)
+
+  /**
+   * Number of liked movies
+   */
+  const likedCount = computed((): number => likedMovies.value.length)
+
+  /**
+   * Number of watchlist movies
+   */
+  const watchlistCount = computed((): number => watchlistMovies.value.length)
+
+  /**
+   * Whether more movies can be loaded (pagination)
+   */
+  const hasMore = computed((): boolean => {
+    return filteredAndSortedMovies.value.length > paginatedMovies.value.length
+  })
+
+  /**
+   * Number of active filters (excluding sort)
+   */
+  const activeFiltersCount = computed((): number => {
+    let count = 0
+    if (filters.value.sources.length > 0) count++
+    if (filters.value.minRating > 0) count++
+    if (filters.value.minYear > 0) count++
+    if (filters.value.minVotes > 0) count++
+    if (filters.value.genres.length > 0) count++
+    if (filters.value.countries.length > 0) count++
+    return count
+  })
+
+  /**
+   * Whether any filters are active
+   */
+  const hasActiveFilters = computed((): boolean => {
+    return (
+      filters.value.sources.length > 0 ||
+      filters.value.minRating > 0 ||
+      filters.value.minYear > 0 ||
+      filters.value.minVotes > 0 ||
+      filters.value.genres.length > 0 ||
+      filters.value.countries.length > 0
+    )
+  })
+
+  /**
+   * Current sort option (reconstructed from stored state)
+   */
+  const currentSortOption = computed((): SortOption => {
+    if (!filters.value || !filters.value.sort) {
+      return SORT_OPTIONS[0]!
+    }
+
+    const stored = filters.value.sort
+    const found = SORT_OPTIONS.find(
+      opt => opt.field === stored.field && opt.direction === stored.direction
+    )
+    return found || SORT_OPTIONS[0]!
+  })
+
+  // ============================================
+  // UTILITY FUNCTIONS
+  // ============================================
+
+  /**
+   * Map SQL row to ExtendedMovieEntry
+   */
+  const mapRowToMovie = (row: any): ExtendedMovieEntry => {
     const sourcesRaw = row.sources_raw || ''
     const sources: MovieSource[] = sourcesRaw
       ? sourcesRaw
@@ -85,11 +443,19 @@ export const useMovieStore = defineStore('movie', () => {
       lastUpdated: row.lastUpdated,
       sources,
       metadata,
+      // User metadata will be loaded from localStorage
+      isLiked: false,
+      inWatchlist: false,
     }
   }
 
+  // ============================================
+  // DATA LOADING ACTIONS
+  // ============================================
+
   /**
-   * Load movies from SQLite database (initialization only)
+   * Initialize database and load persisted user data (likes/watchlist)
+   * Called once on app initialization
    */
   const loadFromFile = async () => {
     isLoading.value.movies = true
@@ -98,12 +464,15 @@ export const useMovieStore = defineStore('movie', () => {
       // Initialize database from remote file
       await db.init('/data/movies.db')
 
-      // We don't load all movies anymore, just initialize
+      // Load persisted user data
+      loadPersistedLikes()
+      loadPersistedWatchlist()
+
       isInitialLoading.value = false
     } catch (err) {
       console.error('Failed to initialize SQLite:', err)
       // Fallback to JSON API if SQLite fails
-      await loadFromJson()
+      await loadFromApi()
     } finally {
       isLoading.value.movies = false
       isInitialLoading.value = false
@@ -111,7 +480,53 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fetch movies with filtering and pagination
+   * Load movies from JSON API (fallback or admin interface)
+   */
+  const loadFromApi = async () => {
+    isLoading.value.movies = true
+    try {
+      const response = await $fetch<Record<string, unknown>>('/api/movies')
+
+      if (response.error) {
+        console.error('Failed to load movies from JSON:', response.message)
+        return
+      }
+
+      const movieEntries: ExtendedMovieEntry[] = Object.entries(response)
+        .filter(([key]) => !key.startsWith('_'))
+        .filter(([, value]) => {
+          if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
+            return false
+          }
+          const movie = value as any
+          if (typeof movie.imdbId !== 'string') return false
+          if (typeof movie.title === 'string') return true
+          if (Array.isArray(movie.title)) {
+            return movie.title.every((t: any) => typeof t === 'string')
+          }
+          return false
+        })
+        .map(([, value]) => value as ExtendedMovieEntry)
+
+      // Convert array to Map
+      allMovies.value.clear()
+      movieEntries.forEach(movie => {
+        allMovies.value.set(movie.imdbId, movie)
+      })
+
+      // Load persisted user data
+      loadPersistedLikes()
+      loadPersistedWatchlist()
+    } catch (err) {
+      console.error('Failed to load movies from JSON fallback:', err)
+    } finally {
+      isLoading.value.movies = false
+      isInitialLoading.value = false
+    }
+  }
+
+  /**
+   * Fetch movies with filtering and pagination from SQLite
    */
   const fetchMovies = async (options: {
     where?: string
@@ -134,10 +549,8 @@ export const useMovieStore = defineStore('movie', () => {
       const searchWhere = 'fts_movies MATCH ?'
       finalWhere = finalWhere ? `(${finalWhere}) AND (${searchWhere})` : searchWhere
 
-      // Sanitize search query for FTS5 (escape quotes and special characters)
+      // Sanitize search query for FTS5
       const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-
-      // Use simple quoted search - FTS5 will handle relevance, we'll add title prioritization in ORDER BY
       params.push(`"${sanitizedQuery}"`)
     }
 
@@ -175,7 +588,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Fetch full movie details for specific IDs (with caching)
    */
-  const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
+  const fetchMoviesByIds = async (imdbIds: string[]): Promise<ExtendedMovieEntry[]> => {
     if (!db.isReady.value) return []
     if (!imdbIds || imdbIds.length === 0) return []
 
@@ -198,9 +611,13 @@ export const useMovieStore = defineStore('movie', () => {
       const results = await db.queryByIds(uncachedIds)
       const movies = results.map(mapRowToMovie)
 
-      // Cache the results
+      // Cache the results and merge with allMovies
       movies.forEach(movie => {
         movieDetailsCache.value.set(movie.imdbId, movie)
+        // Also update allMovies if not present
+        if (!allMovies.value.has(movie.imdbId)) {
+          allMovies.value.set(movie.imdbId, movie)
+        }
       })
 
       // Return all requested movies (cached + newly fetched)
@@ -212,10 +629,15 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Get a single movie from cache or fetch it
+   * Get a single movie by ID (from cache or database)
    */
-  const getMovieDetails = async (imdbId: string): Promise<MovieEntry | undefined> => {
-    // Check cache first
+  const getMovieById = async (imdbId: string): Promise<ExtendedMovieEntry | undefined> => {
+    // Check allMovies first
+    if (allMovies.value.has(imdbId)) {
+      return allMovies.value.get(imdbId)
+    }
+
+    // Check cache
     if (movieDetailsCache.value.has(imdbId)) {
       return movieDetailsCache.value.get(imdbId)
     }
@@ -227,9 +649,11 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Get related movies for a given movie ID
-   * Returns full MovieEntry objects by querying the database
    */
-  const getRelatedMovies = async (movieId: string, limit: number = 8): Promise<MovieEntry[]> => {
+  const getRelatedMovies = async (
+    movieId: string,
+    limit: number = 8
+  ): Promise<ExtendedMovieEntry[]> => {
     try {
       // Fetch related movie IDs and basic info from database
       const relatedRows = await db.getRelatedMovies(movieId, limit)
@@ -261,244 +685,729 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fallback: Load movies from JSON API
+   * Search movies using FTS5 full-text search
    */
-  const loadFromJson = async () => {
-    try {
-      const response = await $fetch<Record<string, unknown>>('/api/movies')
-
-      if (response.error) {
-        console.error('Failed to load movies from JSON:', response.message)
-        return
-      }
-
-      const movieEntries: MovieEntry[] = Object.entries(response)
-        .filter(([key]) => !key.startsWith('_'))
-        .filter(([, value]) => {
-          if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
-            return false
-          }
-          const movie = value as any
-          if (typeof movie.imdbId !== 'string') return false
-          if (typeof movie.title === 'string') return true
-          if (Array.isArray(movie.title)) {
-            return movie.title.every((t: any) => typeof t === 'string')
-          }
-          return false
-        })
-        .map(([, value]) => value as MovieEntry)
-        .sort((a, b) => (a.imdbId || '').localeCompare(b.imdbId || ''))
-
-      movies.value = movieEntries
-    } catch (err) {
-      console.error('Failed to load movies from JSON fallback:', err)
+  const searchMovies = async (searchQuery: string): Promise<ExtendedMovieEntry[]> => {
+    if (!searchQuery || !searchQuery.trim()) {
+      return Array.from(allMovies.value.values())
     }
-  }
-
-  /**
-   * Load movies from JSON API (for Admin interface)
-   */
-  const loadFromApi = async () => {
-    isLoading.value.movies = true
-    try {
-      await loadFromJson()
-    } finally {
-      isLoading.value.movies = false
-      isInitialLoading.value = false
-    }
-  }
-
-  /**
-   * Filter movies by source type
-   * @param sourceType - Type of source to filter by ('archive.org' or 'youtube')
-   * @returns Filtered array of movies
-   */
-  const filterBySource = (sourceType: MovieSourceType): MovieEntry[] => {
-    return movies.value.filter((movie: MovieEntry) =>
-      movie.sources.some((source: MovieSource) => source.type === sourceType)
-    )
-  }
-
-  /**
-   * Search movies with weighted fields (title gets highest priority)
-   * @param query - Search query string
-   * @returns Filtered array of movies matching the query
-   */
-  const searchMovies = async (searchQuery: string): Promise<MovieEntry[]> => {
-    if (!searchQuery || !searchQuery.trim()) return movies.value
 
     if (!db.isReady.value) {
       // Fallback to simple JS search if DB is not ready
       const lowerQuery = searchQuery.toLowerCase()
-      return movies.value.filter((movie: MovieEntry) => {
+      return Array.from(allMovies.value.values()).filter((movie: ExtendedMovieEntry) => {
         const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
         return titles.some(t => t.toLowerCase().includes(lowerQuery))
       })
     }
 
     try {
-      // Sanitize search query for FTS5 (escape quotes and special characters)
       const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-
-      // Try weighted search first - FTS5 supports column weighting with column:term syntax
-      // But let's use a simpler approach that's more compatible
-      let weightedQuery: string
-
-      // For single words, use column-specific search with OR
-      if (!sanitizedQuery.includes(' ')) {
-        weightedQuery = `(title:"${sanitizedQuery}" * 4) OR (director:"${sanitizedQuery}" * 2) OR (actors:"${sanitizedQuery}" * 2) OR (plot:"${sanitizedQuery}")`
-      } else {
-        // For phrases, search all fields but prioritize title matches by searching it multiple times
-        weightedQuery = `"${sanitizedQuery}"`
-      }
-
       const results = await db.query(
         `
-        SELECT m.imdbId, 
+        SELECT m.imdbId,
                CASE 
-                 WHEN m.title LIKE ? THEN 4
                  WHEN m.title LIKE ? THEN 3
+                 WHEN m.title LIKE ? THEN 2
                  ELSE 1
-               END as title_score
+               END as relevance_score
         FROM fts_movies f
         JOIN movies m ON f.imdbId = m.imdbId
         WHERE fts_movies MATCH ?
-        ORDER BY title_score DESC, rank
+        ORDER BY relevance_score DESC, rank
       `,
-        [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, weightedQuery]
+        [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, `"${sanitizedQuery}"`]
       )
 
       const matchedIds = new Set(results.map((r: any) => r.imdbId))
-      return movies.value.filter(m => matchedIds.has(m.imdbId))
+      return Array.from(allMovies.value.values()).filter(m => matchedIds.has(m.imdbId))
     } catch (err) {
-      console.error('Weighted FTS search failed, falling back to simple search:', err)
+      console.error('[MovieStore] Search failed:', err)
+      return []
+    }
+  }
 
-      // Fallback to simple title-prioritized search
-      try {
-        const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-        const results = await db.query(
-          `
-          SELECT m.imdbId,
-                 CASE 
-                   WHEN m.title LIKE ? THEN 3
-                   WHEN m.title LIKE ? THEN 2
-                   ELSE 1
-                 END as relevance_score
-          FROM fts_movies f
-          JOIN movies m ON f.imdbId = m.imdbId
-          WHERE fts_movies MATCH ?
-          ORDER BY relevance_score DESC, rank
-        `,
-          [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, `"${sanitizedQuery}"`]
-        )
+  // ============================================
+  // FILTERING & SORTING ACTIONS
+  // ============================================
 
-        const matchedIds = new Set(results.map((r: any) => r.imdbId))
-        return movies.value.filter(m => matchedIds.has(m.imdbId))
-      } catch (fallbackErr) {
-        console.error('Simple FTS search also failed:', fallbackErr)
+  /**
+   * Fetch lightweight movie list (IDs and titles only) for virtual scrolling
+   */
+  const fetchLightweightMovies = async () => {
+    if (!db.isReady.value) {
+      console.log('DB not ready, cannot fetch lightweight movies')
+      return
+    }
 
-        // Final fallback to JS search with title prioritization
-        const lowerQuery = searchQuery.toLowerCase()
-        const titleMatches: MovieEntry[] = []
-        const otherMatches: MovieEntry[] = []
+    console.log('[MovieStore] Fetching lightweight movies...')
+    isFiltering.value = true
+    try {
+      const params: any[] = []
+      const where: string[] = []
 
-        movies.value.forEach((movie: MovieEntry) => {
-          const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
-          const titleMatch = titles.some(t => t.toLowerCase().includes(lowerQuery))
-
-          if (titleMatch) {
-            titleMatches.push(movie)
-          } else {
-            // Check other fields
-            const actorsMatch = movie.metadata?.Actors?.toLowerCase().includes(lowerQuery)
-            const directorMatch = movie.metadata?.Director?.toLowerCase().includes(lowerQuery)
-            const plotMatch = movie.metadata?.Plot?.toLowerCase().includes(lowerQuery)
-
-            if (actorsMatch || directorMatch || plotMatch) {
-              otherMatches.push(movie)
-            }
-          }
-        })
-
-        // Return title matches first, then other matches
-        return [...titleMatches, ...otherMatches]
+      // Apply filters
+      if (filters.value.minRating > 0) {
+        where.push('m.imdbRating >= ?')
+        params.push(filters.value.minRating)
       }
+      if (filters.value.minYear > 0) {
+        where.push('m.year >= ?')
+        params.push(filters.value.minYear)
+      }
+      if (filters.value.minVotes > 0) {
+        where.push('m.imdbVotes >= ?')
+        params.push(filters.value.minVotes)
+      }
+      if (filters.value.showMissingMetadataOnly) {
+        where.push('m.is_curated = 0')
+      }
+
+      // Genre filters
+      if (filters.value.genres.length > 0) {
+        filters.value.genres.forEach(genre => {
+          where.push('m.genre LIKE ?')
+          params.push(`%${genre}%`)
+        })
+      }
+
+      // Country filters
+      if (filters.value.countries.length > 0) {
+        filters.value.countries.forEach(country => {
+          where.push('m.country LIKE ?')
+          params.push(`%${country}%`)
+        })
+      }
+
+      // Source filters require joins, so use full query
+      if (filters.value.sources.length > 0) {
+        await fetchFilteredMovies()
+        return
+      }
+
+      // Sorting
+      let orderBy = ''
+      const sortField = filters.value.sort.field
+      const sortDir = filters.value.sort.direction.toUpperCase()
+
+      if (sortField === 'relevance' && filters.value.searchQuery) {
+        // For search, we need to use FTS which requires full query
+        await fetchFilteredMovies()
+        return
+      } else if (sortField === 'rating') {
+        orderBy = `m.imdbRating ${sortDir}`
+      } else if (sortField === 'year') {
+        orderBy = `m.year ${sortDir}`
+      } else if (sortField === 'title') {
+        orderBy = `m.title ${sortDir}`
+      } else if (sortField === 'votes') {
+        orderBy = `m.imdbVotes ${sortDir}`
+      }
+
+      const { result, totalCount } = await db.lightweightQuery({
+        where: where.join(' AND '),
+        params,
+        orderBy,
+        includeCount: true,
+      })
+
+      console.log(
+        '[MovieStore] Lightweight query returned:',
+        result?.length || 0,
+        'movies, total:',
+        totalCount
+      )
+
+      lightweightMovies.value = result || []
+      if (totalCount !== undefined) {
+        totalFiltered.value = totalCount
+      }
+    } catch (err: any) {
+      window.console.error('[MovieStore] Lightweight query failed:', err)
+      lightweightMovies.value = []
+    } finally {
+      isFiltering.value = false
     }
   }
 
   /**
-   * Get a single movie by imdbId
-   * @param imdbId - IMDB ID or temporary ID
-   * @returns Movie entry or undefined
+   * Fetch movies from SQLite based on current filters
    */
-  const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
-    // Check local state first
-    const existing = movies.value.find((movie: MovieEntry) => movie.imdbId === imdbId)
-    if (existing) return existing
-
-    if (db.isReady.value) {
-      try {
-        const results = await db.query(
-          `
-          SELECT m.*, GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.label, '') || '|||' || COALESCE(s.quality, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw
-          FROM movies m
-          LEFT JOIN sources s ON m.imdbId = s.movieId
-          LEFT JOIN channels c ON s.channelId = c.id
-          WHERE m.imdbId = ?
-          GROUP BY m.imdbId
-        `,
-          [imdbId]
-        )
-
-        if (results.length > 0) {
-          return mapRowToMovie(results[0])
-        }
-      } catch (err) {
-        console.error('SQL getMovieById failed:', err)
-      }
+  const fetchFilteredMovies = async (append = false) => {
+    if (!db.isReady.value) {
+      // Fallback to JS filtering if DB not ready
+      console.log('DB not ready, using JS filtering')
+      const allMoviesArray = await searchMovies(filters.value.searchQuery)
+      filteredAndSortedMovies.value = applyFilters(allMoviesArray)
+      totalFiltered.value = filteredAndSortedMovies.value.length
+      return
     }
 
-    // Fallback to JSON API for single movie
+    console.log('Fetching filtered movies from SQLite...')
+    if (!append) {
+      isFiltering.value = true
+    }
     try {
-      const movie = await $fetch<MovieEntry>(`/api/movie/${imdbId}`)
-      return movie
-    } catch {
-      return undefined
+      const params: any[] = []
+      const where: string[] = []
+
+      // Filters
+      if (filters.value.minRating > 0) {
+        where.push('m.imdbRating >= ?')
+        params.push(filters.value.minRating)
+      }
+      if (filters.value.minYear > 0) {
+        where.push('m.year >= ?')
+        params.push(filters.value.minYear)
+      }
+      if (filters.value.minVotes > 0) {
+        where.push('m.imdbVotes >= ?')
+        params.push(filters.value.minVotes)
+      }
+      if (filters.value.showMissingMetadataOnly) {
+        where.push('m.is_curated = 0')
+      }
+
+      // Source filters
+      if (filters.value.sources.length > 0) {
+        const sourceConditions: string[] = []
+        if (filters.value.sources.includes('archive.org')) {
+          sourceConditions.push("s.type = 'archive.org'")
+        }
+        const youtubeChannels = filters.value.sources.filter(s => s !== 'archive.org')
+        if (youtubeChannels.length > 0) {
+          sourceConditions.push(
+            `(s.type = 'youtube' AND c.name IN (${youtubeChannels.map(() => '?').join(',')}))`
+          )
+          params.push(...youtubeChannels)
+        }
+        if (sourceConditions.length > 0) {
+          where.push(`(${sourceConditions.join(' OR ')})`)
+        }
+      }
+
+      // Genre filters
+      if (filters.value.genres.length > 0) {
+        filters.value.genres.forEach(genre => {
+          where.push('m.genre LIKE ?')
+          params.push(`%${genre}%`)
+        })
+      }
+
+      // Country filters
+      if (filters.value.countries.length > 0) {
+        filters.value.countries.forEach(country => {
+          where.push('m.country LIKE ?')
+          params.push(`%${country}%`)
+        })
+      }
+
+      // Sorting
+      let orderBy = ''
+      const sortField = filters.value.sort.field
+      const sortDir = filters.value.sort.direction.toUpperCase()
+
+      if (sortField === 'relevance' && filters.value.searchQuery) {
+        orderBy = `rank ${sortDir}`
+      } else if (sortField === 'rating') {
+        orderBy = `m.imdbRating ${sortDir}`
+      } else if (sortField === 'year') {
+        orderBy = `m.year ${sortDir}`
+      } else if (sortField === 'title') {
+        orderBy = `m.title ${sortDir}`
+      } else if (sortField === 'votes') {
+        orderBy = `m.imdbVotes ${sortDir}`
+      }
+
+      const itemsPerPage = 50
+      const limit = filters.value.currentPage * itemsPerPage
+      const offset = append ? (filters.value.currentPage - 1) * itemsPerPage : 0
+
+      const { result, totalCount } = await fetchMovies({
+        searchQuery: filters.value.searchQuery,
+        where: where.join(' AND '),
+        params,
+        orderBy,
+        limit: append ? itemsPerPage : limit,
+        offset,
+        includeCount: true,
+      })
+
+      console.log('[MovieStore] fetchMovies returned:', result.length, 'movies, total:', totalCount)
+
+      if (append) {
+        filteredAndSortedMovies.value = [...filteredAndSortedMovies.value, ...result]
+        // Also append to lightweight movies for virtual scrolling
+        lightweightMovies.value = [
+          ...lightweightMovies.value,
+          ...result.map(m => ({
+            imdbId: m.imdbId,
+            title: m.title,
+            year: m.year,
+          })),
+        ]
+      } else {
+        filteredAndSortedMovies.value = result
+        // Also populate lightweight movies for virtual scrolling
+        lightweightMovies.value = result.map(m => ({
+          imdbId: m.imdbId,
+          title: m.title,
+          year: m.year,
+        }))
+      }
+
+      if (totalCount !== undefined) {
+        totalFiltered.value = totalCount
+      }
+    } catch (err: any) {
+      window.console.error('[MovieStore] SQL filtering failed:', err)
+      filteredAndSortedMovies.value = []
+    } finally {
+      isFiltering.value = false
     }
+  }
+
+  /**
+   * Apply all filters to a list of movies (for JS fallback or liked.vue)
+   */
+  const applyFilters = (movies: ExtendedMovieEntry[]): ExtendedMovieEntry[] => {
+    let filtered = [...movies]
+
+    // 1. Filter by source
+    if (filters.value.sources.length > 0) {
+      filtered = filtered.filter(movie => {
+        return movie.sources.some((source: MovieSource) => {
+          if (source.type === 'archive.org') {
+            return filters.value.sources.includes('archive.org')
+          }
+          if (source.type === 'youtube') {
+            return filters.value.sources.includes(source.channelName)
+          }
+          return false
+        })
+      })
+    }
+
+    // 2. Filter by minimum rating
+    if (filters.value.minRating > 0) {
+      filtered = filtered.filter(movie => {
+        const rating = parseFloat(movie.metadata?.imdbRating || '0')
+        return rating >= filters.value.minRating
+      })
+    }
+
+    // 3. Filter by minimum year
+    if (filters.value.minYear > 0) {
+      filtered = filtered.filter(movie => {
+        return (movie.year || 0) >= filters.value.minYear
+      })
+    }
+
+    // 4. Filter by minimum votes
+    if (filters.value.minVotes > 0) {
+      filtered = filtered.filter(movie => {
+        const votes = parseInt(movie.metadata?.imdbVotes?.replace(/,/g, '') || '0')
+        return votes >= filters.value.minVotes
+      })
+    }
+
+    // 5. Filter by genres
+    if (filters.value.genres.length > 0) {
+      filtered = filtered.filter(movie => {
+        const movieGenres = movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
+        return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
+      })
+    }
+
+    // 6. Filter by countries
+    if (filters.value.countries.length > 0) {
+      filtered = filtered.filter(movie => {
+        const movieCountries =
+          movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
+        return filters.value.countries.some(selectedCountry =>
+          movieCountries.includes(selectedCountry)
+        )
+      })
+    }
+
+    // 7. Filter by missing metadata
+    if (filters.value.showMissingMetadataOnly) {
+      filtered = filtered.filter(movie => !movie.metadata || !movie.metadata.imdbID)
+    }
+
+    // 8. Apply sorting
+    const sortOption =
+      SORT_OPTIONS.find(
+        opt =>
+          opt.field === filters.value.sort.field && opt.direction === filters.value.sort.direction
+      ) || SORT_OPTIONS[0]!
+
+    if (sortOption.field !== 'relevance') {
+      filtered = sortMovies(filtered, sortOption)
+    }
+
+    return filtered
+  }
+
+  /**
+   * Set sort option
+   */
+  const setSort = (option: SortOption) => {
+    filters.value.sort = { field: option.field, direction: option.direction }
+
+    if (filters.value.searchQuery !== '') {
+      filters.value.previousSort = undefined
+    }
+
+    persistFilters()
+  }
+
+  /**
+   * Set search query
+   */
+  const setSearchQuery = (query: string) => {
+    const wasEmpty = filters.value.searchQuery === ''
+    const isNowEmpty = query === ''
+
+    if (wasEmpty && !isNowEmpty) {
+      filters.value.previousSort = { ...filters.value.sort }
+      filters.value.sort = { field: 'relevance', direction: 'desc' }
+    } else if (!wasEmpty && isNowEmpty && filters.value.previousSort) {
+      filters.value.sort = { ...filters.value.previousSort }
+      filters.value.previousSort = undefined
+    }
+
+    filters.value.searchQuery = query
+    persistFilters()
+  }
+
+  /**
+   * Toggle source filter
+   */
+  const toggleSource = (source: string) => {
+    filters.value.sources = filters.value.sources.includes(source)
+      ? filters.value.sources.filter(s => s !== source)
+      : [...filters.value.sources, source]
+    persistFilters()
+  }
+
+  /**
+   * Set minimum rating
+   */
+  const setMinRating = (rating: number) => {
+    filters.value.minRating = rating
+    persistFilters()
+  }
+
+  /**
+   * Set minimum year
+   */
+  const setMinYear = (year: number) => {
+    filters.value.minYear = year
+    persistFilters()
+  }
+
+  /**
+   * Set minimum votes
+   */
+  const setMinVotes = (votes: number) => {
+    filters.value.minVotes = votes
+    persistFilters()
+  }
+
+  /**
+   * Toggle genre filter
+   */
+  const toggleGenre = (genre: string) => {
+    filters.value.genres = filters.value.genres.includes(genre)
+      ? filters.value.genres.filter(g => g !== genre)
+      : [...filters.value.genres, genre]
+    persistFilters()
+  }
+
+  /**
+   * Toggle country filter
+   */
+  const toggleCountry = (country: string) => {
+    filters.value.countries = filters.value.countries.includes(country)
+      ? filters.value.countries.filter(c => c !== country)
+      : [...filters.value.countries, country]
+    persistFilters()
+  }
+
+  /**
+   * Toggle missing metadata filter
+   */
+  const toggleMissingMetadata = () => {
+    filters.value.showMissingMetadataOnly = !filters.value.showMissingMetadataOnly
+    persistFilters()
+  }
+
+  /**
+   * Reset all filters to defaults
+   */
+  const resetFilters = () => {
+    filters.value = { ...DEFAULT_FILTERS }
+    persistFilters()
+  }
+
+  /**
+   * Get all unique genres from movies
+   */
+  const getAvailableGenres = (movies: ExtendedMovieEntry[]): string[] => {
+    const genresSet = new Set<string>()
+    movies.forEach(movie => {
+      movie.metadata?.Genre?.split(', ').forEach((genre: string) => {
+        genresSet.add(genre.trim())
+      })
+    })
+    return Array.from(genresSet).sort()
+  }
+
+  /**
+   * Get all unique countries from movies
+   */
+  const getAvailableCountries = (movies: ExtendedMovieEntry[]): string[] => {
+    const countriesSet = new Set<string>()
+    movies.forEach(movie => {
+      movie.metadata?.Country?.split(', ').forEach((country: string) => {
+        countriesSet.add(country.trim())
+      })
+    })
+    return Array.from(countriesSet).sort()
+  }
+
+  // ============================================
+  // PAGINATION ACTIONS
+  // ============================================
+
+  /**
+   * Set current page for pagination
+   */
+  const setCurrentPage = (page: number) => {
+    filters.value.currentPage = page
+    persistFilters()
+  }
+
+  /**
+   * Load more movies (increment page)
+   */
+  const loadMoreMovies = () => {
+    filters.value.currentPage++
+    persistFilters()
+  }
+
+  /**
+   * Set last scroll position
+   */
+  const setScrollY = (y: number) => {
+    filters.value.lastScrollY = y
+    persistFilters()
+  }
+
+  // ============================================
+  // LIKES & WATCHLIST ACTIONS
+  // ============================================
+
+  /**
+   * Toggle like status for a movie
+   */
+  const toggleLike = (movieId: string) => {
+    const movie = allMovies.value.get(movieId)
+    if (!movie) return
+
+    if (movie.isLiked) {
+      movie.isLiked = false
+      movie.likedAt = undefined
+    } else {
+      movie.isLiked = true
+      movie.likedAt = Date.now()
+    }
+
+    persistLikes()
+  }
+
+  /**
+   * Add a movie to likes
+   */
+  const like = (movieId: string) => {
+    const movie = allMovies.value.get(movieId)
+    if (!movie) return
+
+    movie.isLiked = true
+    movie.likedAt = Date.now()
+    persistLikes()
+  }
+
+  /**
+   * Remove a movie from likes
+   */
+  const unlike = (movieId: string) => {
+    const movie = allMovies.value.get(movieId)
+    if (!movie) return
+
+    movie.isLiked = false
+    movie.likedAt = undefined
+    persistLikes()
+  }
+
+  /**
+   * Check if a movie is liked
+   */
+  const isLiked = (movieId: string): boolean => {
+    const movie = allMovies.value.get(movieId)
+    return movie?.isLiked || false
+  }
+
+  /**
+   * Toggle watchlist status for a movie
+   */
+  const toggleWatchlist = (movieId: string) => {
+    const movie = allMovies.value.get(movieId)
+    if (!movie) return
+
+    if (movie.inWatchlist) {
+      movie.inWatchlist = false
+      movie.addedToWatchlistAt = undefined
+    } else {
+      movie.inWatchlist = true
+      movie.addedToWatchlistAt = Date.now()
+    }
+
+    persistWatchlist()
+  }
+
+  /**
+   * Add a movie to watchlist
+   */
+  const addToWatchlist = (movieId: string) => {
+    const movie = allMovies.value.get(movieId)
+    if (!movie) return
+
+    movie.inWatchlist = true
+    movie.addedToWatchlistAt = Date.now()
+    persistWatchlist()
+  }
+
+  /**
+   * Remove a movie from watchlist
+   */
+  const removeFromWatchlist = (movieId: string) => {
+    const movie = allMovies.value.get(movieId)
+    if (!movie) return
+
+    movie.inWatchlist = false
+    movie.addedToWatchlistAt = undefined
+    persistWatchlist()
+  }
+
+  /**
+   * Check if a movie is in watchlist
+   */
+  const inWatchlist = (movieId: string): boolean => {
+    const movie = allMovies.value.get(movieId)
+    return movie?.inWatchlist || false
+  }
+
+  /**
+   * Clear all liked movies
+   */
+  const clearLikes = () => {
+    allMovies.value.forEach(movie => {
+      movie.isLiked = false
+      movie.likedAt = undefined
+    })
+    persistLikes()
+  }
+
+  /**
+   * Clear all watchlist movies
+   */
+  const clearWatchlist = () => {
+    allMovies.value.forEach(movie => {
+      movie.inWatchlist = false
+      movie.addedToWatchlistAt = undefined
+    })
+    persistWatchlist()
+  }
+
+  // ============================================
+  // UTILITY ACTIONS
+  // ============================================
+
+  /**
+   * Filter movies by source type
+   */
+  const filterBySource = (sourceType: MovieSourceType): ExtendedMovieEntry[] => {
+    return Array.from(allMovies.value.values()).filter((movie: ExtendedMovieEntry) =>
+      movie.sources.some((source: MovieSource) => source.type === sourceType)
+    )
   }
 
   /**
    * Get movies that have OMDB metadata
-   * @returns Array of movies with metadata
    */
-  const getEnrichedMovies = (): MovieEntry[] => {
-    return movies.value.filter((movie: MovieEntry) => movie.metadata !== undefined)
+  const getEnrichedMovies = (): ExtendedMovieEntry[] => {
+    return Array.from(allMovies.value.values()).filter(
+      (movie: ExtendedMovieEntry) => movie.metadata !== undefined
+    )
   }
 
   /**
-   * Get movies without OMDB metadata (need enrichment)
-   * @returns Array of movies without metadata
+   * Get movies without OMDB metadata
    */
-  const getUnenrichedMovies = (): MovieEntry[] => {
-    return movies.value.filter((movie: MovieEntry) => movie.metadata === undefined)
+  const getUnenrichedMovies = (): ExtendedMovieEntry[] => {
+    return Array.from(allMovies.value.values()).filter(
+      (movie: ExtendedMovieEntry) => movie.metadata === undefined
+    )
   }
 
   /**
-   * Check if a local poster exists for the given imdbId
-   * Uses cache to avoid repeated network requests
-   * @param imdbId - IMDB ID to check
-   * @returns Promise<boolean> indicating whether the poster exists locally
+   * Get all sources for a movie grouped by type
+   */
+  const getSourcesByType = (movie: ExtendedMovieEntry): Record<MovieSourceType, MovieSource[]> => {
+    return movie.sources.reduce(
+      (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
+        grouped[source.type].push(source)
+        return grouped
+      },
+      {
+        'archive.org': [],
+        youtube: [],
+      } as Record<MovieSourceType, MovieSource[]>
+    )
+  }
+
+  /**
+   * Get the primary source for a movie
+   */
+  const getPrimarySource = (movie: ExtendedMovieEntry): MovieSource | undefined => {
+    if (movie.sources.length === 0) return undefined
+
+    const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
+    if (archiveSources.length > 0) {
+      const sorted = [...archiveSources].sort((a: MovieSource, b: MovieSource) => {
+        const aDownloads = 'downloads' in a ? a.downloads || 0 : 0
+        const bDownloads = 'downloads' in b ? b.downloads || 0 : 0
+        return bDownloads - aDownloads
+      })
+      return sorted[0]
+    }
+
+    return movie.sources[0]
+  }
+
+  /**
+   * Check if a local poster exists
    */
   const posterExists = async (imdbId: string): Promise<boolean> => {
     if (!imdbId) return false
 
-    // Check cache first
     if (posterCache.value.has(imdbId)) {
       return posterCache.value.get(imdbId)!
     }
 
     try {
-      // Try to fetch the local poster with HEAD request to avoid downloading
       const response = await fetch(`/posters/${imdbId}.jpg`, { method: 'HEAD' })
       const exists = response.ok
       posterCache.value.set(imdbId, exists)
@@ -510,50 +1419,38 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Get the best available poster URL with fallback logic
-   * Priority: local cache -> OMDB URL -> placeholder
-   * @param movie - Movie entry
-   * @returns Promise<string> - URL to the poster image
+   * Get the best available poster URL
    */
-  const getPosterUrl = async (movie: MovieEntry): Promise<string> => {
+  const getPosterUrl = async (movie: ExtendedMovieEntry): Promise<string> => {
     const placeholder = '/images/poster-placeholder.jpg'
 
     if (!movie.imdbId) return placeholder
 
-    // Check for local poster first (best performance)
     const hasLocal = await posterExists(movie.imdbId)
     if (hasLocal) {
       return `/posters/${movie.imdbId}.jpg`
     }
 
-    // Fallback to OMDB poster URL if available
     const omdbPoster = movie.metadata?.Poster
     if (omdbPoster && omdbPoster !== 'N/A') {
       return omdbPoster
     }
 
-    // Final fallback to placeholder
     return placeholder
   }
 
   /**
-   * Get poster URL synchronously (for SSR or when you know the status)
-   * This version doesn't check if the local file exists - assumes you've already checked
-   * @param movie - Movie entry
-   * @param preferLocal - Whether to prefer local path (default: true)
-   * @returns string - URL to the poster image
+   * Get poster URL synchronously
    */
-  const getPosterUrlSync = (movie: MovieEntry, preferLocal: boolean = true): string => {
+  const getPosterUrlSync = (movie: ExtendedMovieEntry, preferLocal: boolean = true): string => {
     const placeholder = '/images/poster-placeholder.jpg'
 
     if (!movie.imdbId) return placeholder
 
-    // If preferLocal, return local path (browser will handle 404 gracefully)
     if (preferLocal) {
       return `/posters/${movie.imdbId}.jpg`
     }
 
-    // Otherwise use OMDB poster URL
     const omdbPoster = movie.metadata?.Poster
     if (omdbPoster && omdbPoster !== 'N/A') {
       return omdbPoster
@@ -563,14 +1460,11 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Preload posters for multiple movies (batch check)
-   * @param imdbIds - Array of IMDB IDs to check
-   * @returns Promise<Map<string, boolean>> - Map of imdbId to existence status
+   * Preload posters for multiple movies
    */
   const preloadPosters = async (imdbIds: string[]): Promise<Map<string, boolean>> => {
     const results = new Map<string, boolean>()
 
-    // Check all posters in parallel (but limit concurrency to avoid overwhelming the server)
     const batchSize = 10
     for (let i = 0; i < imdbIds.length; i += batchSize) {
       const batch = imdbIds.slice(i, i + batchSize)
@@ -585,54 +1479,9 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Get all sources for a movie grouped by type
-   * @param movie - Movie entry
-   * @returns Object with sources grouped by type
+   * Runtime OMDB enrichment
    */
-  const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
-    return movie.sources.reduce(
-      (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
-        grouped[source.type].push(source)
-        return grouped
-      },
-      {
-        'archive.org': [],
-        youtube: [],
-      } as Record<MovieSourceType, MovieSource[]>
-    )
-  }
-
-  /**
-   * Get the primary source for a movie (first source, or highest quality)
-   * @param movie - Movie entry
-   * @returns Primary movie source
-   */
-  const getPrimarySource = (movie: MovieEntry): MovieSource | undefined => {
-    if (movie.sources.length === 0) return undefined
-
-    // Prefer archive.org sources (usually higher quality)
-    const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
-    if (archiveSources.length > 0) {
-      // Sort by downloads if available
-      const sorted = [...archiveSources].sort((a: MovieSource, b: MovieSource) => {
-        const aDownloads = 'downloads' in a ? a.downloads || 0 : 0
-        const bDownloads = 'downloads' in b ? b.downloads || 0 : 0
-        return bDownloads - aDownloads
-      })
-      return sorted[0]
-    }
-
-    // Otherwise return first YouTube source
-    return movie.sources[0]
-  }
-
-  /**
-   * Runtime OMDB enrichment (optional, for movies without metadata)
-   * This can be used to fetch metadata on-demand for movies that don't have it yet
-   * @param movie - Movie entry to enrich
-   * @returns Updated movie metadata or null if failed
-   */
-  const enrichMovieMetadata = async (movie: MovieEntry) => {
+  const enrichMovieMetadata = async (movie: ExtendedMovieEntry) => {
     isLoading.value.imdbFetch = true
 
     const apiKey = useRuntimeConfig().public.OMDB_API_KEY
@@ -642,7 +1491,6 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     try {
-      // Only enrich if we have a valid IMDB ID (not temporary)
       if (!movie.imdbId.startsWith('tt')) {
         isLoading.value.imdbFetch = false
         return null
@@ -661,10 +1509,10 @@ export const useMovieStore = defineStore('movie', () => {
         return null
       }
 
-      // Update the movie in our local state
-      const movieIndex = movies.value.findIndex((m: MovieEntry) => m.imdbId === movie.imdbId)
-      if (movieIndex !== -1 && movies.value[movieIndex]) {
-        movies.value[movieIndex]!.metadata = metadata
+      // Update the movie in allMovies
+      const existingMovie = allMovies.value.get(movie.imdbId)
+      if (existingMovie) {
+        existingMovie.metadata = metadata
       }
 
       isLoading.value.imdbFetch = false
@@ -675,40 +1523,174 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  return {
-    // State
-    movies,
-    movieDetailsCache,
-    isLoading,
-    isInitialLoading,
+  // ============================================
+  // WATCHERS
+  // ============================================
 
-    // Data loading
+  // Throttled search query for performance
+  const throttledSearchQuery = refThrottled(
+    computed(() => filters.value.searchQuery),
+    500
+  )
+
+  // Watch for filter changes and fetch
+  watch(
+    () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { currentPage, lastScrollY, searchQuery, ...rest } = filters.value
+      return JSON.stringify({ ...rest, searchQuery: throttledSearchQuery.value })
+    },
+    () => {
+      console.log('[MovieStore] Filters changed, resetting page and fetching...')
+      filters.value.currentPage = 1
+      fetchLightweightMovies()
+    }
+  )
+
+  // Watch for page changes
+  watch(
+    () => filters.value.currentPage,
+    (newPage, oldPage) => {
+      if (newPage > oldPage) {
+        console.log('[MovieStore] Page increased, fetching more...')
+        fetchFilteredMovies(true)
+      }
+    }
+  )
+
+  // Initial fetch when DB is ready
+  watch(
+    () => db.isReady.value,
+    ready => {
+      console.log('[MovieStore] Watch triggered - DB ready:', ready)
+      const currentLength = lightweightMovies.value?.length || 0
+      console.log('[MovieStore] lightweightMovies.value.length:', currentLength)
+      if (ready && currentLength === 0) {
+        console.log('[MovieStore] DB is ready, fetching lightweight movies...')
+        fetchLightweightMovies()
+      }
+    },
+    { immediate: true }
+  )
+
+  // Reload filters from localStorage on mount
+  if (typeof window !== 'undefined') {
+    onMounted(() => {
+      const stored = localStorage.getItem('movies-deluxe-filters')
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          const merged = { ...DEFAULT_FILTERS, ...parsed }
+          if (JSON.stringify(filters.value) !== JSON.stringify(merged)) {
+            filters.value = merged
+          }
+        } catch {
+          // Failed to reload from localStorage
+        }
+      }
+    })
+  }
+
+  // ============================================
+  // RETURN STORE API
+  // ============================================
+
+  return {
+    // ============================================
+    // STATE (Read-only refs)
+    // ============================================
+    allMovies: readonly(allMovies),
+    movieDetailsCache: readonly(movieDetailsCache),
+    filters: readonly(filters),
+    isInitialLoading: readonly(isInitialLoading),
+    isFiltering: readonly(isFiltering),
+    isLoading: readonly(isLoading),
+
+    // ============================================
+    // COMPUTED PROPERTIES
+    // ============================================
+
+    // Data views
+    filteredAndSortedMovies: readonly(filteredAndSortedMovies),
+    paginatedMovies,
+    lightweightMovies: readonly(lightweightMovies),
+    likedMovies,
+    watchlistMovies,
+
+    // Statistics
+    totalMovies,
+    totalFiltered: readonly(totalFiltered),
+    likedCount,
+    watchlistCount,
+    hasMore,
+    activeFiltersCount,
+    hasActiveFilters,
+    currentSortOption,
+
+    // ============================================
+    // ACTIONS - Data Loading
+    // ============================================
     loadFromFile,
     loadFromApi,
     fetchMovies,
     fetchMoviesByIds,
-    getMovieDetails,
+    getMovieById,
     getRelatedMovies,
+    searchMovies,
     mapRowToMovie,
 
-    // Filtering & search
+    // ============================================
+    // ACTIONS - Filtering & Sorting
+    // ============================================
+    setSort,
+    setSearchQuery,
+    toggleSource,
+    setMinRating,
+    setMinYear,
+    setMinVotes,
+    toggleGenre,
+    toggleCountry,
+    toggleMissingMetadata,
+    resetFilters,
+    applyFilters,
+    getAvailableGenres,
+    getAvailableCountries,
+    fetchFilteredMovies,
+    fetchLightweightMovies,
+
+    // ============================================
+    // ACTIONS - Pagination
+    // ============================================
+    setCurrentPage,
+    loadMoreMovies,
+    setScrollY,
+
+    // ============================================
+    // ACTIONS - Likes & Watchlist
+    // ============================================
+    toggleLike,
+    like,
+    unlike,
+    isLiked,
+    toggleWatchlist,
+    addToWatchlist,
+    removeFromWatchlist,
+    inWatchlist,
+    clearLikes,
+    clearWatchlist,
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
     filterBySource,
-    searchMovies,
-    getMovieById,
     getEnrichedMovies,
     getUnenrichedMovies,
-
-    // Source utilities
     getSourcesByType,
     getPrimarySource,
-
-    // Poster utilities
     posterExists,
     getPosterUrl,
     getPosterUrlSync,
     preloadPosters,
-
-    // Runtime enrichment (optional)
     enrichMovieMetadata,
   }
 })
