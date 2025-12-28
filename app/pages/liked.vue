@@ -52,15 +52,15 @@
         </div>
 
         <!-- Movies Grid -->
-        <template v-else-if="filteredLikedMovies.length > 0 || isFiltering">
+        <template v-else-if="filteredLikedMovies.length > 0 || movieStore.hasActiveFilters">
           <MovieStats
-            v-if="!movieStore.isInitialLoading && !isFiltering"
+            v-if="!isLoadingLiked && !movieStore.hasActiveFilters"
             :total-movies="likedCount"
             :filtered-movies="filteredLikedMovies.length"
           />
           
           <div class="relative">
-            <template v-if="movieStore.isInitialLoading || isFiltering">
+            <template v-if="isLoadingLiked">
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 <MovieCardSkeleton
                   v-for="i in 12"
@@ -76,7 +76,7 @@
         </template>
 
         <!-- No Results After Filtering -->
-        <div v-else-if="likedCount > 0 && filteredLikedMovies.length === 0 && !isFiltering" class="text-center py-12">
+        <div v-else-if="likedCount > 0 && filteredLikedMovies.length === 0" class="text-center py-12">
           <div class="i-mdi-filter-remove text-4xl text-gray-300 dark:text-gray-600 mb-4" />
           <h2 class="text-xl font-semibold mb-2">No movies match your filters</h2>
           <p class="text-gray-600 dark:text-gray-400 mb-6">
@@ -95,9 +95,8 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
-import type { MovieEntry } from '~/types'
+import type { ExtendedMovieEntry } from '~/stores/useMovieStore'
 
 // Set page title and meta
 useHead({
@@ -116,55 +115,98 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const filterStore = useFilterStore()
-const likedMoviesStore = useLikedMoviesStore()
-const { likedMovies, count: likedCount } = storeToRefs(likedMoviesStore)
-const { isFiltering } = storeToRefs(filterStore)
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
 
-// Liked movies data
-const likedMoviesData = ref<MovieEntry[]>([])
+// Local state for liked movies (since store uses lazy loading)
+const likedMoviesData = ref<ExtendedMovieEntry[]>([])
+const isLoadingLiked = ref(true)
 
-// Filtered liked movies (apply current filters to liked movies)
-const filteredLikedMovies = computed(() => {
-  if (likedMoviesData.value.length === 0) return []
-  
-  // Apply the same filters as the main page
-  return filterStore.applyFilters(likedMoviesData.value)
+// Initialize database and load liked movies
+onMounted(async () => {
+  try {
+    // Initialize database if not already loaded
+    await movieStore.loadFromFile()
+    
+    // Get liked movie IDs from localStorage
+    const stored = localStorage.getItem('movies-deluxe-liked')
+    if (stored) {
+      const likedIds: string[] = JSON.parse(stored)
+      if (likedIds.length > 0) {
+        // Fetch full movie details for liked IDs
+        likedMoviesData.value = await movieStore.fetchMoviesByIds(likedIds)
+      }
+    }
+  } catch (err) {
+    console.error('[liked.vue] Failed to load liked movies:', err)
+  } finally {
+    isLoadingLiked.value = false
+  }
 })
 
-// Load liked movies data
-const loadLikedMovies = async () => {
-  if (likedMovies.value.length === 0) {
-    likedMoviesData.value = []
-    return
-  }
+// Get liked movies count from local data
+const likedCount = computed(() => likedMoviesData.value.length)
 
-  try {
-    // Fetch full movie data for liked movie IDs
-    const movies = await movieStore.fetchMoviesByIds(likedMovies.value)
-    likedMoviesData.value = movies
-  } catch (_err) {
-    console.error('Failed to load liked movies:', _err)
-    likedMoviesData.value = []
+// Filtered liked movies - apply current filters to liked movies
+const filteredLikedMovies = computed(() => {
+  const liked = likedMoviesData.value
+  if (liked.length === 0) return []
+  
+  // Apply filters manually since we're showing a subset (liked movies only)
+  let filtered = liked
+  
+  // Apply search query
+  const searchQuery = movieStore.filters.searchQuery?.toLowerCase().trim()
+  if (searchQuery) {
+    filtered = filtered.filter(movie => 
+      movie.title.toLowerCase().includes(searchQuery) ||
+      movie.description?.toLowerCase().includes(searchQuery)
+    )
   }
-}
+  
+  // Apply genre filter
+  if (movieStore.filters.genres && movieStore.filters.genres.length > 0) {
+    filtered = filtered.filter(movie => 
+      movie.genres?.some(genre => movieStore.filters.genres?.includes(genre))
+    )
+  }
+  
+  // Apply year range filter
+  if (movieStore.filters.yearRange) {
+    const { min, max } = movieStore.filters.yearRange
+    filtered = filtered.filter(movie => {
+      const year = movie.year
+      return year >= min && year <= max
+    })
+  }
+  
+  // Apply rating filter
+  if (movieStore.filters.ratingRange) {
+    const { min, max } = movieStore.filters.ratingRange
+    filtered = filtered.filter(movie => {
+      const rating = movie.rating || 0
+      return rating >= min && rating <= max
+    })
+  }
+  
+  // Apply source filter
+  if (movieStore.filters.sources && movieStore.filters.sources.length > 0) {
+    filtered = filtered.filter(movie => 
+      movie.sources?.some(source => 
+        // Check both label (for Archive.org) and channelName (for YouTube)
+        movieStore.filters.sources?.includes(source.label || source.channelName || '')
+      )
+    )
+  }
+  
+  return filtered
+})
 
 // Reset filters
 const resetFilters = () => {
-  filterStore.resetFilters()
+  movieStore.clearAllFilters()
 }
-
-// Load movies on mount and when liked movies change
-onMounted(async () => {
-  await movieStore.loadFromFile()
-  await loadLikedMovies()
-})
-
-// Watch for changes in liked movies
-watch(likedMovies, loadLikedMovies, { deep: true })
 
 // Keyboard shortcuts
 const keys = useMagicKeys()
