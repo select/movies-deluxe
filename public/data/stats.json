@@ -1,13 +1,13 @@
 {
   "database": {
-    "total": 36914,
-    "matched": 8050,
-    "unmatched": 28864,
-    "archiveOrgSources": 27603,
-    "youtubeSources": 11234,
-    "curatedCount": 8050,
+    "total": 35332,
+    "matched": 9604,
+    "unmatched": 25728,
+    "archiveOrgSources": 26801,
+    "youtubeSources": 11214,
+    "curatedCount": 9604,
     "collections": {
-      "feature_films": 27603
+      "feature_films": 26801
     },
     "youtubeChannels": [
       {
@@ -78,7 +78,7 @@
         "name": "Timeless Classic Films",
         "language": "en",
         "enabled": true,
-        "scraped": 50
+        "scraped": 30
       },
       {
         "id": "UCgLqpXqmEJoyDYE_lpY1DXg",
@@ -106,17 +106,17 @@
   "external": {
     "archiveOrg": {
       "total": 26779,
-      "scraped": 27603,
-      "percent": 103.07703797751971,
+      "scraped": 26801,
+      "percent": 100.08215392658425,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11234,
-      "totalAvailable": 17858,
+      "totalScraped": 11214,
+      "totalAvailable": 17865,
       "totalFailed": 6022,
-      "failureRate": 34.89800649049606,
-      "percent": 62.9073804457386,
+      "failureRate": 34.93850081225342,
+      "percent": 62.77078085642317,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -124,7 +124,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2328,
-          "total": 2831,
+          "total": 2833,
           "failed": 435,
           "failureRate": 15.743756786102061
         },
@@ -154,7 +154,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2380,
-          "total": 2596,
+          "total": 2597,
           "failed": 205,
           "failureRate": 7.930367504835589
         },
@@ -184,7 +184,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 532,
-          "total": 610,
+          "total": 611,
           "failed": 106,
           "failureRate": 16.614420062695924
         },
@@ -204,7 +204,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 179,
-          "total": 550,
+          "total": 551,
           "failed": 350,
           "failureRate": 66.1625708884688
         },
@@ -213,7 +213,7 @@
           "name": "Timeless Classic Films",
           "language": "en",
           "enabled": true,
-          "scraped": 50,
+          "scraped": 30,
           "total": 25,
           "failed": 0,
           "failureRate": 0
@@ -234,7 +234,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5060,
+          "total": 5062,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -252,29 +252,29 @@
     }
   },
   "curation": {
-    "total": 36914,
-    "curated": 8050,
-    "percent": 21.807444330064474
+    "total": 35332,
+    "curated": 9604,
+    "percent": 27.182157817276124
   },
   "omdb": {
-    "total": 36914,
-    "matched": 8050,
-    "unmatched": 28864,
-    "percent": 21.807444330064474,
-    "failed": 9943,
-    "failureRate": 55.260379036291894
+    "total": 35332,
+    "matched": 9604,
+    "unmatched": 25728,
+    "percent": 27.182157817276124,
+    "failed": 11807,
+    "failureRate": 55.14455186586334
   },
   "posters": {
-    "totalMovies": 36914,
-    "withPosterUrl": 7258,
-    "downloaded": 1921,
-    "missing": 5337,
+    "totalMovies": 35332,
+    "withPosterUrl": 8696,
+    "downloaded": 1916,
+    "missing": 6780,
     "failed": 1252,
-    "failureRate": 39.457926252757645,
-    "percentOfMoviesWithUrl": 26.467346376412237,
-    "percentOfAllMovies": 5.203987646963212,
+    "failureRate": 39.52020202020202,
+    "percentOfMoviesWithUrl": 22.03311867525299,
+    "percentOfAllMovies": 5.4228461451375525,
     "filesInDirectory": 1949,
-    "matchedPosters": 1921
+    "matchedPosters": 1916
   },
-  "lastUpdated": "2025-12-28T07:32:54.963Z"
+  "lastUpdated": "2025-12-28T15:38:09.477Z"
 }
