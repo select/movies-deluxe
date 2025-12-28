@@ -1,25 +1,6 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-    <!-- Header -->
-    <MovieHeader />
-
-    <!-- Mobile Menu Button -->
-    <MobileMenuButton 
-      :is-open="isFilterMenuOpen"
-      @open-filters="isFilterMenuOpen = true" 
-    />
-
-    <!-- Desktop Sidebar -->
-    <Sidebar @open-filters="isFilterMenuOpen = true" />
-
-    <!-- Filter Menu -->
-    <FilterMenu
-      :is-open="isFilterMenuOpen"
-      @close="isFilterMenuOpen = false"
-    />
-
-    <!-- Main Content -->
-    <main class="md:ml-16">
+  <!-- Main Content -->
+  <main class="md:ml-16">
       <div class="px-4 lg:px-[6%] py-8">
         <!-- Page Header -->
         <div class="mb-8">
@@ -91,11 +72,9 @@
         </div>
       </div>
     </main>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 import type { ExtendedMovieEntry } from '~/stores/useMovieStore'
 
 // Set page title and meta
@@ -115,9 +94,6 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-
-// Filter menu state
-const isFilterMenuOpen = ref(false)
 
 // Local state for liked movies (since store uses lazy loading)
 const likedMoviesData = ref<ExtendedMovieEntry[]>([])
@@ -207,30 +183,4 @@ const filteredLikedMovies = computed(() => {
 const resetFilters = () => {
   movieStore.clearAllFilters()
 }
-
-// Keyboard shortcuts
-const keys = useMagicKeys()
-const { Escape } = keys
-
-// Escape key closes filter menu
-if (Escape) {
-  whenever(Escape, () => {
-    if (isFilterMenuOpen.value) {
-      isFilterMenuOpen.value = false
-    }
-  })
-}
-
-// 'K' key toggles filter menu (with Ctrl/Cmd modifier)
-onKeyStroke('k', (e) => {
-  if (e.ctrlKey || e.metaKey) {
-    const activeElement = window.document.activeElement
-    const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-    
-    if (!isTyping) {
-      e.preventDefault()
-      isFilterMenuOpen.value = !isFilterMenuOpen.value
-    }
-  }
-})
 </script>
