@@ -587,7 +587,7 @@ const loadMovieData = async (movieId: string) => {
   if (foundMovie) {
     movie.value = foundMovie
     updateMetaTags(foundMovie)
-    
+
     // Load related movies
     loadRelatedMovies(movieId)
   } else {
@@ -619,7 +619,7 @@ const showKeyboardHelp = ref(false)
 
 // Setup keyboard navigation
 const setupKeyboardNavigation = () => {
-   
+
   const handleKeyPress = (event: KeyboardEvent) => {
     // Ignore if user is typing in an input field
     const target = event.target as HTMLElement
@@ -671,12 +671,12 @@ const setupKeyboardNavigation = () => {
     }
   }
 
-   
+
   window.addEventListener('keydown', handleKeyPress)
 
   // Cleanup on unmount
   onUnmounted(() => {
-     
+
     window.removeEventListener('keydown', handleKeyPress)
   })
 }
@@ -690,7 +690,7 @@ const navigateToPrevMovie = () => {
   const { filteredAndSortedMovies } = storeToRefs(useMovieStore())
   const movies = filteredAndSortedMovies.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
-  
+
   if (currentIndex > 0) {
     const prevMovie = movies[currentIndex - 1]
     if (prevMovie) {
@@ -701,6 +701,7 @@ const navigateToPrevMovie = () => {
 
 // Navigate to next movie
 const navigateToNextMovie = () => {
+	console.log('Navigating to next movie')
   // Use route.params.id directly to avoid stale closures
   const currentId = route.params.id as string
   if (!currentId) return
@@ -708,7 +709,7 @@ const navigateToNextMovie = () => {
   const { filteredAndSortedMovies } = storeToRefs(useMovieStore())
   const movies = filteredAndSortedMovies.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
-  
+
   if (currentIndex !== -1 && currentIndex < movies.length - 1) {
     const nextMovie = movies[currentIndex + 1]
     if (nextMovie) {
@@ -724,7 +725,7 @@ const handleMovieUpdated = async (newId: string) => {
 
   // If ID changed, navigate to new URL
   if (newId !== movie.value?.imdbId) {
-     
+
     await navigateTo(`/movie/${newId}`)
     // The watcher on route.params.id will handle loading the new movie data
   } else {
@@ -744,7 +745,7 @@ const updateMetaTags = (movie: MovieEntry) => {
   const poster = movie.metadata?.Poster || '/favicon.ico'
   const url = `https://movies-deluxe.app/movie/${movie.imdbId}`
 
-   
+
   useHead({
     title,
     meta: [
@@ -816,14 +817,14 @@ const shareMovie = async () => {
 
   const title = movie.value.title + (movie.value.year ? ` (${movie.value.year})` : '')
   const text = movie.value.metadata?.Plot || `Watch ${movie.value.title} for free on Movies Deluxe`
-   
+
   const url = `${window.location.origin}/movie/${movie.value.imdbId}`
 
   // Try Web Share API first (mobile and some desktop browsers)
-   
+
   if (navigator.share) {
     try {
-       
+
       await navigator.share({
         title,
         text,
@@ -845,7 +846,7 @@ const shareMovie = async () => {
 // Fallback: Copy to clipboard
 const fallbackCopyToClipboard = async (url: string) => {
   try {
-     
+
     await navigator.clipboard.writeText(url)
     copied.value = true
     setTimeout(() => (copied.value = false), 2000)
@@ -859,7 +860,7 @@ const showToast = (message: string) => {
   shareToastMessage.value = message
   showShareToast.value = true
 
-   
+
   setTimeout(() => {
     showShareToast.value = false
   }, 3000)
@@ -880,7 +881,7 @@ const handlePosterError = (event: Event) => {
  */
 const getYouTubeEmbedUrl = (url: string): string => {
   try {
-     
+
     const urlObj = new URL(url)
 
     // Handle youtu.be short links
