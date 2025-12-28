@@ -565,8 +565,6 @@ import type { MovieEntry, ArchiveOrgSource } from '~/types'
 // Nuxt auto-imports
 const route = useRoute()
 const movieStore = useMovieStore()
-const filterStore = useFilterStore()
-const likedMoviesStore = useLikedMoviesStore()
 
 // Filter menu state
 const isFilterMenuOpen = ref(false)
@@ -591,7 +589,7 @@ const copied = ref(false)
 
 // Liked computed
 const isLiked = computed(() => {
-  return movie.value ? likedMoviesStore.isLiked(movie.value.imdbId) : false
+  return movie.value ? movieStore.isLiked(movie.value.imdbId) : false
 })
 
 // Load related movies
@@ -613,7 +611,7 @@ const loadMovieData = async (movieId: string) => {
   relatedMovies.value = []
 
   // Ensure movies are loaded in store
-  if (movieStore.movies.length === 0) {
+  if (movieStore.totalMovies === 0) {
     await movieStore.loadFromFile()
   }
 
@@ -722,7 +720,7 @@ const navigateToPrevMovie = () => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const movies = filterStore.filteredAndSortedMovies
+  const movies = movieStore.filteredAndSortedMovies
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
   
   if (currentIndex > 0) {
@@ -739,7 +737,7 @@ const navigateToNextMovie = () => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const movies = filterStore.filteredAndSortedMovies
+  const movies = movieStore.filteredAndSortedMovies
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
   
   if (currentIndex !== -1 && currentIndex < movies.length - 1) {
@@ -839,7 +837,7 @@ const updateMetaTags = (movie: MovieEntry) => {
 // Toggle liked
 const toggleLiked = () => {
   if (!movie.value) return
-  likedMoviesStore.toggle(movie.value.imdbId)
+  movieStore.toggleLike(movie.value.imdbId)
 }
 
 // Share movie
