@@ -1,47 +1,16 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <!-- Header -->
-      <header class="border-b border-gray-200 dark:border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 py-6">
-          <div class="flex items-center gap-4">
-            <!-- Back Button -->
-            <NuxtLink
-              to="/"
-              class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Back to movies"
-            >
-              <div class="i-mdi-arrow-left text-xl" />
-            </NuxtLink>
-
-            <div class="flex-1">
-              <h1 class="text-2xl font-bold">
-                Movies Deluxe
-              </h1>
-            </div>
-
-            <!-- Dark Mode Toggle -->
-            <AppDarkModeToggle />
-          </div>
-        </div>
-      </header>
-
-      <!-- Mobile Menu Button -->
-      <MobileMenuButton 
-        :is-open="isFilterMenuOpen"
-        @open-filters="isFilterMenuOpen = true" 
-      />
-
-      <!-- Desktop Sidebar -->
-      <Sidebar @open-filters="isFilterMenuOpen = true" />
-
-      <!-- Filter Menu -->
-      <FilterMenu
-        :is-open="isFilterMenuOpen"
-        @close="isFilterMenuOpen = false"
-      />
-
-      <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
+  <div>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
+    <!-- Back Button -->
+    <NuxtLink
+      to="/"
+      class="inline-flex items-center gap-2 mb-6 p-2 px-4 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      aria-label="Back to movies"
+    >
+      <div class="i-mdi-arrow-left text-xl" />
+      <span class="text-sm font-medium">Back to movies</span>
+    </NuxtLink>
         <!-- Loading State - Skeleton -->
         <div
           v-if="isLoading"
@@ -491,72 +460,72 @@
             @updated="handleMovieUpdated"
           />
         </div>
-      </main>
+  </main>
 
-      <!-- Footer -->
-      <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
-        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>All movies are legally available from Archive.org and YouTube</p>
-          <button
-            class="mt-2 text-xs hover:underline"
-            @click="showKeyboardHelp = true"
-          >
-            Press ? for keyboard shortcuts
-          </button>
-        </div>
-      </footer>
-
-      <!-- Keyboard Shortcuts Help Modal -->
-      <div
-        v-if="showKeyboardHelp"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-        @click="showKeyboardHelp = false"
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
+      <p>All movies are legally available from Archive.org and YouTube</p>
+      <button
+        class="mt-2 text-xs hover:underline"
+        @click="showKeyboardHelp = true"
       >
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4"
-          @click.stop
-        >
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold">
-              Keyboard Shortcuts
-            </h3>
-            <button
-              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-              @click="showKeyboardHelp = false"
-            >
-              <div class="i-mdi-close text-xl" />
-            </button>
-          </div>
+        Press ? for keyboard shortcuts
+      </button>
+    </div>
+  </footer>
 
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Go back to home</span>
-              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Toggle filters</span>
-              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Ctrl+K</kbd>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Toggle liked</span>
-              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Previous movie</span>
-              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">←</kbd>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Next movie</span>
-              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">→</kbd>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-700 dark:text-gray-300">Show this help</span>
-              <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">?</kbd>
-            </div>
-          </div>
+  <!-- Keyboard Shortcuts Help Modal -->
+  <div
+    v-if="showKeyboardHelp"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    @click="showKeyboardHelp = false"
+  >
+    <div
+      class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4"
+      @click.stop
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-bold">
+          Keyboard Shortcuts
+        </h3>
+        <button
+          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+          @click="showKeyboardHelp = false"
+        >
+          <div class="i-mdi-close text-xl" />
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700 dark:text-gray-300">Go back to home</span>
+          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700 dark:text-gray-300">Toggle filters</span>
+          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Ctrl+K</kbd>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700 dark:text-gray-300">Toggle liked</span>
+          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700 dark:text-gray-300">Previous movie</span>
+          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">←</kbd>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700 dark:text-gray-300">Next movie</span>
+          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">→</kbd>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700 dark:text-gray-300">Show this help</span>
+          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">?</kbd>
         </div>
       </div>
     </div>
+  </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -565,9 +534,6 @@ import type { MovieEntry, ArchiveOrgSource } from '~/types'
 // Nuxt auto-imports
 const route = useRoute()
 const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile } = useMovieStore()
-
-// Filter menu state
-const isFilterMenuOpen = ref(false)
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
@@ -597,8 +563,8 @@ const loadRelatedMovies = async (movieId: string) => {
   relatedMovies.value = []
   try {
     relatedMovies.value = await getRelatedMovies(movieId, 8)
-  } catch (_err) {
-    console.error('Failed to load related movies:', _err)
+  } catch {
+    // Failed to load related movies, silently continue
     relatedMovies.value = []
   }
 }
