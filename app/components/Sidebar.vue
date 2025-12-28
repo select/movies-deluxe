@@ -54,10 +54,7 @@ const emit = defineEmits<{
   openFilters: []
 }>()
 
-const likedMoviesStore = useLikedMoviesStore()
-const filterStore = useFilterStore()
-const { count: likedCount } = storeToRefs(likedMoviesStore)
-const { activeFiltersCount } = storeToRefs(filterStore)
+const { totalLiked: likedCount, activeFiltersCount } = storeToRefs(useMovieStore())
 
 const openFilters = () => {
   emit('openFilters')
