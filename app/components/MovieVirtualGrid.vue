@@ -255,7 +255,7 @@ const getMovieEntry = (lightweight: LightweightMovieEntry): MovieEntry => {
 
 // Infinite scroll check
 watch(windowScrollY, (y) => {
-  if (y + windowHeight.value >= document.documentElement.scrollHeight - 1000) {
+  if (y + windowHeight.value >= document.documentElement.scrollHeight - 2000) {
     if (props.hasMore) {
       emit('load-more')
     }

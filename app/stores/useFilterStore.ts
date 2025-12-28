@@ -296,7 +296,7 @@ export const useFilterStore = defineStore('filter', () => {
         orderBy = `m.imdbVotes ${sortDir}`
       }
 
-      const itemsPerPage = 20
+      const itemsPerPage = 50
       const limit = filters.value.currentPage * itemsPerPage
       const offset = append ? (filters.value.currentPage - 1) * itemsPerPage : 0
 
@@ -319,6 +319,15 @@ export const useFilterStore = defineStore('filter', () => {
 
       if (append) {
         filteredMovies.value = [...filteredMovies.value, ...result]
+        // Also append to lightweight movies for virtual scrolling
+        lightweightMovies.value = [
+          ...lightweightMovies.value,
+          ...result.map(m => ({
+            imdbId: m.imdbId,
+            title: m.title,
+            year: m.year,
+          })),
+        ]
       } else {
         filteredMovies.value = result
         // Also populate lightweight movies for virtual scrolling
