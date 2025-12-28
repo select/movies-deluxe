@@ -181,6 +181,6 @@ const filteredLikedMovies = computed(() => {
 
 // Reset filters
 const resetFilters = () => {
-  movieStore.clearAllFilters()
+  movieStore.resetFilters()
 }
 </script>
