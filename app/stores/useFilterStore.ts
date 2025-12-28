@@ -156,6 +156,12 @@ export const useFilterStore = defineStore('filter', () => {
         })
       }
 
+      // Source filters require joins, so use full query
+      if (filters.value.sources.length > 0) {
+        await fetchFilteredMovies()
+        return
+      }
+
       // Sorting
       let orderBy = ''
       const sortField = filters.value.sort.field
@@ -315,6 +321,12 @@ export const useFilterStore = defineStore('filter', () => {
         filteredMovies.value = [...filteredMovies.value, ...result]
       } else {
         filteredMovies.value = result
+        // Also populate lightweight movies for virtual scrolling
+        lightweightMovies.value = result.map(m => ({
+          imdbId: m.imdbId,
+          title: m.title,
+          year: m.year,
+        }))
       }
 
       console.log('[FilterStore] filteredMovies.value length:', filteredMovies.value.length)
