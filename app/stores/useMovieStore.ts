@@ -188,6 +188,10 @@ export const useMovieStore = defineStore('movie', () => {
             movie.likedAt = Date.now() // We don't have timestamp from old format
           }
         })
+        // Trigger reactivity for shallowRef after modifying nested properties
+        if (likedIds.length > 0) {
+          triggerRef(allMovies)
+        }
       }
     } catch (err) {
       console.error('[MovieStore] Failed to load persisted likes:', err)
@@ -211,6 +215,10 @@ export const useMovieStore = defineStore('movie', () => {
             movie.addedToWatchlistAt = Date.now()
           }
         })
+        // Trigger reactivity for shallowRef after modifying nested properties
+        if (watchlistIds.length > 0) {
+          triggerRef(allMovies)
+        }
       }
     } catch (err) {
       console.error('[MovieStore] Failed to load persisted watchlist:', err)
@@ -1227,6 +1235,8 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     persistLikes()
+    // Trigger reactivity for shallowRef after modifying nested properties
+    triggerRef(allMovies)
   }
 
   /**
@@ -1239,6 +1249,8 @@ export const useMovieStore = defineStore('movie', () => {
     movie.isLiked = true
     movie.likedAt = Date.now()
     persistLikes()
+    // Trigger reactivity for shallowRef after modifying nested properties
+    triggerRef(allMovies)
   }
 
   /**
@@ -1251,6 +1263,8 @@ export const useMovieStore = defineStore('movie', () => {
     movie.isLiked = false
     movie.likedAt = undefined
     persistLikes()
+    // Trigger reactivity for shallowRef after modifying nested properties
+    triggerRef(allMovies)
   }
 
   /**
@@ -1277,6 +1291,8 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     persistWatchlist()
+    // Trigger reactivity for shallowRef after modifying nested properties
+    triggerRef(allMovies)
   }
 
   /**
@@ -1289,6 +1305,8 @@ export const useMovieStore = defineStore('movie', () => {
     movie.inWatchlist = true
     movie.addedToWatchlistAt = Date.now()
     persistWatchlist()
+    // Trigger reactivity for shallowRef after modifying nested properties
+    triggerRef(allMovies)
   }
 
   /**
@@ -1301,6 +1319,8 @@ export const useMovieStore = defineStore('movie', () => {
     movie.inWatchlist = false
     movie.addedToWatchlistAt = undefined
     persistWatchlist()
+    // Trigger reactivity for shallowRef after modifying nested properties
+    triggerRef(allMovies)
   }
 
   /**
