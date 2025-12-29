@@ -75,20 +75,43 @@ const safeTotalMovies = computed(() => totalFiltered.value || 0)
 // Track window scroll position
 const { y: windowScrollY } = useWindowScroll()
 
+// Save the page number in localStorage (not part of filters to avoid triggering refetch)
+const savedPage = useStorage('movies-deluxe-saved-page', 1, localStorage)
+
 // Load movies on mount
 onMounted(async () => {
+  // Restore the saved page before loading
+  if (savedPage.value > 1) {
+    setCurrentPage(savedPage.value)
+  }
+  
   await loadFromFile()
   
   // Restore scroll position after content loads
+  // Need multiple nextTick calls to wait for virtual grid to render
   await nextTick()
-  if (filters.value.lastScrollY > 0) {
-    window.scrollTo({ top: filters.value.lastScrollY, behavior: 'instant' })
+  await nextTick()
+  
+  const savedScrollY = filters.value.lastScrollY
+  if (savedScrollY > 0) {
+    // Use requestAnimationFrame to ensure DOM is fully painted
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: savedScrollY, behavior: 'instant' })
+      
+      // Verify scroll happened, retry if needed
+      setTimeout(() => {
+        if (Math.abs(window.scrollY - savedScrollY) > 10) {
+          window.scrollTo({ top: savedScrollY, behavior: 'instant' })
+        }
+      }, 50)
+    })
   }
 })
 
-// Save scroll position before leaving
+// Save scroll position and page before leaving
 onBeforeRouteLeave(() => {
   setScrollY(windowScrollY.value)
+  savedPage.value = filters.value.currentPage
 })
 
 // Load more movies
