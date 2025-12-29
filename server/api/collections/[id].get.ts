@@ -1,7 +1,7 @@
 import { defineEventHandler, createError } from 'h3'
 import { getCollectionById } from '../../utils/collections'
 import { loadMoviesDatabase } from '../../utils/movieData'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { MovieEntry } from '~/types/movie'
 
 export default defineEventHandler(async event => {
   const id = event.context.params?.id

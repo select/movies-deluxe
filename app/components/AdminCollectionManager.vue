@@ -158,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Collection } from '~/shared/types/collections'
+import type { Collection } from '~/types/collections'
 
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
@@ -193,10 +193,10 @@ const closeModal = () => {
 const saveCollection = async () => {
   isSaving.value = true
   try {
-    const endpoint = editingCollection.value 
-      ? '/api/admin/collections/update' 
+    const endpoint = editingCollection.value
+      ? '/api/admin/collections/update'
       : '/api/admin/collections/create'
-    
+
     const response = await $fetch<{ success: boolean, collection: Collection }>(endpoint, {
       method: 'POST',
       body: form

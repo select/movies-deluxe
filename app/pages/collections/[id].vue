@@ -90,8 +90,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Collection } from '~/shared/types/collections'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { Collection } from '~/types/collections'
+import type { MovieEntry } from '~/types/movie'
 
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
