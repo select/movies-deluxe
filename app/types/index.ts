@@ -38,6 +38,14 @@ export type {
   TemporaryId,
 } from '~~/shared/types/movie'
 
+export type {
+  ThemeVariant,
+  ThemeColors,
+  ThemeMetadata,
+  ThemeDefinition,
+  ThemeRegistry,
+} from './theme'
+
 // Re-export utility functions
 export {
   isTemporaryId,

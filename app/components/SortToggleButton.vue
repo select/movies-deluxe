@@ -1,24 +1,24 @@
 <template>
   <!-- Compact Toggle Button Group -->
-  <div class="flex w-full rounded-full border border-gray-200 dark:border-gray-700 overflow-hidden">
+  <div class="flex w-full rounded-full border border-theme-border/50 overflow-hidden">
     <button
       :class="[
-        'flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs font-medium transition-colors border-r border-gray-200 dark:border-gray-700 flex-1',
+        'flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs font-medium transition-colors border-r border-theme-border/50 flex-1',
         isOptionAActive
-          ? 'bg-blue-600 text-white'
-          : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+          ? 'bg-theme-primary text-white'
+          : 'bg-theme-surface text-theme-text-muted hover:bg-theme-selection'
       ]"
       @click="$emit('select', optionA)"
     >
-      <div :class="['text-sm', icon, isOptionAActive ? 'text-white' : 'text-gray-500 dark:text-gray-400']" />
+      <div :class="['text-sm', icon, isOptionAActive ? 'text-white' : 'text-theme-text-muted']" />
       <span>{{ optionA.label }}</span>
     </button>
     <button
       :class="[
         'flex items-center justify-center px-2 py-1.5 text-xs font-medium transition-colors flex-1',
         isOptionBActive
-          ? 'bg-blue-600 text-white'
-          : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+          ? 'bg-theme-primary text-white'
+          : 'bg-theme-surface text-theme-text-muted hover:bg-theme-selection'
       ]"
       @click="$emit('select', optionB)"
     >

@@ -1,10 +1,10 @@
 <template>
   <NuxtLink
     :to="`/movie/${movie.imdbId}`"
-    class="flex flex-col border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
+    class="flex flex-col border border-theme-border/50 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-theme-surface text-theme-text"
   >
     <!-- Poster -->
-    <div class="aspect-[2/3] bg-gray-200 dark:bg-gray-700 relative flex-shrink-0">
+    <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0">
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
         v-if="movie.imdbId.startsWith('tt')"
@@ -62,7 +62,7 @@
         {{ getPrimaryTitle(movie) }}
       </h3>
       
-      <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+      <div class="flex items-center gap-1.5 text-[11px] text-theme-text-muted font-medium">
         <span v-if="movie.year">{{ movie.year }}</span>
         <span
           v-if="movie.year && movie.metadata?.imdbRating"
@@ -72,8 +72,8 @@
           v-if="movie.metadata?.imdbRating"
           class="flex items-center gap-1"
         >
-          <div class="i-mdi-star text-yellow-500 dark:text-yellow-400 text-xs" />
-          <span class="font-bold text-gray-700 dark:text-gray-200">{{ movie.metadata.imdbRating }}</span>
+          <div class="i-mdi-star text-theme-accent text-xs" />
+          <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
           <span
             v-if="movie.metadata?.imdbVotes"
             class="text-[10px] opacity-70"

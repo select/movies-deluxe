@@ -17,9 +17,9 @@
         'shadow-2xl',
         'overflow-hidden flex flex-col',
         // Mobile: Bottom sheet (< md breakpoint)
-        'bottom-0 left-0 right-0 rounded-t-2xl border-t border-gray-200 dark:border-gray-700 max-h-[90vh]',
+        'bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh]',
         // Desktop: Left sidebar (>= md breakpoint)
-        'md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:dark:border-gray-700 md:max-h-full',
+        'md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:max-h-full',
         // Animation: translateY for mobile, translateX for desktop
         isOpen
           ? 'translate-y-0 md:translate-x-0'
@@ -28,28 +28,28 @@
     >
       <!-- Mobile Close Button (fixed position, same as menu button) -->
       <button
-        class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gray-700 dark:bg-gray-600 text-white shadow-lg hover:bg-gray-600 dark:hover:bg-gray-500 transition-all flex items-center justify-center z-[60]"
+        class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-theme-primary text-white shadow-lg hover:opacity-90 transition-all flex items-center justify-center z-[60]"
         aria-label="Close filters"
         @click="emit('close')"
       >
         <div class="i-mdi-close text-2xl" />
       </button>
       <!-- Header -->
-      <div class="flex items-center justify-between ">
-        <h2 class="text-lg font-semibold flex items-center gap-2">
+      <div class="flex items-center justify-between p-4">
+        <h2 class="text-lg font-semibold flex items-center gap-2 text-theme-text">
           <div class="i-mdi-filter-variant text-xl" />
           Filters
         </h2>
         <div class="flex items-center gap-2">
           <button
             v-if="hasActiveFilters || filters.searchQuery"
-            class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+            class="text-sm font-medium text-theme-primary hover:opacity-80 px-3 py-1 rounded-full hover:bg-theme-primary/10 transition-colors"
             @click="resetFilters"
           >
             Clear All
           </button>
           <button
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            class="p-2 hover:bg-theme-selection rounded-full transition-colors text-theme-text"
             aria-label="Close filters"
             @click="emit('close')"
           >
@@ -59,10 +59,57 @@
       </div>
 
       <!-- seperator -->
-      <hr class="mx-4 my-4 border-gray-300 dark:border-gray-600" >
+      <hr class="mx-4 my-0 border-theme-border/50" >
       <!-- Filter Content -->
       <div class="overflow-y-auto scrollbar-thin flex-1 md:h-[calc(100vh-4rem)] p-4">
         <div class="max-w-7xl mx-auto space-y-4 flex flex-col gap-4">
+          <!-- Theme Section -->
+          <FilterSection
+            title="Theme"
+            icon="i-mdi-palette"
+            :default-expanded="true"
+          >
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button
+                v-for="theme in themes"
+                :key="theme.metadata.id"
+                :class="[
+                  'flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left',
+                  currentThemeId === theme.metadata.id
+                    ? 'border-theme-primary bg-theme-primary/10'
+                    : 'border-theme-border/50 hover:border-theme-border bg-theme-surface/50'
+                ]"
+                @click="setTheme(theme.metadata.id)"
+                @mouseenter="previewTheme(theme.metadata.id)"
+                @mouseleave="previewTheme(null)"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold truncate">{{ theme.metadata.name }}</span>
+                  <div 
+                    v-if="currentThemeId === theme.metadata.id"
+                    class="i-mdi-check-circle text-theme-primary text-xs" 
+                  />
+                </div>
+                
+                <!-- Color Swatches -->
+                <div class="flex gap-1">
+                  <div 
+                    class="w-3 h-3 rounded-full border border-black/10" 
+                    :style="{ backgroundColor: theme.colors.background }" 
+                  />
+                  <div 
+                    class="w-3 h-3 rounded-full border border-black/10" 
+                    :style="{ backgroundColor: theme.colors.primary }" 
+                  />
+                  <div 
+                    class="w-3 h-3 rounded-full border border-black/10" 
+                    :style="{ backgroundColor: theme.colors.accent }" 
+                  />
+                </div>
+              </button>
+            </div>
+          </FilterSection>
+
           <!-- Sort Section (Top) -->
             <FilterSection
               title="Sort By"
@@ -85,8 +132,8 @@
             >
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-600 dark:text-gray-400">Min:</span>
-                  <span class="font-medium">{{ filters.minRating.toFixed(1) }}+</span>
+                  <span class="text-theme-text-muted">Min:</span>
+                  <span class="font-medium text-theme-text">{{ filters.minRating.toFixed(1) }}+</span>
                 </div>
                 <input
                   :value="filters.minRating"
@@ -94,10 +141,10 @@
                   min="0"
                   max="10"
                   step="0.5"
-                  class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
                   @input="(e) => setMinRating(Number((e.target as HTMLInputElement).value))"
                 >
-                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-500">
+                <div class="flex justify-between text-xs text-theme-text-muted">
                   <span>0</span>
                   <span>5</span>
                   <span>10</span>
@@ -112,8 +159,8 @@
             >
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-600 dark:text-gray-400">From:</span>
-                  <span class="font-medium">{{ filters.minYear || '1910' }}+</span>
+                  <span class="text-theme-text-muted">From:</span>
+                  <span class="font-medium text-theme-text">{{ filters.minYear || '1910' }}+</span>
                 </div>
                 <input
                   :value="filters.minYear"
@@ -121,10 +168,10 @@
                   min="1910"
                   max="2025"
                   step="1"
-                  class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
                   @input="(e) => setMinYear(Number((e.target as HTMLInputElement).value))"
                 >
-                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-500">
+                <div class="flex justify-between text-xs text-theme-text-muted">
                   <span>1910</span>
                   <span>1970</span>
                   <span>2025</span>
@@ -139,8 +186,8 @@
             >
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-600 dark:text-gray-400">Min:</span>
-                  <span class="font-medium">{{ filters.minVotes.toLocaleString() }}+</span>
+                  <span class="text-theme-text-muted">Min:</span>
+                  <span class="font-medium text-theme-text">{{ filters.minVotes.toLocaleString() }}+</span>
                 </div>
                 <input
                   :value="filters.minVotes"
@@ -148,7 +195,7 @@
                   min="0"
                   step="100"
                   placeholder="0"
-                  class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  class="w-full px-3 py-2 bg-theme-surface border border-theme-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-theme-text placeholder-theme-text-muted"
                   @input="(e) => setMinVotes(Number((e.target as HTMLInputElement).value))"
                 >
 
@@ -162,7 +209,7 @@
               title="Genres"
               icon="i-mdi-movie-filter"
             >
-              <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+              <div v-if="isLoadingFilters" class="text-sm text-theme-text-muted">
                 Loading genres...
               </div>
               <CollapsibleFilterItems v-else ref="genresCollapsible" :max-lines="2">
@@ -172,8 +219,8 @@
                   :class="[
                     'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
                     filters.genres.includes(genre.name)
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      ? 'bg-theme-primary text-white'
+                      : 'bg-theme-selection text-theme-text hover:bg-theme-border/50'
                   ]"
                   :title="`${formatCountExact(genre.count)} movies`"
                   @click="toggleGenre(genre.name)"
@@ -183,8 +230,8 @@
                     :class="[
                       'text-xs font-normal',
                       filters.genres.includes(genre.name)
-                        ? 'text-blue-100'
-                        : 'text-gray-500 dark:text-gray-400'
+                        ? 'text-white/80'
+                        : 'text-theme-text-muted'
                     ]"
                   >
                     {{ formatCount(genre.count) }}
@@ -198,7 +245,7 @@
               title="Countries"
               icon="i-mdi-earth"
             >
-              <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+              <div v-if="isLoadingFilters" class="text-sm text-theme-text-muted">
                 Loading countries...
               </div>
               <CollapsibleFilterItems v-else ref="countriesCollapsible" :max-lines="2">
@@ -208,8 +255,8 @@
                   :class="[
                     'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
                     filters.countries.includes(country.name)
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      ? 'bg-theme-primary text-white'
+                      : 'bg-theme-selection text-theme-text hover:bg-theme-border/50'
                   ]"
                   :title="`${formatCountExact(country.count)} movies`"
                   @click="toggleCountry(country.name)"
@@ -219,8 +266,8 @@
                     :class="[
                       'text-xs font-normal',
                       filters.countries.includes(country.name)
-                        ? 'text-blue-100'
-                        : 'text-gray-500 dark:text-gray-400'
+                        ? 'text-white/80'
+                        : 'text-theme-text-muted'
                     ]"
                   >
                     {{ formatCount(country.count) }}
@@ -245,11 +292,11 @@
                 />
 
                 <!-- YouTube Channels -->
-                <div class="pl-4 space-y-2 border-l-2 border-gray-300 dark:border-gray-600">
-                  <p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-2">
+                <div class="pl-4 space-y-2 border-l-2 border-theme-border/50">
+                  <p class="text-xs text-theme-text-muted font-medium uppercase tracking-wide mb-2">
                     YouTube Channels
                   </p>
-                  <div v-if="isLoadingFilters" class="text-sm text-gray-500 dark:text-gray-400">
+                  <div v-if="isLoadingFilters" class="text-sm text-theme-text-muted">
                     Loading channels...
                   </div>
                   <AppInputCheckbox
@@ -260,9 +307,9 @@
                     @change="toggleSource(channel.name)"
                   >
                     <span class="flex items-center justify-between gap-2 flex-1">
-                      <span>{{ channel.name }}</span>
+                      <span class="text-theme-text">{{ channel.name }}</span>
                       <span
-                        class="text-xs text-gray-500 dark:text-gray-400"
+                        class="text-xs text-theme-text-muted"
                         :title="`${formatCountExact(channel.count)} movies`"
                       >
                         {{ formatCount(channel.count) }}
@@ -303,6 +350,7 @@
 import type { SortOption, GenreOption, CountryOption, ChannelOption } from '~/types'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { onClickOutside, useScrollLock } from '@vueuse/core'
+import { getAllThemes } from '~/utils/themes'
 
 interface Props {
   isOpen: boolean
@@ -313,6 +361,12 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   close: []
 }>()
+
+// Theme support
+const uiStore = useUiStore()
+const { currentThemeId } = storeToRefs(uiStore)
+const { setTheme, previewTheme } = uiStore
+const themes = getAllThemes()
 
 // Use unified movie store
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())

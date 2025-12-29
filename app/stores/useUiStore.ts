@@ -1,4 +1,6 @@
 import { useStorage } from '@vueuse/core'
+import { getThemeWithFallback, DEFAULT_DARK_THEME_ID, DEFAULT_LIGHT_THEME_ID } from '~/utils/themes'
+import type { ThemeDefinition } from '~/types/theme'
 
 /**
  * Toast notification type
@@ -16,35 +18,62 @@ export interface Toast {
 }
 
 /**
- * UI state interface
- */
-export interface UiState {
-  isDark: boolean
-}
-
-/**
  * UI store with persistent state
  * Manages app-wide UI preferences like dark mode and toast notifications
  *
  * Uses useStorage from @vueuse/core for automatic localStorage sync.
  */
 export const useUiStore = defineStore('ui', () => {
-  // Dark mode state with localStorage persistence
-  // useStorage automatically syncs with localStorage on client
-  const isDark = useStorage('movies-deluxe-theme-dark', true)
+  // Theme state with localStorage persistence
+  const currentThemeId = useStorage('movies-deluxe-theme-id', DEFAULT_DARK_THEME_ID)
+
+  // Preview theme state (not persistent)
+  const previewThemeId = ref<string | null>(null)
+
+  // Derived theme definition
+  const currentTheme = computed<ThemeDefinition>(() => {
+    return getThemeWithFallback(previewThemeId.value || currentThemeId.value)
+  })
+
+  // Backward compatibility: isDark derived from current theme
+  const isDark = computed({
+    get: () => currentTheme.value.metadata.variant === 'dark',
+    set: (value: boolean) => {
+      if (value) {
+        setTheme(DEFAULT_DARK_THEME_ID)
+      } else {
+        setTheme(DEFAULT_LIGHT_THEME_ID)
+      }
+    },
+  })
 
   // Toast notifications state
   const toasts = ref<Toast[]>([])
 
   /**
-   * Toggle dark mode (useStorage handles persistence automatically)
+   * Set theme by ID
+   */
+  const setTheme = (themeId: string) => {
+    currentThemeId.value = themeId
+    previewThemeId.value = null
+  }
+
+  /**
+   * Preview theme by ID
+   */
+  const previewTheme = (themeId: string | null) => {
+    previewThemeId.value = themeId
+  }
+
+  /**
+   * Toggle dark mode (switches between default dark and light themes)
    */
   const toggleDarkMode = () => {
     isDark.value = !isDark.value
   }
 
   /**
-   * Set dark mode explicitly (useStorage handles persistence automatically)
+   * Set dark mode explicitly
    */
   const setDarkMode = (value: boolean) => {
     isDark.value = value
@@ -83,10 +112,15 @@ export const useUiStore = defineStore('ui', () => {
 
   return {
     // State
+    currentThemeId,
+    previewThemeId,
+    currentTheme,
     isDark,
     toasts,
 
     // Actions
+    setTheme,
+    previewTheme,
     toggleDarkMode,
     setDarkMode,
     showToast,

@@ -30,7 +30,7 @@
             v-else
             class="text-center py-12"
           >
-            <p class="text-gray-600 dark:text-gray-400">
+            <p class="text-theme-text-muted">
               No movies found.
             </p>
           </div>
