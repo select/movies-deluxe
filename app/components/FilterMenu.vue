@@ -298,44 +298,100 @@
             :default-expanded="true"
             :highlight="highlightThemeSection"
           >
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <button
-                v-for="theme in themes"
-                :key="theme.metadata.id"
-                :class="[
-                  'flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left',
-                  currentThemeId === theme.metadata.id
-                    ? 'border-theme-primary bg-theme-primary/10'
-                    : 'border-theme-border/50 hover:border-theme-border bg-theme-surface/50'
-                ]"
-                @click="setTheme(theme.metadata.id)"
-                @mouseenter="previewTheme(theme.metadata.id)"
-                @mouseleave="previewTheme(null)"
-              >
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-semibold truncate">{{ theme.metadata.name }}</span>
-                  <div
-                    v-if="currentThemeId === theme.metadata.id"
-                    class="i-mdi-check-circle text-theme-primary text-xs"
-                  />
-                </div>
+            <div class="space-y-6">
+              <!-- Dark Themes -->
+              <div>
+                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-3 flex items-center gap-2">
+                  <div class="i-mdi-weather-night text-xs" />
+                  Dark Themes
+                </h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <button
+                    v-for="theme in darkThemes"
+                    :key="theme.metadata.id"
+                    :class="[
+                      'flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left',
+                      currentThemeId === theme.metadata.id
+                        ? 'border-theme-primary bg-theme-primary/10'
+                        : 'border-theme-border/50 hover:border-theme-border bg-theme-surface/50'
+                    ]"
+                    @click="setTheme(theme.metadata.id)"
+                    @mouseenter="previewTheme(theme.metadata.id)"
+                    @mouseleave="previewTheme(null)"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-semibold truncate">{{ theme.metadata.name }}</span>
+                      <div
+                        v-if="currentThemeId === theme.metadata.id"
+                        class="i-mdi-check-circle text-theme-primary text-xs"
+                      />
+                    </div>
 
-                <!-- Color Swatches -->
-                <div class="flex gap-1">
-                  <div
-                    class="w-3 h-3 rounded-full border border-black/10"
-                    :style="{ backgroundColor: theme.colors.background }"
-                  />
-                  <div
-                    class="w-3 h-3 rounded-full border border-black/10"
-                    :style="{ backgroundColor: theme.colors.primary }"
-                  />
-                  <div
-                    class="w-3 h-3 rounded-full border border-black/10"
-                    :style="{ backgroundColor: theme.colors.accent }"
-                  />
+                    <!-- Color Swatches -->
+                    <div class="flex gap-1">
+                      <div
+                        class="w-3 h-3 rounded-full border border-black/10"
+                        :style="{ backgroundColor: theme.colors.background }"
+                      />
+                      <div
+                        class="w-3 h-3 rounded-full border border-black/10"
+                        :style="{ backgroundColor: theme.colors.primary }"
+                      />
+                      <div
+                        class="w-3 h-3 rounded-full border border-black/10"
+                        :style="{ backgroundColor: theme.colors.accent }"
+                      />
+                    </div>
+                  </button>
                 </div>
-              </button>
+              </div>
+
+              <!-- Light Themes -->
+              <div>
+                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-3 flex items-center gap-2">
+                  <div class="i-mdi-weather-sunny text-xs" />
+                  Light Themes
+                </h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <button
+                    v-for="theme in lightThemes"
+                    :key="theme.metadata.id"
+                    :class="[
+                      'flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left',
+                      currentThemeId === theme.metadata.id
+                        ? 'border-theme-primary bg-theme-primary/10'
+                        : 'border-theme-border/50 hover:border-theme-border bg-theme-surface/50'
+                    ]"
+                    @click="setTheme(theme.metadata.id)"
+                    @mouseenter="previewTheme(theme.metadata.id)"
+                    @mouseleave="previewTheme(null)"
+                  >
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-semibold truncate">{{ theme.metadata.name }}</span>
+                      <div
+                        v-if="currentThemeId === theme.metadata.id"
+                        class="i-mdi-check-circle text-theme-primary text-xs"
+                      />
+                    </div>
+
+                    <!-- Color Swatches -->
+                    <div class="flex gap-1">
+                      <div
+                        class="w-3 h-3 rounded-full border border-black/10"
+                        :style="{ backgroundColor: theme.colors.background }"
+                      />
+                      <div
+                        class="w-3 h-3 rounded-full border border-black/10"
+                        :style="{ backgroundColor: theme.colors.primary }"
+                      />
+                      <div
+                        class="w-3 h-3 rounded-full border border-black/10"
+                        :style="{ backgroundColor: theme.colors.accent }"
+                      />
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           </FilterSection>
           <!-- Error state -->
@@ -371,6 +427,8 @@ const uiStore = useUiStore()
 const { currentThemeId } = storeToRefs(uiStore)
 const { setTheme, previewTheme } = uiStore
 const themes = getAllThemes()
+const darkThemes = computed(() => themes.filter(t => t.metadata.variant === 'dark'))
+const lightThemes = computed(() => themes.filter(t => t.metadata.variant === 'light'))
 
 // Highlight state for theme section
 const highlightThemeSection = ref(false)
