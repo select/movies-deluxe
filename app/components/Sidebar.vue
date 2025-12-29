@@ -46,7 +46,7 @@
             {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
           </span>
         </button>
-        
+
         <!-- Clear Filters Button (appears on hover when filters are active) -->
         <button
           v-if="activeFiltersCount > 0"
@@ -76,6 +76,7 @@
       </NuxtLink>
 
       <!-- Liked Movies -->
+
       <NuxtLink
         to="/liked"
         class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors relative group"
@@ -107,7 +108,7 @@
             {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
           </span>
         </button>
-        
+
         <!-- Clear Filters Button (appears on hover when filters are active) -->
         <button
           v-if="activeFiltersCount > 0"
