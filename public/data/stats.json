@@ -105,9 +105,9 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 26776,
+      "total": 26774,
       "scraped": 26791,
-      "percent": 100.05602031670153,
+      "percent": 100.06349443489952,
       "failed": 0,
       "failureRate": 0
     },
@@ -267,14 +267,14 @@
   "posters": {
     "totalMovies": 31597,
     "withPosterUrl": 13307,
-    "downloaded": 2790,
-    "missing": 10517,
-    "failed": 1893,
-    "failureRate": 40.42280589365791,
-    "percentOfMoviesWithUrl": 20.96640865709777,
-    "percentOfAllMovies": 8.829952210652909,
-    "filesInDirectory": 2809,
-    "matchedPosters": 2790
+    "downloaded": 8054,
+    "missing": 5253,
+    "failed": 50,
+    "failureRate": 0.6169792694965449,
+    "percentOfMoviesWithUrl": 60.52453595851808,
+    "percentOfAllMovies": 25.489761686236033,
+    "filesInDirectory": 8075,
+    "matchedPosters": 8054
   },
-  "lastUpdated": "2025-12-29T03:02:27.809Z"
+  "lastUpdated": "2025-12-29T09:58:46.868Z"
 }
