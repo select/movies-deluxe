@@ -207,6 +207,27 @@
                 </div>
               </div>
 
+              <!-- Collections -->
+              <div
+                v-if="movieCollections.length > 0"
+                class="mb-6"
+              >
+                <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
+                  Part of Collection
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                  <NuxtLink
+                    v-for="collection in movieCollections"
+                    :key="collection.id"
+                    :to="`/collections/${collection.id}`"
+                    class="px-3 py-1 rounded-full bg-theme-primary/10 border border-theme-primary/20 text-theme-primary text-sm hover:bg-theme-primary/20 transition-colors flex items-center gap-1.5"
+                  >
+                    <div class="i-mdi-folder-movie text-base" />
+                    {{ collection.name }}
+                  </NuxtLink>
+                </div>
+              </div>
+
               <!-- Plot -->
               <div
                 v-if="movie.metadata?.Plot"
@@ -522,6 +543,7 @@ import type { MovieEntry } from '~/types'
 // Stores - get reactive state and methods once
 const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
 const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile, toggleLike } = useMovieStore()
+const { getCollectionsForMovie, loadCollections } = useCollectionsStore()
 const { showToast } = useUiStore()
 const route = useRoute()
 
@@ -534,6 +556,12 @@ const relatedMovies = ref<MovieEntry[]>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 const selectedSourceIndex = ref(0)
+
+// Collections
+const movieCollections = computed(() => {
+  if (!movie.value) return []
+  return getCollectionsForMovie(movie.value.imdbId)
+})
 
 // Current selected source
 const currentSource = computed(() => {
@@ -589,6 +617,9 @@ onMounted(async () => {
   // Scroll to top when entering movie detail page
   scrollY.value = 0
   
+  // Load collections
+  loadCollections()
+
   // Get movie by ID from route params
   const movieId = route.params.id as string
   await loadMovieData(movieId)
