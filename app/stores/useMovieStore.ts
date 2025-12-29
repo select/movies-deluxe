@@ -136,6 +136,20 @@ export const useMovieStore = defineStore('movie', () => {
     },
   })
 
+  // Filter state stored in localStorage using VueUse
+  const filters = useStorage<FilterState>('movies-deluxe-filters', DEFAULT_FILTERS, localStorage, {
+    serializer: {
+      read: (v: string) => {
+        try {
+          return { ...DEFAULT_FILTERS, ...JSON.parse(v) }
+        } catch {
+          return DEFAULT_FILTERS
+        }
+      },
+      write: (v: FilterState) => JSON.stringify(v),
+    },
+  })
+
   // Loading states
   const isLoading = ref<LoadingState>({
     movies: false,
@@ -145,54 +159,11 @@ export const useMovieStore = defineStore('movie', () => {
   const isInitialLoading = ref(true)
   const isFiltering = ref(false)
 
-  // Filter state
-  const filters = ref<FilterState>(getInitialFilters())
-
   // Database composable
   const db = useDatabase()
 
   // Cached poster existence checks
   const posterCache = ref<Map<string, boolean>>(new Map())
-
-  // ============================================
-  // INITIALIZATION HELPERS
-  // ============================================
-
-  /**
-   * Get initial filters from localStorage
-   */
-  function getInitialFilters(): FilterState {
-    if (typeof window === 'undefined') {
-      return DEFAULT_FILTERS
-    }
-
-    try {
-      const stored = localStorage.getItem('movies-deluxe-filters')
-      if (stored) {
-        return {
-          ...DEFAULT_FILTERS,
-          ...JSON.parse(stored),
-        }
-      }
-    } catch {
-      // Failed to parse localStorage
-    }
-
-    return DEFAULT_FILTERS
-  }
-
-  /**
-   * Persist filters to localStorage
-   */
-  function persistFilters(): void {
-    if (typeof window === 'undefined') return
-
-    try {
-      localStorage.setItem('movies-deluxe-filters', JSON.stringify(filters.value))
-    } catch (err) {
-      console.error('[MovieStore] Failed to persist filters:', err)
-    }
-  }
 
   // ============================================
   // COMPUTED PROPERTIES - Data Views
@@ -958,8 +929,6 @@ export const useMovieStore = defineStore('movie', () => {
     if (filters.value.searchQuery !== '') {
       filters.value.previousSort = undefined
     }
-
-    persistFilters()
   }
 
   /**
@@ -978,7 +947,6 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     filters.value.searchQuery = query
-    persistFilters()
   }
 
   /**
@@ -988,7 +956,6 @@ export const useMovieStore = defineStore('movie', () => {
     filters.value.sources = filters.value.sources.includes(source)
       ? filters.value.sources.filter(s => s !== source)
       : [...filters.value.sources, source]
-    persistFilters()
   }
 
   /**
@@ -996,7 +963,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const setMinRating = (rating: number) => {
     filters.value.minRating = rating
-    persistFilters()
   }
 
   /**
@@ -1004,7 +970,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const setMinYear = (year: number) => {
     filters.value.minYear = year
-    persistFilters()
   }
 
   /**
@@ -1012,7 +977,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const setMinVotes = (votes: number) => {
     filters.value.minVotes = votes
-    persistFilters()
   }
 
   /**
@@ -1022,7 +986,6 @@ export const useMovieStore = defineStore('movie', () => {
     filters.value.genres = filters.value.genres.includes(genre)
       ? filters.value.genres.filter(g => g !== genre)
       : [...filters.value.genres, genre]
-    persistFilters()
   }
 
   /**
@@ -1032,7 +995,6 @@ export const useMovieStore = defineStore('movie', () => {
     filters.value.countries = filters.value.countries.includes(country)
       ? filters.value.countries.filter(c => c !== country)
       : [...filters.value.countries, country]
-    persistFilters()
   }
 
   /**
@@ -1040,7 +1002,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const toggleMissingMetadata = () => {
     filters.value.showMissingMetadataOnly = !filters.value.showMissingMetadataOnly
-    persistFilters()
   }
 
   /**
@@ -1048,7 +1009,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const resetFilters = () => {
     filters.value = { ...DEFAULT_FILTERS }
-    persistFilters()
   }
 
   /**
@@ -1086,7 +1046,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const setCurrentPage = (page: number) => {
     filters.value.currentPage = page
-    persistFilters()
   }
 
   /**
@@ -1094,7 +1053,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const loadMoreMovies = () => {
     filters.value.currentPage++
-    persistFilters()
   }
 
   /**
@@ -1102,7 +1060,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const setScrollY = (y: number) => {
     filters.value.lastScrollY = y
-    persistFilters()
   }
 
   // ============================================
