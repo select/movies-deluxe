@@ -123,32 +123,10 @@ export const useMovieStore = defineStore('movie', () => {
   const movieDetailsCache = shallowRef<Map<string, ExtendedMovieEntry>>(new Map())
 
   // Liked movie IDs stored in localStorage using VueUse
-  const likedMovieIds = useStorage<string[]>('movies-deluxe-liked', [], localStorage, {
-    serializer: {
-      read: (v: string) => {
-        try {
-          return JSON.parse(v)
-        } catch {
-          return []
-        }
-      },
-      write: (v: string[]) => JSON.stringify(v),
-    },
-  })
+  const likedMovieIds = useStorage<string[]>('movies-deluxe-liked', [])
 
   // Filter state stored in localStorage using VueUse
-  const filters = useStorage<FilterState>('movies-deluxe-filters', DEFAULT_FILTERS, localStorage, {
-    serializer: {
-      read: (v: string) => {
-        try {
-          return { ...DEFAULT_FILTERS, ...JSON.parse(v) }
-        } catch {
-          return DEFAULT_FILTERS
-        }
-      },
-      write: (v: FilterState) => JSON.stringify(v),
-    },
-  })
+  const filters = useStorage<FilterState>('movies-deluxe-filters', DEFAULT_FILTERS)
 
   // Loading states
   const isLoading = ref<LoadingState>({
@@ -189,6 +167,22 @@ export const useMovieStore = defineStore('movie', () => {
     const itemsPerPage = 50
     const limit = filters.value.currentPage * itemsPerPage
     return filteredAndSortedMovies.value.slice(0, limit)
+  })
+
+  /**
+   * Current movie list for navigation (uses lightweight movies for consistency with index page)
+   * Returns the list of movie IDs in the same order as displayed on the index page
+   * Falls back to all movies sorted by year if no filtering has been applied yet
+   */
+  const currentMovieList = computed((): LightweightMovieEntry[] => {
+    if (lightweightMovies.value.length > 0) {
+      return lightweightMovies.value
+    }
+    // Fallback to all movies sorted by year (newest first) as lightweight entries
+    return Array.from(allMovies.value.values())
+      .filter(m => m.year !== undefined) // Filter out movies without year
+      .sort((a, b) => (b.year || 0) - (a.year || 0))
+      .map(m => ({ imdbId: m.imdbId, title: m.title, year: m.year || 0 }))
   })
 
   // ============================================
@@ -426,10 +420,10 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     const { result, totalCount } = await db.extendedQuery({
-      select: `m.*, 
+      select: `m.*,
                ${
                  searchQuery?.trim()
-                   ? `CASE 
+                   ? `CASE
                  WHEN m.title LIKE '%${searchQuery.replace(/'/g, "''")}%' THEN 1
                  ELSE 2
                END as title_priority,`
@@ -577,7 +571,7 @@ export const useMovieStore = defineStore('movie', () => {
       const results = await db.query(
         `
         SELECT m.imdbId,
-               CASE 
+               CASE
                  WHEN m.title LIKE ? THEN 3
                  WHEN m.title LIKE ? THEN 2
                  ELSE 1
@@ -1397,6 +1391,7 @@ export const useMovieStore = defineStore('movie', () => {
     filteredAndSortedMovies: readonly(filteredAndSortedMovies),
     paginatedMovies,
     lightweightMovies: readonly(lightweightMovies),
+    currentMovieList,
 
     // Statistics
     totalMovies,

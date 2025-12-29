@@ -520,7 +520,7 @@
 import type { MovieEntry } from '~/types'
 
 // Stores - get reactive state and methods once
-const { totalMovies, filteredAndSortedMovies } = storeToRefs(useMovieStore())
+const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
 const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile, toggleLike } = useMovieStore()
 const { showToast } = useUiStore()
 const route = useRoute()
@@ -639,7 +639,7 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const movies = filteredAndSortedMovies.value
+  const movies = currentMovieList.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
 
   if (currentIndex === -1) return
