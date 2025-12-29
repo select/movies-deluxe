@@ -3,13 +3,7 @@
     <!-- Header -->
     <MovieHeader />
 
-    <!-- Mobile Menu Button -->
-    <MobileMenuButton 
-      :is-open="isFilterMenuOpen"
-      @open-filters="isFilterMenuOpen = true" 
-    />
-
-    <!-- Desktop Sidebar -->
+    <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
     <Sidebar @open-filters="isFilterMenuOpen = true" />
 
     <!-- Filter Menu -->
@@ -20,6 +14,9 @@
 
     <!-- Page Content -->
     <slot />
+
+    <!-- Toast Container -->
+    <AppToastContainer />
   </div>
 </template>
 
