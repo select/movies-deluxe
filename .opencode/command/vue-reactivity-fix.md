@@ -56,4 +56,4 @@ function onUpdate(event: string) {
 }
 ```
 
-where to look for: $ARGUMENTS
+$ARGUMENTS
