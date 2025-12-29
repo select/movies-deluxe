@@ -67,11 +67,13 @@ export async function getCollections(includePreviews = false): Promise<any[]> {
 
   const moviesDb = await loadMoviesDatabase()
   return collections.map(collection => {
-    // Filter for movies with IMDb IDs, shuffle, then take first 3
-    const moviesWithImdbIds = collection.movieIds.filter(id => id.startsWith('tt'))
+    // Filter for movies with valid IDs, shuffle, then take first 3
+    const validMovieIds = collection.movieIds.filter(
+      id => id.startsWith('tt') || id.startsWith('archive-') || id.startsWith('youtube-')
+    )
 
     // Shuffle array using Fisher-Yates algorithm
-    const shuffled = [...moviesWithImdbIds]
+    const shuffled = [...validMovieIds]
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]

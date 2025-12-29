@@ -433,5 +433,26 @@
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
     "updatedAt": "2025-12-29T14:55:55.607Z"
+  },
+  "martial-arts": {
+    "id": "martial-arts",
+    "name": "Martial Arts",
+    "description": "A collection of classic martial arts, kung fu, and ninja movies from around the world.",
+    "movieIds": [
+      "tt0398913",
+      "archive-ninja-bugeicho-momochi-sandayu-1980",
+      "archive-ninja-commandments-1987",
+      "archive-shoguns-ninja-sonny-chiba",
+      "archive-the-little-dragons-karate-kids-usa-1979-family-action-comedy",
+      "archive-rningai--daiichiwa-utsukushiki-emono-aka-jobless-samurai_1928",
+      "archive-empire-of-the-spiritual-ninja-1988",
+      "archive-enter.-the.-ninja.-1981.1080p.-blu-ray.-h-264.-aac-rarbg",
+      "youtube-9eGWe1THw14",
+      "youtube--LEoqYF0X7I",
+      "archive-meng-jiao-di-she-long-nu-1973",
+      "archive-xiao-quan-wang-1972"
+    ],
+    "createdAt": "2025-12-29T16:08:00.000Z",
+    "updatedAt": "2025-12-29T16:15:00.000Z"
   }
 }
