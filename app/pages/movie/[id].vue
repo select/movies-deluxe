@@ -519,10 +519,11 @@
 <script setup lang="ts">
 import type { MovieEntry } from '~/types'
 
-// Nuxt auto-imports
-const route = useRoute()
-const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile } = useMovieStore()
+// Stores - get reactive state and methods once
+const { totalMovies, filteredAndSortedMovies } = storeToRefs(useMovieStore())
+const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile, toggleLike } = useMovieStore()
 const { showToast } = useUiStore()
+const route = useRoute()
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
@@ -561,7 +562,6 @@ const loadMovieData = async (movieId: string) => {
   relatedMovies.value = []
 
   // Ensure movies are loaded in store
-  const { totalMovies } = storeToRefs(useMovieStore())
   if (totalMovies.value === 0) await loadFromFile()
 
   const foundMovie = await getMovieById(movieId)
@@ -657,7 +657,6 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const { filteredAndSortedMovies } = storeToRefs(useMovieStore())
   const movies = filteredAndSortedMovies.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
 
@@ -762,7 +761,6 @@ const updateMetaTags = (movie: MovieEntry) => {
 // Toggle liked
 const toggleLiked = () => {
   if (!movie.value) return
-  const { toggleLike } = useMovieStore()
   toggleLike(movie.value.imdbId)
 }
 
