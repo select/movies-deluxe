@@ -4,8 +4,7 @@
       'rounded-full bg-theme-surface hover:bg-theme-selection transition-all duration-300 border border-theme-border/50',
       compact ? 'p-1.5' : 'p-2'
     ]"
-    :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-    @click="toggleDarkMode"
+    aria-label="Open theme selection"
   >
     <div
       v-if="isDark"
@@ -26,11 +25,6 @@ defineProps<{
 // Use centralized UI store for dark mode
 const uiStore = useUiStore()
 const { isDark } = storeToRefs(uiStore)
-
-// Toggle dark mode via store
-const toggleDarkMode = () => {
-  uiStore.toggleDarkMode()
-}
 
 // Expose isDark for parent components if needed
 defineExpose({

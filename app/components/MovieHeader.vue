@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-30 border-b border-theme-border/50 transition-all duration-300 bg-theme-background/80 backdrop-blur-xl">
+  <header class="sticky top-0 z-30 transition-all duration-300 bg-theme-background/80 backdrop-blur-xl">
     <div
       :class="[
         'max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between transition-all duration-300',
@@ -52,13 +52,20 @@
       </div>
 
       <!-- Dark Mode Toggle -->
-      <AppDarkModeToggle :compact="windowScrollY > 50" />
+      <AppDarkModeToggle
+        :compact="windowScrollY > 50"
+        @click.prevent="emit('open-filters')"
+      />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
+
+const emit = defineEmits<{
+  'open-filters': []
+}>()
 
 const { filters } = storeToRefs(useMovieStore())
 const { setSearchQuery, setSort } = useMovieStore()
