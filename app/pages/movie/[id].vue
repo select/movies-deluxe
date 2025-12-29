@@ -525,6 +525,9 @@ const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile, toggle
 const { showToast } = useUiStore()
 const route = useRoute()
 
+// Window scroll control
+const { y: scrollY } = useWindowScroll()
+
 // Component state
 const movie = ref<MovieEntry | null>(null)
 const relatedMovies = ref<MovieEntry[]>([])
@@ -583,6 +586,9 @@ const loadMovieData = async (movieId: string) => {
 
 // Load movie on mount
 onMounted(async () => {
+  // Scroll to top when entering movie detail page
+  scrollY.value = 0
+  
   // Get movie by ID from route params
   const movieId = route.params.id as string
   await loadMovieData(movieId)
@@ -591,6 +597,8 @@ onMounted(async () => {
 // Watch for route changes to reload movie data
 watch(() => route.params.id, async (newId) => {
   if (newId) {
+    // Scroll to top when navigating between movies
+    scrollY.value = 0
     await loadMovieData(newId as string)
   }
 })
