@@ -1,7 +1,7 @@
 /**
  * Frontend Type Definitions
  *
- * This module re-exports shared types from ~/shared/types/movie and adds
+ * This module re-exports shared types from ~/types/movie and adds
  * frontend-specific type utilities for the Nuxt application.
  *
  * ## Usage in components/stores:
@@ -10,7 +10,7 @@
  * ```
  *
  * ## Type Organization:
- * - **Shared types** (from ~/shared/types/movie): Used by both frontend, server, and scripts
+ * - **Shared types** (from ~/types/movie): Used by both frontend, server, and scripts
  * - **Frontend types** (defined here): Only used in the Nuxt app
  */
 
@@ -36,9 +36,9 @@ export type {
 
   // Utility types
   TemporaryId,
-} from '~~/shared/types/movie'
+} from '~~/types/movie'
 
-export type { Collection, CollectionsDatabase } from '~~/shared/types/collections'
+export type { Collection, CollectionsDatabase } from '~~/types/collections'
 
 export type {
   ThemeVariant,
@@ -56,7 +56,7 @@ export {
   generateYouTubeId,
   extractIdentifier,
   MatchConfidence,
-} from '~~/shared/types/movie'
+} from '~~/types/movie'
 
 export type {
   Genre,
@@ -68,7 +68,7 @@ export type {
   GenresResponse,
   CountriesResponse,
   ChannelsResponse,
-} from '~~/shared/types/filters'
+} from '~~/types/filters'
 
 /**
  * Frontend-specific types
