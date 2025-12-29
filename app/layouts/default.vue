@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-theme-background text-theme-text transition-colors duration-300">
     <!-- Header -->
-    <MovieHeader />
+    <MovieHeader @open-filters="isFilterMenuOpen = true" />
 
     <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
     <Sidebar @open-filters="isFilterMenuOpen = true" />
