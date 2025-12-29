@@ -1,13 +1,13 @@
 <template>
   <NuxtLink
     :to="`/collections/${collection.id}`"
-    class="group flex flex-col gap-4 p-4 rounded-2xl bg-theme-surface border border-theme-border/50 hover:border-theme-accent/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+    class="group flex flex-col gap-4 p-4 rounded-2xl transition-all duration-500"
   >
     <!-- Stacked Posters -->
     <div class="relative aspect-[4/3] flex items-center justify-center perspective-1000">
       <!-- Bottom Right Poster (Tilted +5deg) -->
       <div
-        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden shadow-lg bg-theme-selection transform rotate-5 translate-x-12 translate-z-0 group-hover:rotate-12 group-hover:translate-x-16 transition-all duration-500 z-10"
+        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-theme-selection transform rotate-5 translate-x-12 translate-z-0 group-hover:rotate-12 group-hover:translate-x-16 transition-all duration-500 z-10"
       >
         <img
           v-if="posters[2]"
@@ -25,7 +25,7 @@
 
       <!-- Bottom Left Poster (Tilted -5deg) -->
       <div
-        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden shadow-lg bg-theme-selection transform -rotate-5 -translate-x-12 translate-z-10 group-hover:-rotate-12 group-hover:-translate-x-16 transition-all duration-500 z-20"
+        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-theme-selection transform -rotate-5 -translate-x-12 translate-z-10 group-hover:-rotate-12 group-hover:-translate-x-16 transition-all duration-500 z-20"
       >
         <img
           v-if="posters[1]"
@@ -43,7 +43,7 @@
 
       <!-- Top Poster (Centered) -->
       <div
-        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden shadow-2xl bg-theme-selection transform translate-z-20 group-hover:scale-105 transition-all duration-500 z-30"
+        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-theme-selection transform translate-z-20 group-hover:scale-105 transition-all duration-500 z-30"
       >
         <img
           v-if="posters[0]"
@@ -79,18 +79,25 @@
 
 <script setup lang="ts">
 import type { Collection } from '~/shared/types/collections'
+import type { MovieEntry } from '~/shared/types/movie'
 
 const props = defineProps<{
-  collection: Collection
+  collection: Collection & { previewMovies?: MovieEntry[] }
 }>()
 
 // Get posters for the first 3 movies
 const posters = computed(() => {
+  const movieStore = useMovieStore()
+
+  if (props.collection.previewMovies) {
+    return props.collection.previewMovies.map(movie => movieStore.getPosterUrlSync(movie))
+  }
+
   return props.collection.movieIds.slice(0, 3).map(id => {
     if (id.startsWith('tt')) {
       return `/posters/${id}.jpg`
     }
-    return null
+    return '/images/poster-placeholder.jpg'
   })
 })
 </script>
