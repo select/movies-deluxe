@@ -146,6 +146,68 @@
             Remove All Metadata
           </button>
         </div>
+
+        <!-- Collections Management -->
+        <div class="pt-6 border-t border-yellow-200 dark:border-gray-700">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300 mb-3">
+            Collections
+          </h3>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <div
+              v-for="collection in movieCollections"
+              :key="collection.id"
+              class="flex items-center gap-2 px-3 py-1.5 bg-theme-primary/10 border border-theme-primary/30 rounded-lg text-sm"
+            >
+              <div class="i-mdi-folder text-theme-primary" />
+              <span class="font-medium">{{ collection.name }}</span>
+              <button
+                class="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-red-500 transition-colors"
+                title="Remove from collection"
+                @click="removeFromCollection(collection.id)"
+              >
+                <div class="i-mdi-close text-xs" />
+              </button>
+            </div>
+            <div
+              v-if="movieCollections.length === 0"
+              class="text-sm text-gray-500 italic py-1.5"
+            >
+              Not in any collections
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <select
+              v-model="selectedCollectionId"
+              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm"
+            >
+              <option
+                value=""
+                disabled
+              >
+                Add to collection...
+              </option>
+              <option
+                v-for="c in availableCollections"
+                :key="c.id"
+                :value="c.id"
+              >
+                {{ c.name }}
+              </option>
+            </select>
+            <button
+              class="px-4 py-2 bg-theme-primary hover:bg-theme-primary/80 text-white rounded font-bold transition-colors disabled:opacity-50"
+              :disabled="!selectedCollectionId || isUpdatingCollection"
+              @click="addToCollection"
+            >
+              <div
+                v-if="isUpdatingCollection"
+                class="i-mdi-loading animate-spin"
+              />
+              <span v-else>Add</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Right: Search Results -->
@@ -226,11 +288,57 @@ const isSearching = ref(false)
 const searchResults = ref<OMDBSearchResult[]>([])
 const searchError = ref('')
 
+// Collections state
+const collectionsStore = useCollectionsStore()
+const { collections } = storeToRefs(collectionsStore)
+const selectedCollectionId = ref('')
+const isUpdatingCollection = ref(false)
+
+const movieCollections = computed(() => collectionsStore.getCollectionsForMovie(props.movie.imdbId))
+const availableCollections = computed(() => {
+  return Array.from(collections.value.values()).filter(
+    c => !c.movieIds.includes(props.movie.imdbId)
+  )
+})
+
 onMounted(() => {
   isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   searchTitle.value = getPrimaryTitle(props.movie)
   searchYear.value = props.movie.year?.toString() || ''
+  
+  // Load collections if not already loaded
+  if (collections.value.size === 0) {
+    collectionsStore.loadCollections()
+  }
 })
+
+const addToCollection = async () => {
+  if (!selectedCollectionId.value) return
+  
+  isUpdatingCollection.value = true
+  try {
+    const success = await collectionsStore.addMovieToCollection(
+      selectedCollectionId.value,
+      props.movie.imdbId
+    )
+    if (success) {
+      selectedCollectionId.value = ''
+    }
+  } finally {
+    isUpdatingCollection.value = false
+  }
+}
+
+const removeFromCollection = async (collectionId: string) => {
+  if (!confirm('Remove movie from this collection?')) return
+  
+  isUpdatingCollection.value = true
+  try {
+    await collectionsStore.removeMovieFromCollection(collectionId, props.movie.imdbId)
+  } finally {
+    isUpdatingCollection.value = false
+  }
+}
 
 // Watch for movie changes to update search fields
 watch(() => props.movie.imdbId, () => {

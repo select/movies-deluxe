@@ -192,6 +192,11 @@
           </div>
         </section>
 
+        <!-- Collection Management Section -->
+        <section>
+          <AdminCollectionManager />
+        </section>
+
         <!-- Data Enrichment Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">

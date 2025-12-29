@@ -9,9 +9,11 @@ import Database from 'better-sqlite3'
 import { join } from 'path'
 import { existsSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from '../server/utils/movieData'
+import { loadCollectionsDatabase } from '../server/utils/collections'
 import { createLogger } from '../server/utils/logger'
 import { normalizeLanguageCode } from '../shared/utils/languageNormalizer'
-import type { MovieEntry } from '../shared/types/movie'
+import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../shared/types/movie'
+import type { Collection } from '../shared/types/collections'
 
 const logger = createLogger('SQLiteGen')
 const DB_PATH = join(process.cwd(), 'public/data/movies.db')
@@ -23,8 +25,12 @@ async function generateSQLite(
 
   // 1. Load JSON data
   const db = await loadMoviesDatabase()
+  const collectionsDb = await loadCollectionsDatabase()
   const movies = Object.values(db).filter(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
+  )
+  const collections = Object.values(collectionsDb).filter(
+    (entry): entry is Collection => typeof entry === 'object' && entry !== null && 'id' in entry
   )
 
   logger.info(`Processing ${movies.length} movies`)
@@ -112,6 +118,23 @@ async function generateSQLite(
         PRIMARY KEY (movieId, relatedMovieId)
       );
 
+      CREATE TABLE collections (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+      );
+
+      CREATE TABLE collection_movies (
+        collectionId TEXT NOT NULL,
+        movieId TEXT NOT NULL,
+        addedAt TEXT NOT NULL,
+        PRIMARY KEY (collectionId, movieId),
+        FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,
+        FOREIGN KEY (movieId) REFERENCES movies(imdbId) ON DELETE CASCADE
+      );
+
       -- FTS5 Virtual Table for Search
       CREATE VIRTUAL TABLE fts_movies USING fts5(
         imdbId UNINDEXED,
@@ -139,6 +162,8 @@ async function generateSQLite(
       CREATE INDEX idx_countries_count ON countries(movie_count DESC);
       CREATE INDEX idx_related_movies_movieId ON related_movies(movieId);
       CREATE INDEX idx_related_movies_score ON related_movies(movieId, score DESC);
+      CREATE INDEX idx_collection_movies_collectionId ON collection_movies(collectionId);
+      CREATE INDEX idx_collection_movies_movieId ON collection_movies(movieId);
     `)
 
     // 5. Prepare Statements
@@ -181,6 +206,16 @@ async function generateSQLite(
       VALUES (?, ?, ?)
     `)
 
+    const insertCollection = sqlite.prepare(`
+      INSERT INTO collections (id, name, description, createdAt, updatedAt)
+      VALUES (?, ?, ?, ?, ?)
+    `)
+
+    const insertCollectionMovie = sqlite.prepare(`
+      INSERT INTO collection_movies (collectionId, movieId, addedAt)
+      VALUES (?, ?, ?)
+    `)
+
     // 6. Insert Data in a Transaction
     logger.info('Inserting data...')
     sqlite.exec('BEGIN TRANSACTION')
@@ -196,11 +231,11 @@ async function generateSQLite(
         // Determine language priority: Archive.org language > YouTube language > OMDB language
         let language: string | null = null
         for (const source of movie.sources) {
-          if (source.type === 'archive.org' && (source as any).language) {
-            language = normalizeLanguageCode((source as any).language)
+          if (source.type === 'archive.org' && (source as ArchiveOrgSource).language) {
+            language = normalizeLanguageCode((source as ArchiveOrgSource).language!)
             break // Archive.org language has highest priority
-          } else if (source.type === 'youtube' && (source as any).language) {
-            language = normalizeLanguageCode((source as any).language)
+          } else if (source.type === 'youtube' && (source as YouTubeSource).language) {
+            language = normalizeLanguageCode((source as YouTubeSource).language!)
             // Don't break - keep looking for Archive.org language
           }
         }
@@ -244,13 +279,17 @@ async function generateSQLite(
             const sourceLanguage = normalizeLanguageCode((source as any).language)
 
             // Get identifier - handle both 'id' and 'videoId' fields for YouTube sources
-            const identifier = (source as any).id || (source as any).videoId || null
+            const identifier =
+              source.type === 'youtube'
+                ? (source as YouTubeSource).id
+                : (source as ArchiveOrgSource).id
 
             // Insert channel if YouTube source
             let channelId = null
             if (source.type === 'youtube') {
-              const ytChannelId = (source as any).channelId
-              const ytChannelName = (source as any).channelName
+              const ytSource = source as YouTubeSource
+              const ytChannelId = ytSource.channelId
+              const ytChannelName = ytSource.channelName
               if (ytChannelId && ytChannelName) {
                 insertChannel.run(ytChannelId, ytChannelName, new Date().toISOString())
                 channelId = ytChannelId
@@ -335,6 +374,26 @@ async function generateSQLite(
       }
 
       logger.info(`Inserted ${genreCounts.size} genres and ${countryCounts.size} countries`)
+
+      // 6.7. Populate Collections
+      logger.info('Populating collections...')
+      for (const collection of collections) {
+        insertCollection.run(
+          collection.id,
+          collection.name,
+          collection.description || null,
+          collection.createdAt,
+          collection.updatedAt
+        )
+
+        for (const movieId of collection.movieIds) {
+          // Only insert if movie exists in our database
+          if (db[movieId]) {
+            insertCollectionMovie.run(collection.id, movieId, collection.updatedAt)
+          }
+        }
+      }
+      logger.info(`Inserted ${collections.length} collections`)
 
       // 7. Calculate Related Movies
       logger.info('Calculating related movies...')

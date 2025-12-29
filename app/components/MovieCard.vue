@@ -50,9 +50,25 @@
       <!-- Like Indicator -->
       <div
         v-if="isMovieLiked"
-        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center"
+        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center z-10"
       >
         <div class="i-mdi-heart text-red-500 text-lg" />
+      </div>
+
+      <!-- Collection Indicator -->
+      <div
+        v-if="movieCollections.length > 0"
+        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center z-10"
+        :class="{ 'ml-8': isMovieLiked }"
+        :title="movieCollections.map(c => c.name).join(', ')"
+      >
+        <div class="i-mdi-folder text-theme-accent text-lg" />
+        <span
+          v-if="movieCollections.length > 1"
+          class="absolute -bottom-1 -right-1 bg-theme-accent text-black text-[9px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-theme-surface"
+        >
+          {{ movieCollections.length }}
+        </span>
       </div>
     </div>
 
@@ -96,9 +112,13 @@ interface Props {
 const props = defineProps<Props>()
 
 const { isLiked: isLikedFn } = useMovieStore()
+const collectionsStore = useCollectionsStore()
 
 // Check if movie is liked
 const isMovieLiked = computed(() => isLikedFn(props.movie.imdbId))
+
+// Get collections for this movie
+const movieCollections = computed(() => collectionsStore.getCollectionsForMovie(props.movie.imdbId))
 
 // Computed language code
 const languageCode = computed(() => {
