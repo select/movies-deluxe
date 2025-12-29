@@ -12,18 +12,14 @@ import {
   type SortField,
   type SortDirection,
 } from '~/utils/movieSort'
+import { useStorage } from '@vueuse/core'
 
 /**
- * Extended MovieEntry with user metadata (likes/watchlist)
- * This embeds user-specific data directly in the movie object
+ * Extended MovieEntry with user metadata
+ * User-specific data (likes) is stored separately in VueUse storage
+ * Type alias kept for backwards compatibility
  */
-export interface ExtendedMovieEntry extends MovieEntry {
-  // User metadata (embedded in movie object)
-  isLiked?: boolean
-  likedAt?: number
-  inWatchlist?: boolean
-  addedToWatchlistAt?: number
-}
+export type ExtendedMovieEntry = MovieEntry
 
 /**
  * Serializable sort state (for localStorage)
@@ -126,6 +122,20 @@ export const useMovieStore = defineStore('movie', () => {
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
   const movieDetailsCache = shallowRef<Map<string, ExtendedMovieEntry>>(new Map())
 
+  // Liked movie IDs stored in localStorage using VueUse
+  const likedMovieIds = useStorage<string[]>('movies-deluxe-liked', [], localStorage, {
+    serializer: {
+      read: (v: string) => {
+        try {
+          return JSON.parse(v)
+        } catch {
+          return []
+        }
+      },
+      write: (v: string[]) => JSON.stringify(v),
+    },
+  })
+
   // Loading states
   const isLoading = ref<LoadingState>({
     movies: false,
@@ -172,92 +182,6 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Load persisted likes from localStorage
-   */
-  function loadPersistedLikes(): void {
-    if (typeof window === 'undefined') return
-
-    try {
-      const stored = localStorage.getItem('movies-deluxe-liked')
-      if (stored) {
-        const likedIds: string[] = JSON.parse(stored)
-        likedIds.forEach(id => {
-          const movie = allMovies.value.get(id)
-          if (movie) {
-            movie.isLiked = true
-            movie.likedAt = Date.now() // We don't have timestamp from old format
-          }
-        })
-        // Trigger reactivity for shallowRef after modifying nested properties
-        if (likedIds.length > 0) {
-          triggerRef(allMovies)
-        }
-      }
-    } catch (err) {
-      console.error('[MovieStore] Failed to load persisted likes:', err)
-    }
-  }
-
-  /**
-   * Load persisted watchlist from localStorage
-   */
-  function loadPersistedWatchlist(): void {
-    if (typeof window === 'undefined') return
-
-    try {
-      const stored = localStorage.getItem('movies-deluxe-watchlist')
-      if (stored) {
-        const watchlistIds: string[] = JSON.parse(stored)
-        watchlistIds.forEach(id => {
-          const movie = allMovies.value.get(id)
-          if (movie) {
-            movie.inWatchlist = true
-            movie.addedToWatchlistAt = Date.now()
-          }
-        })
-        // Trigger reactivity for shallowRef after modifying nested properties
-        if (watchlistIds.length > 0) {
-          triggerRef(allMovies)
-        }
-      }
-    } catch (err) {
-      console.error('[MovieStore] Failed to load persisted watchlist:', err)
-    }
-  }
-
-  /**
-   * Persist likes to localStorage
-   */
-  function persistLikes(): void {
-    if (typeof window === 'undefined') return
-
-    try {
-      const likedIds = Array.from(allMovies.value.values())
-        .filter(m => m.isLiked)
-        .map(m => m.imdbId)
-      localStorage.setItem('movies-deluxe-liked', JSON.stringify(likedIds))
-    } catch (err) {
-      console.error('[MovieStore] Failed to persist likes:', err)
-    }
-  }
-
-  /**
-   * Persist watchlist to localStorage
-   */
-  function persistWatchlist(): void {
-    if (typeof window === 'undefined') return
-
-    try {
-      const watchlistIds = Array.from(allMovies.value.values())
-        .filter(m => m.inWatchlist)
-        .map(m => m.imdbId)
-      localStorage.setItem('movies-deluxe-watchlist', JSON.stringify(watchlistIds))
-    } catch (err) {
-      console.error('[MovieStore] Failed to persist watchlist:', err)
-    }
-  }
-
-  /**
    * Persist filters to localStorage
    */
   function persistFilters(): void {
@@ -296,24 +220,6 @@ export const useMovieStore = defineStore('movie', () => {
     return filteredAndSortedMovies.value.slice(0, limit)
   })
 
-  /**
-   * Liked movies sorted by likedAt timestamp (newest first)
-   */
-  const likedMovies = computed((): ExtendedMovieEntry[] => {
-    return Array.from(allMovies.value.values())
-      .filter(m => m.isLiked)
-      .sort((a, b) => (b.likedAt || 0) - (a.likedAt || 0))
-  })
-
-  /**
-   * Watchlist movies sorted by addedToWatchlistAt timestamp (newest first)
-   */
-  const watchlistMovies = computed((): ExtendedMovieEntry[] => {
-    return Array.from(allMovies.value.values())
-      .filter(m => m.inWatchlist)
-      .sort((a, b) => (b.addedToWatchlistAt || 0) - (a.addedToWatchlistAt || 0))
-  })
-
   // ============================================
   // COMPUTED PROPERTIES - Statistics
   // ============================================
@@ -329,14 +235,9 @@ export const useMovieStore = defineStore('movie', () => {
   const totalFiltered = ref(0)
 
   /**
-   * Number of liked movies
+   * Number of liked movies - calculated directly from likedMovieIds
    */
-  const likedCount = computed((): number => likedMovies.value.length)
-
-  /**
-   * Number of watchlist movies
-   */
-  const watchlistCount = computed((): number => watchlistMovies.value.length)
+  const likedCount = computed((): number => likedMovieIds.value.length)
 
   /**
    * Whether more movies can be loaded (pagination)
@@ -453,9 +354,6 @@ export const useMovieStore = defineStore('movie', () => {
       lastUpdated: row.lastUpdated,
       sources,
       metadata,
-      // User metadata will be loaded from localStorage
-      isLiked: false,
-      inWatchlist: false,
     }
   }
 
@@ -464,7 +362,7 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Initialize database and load persisted user data (likes/watchlist)
+   * Initialize database (user data loaded automatically via VueUse storage)
    * Called once on app initialization
    */
   const loadFromFile = async () => {
@@ -473,10 +371,6 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       // Initialize database from remote file
       await db.init('/data/movies.db')
-
-      // Load persisted user data
-      loadPersistedLikes()
-      loadPersistedWatchlist()
 
       isInitialLoading.value = false
     } catch (err) {
@@ -523,10 +417,6 @@ export const useMovieStore = defineStore('movie', () => {
       movieEntries.forEach(movie => {
         allMovies.value.set(movie.imdbId, movie)
       })
-
-      // Load persisted user data
-      loadPersistedLikes()
-      loadPersistedWatchlist()
     } catch (err) {
       console.error('Failed to load movies from JSON fallback:', err)
     } finally {
@@ -1216,141 +1106,54 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   // ============================================
-  // LIKES & WATCHLIST ACTIONS
+  // LIKES ACTIONS
   // ============================================
 
   /**
    * Toggle like status for a movie
    */
   const toggleLike = (movieId: string) => {
-    const movie = allMovies.value.get(movieId)
-    if (!movie) return
-
-    if (movie.isLiked) {
-      movie.isLiked = false
-      movie.likedAt = undefined
+    const index = likedMovieIds.value.indexOf(movieId)
+    if (index > -1) {
+      // Remove from likes
+      likedMovieIds.value.splice(index, 1)
     } else {
-      movie.isLiked = true
-      movie.likedAt = Date.now()
+      // Add to likes
+      likedMovieIds.value.push(movieId)
     }
-
-    persistLikes()
-    // Trigger reactivity for shallowRef after modifying nested properties
-    triggerRef(allMovies)
   }
 
   /**
    * Add a movie to likes
    */
   const like = (movieId: string) => {
-    const movie = allMovies.value.get(movieId)
-    if (!movie) return
-
-    movie.isLiked = true
-    movie.likedAt = Date.now()
-    persistLikes()
-    // Trigger reactivity for shallowRef after modifying nested properties
-    triggerRef(allMovies)
+    if (!likedMovieIds.value.includes(movieId)) {
+      likedMovieIds.value.push(movieId)
+    }
   }
 
   /**
    * Remove a movie from likes
    */
   const unlike = (movieId: string) => {
-    const movie = allMovies.value.get(movieId)
-    if (!movie) return
-
-    movie.isLiked = false
-    movie.likedAt = undefined
-    persistLikes()
-    // Trigger reactivity for shallowRef after modifying nested properties
-    triggerRef(allMovies)
+    const index = likedMovieIds.value.indexOf(movieId)
+    if (index > -1) {
+      likedMovieIds.value.splice(index, 1)
+    }
   }
 
   /**
    * Check if a movie is liked
    */
   const isLiked = (movieId: string): boolean => {
-    const movie = allMovies.value.get(movieId)
-    return movie?.isLiked || false
-  }
-
-  /**
-   * Toggle watchlist status for a movie
-   */
-  const toggleWatchlist = (movieId: string) => {
-    const movie = allMovies.value.get(movieId)
-    if (!movie) return
-
-    if (movie.inWatchlist) {
-      movie.inWatchlist = false
-      movie.addedToWatchlistAt = undefined
-    } else {
-      movie.inWatchlist = true
-      movie.addedToWatchlistAt = Date.now()
-    }
-
-    persistWatchlist()
-    // Trigger reactivity for shallowRef after modifying nested properties
-    triggerRef(allMovies)
-  }
-
-  /**
-   * Add a movie to watchlist
-   */
-  const addToWatchlist = (movieId: string) => {
-    const movie = allMovies.value.get(movieId)
-    if (!movie) return
-
-    movie.inWatchlist = true
-    movie.addedToWatchlistAt = Date.now()
-    persistWatchlist()
-    // Trigger reactivity for shallowRef after modifying nested properties
-    triggerRef(allMovies)
-  }
-
-  /**
-   * Remove a movie from watchlist
-   */
-  const removeFromWatchlist = (movieId: string) => {
-    const movie = allMovies.value.get(movieId)
-    if (!movie) return
-
-    movie.inWatchlist = false
-    movie.addedToWatchlistAt = undefined
-    persistWatchlist()
-    // Trigger reactivity for shallowRef after modifying nested properties
-    triggerRef(allMovies)
-  }
-
-  /**
-   * Check if a movie is in watchlist
-   */
-  const inWatchlist = (movieId: string): boolean => {
-    const movie = allMovies.value.get(movieId)
-    return movie?.inWatchlist || false
+    return likedMovieIds.value.includes(movieId)
   }
 
   /**
    * Clear all liked movies
    */
   const clearLikes = () => {
-    allMovies.value.forEach(movie => {
-      movie.isLiked = false
-      movie.likedAt = undefined
-    })
-    persistLikes()
-  }
-
-  /**
-   * Clear all watchlist movies
-   */
-  const clearWatchlist = () => {
-    allMovies.value.forEach(movie => {
-      movie.inWatchlist = false
-      movie.addedToWatchlistAt = undefined
-    })
-    persistWatchlist()
+    likedMovieIds.value = []
   }
 
   // ============================================
@@ -1627,6 +1430,7 @@ export const useMovieStore = defineStore('movie', () => {
     isInitialLoading: readonly(isInitialLoading),
     isFiltering: readonly(isFiltering),
     isLoading: readonly(isLoading),
+    likedMovieIds: readonly(likedMovieIds),
 
     // ============================================
     // COMPUTED PROPERTIES
@@ -1636,14 +1440,11 @@ export const useMovieStore = defineStore('movie', () => {
     filteredAndSortedMovies: readonly(filteredAndSortedMovies),
     paginatedMovies,
     lightweightMovies: readonly(lightweightMovies),
-    likedMovies,
-    watchlistMovies,
 
     // Statistics
     totalMovies,
     totalFiltered: readonly(totalFiltered),
     likedCount,
-    watchlistCount,
     hasMore,
     activeFiltersCount,
     hasActiveFilters,
@@ -1688,18 +1489,13 @@ export const useMovieStore = defineStore('movie', () => {
     setScrollY,
 
     // ============================================
-    // ACTIONS - Likes & Watchlist
+    // ACTIONS - Likes
     // ============================================
     toggleLike,
     like,
     unlike,
     isLiked,
-    toggleWatchlist,
-    addToWatchlist,
-    removeFromWatchlist,
-    inWatchlist,
     clearLikes,
-    clearWatchlist,
 
     // ============================================
     // UTILITY FUNCTIONS

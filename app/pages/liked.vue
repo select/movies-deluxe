@@ -39,7 +39,7 @@
             :total-movies="likedCount"
             :filtered-movies="filteredLikedMovies.length"
           />
-          
+
           <div class="relative">
             <template v-if="isLoadingLiked">
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -93,8 +93,12 @@ useHead({
   ],
 })
 
-const { filters } = storeToRefs(useMovieStore())
-const { loadFromFile, fetchMoviesByIds, resetFilters } = useMovieStore()
+const movieStore = useMovieStore()
+const { filters } = storeToRefs(movieStore)
+const { loadFromFile, fetchMoviesByIds, resetFilters } = movieStore
+
+// Get likedMovieIds directly from store (VueUse storage)
+const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 
 // Local state for liked movies (since store uses lazy loading)
 const likedMoviesData = ref<ExtendedMovieEntry[]>([])
@@ -105,15 +109,11 @@ onMounted(async () => {
   try {
     // Initialize database if not already loaded
     await loadFromFile()
-    
-    // Get liked movie IDs from localStorage
-    const stored = localStorage.getItem('movies-deluxe-liked')
-    if (stored) {
-      const likedIds: string[] = JSON.parse(stored)
-      if (likedIds.length > 0) {
-        // Fetch full movie details for liked IDs
-        likedMoviesData.value = await fetchMoviesByIds(likedIds)
-      }
+
+    // Fetch full movie details for liked IDs from VueUse storage
+    if (likedMovieIds.value.length > 0) {
+      // Convert readonly array to mutable array for fetchMoviesByIds
+      likedMoviesData.value = await fetchMoviesByIds([...likedMovieIds.value])
     }
   } catch {
     // Failed to load liked movies, continue with empty state
@@ -122,17 +122,15 @@ onMounted(async () => {
   }
 })
 
-// Get liked movies count from local data
-const likedCount = computed(() => likedMoviesData.value.length)
 
 // Filtered liked movies - apply current filters to liked movies
 const filteredLikedMovies = computed(() => {
   const liked = likedMoviesData.value
   if (liked.length === 0) return []
-  
+
   // Apply filters manually since we're showing a subset (liked movies only)
   let filtered = liked
-  
+
   // Apply search query
   const searchQuery = filters.value.searchQuery?.toLowerCase().trim()
   if (searchQuery) {
@@ -142,7 +140,7 @@ const filteredLikedMovies = computed(() => {
       return title.toLowerCase().includes(searchQuery) || plot.toLowerCase().includes(searchQuery)
     })
   }
-  
+
   // Apply genre filter
   if (filters.value.genres && filters.value.genres.length > 0) {
     filtered = filtered.filter(movie => {
@@ -150,14 +148,14 @@ const filteredLikedMovies = computed(() => {
       return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
     })
   }
-  
+
   // Apply year filter
   if (filters.value.minYear > 0) {
     filtered = filtered.filter(movie => {
       return (movie.year || 0) >= filters.value.minYear
     })
   }
-  
+
   // Apply rating filter
   if (filters.value.minRating > 0) {
     filtered = filtered.filter(movie => {
@@ -165,10 +163,10 @@ const filteredLikedMovies = computed(() => {
       return rating >= filters.value.minRating
     })
   }
-  
+
   // Apply source filter
   if (filters.value.sources && filters.value.sources.length > 0) {
-    filtered = filtered.filter(movie => 
+    filtered = filtered.filter(movie =>
       movie.sources?.some(source => {
         if (source.type === 'archive.org') {
           return filters.value.sources.includes('archive.org')
@@ -180,7 +178,7 @@ const filteredLikedMovies = computed(() => {
       })
     )
   }
-  
+
   return filtered
 })
 </script>
