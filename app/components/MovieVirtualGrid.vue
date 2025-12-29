@@ -50,7 +50,6 @@ import type { MovieEntry, LightweightMovieEntry } from '~/types'
 const props = defineProps<{
   movies: LightweightMovieEntry[]
   totalMovies: number
-  hasMore: boolean
 }>()
 
 const emit = defineEmits<{
@@ -237,11 +236,10 @@ const getMovieEntry = (lightweight: LightweightMovieEntry): MovieEntry => {
 
 // Load more when approaching end of currently loaded content
 watch(visibleRows, () => {
-  if (!props.hasMore) return
-  
+
   // Calculate rows based on currently loaded movies, not total
   const loadedRows = Math.ceil(props.movies.length / cols.value)
-  
+
   // Check if we're rendering the last few rows of loaded content
   const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
   if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
@@ -250,15 +248,3 @@ watch(visibleRows, () => {
   }
 }, { deep: true })
 </script>
-
-<style scoped>
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-</style>
