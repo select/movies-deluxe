@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-29T14:53:19.806Z"
+    "lastUpdated": "2025-12-29T15:13:26.421Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -454,5 +454,26 @@
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
     "updatedAt": "2025-12-29T16:15:00.000Z"
+  },
+  "canine-cinema": {
+    "id": "canine-cinema",
+    "name": "Canine Cinema",
+    "description": "Heartwarming and adventurous films featuring man's best friend.",
+    "movieIds": [
+      "tt0009018",
+      "tt0043819",
+      "tt0038768",
+      "tt0026162",
+      "tt0043326",
+      "youtube-eUpjjIamaYE",
+      "archive-lassie-a-christmas-story-1959-film-noir-christmas-special",
+      "archive-the-extra-girl",
+      "archive-westofhotdog",
+      "tt0043895",
+      "youtube-EnkrwkbCxfo",
+      "tt0463721"
+    ],
+    "createdAt": "2025-12-29T16:18:00.000Z",
+    "updatedAt": "2025-12-29T15:13:26.421Z"
   }
 }
