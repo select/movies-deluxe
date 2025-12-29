@@ -68,11 +68,11 @@ useHead({
   ],
 })
 
-const { isInitialLoading, lightweightMovies, totalFiltered, filters } = storeToRefs(useMovieStore())
+const { isInitialLoading, currentMovieList, totalFiltered, filters } = storeToRefs(useMovieStore())
 const { loadFromFile, setCurrentPage } = useMovieStore()
 
-// Ensure lightweightMovies is always an array (convert readonly to mutable)
-const safeLightweightMovies = computed(() => [...(lightweightMovies.value || [])])
+// Ensure currentMovieList is always an array (convert readonly to mutable)
+const safeLightweightMovies = computed(() => [...(currentMovieList.value || [])])
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
 // Load movies on mount
