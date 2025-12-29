@@ -30,6 +30,16 @@
         </span>
       </NuxtLink>
 
+      <!-- Collections -->
+      <NuxtLink
+        to="/collections"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        title="Collections"
+        :class="{ 'bg-theme-primary/20': $route.path.startsWith('/collections') }"
+      >
+        <div class="i-mdi-folder text-xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
+      </NuxtLink>
+
       <!-- Filters -->
       <div class="relative group">
         <button
@@ -90,6 +100,16 @@
         >
           {{ likedCount > 99 ? '99+' : likedCount }}
         </span>
+      </NuxtLink>
+
+      <!-- Collections -->
+      <NuxtLink
+        to="/collections"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        aria-label="Collections"
+        :class="{ 'bg-theme-primary/20': $route.path.startsWith('/collections') }"
+      >
+        <div class="i-mdi-folder text-2xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
       </NuxtLink>
 
       <!-- Filters -->

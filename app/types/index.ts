@@ -38,6 +38,8 @@ export type {
   TemporaryId,
 } from '~~/shared/types/movie'
 
+export type { Collection, CollectionsDatabase } from '~~/shared/types/collections'
+
 export type {
   ThemeVariant,
   ThemeColors,
