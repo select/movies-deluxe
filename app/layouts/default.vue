@@ -1,13 +1,14 @@
 <template>
   <div class="min-h-screen bg-theme-background text-theme-text transition-colors duration-300">
     <!-- Header -->
-    <MovieHeader @open-filters="isFilterMenuOpen = true" />
+    <MovieHeader @open-filters="openThemeSelection" />
 
     <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
     <Sidebar @open-filters="isFilterMenuOpen = true" />
 
     <!-- Filter Menu -->
     <FilterMenu
+      ref="filterMenuRef"
       :is-open="isFilterMenuOpen"
       @close="isFilterMenuOpen = false"
     />
@@ -25,6 +26,21 @@ import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 
 // Filter menu state (shared across all pages)
 const isFilterMenuOpen = ref(false)
+const filterMenuRef = ref()
+
+/**
+ * Open filter menu and scroll to theme section
+ */
+const openThemeSelection = () => {
+  isFilterMenuOpen.value = true
+  
+  // Wait for menu to open and then scroll
+  nextTick(() => {
+    setTimeout(() => {
+      filterMenuRef.value?.scrollToThemeSection()
+    }, 300) // Match menu transition duration
+  })
+}
 
 // Keyboard shortcuts
 const keys = useMagicKeys()

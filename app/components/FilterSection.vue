@@ -2,7 +2,10 @@
   <div >
     <!-- Filter Title / Header (clickable on mobile) -->
     <button
-      class="flex items-center justify-between w-full px-2 py-1 rounded-md bg-gradient-to-r from-gray-100 to-transparent dark:from-gray-800 dark:to-transparent text-left group transition-colors hover:from-gray-200 dark:hover:from-gray-700 md:cursor-default md:hover:from-gray-100 md:dark:hover:from-gray-800"
+      :class="[
+        'flex items-center justify-between w-full px-2 py-1 rounded-md bg-gradient-to-r from-theme-selection to-transparent text-left group transition-all duration-500 md:cursor-default',
+        highlight ? 'ring-2 ring-theme-primary ring-offset-2 ring-offset-theme-background scale-[1.02] shadow-lg' : ''
+      ]"
       :aria-expanded="isExpanded"
       :disabled="isDesktop"
       @click="toggleSection"
@@ -10,9 +13,9 @@
       <div class="flex items-center gap-2">
         <div
           v-if="icon"
-          :class="['text-base text-gray-600 dark:text-gray-400', icon]"
+          :class="['text-base text-theme-text-muted', icon]"
         />
-        <h3 class="font-bold text-[10px] uppercase tracking-wider text-gray-600 dark:text-gray-400">
+        <h3 class="font-bold text-[10px] uppercase tracking-wider text-theme-text-muted">
           {{ title }}
         </h3>
       </div>
@@ -46,10 +49,12 @@ interface Props {
   title: string
   icon?: string
   defaultExpanded?: boolean
+  highlight?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   defaultExpanded: false,
+  highlight: false,
 })
 
 const isDesktop = useMediaQuery('(min-width: 768px)')
