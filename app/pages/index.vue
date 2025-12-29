@@ -18,11 +18,10 @@
             </div>
           </template>
 
-          <template v-else-if="safeLightweightMovies.length > 0">
+          <template v-else-if="currentMovieList.length > 0">
             <MovieVirtualGrid
-              :movies="safeLightweightMovies"
+              :movies="currentMovieList"
               :total-movies="safeTotalMovies"
-              :has-more="hasMore"
               @load-more="loadMore"
             />
           </template>
@@ -69,25 +68,27 @@ useHead({
 })
 
 const { isInitialLoading, currentMovieList, totalFiltered, filters } = storeToRefs(useMovieStore())
-const { loadFromFile, setCurrentPage } = useMovieStore()
+const { loadFromFile, setCurrentPage, setScrollY } = useMovieStore()
 
-// Ensure currentMovieList is always an array (convert readonly to mutable)
-const safeLightweightMovies = computed(() => [...(currentMovieList.value || [])])
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
+
+// Track window scroll position
+const { y: windowScrollY } = useWindowScroll()
 
 // Load movies on mount
 onMounted(async () => {
   await loadFromFile()
+  
+  // Restore scroll position after content loads
+  await nextTick()
+  if (filters.value.lastScrollY > 0) {
+    window.scrollTo({ top: filters.value.lastScrollY, behavior: 'instant' })
+  }
 })
 
-// Save scroll position before leaving (might need adjustment for virtual grid)
+// Save scroll position before leaving
 onBeforeRouteLeave(() => {
-  // filterStore.setScrollY(windowScrollY.value)
-})
-
-// Computed properties
-const hasMore = computed(() => {
-  return safeLightweightMovies.value.length < safeTotalMovies.value
+  setScrollY(windowScrollY.value)
 })
 
 // Load more movies
