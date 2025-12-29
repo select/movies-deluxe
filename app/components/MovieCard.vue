@@ -112,13 +112,13 @@ interface Props {
 const props = defineProps<Props>()
 
 const { isLiked: isLikedFn } = useMovieStore()
-const collectionsStore = useCollectionsStore()
+const { getCollectionsForMovie } = useCollectionsStore()
 
 // Check if movie is liked
 const isMovieLiked = computed(() => isLikedFn(props.movie.imdbId))
 
 // Get collections for this movie
-const movieCollections = computed(() => collectionsStore.getCollectionsForMovie(props.movie.imdbId))
+const movieCollections = computed(() => getCollectionsForMovie(props.movie.imdbId))
 
 // Computed language code
 const languageCode = computed(() => {

@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="`/collections/${collection.id}`"
-    class="group flex flex-col gap-4 p-4 rounded-2xl transition-all duration-500"
+    class="group flex flex-col gap-8 p-4 rounded-2xl transition-all duration-500"
   >
     <!-- Stacked Posters -->
     <div class="relative aspect-[4/3] flex items-center justify-center perspective-1000">
@@ -78,27 +78,26 @@
 </template>
 
 <script setup lang="ts">
-import type { Collection } from '~/shared/types/collections'
-import type { MovieEntry } from '~/shared/types/movie'
+import type { Collection } from '~/types/collections'
+import type { MovieEntry } from '~/types/movie'
 
 const props = defineProps<{
   collection: Collection & { previewMovies?: MovieEntry[] }
 }>()
 
-// Get posters for the first 3 movies
-const posters = computed(() => {
-  const movieStore = useMovieStore()
+const { getPosterUrlSync } = useMovieStore()
 
+// Get posters for the first 3 movies with IMDb IDs
+const posters = computed(() => {
   if (props.collection.previewMovies) {
-    return props.collection.previewMovies.map(movie => movieStore.getPosterUrlSync(movie))
+    return props.collection.previewMovies.map(movie => getPosterUrlSync(movie))
   }
 
-  return props.collection.movieIds.slice(0, 3).map(id => {
-    if (id.startsWith('tt')) {
-      return `/posters/${id}.jpg`
-    }
-    return '/images/poster-placeholder.jpg'
-  })
+  // Fallback: filter for IMDb IDs first, then take first 3
+  return props.collection.movieIds
+    .filter(id => id.startsWith('tt'))
+    .slice(0, 3)
+    .map(id => `/posters/${id}.jpg`)
 })
 </script>
 
