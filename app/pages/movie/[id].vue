@@ -586,9 +586,6 @@ onMounted(async () => {
   // Get movie by ID from route params
   const movieId = route.params.id as string
   await loadMovieData(movieId)
-
-  // Setup keyboard navigation
-  setupKeyboardNavigation()
 })
 
 // Watch for route changes to reload movie data
@@ -601,55 +598,40 @@ watch(() => route.params.id, async (newId) => {
 // Keyboard navigation state
 const showKeyboardHelp = ref(false)
 
-// Setup keyboard navigation
-const setupKeyboardNavigation = () => {
+// Setup keyboard navigation with useMagicKeys
+const keys = useMagicKeys()
+const { Escape, Space, Enter, ArrowLeft, ArrowRight, Shift_Slash } = keys
 
-  const handleKeyPress = (event: KeyboardEvent) => {
-    // Ignore if user is typing in an input field
-    const target = event.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
+// Helper to check if user is typing in an input field
+const isTyping = computed(() => {
+  const activeElement = document.activeElement
+  return activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+})
 
-    switch (event.key) {
-      case 'Escape':
-        // Go back to home
-        navigateTo('/')
-        break
+// Escape key - go back to home
+whenever(() => Escape?.value && !isTyping.value, () => {
+  navigateTo('/')
+})
 
-      case ' ':
-      case 'Enter':
-        // Toggle liked (only if Space or Enter)
-        if (event.key === ' ' || event.key === 'Enter') {
-          event.preventDefault() // Prevent page scroll on Space
-          toggleLiked()
-        }
-        break
+// Space or Enter - toggle liked
+whenever(() => (Space?.value || Enter?.value) && !isTyping.value, () => {
+  toggleLiked()
+})
 
-      case 'ArrowLeft':
-        // Navigate to previous movie
-        navigateToAdjacentMovie('prev')
-        break
+// Arrow Left - previous movie
+whenever(() => ArrowLeft?.value && !isTyping.value, () => {
+  navigateToAdjacentMovie('prev')
+})
 
-      case 'ArrowRight':
-        // Navigate to next movie
-        navigateToAdjacentMovie('next')
-        break
+// Arrow Right - next movie
+whenever(() => ArrowRight?.value && !isTyping.value, () => {
+  navigateToAdjacentMovie('next')
+})
 
-      case '?':
-        // Toggle keyboard shortcuts help
-        showKeyboardHelp.value = !showKeyboardHelp.value
-        break
-    }
-  }
-
-
-  window.addEventListener('keydown', handleKeyPress)
-
-  // Cleanup on unmount
-  onUnmounted(() => {
-
-    window.removeEventListener('keydown', handleKeyPress)
-  })
-}
+// Shift + / (?) - toggle keyboard shortcuts help
+whenever(() => Shift_Slash?.value && !isTyping.value, () => {
+  showKeyboardHelp.value = !showKeyboardHelp.value
+})
 
 // Navigate to adjacent movie (previous or next)
 const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
