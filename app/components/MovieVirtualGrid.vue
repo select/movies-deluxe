@@ -24,7 +24,9 @@
       >
         <MovieCardPlaceholder
           v-if="!fullyLoadedCards.has(movie.imdbId)"
+          :imdb-id="movie.imdbId"
           :title="movie.title"
+          :year="movie.year"
         />
         <MovieCard
           v-else
