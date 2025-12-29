@@ -1,11 +1,11 @@
 {
   "database": {
-    "total": 32806,
-    "matched": 13697,
-    "unmatched": 19109,
+    "total": 31597,
+    "matched": 14877,
+    "unmatched": 16720,
     "archiveOrgSources": 26791,
     "youtubeSources": 11208,
-    "curatedCount": 13697,
+    "curatedCount": 14877,
     "collections": {
       "feature_films": 26791
     },
@@ -105,9 +105,9 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 26779,
+      "total": 26776,
       "scraped": 26791,
-      "percent": 100.04481123268232,
+      "percent": 100.05602031670153,
       "failed": 0,
       "failureRate": 0
     },
@@ -252,29 +252,29 @@
     }
   },
   "curation": {
-    "total": 32806,
-    "curated": 13697,
-    "percent": 41.7515088703286
+    "total": 31597,
+    "curated": 14877,
+    "percent": 47.083583884546
   },
   "omdb": {
-    "total": 32806,
-    "matched": 13697,
-    "unmatched": 19109,
-    "percent": 41.7515088703286,
-    "failed": 15188,
-    "failureRate": 52.58092435520167
+    "total": 31597,
+    "matched": 14877,
+    "unmatched": 16720,
+    "percent": 47.083583884546,
+    "failed": 16721,
+    "failureRate": 52.91790619659472
   },
   "posters": {
-    "totalMovies": 32806,
-    "withPosterUrl": 12153,
-    "downloaded": 2786,
-    "missing": 9367,
-    "failed": 1892,
-    "failureRate": 40.44463445917059,
-    "percentOfMoviesWithUrl": 22.924380811322305,
-    "percentOfAllMovies": 8.492348960555995,
+    "totalMovies": 31597,
+    "withPosterUrl": 13307,
+    "downloaded": 2790,
+    "missing": 10517,
+    "failed": 1893,
+    "failureRate": 40.42280589365791,
+    "percentOfMoviesWithUrl": 20.96640865709777,
+    "percentOfAllMovies": 8.829952210652909,
     "filesInDirectory": 2809,
-    "matchedPosters": 2786
+    "matchedPosters": 2790
   },
-  "lastUpdated": "2025-12-28T22:41:31.019Z"
+  "lastUpdated": "2025-12-29T03:02:27.809Z"
 }

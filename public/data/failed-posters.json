@@ -11350,5 +11350,11 @@
     "url": "https://m.media-amazon.com/images/M/MV5BNmQzYzAxYzUtYzI1Ny00M2I2LWEwYTQtYjI0MjMxMmU3MGFmXkEyXkFqcGc@._V1_SX300.jpg",
     "failedAt": "2025-12-28T15:48:49.708Z",
     "error": "HTTP 404: Not Found"
+  },
+  {
+    "imdbId": "tt0042296",
+    "url": "https://m.media-amazon.com/images/M/MV5BYmU5YjY4ZGQtYjk3Zi00ODhmLTlmYjAtOWUzZjFiNjQ5OGIzXkEyXkFqcGc@._V1_SX300.jpg",
+    "failedAt": "2025-12-29T02:55:27.686Z",
+    "error": ""
   }
 ]
