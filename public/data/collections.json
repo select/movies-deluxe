@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-29T15:13:26.421Z"
+    "lastUpdated": "2025-12-29T15:30:26.152Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -429,10 +429,37 @@
       "tt0150749",
       "tt0151251",
       "tt0148490",
-      "tt0148494"
+      "tt0148494",
+      "tt0019975",
+      "tt0017609",
+      "tt0014664",
+      "tt0013823",
+      "archive-oswald-the-lucky-rabbit-neck-n-neck-1928",
+      "archive-steamboat-willie-1928-colorized-animation-720p-hd",
+      "tt0019422",
+      "tt0020414",
+      "tt0019278",
+      "tt0018925",
+      "tt0013323",
+      "tt0013014",
+      "tt0013520",
+      "tt0013149",
+      "tt0018509",
+      "tt0019968",
+      "tt0020445",
+      "tt0020164",
+      "tt0020580",
+      "tt0020246",
+      "tt0020276",
+      "tt0020167",
+      "tt0020168",
+      "tt0020041",
+      "tt0020053",
+      "tt0020049",
+      "tt0020484"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2025-12-29T14:55:55.607Z"
+    "updatedAt": "2025-12-29T15:30:51.167Z"
   },
   "martial-arts": {
     "id": "martial-arts",
@@ -462,7 +489,6 @@
     "movieIds": [
       "tt0009018",
       "tt0043819",
-      "tt0038768",
       "tt0026162",
       "tt0043326",
       "youtube-eUpjjIamaYE",
@@ -474,6 +500,6 @@
       "tt0463721"
     ],
     "createdAt": "2025-12-29T16:18:00.000Z",
-    "updatedAt": "2025-12-29T15:13:26.421Z"
+    "updatedAt": "2025-12-29T15:17:44.531Z"
   }
 }
