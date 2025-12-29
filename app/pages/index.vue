@@ -40,6 +40,7 @@
 
 <script setup lang="ts">
 import { onBeforeRouteLeave } from 'vue-router'
+import { useStorage, useWindowScroll } from '@vueuse/core'
 
 // Set page title and meta
 useHead({
