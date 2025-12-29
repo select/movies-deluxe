@@ -291,10 +291,11 @@ const searchError = ref('')
 // Collections state
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
+const { getCollectionsForMovie, loadCollections, addMovieToCollection, removeMovieFromCollection } = collectionsStore
 const selectedCollectionId = ref('')
 const isUpdatingCollection = ref(false)
 
-const movieCollections = computed(() => collectionsStore.getCollectionsForMovie(props.movie.imdbId))
+const movieCollections = computed(() => getCollectionsForMovie(props.movie.imdbId))
 const availableCollections = computed(() => {
   return Array.from(collections.value.values()).filter(
     c => !c.movieIds.includes(props.movie.imdbId)
@@ -308,7 +309,7 @@ onMounted(() => {
   
   // Load collections if not already loaded
   if (collections.value.size === 0) {
-    collectionsStore.loadCollections()
+    loadCollections()
   }
 })
 
@@ -317,7 +318,7 @@ const addToCollection = async () => {
   
   isUpdatingCollection.value = true
   try {
-    const success = await collectionsStore.addMovieToCollection(
+    const success = await addMovieToCollection(
       selectedCollectionId.value,
       props.movie.imdbId
     )
@@ -334,7 +335,7 @@ const removeFromCollection = async (collectionId: string) => {
   
   isUpdatingCollection.value = true
   try {
-    await collectionsStore.removeMovieFromCollection(collectionId, props.movie.imdbId)
+    await removeMovieFromCollection(collectionId, props.movie.imdbId)
   } finally {
     isUpdatingCollection.value = false
   }
