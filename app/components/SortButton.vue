@@ -2,10 +2,10 @@
   <button
     :class="[
       'flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full text-xs font-medium transition-colors w-full',
-      'border border-gray-200 dark:border-gray-700',
+      'border border-theme-border/50',
       isActive
-        ? 'bg-blue-600 text-white border-blue-600'
-        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+        ? 'bg-theme-primary text-white border-theme-primary'
+        : 'bg-theme-surface text-theme-text-muted hover:bg-theme-selection hover:border-theme-border'
     ]"
     @click="$emit('select', option)"
   >
@@ -14,7 +14,7 @@
       :class="[
         'text-sm',
         getSortIcon(),
-        isActive ? 'text-white' : 'text-gray-500 dark:text-gray-400'
+        isActive ? 'text-white' : 'text-theme-text-muted'
       ]"
     />
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div class="min-h-screen bg-theme-background text-theme-text transition-colors duration-300">
     <!-- Header -->
     <MovieHeader />
 

@@ -4,11 +4,11 @@
       <div class="px-4 lg:px-[6%] py-8">
         <!-- Page Header -->
         <div class="mb-8">
-          <h1 class="text-3xl font-bold mb-2 flex items-center gap-3">
-            <div class="i-mdi-heart text-red-500" />
+          <h1 class="text-3xl font-bold mb-2 flex items-center gap-3 text-theme-text">
+            <div class="i-mdi-heart text-theme-accent" />
             Liked Movies
           </h1>
-          <p class="text-gray-600 dark:text-gray-400">
+          <p class="text-theme-text-muted">
             Your personal collection of favorite movies
             <span v-if="likedCount > 0" class="ml-2">
               ({{ likedCount }} {{ likedCount === 1 ? 'movie' : 'movies' }})
@@ -18,14 +18,14 @@
 
         <!-- Empty State -->
         <div v-if="likedCount === 0" class="text-center py-16">
-          <div class="i-mdi-heart-outline text-6xl text-gray-300 dark:text-gray-600 mb-4" />
-          <h2 class="text-xl font-semibold mb-2">No liked movies yet</h2>
-          <p class="text-gray-600 dark:text-gray-400 mb-6">
+          <div class="i-mdi-heart-outline text-6xl text-theme-border mb-4" />
+          <h2 class="text-xl font-semibold mb-2 text-theme-text">No liked movies yet</h2>
+          <p class="text-theme-text-muted mb-6">
             Start exploring movies and click the heart icon to add them to your favorites
           </p>
           <NuxtLink
             to="/"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            class="btn-primary inline-flex items-center gap-2"
           >
             <div class="i-mdi-magnify" />
             Browse Movies
@@ -58,13 +58,13 @@
 
         <!-- No Results After Filtering -->
         <div v-else-if="likedCount > 0 && filteredLikedMovies.length === 0" class="text-center py-12">
-          <div class="i-mdi-filter-remove text-4xl text-gray-300 dark:text-gray-600 mb-4" />
-          <h2 class="text-xl font-semibold mb-2">No movies match your filters</h2>
-          <p class="text-gray-600 dark:text-gray-400 mb-6">
+          <div class="i-mdi-filter-remove text-4xl text-theme-border mb-4" />
+          <h2 class="text-xl font-semibold mb-2 text-theme-text">No movies match your filters</h2>
+          <p class="text-theme-text-muted mb-6">
             Try adjusting your search or filter criteria
           </p>
           <button
-            class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            class="btn-primary"
             @click="resetFilters"
           >
             Clear Filters

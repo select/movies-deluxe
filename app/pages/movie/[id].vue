@@ -5,7 +5,7 @@
     <!-- Back Button -->
     <NuxtLink
       to="/"
-      class="inline-flex items-center gap-2 mb-6 p-2 px-4 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      class="inline-flex items-center gap-2 mb-6 p-2 px-4 rounded-full bg-theme-surface hover:bg-theme-selection transition-colors border border-theme-border/50 text-theme-text"
       aria-label="Back to movies"
     >
       <div class="i-mdi-arrow-left text-xl" />
@@ -95,13 +95,13 @@
         <!-- Movie Details -->
         <div
           v-else-if="movie"
-          class="space-y-8"
+          class="space-y-8 text-theme-text"
         >
           <!-- Movie Header -->
           <div class="flex flex-col md:flex-row gap-8">
             <!-- Poster -->
             <div class="flex-shrink-0">
-              <div class="w-full md:w-80 aspect-[2/3] bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+              <div class="w-full md:w-80 aspect-[2/3] bg-theme-selection rounded-lg overflow-hidden border border-theme-border/50">
                 <img
                   v-if="movie.imdbId.startsWith('tt')"
                   :src="`/posters/${movie.imdbId}.jpg`"
@@ -111,7 +111,7 @@
                 >
                 <div
                   v-else
-                  class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
+                  class="w-full h-full flex items-center justify-center text-theme-text-muted"
                 >
                   <div class="i-mdi-movie text-8xl" />
                 </div>
@@ -128,19 +128,19 @@
               <div class="flex flex-wrap gap-4 text-sm mb-6">
                 <span
                   v-if="movie.year"
-                  class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800"
+                  class="px-3 py-1 rounded-full bg-theme-surface border border-theme-border/50"
                 >
                   {{ movie.year }}
                 </span>
                 <span
                   v-if="movie.metadata?.Rated"
-                  class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800"
+                  class="px-3 py-1 rounded-full bg-theme-surface border border-theme-border/50"
                 >
                   {{ movie.metadata.Rated }}
                 </span>
                 <span
                   v-if="movie.metadata?.Runtime"
-                  class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800"
+                  class="px-3 py-1 rounded-full bg-theme-surface border border-theme-border/50"
                 >
                   {{ movie.metadata.Runtime }}
                 </span>
@@ -151,12 +151,12 @@
                 v-if="movie.metadata?.imdbRating"
                 class="flex items-center gap-2 mb-6"
               >
-                <div class="i-mdi-star text-yellow-500 dark:text-yellow-400 text-2xl" />
+                <div class="i-mdi-star text-theme-accent text-2xl" />
                 <span class="text-2xl font-bold">{{ movie.metadata.imdbRating }}</span>
-                <span class="text-gray-600 dark:text-gray-400">/ 10</span>
+                <span class="text-theme-text-muted">/ 10</span>
                 <span
                   v-if="movie.metadata?.imdbVotes"
-                  class="text-sm text-gray-500 dark:text-gray-500"
+                  class="text-sm text-theme-text-muted"
                 >
                   ({{ formatVotes(movie.metadata.imdbVotes) }} votes)
                 </span>
@@ -166,13 +166,13 @@
               <div class="flex flex-wrap gap-3 mb-6">
                 <!-- Liked Button -->
                 <button
-                  class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-700 dark:bg-gray-800 text-white hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors"
+                  class="btn flex items-center gap-2"
                   @click="toggleLiked"
                 >
                   <div
                     :class="[
                       'i-mdi-heart text-lg',
-                      isLiked ? 'text-red-500' : ''
+                      isLiked ? 'text-theme-accent' : ''
                     ]"
                   />
                   {{ isLiked ? 'Liked' : 'Like' }}
@@ -180,7 +180,7 @@
 
                 <!-- Share Button -->
                 <button
-                  class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-700 dark:bg-gray-800 text-white hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors"
+                  class="btn flex items-center gap-2"
                   @click="shareMovie"
                 >
                   <div class="i-mdi-share-variant text-lg" />
@@ -193,14 +193,14 @@
                 v-if="movie.metadata?.Genre"
                 class="mb-6"
               >
-                <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
                   Genre
                 </h3>
                 <div class="flex flex-wrap gap-2">
                   <span
                     v-for="genre in movie.metadata.Genre.split(', ')"
                     :key="genre"
-                    class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-sm"
+                    class="px-3 py-1 rounded-full bg-theme-surface border border-theme-border/50 text-sm"
                   >
                     {{ genre }}
                   </span>
@@ -212,10 +212,10 @@
                 v-if="movie.metadata?.Plot"
                 class="mb-6"
               >
-                <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
                   Plot
                 </h3>
-                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p class="text-theme-text leading-relaxed">
                   {{ movie.metadata.Plot }}
                 </p>
               </div>
@@ -223,16 +223,16 @@
               <!-- Credits -->
               <div class="space-y-3">
                 <div v-if="movie.metadata?.Director">
-                  <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">Director:</span>
-                  <span class="ml-2 text-gray-700 dark:text-gray-300">{{ movie.metadata.Director }}</span>
+                  <span class="text-sm font-semibold text-theme-text-muted">Director:</span>
+                  <span class="ml-2 text-theme-text">{{ movie.metadata.Director }}</span>
                 </div>
                 <div v-if="movie.metadata?.Writer">
-                  <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">Writer:</span>
-                  <span class="ml-2 text-gray-700 dark:text-gray-300">{{ movie.metadata.Writer }}</span>
+                  <span class="text-sm font-semibold text-theme-text-muted">Writer:</span>
+                  <span class="ml-2 text-theme-text">{{ movie.metadata.Writer }}</span>
                 </div>
                 <div v-if="movie.metadata?.Actors">
-                  <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">Actors:</span>
-                  <span class="ml-2 text-gray-700 dark:text-gray-300">{{ movie.metadata.Actors }}</span>
+                  <span class="text-sm font-semibold text-theme-text-muted">Actors:</span>
+                  <span class="ml-2 text-theme-text">{{ movie.metadata.Actors }}</span>
                 </div>
               </div>
             </div>
@@ -243,7 +243,7 @@
             v-if="movie.sources.length > 1"
             class="mb-4"
           >
-            <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+            <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
               Select Source
             </h3>
             <div class="flex flex-wrap gap-2">
@@ -253,13 +253,13 @@
                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
                 :class="[
                   selectedSourceIndex === index
-                    ? 'bg-blue-600 border-blue-600 text-white'
-                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-theme-primary border-theme-primary text-white'
+                    : 'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection'
                 ]"
                 @click="selectedSourceIndex = index"
               >
                 <div class="flex items-center gap-2">
-                  <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-red-600' : 'i-mdi-bank'" />
+                  <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-theme-accent' : 'i-mdi-bank'" />
                   <span>{{ source.label || (source.type === 'youtube' ? (source.channelName || 'YouTube') : 'Archive.org') }}</span>
                   <span
                     v-if="source.quality"
@@ -310,7 +310,7 @@
           <!-- Source Links -->
           <div
             v-if="movie.sources.length > 0"
-            class="flex flex-wrap gap-6 py-4 px-6 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700"
+            class="flex flex-wrap gap-6 py-4 px-6 bg-theme-surface rounded-lg border border-theme-border/50"
           >
             <div
               v-for="(source, index) in movie.sources"
@@ -319,43 +319,43 @@
               :class="{ 'opacity-100': selectedSourceIndex === index, 'opacity-60': selectedSourceIndex !== index }"
             >
               <template v-if="source.type === 'archive.org'">
-                <span class="font-semibold text-gray-600 dark:text-gray-400">Source {{ index + 1 }}:</span>
+                <span class="font-semibold text-theme-text-muted">Source {{ index + 1 }}:</span>
                 <a
                   :href="source.url"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                  class="flex items-center gap-1.5 text-theme-primary hover:underline font-medium"
                 >
                   <div class="i-mdi-bank text-lg" />
                   Archive.org
                 </a>
               </template>
               <template v-else-if="source.type === 'youtube'">
-                <span class="font-semibold text-gray-600 dark:text-gray-400">Source {{ index + 1 }}:</span>
+                <span class="font-semibold text-theme-text-muted">Source {{ index + 1 }}:</span>
                 <a
                   :href="source.url"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                  class="flex items-center gap-1.5 text-theme-primary hover:underline font-medium"
                 >
-                  <div class="i-mdi-youtube text-lg text-red-600" />
+                  <div class="i-mdi-youtube text-lg text-theme-accent" />
                   YouTube
                 </a>
                 <template v-if="source.channelName">
-                  <span class="text-gray-400">on</span>
+                  <span class="text-theme-text-muted">on</span>
                   <a
                     v-if="source.channelId"
                     :href="`https://www.youtube.com/channel/${source.channelId}`"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                    class="flex items-center gap-1 text-theme-primary hover:underline font-medium"
                   >
                     <div class="i-mdi-television-play text-base" />
                     {{ source.channelName }}
                   </a>
                   <span
                     v-else
-                    class="text-gray-700 dark:text-gray-300 font-medium"
+                    class="text-theme-text font-medium"
                   >
                     {{ source.channelName }}
                   </span>
@@ -363,14 +363,14 @@
               </template>
               <button
                 v-if="selectedSourceIndex !== index"
-                class="ml-2 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                class="ml-2 text-xs text-theme-primary hover:underline"
                 @click="selectedSourceIndex = index"
               >
                 Switch to this source
               </button>
               <span
                 v-else
-                class="ml-2 text-xs text-green-600 dark:text-green-400 font-bold"
+                class="ml-2 text-xs text-theme-accent font-bold"
               >
                 Currently Playing
               </span>
@@ -380,41 +380,41 @@
           <!-- Additional Info -->
           <div
             v-if="movie.metadata"
-            class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-gray-200 dark:border-gray-800"
+            class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-theme-border/50"
           >
             <div v-if="movie.metadata.Language">
-              <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+              <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
                 Language
               </h3>
-              <p class="text-gray-700 dark:text-gray-300">
+              <p class="text-theme-text">
                 {{ movie.metadata.Language }}
               </p>
             </div>
             <div v-if="movie.metadata.Country">
-              <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+              <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
                 Country
               </h3>
-              <p class="text-gray-700 dark:text-gray-300">
+              <p class="text-theme-text">
                 {{ movie.metadata.Country }}
               </p>
             </div>
             <div v-if="movie.metadata.Awards">
-              <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+              <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
                 Awards
               </h3>
-              <p class="text-gray-700 dark:text-gray-300">
+              <p class="text-theme-text">
                 {{ movie.metadata.Awards }}
               </p>
             </div>
             <div v-if="movie.imdbId.startsWith('tt')">
-              <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
+              <h3 class="text-sm font-semibold text-theme-text-muted mb-2">
                 IMDB
               </h3>
               <a
                 :href="`https://www.imdb.com/title/${movie.imdbId}/`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-blue-600 dark:text-blue-400 hover:underline"
+                class="text-theme-primary hover:underline"
               >
                 View on IMDB
               </a>
@@ -424,7 +424,7 @@
           <!-- Related Movies -->
           <div
             v-if="relatedMovies.length > 0"
-            class="pt-8 border-t border-gray-200 dark:border-gray-800"
+            class="pt-8 border-t border-theme-border/50"
           >
             <h2 class="text-2xl font-bold mb-6">
               Related Movies
@@ -454,8 +454,8 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
-    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400">
+  <footer class="border-t border-theme-border/50 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-theme-text-muted">
       <p>All movies are legally available from Archive.org and YouTube</p>
       <button
         class="mt-2 text-xs hover:underline"
@@ -469,19 +469,19 @@
   <!-- Keyboard Shortcuts Help Modal -->
   <div
     v-if="showKeyboardHelp"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
     @click="showKeyboardHelp = false"
   >
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4"
+      class="bg-theme-surface rounded-lg p-6 max-w-md w-full mx-4 border border-theme-border shadow-2xl"
       @click.stop
     >
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-bold">
+        <h3 class="text-xl font-bold text-theme-text">
           Keyboard Shortcuts
         </h3>
         <button
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+          class="p-2 hover:bg-theme-selection rounded-full text-theme-text"
           @click="showKeyboardHelp = false"
         >
           <div class="i-mdi-close text-xl" />
@@ -490,25 +490,25 @@
 
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-gray-700 dark:text-gray-300">Go back to home</span>
-          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
+          <span class="text-theme-text">Go back to home</span>
+          <kbd class="px-3 py-1 bg-theme-selection border border-theme-border/50 rounded text-sm font-mono text-theme-text">ESC</kbd>
         </div>
 
         <div class="flex items-center justify-between">
-          <span class="text-gray-700 dark:text-gray-300">Toggle liked</span>
-          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
+          <span class="text-theme-text">Toggle liked</span>
+          <kbd class="px-3 py-1 bg-theme-selection border border-theme-border/50 rounded text-sm font-mono text-theme-text">Space / Enter</kbd>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-gray-700 dark:text-gray-300">Previous movie</span>
-          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">←</kbd>
+          <span class="text-theme-text">Previous movie</span>
+          <kbd class="px-3 py-1 bg-theme-selection border border-theme-border/50 rounded text-sm font-mono text-theme-text">←</kbd>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-gray-700 dark:text-gray-300">Next movie</span>
-          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">→</kbd>
+          <span class="text-theme-text">Next movie</span>
+          <kbd class="px-3 py-1 bg-theme-selection border border-theme-border/50 rounded text-sm font-mono text-theme-text">→</kbd>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-gray-700 dark:text-gray-300">Show this help</span>
-          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">?</kbd>
+          <span class="text-theme-text">Show this help</span>
+          <kbd class="px-3 py-1 bg-theme-selection border border-theme-border/50 rounded text-sm font-mono text-theme-text">?</kbd>
         </div>
       </div>
     </div>
