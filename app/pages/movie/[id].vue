@@ -188,15 +188,6 @@
                 </button>
               </div>
 
-              <!-- Share Toast -->
-              <div
-                v-if="showShareToast"
-                class="mb-4 p-3 rounded-lg bg-green-600 text-white text-sm flex items-center gap-2"
-              >
-                <div class="i-mdi-check-circle text-lg" />
-                {{ shareToastMessage }}
-              </div>
-
               <!-- Genre -->
               <div
                 v-if="movie.metadata?.Genre"
@@ -290,7 +281,7 @@
               class="aspect-video"
             >
               <iframe
-                :src="getYouTubeEmbedUrl(currentSource.url)"
+                :src="`https://www.youtube.com/embed/${currentSource.id}`"
                 class="w-full h-full"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -305,7 +296,7 @@
               class="aspect-video"
             >
               <iframe
-                :src="getArchiveEmbedUrl(currentSource)"
+                :src="`https://archive.org/embed/${currentSource.id}`"
                 class="w-full h-full"
                 frameborder="0"
                 webkitallowfullscreen="true"
@@ -502,10 +493,7 @@
           <span class="text-gray-700 dark:text-gray-300">Go back to home</span>
           <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">ESC</kbd>
         </div>
-        <div class="flex items-center justify-between">
-          <span class="text-gray-700 dark:text-gray-300">Toggle filters</span>
-          <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Ctrl+K</kbd>
-        </div>
+
         <div class="flex items-center justify-between">
           <span class="text-gray-700 dark:text-gray-300">Toggle liked</span>
           <kbd class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">Space / Enter</kbd>
@@ -529,11 +517,12 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, ArchiveOrgSource } from '~/types'
+import type { MovieEntry } from '~/types'
 
 // Nuxt auto-imports
 const route = useRoute()
 const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile } = useMovieStore()
+const { showToast } = useUiStore()
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
@@ -547,11 +536,6 @@ const currentSource = computed(() => {
   if (!movie.value || !movie.value.sources) return null
   return movie.value.sources[selectedSourceIndex.value] || movie.value.sources[0] || null
 })
-
-// Share functionality state
-const showShareToast = ref(false)
-const shareToastMessage = ref('')
-const copied = ref(false)
 
 // Liked computed
 const isLiked = computed(() => {
@@ -578,21 +562,21 @@ const loadMovieData = async (movieId: string) => {
 
   // Ensure movies are loaded in store
   const { totalMovies } = storeToRefs(useMovieStore())
-  if (totalMovies.value === 0) {
-    await loadFromFile()
-  }
+  if (totalMovies.value === 0) await loadFromFile()
 
   const foundMovie = await getMovieById(movieId)
 
-  if (foundMovie) {
-    movie.value = foundMovie
-    updateMetaTags(foundMovie)
-
-    // Load related movies
-    loadRelatedMovies(movieId)
-  } else {
+  if (!foundMovie) {
     error.value = `Movie with ID "${movieId}" not found.`
+    isLoading.value = false
+    return
   }
+
+  movie.value = foundMovie
+  updateMetaTags(foundMovie)
+
+  // Load related movies
+  loadRelatedMovies(movieId)
 
   isLoading.value = false
 }
@@ -623,26 +607,12 @@ const setupKeyboardNavigation = () => {
   const handleKeyPress = (event: KeyboardEvent) => {
     // Ignore if user is typing in an input field
     const target = event.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-      return
-    }
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
 
     switch (event.key) {
       case 'Escape':
-        // Close filter menu if open, otherwise go back to home
-        if (isFilterMenuOpen.value) {
-          isFilterMenuOpen.value = false
-        } else {
-          navigateTo('/')
-        }
-        break
-
-      case 'k':
-        // Toggle filter menu with Ctrl/Cmd+K
-        if (event.ctrlKey || event.metaKey) {
-          event.preventDefault()
-          isFilterMenuOpen.value = !isFilterMenuOpen.value
-        }
+        // Go back to home
+        navigateTo('/')
         break
 
       case ' ':
@@ -656,12 +626,12 @@ const setupKeyboardNavigation = () => {
 
       case 'ArrowLeft':
         // Navigate to previous movie
-        navigateToPrevMovie()
+        navigateToAdjacentMovie('prev')
         break
 
       case 'ArrowRight':
         // Navigate to next movie
-        navigateToNextMovie()
+        navigateToAdjacentMovie('next')
         break
 
       case '?':
@@ -681,8 +651,8 @@ const setupKeyboardNavigation = () => {
   })
 }
 
-// Navigate to previous movie
-const navigateToPrevMovie = () => {
+// Navigate to adjacent movie (previous or next)
+const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   // Use route.params.id directly to avoid stale closures
   const currentId = route.params.id as string
   if (!currentId) return
@@ -691,31 +661,16 @@ const navigateToPrevMovie = () => {
   const movies = filteredAndSortedMovies.value
   const currentIndex = movies.findIndex(m => m.imdbId === currentId)
 
-  if (currentIndex > 0) {
-    const prevMovie = movies[currentIndex - 1]
-    if (prevMovie) {
-      navigateTo(`/movie/${prevMovie.imdbId}`)
-    }
-  }
-}
+  if (currentIndex === -1) return
 
-// Navigate to next movie
-const navigateToNextMovie = () => {
-	console.log('Navigating to next movie')
-  // Use route.params.id directly to avoid stale closures
-  const currentId = route.params.id as string
-  if (!currentId) return
+  const offset = direction === 'prev' ? -1 : 1
+  const targetIndex = currentIndex + offset
 
-  const { filteredAndSortedMovies } = storeToRefs(useMovieStore())
-  const movies = filteredAndSortedMovies.value
-  const currentIndex = movies.findIndex(m => m.imdbId === currentId)
+  // Check bounds
+  if (targetIndex < 0 || targetIndex >= movies.length) return
 
-  if (currentIndex !== -1 && currentIndex < movies.length - 1) {
-    const nextMovie = movies[currentIndex + 1]
-    if (nextMovie) {
-      navigateTo(`/movie/${nextMovie.imdbId}`)
-    }
-  }
+  const targetMovie = movies[targetIndex]
+  if (targetMovie) navigateTo(`/movie/${targetMovie.imdbId}`)
 }
 
 // Handle movie updated from curation panel
@@ -725,16 +680,16 @@ const handleMovieUpdated = async (newId: string) => {
 
   // If ID changed, navigate to new URL
   if (newId !== movie.value?.imdbId) {
-
     await navigateTo(`/movie/${newId}`)
     // The watcher on route.params.id will handle loading the new movie data
-  } else {
-    // Just refresh current movie data from store
-    const foundMovie = await getMovieById(newId)
-    if (foundMovie) {
-      movie.value = foundMovie
-      updateMetaTags(foundMovie)
-    }
+    return
+  }
+
+  // Just refresh current movie data from store
+  const foundMovie = await getMovieById(newId)
+  if (foundMovie) {
+    movie.value = foundMovie
+    updateMetaTags(foundMovie)
   }
 }
 
@@ -817,53 +772,33 @@ const shareMovie = async () => {
 
   const title = movie.value.title + (movie.value.year ? ` (${movie.value.year})` : '')
   const text = movie.value.metadata?.Plot || `Watch ${movie.value.title} for free on Movies Deluxe`
-
   const url = `${window.location.origin}/movie/${movie.value.imdbId}`
 
   // Try Web Share API first (mobile and some desktop browsers)
-
-  if (navigator.share) {
-    try {
-
-      await navigator.share({
-        title,
-        text,
-        url
-      })
-      showToast('Shared successfully!')
-    } catch (err) {
-      // User cancelled or error occurred
-      if ((err as Error).name !== 'AbortError') {
-        fallbackCopyToClipboard(url)
-      }
-    }
-  } else {
-    // Fallback to clipboard
-    fallbackCopyToClipboard(url)
+  if (!navigator.share) {
+    await copyToClipboard(url)
+    return
   }
-}
 
-// Fallback: Copy to clipboard
-const fallbackCopyToClipboard = async (url: string) => {
   try {
-
-    await navigator.clipboard.writeText(url)
-    copied.value = true
-    setTimeout(() => (copied.value = false), 2000)
-  } catch {
-    // Copy failed
+    await navigator.share({ title, text, url })
+    showToast('Shared successfully!')
+  } catch (err) {
+    // User cancelled or error occurred
+    if ((err as Error).name !== 'AbortError') {
+      await copyToClipboard(url)
+    }
   }
 }
 
-// Show toast notification
-const showToast = (message: string) => {
-  shareToastMessage.value = message
-  showShareToast.value = true
-
-
-  setTimeout(() => {
-    showShareToast.value = false
-  }, 3000)
+// Copy to clipboard
+const copyToClipboard = async (url: string) => {
+  try {
+    await navigator.clipboard.writeText(url)
+    showToast('Link copied to clipboard!')
+  } catch {
+    showToast('Failed to copy link', 'error')
+  }
 }
 
 // Handle poster loading errors
@@ -871,70 +806,4 @@ const handlePosterError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.style.display = 'none'
 }
-
-/**
- * Extract YouTube video ID from URL and create embed URL
- * Supports formats:
- * - https://www.youtube.com/watch?v=VIDEO_ID
- * - https://youtu.be/VIDEO_ID
- * - https://www.youtube.com/embed/VIDEO_ID
- */
-const getYouTubeEmbedUrl = (url: string): string => {
-  try {
-
-    const urlObj = new URL(url)
-
-    // Handle youtu.be short links
-    if (urlObj.hostname === 'youtu.be') {
-      const videoId = urlObj.pathname.slice(1) // Remove leading slash
-      return `https://www.youtube.com/embed/${videoId}`
-    }
-
-    // Handle youtube.com links
-    if (urlObj.hostname.includes('youtube.com')) {
-      // Already an embed URL
-      if (urlObj.pathname.includes('/embed/')) {
-        return url
-      }
-
-      // Extract from watch?v= parameter
-      const videoId = urlObj.searchParams.get('v')
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`
-      }
-    }
-
-    // Fallback: return original URL
-    return url
-  } catch {
-    // Invalid URL, return as-is
-    return url
-  }
-}
-
-/**
- * Create Archive.org embed URL from source
- * Uses the id from the source
- */
-const getArchiveEmbedUrl = (source: ArchiveOrgSource): string => {
-  // Source always has id field with the identifier
-  if (source.id) {
-    return `https://archive.org/embed/${source.id}`
-  }
-
-  // Fallback: return original URL (should not happen with new data structure)
-  return source.url
-}
 </script>
-
-<style scoped>
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-</style>
