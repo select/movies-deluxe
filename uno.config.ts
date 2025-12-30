@@ -29,6 +29,7 @@ export default defineConfig({
       fonts: {
         sans: 'Ubuntu:300,400,500,700',
         mono: 'Ubuntu Mono',
+        imperial: 'Imperial Script',
       },
     }),
   ],
@@ -194,6 +195,7 @@ export default defineConfig({
   // Safelist to ensure classes are always generated
   safelist: [
     'font-sans',
+    'font-imperial',
     'scrollbar-thin',
     'scrollbar-default',
     'scrollbar-hidden',
