@@ -99,7 +99,7 @@ export async function downloadPoster(
   force: boolean = false,
   fallbackUrls: string[] = []
 ): Promise<boolean> {
-  if (!url || url === 'N/A' || !imdbId) return false
+  if (!imdbId) return false
 
   const postersDir = join(process.cwd(), 'public/posters')
   if (!fs.existsSync(postersDir)) {
@@ -113,29 +113,55 @@ export async function downloadPoster(
     return true
   }
 
-  // Try primary URL first, then fallbacks
-  const urlsToTry = [url, ...fallbackUrls].filter(u => u && u !== 'N/A')
+  // Build URLs to try in order of preference
+  const urlsToTry: string[] = []
+
+  // 1. For IMDb IDs, try OMDB Poster API first (most reliable)
+  if (imdbId.startsWith('tt')) {
+    const omdbApiKey = process.env.OMDB_API_KEY
+    if (omdbApiKey && omdbApiKey !== 'your_omdb_api_key_here') {
+      const omdbPosterUrl = `http://img.omdbapi.com/?apikey=${omdbApiKey}&i=${imdbId}`
+      urlsToTry.push(omdbPosterUrl)
+    }
+  }
+
+  // 2. Add the original URL if provided
+  if (url && url !== 'N/A') {
+    urlsToTry.push(url)
+  }
+
+  // 3. Add any additional fallback URLs
+  urlsToTry.push(...fallbackUrls.filter(u => u && u !== 'N/A'))
+
+  // If no URLs to try, fail early
+  if (urlsToTry.length === 0) {
+    return false
+  }
 
   let lastError: string = ''
   for (let i = 0; i < urlsToTry.length; i++) {
     const currentUrl = urlsToTry[i]!
+    const isOmdbApi = currentUrl.includes('img.omdbapi.com')
     const isFallback = i > 0
 
     try {
       if (isFallback) {
-        console.log(`Trying fallback URL ${i} for ${imdbId}: ${currentUrl}`)
+        const source = isOmdbApi ? 'OMDB Poster API' : 'fallback URL'
+        console.log(`Trying ${source} ${i} for ${imdbId}`)
       }
       await downloadImageOnce(currentUrl, filepath, 30000)
       // Remove from failed downloads if it was there
       removeFailedDownload(imdbId)
       if (isFallback) {
-        console.log(`✅ Successfully downloaded from fallback URL ${i} for ${imdbId}`)
+        const source = isOmdbApi ? 'OMDB Poster API' : 'fallback URL'
+        console.log(`✅ Successfully downloaded from ${source} ${i} for ${imdbId}`)
       }
       return true
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error)
       if (isFallback) {
-        console.error(`Failed fallback ${i} for ${imdbId}:`, lastError)
+        const source = isOmdbApi ? 'OMDB Poster API' : 'fallback URL'
+        console.error(`Failed ${source} ${i} for ${imdbId}:`, lastError)
       }
       if (fs.existsSync(filepath)) {
         fs.unlinkSync(filepath)
@@ -149,8 +175,9 @@ export async function downloadPoster(
     `Failed to download poster for ${imdbId} (tried ${urlsToTry.length} URLs):`,
     lastError
   )
-  // Track failed download with primary URL
-  saveFailedDownload(imdbId, url, lastError)
+  // Track failed download with the original URL (or first URL tried)
+  const urlToLog = url && url !== 'N/A' ? url : urlsToTry[0] || 'N/A'
+  saveFailedDownload(imdbId, urlToLog, lastError)
   return false
 }
 
