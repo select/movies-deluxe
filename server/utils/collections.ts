@@ -3,9 +3,6 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 import type { CollectionsDatabase, Collection } from '../../shared/types/collections'
 
-import { loadMoviesDatabase } from './movieData'
-import type { MovieEntry } from '../../shared/types/movie'
-
 const DATA_DIR = join(process.cwd(), 'public/data')
 const COLLECTIONS_FILE = join(DATA_DIR, 'collections.json')
 
@@ -55,40 +52,13 @@ function createEmptyDatabase(): CollectionsDatabase {
 }
 
 /**
- * Get all collections as an array, optionally including movie details for previews
+ * Get all collections as an array
  */
-export async function getCollections(includePreviews = false): Promise<any[]> {
+export async function getCollections(): Promise<Collection[]> {
   const db = await loadCollectionsDatabase()
-  const collections = Object.entries(db)
+  return Object.entries(db)
     .filter(([key]) => !key.startsWith('_'))
     .map(([_, value]) => value as Collection)
-
-  if (!includePreviews) return collections
-
-  const moviesDb = await loadMoviesDatabase()
-  return collections.map(collection => {
-    // Filter for movies with valid IDs, shuffle, then take first 3
-    const validMovieIds = collection.movieIds.filter(
-      id => id.startsWith('tt') || id.startsWith('archive-') || id.startsWith('youtube-')
-    )
-
-    // Shuffle array using Fisher-Yates algorithm
-    const shuffled = [...validMovieIds]
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-
-    const previewMovies = shuffled
-      .slice(0, 3)
-      .map(id => moviesDb[id] as MovieEntry)
-      .filter(Boolean)
-
-    return {
-      ...collection,
-      previewMovies,
-    }
-  })
 }
 
 /**
