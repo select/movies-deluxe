@@ -409,7 +409,6 @@
 </template>
 
 <script setup lang="ts">
-import { getPrimaryTitle, cleanTitleForSearch } from '../../shared/utils/movieTitle'
 import type { MovieEntry, MovieSource, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
 
 interface UpdateResponse {
