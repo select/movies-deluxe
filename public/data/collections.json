@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-30T17:52:37.277Z"
+    "lastUpdated": "2025-12-30T19:09:33.178Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -1269,10 +1269,11 @@
       "youtube-9eGWe1THw14",
       "youtube--LEoqYF0X7I",
       "archive-meng-jiao-di-she-long-nu-1973",
-      "archive-xiao-quan-wang-1972"
+      "archive-xiao-quan-wang-1972",
+      "tt0056058"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2025-12-29T16:15:00.000Z"
+    "updatedAt": "2025-12-30T19:09:33.178Z"
   },
   "canine-cinema": {
     "id": "canine-cinema",

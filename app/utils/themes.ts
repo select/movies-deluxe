@@ -3,8 +3,8 @@ import type { ThemeDefinition, ThemeRegistry, ThemeColors } from '~/types/theme'
 /**
  * Default theme IDs
  */
-export const DEFAULT_DARK_THEME_ID = 'dark-default'
-export const DEFAULT_LIGHT_THEME_ID = 'light-default'
+export const DEFAULT_DARK_THEME_ID = 'kanagawa'
+export const DEFAULT_LIGHT_THEME_ID = 'rose-pine-dawn'
 
 /**
  * Default system themes
@@ -171,7 +171,7 @@ export const COLOR_SCHEME_THEMES: ThemeRegistry = {
   'everforest-dark': {
     metadata: {
       id: 'everforest-dark',
-      name: 'Dark',
+      name: 'Everforest Dark',
       family: 'Everforest',
       variant: 'dark',
     },
@@ -228,7 +228,7 @@ export const COLOR_SCHEME_THEMES: ThemeRegistry = {
   'rose-pine-dawn': {
     metadata: {
       id: 'rose-pine-dawn',
-      name: 'Dawn',
+      name: 'Rosé Pine Dawn',
       family: 'Rosé Pine',
       variant: 'light',
     },

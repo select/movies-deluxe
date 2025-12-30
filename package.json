@@ -44,6 +44,7 @@
     "dotenv": "17.2.3",
     "focus-trap": "7.7.0",
     "fuse.js": "7.1.0",
+    "google-it": "1.6.4",
     "googleapis": "169.0.0",
     "nuxt": "^4.2.2",
     "openai": "6.13.0",

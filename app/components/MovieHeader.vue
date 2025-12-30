@@ -1,7 +1,7 @@
 <template>
   <header class="transition-all duration-300">
     <div
-    class="md:ml-16 max-w-none mx-auto px-4  flex items-center justify-between"
+    class="md:ml-16 max-w-none mx-auto px-4  flex lg:flex-row flex-col md:items-baseline justify-between"
       :class="{
 	      'py-6 md:py-10 lg:px-[6%]': isHeroPage,
 	      'py-3': !isHeroPage
@@ -11,8 +11,8 @@
         <h1
           class="font-imperial text-theme-text transition-all duration-300"
           :class="{
-            'text-3xl md:text-5xl lg:text-6xl': isHeroPage,
-            'text-xl md:text-2xl': !isHeroPage
+            'text-6xl md:text-7xl lg:text-8xl': isHeroPage,
+            'text-5xl md:text-6xl': !isHeroPage
           }"
         >
           Movies Deluxe
