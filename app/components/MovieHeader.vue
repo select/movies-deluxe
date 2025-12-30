@@ -1,59 +1,32 @@
 <template>
-  <header class="sticky top-0 z-30 transition-all duration-300 bg-theme-background/80 backdrop-blur-xl">
+  <header class="transition-all duration-300">
     <div
       :class="[
-        'max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between transition-all duration-300',
-        windowScrollY > 50 ? 'py-3' : 'py-6'
+        'max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between',
+        isHeroPage ? 'py-6 md:py-10' : 'py-3'
       ]"
     >
       <div>
-        <h1
-          :class="[
-            'font-bold transition-all duration-300 text-theme-text',
-            windowScrollY > 50 ? 'text-xl' : 'text-3xl'
-          ]"
-        >
-          Movies Deluxe
-        </h1>
+        <NuxtLink to="/">
+          <h1
+            :class="[
+              'font-bold text-theme-text transition-all duration-300',
+              isHeroPage ? 'text-3xl md:text-5xl lg:text-6xl' : 'text-xl md:text-2xl'
+            ]"
+          >
+            Movies Deluxe
+          </h1>
+        </NuxtLink>
         <p
-          v-if="windowScrollY <= 50"
-          class="text-sm text-theme-text-muted mt-1 transition-all duration-300"
+          v-if="isHeroPage"
+          class="text-base md:text-lg text-theme-text-muted mt-2 max-w-2xl transition-opacity duration-300"
         >
           Free legal movie streams from Archive.org and YouTube
         </p>
       </div>
 
-      <!-- Search Bar -->
-      <div
-        :class="[
-          'flex-1 max-w-md mx-8 hidden md:block transition-all duration-300',
-          windowScrollY > 50 ? 'scale-95' : 'scale-100'
-        ]"
-      >
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-theme-text-muted" />
-          </div>
-          <input
-            :value="filters.searchQuery"
-            type="text"
-            class="block w-full pl-10 pr-3 py-2 border border-theme-border/50 rounded-full leading-5 bg-theme-surface text-theme-text placeholder-theme-text-muted focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary sm:text-sm transition-all"
-            placeholder="Search movie titles, actors, directors..."
-            @input="(e) => handleSearchInput((e.target as HTMLInputElement).value)"
-          >
-          <button
-            v-if="filters.searchQuery"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center"
-            @click="setSearchQuery('')"
-          >
-            <div class="i-mdi-close text-theme-text-muted hover:text-theme-text" />
-          </button>
-        </div>
-      </div>
-
       <!-- Dark Mode Toggle -->
       <AppDarkModeToggle
-        :compact="windowScrollY > 50"
         @click.prevent="emit('open-filters')"
       />
     </div>
@@ -61,20 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import { useWindowScroll } from '@vueuse/core'
-
 const emit = defineEmits<{
   'open-filters': []
 }>()
 
-const { filters } = storeToRefs(useMovieStore())
-const { setSearchQuery, setSort } = useMovieStore()
-const { y: windowScrollY } = useWindowScroll()
-
-const handleSearchInput = (query: string) => {
-  setSearchQuery(query)
-  if (query && filters.value.sort.field !== 'relevance') {
-    setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
-  }
-}
+const route = useRoute()
+const isHeroPage = computed(() => {
+  return route.path === '/' || route.path === '/collections' || route.path === '/collections/'
+})
 </script>

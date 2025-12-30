@@ -50,6 +50,9 @@ export const useUiStore = defineStore('ui', () => {
   // Toast notifications state
   const toasts = ref<Toast[]>([])
 
+  // Search overlay state
+  const isSearchOpen = ref(false)
+
   /**
    * Set theme by ID
    */
@@ -117,6 +120,7 @@ export const useUiStore = defineStore('ui', () => {
     currentTheme,
     isDark,
     toasts,
+    isSearchOpen,
 
     // Actions
     setTheme,
@@ -126,5 +130,7 @@ export const useUiStore = defineStore('ui', () => {
     showToast,
     removeToast,
     clearToasts,
+    toggleSearch: () => (isSearchOpen.value = !isSearchOpen.value),
+    setSearchOpen: (value: boolean) => (isSearchOpen.value = value),
   }
 })
