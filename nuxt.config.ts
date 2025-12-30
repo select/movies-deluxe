@@ -121,5 +121,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-side only
     minMovieDurationMinutes: 40,
+    googleApiKey: process.env.GOOGLE_API_KEY || process.env.YOUTUBE_API_KEY,
+    googleSearchCx: process.env.GOOGLE_SEARCH_CX,
   },
 })
