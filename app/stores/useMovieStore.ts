@@ -562,7 +562,7 @@ export const useMovieStore = defineStore('movie', () => {
       const lowerQuery = searchQuery.toLowerCase()
       return Array.from(allMovies.value.values()).filter((movie: ExtendedMovieEntry) => {
         const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
-        return titles.some(t => t.toLowerCase().includes(lowerQuery))
+        return titles.some((t: string) => t.toLowerCase().includes(lowerQuery))
       })
     }
 
@@ -1144,7 +1144,10 @@ export const useMovieStore = defineStore('movie', () => {
   const getSourcesByType = (movie: ExtendedMovieEntry): Record<MovieSourceType, MovieSource[]> => {
     return movie.sources.reduce(
       (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
-        grouped[source.type].push(source)
+        if (!grouped[source.type]) {
+          grouped[source.type] = []
+        }
+        grouped[source.type]!.push(source)
         return grouped
       },
       {

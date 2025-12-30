@@ -75,11 +75,11 @@
                   type="text"
                   class="flex-1 px-2 py-1 text-[10px] rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   placeholder="Search query..."
-                  @keyup.enter="handleGoogleSearch(sourceSearchTitles[source.id])"
+                  @keyup.enter="handleGoogleSearch(sourceSearchTitles[source.id] || '')"
                 >
                 <button
                   class="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded transition-colors"
-                  @click="handleGoogleSearch(sourceSearchTitles[source.id])"
+                  @click="handleGoogleSearch(sourceSearchTitles[source.id] || '')"
                 >
                   Search
                 </button>
@@ -437,7 +437,7 @@ const isAiExtracting = ref(false)
 const aiError = ref('')
 
 const initSourceSearchTitles = () => {
-  props.movie.sources.forEach((source) => {
+  props.movie.sources.forEach((source: MovieSource) => {
     const rawTitle = source.title || getPrimaryTitle(props.movie)
     sourceSearchTitles[source.id] = cleanTitleForSearch(rawTitle)
   })
@@ -715,8 +715,8 @@ const extractWithAI = async () => {
 
   try {
     // Combine all source titles and descriptions
-    const titles = props.movie.sources.map(s => s.title).filter(Boolean)
-    const descriptions = props.movie.sources.map(s => s.description).filter(Boolean)
+    const titles = props.movie.sources.map((s: MovieSource) => s.title).filter(Boolean)
+    const descriptions = props.movie.sources.map((s: MovieSource) => s.description).filter(Boolean)
 
     // Use first source for extraction (or combine if needed)
     const title = titles[0] || props.movie.title

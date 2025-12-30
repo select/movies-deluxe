@@ -1,20 +1,18 @@
 /**
  * Frontend Type Definitions
  *
- * This module re-exports shared types from ~/types/movie and adds
- * frontend-specific type utilities for the Nuxt application.
+ * This module re-exports shared types and adds frontend-specific type utilities.
+ * Shared types from shared/types/ are auto-imported by Nuxt.
  *
  * ## Usage in components/stores:
  * ```ts
- * import type { MovieEntry, MovieSource, LoadingState } from '~/app/types'
+ * import type { MovieEntry, LoadingState } from '~/types'
  * ```
- *
- * ## Type Organization:
- * - **Shared types** (from ~/types/movie): Used by both frontend, server, and scripts
- * - **Frontend types** (defined here): Only used in the Nuxt app
  */
 
-// Re-export all shared types from the shared directory (Nuxt 4 ~/shared alias)
+// Re-export auto-imported shared types for convenience
+// These types are auto-imported from shared/types/ but we re-export them
+// here so components can import from a single location (~/types)
 export type {
   // Core movie types
   MovieEntry,
@@ -24,6 +22,7 @@ export type {
   ArchiveOrgSource,
   YouTubeSource,
   MovieMetadata,
+  AIMetadata,
 
   // Database types
   DatabaseSchema,
@@ -33,32 +32,16 @@ export type {
   OMDBSearchResult,
   OMDBSearchResponse,
   MatchResult,
+  MatchConfidence,
 
   // Utility types
   TemporaryId,
-} from '~~/types/movie'
 
-export type { Collection, CollectionsDatabase } from '~~/types/collections'
+  // Collection types
+  Collection,
+  CollectionsDatabase,
 
-export type {
-  ThemeVariant,
-  ThemeColors,
-  ThemeMetadata,
-  ThemeDefinition,
-  ThemeRegistry,
-} from './theme'
-
-// Re-export utility functions
-export {
-  isTemporaryId,
-  isImdbId,
-  generateArchiveId,
-  generateYouTubeId,
-  extractIdentifier,
-  MatchConfidence,
-} from '~~/types/movie'
-
-export type {
+  // Filter types
   Genre,
   Country,
   YouTubeChannel,
@@ -68,7 +51,18 @@ export type {
   GenresResponse,
   CountriesResponse,
   ChannelsResponse,
-} from '~~/types/filters'
+}
+
+// Re-export utility functions
+export { isTemporaryId, isImdbId, generateArchiveId, generateYouTubeId, extractIdentifier }
+
+export type {
+  ThemeVariant,
+  ThemeColors,
+  ThemeMetadata,
+  ThemeDefinition,
+  ThemeRegistry,
+} from './theme'
 
 /**
  * Frontend-specific types
