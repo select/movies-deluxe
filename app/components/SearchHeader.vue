@@ -46,10 +46,6 @@
 </template>
 
 <script setup lang="ts">
-import { useMovieStore } from '~/stores/useMovieStore'
-import { useUiStore } from '~/stores/useUiStore'
-import { storeToRefs } from 'pinia'
-
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
 const { setSearchQuery, setSort } = movieStore

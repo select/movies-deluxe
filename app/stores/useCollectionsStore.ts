@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-
 export const useCollectionsStore = defineStore('collections', () => {
   const collections = ref<Map<string, Collection>>(new Map())
   const isLoading = ref(false)
