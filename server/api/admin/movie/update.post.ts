@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
+import { isImdbId, generateArchiveId, generateYouTubeId } from '../../../../shared/types/movie'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -34,26 +35,32 @@ export default defineEventHandler(async event => {
       movie.verified = false
 
       // If it was matched to an IMDB ID, migrate it back to a temporary ID
-      if (currentId.startsWith('tt') && movie.sources && movie.sources.length > 0) {
+      if (isImdbId(currentId) && movie.sources && movie.sources.length > 0) {
         const source = movie.sources[0]
         let tempId = currentId
         if (source.type === 'youtube') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          tempId = `youtube-${(source as any).videoId}`
+          tempId = generateYouTubeId(source.id)
         } else if (source.type === 'archive.org') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          tempId = `archive-${(source as any).identifier}`
+          tempId = generateArchiveId(source.id)
         }
 
         if (tempId !== currentId) {
+          // Ensure each rejected movie gets a unique temp ID to avoid accidental merging
+          // when multiple different movies might share a source or have same identifier
+          let finalTempId = tempId
+          let counter = 1
+          while (db[finalTempId] && finalTempId !== currentId) {
+            finalTempId = `${tempId}-${counter++}`
+          }
+          tempId = finalTempId
+
           const existing = db[tempId]
           if (existing) {
             // Merge sources
-
             existing.sources = [
-              ...existing.sources,
-              ...movie.sources.filter(
-                (s: any) => !existing.sources.some((es: any) => es.url === s.url)
+              ...(existing.sources || []),
+              ...(movie.sources || []).filter(
+                (s: any) => !(existing.sources || []).some((es: any) => es.url === s.url)
               ),
             ]
             existing.lastUpdated = new Date().toISOString()
@@ -99,7 +106,7 @@ export default defineEventHandler(async event => {
 
     // Download poster if metadata has one
     const posterUrl = metadata?.Poster || metadata?.poster
-    if (posterUrl && posterUrl !== 'N/A' && finalId.startsWith('tt')) {
+    if (posterUrl && posterUrl !== 'N/A' && isImdbId(finalId)) {
       // We don't await this to avoid blocking the response,
       // but we could if we want to ensure it's done.
       // For curation, it's better to at least start it.
