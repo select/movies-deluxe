@@ -73,7 +73,8 @@
             @click="adminStore.generateSqlite"
           >
             <div
-              :class="['i-mdi-database-export', generatingSqlite ? 'animate-spin' : '']"
+              class="i-mdi-database-export"
+              :class="{ 'animate-spin': generatingSqlite }"
             />
             Generate SQLite
           </button>
@@ -82,7 +83,10 @@
             :disabled="loading"
             @click="adminStore.refreshStats"
           >
-            <div :class="['i-mdi-refresh', loading ? 'animate-spin' : '']" />
+            <div
+              class="i-mdi-refresh"
+              :class="{ 'animate-spin': loading }"
+            />
             Refresh Stats
           </button>
         </div>

@@ -4,12 +4,11 @@
     :class="{ 'opacity-50 cursor-not-allowed': disabled }"
   >
     <div
-      :class="[
-        'flex items-center justify-center w-5 h-5 transition-colors',
-        checked
-          ? 'text-blue-600 dark:text-blue-500'
-          : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-500 dark:group-hover:text-gray-500'
-      ]"
+      class="flex items-center justify-center w-5 h-5 transition-colors"
+      :class="{
+        'text-blue-600 dark:text-blue-500': checked,
+        'text-gray-400 dark:text-gray-600 group-hover:text-gray-500 dark:group-hover:text-gray-500': !checked
+      }"
       role="checkbox"
       :aria-checked="checked"
       :aria-disabled="disabled"

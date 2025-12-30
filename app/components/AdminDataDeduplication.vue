@@ -16,7 +16,8 @@
         @click="$emit('start')"
       >
         <div
-          :class="['i-mdi-broom', loading ? 'animate-pulse' : '']"
+          class="i-mdi-broom"
+          :class="{ 'animate-pulse': loading }"
         />
         {{ loading ? 'Processing...' : 'Clean Descriptions' }}
       </button>

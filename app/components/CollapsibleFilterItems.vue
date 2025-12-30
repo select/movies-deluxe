@@ -3,13 +3,11 @@
     <!-- Items container with overflow handling -->
     <div
       ref="itemsContainer"
-      :class="[
-        'flex flex-wrap gap-2 transition-all duration-300 ease-in-out',
-        // Mobile: Always show all items
-        'md:overflow-hidden',
-        // Desktop: Apply max height when collapsed - increased to show at least 2 full lines
-        !isExpanded && isDesktop ? 'md:max-h-[5.5rem]' : 'md:max-h-none'
-      ]"
+      class="flex flex-wrap gap-2 transition-all duration-300 ease-in-out md:overflow-hidden"
+      :class="{
+        'md:max-h-[5.5rem]': !isExpanded && isDesktop,
+        'md:max-h-none': isExpanded || !isDesktop
+      }"
     >
       <slot />
     </div>
@@ -17,20 +15,19 @@
     <!-- Show More/Less button with gradient background (desktop only) -->
     <button
       v-if="shouldShowToggle && isDesktop"
-      class="cursor-pointer w-full flex items-end justify-center gap-1.5  text-xs font-medium transition-colors text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 h-11 flex "
+      class="cursor-pointer w-full flex items-end justify-center gap-1.5 text-xs font-medium transition-colors text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 h-11 flex"
       :class="{
-          'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-gray-900 dark:via-gray-900/90 dark:to-transparent': !isExpanded,
-          'mt-2 bg-transparent': isExpanded
-      }
-      "
+        'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-gray-900 dark:via-gray-900/90 dark:to-transparent': !isExpanded,
+        'mt-2 bg-transparent': isExpanded
+      }"
       @click="toggleExpanded"
     >
       <span>{{ isExpanded ? 'Show Less' : 'Show More' }}</span>
       <div
-        :class="[
-          'i-mdi-chevron-down text-sm transition-transform duration-200',
-          isExpanded ? 'rotate-180' : ''
-        ]"
+        class="i-mdi-chevron-down text-sm transition-transform duration-200"
+        :class="{
+          'rotate-180': isExpanded
+        }"
       />
     </button>
   </div>

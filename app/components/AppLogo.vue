@@ -1,10 +1,11 @@
 <template>
   <div>
     <h1
-      :class="[
-        'font-bold transition-all duration-300',
-        compact ? 'text-xl' : 'text-3xl'
-      ]"
+      class="font-bold transition-all duration-300"
+      :class="{
+        'text-xl': compact,
+        'text-3xl': !compact
+      }"
     >
       Movies Deluxe
     </h1>

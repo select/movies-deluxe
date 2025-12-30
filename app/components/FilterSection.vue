@@ -2,10 +2,10 @@
   <div >
     <!-- Filter Title / Header (clickable on mobile) -->
     <button
-      :class="[
-        'flex items-center justify-between w-full px-2 py-1 rounded-md bg-gradient-to-r from-theme-selection to-transparent text-left group transition-all duration-500 md:cursor-default',
-        highlight ? 'ring-2 ring-theme-primary ring-offset-2 ring-offset-theme-background scale-[1.02] shadow-lg' : ''
-      ]"
+      class="flex items-center justify-between w-full px-2 py-1 rounded-md bg-gradient-to-r from-theme-selection to-transparent text-left group transition-all duration-500 md:cursor-default"
+      :class="{
+        'ring-2 ring-theme-primary ring-offset-2 ring-offset-theme-background scale-[1.02] shadow-lg': highlight
+      }"
       :aria-expanded="isExpanded"
       :disabled="isDesktop"
       @click="toggleSection"
@@ -13,7 +13,8 @@
       <div class="flex items-center gap-2">
         <div
           v-if="icon"
-          :class="['text-base text-theme-text-muted', icon]"
+          class="text-base text-theme-text-muted"
+          :class="icon"
         />
         <h3 class="font-bold text-[10px] uppercase tracking-wider text-theme-text-muted">
           {{ title }}
@@ -29,13 +30,11 @@
 
     <!-- Filter Content (collapsible on mobile) -->
     <div
-      :class="[
-        'transition-all duration-300 ease-in-out overflow-hidden',
-        'md:max-h-none md:opacity-100 md:visible md:mt-3', // Always expanded on desktop
-        isExpanded
-          ? 'max-h-[2000px] opacity-100 visible mt-3'
-          : 'max-h-0 opacity-0 invisible mt-0', // Collapsible on mobile
-      ]"
+      class="transition-all duration-300 ease-in-out overflow-hidden md:max-h-none md:opacity-100 md:visible md:mt-3"
+      :class="{
+        'max-h-[2000px] opacity-100 visible mt-3': isExpanded,
+        'max-h-0 opacity-0 invisible mt-0': !isExpanded
+      }"
     >
       <div class="space-y-2">
         <slot />
