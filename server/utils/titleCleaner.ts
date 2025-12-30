@@ -331,6 +331,34 @@ export function testCleaningRules(): {
 }
 
 /**
+ * Extract year and clean title from strings like "Movie Name (1999)" or "Movie Name [2000]"
+ *
+ * @param title - Raw title
+ * @returns Object containing cleaned title and extracted year
+ */
+export function extractYearAndCleanTitle(title: string): { title: string; year?: number } {
+  // 1. Try to extract year from title like "Movie Name (1999)" or "Movie Name [1999]"
+  const yearMatch = title.match(/^(.+?)\s*[([](19\d{2}|20\d{2})[)\]]/)
+  if (yearMatch && yearMatch[1] && yearMatch[2]) {
+    return {
+      title: yearMatch[1].trim(),
+      year: parseInt(yearMatch[2], 10),
+    }
+  }
+
+  // 2. Try to extract year from title like "1999 Movie Name" or "[1999] Movie Name"
+  const prefixMatch = title.match(/^[([ ]*(19\d{2}|20\d{2})[)\] ]*\s+(.+)$/)
+  if (prefixMatch && prefixMatch[1] && prefixMatch[2]) {
+    return {
+      title: prefixMatch[2].trim(),
+      year: parseInt(prefixMatch[1], 10),
+    }
+  }
+
+  return { title: title.trim() }
+}
+
+/**
  * General-purpose title cleaner for Archive.org and other sources
  * Removes common patterns that interfere with OMDB matching
  *
@@ -394,8 +422,8 @@ export function cleanTitleGeneral(title: string): string {
   // 11. Remove genre/type descriptors in parentheses: (the grindhouse experience)
   cleaned = cleaned.replace(/\s*\([^)]*(?:experience|thriller|drama|comedy|horror)\s*\)/gi, '')
 
-  // 12. Remove years in parentheses: (1999), (2000)
-  cleaned = cleaned.replace(/\s*\(\s*\d{4}\s*\)\s*/g, ' ')
+  // 12. Remove years in parentheses or brackets: (1999), [2000]
+  cleaned = cleaned.replace(/\s*[([][\s\d]{4}[)\]]\s*/g, ' ')
 
   // 13. Remove actor names from title: "Title - Actor Name (Year)"
   cleaned = cleaned.replace(/\s*[-–—]\s*[A-Z][a-z]+\s+[A-Z][a-z]+\s*\(\d{4}\)\s*$/, '')
