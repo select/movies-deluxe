@@ -94,7 +94,6 @@ export function getFailedPosterDownloads(): FailedDownload[] {
 }
 
 export async function downloadPoster(
-  url: string,
   imdbId: string,
   force: boolean = false,
   fallbackUrls: string[] = []
@@ -123,11 +122,6 @@ export async function downloadPoster(
       const omdbPosterUrl = `http://img.omdbapi.com/?apikey=${omdbApiKey}&i=${imdbId}`
       urlsToTry.push(omdbPosterUrl)
     }
-  }
-
-  // 2. Add the original URL if provided
-  if (url && url !== 'N/A') {
-    urlsToTry.push(url)
   }
 
   // 3. Add any additional fallback URLs
