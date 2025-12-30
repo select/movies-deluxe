@@ -106,7 +106,7 @@
                   v-if="movie.imdbId.startsWith('tt')"
                   :src="`/posters/${movie.imdbId}.jpg`"
                   :alt="getPrimaryTitle(movie)"
-                  class="w-full h-full object-cover"
+                  class="w-full h-full object-cover object-center"
                   @error="handlePosterError"
                 >
                 <div
