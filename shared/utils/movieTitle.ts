@@ -61,3 +61,16 @@ export function normalizeTitleForComparison(title: string): string {
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim()
 }
+
+/**
+ * Clean title for search (remove braces, quotes, stars, etc.)
+ */
+export function cleanTitleForSearch(title: string): string {
+  return title
+    .replace(/\(.*?\)/g, '') // Remove (braces)
+    .replace(/\[.*?\]/g, '') // Remove [brackets]
+    .replace(/["'“”‘’]/g, '') // Remove quotes
+    .replace(/[*]/g, '') // Remove stars
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim()
+}

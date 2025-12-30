@@ -68,28 +68,38 @@
               No description available in database
             </p>
 
-            <div class="mt-3 pt-2 border-t border-yellow-50 dark:border-gray-700 flex flex-wrap gap-2">
-              <button
-                v-if="source.title"
-                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
-                @click="searchByTitle(source)"
-              >
-                Search Title
-              </button>
-              <button
-                v-if="source.description"
-                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
-                @click="searchByDescription(source)"
-              >
-                Search Desc
-              </button>
-              <button
-                v-if="source.title && source.description"
-                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
-                @click="searchBoth(source)"
-              >
-                Search Both
-              </button>
+            <div class="mt-3 pt-2 border-t border-yellow-50 dark:border-gray-700">
+              <div class="flex gap-1 mb-2">
+                <input
+                  v-model="sourceSearchTitles[source.id]"
+                  type="text"
+                  class="flex-1 px-2 py-1 text-[10px] rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  placeholder="Search query..."
+                  @keyup.enter="handleGoogleSearch(sourceSearchTitles[source.id])"
+                >
+                <button
+                  class="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded transition-colors"
+                  @click="handleGoogleSearch(sourceSearchTitles[source.id])"
+                >
+                  Search
+                </button>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-if="source.description"
+                  class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                  @click="searchByDescription(source)"
+                >
+                  Search Desc
+                </button>
+                <button
+                  v-if="source.title && source.description"
+                  class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                  @click="searchBoth(source)"
+                >
+                  Search Both
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -338,8 +348,8 @@
 </template>
 
 <script setup lang="ts">
-
-import type { MovieEntry, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
+import { getPrimaryTitle, cleanTitleForSearch } from '../../shared/utils/movieTitle'
+import type { MovieEntry, MovieSource, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
 
 interface UpdateResponse {
   success: boolean
@@ -362,6 +372,14 @@ const isSearching = ref(false)
 const searchResults = ref<OMDBSearchResult[]>([])
 const googleResults = ref<OMDBSearchResult[]>([])
 const searchError = ref('')
+const sourceSearchTitles = reactive<Record<string, string>>({})
+
+const initSourceSearchTitles = () => {
+  props.movie.sources.forEach((source) => {
+    const rawTitle = source.title || getPrimaryTitle(props.movie)
+    sourceSearchTitles[source.id] = cleanTitleForSearch(rawTitle)
+  })
+}
 
 // Collections state
 const collectionsStore = useCollectionsStore()
@@ -381,6 +399,7 @@ onMounted(() => {
   isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   searchTitle.value = getPrimaryTitle(props.movie)
   searchYear.value = props.movie.year?.toString() || ''
+  initSourceSearchTitles()
 
   // Load collections if not already loaded
   if (collections.value.size === 0) {
@@ -423,6 +442,7 @@ watch(() => props.movie.imdbId, () => {
   imdbIdInput.value = ''
   searchResults.value = []
   searchError.value = ''
+  initSourceSearchTitles()
 })
 
 const handleSearch = async () => {
@@ -485,22 +505,17 @@ const handleGoogleSearch = async (query: string) => {
   }
 }
 
-const searchByTitle = (source: any) => {
-  if (!source.title) return
-  handleGoogleSearch(`${source.title} imdb`)
-}
-
-const searchByDescription = (source: any) => {
+const searchByDescription = (source: MovieSource) => {
   if (!source.description) return
   // Use first 100 chars of description
   const cleanDesc = source.description.substring(0, 100).replace(/\n/g, ' ')
-  handleGoogleSearch(`${cleanDesc} imdb`)
+  handleGoogleSearch(cleanDesc)
 }
 
-const searchBoth = (source: any) => {
-  const title = source.title || ''
+const searchBoth = (source: MovieSource) => {
+  const title = sourceSearchTitles[source.id] || ''
   const desc = source.description ? source.description.substring(0, 50).replace(/\n/g, ' ') : ''
-  handleGoogleSearch(`${title} ${desc} imdb`)
+  handleGoogleSearch(`${title} ${desc}`)
 }
 
 const removeSource = async (sourceId: string) => {
