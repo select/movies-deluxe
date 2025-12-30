@@ -160,11 +160,14 @@ The `scripts/` directory contains maintenance and migration scripts:
 - `migrate-archive-source-titles.ts` - Migrate archive source titles
 - `migrate-failed-omdb.ts` - Migrate failed OMDB entries
 - `analyze-failed-omdb.ts` - Analyze failed OMDB matches
+- `retry-failed-posters-omdb.ts` - Retry downloading failed posters using OMDB Poster API
 - `generate-sqlite.ts` - Generate SQLite database
 - `lookup-youtube-channels.ts` - Lookup YouTube channel information
 - `test-*.ts` - Various test scripts
 
 Run scripts with: `pnpm tsx scripts/<script-name>.ts`
+
+Example: `pnpm tsx scripts/retry-failed-posters-omdb.ts --limit 100`
 
 ## Features
 
