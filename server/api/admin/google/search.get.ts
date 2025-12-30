@@ -1,5 +1,8 @@
-import googleIt from 'google-it'
+import puppeteer from 'puppeteer-extra'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import { defineEventHandler, getQuery, createError } from 'h3'
+
+puppeteer.use(StealthPlugin())
 
 export default defineEventHandler(async event => {
   const { q } = getQuery(event)
@@ -11,30 +14,56 @@ export default defineEventHandler(async event => {
     })
   }
 
+  let browser
   try {
-    const searchResults = await googleIt({
-      query: q,
-      'no-display': true,
-      limit: 10,
-      diagnostics: true,
-      userAgent:
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
 
-    let results = searchResults.results
-    const body = searchResults.body
+    const page = await browser.newPage()
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    )
 
-    // Fallback: if google-it fails to parse (due to changed Google structure or bot detection),
-    // try manual extraction of IMDB links from body
-    if ((!results || results.length === 0) && body) {
-      const imdbLinks = body.match(/https?:\/\/(www\.)?imdb\.com\/title\/tt\d+/g) || []
-      const uniqueLinks = Array.from(new Set(imdbLinks))
-      results = uniqueLinks.map(link => ({
-        link,
-        title: 'IMDb Result',
-        snippet: '',
-      }))
-    }
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(q)}`
+    await page.goto(searchUrl, { waitUntil: 'networkidle2' })
+
+    // Extract results
+    const results = await page.evaluate(() => {
+      const items: any[] = []
+      const elements = document.querySelectorAll('div.g')
+
+      elements.forEach(el => {
+        const titleEl = el.querySelector('h3')
+        const linkEl = el.querySelector('a')
+        const snippetEl = el.querySelector('div.VwiC3b')
+
+        if (titleEl && linkEl) {
+          items.push({
+            title: titleEl.innerText,
+            link: linkEl.href,
+            snippet: snippetEl ? (snippetEl as HTMLElement).innerText : '',
+          })
+        }
+      })
+
+      // Fallback: if div.g not found, try to find any IMDb links
+      if (items.length === 0) {
+        const links = document.querySelectorAll('a')
+        links.forEach(link => {
+          if (link.href.includes('imdb.com/title/tt')) {
+            items.push({
+              title: link.innerText || 'IMDb Result',
+              link: link.href,
+              snippet: '',
+            })
+          }
+        })
+      }
+
+      return items
+    })
 
     // Filter and format results to match OMDB search format
     const formattedResults = results
@@ -67,9 +96,14 @@ export default defineEventHandler(async event => {
       })
       .filter((r: any) => r.imdbID !== null)
 
+    // Deduplicate by imdbID
+    const uniqueResults = Array.from(
+      new Map(formattedResults.map(item => [item.imdbID, item])).values()
+    )
+
     return {
-      Search: formattedResults,
-      totalResults: formattedResults.length.toString(),
+      Search: uniqueResults,
+      totalResults: uniqueResults.length.toString(),
       Response: 'True',
     }
   } catch (error: any) {
@@ -79,6 +113,10 @@ export default defineEventHandler(async event => {
       totalResults: '0',
       Response: 'False',
       Error: error.message,
+    }
+  } finally {
+    if (browser) {
+      await browser.close()
     }
   }
 })
