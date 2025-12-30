@@ -39,7 +39,7 @@
               />
               <span class="font-medium text-gray-900 dark:text-gray-100">{{ source.type }}</span>
             </div>
-            
+
             <!-- Original title from source -->
             <div
               v-if="source.title"
@@ -158,7 +158,7 @@
               :key="collection.id"
               class="flex items-center gap-2 px-3 py-1.5 bg-theme-primary/10 border border-theme-primary/30 rounded-lg text-sm"
             >
-              <div class="i-mdi-folder text-theme-primary" />
+              <div class="i-mdi:movie-roll text-theme-primary" />
               <span class="font-medium">{{ collection.name }}</span>
               <button
                 class="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-red-500 transition-colors"
@@ -264,7 +264,7 @@
 </template>
 
 <script setup lang="ts">
- 
+
 import type { MovieEntry, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
 
 interface UpdateResponse {
@@ -306,7 +306,7 @@ onMounted(() => {
   isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   searchTitle.value = getPrimaryTitle(props.movie)
   searchYear.value = props.movie.year?.toString() || ''
-  
+
   // Load collections if not already loaded
   if (collections.value.size === 0) {
     loadCollections()
@@ -315,7 +315,7 @@ onMounted(() => {
 
 const addToCollection = async () => {
   if (!selectedCollectionId.value) return
-  
+
   isUpdatingCollection.value = true
   try {
     const success = await addMovieToCollection(
@@ -332,7 +332,7 @@ const addToCollection = async () => {
 
 const removeFromCollection = async (collectionId: string) => {
   if (!confirm('Remove movie from this collection?')) return
-  
+
   isUpdatingCollection.value = true
   try {
     await removeMovieFromCollection(collectionId, props.movie.imdbId)
@@ -353,22 +353,22 @@ watch(() => props.movie.imdbId, () => {
 const handleSearch = async () => {
   const title = searchTitle.value.trim()
   const year = searchYear.value.trim()
-  
+
   if (!title) return
-  
+
   isSearching.value = true
   searchError.value = ''
   searchResults.value = []
-  
+
   try {
-     
+
     const data = await $fetch<OMDBSearchResponse>('/api/admin/omdb/search', {
       query: {
         s: title,
         y: year
       }
     })
-    
+
     if (data.Response === 'True') {
       searchResults.value = data.Search || []
     } else {
@@ -384,14 +384,14 @@ const handleSearch = async () => {
 const handleDirectImdbFetch = async () => {
   const input = imdbIdInput.value.trim()
   if (!input) return
-  
+
   // Extract IMDB ID from input (could be full URL or just the ID)
   const match = input.match(/tt\d{7,}/)
   if (!match) {
     searchError.value = 'Invalid IMDB ID or URL (should contain tt followed by at least 7 digits)'
     return
   }
-  
+
   const id = match[0]
   await selectMovie(id)
 }
@@ -400,13 +400,13 @@ const selectMovie = async (imdbId: string) => {
   try {
     isSearching.value = true
     // Get full details first
-     
+
     const details = await $fetch<MovieMetadata & { Response: string, Error?: string }>('/api/admin/omdb/details', {
       query: { i: imdbId }
     })
-    
+
     if (details.Response === 'True') {
-       
+
       const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
         method: 'POST',
         body: {
@@ -415,7 +415,7 @@ const selectMovie = async (imdbId: string) => {
           verified: true
         }
       })
-      
+
       if (res.success) {
         emit('updated', res.movieId)
       }
@@ -432,12 +432,12 @@ const selectMovie = async (imdbId: string) => {
 }
 
 const removeMetadata = async () => {
-   
+
   if (!confirm('Are you sure you want to remove metadata? This will reset the movie to an unmatched state.')) return
-  
+
   try {
     isSearching.value = true
-     
+
     const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
@@ -445,7 +445,7 @@ const removeMetadata = async () => {
         removeMetadata: true
       }
     })
-    
+
     if (res.success) {
       emit('updated', res.movieId)
     }
@@ -460,7 +460,7 @@ const removeMetadata = async () => {
 const verifyMovie = async () => {
   try {
     isSearching.value = true
-     
+
     const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
@@ -468,7 +468,7 @@ const verifyMovie = async () => {
         verified: true
       }
     })
-    
+
     if (res.success) {
       emit('updated', res.movieId)
     }

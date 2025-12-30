@@ -1,8 +1,8 @@
 {
   "database": {
-    "total": 31597,
+    "total": 31590,
     "matched": 14877,
-    "unmatched": 16720,
+    "unmatched": 16713,
     "archiveOrgSources": 26791,
     "youtubeSources": 11208,
     "curatedCount": 14877,
@@ -105,18 +105,18 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 26774,
+      "total": 26958,
       "scraped": 26791,
-      "percent": 100.06349443489952,
+      "percent": 99.38051784256993,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
       "totalScraped": 11208,
-      "totalAvailable": 17872,
+      "totalAvailable": 17874,
       "totalFailed": 6022,
       "failureRate": 34.950667440510735,
-      "percent": 62.71262309758281,
+      "percent": 62.70560590802282,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -124,7 +124,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2322,
-          "total": 2834,
+          "total": 2835,
           "failed": 435,
           "failureRate": 15.778019586507073
         },
@@ -154,7 +154,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2380,
-          "total": 2597,
+          "total": 2598,
           "failed": 205,
           "failureRate": 7.930367504835589
         },
@@ -184,7 +184,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 532,
-          "total": 611,
+          "total": 613,
           "failed": 106,
           "failureRate": 16.614420062695924
         },
@@ -194,7 +194,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 1971,
-          "total": 3645,
+          "total": 3648,
           "failed": 1656,
           "failureRate": 45.6575682382134
         },
@@ -234,7 +234,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5065,
+          "total": 5060,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -252,29 +252,29 @@
     }
   },
   "curation": {
-    "total": 31597,
+    "total": 31590,
     "curated": 14877,
-    "percent": 47.083583884546
+    "percent": 47.09401709401709
   },
   "omdb": {
-    "total": 31597,
+    "total": 31590,
     "matched": 14877,
-    "unmatched": 16720,
-    "percent": 47.083583884546,
+    "unmatched": 16713,
+    "percent": 47.09401709401709,
     "failed": 16721,
     "failureRate": 52.91790619659472
   },
   "posters": {
-    "totalMovies": 31597,
+    "totalMovies": 31590,
     "withPosterUrl": 13307,
-    "downloaded": 8054,
-    "missing": 5253,
-    "failed": 50,
-    "failureRate": 0.6169792694965449,
-    "percentOfMoviesWithUrl": 60.52453595851808,
-    "percentOfAllMovies": 25.489761686236033,
-    "filesInDirectory": 8075,
-    "matchedPosters": 8054
+    "downloaded": 8085,
+    "missing": 5222,
+    "failed": 23,
+    "failureRate": 0.2836704489393192,
+    "percentOfMoviesWithUrl": 60.75749605470805,
+    "percentOfAllMovies": 25.593542260208928,
+    "filesInDirectory": 8114,
+    "matchedPosters": 8085
   },
-  "lastUpdated": "2025-12-29T09:58:46.868Z"
+  "lastUpdated": "2025-12-30T01:06:04.672Z"
 }
