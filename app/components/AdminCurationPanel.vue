@@ -59,7 +59,7 @@
               v-if="source.description"
               class="text-xs text-gray-600 dark:text-gray-400 line-clamp-4 whitespace-pre-wrap"
             >
-              {{ source.description }}
+              {{ source.description.length > 1000 ? source.description.substring(0, 1000) + '...' : source.description }}
             </p>
             <p
               v-else
@@ -465,7 +465,7 @@ const handleGoogleSearch = async (query: string) => {
 
   try {
     const data = await $fetch<OMDBSearchResponse>('/api/admin/google/search', {
-      query: { q: query }
+      query: { q: `${query} site:imdb.com` }
     })
 
     if (data.Response === 'True') {
