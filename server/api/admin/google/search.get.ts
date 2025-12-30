@@ -1,8 +1,8 @@
-import puppeteer from 'puppeteer'
 import { defineEventHandler, getQuery, createError } from 'h3'
 
 export default defineEventHandler(async event => {
   const { q } = getQuery(event)
+  const config = useRuntimeConfig()
 
   if (!q || typeof q !== 'string') {
     throw createError({
@@ -11,78 +11,53 @@ export default defineEventHandler(async event => {
     })
   }
 
-  let browser
+  const apiKey = config.googleApiKey
+  const cx = config.googleSearchCx
+
+  if (!apiKey || !cx) {
+    return {
+      Search: [],
+      totalResults: '0',
+      Response: 'False',
+      Error:
+        'Google Search API not configured. Please set GOOGLE_API_KEY and GOOGLE_SEARCH_CX in .env',
+    }
+  }
+
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    })
+    const searchUrl = new URL('https://www.googleapis.com/customsearch/v1')
+    searchUrl.searchParams.append('key', apiKey)
+    searchUrl.searchParams.append('cx', cx)
+    searchUrl.searchParams.append('q', q)
+    searchUrl.searchParams.append('num', '10')
 
-    const page = await browser.newPage()
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    )
+    const response = await fetch(searchUrl.toString())
+    const data = await response.json()
 
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(q)}`
-    await page.goto(searchUrl, { waitUntil: 'networkidle2' })
+    if (data.error) {
+      throw new Error(data.error.message || 'Google API Error')
+    }
 
-    // Extract results
-    const results = await page.evaluate(() => {
-      const items: any[] = []
-      const elements = document.querySelectorAll('div.g')
-
-      elements.forEach(el => {
-        const titleEl = el.querySelector('h3')
-        const linkEl = el.querySelector('a')
-        const snippetEl = el.querySelector('div.VwiC3b')
-
-        if (titleEl && linkEl) {
-          items.push({
-            title: titleEl.innerText,
-            link: linkEl.href,
-            snippet: snippetEl ? (snippetEl as HTMLElement).innerText : '',
-          })
-        }
-      })
-
-      // Fallback: if div.g not found, try to find any IMDb links
-      if (items.length === 0) {
-        const links = document.querySelectorAll('a')
-        links.forEach(link => {
-          if (link.href.includes('imdb.com/title/tt')) {
-            items.push({
-              title: link.innerText || 'IMDb Result',
-              link: link.href,
-              snippet: '',
-            })
-          }
-        })
-      }
-
-      return items
-    })
-    console.log('google q', q)
-    console.log('google results', results)
+    const items = data.items || []
 
     // Filter and format results to match OMDB search format
-    const formattedResults = results
+    const formattedResults = items
       .filter((r: any) => r.link && r.link.includes('imdb.com/title/tt'))
       .map((r: any) => {
         const imdbIdMatch = r.link.match(/tt\d+/)
         const imdbId = imdbIdMatch ? imdbIdMatch[0] : null
 
-        // Try to extract year from title if available
-        const yearMatch = r.title ? r.title.match(/\((\d{4})\)/) : null
+        // Try to extract year from title or snippet if available
+        const yearMatch = (r.title + ' ' + r.snippet).match(/\((\d{4})\)/)
         const year = yearMatch ? yearMatch[1] : 'N/A'
 
         // Clean title
-        const cleanTitle =
-          r.title && r.title !== 'IMDb Result'
-            ? r.title
-                .replace(/\s*\((\d{4})\)\s*-\s*IMDb/i, '')
-                .replace(/\s*-\s*IMDb/i, '')
-                .trim()
-            : 'IMDb Result'
+        const cleanTitle = r.title
+          ? r.title
+              .replace(/\s*\((\d{4})\)\s*-\s*IMDb/i, '')
+              .replace(/\s*-\s*IMDb/i, '')
+              .trim()
+          : 'IMDb Result'
 
         return {
           Title: cleanTitle,
@@ -112,10 +87,6 @@ export default defineEventHandler(async event => {
       totalResults: '0',
       Response: 'False',
       Error: error.message,
-    }
-  } finally {
-    if (browser) {
-      await browser.close()
     }
   }
 })

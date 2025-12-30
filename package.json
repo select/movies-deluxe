@@ -48,9 +48,6 @@
     "nuxt": "^4.2.2",
     "openai": "6.13.0",
     "pinia": "3.0.4",
-    "puppeteer": "24.34.0",
-    "puppeteer-extra": "3.3.6",
-    "puppeteer-extra-plugin-stealth": "2.11.2",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4"
   },
@@ -63,7 +60,6 @@
     "@nuxt/eslint": "1.12.1",
     "@types/better-sqlite3": "7.6.13",
     "@types/node": "25.0.2",
-    "@types/puppeteer": "7.0.4",
     "@typescript-eslint/eslint-plugin": "8.50.0",
     "@typescript-eslint/parser": "8.50.0",
     "@unocss/nuxt": "66.5.10",
