@@ -5,7 +5,7 @@ import { isImdbId, generateArchiveId, generateYouTubeId } from '../../../../shar
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const { movieId, newImdbId, metadata, removeMetadata, verified } = body
+  const { movieId, newImdbId, metadata, removeMetadata, verified, ai } = body
 
   if (!movieId) {
     throw createError({
@@ -32,6 +32,8 @@ export default defineEventHandler(async event => {
     // Handle metadata removal
     if (removeMetadata) {
       delete movie.metadata
+      delete movie.ai
+      delete movie.redirect
       movie.verified = false
 
       // If it was matched to an IMDB ID, migrate it back to a temporary ID
@@ -96,6 +98,15 @@ export default defineEventHandler(async event => {
 
     if (verified !== undefined) {
       movie.verified = verified
+    }
+
+    if (ai !== undefined) {
+      movie.ai = ai
+
+      // Remove redirect flag when AI extraction succeeds
+      if (ai?.title) {
+        delete movie.redirect
+      }
     }
 
     movie.lastUpdated = new Date().toISOString()

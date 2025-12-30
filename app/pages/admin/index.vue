@@ -163,6 +163,17 @@
           progress-color="bg-purple-500"
           :subtitle="`${stats.posters.downloaded} / ${stats.posters.withPosterUrl} posters`"
         />
+
+        <AdminStatsCard
+          title="AI Extracted"
+          :value="stats.ai.withAiData"
+          icon="i-mdi-robot"
+          icon-color="text-purple-500"
+          show-progress
+          :percent="stats.ai.percent"
+          progress-color="bg-purple-500"
+          :subtitle="`${stats.ai.withAiData} / ${stats.ai.totalUnmatched} unmatched`"
+        />
       </section>
 
       <!-- YouTube Channel Stats -->
@@ -207,11 +218,17 @@
             <div class="i-mdi-database-sync text-green-600" />
             Data Enrichment
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <AdminOMDBEnrichment
               v-model="omdbOptions"
               :loading="scraping"
               @start="adminStore.startOMDBEnrichment"
+            />
+
+            <AdminAIExtractor
+              v-model="aiOptions"
+              :loading="scraping"
+              @start="adminStore.startAIExtraction"
             />
 
             <AdminPosterDownloader
@@ -275,6 +292,7 @@ const {
   youtubeOptions,
   youtubeChannels,
   omdbOptions,
+  aiOptions,
   posterOptions,
   deduplicating,
   deduplicationResults,

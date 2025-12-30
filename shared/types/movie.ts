@@ -94,6 +94,15 @@ export interface MovieMetadata {
 }
 
 /**
+ * AI-extracted metadata from Ollama
+ * Used to store cleaned movie titles and years extracted from promotional/messy source titles
+ */
+export interface AIMetadata {
+  title?: string // Cleaned movie title extracted by AI
+  year?: number // Release year extracted by AI
+}
+
+/**
  * Main movie entry structure
  */
 export interface MovieEntry {
@@ -103,6 +112,7 @@ export interface MovieEntry {
   sources: MovieSource[]
   metadata?: MovieMetadata
   verified?: boolean // Whether this entry has been manually verified by a human
+  ai?: AIMetadata // AI-extracted metadata from Ollama (for unmatched movies with promotional titles)
   lastUpdated: string // ISO 8601 timestamp
 }
 
