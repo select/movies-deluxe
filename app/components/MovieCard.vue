@@ -21,7 +21,7 @@
       >
         <div class="i-mdi-movie text-6xl" />
       </div>
-      
+
       <!-- Badges -->
       <div class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
         <!-- Source Badge -->
@@ -37,7 +37,7 @@
         >
           {{ movie.sources[0].channelName || 'YouTube' }}
         </span>
-        
+
         <!-- Language Badge -->
         <span
           v-if="languageCode"
@@ -62,7 +62,7 @@
         :class="{ 'ml-8': isMovieLiked }"
         :title="movieCollections.map(c => c.name).join(', ')"
       >
-        <div class="i-mdi-folder text-theme-accent text-lg" />
+        <div class="i-mdi:movie-roll text-theme-accent text-lg" />
         <span
           v-if="movieCollections.length > 1"
           class="absolute -bottom-1 -right-1 bg-theme-accent text-black text-[9px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-theme-surface"
@@ -77,7 +77,7 @@
       <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem]">
         {{ getPrimaryTitle(movie) }}
       </h3>
-      
+
       <div class="flex items-center gap-1.5 text-[11px] text-theme-text-muted font-medium">
         <span v-if="movie.year">{{ movie.year }}</span>
         <span
@@ -132,13 +132,13 @@ const languageCode = computed(() => {
     // Otherwise use getLanguageCode for legacy data
     return getLanguageCode(lang)
   }
-  
+
   // Fallback to source language (also normalized)
   const sourceLang = props.movie.sources[0]?.language
   if (sourceLang && sourceLang.length === 2) {
     return sourceLang.toUpperCase()
   }
-  
+
   return ''
 })
 

@@ -28,7 +28,7 @@
         v-else-if="collectionsList.length === 0"
         class="flex flex-col items-center justify-center py-20 text-center"
       >
-        <div class="i-mdi-folder-open text-6xl text-theme-text-muted mb-4 opacity-20" />
+        <div class="i-mdi:movie-roll text-6xl text-theme-text-muted mb-4 opacity-20" />
         <h3 class="text-xl font-bold text-theme-text mb-2">
           No collections found
         </h3>

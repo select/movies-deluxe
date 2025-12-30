@@ -37,7 +37,7 @@
         title="Collections"
         :class="{ 'bg-theme-primary/20': $route.path.startsWith('/collections') }"
       >
-        <div class="i-mdi-folder text-xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
+        <div class="i-mdi:movie-roll text-xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
       </NuxtLink>
 
       <!-- Filters -->
@@ -109,7 +109,7 @@
         aria-label="Collections"
         :class="{ 'bg-theme-primary/20': $route.path.startsWith('/collections') }"
       >
-        <div class="i-mdi-folder text-2xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
+        <div class="i-mdi:movie-roll text-2xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
       </NuxtLink>
 
       <!-- Filters -->

@@ -222,7 +222,7 @@
                     :to="`/collections/${collection.id}`"
                     class="px-3 py-1 rounded-full bg-theme-primary/10 border border-theme-primary/20 text-theme-primary text-sm hover:bg-theme-primary/20 transition-colors flex items-center gap-1.5"
                   >
-                    <div class="i-mdi-folder-movie text-base" />
+                    <div class="i-mdi:movie-roll-movie text-base" />
                     {{ collection.name }}
                   </NuxtLink>
                 </div>
@@ -616,7 +616,7 @@ const loadMovieData = async (movieId: string) => {
 onMounted(async () => {
   // Scroll to top when entering movie detail page
   scrollY.value = 0
-  
+
   // Load collections
   loadCollections()
 

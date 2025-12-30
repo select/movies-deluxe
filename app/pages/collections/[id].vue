@@ -7,7 +7,7 @@
           to="/collections"
           class="hover:text-theme-accent transition-colors flex items-center gap-1"
         >
-          <div class="i-mdi-folder-outline" />
+          <div class="i-mdi:movie-roll" />
           Collections
         </NuxtLink>
         <span class="mx-2 opacity-50">/</span>
