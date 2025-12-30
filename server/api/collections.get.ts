@@ -3,7 +3,7 @@ import { getCollections } from '../utils/collections'
 
 export default defineEventHandler(async () => {
   try {
-    return await getCollections(true)
+    return await getCollections()
   } catch {
     throw createError({
       statusCode: 500,

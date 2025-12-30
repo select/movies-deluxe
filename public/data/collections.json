@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-30T02:39:46.659Z"
+    "lastUpdated": "2025-12-30T17:05:48.984Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -1034,7 +1034,6 @@
       "tt0149273",
       "tt0162727",
       "tt0148633",
-      "tt0151356",
       "tt0148014",
       "tt0148253",
       "tt0151663",
@@ -1246,10 +1245,14 @@
       "tt0161903",
       "tt0161945",
       "tt0161951",
-      "tt0161963"
+      "tt0161963",
+      "archive-ptp_trapped_dave-fleischer_mkv_x264_716x476_131046",
+      "archive-ptp_bed-time_dave-fleischer_mkv_x264_712x476_131028",
+      "archive-ptp_the-puzzle_dave-fleischer_avi_xvid_768x576_181657",
+      "youtube-u92t2pNOoqM"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2025-12-30T00:48:20.406Z"
+    "updatedAt": "2025-12-30T17:05:48.981Z"
   },
   "martial-arts": {
     "id": "martial-arts",
@@ -1278,19 +1281,15 @@
     "description": "Heartwarming and adventurous films featuring man's best friend.",
     "movieIds": [
       "tt0009018",
-      "tt0043819",
-      "tt0026162",
-      "tt0043326",
       "youtube-eUpjjIamaYE",
       "archive-lassie-a-christmas-story-1959-film-noir-christmas-special",
-      "archive-the-extra-girl",
       "archive-westofhotdog",
       "tt0043895",
       "youtube-EnkrwkbCxfo",
       "tt0463721"
     ],
     "createdAt": "2025-12-29T16:18:00.000Z",
-    "updatedAt": "2025-12-29T15:17:44.531Z"
+    "updatedAt": "2025-12-30T17:05:48.982Z"
   },
   "buster-keaton": {
     "id": "buster-keaton",
@@ -1363,7 +1362,6 @@
       "tt0023498",
       "tt0024762",
       "tt0031433",
-      "tt0059000",
       "tt0323263",
       "tt1029374",
       "tt8020616",
@@ -1381,6 +1379,6 @@
       "youtube-uSrRnk1Tc1I"
     ],
     "createdAt": "2025-12-30T00:00:00.000Z",
-    "updatedAt": "2025-12-30T00:43:57.891Z"
+    "updatedAt": "2025-12-30T17:05:48.982Z"
   }
 }

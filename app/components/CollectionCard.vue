@@ -78,26 +78,39 @@
 </template>
 
 <script setup lang="ts">
-import type { Collection } from '~/types/collections'
-import type { MovieEntry } from '~/types/movie'
-
 const props = defineProps<{
-  collection: Collection & { previewMovies?: MovieEntry[] }
+  collection: Collection
 }>()
 
-const { getPosterUrlSync } = useMovieStore()
+// Shuffle array using Fisher-Yates algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
 
-// Get posters for the first 3 movies with IMDb IDs
+
+// Get posters for preview movies (up to 3, with blanks if fewer)
 const posters = computed(() => {
-  if (props.collection.previewMovies) {
-    return props.collection.previewMovies.map(movie => getPosterUrlSync(movie))
+  // Filter for IMDb IDs only (they have posters)
+  // Shuffle and take up to 3 (may be less if collection has fewer IMDb movies)
+  const previewMovieIds=shuffleArray(props.collection.movieIds.filter(id => id.startsWith('tt'))).slice(0, 3)
+  const posterUrls: (string | null)[] = []
+
+  for (let i = 0; i < 3; i++) {
+    const movieId = previewMovieIds[i]
+    if (movieId) {
+      // Construct poster URL directly from IMDb ID
+      posterUrls.push(`/posters/${movieId}.jpg`)
+    } else {
+      posterUrls.push(null)
+    }
   }
 
-  // Fallback: filter for IMDb IDs first, then take first 3
-  return props.collection.movieIds
-    .filter(id => id.startsWith('tt'))
-    .slice(0, 3)
-    .map(id => `/posters/${id}.jpg`)
+  return posterUrls
 })
 </script>
 
