@@ -10,7 +10,7 @@
 // - hasFailedOmdbMatch, saveFailedOmdbMatch, clearFailedOmdbMatches, removeFailedOmdbMatch (from failedOmdb.ts)
 // - matchMovie (from omdb.ts)
 // - emitProgress (from progress.ts)
-// - cleanTitleGeneral (from titleCleaner.ts)
+// - cleanTitleGeneral, extractYearAndCleanTitle (from titleCleaner.ts)
 
 interface EnrichmentOptions {
   limit?: number
@@ -23,21 +23,6 @@ interface EnrichmentResult {
   matched: number
   failed: number
   errors: string[]
-}
-
-/**
- * Parse title to extract movie name and year
- */
-function parseTitle(title: string): { name: string; year?: number } {
-  // Try to extract year from title like "Movie Name (1999)"
-  const match = title.match(/^(.+?)\s*\((\d{4})\)/)
-  if (match && match[1] && match[2]) {
-    return {
-      name: match[1].trim(),
-      year: parseInt(match[2], 10),
-    }
-  }
-  return { name: title }
 }
 
 export default defineEventHandler(async event => {
@@ -175,8 +160,8 @@ export default defineEventHandler(async event => {
 
       const sourceYear = archiveYear || youtubeYear
 
-      // Parse title
-      const { name, year: titleYear } = parseTitle(primaryTitle)
+      // Parse title and extract year
+      const { title: name, year: titleYear } = extractYearAndCleanTitle(primaryTitle)
       const yearToUse = sourceYear || titleYear
 
       // Track all attempts for enhanced failure tracking
