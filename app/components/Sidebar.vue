@@ -53,8 +53,8 @@
       <!-- Dark Mode Toggle -->
       <button
         class="p-2 hover:bg-theme-selection rounded-full transition-colors"
-        title="Toggle Theme"
-        @click="toggleDarkMode"
+        title="Theme Selection"
+        @click="openThemeSelection"
       >
         <div
           v-if="isDark"
@@ -150,8 +150,8 @@
       <!-- Dark Mode Toggle -->
       <button
         class="p-2 hover:bg-theme-selection rounded-full transition-colors"
-        aria-label="Toggle Theme"
-        @click="toggleDarkMode"
+        aria-label="Theme Selection"
+        @click="openThemeSelection"
       >
         <div
           v-if="isDark"
@@ -197,19 +197,24 @@
 <script setup lang="ts">
 const emit = defineEmits<{
   openFilters: []
+  openThemeSelection: []
 }>()
 
 const movieStore = useMovieStore()
 const { likedCount, activeFiltersCount } = storeToRefs(movieStore)
 
 const uiStore = useUiStore()
-const { setSearchOpen, toggleDarkMode } = uiStore
+const { setSearchOpen } = uiStore
 const { isDark } = storeToRefs(uiStore)
 
 const route = useRoute()
 
 const openFilters = () => {
   emit('openFilters')
+}
+
+const openThemeSelection = () => {
+  emit('openThemeSelection')
 }
 
 const clearFilters = () => {

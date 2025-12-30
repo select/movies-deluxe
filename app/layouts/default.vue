@@ -4,10 +4,13 @@
     <SearchHeader />
 
     <!-- Header -->
-    <MovieHeader @open-filters="openThemeSelection" />
+    <MovieHeader />
 
     <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
-    <Sidebar @open-filters="isFilterMenuOpen = true" />
+    <Sidebar
+      @open-filters="isFilterMenuOpen = true"
+      @open-theme-selection="openThemeSelection"
+    />
 
     <!-- Filter Menu -->
     <FilterMenu
