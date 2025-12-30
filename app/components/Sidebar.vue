@@ -4,14 +4,6 @@
     class="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-40 glass shadow-2xl rounded-full w-12 border-theme-border/30"
   >
     <div class="flex flex-col items-center gap-2 py-2">
-      <!-- Search -->
-      <button
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
-        title="Search (Shift+S)"
-        @click="setSearchOpen(true)"
-      >
-        <div class="i-mdi-magnify text-xl" />
-      </button>
 
       <!-- Home -->
       <NuxtLink
@@ -22,6 +14,15 @@
       >
         <div class="i-mdi-home text-xl" />
       </NuxtLink>
+
+      <!-- Search -->
+      <button
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        title="Search (Shift+S)"
+        @click="setSearchOpen(true)"
+      >
+        <div class="i-mdi-magnify text-xl" />
+      </button>
 
       <!-- Liked Movies -->
       <NuxtLink
@@ -48,6 +49,22 @@
       >
         <div class="i-mdi:movie-roll text-xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
       </NuxtLink>
+
+      <!-- Dark Mode Toggle -->
+      <button
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors"
+        title="Toggle Theme"
+        @click="toggleDarkMode"
+      >
+        <div
+          v-if="isDark"
+          class="i-material-symbols-light-wb-sunny text-xl text-theme-accent"
+        />
+        <div
+          v-else
+          class="i-material-symbols-light-dark-mode text-xl text-theme-primary"
+        />
+      </button>
 
       <!-- Filters -->
       <div class="relative group">
@@ -130,6 +147,22 @@
         <div class="i-mdi:movie-roll text-2xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
       </NuxtLink>
 
+      <!-- Dark Mode Toggle -->
+      <button
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors"
+        aria-label="Toggle Theme"
+        @click="toggleDarkMode"
+      >
+        <div
+          v-if="isDark"
+          class="i-material-symbols-light-wb-sunny text-2xl text-theme-accent"
+        />
+        <div
+          v-else
+          class="i-material-symbols-light-dark-mode text-2xl text-theme-primary"
+        />
+      </button>
+
       <!-- Filters -->
       <div class="relative group">
         <button
@@ -170,7 +203,8 @@ const movieStore = useMovieStore()
 const { likedCount, activeFiltersCount } = storeToRefs(movieStore)
 
 const uiStore = useUiStore()
-const { setSearchOpen } = uiStore
+const { setSearchOpen, toggleDarkMode } = uiStore
+const { isDark } = storeToRefs(uiStore)
 
 const route = useRoute()
 
