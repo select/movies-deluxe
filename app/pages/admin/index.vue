@@ -269,7 +269,6 @@
 </template>
 
 <script setup lang="ts">
-
 import type { ScrapeStats } from '~/types/admin'
 
 // Set page title

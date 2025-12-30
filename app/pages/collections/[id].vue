@@ -90,9 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Collection } from '~/types/collections'
-import type { MovieEntry } from '~/types/movie'
-
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()

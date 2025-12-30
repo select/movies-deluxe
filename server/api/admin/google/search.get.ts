@@ -72,7 +72,7 @@ export default defineEventHandler(async event => {
 
     // Deduplicate by imdbID
     const uniqueResults = Array.from(
-      new Map(formattedResults.map(item => [item.imdbID, item])).values()
+      new Map(formattedResults.map((item: any) => [item.imdbID, item])).values()
     )
 
     return {
