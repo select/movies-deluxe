@@ -38,6 +38,13 @@
                 class="text-lg"
               />
               <span class="font-medium text-gray-900 dark:text-gray-100">{{ source.type }}</span>
+              <button
+                class="ml-auto p-1 text-gray-400 hover:text-red-500 transition-colors"
+                title="Remove source"
+                @click="removeSource(source.id)"
+              >
+                <div class="i-mdi-close" />
+              </button>
             </div>
 
             <!-- Original title from source -->
@@ -60,6 +67,30 @@
             >
               No description available in database
             </p>
+
+            <div class="mt-3 pt-2 border-t border-yellow-50 dark:border-gray-700 flex flex-wrap gap-2">
+              <button
+                v-if="source.title"
+                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                @click="searchByTitle(source)"
+              >
+                Search Title
+              </button>
+              <button
+                v-if="source.description"
+                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                @click="searchByDescription(source)"
+              >
+                Search Desc
+              </button>
+              <button
+                v-if="source.title && source.description"
+                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                @click="searchBoth(source)"
+              >
+                Search Both
+              </button>
+            </div>
           </div>
         </div>
 
@@ -258,6 +289,49 @@
             Search results will appear here
           </p>
         </div>
+
+        <!-- Google Results -->
+        <div
+          v-if="googleResults.length > 0"
+          id="google-results"
+          class="mt-8 pt-6 border-t border-yellow-200 dark:border-gray-700"
+        >
+          <div class="flex items-center gap-2 mb-3">
+            <div class="i-mdi-google text-blue-600" />
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
+              Google Results (IMDb)
+            </h3>
+          </div>
+          <div class="space-y-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
+            <div
+              v-for="result in googleResults"
+              :key="result.imdbID"
+              class="flex gap-3 p-2 bg-white dark:bg-gray-800/50 rounded border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-gray-500 transition-colors group"
+            >
+              <div class="w-12 h-18 bg-gray-100 dark:bg-gray-700 flex items-center justify-center rounded">
+                <div class="i-mdi-movie-open text-2xl text-gray-400" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-sm truncate text-gray-900 dark:text-gray-100">
+                  {{ result.Title }}
+                </h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ result.Year }} • {{ result.Type }}
+                </p>
+                <p class="text-[10px] font-mono text-gray-400">
+                  {{ result.imdbID }}
+                </p>
+              </div>
+              <button
+                class="self-center px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded font-bold opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+                :disabled="isSearching"
+                @click="selectMovie(result.imdbID)"
+              >
+                Select
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -286,6 +360,7 @@ const searchYear = ref('')
 const imdbIdInput = ref('')
 const isSearching = ref(false)
 const searchResults = ref<OMDBSearchResult[]>([])
+const googleResults = ref<OMDBSearchResult[]>([])
 const searchError = ref('')
 
 // Collections state
@@ -376,6 +451,83 @@ const handleSearch = async () => {
     }
   } catch {
     searchError.value = 'Failed to search OMDB'
+  } finally {
+    isSearching.value = false
+  }
+}
+
+const handleGoogleSearch = async (query: string) => {
+  if (!query) return
+
+  isSearching.value = true
+  searchError.value = ''
+  googleResults.value = []
+
+  try {
+    const data = await $fetch<OMDBSearchResponse>('/api/admin/google/search', {
+      query: { q: query }
+    })
+
+    if (data.Response === 'True') {
+      googleResults.value = data.Search || []
+      // Scroll to results
+      nextTick(() => {
+        const resultsEl = document.getElementById('google-results')
+        resultsEl?.scrollIntoView({ behavior: 'smooth' })
+      })
+    } else {
+      searchError.value = data.Error || 'No Google results found'
+    }
+  } catch {
+    searchError.value = 'Failed to search Google'
+  } finally {
+    isSearching.value = false
+  }
+}
+
+const searchByTitle = (source: any) => {
+  if (!source.title) return
+  handleGoogleSearch(`${source.title} imdb`)
+}
+
+const searchByDescription = (source: any) => {
+  if (!source.description) return
+  // Use first 100 chars of description
+  const cleanDesc = source.description.substring(0, 100).replace(/\n/g, ' ')
+  handleGoogleSearch(`${cleanDesc} imdb`)
+}
+
+const searchBoth = (source: any) => {
+  const title = source.title || ''
+  const desc = source.description ? source.description.substring(0, 50).replace(/\n/g, ' ') : ''
+  handleGoogleSearch(`${title} ${desc} imdb`)
+}
+
+const removeSource = async (sourceId: string) => {
+  if (!confirm('Are you sure you want to remove this source? If this is the last source, the movie entry will be deleted.')) return
+
+  try {
+    isSearching.value = true
+    const res = await $fetch<{ success: boolean, movieId: string | null, deleted: boolean }>('/api/admin/movie/remove-source', {
+      method: 'POST',
+      body: {
+        movieId: props.movie.imdbId,
+        sourceId
+      }
+    })
+
+    if (res.success) {
+      if (res.deleted) {
+        // If movie was deleted, navigate back or emit event to parent
+        // For now we emit updated with null or handle it in parent
+        emit('updated', '')
+      } else if (res.movieId) {
+        emit('updated', res.movieId)
+      }
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to remove source:', err)
   } finally {
     isSearching.value = false
   }
