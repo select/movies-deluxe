@@ -177,14 +177,15 @@
       </section>
 
       <!-- YouTube Channel Stats -->
+      <section>
       <AdminYouTubeChannelStats
         v-if="stats?.external.youtube.channels.length"
         :channels="stats.external.youtube.channels"
       />
-
+      </section>
 
       <!-- Scrape Controls -->
-      <div class="space-y-6 grid grid-cols-2 gap-8">
+      <div class="space-y-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Data Collection Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -207,18 +208,15 @@
           </div>
         </section>
 
-        <!-- Collection Management Section -->
-        <section>
-          <AdminCollectionManager />
-        </section>
+
 
         <!-- Data Enrichment Section -->
-        <section>
+        <section >
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             <div class="i-mdi-database-sync text-green-600" />
             Data Enrichment
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <AdminOMDBEnrichment
               v-model="omdbOptions"
               :loading="scraping"
@@ -236,22 +234,26 @@
               :loading="scraping"
               @start="adminStore.startPosterDownload"
             />
+	          <!-- Data Cleanup Section -->
+	          <div>
+	            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+	              <div class="i-mdi-broom text-orange-600" />
+	              Data Cleanup
+	            </h3>
+	            <div >
+	              <AdminDataDeduplication
+	                :loading="deduplicating"
+	                :results="deduplicationResults"
+	                @start="adminStore.deduplicateDescriptions"
+	              />
+	            </div>
+	          </div>
           </div>
-          
-          <!-- Data Cleanup Section -->
-          <div class="mt-8">
-            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-              <div class="i-mdi-broom text-orange-600" />
-              Data Cleanup
-            </h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <AdminDataDeduplication
-                :loading="deduplicating"
-                :results="deduplicationResults"
-                @start="adminStore.deduplicateDescriptions"
-              />
-            </div>
-          </div>
+
+        </section>
+        <!-- Collection Management Section -->
+        <section>
+          <AdminCollectionManager />
         </section>
       </div>
 

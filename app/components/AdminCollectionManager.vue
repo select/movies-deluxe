@@ -158,8 +158,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Collection } from '~/types/collections'
-
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
 
