@@ -93,6 +93,17 @@
           <div class="i-mdi-close text-xs text-theme-text-muted hover:text-theme-accent" />
         </button>
       </div>
+
+      <!-- GitHub Link -->
+      <a
+        href="https://github.com/select/movies-deluxe"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors"
+        title="View on GitHub"
+      >
+        <div class="i-mdi-github text-xl" />
+      </a>
     </div>
   </aside>
 
@@ -190,6 +201,17 @@
           <div class="i-mdi-close text-sm text-theme-text-muted hover:text-theme-accent" />
         </button>
       </div>
+
+      <!-- GitHub Link -->
+      <a
+        href="https://github.com/select/movies-deluxe"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors"
+        aria-label="View on GitHub"
+      >
+        <div class="i-mdi-github text-2xl" />
+      </a>
     </div>
   </aside>
 </template>
