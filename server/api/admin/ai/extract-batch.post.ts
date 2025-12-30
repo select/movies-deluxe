@@ -69,9 +69,6 @@ export default defineEventHandler(async event => {
 
         if (extracted?.title) {
           ;(movie as MovieEntry).ai = extracted
-          if ((movie as MovieEntry).redirect) {
-            delete (movie as MovieEntry).redirect
-          }
           successCount++
         } else {
           failedCount++

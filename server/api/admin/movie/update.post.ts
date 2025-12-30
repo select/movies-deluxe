@@ -33,7 +33,6 @@ export default defineEventHandler(async event => {
     if (removeMetadata) {
       delete movie.metadata
       delete movie.ai
-      delete movie.redirect
       movie.verified = false
 
       // If it was matched to an IMDB ID, migrate it back to a temporary ID
@@ -102,11 +101,6 @@ export default defineEventHandler(async event => {
 
     if (ai !== undefined) {
       movie.ai = ai
-
-      // Remove redirect flag when AI extraction succeeds
-      if (ai?.title) {
-        delete movie.redirect
-      }
     }
 
     movie.lastUpdated = new Date().toISOString()
