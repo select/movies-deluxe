@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-30T00:47:00.264Z"
+    "lastUpdated": "2025-12-30T02:39:46.659Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -94,6 +94,22 @@
     "name": "Animation Shorts",
     "description": "Golden age animation shorts including Popeye, Betty Boop, and other classic cartoons.",
     "movieIds": [
+      "tt0022960",
+      "tt0019714",
+      "tt0021689",
+      "tt0021690",
+      "tt0022715",
+      "tt0146594",
+      "tt0023067",
+      "tt0022045",
+      "tt28335389",
+      "tt0022231",
+      "tt0305983",
+      "tt0024555",
+      "tt0022506",
+      "tt0023591",
+      "tt0022528",
+      "tt0022584",
       "archive-betty-boop-1970s-redrawn-colorizations",
       "archive-doing-impossikible-stunts-1940-redrawn",
       "archive-felix-the-cat-bold-king-cole",
