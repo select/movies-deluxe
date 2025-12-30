@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-30T17:05:48.984Z"
+    "lastUpdated": "2025-12-30T17:52:37.277Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -74,7 +74,6 @@
       "tt0004210",
       "tt0004277",
       "tt0007145",
-      "tt0013450",
       "tt0015841",
       "tt0013486",
       "tt0029430",
@@ -87,7 +86,7 @@
       "tt0004637"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2025-12-29T14:53:16.546Z"
+    "updatedAt": "2025-12-30T17:52:37.277Z"
   },
   "animation-shorts": {
     "id": "animation-shorts",
