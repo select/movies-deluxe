@@ -10,21 +10,11 @@
     <!-- Filter Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
       ref="filterMenuRef"
-      :class="[
-        'fixed z-50',
-        'transition-all duration-300 ease-in-out',
-        'glass',
-        'shadow-2xl',
-        'overflow-hidden flex flex-col',
-        // Mobile: Bottom sheet (< md breakpoint)
-        'bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh]',
-        // Desktop: Left sidebar (>= md breakpoint)
-        'md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:max-h-full',
-        // Animation: translateY for mobile, translateX for desktop
-        isOpen
-          ? 'translate-y-0 md:translate-x-0'
-          : 'translate-y-full md:translate-y-0 md:-translate-x-full',
-      ]"
+      class="fixed z-50 transition-all duration-300 ease-in-out glass shadow-2xl overflow-hidden flex flex-col bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh] md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:max-h-full"
+      :class="{
+        'translate-y-0 md:translate-x-0': isOpen,
+        'translate-y-full md:translate-y-0 md:-translate-x-full': !isOpen
+      }"
     >
       <!-- Mobile Close Button (fixed position, same as menu button) -->
       <button
@@ -171,23 +161,21 @@
                 <button
                   v-for="genre in genres"
                   :key="genre.name"
-                  :class="[
-                    'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
-                    filters.genres.includes(genre.name)
-                      ? 'bg-theme-primary text-white'
-                      : 'bg-theme-selection text-theme-text hover:bg-theme-border/50'
-                  ]"
+                  class="px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5"
+                  :class="{
+                    'bg-theme-primary text-white': filters.genres.includes(genre.name),
+                    'bg-theme-selection text-theme-text hover:bg-theme-border/50': !filters.genres.includes(genre.name)
+                  }"
                   :title="`${formatCountExact(genre.count)} movies`"
                   @click="toggleGenre(genre.name)"
                 >
                   <span>{{ genre.name }}</span>
                   <span
-                    :class="[
-                      'text-xs font-normal',
-                      filters.genres.includes(genre.name)
-                        ? 'text-white/80'
-                        : 'text-theme-text-muted'
-                    ]"
+                    class="text-xs font-normal"
+                    :class="{
+                      'text-white/80': filters.genres.includes(genre.name),
+                      'text-theme-text-muted': !filters.genres.includes(genre.name)
+                    }"
                   >
                     {{ formatCount(genre.count) }}
                   </span>
@@ -207,23 +195,21 @@
                 <button
                   v-for="country in countries"
                   :key="country.name"
-                  :class="[
-                    'px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5',
-                    filters.countries.includes(country.name)
-                      ? 'bg-theme-primary text-white'
-                      : 'bg-theme-selection text-theme-text hover:bg-theme-border/50'
-                  ]"
+                  class="px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5"
+                  :class="{
+                    'bg-theme-primary text-white': filters.countries.includes(country.name),
+                    'bg-theme-selection text-theme-text hover:bg-theme-border/50': !filters.countries.includes(country.name)
+                  }"
                   :title="`${formatCountExact(country.count)} movies`"
                   @click="toggleCountry(country.name)"
                 >
                   <span>{{ country.name }}</span>
                   <span
-                    :class="[
-                      'text-xs font-normal',
-                      filters.countries.includes(country.name)
-                        ? 'text-white/80'
-                        : 'text-theme-text-muted'
-                    ]"
+                    class="text-xs font-normal"
+                    :class="{
+                      'text-white/80': filters.countries.includes(country.name),
+                      'text-theme-text-muted': !filters.countries.includes(country.name)
+                    }"
                   >
                     {{ formatCount(country.count) }}
                   </span>
@@ -309,12 +295,11 @@
                   <button
                     v-for="theme in darkThemes"
                     :key="theme.metadata.id"
-                    :class="[
-                      'flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left',
-                      currentThemeId === theme.metadata.id
-                        ? 'border-theme-primary bg-theme-primary/10'
-                        : 'border-theme-border/50 hover:border-theme-border bg-theme-surface/50'
-                    ]"
+                    class="flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left"
+                    :class="{
+                      'border-theme-primary bg-theme-primary/10': currentThemeId === theme.metadata.id,
+                      'border-theme-border/50 hover:border-theme-border bg-theme-surface/50': currentThemeId !== theme.metadata.id
+                    }"
                     @click="setTheme(theme.metadata.id)"
                     @mouseenter="previewTheme(theme.metadata.id)"
                     @mouseleave="previewTheme(null)"
@@ -356,12 +341,11 @@
                   <button
                     v-for="theme in lightThemes"
                     :key="theme.metadata.id"
-                    :class="[
-                      'flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left',
-                      currentThemeId === theme.metadata.id
-                        ? 'border-theme-primary bg-theme-primary/10'
-                        : 'border-theme-border/50 hover:border-theme-border bg-theme-surface/50'
-                    ]"
+                    class="flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left"
+                    :class="{
+                      'border-theme-primary bg-theme-primary/10': currentThemeId === theme.metadata.id,
+                      'border-theme-border/50 hover:border-theme-border bg-theme-surface/50': currentThemeId !== theme.metadata.id
+                    }"
                     @click="setTheme(theme.metadata.id)"
                     @mouseenter="previewTheme(theme.metadata.id)"
                     @mouseleave="previewTheme(null)"

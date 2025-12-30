@@ -170,10 +170,10 @@
                   @click="toggleLiked"
                 >
                   <div
-                    :class="[
-                      'i-mdi-heart text-lg',
-                      isLiked ? 'text-theme-accent' : ''
-                    ]"
+                    class="i-mdi-heart text-lg"
+                    :class="{
+                      'text-theme-accent': isLiked
+                    }"
                   />
                   {{ isLiked ? 'Liked' : 'Like' }}
                 </button>
@@ -272,11 +272,10 @@
                 v-for="(source, index) in movie.sources"
                 :key="source.id"
                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
-                :class="[
-                  selectedSourceIndex === index
-                    ? 'bg-theme-primary border-theme-primary text-white'
-                    : 'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection'
-                ]"
+                :class="{
+                  'bg-theme-primary border-theme-primary text-white': selectedSourceIndex === index,
+                  'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection': selectedSourceIndex !== index
+                }"
                 @click="selectedSourceIndex = index"
               >
                 <div class="flex items-center gap-2">

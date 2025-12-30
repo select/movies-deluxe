@@ -3,8 +3,8 @@
     <div class="flex items-center justify-between mb-2">
       <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ title }}</span>
       <div
-        :class="[icon, iconColor]"
         class="text-xl"
+        :class="[icon, iconColor]"
       />
     </div>
     <div class="text-2xl font-bold flex items-baseline gap-2">

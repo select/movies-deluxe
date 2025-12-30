@@ -1,9 +1,10 @@
 <template>
   <button
-    :class="[
-      'rounded-full bg-theme-surface hover:bg-theme-selection transition-all duration-300 border border-theme-border/50',
-      compact ? 'p-1.5' : 'p-2'
-    ]"
+    class="rounded-full bg-theme-surface hover:bg-theme-selection transition-all duration-300 border border-theme-border/50"
+    :class="{
+      'p-1.5': compact,
+      'p-2': !compact
+    }"
     aria-label="Open theme selection"
   >
     <div

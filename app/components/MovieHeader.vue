@@ -9,10 +9,11 @@
     >
       <NuxtLink to="/">
         <h1
-          :class="[
-            'font-bold text-theme-text transition-all duration-300',
-            isHeroPage ? 'text-3xl md:text-5xl lg:text-6xl' : 'text-xl md:text-2xl'
-          ]"
+          class="font-bold text-theme-text transition-all duration-300"
+          :class="{
+            'text-3xl md:text-5xl lg:text-6xl': isHeroPage,
+            'text-xl md:text-2xl': !isHeroPage
+          }"
         >
           Movies Deluxe
         </h1>
