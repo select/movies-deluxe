@@ -58,6 +58,12 @@ export interface ScrapeStats {
     filesInDirectory: number
     matchedPosters: number
   }
+  ai: {
+    totalUnmatched: number
+    withAiData: number
+    withoutAiData: number
+    percent: number
+  }
   lastUpdated?: string
 }
 

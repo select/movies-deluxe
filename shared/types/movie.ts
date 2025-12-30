@@ -113,6 +113,7 @@ export interface MovieEntry {
   metadata?: MovieMetadata
   verified?: boolean // Whether this entry has been manually verified by a human
   ai?: AIMetadata // AI-extracted metadata from Ollama (for unmatched movies with promotional titles)
+  redirect?: boolean // Whether this movie should redirect to another ID
   lastUpdated: string // ISO 8601 timestamp
 }
 
