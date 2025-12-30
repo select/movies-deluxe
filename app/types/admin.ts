@@ -6,14 +6,22 @@ export interface ScrapeStats {
     archiveOrgSources: number
     youtubeSources: number
     curatedCount: number
+    collections: Record<string, number>
+    youtubeChannels: Array<{
+      id: string
+      name: string
+      language?: string
+      enabled: boolean
+      scraped: number
+    }>
   }
   external: {
     archiveOrg: {
       total: number
       scraped: number
       percent: number
-      failed?: number
-      failureRate?: number
+      failed: number
+      failureRate: number
     }
     youtube: {
       totalScraped: number
@@ -24,11 +32,12 @@ export interface ScrapeStats {
       channels: Array<{
         id: string
         name: string
+        language?: string
         enabled: boolean
         scraped: number
         total: number
-        failed?: number
-        failureRate?: number
+        failed: number
+        failureRate: number
       }>
     }
   }
@@ -42,8 +51,8 @@ export interface ScrapeStats {
     matched: number
     unmatched: number
     percent: number
-    failed?: number
-    failureRate?: number
+    failed: number
+    failureRate: number
   }
   posters: {
     totalMovies: number
@@ -52,7 +61,6 @@ export interface ScrapeStats {
     missing: number
     failed: number
     failureRate: number
-    percent: number
     percentOfMoviesWithUrl: number
     percentOfAllMovies: number
     filesInDirectory: number
@@ -64,7 +72,7 @@ export interface ScrapeStats {
     withoutAiData: number
     percent: number
   }
-  lastUpdated?: string
+  lastUpdated: string
 }
 
 export interface ScrapeResults {
