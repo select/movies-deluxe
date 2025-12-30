@@ -1,8 +1,5 @@
-import puppeteer from 'puppeteer-extra'
-import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import puppeteer from 'puppeteer'
 import { defineEventHandler, getQuery, createError } from 'h3'
-
-puppeteer.use(StealthPlugin())
 
 export default defineEventHandler(async event => {
   const { q } = getQuery(event)
@@ -64,6 +61,8 @@ export default defineEventHandler(async event => {
 
       return items
     })
+    console.log('google q', q)
+    console.log('google results', results)
 
     // Filter and format results to match OMDB search format
     const formattedResults = results
