@@ -4,13 +4,13 @@
     class="flex flex-col border border-theme-border/50 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-theme-surface text-theme-text"
   >
     <!-- Poster -->
-    <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0">
+    <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
         v-if="movie.imdbId.startsWith('tt')"
         :src="`/posters/${movie.imdbId}.jpg`"
         :alt="getPrimaryTitle(movie)"
-        class="w-full h-full object-cover"
+        class="w-full h-full object-cover object-center"
         loading="lazy"
         @error="handlePosterError"
       >
