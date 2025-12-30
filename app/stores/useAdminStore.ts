@@ -11,7 +11,7 @@ import type {
 } from '~/types/admin'
 
 export interface ProgressUpdate {
-  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite'
+  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number
@@ -53,6 +53,12 @@ export const useAdminStore = defineStore('admin', () => {
     limit: 50,
     onlyUnmatched: true,
     forceRetryFailed: false,
+  })
+
+  const aiOptions = reactive({
+    limit: 100,
+    onlyUnmatched: true,
+    forceReExtract: false,
   })
 
   const updateProgress = (update: ProgressUpdate) => {
@@ -173,6 +179,24 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  const startAIExtraction = async () => {
+    scraping.value = true
+    try {
+      const response = await $fetch<{ success: boolean }>('/api/admin/ai/extract-batch', {
+        method: 'POST',
+        body: aiOptions,
+      })
+
+      if (response.success) {
+        await refreshStats()
+      }
+    } catch (error) {
+      console.error('AI extraction failed:', error)
+    } finally {
+      scraping.value = false
+    }
+  }
+
   const generateSqlite = async () => {
     generatingSqlite.value = true
     try {
@@ -274,6 +298,7 @@ export const useAdminStore = defineStore('admin', () => {
     youtubeOptions,
     posterOptions,
     omdbOptions,
+    aiOptions,
     updateProgress,
     clearProgress,
     loadYouTubeChannels,
@@ -282,6 +307,7 @@ export const useAdminStore = defineStore('admin', () => {
     startYouTubeScrape,
     startPosterDownload,
     startOMDBEnrichment,
+    startAIExtraction,
     generateSqlite,
     deduplicateDescriptions,
     totalExternalVideos,

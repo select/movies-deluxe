@@ -92,6 +92,11 @@ export default defineEventHandler(async _event => {
     }
   })
 
+  // AI extraction stats (count unmatched movies with AI data)
+  const unmatchedMovies = entries.filter(m => !m.imdbId.startsWith('tt'))
+  const withAiData = unmatchedMovies.filter(m => m.ai?.title).length
+  const withoutAiData = unmatchedMovies.length - withAiData
+
   const stats = {
     database: dbStats,
     external: {
@@ -134,6 +139,12 @@ export default defineEventHandler(async _event => {
         dbStats.matched + failedOmdb.length > 0
           ? (failedOmdb.length / (dbStats.matched + failedOmdb.length)) * 100
           : 0,
+    },
+    ai: {
+      totalUnmatched: unmatchedMovies.length,
+      withAiData,
+      withoutAiData,
+      percent: unmatchedMovies.length > 0 ? (withAiData / unmatchedMovies.length) * 100 : 0,
     },
     posters: {
       totalMovies: entries.length,

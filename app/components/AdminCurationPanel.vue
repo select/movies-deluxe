@@ -168,6 +168,67 @@
           </div>
         </div>
 
+        <!-- AI Metadata Extraction -->
+        <div class="pt-4 border-t border-yellow-200 dark:border-gray-700">
+          <div class="flex items-center gap-2 mb-2">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
+              AI Extract
+            </h3>
+            <div
+              v-if="movie.ai?.title"
+              class="flex items-center gap-1 text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded"
+            >
+              <div class="i-mdi-robot" />
+              AI Data Available
+            </div>
+          </div>
+
+          <!-- Show existing AI data if available -->
+          <div
+            v-if="movie.ai?.title"
+            class="mb-3 p-3 bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded"
+          >
+            <div class="flex items-start gap-2">
+              <div class="i-mdi-robot text-purple-600 dark:text-purple-400 text-lg mt-0.5" />
+              <div class="flex-1">
+                <p class="text-sm font-medium text-purple-800 dark:text-purple-300">
+                  AI Extracted: "{{ movie.ai.title }}"{{ movie.ai.year ? ` (${movie.ai.year})` : '' }}
+                </p>
+                <p class="text-xs text-purple-700 dark:text-purple-400 mt-1">
+                  Click "Extract with AI" to re-extract or use "Search OMDB" above with these values
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded font-bold transition-colors disabled:opacity-50"
+            :disabled="isAiExtracting || isSearching"
+            @click="extractWithAI"
+          >
+            <div
+              v-if="isAiExtracting"
+              class="i-mdi-loading animate-spin"
+            />
+            <div
+              v-else
+              class="i-mdi-robot"
+            />
+            <span>{{ movie.ai?.title ? 'Re-extract with AI' : 'Extract with AI' }}</span>
+          </button>
+
+          <div
+            v-if="aiError"
+            class="text-red-500 text-sm mt-2"
+          >
+            {{ aiError }}
+          </div>
+
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">
+            Uses Ollama AI to extract clean movie title and year from source data
+          </p>
+        </div>
+
         <div class="pt-4 border-t border-yellow-200 dark:border-gray-700 flex flex-wrap gap-4">
           <button
             v-if="!movie.verified"
@@ -373,6 +434,8 @@ const searchResults = ref<OMDBSearchResult[]>([])
 const googleResults = ref<OMDBSearchResult[]>([])
 const searchError = ref('')
 const sourceSearchTitles = reactive<Record<string, string>>({})
+const isAiExtracting = ref(false)
+const aiError = ref('')
 
 const initSourceSearchTitles = () => {
   props.movie.sources.forEach((source) => {
@@ -644,6 +707,54 @@ const verifyMovie = async () => {
     console.error('Failed to verify movie:', err)
   } finally {
     isSearching.value = false
+  }
+}
+
+const extractWithAI = async () => {
+  isAiExtracting.value = true
+  aiError.value = ''
+
+  try {
+    // Combine all source titles and descriptions
+    const titles = props.movie.sources.map(s => s.title).filter(Boolean)
+    const descriptions = props.movie.sources.map(s => s.description).filter(Boolean)
+
+    // Use first source for extraction (or combine if needed)
+    const title = titles[0] || props.movie.title
+    const description = descriptions[0] || ''
+
+    const response = await $fetch<{ success: boolean, data: { title: string, year?: number } }>('/api/admin/ai/extract-metadata', {
+      method: 'POST',
+      body: {
+        title,
+        description,
+      },
+    })
+
+    if (response.success && response.data) {
+      // Save AI data to movie
+      const updateRes = await $fetch<UpdateResponse>('/api/admin/movie/update', {
+        method: 'POST',
+        body: {
+          movieId: props.movie.imdbId,
+          ai: response.data,
+        },
+      })
+
+      if (updateRes.success) {
+        // Pre-fill OMDB search fields
+        searchTitle.value = response.data.title || ''
+        searchYear.value = response.data.year?.toString() || ''
+
+        emit('updated', updateRes.movieId)
+      }
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('AI extraction error:', err)
+    aiError.value = 'Failed to extract metadata with AI'
+  } finally {
+    isAiExtracting.value = false
   }
 }
 </script>
