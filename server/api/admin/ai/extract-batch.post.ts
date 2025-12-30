@@ -1,9 +1,5 @@
-import { defineEventHandler, readBody, createError } from 'h3'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
-import { extractMovieMetadata } from '../../../utils/ollama'
-import { emitProgress } from '../../../utils/progress'
-import type { MovieEntry } from '~/shared/types/movie'
 
 interface BatchOptions {
   limit?: number
@@ -35,7 +31,8 @@ export default defineEventHandler(async event => {
     let successCount = 0
     let failedCount = 0
 
-    emitProgress(event, 'ai', {
+    emitProgress({
+      type: 'ai',
       status: 'starting',
       message: 'Starting AI extraction...',
       current: 0,
@@ -58,7 +55,8 @@ export default defineEventHandler(async event => {
         const title = source.title || (movie as MovieEntry).title
         const description = source.description || ''
 
-        emitProgress(event, 'ai', {
+        emitProgress({
+          type: 'ai',
           status: 'in_progress',
           message: `Extracting: ${title.substring(0, 50)}...`,
           current,
@@ -71,7 +69,9 @@ export default defineEventHandler(async event => {
 
         if (extracted?.title) {
           ;(movie as MovieEntry).ai = extracted
-          delete (movie as MovieEntry).redirect
+          if ((movie as MovieEntry).redirect) {
+            delete (movie as MovieEntry).redirect
+          }
           successCount++
         } else {
           failedCount++
@@ -91,7 +91,8 @@ export default defineEventHandler(async event => {
     db._schema.lastUpdated = new Date().toISOString()
     await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
 
-    emitProgress(event, 'ai', {
+    emitProgress({
+      type: 'ai',
       status: 'completed',
       message: `Completed: ${successCount} successful, ${failedCount} failed`,
       current: total,
@@ -107,7 +108,8 @@ export default defineEventHandler(async event => {
       failed: failedCount,
     }
   } catch (error) {
-    emitProgress(event, 'ai', {
+    emitProgress({
+      type: 'ai',
       status: 'error',
       message: `Error: ${error instanceof Error ? error.message : String(error)}`,
       current: 0,
