@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import type { Collection } from '~/types/collections'
 
 export const useCollectionsStore = defineStore('collections', () => {
   const collections = ref<Map<string, Collection>>(new Map())

@@ -1,5 +1,8 @@
 <template>
   <div class="min-h-screen bg-theme-background text-theme-text transition-colors duration-300">
+    <!-- Sliding Search Header -->
+    <SearchHeader />
+
     <!-- Header -->
     <MovieHeader @open-filters="openThemeSelection" />
 
@@ -64,6 +67,25 @@ onKeyStroke('k', (e) => {
     if (!isTyping) {
       e.preventDefault()
       isFilterMenuOpen.value = !isFilterMenuOpen.value
+    }
+  }
+})
+
+const { setSearchOpen } = useUiStore()
+
+// 'S' key or '/' key opens search
+onKeyStroke(['s', 'S', '/'], (e) => {
+  const activeElement = window.document.activeElement
+  const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+  
+  if (!isTyping) {
+    // Only 'S' without modifiers or just '/'
+    if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault()
+      setSearchOpen(true)
+    } else if (e.key === '/') {
+      e.preventDefault()
+      setSearchOpen(true)
     }
   }
 })

@@ -4,12 +4,21 @@
     class="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-40 glass shadow-2xl rounded-full w-12 border-theme-border/30"
   >
     <div class="flex flex-col items-center gap-2 py-2">
+      <!-- Search -->
+      <button
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        title="Search (Shift+S)"
+        @click="setSearchOpen(true)"
+      >
+        <div class="i-mdi-magnify text-xl" />
+      </button>
+
       <!-- Home -->
       <NuxtLink
         to="/"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         title="All Movies"
-        :class="{ 'bg-theme-primary/20': $route.path === '/' }"
+        :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
         <div class="i-mdi-home text-xl" />
       </NuxtLink>
@@ -19,9 +28,9 @@
         to="/liked"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         title="Liked Movies"
-        :class="{ 'bg-theme-accent/20': $route.path === '/liked' }"
+        :class="{ 'bg-theme-accent/20': route.path === '/liked' }"
       >
-        <div class="i-mdi-heart text-xl" :class="{ 'text-theme-accent': $route.path === '/liked' }" />
+        <div class="i-mdi-heart text-xl" :class="{ 'text-theme-accent': route.path === '/liked' }" />
         <span
           v-if="likedCount > 0"
           class="absolute top-0 -right-1 bg-theme-accent text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
@@ -35,9 +44,9 @@
         to="/collections"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         title="Collections"
-        :class="{ 'bg-theme-primary/20': $route.path.startsWith('/collections') }"
+        :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
       >
-        <div class="i-mdi:movie-roll text-xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
+        <div class="i-mdi:movie-roll text-xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
       </NuxtLink>
 
       <!-- Filters -->
@@ -75,12 +84,21 @@
     class="md:hidden fixed bottom-6 right-6 z-50 glass shadow-2xl rounded-full h-14 border-theme-border/30"
   >
     <div class="flex items-center gap-2 px-2 h-full">
+      <!-- Search -->
+      <button
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
+        aria-label="Search"
+        @click="setSearchOpen(true)"
+      >
+        <div class="i-mdi-magnify text-2xl" />
+      </button>
+
       <!-- Home -->
       <NuxtLink
         to="/"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
         aria-label="All Movies"
-        :class="{ 'bg-theme-primary/20': $route.path === '/' }"
+        :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
         <div class="i-mdi-home text-2xl" />
       </NuxtLink>
@@ -91,9 +109,9 @@
         to="/liked"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         aria-label="Liked Movies"
-        :class="{ 'bg-theme-accent/20': $route.path === '/liked' }"
+        :class="{ 'bg-theme-accent/20': route.path === '/liked' }"
       >
-        <div class="i-mdi-heart text-2xl" :class="{ 'text-theme-accent': $route.path === '/liked' }" />
+        <div class="i-mdi-heart text-2xl" :class="{ 'text-theme-accent': route.path === '/liked' }" />
         <span
           v-if="likedCount > 0"
           class="absolute -top-1 -right-1 bg-theme-accent text-white text-xs rounded-full size-5 flex items-center justify-center font-medium"
@@ -107,9 +125,9 @@
         to="/collections"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         aria-label="Collections"
-        :class="{ 'bg-theme-primary/20': $route.path.startsWith('/collections') }"
+        :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
       >
-        <div class="i-mdi:movie-roll text-2xl" :class="{ 'text-theme-primary': $route.path.startsWith('/collections') }" />
+        <div class="i-mdi:movie-roll text-2xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
       </NuxtLink>
 
       <!-- Filters -->
@@ -150,6 +168,11 @@ const emit = defineEmits<{
 
 const movieStore = useMovieStore()
 const { likedCount, activeFiltersCount } = storeToRefs(movieStore)
+
+const uiStore = useUiStore()
+const { setSearchOpen } = uiStore
+
+const route = useRoute()
 
 const openFilters = () => {
   emit('openFilters')

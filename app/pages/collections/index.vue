@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
-    <div class="px-4 lg:px-[6%]">
+  <main class="md:ml-16">
+    <div class="px-4 lg:px-[6%] py-8">
       <!-- Header -->
       <div class="mb-10">
         <h1 class="text-3xl font-black text-theme-text mb-2 tracking-tight">
@@ -25,7 +25,7 @@
 
       <!-- Empty State -->
       <div
-        v-else-if="collectionsList.length === 0"
+        v-else-if="collections.size === 0"
         class="flex flex-col items-center justify-center py-20 text-center"
       >
         <div class="i-mdi:movie-roll text-6xl text-theme-text-muted mb-4 opacity-20" />
@@ -43,23 +43,21 @@
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
         <CollectionCard
-          v-for="collection in collectionsList"
+          v-for="collection in collections.values()"
           :key="collection.id"
           :collection="collection"
         />
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-const collectionsStore = useCollectionsStore()
-const { isLoading, collections } = storeToRefs(collectionsStore)
-
-const collectionsList = computed(() => Array.from(collections.value.values()))
+const { isLoading, collections } = storeToRefs(useCollectionsStore())
+const { loadCollections } = useCollectionsStore()
 
 onMounted(() => {
-  collectionsStore.loadCollections()
+  loadCollections()
 })
 
 useHead({
