@@ -45,8 +45,8 @@ async function testOmdbPosterApi() {
     console.log(`📥 Testing: ${testCase.name} (${testCase.imdbId})`)
 
     try {
-      // The downloadPoster function should now try OMDB Poster API first
-      const success = await downloadPoster(testCase.omdbUrl, testCase.imdbId, true, [])
+      // The downloadPoster function should now try OMDB Poster API first, then IMDB scraping
+      const success = await downloadPoster(testCase.imdbId, true)
 
       if (success) {
         console.log(`   ✅ Successfully downloaded poster\n`)

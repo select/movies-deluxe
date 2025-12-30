@@ -50,10 +50,10 @@ export default defineEventHandler(async event => {
       total,
     })
 
-    const posterUrl = movie.metadata!.Poster as string
+    // const posterUrl = movie.metadata!.Poster as string
 
     try {
-      const success = await downloadPoster(posterUrl, movie.imdbId, force, [])
+      const success = await downloadPoster(movie.imdbId, force)
       if (success) {
         results.successful++
       } else {

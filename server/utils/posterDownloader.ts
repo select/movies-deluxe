@@ -93,11 +93,91 @@ export function getFailedPosterDownloads(): FailedDownload[] {
   return []
 }
 
-export async function downloadPoster(
-  imdbId: string,
-  force: boolean = false,
-  fallbackUrls: string[] = []
-): Promise<boolean> {
+/**
+ * Fetch HTML content from URL with proper headers
+ */
+async function fetchHtml(url: string, timeout: number = 30000): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const options = {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    }
+
+    const request = https.get(url, options, response => {
+      // Handle redirects
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        const redirectUrl = response.headers.location
+        if (redirectUrl) {
+          fetchHtml(redirectUrl, timeout).then(resolve).catch(reject)
+          return
+        }
+      }
+
+      // Check status code
+      if (response.statusCode !== 200) {
+        reject(new Error(`HTTP ${response.statusCode}: ${response.statusMessage}`))
+        return
+      }
+
+      let html = ''
+      response.on('data', chunk => {
+        html += chunk
+      })
+
+      response.on('end', () => {
+        resolve(html)
+      })
+    })
+
+    request.on('error', reject)
+    request.setTimeout(timeout, () => {
+      request.destroy()
+      reject(new Error('Request timeout'))
+    })
+  })
+}
+
+/**
+ * Extract poster URL from IMDB page HTML
+ */
+function extractPosterUrl(html: string): string | null {
+  // Look for the first ipc-image with loading="eager" (usually the poster)
+  const posterRegex = /class="ipc-image"\s+loading="eager"\s+src="([^"]+)"/
+  const match = html.match(posterRegex)
+
+  if (match && match[1]) {
+    // Get the URL and try to get a higher quality version
+    let url = match[1]
+
+    // IMDB URLs often have quality parameters like _V1_QL75_UY281_CR45,0,190,281_.jpg
+    // We can try to get a larger version by modifying these parameters
+    // Replace with higher quality: _V1_SX300.jpg (similar to OMDB)
+    url = url.replace(/_V1_[^.]+\.jpg/, '_V1_SX300.jpg')
+
+    return url
+  }
+
+  return null
+}
+
+/**
+ * Scrape poster URL from IMDB page
+ */
+async function scrapeImdbPoster(imdbId: string): Promise<string | null> {
+  try {
+    const imdbUrl = `https://www.imdb.com/title/${imdbId}/`
+    const html = await fetchHtml(imdbUrl)
+    return extractPosterUrl(html)
+  } catch {
+    return null
+  }
+}
+
+export async function downloadPoster(imdbId: string, force: boolean = false): Promise<boolean> {
   if (!imdbId) return false
 
   const postersDir = join(process.cwd(), 'public/posters')
@@ -124,15 +204,14 @@ export async function downloadPoster(
     }
   }
 
-  // 3. Add any additional fallback URLs
-  urlsToTry.push(...fallbackUrls.filter(u => u && u !== 'N/A'))
-
   // If no URLs to try, fail early
   if (urlsToTry.length === 0) {
     return false
   }
 
   let lastError: string = ''
+
+  // Try OMDB Poster API first
   for (let i = 0; i < urlsToTry.length; i++) {
     const currentUrl = urlsToTry[i]!
     const isOmdbApi = currentUrl.includes('img.omdbapi.com')
@@ -160,17 +239,41 @@ export async function downloadPoster(
       if (fs.existsSync(filepath)) {
         fs.unlinkSync(filepath)
       }
-      // Continue to next URL
+      // Continue to next method
     }
   }
 
-  // All URLs failed
+  // 2. If OMDB API failed and this is an IMDB ID, try scraping IMDB page
+  if (imdbId.startsWith('tt')) {
+    try {
+      console.log(`Trying IMDB scraping fallback for ${imdbId}`)
+      const scrapedUrl = await scrapeImdbPoster(imdbId)
+
+      if (scrapedUrl) {
+        await downloadImageOnce(scrapedUrl, filepath, 30000)
+        removeFailedDownload(imdbId)
+        console.log(`✅ Successfully downloaded from IMDB scraping for ${imdbId}`)
+        return true
+      } else {
+        lastError = 'No poster found on IMDB page'
+        console.error(`Failed IMDB scraping for ${imdbId}: ${lastError}`)
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error)
+      console.error(`Failed IMDB scraping for ${imdbId}:`, lastError)
+      if (fs.existsSync(filepath)) {
+        fs.unlinkSync(filepath)
+      }
+    }
+  }
+
+  // All methods failed
   console.error(
-    `Failed to download poster for ${imdbId} (tried ${urlsToTry.length} URLs):`,
+    `Failed to download poster for ${imdbId} (tried ${urlsToTry.length + 1} methods):`,
     lastError
   )
-  // Track failed download with the original URL (or first URL tried)
-  const urlToLog = url && url !== 'N/A' ? url : urlsToTry[0] || 'N/A'
+  // Track failed download with the first URL tried
+  const urlToLog = urlsToTry[0] || 'N/A'
   saveFailedDownload(imdbId, urlToLog, lastError)
   return false
 }
