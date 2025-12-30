@@ -70,17 +70,15 @@ export default defineEventHandler(async event => {
         if (extracted?.title) {
           ;(movie as MovieEntry).ai = extracted
           successCount++
+
+          // Save immediately after each successful extraction to prevent data loss
+          await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
         } else {
           failedCount++
         }
       } catch (error) {
         console.error(`AI extraction failed for ${id}:`, error)
         failedCount++
-      }
-
-      // Save periodically (every 10 movies)
-      if (current % 10 === 0) {
-        await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
       }
     }
 
