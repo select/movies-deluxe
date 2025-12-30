@@ -103,7 +103,7 @@ export default defineEventHandler(async event => {
       // We don't await this to avoid blocking the response,
       // but we could if we want to ensure it's done.
       // For curation, it's better to at least start it.
-      downloadPoster(posterUrl, finalId).catch(err => {
+      downloadPoster(finalId).catch(err => {
         console.error('Background poster download failed:', err)
       })
     }
