@@ -25,7 +25,7 @@ export default {
     'scope-empty': [0], // Allow commits without scope
 
     // Subject: The commit message itself
-    'subject-case': [2, 'always', 'lower-case'],
+    'subject-case': [2, 'always', 'sentence-case'],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
 

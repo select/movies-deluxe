@@ -5,13 +5,22 @@
   >
     <!-- Poster -->
     <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
+      <!-- Shimmer loading state -->
+      <div
+        v-if="movie.imdbId.startsWith('tt')"
+        class="absolute inset-0 shimmer z-10 transition-opacity duration-500"
+        :class="{ 'opacity-0 pointer-events-none': imageLoaded, 'opacity-100': !imageLoaded }"
+      />
+
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
         v-if="movie.imdbId.startsWith('tt')"
         :src="`/posters/${movie.imdbId}.jpg`"
         :alt="getPrimaryTitle(movie)"
-        class="w-full h-full object-cover object-center"
+        class="w-full h-full object-cover object-center transition-opacity duration-700"
+        :class="{ 'opacity-0': !imageLoaded, 'opacity-100': imageLoaded }"
         loading="lazy"
+        @load="imageLoaded = true"
         @error="handlePosterError"
       >
       <!-- Icon fallback for movies without local posters -->
@@ -23,19 +32,22 @@
       </div>
 
       <!-- Badges -->
-      <div class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
+      <div
+        v-if="hasFullData"
+        class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end"
+      >
         <!-- Source Badge -->
         <span
-          v-if="movie.sources[0]?.type === 'archive.org'"
+          v-if="firstSource?.type === 'archive.org'"
           class="px-1.5 py-0.5 text-[10px] rounded-full glass text-gray-800 dark:text-white font-medium"
         >
           Archive.org
         </span>
         <span
-          v-else-if="movie.sources[0]?.type === 'youtube'"
+          v-else-if="firstSource?.type === 'youtube'"
           class="px-1.5 py-0.5 text-[10px] rounded-full glass text-red-600 dark:text-red-400 font-bold"
         >
-          {{ movie.sources[0].channelName || 'YouTube' }}
+          {{ firstSource.channelName || 'YouTube' }}
         </span>
 
         <!-- Language Badge -->
@@ -81,20 +93,20 @@
       <div class="flex items-center gap-1.5 text-[11px] text-theme-textmuted font-medium">
         <span v-if="movie.year">{{ movie.year }}</span>
         <span
-          v-if="movie.year && movie.metadata?.imdbRating"
+          v-if="movie.year && metadata?.imdbRating"
           class="opacity-50"
         >•</span>
         <span
-          v-if="movie.metadata?.imdbRating"
+          v-if="metadata?.imdbRating"
           class="flex items-center gap-1"
         >
           <div class="i-mdi-star text-theme-accent text-xs" />
-          <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
+          <span class="font-bold text-theme-text">{{ metadata.imdbRating }}</span>
           <span
-            v-if="movie.metadata?.imdbVotes"
+            v-if="metadata?.imdbVotes"
             class="text-[10px] opacity-70"
           >
-            ({{ formatVotes(movie.metadata.imdbVotes) }})
+            ({{ formatVotes(metadata.imdbVotes) }})
           </span>
         </span>
       </div>
@@ -103,10 +115,10 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry } from '~/types'
+import type { MovieEntry, LightweightMovieEntry } from '~/types'
 
 interface Props {
-  movie: MovieEntry
+  movie: MovieEntry | LightweightMovieEntry
 }
 
 const props = defineProps<Props>()
@@ -114,16 +126,29 @@ const props = defineProps<Props>()
 const { isLiked: isLikedFn } = useMovieStore()
 const { getCollectionsForMovie } = useCollectionsStore()
 
+const imageLoaded = ref(false)
+
 // Check if movie is liked
 const isMovieLiked = computed(() => isLikedFn(props.movie.imdbId))
 
 // Get collections for this movie
 const movieCollections = computed(() => getCollectionsForMovie(props.movie.imdbId))
 
+// Helper to check if we have full movie data
+const hasFullData = computed(() => 'sources' in props.movie && props.movie.sources.length > 0)
+
+// Safe access to metadata
+const metadata = computed(() => 'metadata' in props.movie ? props.movie.metadata : undefined)
+
+// Safe access to sources
+const firstSource = computed(() => 'sources' in props.movie ? props.movie.sources[0] : undefined)
+
 // Computed language code
 const languageCode = computed(() => {
+  if (!hasFullData.value) return ''
+  
   // Get language from metadata (already normalized to 2-letter code in database)
-  const lang = props.movie.metadata?.Language
+  const lang = metadata.value?.Language
   if (lang) {
     // If it's already a 2-letter code, just uppercase it
     if (lang.length === 2) {
@@ -134,7 +159,7 @@ const languageCode = computed(() => {
   }
 
   // Fallback to source language (also normalized)
-  const sourceLang = props.movie.sources[0]?.language
+  const sourceLang = firstSource.value?.language
   if (sourceLang && sourceLang.length === 2) {
     return sourceLang.toUpperCase()
   }
@@ -144,6 +169,7 @@ const languageCode = computed(() => {
 
 // Handle poster loading errors
 const handlePosterError = (event: Event) => {
+  imageLoaded.value = true // Stop shimmer
   const img = event.target as HTMLImageElement
   // Hide the image and show icon fallback
   img.style.display = 'none'

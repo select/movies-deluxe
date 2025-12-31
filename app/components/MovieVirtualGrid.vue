@@ -9,31 +9,20 @@
       :style="{ height: `${visibleRows[0].top}px` }"
     />
 
-    <!-- Visible rows -->
-    <div
-      v-for="row in visibleRows"
-      :key="row.index"
-      :ref="row.index === 0 ? (el) => firstRowRef = el as HTMLElement : undefined"
-      class="grid gap-4 px-4 lg:px-[6%] mb-4"
-      :class="gridClass"
-    >
-      <!-- Show placeholder or full card based on debounced load state -->
-      <template
-        v-for="movie in row.movies"
-        :key="movie.imdbId"
+      <!-- Visible rows -->
+      <div
+        v-for="row in visibleRows"
+        :key="row.index"
+        :ref="row.index === 0 ? (el) => firstRowRef = el as HTMLElement : undefined"
+        class="grid gap-4 px-4 lg:px-[6%] mb-4"
+        :class="gridClass"
       >
-        <MovieCardPlaceholder
-          v-if="!fullyLoadedCards.has(movie.imdbId)"
-          :imdb-id="movie.imdbId"
-          :title="movie.title"
-          :year="movie.year"
-        />
         <MovieCard
-          v-else
+          v-for="movie in row.movies"
+          :key="movie.imdbId"
           :movie="getMovieEntry(movie)"
         />
-      </template>
-    </div>
+      </div>
 
     <!-- Spacer for rows after visible range -->
     <div
@@ -65,9 +54,6 @@ const breakpoints = useBreakpoints(breakpointsTailwind)
 // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
 const loadedMovies = shallowRef<Map<string, MovieEntry>>(new Map())
 const loadingIds = ref<Set<string>>(new Set())
-
-// Track which cards should show full content
-const fullyLoadedCards = ref<Set<string>>(new Set())
 
 const cols = computed(() => {
   if (breakpoints.xl.value) return 6
@@ -192,12 +178,6 @@ watch(visibleMovieIds, async (newIds) => {
   )
 
   if (idsToLoad.length === 0) {
-    // All visible movies are already loaded, mark them as fully loaded
-    newIds.forEach(id => {
-      if (loadedMovies.value.has(id)) {
-        fullyLoadedCards.value.add(id)
-      }
-    })
     return
   }
 
@@ -208,8 +188,6 @@ watch(visibleMovieIds, async (newIds) => {
     const movies = await fetchMoviesByIds(idsToLoad)
     movies.forEach(movie => {
       loadedMovies.value.set(movie.imdbId, movie)
-      // Mark as fully loaded immediately after loading
-      fullyLoadedCards.value.add(movie.imdbId)
     })
   } catch (err) {
     window.console.error('Failed to load movie details:', err)
