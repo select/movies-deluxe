@@ -30,7 +30,7 @@
             v-else
             class="text-center py-12"
           >
-            <p class="text-theme-text-muted">
+            <p class="text-theme-textmuted">
               No movies found.
             </p>
           </div>
@@ -85,20 +85,20 @@ onMounted(async () => {
   if (savedPage.value > 1) {
     setCurrentPage(savedPage.value)
   }
-  
+
   await loadFromFile()
-  
+
   // Restore scroll position after content loads
   // Need multiple nextTick calls to wait for virtual grid to render
   await nextTick()
   await nextTick()
-  
+
   const savedScrollY = filters.value.lastScrollY
   if (savedScrollY > 0) {
     // Use requestAnimationFrame to ensure DOM is fully painted
     requestAnimationFrame(() => {
       window.scrollTo({ top: savedScrollY, behavior: 'instant' })
-      
+
       // Verify scroll happened, retry if needed
       setTimeout(() => {
         if (Math.abs(window.scrollY - savedScrollY) > 10) {

@@ -3,7 +3,7 @@
     class="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full text-xs font-medium transition-colors w-full border border-theme-border/50"
     :class="{
       'bg-theme-primary text-white border-theme-primary': isActive,
-      'bg-theme-surface text-theme-text-muted hover:bg-theme-selection hover:border-theme-border': !isActive
+      'bg-theme-surface text-theme-textmuted hover:bg-theme-selection hover:border-theme-border': !isActive
     }"
     @click="$emit('select', option)"
   >
@@ -13,7 +13,7 @@
       :class="{
         [getSortIcon()]: true,
         'text-white': isActive,
-        'text-theme-text-muted': !isActive
+        'text-theme-textmuted': !isActive
       }"
     />
 

@@ -2,7 +2,7 @@
   <main class="md:ml-16">
     <div class="px-4 lg:px-[6%] py-8">
       <!-- Breadcrumbs -->
-      <nav class="flex mb-6 text-sm font-medium text-theme-text-muted">
+      <nav class="flex mb-6 text-sm font-medium text-theme-textmuted">
         <NuxtLink
           to="/collections"
           class="hover:text-theme-accent transition-colors flex items-center gap-1"
@@ -24,7 +24,7 @@
             <h1 class="text-4xl font-black text-theme-text mb-3 tracking-tight">
               {{ collection.name }}
             </h1>
-            <p class="text-lg text-theme-text-muted max-w-3xl leading-relaxed">
+            <p class="text-lg text-theme-textmuted max-w-3xl leading-relaxed">
               {{ collection.description }}
             </p>
           </div>
@@ -63,11 +63,11 @@
         v-else
         class="flex flex-col items-center justify-center py-20 text-center"
       >
-        <div class="i-mdi-movie-open-outline text-6xl text-theme-text-muted mb-4 opacity-20" />
+        <div class="i-mdi-movie-open-outline text-6xl text-theme-textmuted mb-4 opacity-20" />
         <h3 class="text-xl font-bold text-theme-text mb-2">
           {{ hasActiveFilters ? 'No movies match your filters' : 'No movies in this collection' }}
         </h3>
-        <p class="text-theme-text-muted mb-8">
+        <p class="text-theme-textmuted mb-8">
           {{ hasActiveFilters ? 'Try adjusting your search or filter criteria.' : 'This collection is currently empty.' }}
         </p>
         <button

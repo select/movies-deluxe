@@ -13,10 +13,10 @@
       <div class="flex items-center gap-2">
         <div
           v-if="icon"
-          class="text-base text-theme-text-muted"
+          class="text-base text-theme-textmuted"
           :class="icon"
         />
-        <h3 class="font-bold text-[10px] uppercase tracking-wider text-theme-text-muted">
+        <h3 class="font-bold text-[10px] uppercase tracking-wider text-theme-textmuted">
           {{ title }}
         </h3>
       </div>

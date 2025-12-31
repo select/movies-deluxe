@@ -90,7 +90,7 @@
           title="Clear all filters"
           @click.stop="clearFilters"
         >
-          <div class="i-mdi-close text-xs text-theme-text-muted hover:text-theme-accent" />
+          <div class="i-mdi-close text-xs text-theme-textmuted hover:text-theme-accent" />
         </button>
       </div>
 
@@ -198,7 +198,7 @@
           aria-label="Clear all filters"
           @click.stop="clearFilters"
         >
-          <div class="i-mdi-close text-sm text-theme-text-muted hover:text-theme-accent" />
+          <div class="i-mdi-close text-sm text-theme-textmuted hover:text-theme-accent" />
         </button>
       </div>
 

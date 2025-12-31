@@ -14,7 +14,7 @@
       <div class="max-w-4xl mx-auto flex items-center gap-4">
         <div class="relative flex-1">
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-2xl text-theme-text-muted" />
+            <div class="i-mdi-magnify text-2xl text-theme-textmuted" />
           </div>
           <input
             ref="searchInput"
@@ -30,11 +30,11 @@
             class="absolute inset-y-0 right-0 pr-4 flex items-center"
             @click="searchQuery = ''"
           >
-            <div class="i-mdi-close text-xl text-theme-text-muted hover:text-theme-text" />
+            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text" />
           </button>
         </div>
         <button
-          class="p-2 md:p-3 rounded-xl hover:bg-theme-background text-theme-text-muted hover:text-theme-text transition-colors"
+          class="p-2 md:p-3 rounded-xl hover:bg-theme-background text-theme-textmuted hover:text-theme-text transition-colors"
           title="Close search"
           @click="setSearchOpen(false)"
         >
@@ -66,12 +66,12 @@ watch(() => filters.value.searchQuery, (newVal) => {
 // Update store when local query changes
 watch(searchQuery, (newVal) => {
   setSearchQuery(newVal)
-  
+
   // If searching from another page, navigate to home
   if (newVal && route.path !== '/') {
     navigateTo('/')
   }
-  
+
   if (newVal && filters.value.sort.field !== 'relevance') {
     setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
   }

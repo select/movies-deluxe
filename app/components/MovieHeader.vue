@@ -20,7 +20,7 @@
       </NuxtLink>
       <p
         v-if="isHeroPage"
-        class="text-base md:text-lg text-theme-text-muted mt-2 max-w-2xl transition-opacity duration-300"
+        class="text-base md:text-lg text-theme-textmuted mt-2 max-w-2xl transition-opacity duration-300"
       >
         Free legal movie streams from Archive.org and YouTube
       </p>

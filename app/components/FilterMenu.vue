@@ -77,7 +77,7 @@
             >
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-theme-text-muted">Min:</span>
+                  <span class="text-theme-textmuted">Min:</span>
                   <span class="font-medium text-theme-text">{{ filters.minRating.toFixed(1) }}+</span>
                 </div>
                 <input
@@ -89,7 +89,7 @@
                   class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
                   @input="(e) => setMinRating(Number((e.target as HTMLInputElement).value))"
                 >
-                <div class="flex justify-between text-xs text-theme-text-muted">
+                <div class="flex justify-between text-xs text-theme-textmuted">
                   <span>0</span>
                   <span>5</span>
                   <span>10</span>
@@ -104,7 +104,7 @@
             >
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-theme-text-muted">From:</span>
+                  <span class="text-theme-textmuted">From:</span>
                   <span class="font-medium text-theme-text">{{ filters.minYear || '1910' }}+</span>
                 </div>
                 <input
@@ -116,7 +116,7 @@
                   class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
                   @input="(e) => setMinYear(Number((e.target as HTMLInputElement).value))"
                 >
-                <div class="flex justify-between text-xs text-theme-text-muted">
+                <div class="flex justify-between text-xs text-theme-textmuted">
                   <span>1910</span>
                   <span>1970</span>
                   <span>2025</span>
@@ -131,7 +131,7 @@
             >
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-theme-text-muted">Min:</span>
+                  <span class="text-theme-textmuted">Min:</span>
                   <span class="font-medium text-theme-text">{{ filters.minVotes.toLocaleString() }}+</span>
                 </div>
                 <input
@@ -154,7 +154,7 @@
               title="Genres"
               icon="i-mdi-movie-filter"
             >
-              <div v-if="isLoadingFilters" class="text-sm text-theme-text-muted">
+              <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
                 Loading genres...
               </div>
               <CollapsibleFilterItems v-else ref="genresCollapsible" :max-lines="2">
@@ -174,7 +174,7 @@
                     class="text-xs font-normal"
                     :class="{
                       'text-white/80': filters.genres.includes(genre.name),
-                      'text-theme-text-muted': !filters.genres.includes(genre.name)
+                      'text-theme-textmuted': !filters.genres.includes(genre.name)
                     }"
                   >
                     {{ formatCount(genre.count) }}
@@ -188,7 +188,7 @@
               title="Countries"
               icon="i-mdi-earth"
             >
-              <div v-if="isLoadingFilters" class="text-sm text-theme-text-muted">
+              <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
                 Loading countries...
               </div>
               <CollapsibleFilterItems v-else ref="countriesCollapsible" :max-lines="2">
@@ -208,7 +208,7 @@
                     class="text-xs font-normal"
                     :class="{
                       'text-white/80': filters.countries.includes(country.name),
-                      'text-theme-text-muted': !filters.countries.includes(country.name)
+                      'text-theme-textmuted': !filters.countries.includes(country.name)
                     }"
                   >
                     {{ formatCount(country.count) }}
@@ -234,10 +234,10 @@
 
                 <!-- YouTube Channels -->
                 <div class="pl-4 space-y-2 border-l-2 border-theme-border/50">
-                  <p class="text-xs text-theme-text-muted font-medium uppercase tracking-wide mb-2">
+                  <p class="text-xs text-theme-textmuted font-medium uppercase tracking-wide mb-2">
                     YouTube Channels
                   </p>
-                  <div v-if="isLoadingFilters" class="text-sm text-theme-text-muted">
+                  <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
                     Loading channels...
                   </div>
                   <AppInputCheckbox
@@ -250,7 +250,7 @@
                     <span class="flex items-center justify-between gap-2 flex-1">
                       <span class="text-theme-text">{{ channel.name }}</span>
                       <span
-                        class="text-xs text-theme-text-muted"
+                        class="text-xs text-theme-textmuted"
                         :title="`${formatCountExact(channel.count)} movies`"
                       >
                         {{ formatCount(channel.count) }}
@@ -287,7 +287,7 @@
             <div class="space-y-6">
               <!-- Dark Themes -->
               <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-3 flex items-center gap-2">
+                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
                   <div class="i-mdi-weather-night text-xs" />
                   Dark Themes
                 </h4>
@@ -333,7 +333,7 @@
 
               <!-- Light Themes -->
               <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-3 flex items-center gap-2">
+                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
                   <div class="i-mdi-weather-sunny text-xs" />
                   Light Themes
                 </h4>

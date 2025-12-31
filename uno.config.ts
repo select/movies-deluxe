@@ -45,8 +45,7 @@ export default defineConfig({
     // Skeleton loading styles
     skeleton: 'bg-theme-surface/50 animate-pulse',
     'skeleton-border': 'border-theme-border/30',
-    'movie-label':
-      'text-xs font-bold uppercase tracking-wider text-theme-text-muted opacity-80 mb-2',
+    'movie-label': 'text-xs font-bold uppercase tracking-wider text-theme-textmuted mb-2',
   },
   preflights: [
     {
@@ -169,7 +168,7 @@ export default defineConfig({
         background: 'var(--theme-background)',
         surface: 'var(--theme-surface)',
         text: 'var(--theme-text)',
-        textMuted: 'var(--theme-text-muted)',
+        textmuted: 'var(--theme-text-muted)',
         primary: 'var(--theme-primary)',
         secondary: 'var(--theme-secondary)',
         accent: 'var(--theme-accent)',

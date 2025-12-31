@@ -17,7 +17,7 @@
         >
         <div
           v-else
-          class="w-full h-full flex items-center justify-center text-theme-text-muted"
+          class="w-full h-full flex items-center justify-center text-theme-textmuted"
         >
           <div class="i-mdi-movie text-3xl" />
         </div>
@@ -35,7 +35,7 @@
         >
         <div
           v-else
-          class="w-full h-full flex items-center justify-center text-theme-text-muted"
+          class="w-full h-full flex items-center justify-center text-theme-textmuted"
         >
           <div class="i-mdi-movie text-3xl" />
         </div>
@@ -53,7 +53,7 @@
         >
         <div
           v-else
-          class="w-full h-full flex items-center justify-center text-theme-text-muted"
+          class="w-full h-full flex items-center justify-center text-theme-textmuted"
         >
           <div class="i-mdi-movie text-4xl" />
         </div>
@@ -70,7 +70,7 @@
       <h3 class="text-lg font-bold text-theme-text group-hover:text-theme-accent transition-colors">
         {{ collection.name }}
       </h3>
-      <p class="text-sm text-theme-text-muted line-clamp-2 leading-relaxed">
+      <p class="text-sm text-theme-textmuted line-clamp-2 leading-relaxed">
         {{ collection.description }}
       </p>
     </div>
