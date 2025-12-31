@@ -52,6 +52,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  icon: undefined,
   defaultExpanded: false,
   highlight: false,
 })
