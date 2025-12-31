@@ -59,6 +59,11 @@ export default withNuxt(
         {
           patterns: [
             {
+              group: ['~/stores/*', '~~/app/stores/*', '@/stores/*'],
+              message:
+                'Pinia stores from app/stores/ are auto-imported. Remove this import statement.',
+            },
+            {
               group: ['~/components/*', '~~/app/components/*', '@/components/*'],
               message:
                 'Components from app/components/ are auto-imported. Remove this import statement.',
@@ -86,7 +91,7 @@ export default withNuxt(
           paths: [
             {
               name: 'pinia',
-              importNames: ['storeToRefs', 'defineStore', 'acceptHMRUpdate'],
+              importNames: ['usePinia', 'storeToRefs', 'defineStore', 'acceptHMRUpdate'],
               message:
                 'Pinia helpers (storeToRefs, defineStore, acceptHMRUpdate) are auto-imported by Nuxt. Remove this import statement.',
             },
