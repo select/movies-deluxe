@@ -1,7 +1,12 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
-import { isImdbId, generateArchiveId, generateYouTubeId } from '../../../../shared/types/movie'
+import {
+  isImdbId,
+  generateArchiveId,
+  generateYouTubeId,
+  type MovieEntry,
+} from '../../../../shared/types/movie'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -36,7 +41,52 @@ export default defineEventHandler(async event => {
     }
 
     // Remove the source
-    movie.sources.splice(sourceIndex, 1)
+    const [removedSource] = movie.sources.splice(sourceIndex, 1)
+
+    // Recreate the removed source as a new standalone movie entry
+    // This ensures data is not lost when unlinking sources from a movie
+    let removedSourceTempId: string
+    if (removedSource.type === 'youtube') {
+      removedSourceTempId = generateYouTubeId(removedSource.id)
+    } else {
+      removedSourceTempId = generateArchiveId(removedSource.id)
+    }
+
+    // Only recreate if it's not the same as the current movie (which shouldn't happen)
+    if (removedSourceTempId !== movieId) {
+      if (!db[removedSourceTempId]) {
+        // Create new entry
+        const newEntry: MovieEntry = {
+          imdbId: removedSourceTempId,
+          title: removedSource.title,
+          sources: [removedSource],
+          lastUpdated: new Date().toISOString(),
+        }
+
+        // Try to preserve year if available
+        if (removedSource.type === 'youtube' && removedSource.releaseYear) {
+          newEntry.year = removedSource.releaseYear
+        } else if (removedSource.type === 'archive.org' && removedSource.releaseDate) {
+          try {
+            const year = new Date(removedSource.releaseDate).getFullYear()
+            if (!isNaN(year)) {
+              newEntry.year = year
+            }
+          } catch {
+            // Ignore invalid dates
+          }
+        }
+
+        db[removedSourceTempId] = newEntry
+      } else {
+        // If it already exists, merge the source if not already there
+        const existingMovie = db[removedSourceTempId] as MovieEntry
+        if (!existingMovie.sources.some(s => s.id === removedSource.id)) {
+          existingMovie.sources.push(removedSource)
+          existingMovie.lastUpdated = new Date().toISOString()
+        }
+      }
+    }
 
     let finalMovieId = movieId
     let deleted = false
