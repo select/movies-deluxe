@@ -146,7 +146,7 @@ const firstSource = computed(() => 'sources' in props.movie ? props.movie.source
 // Computed language code
 const languageCode = computed(() => {
   if (!hasFullData.value) return ''
-  
+
   // Get language from metadata (already normalized to 2-letter code in database)
   const lang = metadata.value?.Language
   if (lang) {

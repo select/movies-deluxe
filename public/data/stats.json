@@ -1,13 +1,13 @@
 {
   "database": {
-    "total": 31572,
-    "matched": 14870,
-    "unmatched": 16702,
-    "archiveOrgSources": 26791,
-    "youtubeSources": 11208,
-    "curatedCount": 14870,
+    "total": 31569,
+    "matched": 14866,
+    "unmatched": 16703,
+    "archiveOrgSources": 26790,
+    "youtubeSources": 11205,
+    "curatedCount": 14866,
     "collections": {
-      "feature_films": 26791
+      "feature_films": 26790
     },
     "youtubeChannels": [
       {
@@ -15,7 +15,7 @@
         "name": "Netzkino",
         "language": "de",
         "enabled": true,
-        "scraped": 2322
+        "scraped": 2321
       },
       {
         "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -36,7 +36,7 @@
         "name": "Movie Central",
         "language": "en",
         "enabled": true,
-        "scraped": 2380
+        "scraped": 2379
       },
       {
         "id": "UCOg0aMAXmF3o5m243PxhE5g",
@@ -57,7 +57,7 @@
         "name": "Moviedome",
         "language": "de",
         "enabled": true,
-        "scraped": 532
+        "scraped": 531
       },
       {
         "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -105,28 +105,28 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 26956,
-      "scraped": 26791,
-      "percent": 99.38789137854282,
+      "total": 26997,
+      "scraped": 26790,
+      "percent": 99.23324813868207,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11208,
-      "totalAvailable": 17888,
+      "totalScraped": 11205,
+      "totalAvailable": 17832,
       "totalFailed": 6022,
-      "failureRate": 34.950667440510735,
-      "percent": 62.65652951699463,
+      "failureRate": 34.95675393277994,
+      "percent": 62.83647375504711,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 2322,
-          "total": 2837,
+          "scraped": 2321,
+          "total": 2770,
           "failed": 435,
-          "failureRate": 15.778019586507073
+          "failureRate": 15.783744557329463
         },
         {
           "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
@@ -153,10 +153,10 @@
           "name": "Movie Central",
           "language": "en",
           "enabled": true,
-          "scraped": 2380,
-          "total": 2599,
+          "scraped": 2379,
+          "total": 2600,
           "failed": 205,
-          "failureRate": 7.930367504835589
+          "failureRate": 7.93343653250774
         },
         {
           "id": "UCOg0aMAXmF3o5m243PxhE5g",
@@ -183,10 +183,10 @@
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 532,
-          "total": 614,
+          "scraped": 531,
+          "total": 604,
           "failed": 106,
-          "failureRate": 16.614420062695924
+          "failureRate": 16.64050235478807
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -194,7 +194,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 1971,
-          "total": 3650,
+          "total": 3652,
           "failed": 1656,
           "failureRate": 45.6575682382134
         },
@@ -204,7 +204,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 179,
-          "total": 553,
+          "total": 558,
           "failed": 350,
           "failureRate": 66.1625708884688
         },
@@ -234,7 +234,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5066,
+          "total": 5073,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -244,7 +244,7 @@
           "language": "ko",
           "enabled": true,
           "scraped": 288,
-          "total": 598,
+          "total": 604,
           "failed": 310,
           "failureRate": 51.83946488294314
         }
@@ -252,35 +252,35 @@
     }
   },
   "curation": {
-    "total": 31572,
-    "curated": 14870,
-    "percent": 47.098695046243506
+    "total": 31569,
+    "curated": 14866,
+    "percent": 47.090500174221546
   },
   "omdb": {
-    "total": 31572,
-    "matched": 14870,
-    "unmatched": 16702,
-    "percent": 47.098695046243506,
+    "total": 31569,
+    "matched": 14866,
+    "unmatched": 16703,
+    "percent": 47.090500174221546,
     "failed": 16721,
-    "failureRate": 52.929631857174506
+    "failureRate": 52.93633456801848
   },
   "ai": {
-    "totalUnmatched": 16702,
-    "withAiData": 1,
-    "withoutAiData": 16701,
-    "percent": 0.005987306909352173
+    "totalUnmatched": 16703,
+    "withAiData": 3192,
+    "withoutAiData": 13511,
+    "percent": 19.11033945997725
   },
   "posters": {
-    "totalMovies": 31572,
-    "withPosterUrl": 13298,
-    "downloaded": 13286,
+    "totalMovies": 31569,
+    "withPosterUrl": 13294,
+    "downloaded": 13282,
     "missing": 12,
     "failed": 12,
-    "failureRate": 0.09023913370431644,
-    "percentOfMoviesWithUrl": 99.90976086629568,
-    "percentOfAllMovies": 42.08159128341569,
-    "filesInDirectory": 13341,
-    "matchedPosters": 13286
+    "failureRate": 0.09026628554234993,
+    "percentOfMoviesWithUrl": 99.90973371445764,
+    "percentOfAllMovies": 42.07291963635212,
+    "filesInDirectory": 13348,
+    "matchedPosters": 13282
   },
-  "lastUpdated": "2025-12-30T22:24:27.716Z"
+  "lastUpdated": "2026-01-01T22:15:28.143Z"
 }
