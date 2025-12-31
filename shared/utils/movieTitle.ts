@@ -12,9 +12,10 @@ export function getPrimaryTitle(movie: MovieEntry | { title: string }): string {
     return movie.title
   }
 
-  // Fallback for legacy data that might still have arrays
-  if (Array.isArray(movie.title) && (movie.title as any).length > 0) {
-    const firstTitle = (movie.title as any)[0]
+  // Fallback for legacy data that might still have arrays - use type assertion
+  const title = movie.title as unknown
+  if (Array.isArray(title) && title.length > 0) {
+    const firstTitle = title[0] as unknown
     return typeof firstTitle === 'string' ? firstTitle : ''
   }
 
@@ -35,7 +36,8 @@ export function getAllTitles(movie: MovieEntry | { title: string }): string[] {
 
   // Fallback for legacy data that might still have arrays
   if (Array.isArray(movie.title)) {
-    return (movie.title as any[]).filter((t: any) => typeof t === 'string' && t.length > 0)
+    const titleArray = movie.title as unknown[]
+    return titleArray.filter((t): t is string => typeof t === 'string' && t.length > 0)
   }
 
   return []

@@ -36,12 +36,12 @@ export default defineEventHandler(async event => {
       ...collection,
       movies,
     }
-  } catch (error: any) {
-    if (error.statusCode) throw error
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'statusCode' in error) throw error
 
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to load collection: ${error.message}`,
+      statusMessage: `Failed to load collection: ${error instanceof Error ? error.message : String(error)}`,
     })
   }
 })

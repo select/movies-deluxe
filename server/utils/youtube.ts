@@ -1,5 +1,10 @@
 import type { Innertube } from 'youtubei.js'
-import { generateYouTubeId, type YouTubeSource, type MovieEntry } from '../../shared/types/movie'
+import {
+  generateYouTubeId,
+  type MoviesDatabase,
+  type YouTubeSource,
+  type MovieEntry,
+} from '../../shared/types/movie'
 import {
   saveFailedYouTubeVideo,
   removeFailedYouTubeVideo,
@@ -27,7 +32,7 @@ export function parseMovieTitle(title: string): { title: string; year?: number }
 export async function fetchChannelVideos(
   youtube: Innertube,
   channelIdentifier: string,
-  db: any, // MoviesDatabase
+  db: MoviesDatabase,
   channelConfig: { id: string; language?: string; name?: string } | undefined,
   onVideoProcessed: (
     video: { id: string; title: string },
@@ -54,13 +59,22 @@ export async function fetchChannelVideos(
     }
   }
 
-  console.log('Channel:', (channel as any)?.header?.author?.name || channelIdentifier)
+  console.log(
+    'Channel:',
+    (channel && typeof channel === 'object' && 'header' in channel && channel.header
+      ? (
+          channel.header as {
+            author?: { name?: string }
+          }
+        )?.author?.name
+      : undefined) || channelIdentifier
+  )
 
   // Build set of already scraped video IDs for this channel
   const existingVideoIds = new Set<string>()
   for (const [key, entry] of Object.entries(db)) {
     if (key.startsWith('_')) continue
-    const movieEntry = entry as any
+    const movieEntry = entry as MovieEntry
     for (const source of movieEntry.sources || []) {
       if (source.type === 'youtube' && source.channelId === channelIdentifier) {
         existingVideoIds.add(source.id)
@@ -117,7 +131,13 @@ export async function fetchChannelVideos(
 
       // Filter out shorts, trailers, clips
       let skipReason: FailureReason | null = null
-      if ((fullVideo.basic_info as any).is_short || title.toLowerCase().includes('#shorts')) {
+      if (
+        (fullVideo.basic_info &&
+          typeof fullVideo.basic_info === 'object' &&
+          'is_short' in fullVideo.basic_info &&
+          fullVideo.basic_info.is_short) ||
+        title.toLowerCase().includes('#shorts')
+      ) {
         skipReason = 'shorts'
       } else if (
         title.toLowerCase().includes('trailer') ||
@@ -163,8 +183,22 @@ export async function fetchChannelVideos(
         id: videoId,
         title,
         description: fullVideo.basic_info.short_description || '',
-        publishedAt: (fullVideo.basic_info as any).upload_date || '',
-        channelName: fullVideo.basic_info.author || (channel as any)?.header?.author?.name || '',
+        publishedAt:
+          (fullVideo.basic_info &&
+          typeof fullVideo.basic_info === 'object' &&
+          'upload_date' in fullVideo.basic_info
+            ? (fullVideo.basic_info.upload_date as string)
+            : '') || '',
+        channelName:
+          fullVideo.basic_info.author ||
+          (channel && typeof channel === 'object' && 'header' in channel && channel.header
+            ? (
+                channel.header as {
+                  author?: { name?: string }
+                }
+              )?.author?.name
+            : undefined) ||
+          '',
         channelId: fullVideo.basic_info.channel_id || channelIdentifier,
         thumbnails: {
           high: thumbnailUrl,

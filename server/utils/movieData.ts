@@ -292,8 +292,8 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
         stats.youtubeSources++
 
         // Count per channel (match by channel ID)
-        const youtubeSource = source as any
-        const channelStats = channelStatsMap.get(youtubeSource.channelId)
+        const youtubeSource = source as YouTubeSource
+        const channelStats = channelStatsMap.get(youtubeSource.channelId ?? '')
         if (channelStats) {
           channelStats.scraped++
         }
@@ -693,9 +693,9 @@ export async function findOrphanedPosters(db: MoviesDatabase): Promise<string[]>
       }
 
       return orphaned
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Directory doesn't exist or can't be read
-      if (error.code === 'ENOENT') {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         return []
       }
       throw error

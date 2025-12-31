@@ -18,10 +18,11 @@ export default defineEventHandler(async event => {
 
     // Get unmatched movies (no metadata)
     const movies = Object.entries(db)
-      .filter(([id, movie]: [string, any]) => {
+      .filter(([id, movie]: [string, unknown]) => {
         if (id.startsWith('_')) return false
-        if (onlyUnmatched && movie.metadata) return false
-        if (!forceReExtract && movie.ai?.title) return false
+        const movieEntry = movie as MovieEntry
+        if (onlyUnmatched && movieEntry.metadata) return false
+        if (!forceReExtract && movieEntry.ai?.title) return false
         return true
       })
       .slice(0, limit)

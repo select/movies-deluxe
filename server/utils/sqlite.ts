@@ -11,7 +11,7 @@ export function getSqliteDatabase() {
   return db
 }
 
-export function querySqlite<T = any>(sql: string, params: any[] = []): T[] {
+export function querySqlite<T = unknown>(sql: string, params: unknown[] = []): T[] {
   const database = getSqliteDatabase()
   return database.prepare(sql).all(...params) as T[]
 }

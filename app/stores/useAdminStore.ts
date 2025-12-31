@@ -95,7 +95,7 @@ export const useAdminStore = defineStore('admin', () => {
     scraping.value = true
     results.value = null
     try {
-      results.value = await ($fetch as any)('/api/admin/scrape/archive', {
+      results.value = await $fetch<ScrapeResults>('/api/admin/scrape/archive', {
         method: 'POST',
         body: archiveOptions,
       })
@@ -117,7 +117,7 @@ export const useAdminStore = defineStore('admin', () => {
     scraping.value = true
     results.value = null
     try {
-      results.value = await ($fetch as any)('/api/admin/scrape/youtube', {
+      results.value = await $fetch<ScrapeResults>('/api/admin/scrape/youtube', {
         method: 'POST',
         body: youtubeOptions,
       })
@@ -139,7 +139,7 @@ export const useAdminStore = defineStore('admin', () => {
     scraping.value = true
     posterResults.value = null
     try {
-      posterResults.value = await ($fetch as any)('/api/admin/posters/download', {
+      posterResults.value = await $fetch<PosterResults>('/api/admin/posters/download', {
         method: 'POST',
         body: posterOptions,
       })
@@ -161,7 +161,7 @@ export const useAdminStore = defineStore('admin', () => {
     scraping.value = true
     results.value = null
     try {
-      results.value = await ($fetch as any)('/api/admin/omdb/enrich', {
+      results.value = await $fetch<ScrapeResults>('/api/admin/omdb/enrich', {
         method: 'POST',
         body: omdbOptions,
       })

@@ -1,3 +1,5 @@
+import type { WorkerResponse, FilterOptionsResponse, LightweightMovie } from '~/types/database'
+
 // Singleton instance
 let dbInstance: ReturnType<typeof createDatabase> | null = null
 
@@ -6,7 +8,7 @@ function createDatabase() {
   const isReady = ref(false)
   const pendingQueries = new Map<
     string,
-    { resolve: (value: any) => void; reject: (reason?: any) => void }
+    { resolve: (value: WorkerResponse<unknown>) => void; reject: (reason?: Error) => void }
   >()
 
   const init = async (url?: string) => {
@@ -38,7 +40,7 @@ function createDatabase() {
     })
   }
 
-  const query = async <T = any>(sql: string, params: any[] = []): Promise<T[]> => {
+  const query = async <T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -46,18 +48,18 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: any) => resolve(data.result),
+        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
         reject,
       })
       worker.value!.postMessage({ type: 'exec', id, sql, params })
     })
   }
 
-  const extendedQuery = async <T = any>(options: {
+  const extendedQuery = async <T = unknown>(options: {
     select?: string
     from: string
     where?: string
-    params?: any[]
+    params?: unknown[]
     groupBy?: string
     orderBy?: string
     limit?: number
@@ -71,7 +73,8 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: any) => resolve({ result: data.result, totalCount: data.totalCount }),
+        resolve: (data: WorkerResponse<unknown>) =>
+          resolve({ result: (data.result as T[]) ?? [], totalCount: data.totalCount }),
         reject,
       })
       worker.value!.postMessage({ type: 'query', id, ...options })
@@ -80,13 +83,13 @@ function createDatabase() {
 
   const lightweightQuery = async (options: {
     where?: string
-    params?: any[]
+    params?: unknown[]
     orderBy?: string
     limit?: number
     offset?: number
     includeCount?: boolean
   }): Promise<{
-    result: Array<{ imdbId: string; title: string; year: number }>
+    result: LightweightMovie[]
     totalCount?: number
   }> => {
     if (!isReady.value) {
@@ -96,14 +99,18 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: any) => resolve({ result: data.result, totalCount: data.totalCount }),
+        resolve: (data: WorkerResponse<unknown>) =>
+          resolve({
+            result: (data.result as LightweightMovie[]) ?? [],
+            totalCount: data.totalCount,
+          }),
         reject,
       })
       worker.value!.postMessage({ type: 'query-lightweight', id, ...options })
     })
   }
 
-  const queryByIds = async (imdbIds: string[]): Promise<any[]> => {
+  const queryByIds = async <T = MovieEntry>(imdbIds: string[]): Promise<T[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -111,14 +118,17 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: any) => resolve(data.result),
+        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
         reject,
       })
       worker.value!.postMessage({ type: 'query-by-ids', id, imdbIds })
     })
   }
 
-  const getRelatedMovies = async (imdbId: string, limit: number = 8): Promise<any[]> => {
+  const getRelatedMovies = async <T = MovieEntry>(
+    imdbId: string,
+    limit: number = 8
+  ): Promise<T[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -126,18 +136,14 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: any) => resolve(data.result),
+        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
         reject,
       })
       worker.value!.postMessage({ type: 'query-related', id, imdbId, limit })
     })
   }
 
-  const getFilterOptions = async (): Promise<{
-    genres: any[]
-    countries: any[]
-    channels: any[]
-  }> => {
+  const getFilterOptions = async (): Promise<FilterOptionsResponse> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -145,11 +151,11 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: any) =>
+        resolve: (data: WorkerResponse) =>
           resolve({
-            genres: data.genres,
-            countries: data.countries,
-            channels: data.channels,
+            genres: data.genres ?? [],
+            countries: data.countries ?? [],
+            channels: data.channels ?? [],
           }),
         reject,
       })

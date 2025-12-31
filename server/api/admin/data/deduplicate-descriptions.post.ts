@@ -116,7 +116,7 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
 
     // Process all descriptions
     movies.forEach(movie => {
-      movie.sources?.forEach((source: any) => {
+      movie.sources?.forEach(source => {
         totalSources++
 
         if (source.description) {

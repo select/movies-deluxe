@@ -34,20 +34,20 @@ export default defineEventHandler(async () => {
       message: 'SQLite database generated successfully',
       output: stdout,
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('SQLite generation failed:', error)
 
     emitProgress({
       type: 'sqlite',
       status: 'error',
-      message: `SQLite generation failed: ${error.message}`,
+      message: `SQLite generation failed: ${error instanceof Error ? error.message : String(error)}`,
       current: 0,
       total: 100,
     })
 
     return {
       success: false,
-      message: `Failed to generate SQLite database: ${error.message}`,
+      message: `Failed to generate SQLite database: ${error instanceof Error ? error.message : String(error)}`,
     }
   }
 })

@@ -6,11 +6,11 @@ export default defineEventHandler(async event => {
   setHeader('Connection', 'keep-alive')
   setHeader('Access-Control-Allow-Origin', '*')
 
-  const sendEvent = (data: any) => {
+  const sendEvent = (data: unknown) => {
     event.node.res.write(`data: ${JSON.stringify(data)}\n\n`)
   }
 
-  const onProgress = (update: any) => {
+  const onProgress = (update: unknown) => {
     sendEvent(update)
   }
 

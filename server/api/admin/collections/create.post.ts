@@ -25,10 +25,10 @@ export default defineEventHandler(async event => {
 
     await upsertCollection(collection)
     return { success: true, collection }
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to create collection: ${error.message}`,
+      statusMessage: `Failed to create collection: ${error instanceof Error ? error.message : String(error)}`,
     })
   }
 })

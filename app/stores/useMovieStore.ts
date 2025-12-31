@@ -261,8 +261,8 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Map SQL row to ExtendedMovieEntry
    */
-  const mapRowToMovie = (row: any): ExtendedMovieEntry => {
-    const sourcesRaw = row.sources_raw || ''
+  const mapRowToMovie = (row: Record<string, unknown>): ExtendedMovieEntry => {
+    const sourcesRaw = (row.sources_raw as string) || ''
     const sources: MovieSource[] = sourcesRaw
       ? sourcesRaw
           .split('###')
@@ -273,7 +273,7 @@ export const useMovieStore = defineStore('movie', () => {
 
             const base = {
               type: type as MovieSourceType,
-              url: generateSourceUrl(type as any, id),
+              url: generateSourceUrl(type as MovieSourceType, id),
               id,
               title: '', // Title not stored in sources table, use movie title
               label: label || undefined,
@@ -285,38 +285,39 @@ export const useMovieStore = defineStore('movie', () => {
             if (type === 'youtube') {
               return {
                 ...base,
+                type: 'youtube' as const,
                 channelName: channelName || '',
-              } as any
+              } as YouTubeSource
             }
-            return base as any
+            return base as ArchiveOrgSource
           })
-          .filter((s: any) => s !== null)
+          .filter((s: MovieSource | null): s is MovieSource => s !== null)
       : []
 
     const metadata: MovieMetadata | undefined = row.is_curated
       ? {
-          Rated: row.rated,
-          Runtime: row.runtime,
-          Genre: row.genre,
-          Director: row.director,
-          Writer: row.writer,
-          Actors: row.actors,
-          Plot: row.plot,
-          Language: row.language,
-          Country: row.country,
-          Awards: row.awards,
-          imdbRating: row.imdbRating?.toString(),
-          imdbVotes: row.imdbVotes?.toLocaleString(),
-          imdbID: row.imdbId,
+          Rated: row.rated as string | undefined,
+          Runtime: row.runtime as string | undefined,
+          Genre: row.genre as string | undefined,
+          Director: row.director as string | undefined,
+          Writer: row.writer as string | undefined,
+          Actors: row.actors as string | undefined,
+          Plot: row.plot as string | undefined,
+          Language: row.language as string | undefined,
+          Country: row.country as string | undefined,
+          Awards: row.awards as string | undefined,
+          imdbRating: (row.imdbRating as number | undefined)?.toString(),
+          imdbVotes: (row.imdbVotes as number | undefined)?.toLocaleString(),
+          imdbID: row.imdbId as string,
         }
       : undefined
 
     return {
-      imdbId: row.imdbId,
-      title: row.title,
-      year: row.year,
+      imdbId: row.imdbId as string,
+      title: row.title as string,
+      year: row.year as number,
       verified: !!row.verified,
-      lastUpdated: row.lastUpdated,
+      lastUpdated: row.lastUpdated as string,
       sources,
       metadata,
     }
@@ -367,11 +368,11 @@ export const useMovieStore = defineStore('movie', () => {
           if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
             return false
           }
-          const movie = value as any
+          const movie = value as Record<string, unknown>
           if (typeof movie.imdbId !== 'string') return false
           if (typeof movie.title === 'string') return true
           if (Array.isArray(movie.title)) {
-            return movie.title.every((t: any) => typeof t === 'string')
+            return movie.title.every((t: unknown) => typeof t === 'string')
           }
           return false
         })
@@ -395,7 +396,7 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const fetchMovies = async (options: {
     where?: string
-    params?: any[]
+    params?: unknown[]
     orderBy?: string
     limit?: number
     offset?: number
@@ -419,7 +420,7 @@ export const useMovieStore = defineStore('movie', () => {
       params.push(`"${sanitizedQuery}"`)
     }
 
-    const { result, totalCount } = await db.extendedQuery({
+    const { result, totalCount } = await db.extendedQuery<Record<string, unknown>>({
       select: `m.*,
                ${
                  searchQuery?.trim()
@@ -473,7 +474,7 @@ export const useMovieStore = defineStore('movie', () => {
     console.log('[MovieStore] Fetching details for', uncachedIds.length, 'uncached movies')
 
     try {
-      const results = await db.queryByIds(uncachedIds)
+      const results = await db.queryByIds<Record<string, unknown>>(uncachedIds)
       const movies = results.map(mapRowToMovie)
 
       // Cache the results and merge with allMovies
@@ -521,7 +522,12 @@ export const useMovieStore = defineStore('movie', () => {
   ): Promise<ExtendedMovieEntry[]> => {
     try {
       // Fetch related movie IDs and basic info from database
-      const relatedRows = await db.getRelatedMovies(movieId, limit)
+      const relatedRows = await db.getRelatedMovies<{
+        imdbId: string
+        title: string
+        year: number
+        score: number
+      }>(movieId, limit)
 
       if (!relatedRows || relatedRows.length === 0) {
         return []
@@ -529,13 +535,17 @@ export const useMovieStore = defineStore('movie', () => {
 
       // Fetch full movie data for each related movie
       const relatedMovieIds = relatedRows.map(row => row.imdbId)
-      const fullMovies = await db.queryByIds(relatedMovieIds)
+      const fullMovies = await db.queryByIds<Record<string, unknown>>(relatedMovieIds)
 
       // Map to MovieEntry objects
       const movies = fullMovies.map(mapRowToMovie)
 
       // Sort by original score order (preserve database ordering)
-      const scoreMap = new Map(relatedRows.map(row => [row.imdbId, row.score]))
+      const scoreMap = new Map(
+        relatedRows.map(row => {
+          return [row.imdbId, row.score]
+        })
+      )
       movies.sort((a, b) => {
         const scoreA = scoreMap.get(a.imdbId) || 0
         const scoreB = scoreMap.get(b.imdbId) || 0
@@ -568,7 +578,7 @@ export const useMovieStore = defineStore('movie', () => {
 
     try {
       const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-      const results = await db.query(
+      const results = await db.query<Record<string, unknown>>(
         `
         SELECT m.imdbId,
                CASE
@@ -584,7 +594,7 @@ export const useMovieStore = defineStore('movie', () => {
         [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, `"${sanitizedQuery}"`]
       )
 
-      const matchedIds = new Set(results.map((r: any) => r.imdbId))
+      const matchedIds = new Set(results.map(r => r.imdbId as string))
       return Array.from(allMovies.value.values()).filter(m => matchedIds.has(m.imdbId))
     } catch (err) {
       console.error('[MovieStore] Search failed:', err)
@@ -608,7 +618,7 @@ export const useMovieStore = defineStore('movie', () => {
     console.log('[MovieStore] Fetching lightweight movies...')
     isFiltering.value = true
     try {
-      const params: any[] = []
+      const params: unknown[] = []
       const where: string[] = []
 
       // Apply filters
@@ -687,7 +697,7 @@ export const useMovieStore = defineStore('movie', () => {
       if (totalCount !== undefined) {
         totalFiltered.value = totalCount
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       window.console.error('[MovieStore] Lightweight query failed:', err)
       lightweightMovies.value = []
     } finally {
@@ -713,7 +723,7 @@ export const useMovieStore = defineStore('movie', () => {
       isFiltering.value = true
     }
     try {
-      const params: any[] = []
+      const params: unknown[] = []
       const where: string[] = []
 
       // Filters
@@ -824,7 +834,7 @@ export const useMovieStore = defineStore('movie', () => {
       if (totalCount !== undefined) {
         totalFiltered.value = totalCount
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       window.console.error('[MovieStore] SQL filtering failed:', err)
       filteredAndSortedMovies.value = []
     } finally {

@@ -32,7 +32,14 @@ export default defineEventHandler(async event => {
     searchUrl.searchParams.append('num', '10')
 
     const response = await fetch(searchUrl.toString())
-    const data = await response.json()
+    const data = (await response.json()) as {
+      error?: { message?: string }
+      items?: Array<{
+        link: string
+        title?: string
+        snippet?: string
+      }>
+    }
 
     if (data.error) {
       throw new Error(data.error.message || 'Google API Error')
@@ -42,8 +49,8 @@ export default defineEventHandler(async event => {
 
     // Filter and format results to match OMDB search format
     const formattedResults = items
-      .filter((r: any) => r.link && r.link.includes('imdb.com/title/tt'))
-      .map((r: any) => {
+      .filter(r => r.link && r.link.includes('imdb.com/title/tt'))
+      .map(r => {
         const imdbIdMatch = r.link.match(/tt\d+/)
         const imdbId = imdbIdMatch ? imdbIdMatch[0] : null
 
@@ -68,11 +75,11 @@ export default defineEventHandler(async event => {
           Snippet: r.snippet || '',
         }
       })
-      .filter((r: any) => r.imdbID !== null)
+      .filter(r => r.imdbID !== null)
 
     // Deduplicate by imdbID
     const uniqueResults = Array.from(
-      new Map(formattedResults.map((item: any) => [item.imdbID, item])).values()
+      new Map(formattedResults.map(item => [item.imdbID, item])).values()
     )
 
     return {
@@ -80,13 +87,13 @@ export default defineEventHandler(async event => {
       totalResults: uniqueResults.length.toString(),
       Response: 'True',
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Google search error:', error)
     return {
       Search: [],
       totalResults: '0',
       Response: 'False',
-      Error: error.message,
+      Error: error instanceof Error ? error.message : String(error),
     }
   }
 })

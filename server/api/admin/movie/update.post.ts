@@ -1,7 +1,12 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
-import { isImdbId, generateArchiveId, generateYouTubeId } from '../../../../shared/types/movie'
+import {
+  isImdbId,
+  generateArchiveId,
+  generateYouTubeId,
+  type MovieSource,
+} from '../../../../shared/types/movie'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -61,7 +66,8 @@ export default defineEventHandler(async event => {
             existing.sources = [
               ...(existing.sources || []),
               ...(movie.sources || []).filter(
-                (s: any) => !(existing.sources || []).some((es: any) => es.url === s.url)
+                (s: MovieSource) =>
+                  !(existing.sources || []).some((es: MovieSource) => es.url === s.url)
               ),
             ]
             existing.lastUpdated = new Date().toISOString()
@@ -128,7 +134,7 @@ export default defineEventHandler(async event => {
         existing.sources = [
           ...existing.sources,
           ...movie.sources.filter(
-            (s: any) => !existing.sources.some((es: any) => es.url === s.url)
+            (s: MovieSource) => !existing.sources.some((es: MovieSource) => es.url === s.url)
           ),
         ]
         existing.metadata = movie.metadata || existing.metadata

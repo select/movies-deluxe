@@ -204,11 +204,13 @@ function validateSources(movieId: string, movie: MovieEntry): ValidationIssue[] 
     }
 
     if (source.type !== 'archive.org' && source.type !== 'youtube') {
+      const sourceType =
+        'type' in source ? (source as MovieSource & { type: string }).type : 'unknown'
       issues.push({
         severity: 'error',
         category: 'sources',
         movieId,
-        message: `Source ${index}: Invalid type "${(source as any).type}"`,
+        message: `Source ${index}: Invalid type "${sourceType}"`,
         fixable: false,
       })
     }

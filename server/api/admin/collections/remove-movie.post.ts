@@ -15,10 +15,10 @@ export default defineEventHandler(async event => {
   try {
     const success = await removeMovieFromCollection(collectionId, movieId)
     return { success }
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to remove movie from collection: ${error.message}`,
+      statusMessage: `Failed to remove movie from collection: ${error instanceof Error ? error.message : String(error)}`,
     })
   }
 })
