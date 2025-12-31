@@ -193,7 +193,7 @@
                 v-if="movie.metadata?.Genre"
                 class="mb-6"
               >
-                <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+                <h3 class="movie-label">
                   Genre
                 </h3>
                 <div class="flex flex-wrap gap-2">
@@ -212,7 +212,7 @@
                 v-if="movieCollections.length > 0"
                 class="mb-6"
               >
-                <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+                <h3 class="movie-label">
                   Part of Collection
                 </h3>
                 <div class="flex flex-wrap gap-2">
@@ -233,7 +233,7 @@
                 v-if="movie.metadata?.Plot"
                 class="mb-6"
               >
-                <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+                <h3 class="movie-label">
                   Plot
                 </h3>
                 <div class="relative">
@@ -257,18 +257,17 @@
                 </div>
               </div>
 
-              <!-- Credits -->
               <div class="space-y-3">
                 <div v-if="movie.metadata?.Director">
-                  <span class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 block mb-1">Director</span>
+                  <span class="movie-label block !mb-1">Director</span>
                   <span class="text-theme-text">{{ movie.metadata.Director }}</span>
                 </div>
                 <div v-if="movie.metadata?.Writer">
-                  <span class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 block mb-1">Writer</span>
+                  <span class="movie-label block !mb-1">Writer</span>
                   <span class="text-theme-text">{{ movie.metadata.Writer }}</span>
                 </div>
                 <div v-if="movie.metadata?.Actors">
-                  <span class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 block mb-1">Actors</span>
+                  <span class="movie-label block !mb-1">Actors</span>
                   <span class="text-theme-text">{{ movie.metadata.Actors }}</span>
                 </div>
               </div>
@@ -280,7 +279,7 @@
             v-if="movie.sources.length > 1"
             class="mb-4"
           >
-            <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+            <h3 class="movie-label">
               Select Source
             </h3>
             <div class="flex flex-wrap gap-2">
@@ -419,7 +418,7 @@
             class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-theme-border/50"
           >
             <div v-if="movie.metadata.Language">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+              <h3 class="movie-label">
                 Language
               </h3>
               <p class="text-theme-text">
@@ -427,7 +426,7 @@
               </p>
             </div>
             <div v-if="movie.metadata.Country">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+              <h3 class="movie-label">
                 Country
               </h3>
               <p class="text-theme-text">
@@ -435,7 +434,7 @@
               </p>
             </div>
             <div v-if="movie.metadata.Awards">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+              <h3 class="movie-label">
                 Awards
               </h3>
               <p class="text-theme-text">
@@ -443,7 +442,31 @@
               </p>
             </div>
             <div v-if="movie.imdbId.startsWith('tt')">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-theme-text-muted/80 mb-2">
+              <h3 class="movie-label">
+                IMDB
+              </h3>
+              <p class="text-theme-text">
+                {{ movie.metadata.Language }}
+              </p>
+            </div>
+            <div v-if="movie.metadata.Country">
+              <h3 class="movie-label">
+                Country
+              </h3>
+              <p class="text-theme-text">
+                {{ movie.metadata.Country }}
+              </p>
+            </div>
+            <div v-if="movie.metadata.Awards">
+              <h3 class="movie-label">
+                Awards
+              </h3>
+              <p class="text-theme-text">
+                {{ movie.metadata.Awards }}
+              </p>
+            </div>
+            <div v-if="movie.imdbId.startsWith('tt')">
+              <h3 class="movie-label">
                 IMDB
               </h3>
               <a
