@@ -424,7 +424,7 @@ const scrollToThemeSection = () => {
   const element = document.getElementById('theme-selection-section')
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    
+
     // Trigger highlight effect
     highlightThemeSection.value = true
     setTimeout(() => {
@@ -460,7 +460,6 @@ const fetchFilterOptions = async () => {
   try {
     const db = useDatabase()
     if (db.isReady.value) {
-      console.log('[FilterMenu] Fetching filter options from SQLite...')
       const options = await db.getFilterOptions()
       genres.value = options.genres
       countries.value = options.countries
@@ -472,8 +471,7 @@ const fetchFilterOptions = async () => {
         countriesCollapsible.value?.checkOverflow()
       })
     }
-  } catch (error) {
-    console.error('Failed to load filter options:', error)
+  } catch {
     filterLoadError.value = 'Failed to load filter options'
   } finally {
     isLoadingFilters.value = false
