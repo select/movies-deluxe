@@ -20,7 +20,7 @@ export const NotificationPlugin: Plugin = async ({ $ }) => {
         // Sound playback failed, but notification was sent
       }
     } catch {
-      console.error('Failed to send notification. Make sure notify-send is installed.')
+      window.console.error('Failed to send notification. Make sure notify-send is installed.')
     }
   }
 
