@@ -78,7 +78,7 @@
         {{ getPrimaryTitle(movie) }}
       </h3>
 
-      <div class="flex items-center gap-1.5 text-[11px] text-theme-text-muted font-medium">
+      <div class="flex items-center gap-1.5 text-[11px] text-theme-textmuted font-medium">
         <span v-if="movie.year">{{ movie.year }}</span>
         <span
           v-if="movie.year && movie.metadata?.imdbRating"

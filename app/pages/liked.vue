@@ -8,7 +8,7 @@
             <div class="i-mdi-heart text-theme-accent" />
             Liked Movies
           </h1>
-          <p class="text-theme-text-muted">
+          <p class="text-theme-textmuted">
             Your personal collection of favorite movies
             <span v-if="likedCount > 0" class="ml-2">
               ({{ likedCount }} {{ likedCount === 1 ? 'movie' : 'movies' }})
@@ -20,7 +20,7 @@
         <div v-if="likedCount === 0" class="text-center py-16">
           <div class="i-mdi-heart-outline text-6xl text-theme-border mb-4" />
           <h2 class="text-xl font-semibold mb-2 text-theme-text">No liked movies yet</h2>
-          <p class="text-theme-text-muted mb-6">
+          <p class="text-theme-textmuted mb-6">
             Start exploring movies and click the heart icon to add them to your favorites
           </p>
           <NuxtLink
@@ -60,7 +60,7 @@
         <div v-else-if="likedCount > 0 && filteredLikedMovies.length === 0" class="text-center py-12">
           <div class="i-mdi-filter-remove text-4xl text-theme-border mb-4" />
           <h2 class="text-xl font-semibold mb-2 text-theme-text">No movies match your filters</h2>
-          <p class="text-theme-text-muted mb-6">
+          <p class="text-theme-textmuted mb-6">
             Try adjusting your search or filter criteria
           </p>
           <button

@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-black text-theme-text mb-2 tracking-tight">
           Collections
         </h1>
-        <p class="text-theme-text-muted max-w-2xl leading-relaxed">
+        <p class="text-theme-textmuted max-w-2xl leading-relaxed">
           Curated sets of movies organized by theme, actor, or genre.
         </p>
       </div>
@@ -28,11 +28,11 @@
         v-else-if="collections.size === 0"
         class="flex flex-col items-center justify-center py-20 text-center"
       >
-        <div class="i-mdi:movie-roll text-6xl text-theme-text-muted mb-4 opacity-20" />
+        <div class="i-mdi:movie-roll text-6xl text-theme-textmuted mb-4 opacity-20" />
         <h3 class="text-xl font-bold text-theme-text mb-2">
           No collections found
         </h3>
-        <p class="text-theme-text-muted">
+        <p class="text-theme-textmuted">
           Check back later for curated movie collections.
         </p>
       </div>

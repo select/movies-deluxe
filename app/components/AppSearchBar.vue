@@ -15,7 +15,7 @@
       class="absolute inset-y-0 right-0 pr-3 flex items-center"
       @click="setSearchQuery('')"
     >
-      <div class="i-mdi-close text-theme-text-muted hover:text-theme-text" />
+      <div class="i-mdi-close text-theme-textmuted hover:text-theme-text" />
     </button>
   </div>
 </template>
@@ -43,7 +43,7 @@ const throttledQuery = refThrottled(localQuery, 500)
 
 watch(throttledQuery, (newQuery) => {
   setSearchQuery(newQuery)
-  
+
   // If searching, switch to relevance sort if not already
   if (newQuery && filters.value.sort.field !== 'relevance') {
     setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })

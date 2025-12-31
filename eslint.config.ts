@@ -62,6 +62,7 @@ export default withNuxt(
               group: ['~/stores/*', '~~/app/stores/*', '@/stores/*'],
               message:
                 'Pinia stores from app/stores/ are auto-imported. Remove this import statement.',
+              allowTypeImports: true,
             },
             {
               group: ['~/components/*', '~~/app/components/*', '@/components/*'],
