@@ -111,7 +111,7 @@
                 >
                 <div
                   v-else
-                  class="w-full h-full flex items-center justify-center text-theme-text-muted"
+                  class="w-full h-full flex items-center justify-center text-theme-textmuted"
                 >
                   <div class="i-mdi-movie text-8xl" />
                 </div>
@@ -153,10 +153,10 @@
               >
                 <div class="i-mdi-star text-theme-accent text-2xl" />
                 <span class="text-2xl font-bold">{{ movie.metadata.imdbRating }}</span>
-                <span class="text-theme-text-muted">/ 10</span>
+                <span class="text-theme-textmuted">/ 10</span>
                 <span
                   v-if="movie.metadata?.imdbVotes"
-                  class="text-sm text-theme-text-muted"
+                  class="text-sm text-theme-textmuted"
                 >
                   ({{ formatVotes(movie.metadata.imdbVotes) }} votes)
                 </span>
@@ -354,7 +354,7 @@
               :class="{ 'opacity-100': selectedSourceIndex === index, 'opacity-60': selectedSourceIndex !== index }"
             >
               <template v-if="source.type === 'archive.org'">
-                <span class="font-semibold text-theme-text-muted">Source {{ index + 1 }}:</span>
+                <span class="font-semibold text-theme-textmuted">Source {{ index + 1 }}:</span>
                 <a
                   :href="source.url"
                   target="_blank"
@@ -366,7 +366,7 @@
                 </a>
               </template>
               <template v-else-if="source.type === 'youtube'">
-                <span class="font-semibold text-theme-text-muted">Source {{ index + 1 }}:</span>
+                <span class="font-semibold text-theme-textmuted">Source {{ index + 1 }}:</span>
                 <a
                   :href="source.url"
                   target="_blank"
@@ -377,7 +377,7 @@
                   YouTube
                 </a>
                 <template v-if="source.channelName">
-                  <span class="text-theme-text-muted">on</span>
+                  <span class="text-theme-textmuted">on</span>
                   <a
                     v-if="source.channelId"
                     :href="`https://www.youtube.com/channel/${source.channelId}`"
@@ -514,7 +514,7 @@
 
   <!-- Footer -->
   <footer class="border-t border-theme-border/50 mt-12">
-    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-theme-text-muted">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-theme-textmuted">
       <p>All movies are legally available from Archive.org and YouTube</p>
       <button
         class="mt-2 text-xs hover:underline"
@@ -738,14 +738,18 @@ const handleMovieUpdated = async (newId: string) => {
   // Always reload the database from file first to get the latest changes
   await loadFromFile()
 
-  // If ID changed, navigate to new URL
+  // If ID changed, update the URL without full navigation if possible
   if (newId !== movie.value?.imdbId) {
-    await navigateTo(`/movie/${newId}`)
-    // The watcher on route.params.id will handle loading the new movie data
-    return
+    // Use window.history.replaceState to update URL without triggering Nuxt navigation/reload
+    // This keeps the current component state but updates the address bar
+    const newPath = `/movie/${newId}`
+    window.history.replaceState({}, '', newPath)
+
+    // Update the route object manually so other components/composables see the new ID
+    route.params.id = newId
   }
 
-  // Just refresh current movie data from store
+  // Refresh current movie data from store
   const foundMovie = await getMovieById(newId)
   if (foundMovie) {
     movie.value = foundMovie
