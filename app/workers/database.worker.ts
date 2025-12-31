@@ -55,19 +55,13 @@ async function loadRemoteDatabase(url: string) {
 
     // Create a new in-memory database
     db = new sqlite.oo1.DB(':memory:')
-    console.log('Created in-memory database')
 
     // Log database pointer info
-    console.log('Database pointer:', db.pointer)
     console.log('Database size:', uint8Array.byteLength, 'bytes')
 
     // Check if sqlite3_deserialize is available
     if (typeof sqlite.capi.sqlite3_deserialize !== 'function') {
       console.error('sqlite3_deserialize is not available!')
-      console.log(
-        'Available capi methods:',
-        Object.keys(sqlite.capi).filter(k => k.includes('deserialize'))
-      )
       throw new Error('sqlite3_deserialize is not available in this SQLite build')
     }
 
@@ -82,7 +76,6 @@ async function loadRemoteDatabase(url: string) {
     // Copy the database content to the allocated memory
     try {
       sqlite.wasm.heap8u().set(uint8Array, pMem)
-      console.log('Copied database to WASM memory successfully')
     } catch (err) {
       console.error('Failed to copy to WASM memory:', err)
       throw err
@@ -91,21 +84,6 @@ async function loadRemoteDatabase(url: string) {
     // Log flags
     const flags =
       sqlite.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite.capi.SQLITE_DESERIALIZE_READONLY
-    console.log('Deserialize flags:', {
-      FREEONCLOSE: sqlite.capi.SQLITE_DESERIALIZE_FREEONCLOSE,
-      READONLY: sqlite.capi.SQLITE_DESERIALIZE_READONLY,
-      combined: flags,
-    })
-
-    // Deserialize the database content into the in-memory database
-    console.log('Calling sqlite3_deserialize with:', {
-      dbPointer: db.pointer,
-      schema: 'main',
-      pMem,
-      size: uint8Array.byteLength,
-      maxSize: uint8Array.byteLength,
-      flags,
-    })
 
     if (!db.pointer) {
       throw new Error('Database pointer is undefined')
@@ -119,8 +97,6 @@ async function loadRemoteDatabase(url: string) {
       uint8Array.byteLength,
       flags
     )
-
-    console.log('sqlite3_deserialize returned:', rc, 'SQLITE_OK:', sqlite.capi.SQLITE_OK)
 
     if (rc !== sqlite.capi.SQLITE_OK) {
       const errMsg = sqlite.capi.sqlite3_errmsg(db.pointer)
@@ -161,11 +137,15 @@ self.onmessage = async e => {
         await loadRemoteDatabase(url)
       }
       self.postMessage({ id, success: true })
-    } else if (type === 'exec') {
-      if (!db) {
-        throw new Error('Database not initialized. Call init first.')
-      }
+      return
+    }
 
+    // All other operations require initialized database
+    if (!db) {
+      throw new Error('Database not initialized. Call init first.')
+    }
+
+    if (type === 'exec') {
       const result = db.exec({
         sql,
         bind: params,
@@ -174,10 +154,6 @@ self.onmessage = async e => {
       })
       self.postMessage({ id, result })
     } else if (type === 'query') {
-      if (!db) {
-        throw new Error('Database not initialized. Call init first.')
-      }
-
       const {
         select = '*',
         from,
@@ -197,17 +173,12 @@ self.onmessage = async e => {
       if (limit !== undefined) sql += ` LIMIT ${limit}`
       if (offset !== undefined) sql += ` OFFSET ${offset}`
 
-      console.log('Worker executing SQL:', sql)
-      console.log('Worker params:', params)
-
       const result = db.exec({
         sql,
         bind: params,
         returnValue: 'resultRows',
         rowMode: 'object',
       })
-
-      console.log('Worker query result length:', result.length)
 
       let totalCount = undefined
       if (includeCount) {
@@ -229,10 +200,6 @@ self.onmessage = async e => {
       self.postMessage({ id, result, totalCount })
     } else if (type === 'query-lightweight') {
       // Lightweight query for IDs and titles only (no joins, minimal data)
-      if (!db) {
-        throw new Error('Database not initialized. Call init first.')
-      }
-
       const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e.data
 
       // Only select imdbId, title, and year for lightweight queries
@@ -242,17 +209,12 @@ self.onmessage = async e => {
       if (limit !== undefined) sql += ` LIMIT ${limit}`
       if (offset !== undefined) sql += ` OFFSET ${offset}`
 
-      console.log('Worker executing lightweight SQL:', sql)
-      console.log('Worker params:', params)
-
       const result = db.exec({
         sql,
         bind: params,
         returnValue: 'resultRows',
         rowMode: 'object',
       })
-
-      console.log('Worker lightweight query result length:', result.length)
 
       let totalCount = undefined
       if (includeCount) {
@@ -272,10 +234,6 @@ self.onmessage = async e => {
       self.postMessage({ id, result, totalCount })
     } else if (type === 'query-by-ids') {
       // Query full movie details for specific IDs
-      if (!db) {
-        throw new Error('Database not initialized. Call init first.')
-      }
-
       const { imdbIds } = e.data
 
       if (!imdbIds || imdbIds.length === 0) {
@@ -293,9 +251,6 @@ self.onmessage = async e => {
         GROUP BY m.imdbId
       `
 
-      console.log('Worker executing query-by-ids SQL:', sql)
-      console.log('Worker params:', imdbIds)
-
       const result = db.exec({
         sql,
         bind: imdbIds,
@@ -303,15 +258,9 @@ self.onmessage = async e => {
         rowMode: 'object',
       })
 
-      console.log('Worker query-by-ids result length:', result.length)
-
       self.postMessage({ id, result })
     } else if (type === 'query-related') {
       // Query related movies for a specific ID
-      if (!db) {
-        throw new Error('Database not initialized. Call init first.')
-      }
-
       const { imdbId, limit = 8 } = e.data
 
       const sql = `
@@ -323,9 +272,6 @@ self.onmessage = async e => {
         LIMIT ?
       `
 
-      console.log('Worker executing query-related SQL:', sql)
-      console.log('Worker params:', [imdbId, limit])
-
       const result = db.exec({
         sql,
         bind: [imdbId, limit],
@@ -333,14 +279,8 @@ self.onmessage = async e => {
         rowMode: 'object',
       })
 
-      console.log('Worker query-related result length:', result.length)
-
       self.postMessage({ id, result })
     } else if (type === 'get-filter-options') {
-      if (!db) {
-        throw new Error('Database not initialized. Call init first.')
-      }
-
       const genres = db.exec({
         sql: 'SELECT name, movie_count as count FROM genres ORDER BY movie_count DESC, name ASC',
         returnValue: 'resultRows',
