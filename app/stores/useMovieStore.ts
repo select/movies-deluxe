@@ -251,14 +251,15 @@ export const useMovieStore = defineStore('movie', () => {
           .split('###')
           .filter((s: string) => s.trim())
           .map((s: string) => {
-            const [type, id, label, quality, addedAt, description, channelName] = s.split('|||')
+            const [type, id, title, label, quality, addedAt, description, channelName] =
+              s.split('|||')
             if (!type || !id) return null
 
             const base = {
               type: type as MovieSourceType,
               url: generateSourceUrl(type as MovieSourceType, id),
               id,
-              title: '', // Title not stored in sources table, use movie title
+              title: title || '',
               label: label || undefined,
               quality: quality || undefined,
               addedAt: addedAt || new Date().toISOString(),
@@ -408,12 +409,12 @@ export const useMovieStore = defineStore('movie', () => {
                ${
                  searchQuery?.trim()
                    ? `CASE
-                 WHEN m.title LIKE '%${searchQuery.replace(/'/g, "''")}%' THEN 1
-                 ELSE 2
-               END as title_priority,`
+                  WHEN m.title LIKE '%${searchQuery.replace(/'/g, "''")}%' THEN 1
+                  ELSE 2
+                END as title_priority,`
                    : ''
                }
-               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.label, '') || '|||' || COALESCE(s.quality, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
+               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || COALESCE(s.label, '') || '|||' || COALESCE(s.quality, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
       from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId LEFT JOIN channels c ON s.channelId = c.id`,
       where: finalWhere,
       params,
