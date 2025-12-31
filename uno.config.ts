@@ -45,6 +45,8 @@ export default defineConfig({
     // Skeleton loading styles
     skeleton: 'bg-theme-surface/50 animate-pulse',
     'skeleton-border': 'border-theme-border/30',
+    'movie-label':
+      'text-xs font-bold uppercase tracking-wider text-theme-text-muted opacity-80 mb-2',
   },
   preflights: [
     {
