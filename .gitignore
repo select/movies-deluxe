@@ -37,3 +37,6 @@ public/posters/*.webp
 
 # SQLite WASM files (copied from node_modules)
 public/sqlite-wasm/
+
+# SQLite temporary files
+*.db-journal
