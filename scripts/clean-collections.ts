@@ -17,7 +17,7 @@ interface CollectionsDatabase {
     description: string
     lastUpdated: string
   }
-  [key: string]: Collection | any
+  [key: string]: Collection | CollectionsDatabase['_schema']
 }
 
 const DATA_DIR = join(process.cwd(), 'public/data')

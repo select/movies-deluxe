@@ -94,22 +94,22 @@ async function testApiConnection(apiKey: string): Promise<boolean> {
       log.error('API returned 0 videos (unexpected)')
       return false
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.error('API connection failed')
     console.log()
 
-    if (error.message?.includes('API key')) {
+    if (error instanceof Error && error.message?.includes('API key')) {
       log.error('API Key Error:')
       console.log('  • Check that your API key is correct')
       console.log('  • Verify YouTube Data API v3 is enabled in your project')
       console.log('  • Check API key restrictions (should allow YouTube Data API)')
-    } else if (error.message?.includes('quota')) {
+    } else if (error instanceof Error && error.message?.includes('quota')) {
       log.error('Quota Error:')
       console.log('  • Daily quota limit reached (10,000 units/day)')
       console.log('  • Wait until midnight Pacific Time for reset')
       console.log('  • Or request quota increase from Google')
     } else {
-      log.error(`Error: ${error.message}`)
+      log.error(`Error: ${error instanceof Error ? error.message : String(error)}`)
     }
 
     return false
@@ -134,8 +134,10 @@ async function fetchAllVideoIds(apiKey: string): Promise<string[]> {
     log.success(`Fetched ${videoIds.length} video IDs in ${duration}s`)
 
     return videoIds
-  } catch (error: any) {
-    log.error(`Failed to fetch video IDs: ${error.message}`)
+  } catch (error: unknown) {
+    log.error(
+      `Failed to fetch video IDs: ${error instanceof Error ? error.message : String(error)}`
+    )
     throw error
   }
 }
@@ -257,12 +259,14 @@ async function runInteractiveTest() {
     console.log(colors.bright + colors.green + '  ✓ Test completed successfully!' + colors.reset)
     console.log(colors.green + '='.repeat(80) + colors.reset)
     console.log()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log()
-    log.error('Test failed: ' + error.message)
+    log.error('Test failed: ' + (error instanceof Error ? error.message : String(error)))
     console.log()
-    console.log('Stack trace:')
-    console.log(error.stack)
+    if (error instanceof Error) {
+      console.log('Stack trace:')
+      console.log(error.stack)
+    }
     process.exit(1)
   } finally {
     rl.close()

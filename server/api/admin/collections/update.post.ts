@@ -27,12 +27,12 @@ export default defineEventHandler(async event => {
 
     await upsertCollection(collection)
     return { success: true, collection }
-  } catch (error: any) {
-    if (error.statusCode) throw error
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'statusCode' in error) throw error
 
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to update collection: ${error.message}`,
+      statusMessage: `Failed to update collection: ${error instanceof Error ? error.message : String(error)}`,
     })
   }
 })

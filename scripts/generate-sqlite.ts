@@ -276,7 +276,10 @@ async function generateSQLite(
               : null
 
             // Normalize source language
-            const sourceLanguage = normalizeLanguageCode((source as any).language)
+            const sourceLanguage =
+              source.type === 'archive.org'
+                ? normalizeLanguageCode((source as ArchiveOrgSource).language)
+                : normalizeLanguageCode((source as YouTubeSource).language)
 
             // Get identifier - handle both 'id' and 'videoId' fields for YouTube sources
             const identifier =

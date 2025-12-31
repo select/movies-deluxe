@@ -56,8 +56,8 @@ export async function isOllamaModelAvailable(
     const response = await fetch(`${host}/api/tags`)
     if (!response.ok) return false
 
-    const data = await response.json()
-    return data.models?.some((m: any) => m.name.includes(model)) ?? false
+    const data = (await response.json()) as { models?: Array<{ name: string }> }
+    return data.models?.some(m => m.name.includes(model)) ?? false
   } catch {
     return false
   }

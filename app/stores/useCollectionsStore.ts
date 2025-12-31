@@ -22,12 +22,12 @@ export const useCollectionsStore = defineStore('collections', () => {
   const getCollectionById = async (id: string) => {
     // Check if we already have it with movies
     const existing = collections.value.get(id)
-    if (existing && (existing as any).movies) {
-      return existing as Collection & { movies: any[] }
+    if (existing && 'movies' in existing) {
+      return existing as Collection & { movies: MovieEntry[] }
     }
 
     try {
-      const data = await $fetch<Collection & { movies: any[] }>(`/api/collections/${id}`)
+      const data = await $fetch<Collection & { movies: MovieEntry[] }>(`/api/collections/${id}`)
       collections.value.set(id, data)
       return data
     } catch {

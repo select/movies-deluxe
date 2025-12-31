@@ -1,7 +1,8 @@
 import sqlite3InitModule from '@sqlite.org/sqlite-wasm'
+import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 
-let db: any = null
-let sqlite3: any = null
+let db: SQLiteDatabase | null = null
+let sqlite3: SQLite3 | null = null
 
 async function initDatabase() {
   if (sqlite3) return sqlite3
@@ -28,7 +29,10 @@ async function initDatabase() {
 }
 
 async function loadRemoteDatabase(url: string) {
-  await initDatabase()
+  const sqlite = await initDatabase()
+  if (!sqlite) {
+    throw new Error('Failed to initialize SQLite')
+  }
 
   try {
     console.log('Fetching database from:', url)
@@ -50,7 +54,7 @@ async function loadRemoteDatabase(url: string) {
     }
 
     // Create a new in-memory database
-    db = new sqlite3.oo1.DB(':memory:')
+    db = new sqlite.oo1.DB(':memory:')
     console.log('Created in-memory database')
 
     // Log database pointer info
@@ -58,18 +62,18 @@ async function loadRemoteDatabase(url: string) {
     console.log('Database size:', uint8Array.byteLength, 'bytes')
 
     // Check if sqlite3_deserialize is available
-    if (typeof sqlite3.capi.sqlite3_deserialize !== 'function') {
+    if (typeof sqlite.capi.sqlite3_deserialize !== 'function') {
       console.error('sqlite3_deserialize is not available!')
       console.log(
         'Available capi methods:',
-        Object.keys(sqlite3.capi).filter(k => k.includes('deserialize'))
+        Object.keys(sqlite.capi).filter(k => k.includes('deserialize'))
       )
       throw new Error('sqlite3_deserialize is not available in this SQLite build')
     }
 
     // Allocate memory using sqlite3_malloc (required for deserialize)
     // Use the regular malloc, not malloc64, to avoid BigInt issues
-    const pMem = sqlite3.capi.sqlite3_malloc(uint8Array.byteLength)
+    const pMem = sqlite.capi.sqlite3_malloc(uint8Array.byteLength)
     if (!pMem) {
       throw new Error('Failed to allocate memory for database')
     }
@@ -77,7 +81,7 @@ async function loadRemoteDatabase(url: string) {
 
     // Copy the database content to the allocated memory
     try {
-      sqlite3.wasm.heap8u().set(uint8Array, pMem)
+      sqlite.wasm.heap8u().set(uint8Array, pMem)
       console.log('Copied database to WASM memory successfully')
     } catch (err) {
       console.error('Failed to copy to WASM memory:', err)
@@ -86,10 +90,10 @@ async function loadRemoteDatabase(url: string) {
 
     // Log flags
     const flags =
-      sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite3.capi.SQLITE_DESERIALIZE_READONLY
+      sqlite.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite.capi.SQLITE_DESERIALIZE_READONLY
     console.log('Deserialize flags:', {
-      FREEONCLOSE: sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE,
-      READONLY: sqlite3.capi.SQLITE_DESERIALIZE_READONLY,
+      FREEONCLOSE: sqlite.capi.SQLITE_DESERIALIZE_FREEONCLOSE,
+      READONLY: sqlite.capi.SQLITE_DESERIALIZE_READONLY,
       combined: flags,
     })
 
@@ -103,7 +107,11 @@ async function loadRemoteDatabase(url: string) {
       flags,
     })
 
-    const rc = sqlite3.capi.sqlite3_deserialize(
+    if (!db.pointer) {
+      throw new Error('Database pointer is undefined')
+    }
+
+    const rc = sqlite.capi.sqlite3_deserialize(
       db.pointer,
       'main',
       pMem,
@@ -112,11 +120,11 @@ async function loadRemoteDatabase(url: string) {
       flags
     )
 
-    console.log('sqlite3_deserialize returned:', rc, 'SQLITE_OK:', sqlite3.capi.SQLITE_OK)
+    console.log('sqlite3_deserialize returned:', rc, 'SQLITE_OK:', sqlite.capi.SQLITE_OK)
 
-    if (rc !== sqlite3.capi.SQLITE_OK) {
-      const errMsg = sqlite3.capi.sqlite3_errmsg(db.pointer)
-      const errCode = sqlite3.capi.sqlite3_extended_errcode(db.pointer)
+    if (rc !== sqlite.capi.SQLITE_OK) {
+      const errMsg = sqlite.capi.sqlite3_errmsg(db.pointer)
+      const errCode = sqlite.capi.sqlite3_extended_errcode(db.pointer)
       console.error('Deserialize failed:', {
         returnCode: rc,
         errorMessage: errMsg,
@@ -134,7 +142,8 @@ async function loadRemoteDatabase(url: string) {
       rowMode: 'object',
     })
 
-    console.log('Database loaded successfully, movies count:', testResult[0]?.count)
+    const firstRow = testResult[0] as { count: number } | undefined
+    console.log('Database loaded successfully, movies count:', firstRow?.count)
     return true
   } catch (err) {
     console.error('Failed to load remote database:', err)
@@ -213,7 +222,8 @@ self.onmessage = async e => {
           returnValue: 'resultRows',
           rowMode: 'object',
         })
-        totalCount = countResult[0]?.count
+        const firstRow = countResult[0] as { count: number } | undefined
+        totalCount = firstRow?.count
       }
 
       self.postMessage({ id, result, totalCount })
@@ -255,7 +265,8 @@ self.onmessage = async e => {
           returnValue: 'resultRows',
           rowMode: 'object',
         })
-        totalCount = countResult[0]?.count
+        const firstRow = countResult[0] as { count: number } | undefined
+        totalCount = firstRow?.count
       }
 
       self.postMessage({ id, result, totalCount })
@@ -356,8 +367,8 @@ self.onmessage = async e => {
 
       self.postMessage({ id, genres, countries, channels })
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Worker error:', err)
-    self.postMessage({ id, error: err.message || String(err) })
+    self.postMessage({ id, error: (err as Error).message || String(err) })
   }
 }

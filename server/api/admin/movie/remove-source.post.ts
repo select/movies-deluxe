@@ -19,7 +19,7 @@ export default defineEventHandler(async event => {
     const content = await readFile(filePath, 'utf-8')
     const db = JSON.parse(content)
 
-    const movie = db[movieId]
+    const movie = db[movieId] as MovieEntry
     if (!movie) {
       throw createError({
         statusCode: 404,
@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
       })
     }
 
-    const sourceIndex = movie.sources.findIndex((s: any) => s.id === sourceId)
+    const sourceIndex = movie.sources.findIndex(s => s.id === sourceId)
     if (sourceIndex === -1) {
       throw createError({
         statusCode: 404,
@@ -52,6 +52,10 @@ export default defineEventHandler(async event => {
       // For simplicity, we always check if the ID should be updated for temporary IDs.
       if (!isImdbId(movieId)) {
         const remainingSource = movie.sources[0]
+        if (!remainingSource) {
+          // No remaining sources, movie should have been deleted above
+          return
+        }
         let newTempId = movieId
         if (remainingSource.type === 'youtube') {
           newTempId = generateYouTubeId(remainingSource.id)
@@ -60,14 +64,12 @@ export default defineEventHandler(async event => {
         }
 
         if (newTempId !== movieId) {
-          const existing = db[newTempId]
+          const existing = db[newTempId] as MovieEntry | undefined
           if (existing) {
             // Merge remaining sources into existing entry
             existing.sources = [
               ...(existing.sources || []),
-              ...movie.sources.filter(
-                (s: any) => !(existing.sources || []).some((es: any) => es.id === s.id)
-              ),
+              ...movie.sources.filter(s => !(existing.sources || []).some(es => es.id === s.id)),
             ]
             existing.lastUpdated = new Date().toISOString()
             delete db[movieId]
