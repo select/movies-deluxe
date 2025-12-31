@@ -103,6 +103,22 @@ export interface AIMetadata {
 }
 
 /**
+ * Quality labels for marking low-quality or problematic content
+ */
+export enum QualityLabel {
+  CLIP = 'clip',
+  TEASER = 'teaser',
+  TRAILER = 'trailer',
+  PROMO = 'promo',
+  BEHIND_THE_SCENES = 'behind-the-scenes',
+  INTERVIEW = 'interview',
+  DUPLICATE = 'duplicate',
+  INCORRECT = 'incorrect',
+  INCOMPLETE = 'incomplete',
+  ADULT = 'adult',
+}
+
+/**
  * Main movie entry structure
  */
 export interface MovieEntry {
@@ -113,6 +129,10 @@ export interface MovieEntry {
   metadata?: MovieMetadata
   verified?: boolean // Whether this entry has been manually verified by a human
   ai?: AIMetadata // AI-extracted metadata from Ollama (for unmatched movies with promotional titles)
+  qualityLabels?: QualityLabel[] // Quality issues marked by admins
+  qualityMarkedAt?: string // ISO 8601 timestamp when quality was marked
+  qualityMarkedBy?: string // Admin username who marked the quality
+  qualityNotes?: string // Additional notes about quality issues
   lastUpdated: string // ISO 8601 timestamp
 }
 
