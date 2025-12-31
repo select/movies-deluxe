@@ -134,3 +134,8 @@ export const useUiStore = defineStore('ui', () => {
     setSearchOpen: (value: boolean) => (isSearchOpen.value = value),
   }
 })
+
+// HMR support
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useUiStore, import.meta.hot))
+}

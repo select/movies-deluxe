@@ -97,3 +97,8 @@ export const useCollectionsStore = defineStore('collections', () => {
     getCollectionsForMovie,
   }
 })
+
+// HMR support
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useCollectionsStore, import.meta.hot))
+}
