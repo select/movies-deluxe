@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2025-12-31T02:19:56.139Z"
+    "lastUpdated": "2025-12-31T16:41:25.883Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -59,10 +59,11 @@
       "tt0072431",
       "tt0079944",
       "tt0060827",
-      "tt0048424"
+      "tt0048424",
+      "tt0051808"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2025-12-31T02:19:56.138Z"
+    "updatedAt": "2025-12-31T16:41:25.883Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -1330,10 +1331,44 @@
       "youtube--LEoqYF0X7I",
       "archive-meng-jiao-di-she-long-nu-1973",
       "archive-xiao-quan-wang-1972",
-      "tt0056058"
+      "tt0056058",
+      "archive-JackieChanFirstMovieBigAndLittleWongTinBar",
+      "tt0079509",
+      "tt0085127",
+      "tt0089374",
+      "tt0091655",
+      "tt0095403",
+      "tt0099812",
+      "tt0103950",
+      "tt18757236",
+      "tt4687848",
+      "youtube-izJVVBjIN3Q",
+      "youtube-PdVMOvOzZNw",
+      "youtube-PofsGjGYfUs",
+      "youtube-xU9eLFJ6ZJ4",
+      "archive-LADYWHIRLWIND1973_1",
+      "tt0095937",
+      "tt0311363",
+      "tt1442571",
+      "tt6083388",
+      "youtube-Fm229Xcte1A",
+      "tt0079891",
+      "tt0099818",
+      "tt0103285",
+      "tt0108624",
+      "tt0328113",
+      "tt0342258",
+      "tt0913968",
+      "tt0940808",
+      "tt1686784",
+      "tt2644714",
+      "youtube-iGGk97eT384",
+      "youtube-bmHFoKFsxjQ",
+      "youtube-ZjKwt3FgkvY",
+      "youtube-2u-Le5E7v6U"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2025-12-30T19:09:33.178Z"
+    "updatedAt": "2025-12-31T02:40:00.000Z"
   },
   "canine-cinema": {
     "id": "canine-cinema",
@@ -1440,5 +1475,27 @@
     ],
     "createdAt": "2025-12-30T00:00:00.000Z",
     "updatedAt": "2025-12-30T17:05:48.982Z"
+  },
+  "criterion-collection": {
+    "id": "criterion-collection",
+    "name": "The Criterion Collection",
+    "description": "Films from The Criterion Collection, a prestigious series of classic and contemporary films.",
+    "movieIds": [
+      "archive-LieutenantKizhe1934Restored",
+      "archive-night-and-the-city-1950-576p-sd",
+      "archive-OneWonderfulSundaysubarashikiNichiyobi1947",
+      "archive-shatteredscherben1921",
+      "archive-the-story-of-temple-drake-1933-colorized-movie-720p-hdl_202402",
+      "archive-the.-third.-man.-1949.-criterion.-1080p.-blu-ray.",
+      "archive-thieves-highway-1949-restored-movie-720p-hd",
+      "archive-threepenny-opera-1931-colorized-movie-576p-sd",
+      "archive-WhiteNights-LeNottiBianche1957",
+      "tt0015634",
+      "tt0076085",
+      "tt0470941",
+      "tt0103905"
+    ],
+    "createdAt": "2025-12-31T02:45:00.000Z",
+    "updatedAt": "2025-12-31T05:06:14.998Z"
   }
 }
