@@ -160,16 +160,6 @@ export const useMovieStore = defineStore('movie', () => {
   const filteredAndSortedMovies = ref<ExtendedMovieEntry[]>([])
 
   /**
-   * Paginated movies for display (subset of filteredAndSortedMovies)
-   * Includes movies up to currentPage * ITEMS_PER_PAGE
-   */
-  const paginatedMovies = computed((): ExtendedMovieEntry[] => {
-    const itemsPerPage = 50
-    const limit = filters.value.currentPage * itemsPerPage
-    return filteredAndSortedMovies.value.slice(0, limit)
-  })
-
-  /**
    * Current movie list for navigation (uses lightweight movies for consistency with index page)
    * Returns the list of movie IDs in the same order as displayed on the index page
    * Falls back to all movies sorted by year if no filtering has been applied yet
@@ -203,13 +193,6 @@ export const useMovieStore = defineStore('movie', () => {
    * Number of liked movies - calculated directly from likedMovieIds
    */
   const likedCount = computed((): number => likedMovieIds.value.length)
-
-  /**
-   * Whether more movies can be loaded (pagination)
-   */
-  const hasMore = computed((): boolean => {
-    return filteredAndSortedMovies.value.length > paginatedMovies.value.length
-  })
 
   /**
    * Number of active filters (excluding sort)
@@ -611,11 +594,10 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const fetchLightweightMovies = async () => {
     if (!db.isReady.value) {
-      console.log('DB not ready, cannot fetch lightweight movies')
+      window.console.log('DB not ready, cannot fetch lightweight movies')
       return
     }
 
-    console.log('[MovieStore] Fetching lightweight movies...')
     isFiltering.value = true
     try {
       const params: unknown[] = []
@@ -686,13 +668,6 @@ export const useMovieStore = defineStore('movie', () => {
         includeCount: true,
       })
 
-      console.log(
-        '[MovieStore] Lightweight query returned:',
-        result?.length || 0,
-        'movies, total:',
-        totalCount
-      )
-
       lightweightMovies.value = result || []
       if (totalCount !== undefined) {
         totalFiltered.value = totalCount
@@ -711,14 +686,13 @@ export const useMovieStore = defineStore('movie', () => {
   const fetchFilteredMovies = async (append = false) => {
     if (!db.isReady.value) {
       // Fallback to JS filtering if DB not ready
-      console.log('DB not ready, using JS filtering')
+      window.console.error('DB not ready, using JS filtering')
       const allMoviesArray = await searchMovies(filters.value.searchQuery)
       filteredAndSortedMovies.value = applyFilters(allMoviesArray)
       totalFiltered.value = filteredAndSortedMovies.value.length
       return
     }
 
-    console.log('Fetching filtered movies from SQLite...')
     if (!append) {
       isFiltering.value = true
     }
@@ -807,8 +781,6 @@ export const useMovieStore = defineStore('movie', () => {
         offset,
         includeCount: true,
       })
-
-      console.log('[MovieStore] fetchMovies returned:', result.length, 'movies, total:', totalCount)
 
       if (append) {
         filteredAndSortedMovies.value = [...filteredAndSortedMovies.value, ...result]
@@ -1330,7 +1302,6 @@ export const useMovieStore = defineStore('movie', () => {
       return JSON.stringify({ ...rest, searchQuery: throttledSearchQuery.value })
     },
     () => {
-      console.log('[MovieStore] Filters changed, resetting page and fetching...')
       filters.value.currentPage = 1
       fetchLightweightMovies()
     }
@@ -1341,7 +1312,6 @@ export const useMovieStore = defineStore('movie', () => {
     () => filters.value.currentPage,
     (newPage, oldPage) => {
       if (newPage > oldPage) {
-        console.log('[MovieStore] Page increased, fetching more...')
         fetchFilteredMovies(true)
       }
     }
@@ -1402,7 +1372,6 @@ export const useMovieStore = defineStore('movie', () => {
 
     // Data views
     filteredAndSortedMovies: readonly(filteredAndSortedMovies),
-    paginatedMovies,
     lightweightMovies: readonly(lightweightMovies),
     currentMovieList,
 
@@ -1410,7 +1379,6 @@ export const useMovieStore = defineStore('movie', () => {
     totalMovies,
     totalFiltered: readonly(totalFiltered),
     likedCount,
-    hasMore,
     activeFiltersCount,
     hasActiveFilters,
     currentSortOption,
@@ -1477,3 +1445,8 @@ export const useMovieStore = defineStore('movie', () => {
     enrichMovieMetadata,
   }
 })
+
+// HMR support
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useMovieStore, import.meta.hot))
+}

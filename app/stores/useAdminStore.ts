@@ -76,7 +76,7 @@ export const useAdminStore = defineStore('admin', () => {
       )
       youtubeChannels.value = data.channels
     } catch (e) {
-      console.error('Failed to load YouTube channels', e)
+      window.console.error('Failed to load YouTube channels', e)
     }
   }
 
@@ -85,7 +85,7 @@ export const useAdminStore = defineStore('admin', () => {
     try {
       stats.value = await $fetch<ScrapeStats>('/api/admin/scrape/stats')
     } catch (e) {
-      console.error('Failed to fetch stats', e)
+      window.console.error('Failed to fetch stats', e)
     } finally {
       loading.value = false
     }
@@ -101,7 +101,7 @@ export const useAdminStore = defineStore('admin', () => {
       })
       await refreshStats()
     } catch (e: unknown) {
-      console.error('Archive scrape failed', e)
+      window.console.error('Archive scrape failed', e)
       results.value = {
         processed: 0,
         added: 0,
@@ -123,7 +123,7 @@ export const useAdminStore = defineStore('admin', () => {
       })
       await refreshStats()
     } catch (e: unknown) {
-      console.error('YouTube scrape failed', e)
+      window.console.error('YouTube scrape failed', e)
       results.value = {
         processed: 0,
         added: 0,
@@ -145,7 +145,7 @@ export const useAdminStore = defineStore('admin', () => {
       })
       await refreshStats()
     } catch (e: unknown) {
-      console.error('Poster download failed', e)
+      window.console.error('Poster download failed', e)
       posterResults.value = {
         processed: 0,
         successful: 0,
@@ -167,7 +167,7 @@ export const useAdminStore = defineStore('admin', () => {
       })
       await refreshStats()
     } catch (e: unknown) {
-      console.error('OMDB enrichment failed', e)
+      window.console.error('OMDB enrichment failed', e)
       results.value = {
         processed: 0,
         added: 0,
@@ -191,7 +191,7 @@ export const useAdminStore = defineStore('admin', () => {
         await refreshStats()
       }
     } catch (error) {
-      console.error('AI extraction failed:', error)
+      window.console.error('AI extraction failed:', error)
     } finally {
       scraping.value = false
     }
@@ -204,7 +204,7 @@ export const useAdminStore = defineStore('admin', () => {
         method: 'POST',
       })
     } catch (e) {
-      console.error('SQLite generation failed', e)
+      window.console.error('SQLite generation failed', e)
     } finally {
       generatingSqlite.value = false
     }
@@ -269,7 +269,7 @@ export const useAdminStore = defineStore('admin', () => {
       )
       await refreshStats()
     } catch (e: unknown) {
-      console.error('Description deduplication failed', e)
+      window.console.error('Description deduplication failed', e)
       deduplicationResults.value = {
         totalSources: 0,
         sourcesWithDescriptions: 0,
@@ -320,3 +320,8 @@ export const useAdminStore = defineStore('admin', () => {
     postersFailedPercent,
   }
 })
+
+// HMR support
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAdminStore, import.meta.hot))
+}
