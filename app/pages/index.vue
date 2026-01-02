@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { onBeforeRouteLeave } from 'vue-router'
-import { useStorage, useWindowScroll } from '@vueuse/core'
+import { useWindowScroll } from '@vueuse/core'
 
 // Set page title and meta
 useHead({
@@ -76,16 +76,8 @@ const safeTotalMovies = computed(() => totalFiltered.value || 0)
 // Track window scroll position
 const { y: windowScrollY } = useWindowScroll()
 
-// Save the page number in localStorage (not part of filters to avoid triggering refetch)
-const savedPage = useStorage('movies-deluxe-saved-page', 1, localStorage)
-
 // Load movies on mount
 onMounted(async () => {
-  // Restore the saved page before loading
-  if (savedPage.value > 1) {
-    setCurrentPage(savedPage.value)
-  }
-
   await loadFromFile()
 
   // Restore scroll position after content loads
@@ -109,10 +101,9 @@ onMounted(async () => {
   }
 })
 
-// Save scroll position and page before leaving
+// Save scroll position before leaving
 onBeforeRouteLeave(() => {
   setScrollY(windowScrollY.value)
-  savedPage.value = filters.value.currentPage
 })
 
 // Load more movies
