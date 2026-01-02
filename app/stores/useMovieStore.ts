@@ -1,10 +1,4 @@
-import type {
-  MovieEntry,
-  MovieSource,
-  MovieMetadata,
-  LightweightMovieEntry,
-  QualityLabel,
-} from '~/types'
+import type { MovieEntry, MovieSource, LightweightMovieEntry, QualityLabel } from '~/types'
 import type { LightweightMovie } from '~/types/database'
 import { useStorage } from '@vueuse/core'
 
@@ -924,32 +918,6 @@ export const useMovieStore = defineStore('movie', () => {
     filters.value = { ...DEFAULT_FILTERS }
   }
 
-  /**
-   * Get all unique genres from movies
-   */
-  const getAvailableGenres = (movies: MovieEntry[]): string[] => {
-    const genresSet = new Set<string>()
-    movies.forEach(movie => {
-      movie.metadata?.Genre?.split(', ').forEach((genre: string) => {
-        genresSet.add(genre.trim())
-      })
-    })
-    return Array.from(genresSet).sort()
-  }
-
-  /**
-   * Get all unique countries from movies
-   */
-  const getAvailableCountries = (movies: MovieEntry[]): string[] => {
-    const countriesSet = new Set<string>()
-    movies.forEach(movie => {
-      movie.metadata?.Country?.split(', ').forEach((country: string) => {
-        countriesSet.add(country.trim())
-      })
-    })
-    return Array.from(countriesSet).sort()
-  }
-
   // ============================================
   // PAGINATION ACTIONS
   // ============================================
@@ -959,13 +927,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const setCurrentPage = (page: number) => {
     filters.value.currentPage = page
-  }
-
-  /**
-   * Load more movies (increment page)
-   */
-  const loadMoreMovies = () => {
-    filters.value.currentPage++
   }
 
   /**
@@ -1003,27 +964,10 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Remove a movie from likes
-   */
-  const unlike = (movieId: string) => {
-    const index = likedMovieIds.value.indexOf(movieId)
-    if (index > -1) {
-      likedMovieIds.value.splice(index, 1)
-    }
-  }
-
-  /**
    * Check if a movie is liked
    */
   const isLiked = (movieId: string): boolean => {
     return likedMovieIds.value.includes(movieId)
-  }
-
-  /**
-   * Clear all liked movies
-   */
-  const clearLikes = () => {
-    likedMovieIds.value = []
   }
 
   // ============================================
@@ -1109,70 +1053,6 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     return placeholder
-  }
-
-  /**
-   * Preload posters for multiple movies
-   */
-  const preloadPosters = async (imdbIds: string[]): Promise<Map<string, boolean>> => {
-    const results = new Map<string, boolean>()
-
-    const batchSize = 10
-    for (let i = 0; i < imdbIds.length; i += batchSize) {
-      const batch = imdbIds.slice(i, i + batchSize)
-      const promises = batch.map(async imdbId => {
-        const exists = await posterExists(imdbId)
-        results.set(imdbId, exists)
-      })
-      await Promise.all(promises)
-    }
-
-    return results
-  }
-
-  /**
-   * Runtime OMDB enrichment
-   */
-  const enrichMovieMetadata = async (movie: MovieEntry) => {
-    isLoading.value.imdbFetch = true
-
-    const apiKey = useRuntimeConfig().public.OMDB_API_KEY
-    if (!apiKey) {
-      isLoading.value.imdbFetch = false
-      return null
-    }
-
-    try {
-      if (!movie.imdbId.startsWith('tt')) {
-        isLoading.value.imdbFetch = false
-        return null
-      }
-
-      const metadata = await $fetch<MovieMetadata>('https://www.omdbapi.com/', {
-        params: {
-          apikey: apiKey,
-          i: movie.imdbId,
-          plot: 'full',
-        },
-      })
-
-      if (metadata && 'Error' in metadata) {
-        isLoading.value.imdbFetch = false
-        return null
-      }
-
-      // Update the movie in allMovies
-      const existingMovie = allMovies.value.get(movie.imdbId)
-      if (existingMovie) {
-        existingMovie.metadata = metadata
-      }
-
-      isLoading.value.imdbFetch = false
-      return metadata
-    } catch {
-      isLoading.value.imdbFetch = false
-      return null
-    }
   }
 
   /**
@@ -1386,8 +1266,6 @@ export const useMovieStore = defineStore('movie', () => {
     toggleCountry,
     resetFilters,
     applyFilters,
-    getAvailableGenres,
-    getAvailableCountries,
     fetchFilteredMovies,
     fetchLightweightMovies,
 
@@ -1395,7 +1273,6 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Pagination
     // ============================================
     setCurrentPage,
-    loadMoreMovies,
     setScrollY,
 
     // ============================================
@@ -1403,9 +1280,7 @@ export const useMovieStore = defineStore('movie', () => {
     // ============================================
     toggleLike,
     like,
-    unlike,
     isLiked,
-    clearLikes,
 
     // ============================================
     // UTILITY FUNCTIONS
@@ -1414,8 +1289,6 @@ export const useMovieStore = defineStore('movie', () => {
     posterExists,
     getPosterUrl,
     getPosterUrlSync,
-    preloadPosters,
-    enrichMovieMetadata,
     markMovieQuality,
     clearMovieQuality,
     getMarkedMovies,
