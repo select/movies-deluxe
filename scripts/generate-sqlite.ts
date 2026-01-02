@@ -137,13 +137,10 @@ async function generateSQLite(
         FOREIGN KEY (movieId) REFERENCES movies(imdbId) ON DELETE CASCADE
       );
 
-      -- FTS5 Virtual Table for Search
+      -- FTS5 Virtual Table for Search (title only)
       CREATE VIRTUAL TABLE fts_movies USING fts5(
         imdbId UNINDEXED,
         title,
-        actors,
-        director,
-        plot,
         tokenize='unicode61'
       );
 
@@ -199,8 +196,8 @@ async function generateSQLite(
     `)
 
     const insertFts = sqlite.prepare(`
-      INSERT INTO fts_movies (imdbId, title, actors, director, plot)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO fts_movies (imdbId, title)
+      VALUES (?, ?)
     `)
 
     const insertRelated = sqlite.prepare(`
@@ -322,7 +319,7 @@ async function generateSQLite(
 
         // Insert into FTS
         const ftsTitle = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
-        insertFts.run(movie.imdbId, ftsTitle, m.Actors || '', m.Director || '', m.Plot || '')
+        insertFts.run(movie.imdbId, ftsTitle)
 
         count++
         if (count % 1000 === 0) {
