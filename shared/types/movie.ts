@@ -38,6 +38,14 @@ export interface ArchiveOrgSource extends MovieSourceBase {
 }
 
 /**
+ * YouTube region restriction data
+ */
+export interface YouTubeRegionRestriction {
+  allowed?: string[] // List of region codes where the video is viewable (ISO 3166-1 alpha-2)
+  blocked?: string[] // List of region codes where the video is blocked (ISO 3166-1 alpha-2)
+}
+
+/**
  * YouTube specific source data
  */
 export interface YouTubeSource extends MovieSourceBase {
@@ -51,6 +59,7 @@ export interface YouTubeSource extends MovieSourceBase {
   publishedAt?: string
   viewCount?: number
   thumbnail?: string
+  regionRestriction?: YouTubeRegionRestriction // Geographic restrictions
 }
 
 /**
@@ -116,6 +125,7 @@ export enum QualityLabel {
   INCORRECT = 'incorrect',
   INCOMPLETE = 'incomplete',
   ADULT = 'adult',
+  BLOCKED = 'blocked', // YouTube videos unavailable due to geographic restrictions or privacy settings
 }
 
 /**
