@@ -1,20 +1,21 @@
 {
   "database": {
-    "total": 31475,
-    "matched": 14951,
-    "unmatched": 16524,
+    "total": 31477,
+    "matched": 14946,
+    "unmatched": 16531,
     "archiveOrgSources": 26789,
     "youtubeSources": 11202,
-    "curatedCount": 14951,
-    "qualityMarkedCount": 247,
+    "curatedCount": 14946,
+    "qualityMarkedCount": 250,
     "qualityBreakdown": {
       "blocked": 100,
+      "clip": 33,
       "interview": 19,
       "teaser": 6,
       "trailer": 85,
-      "clip": 31,
       "behind-the-scenes": 6,
       "promo": 3,
+      "incorrect": 1,
       "duplicate": 1
     },
     "collections": {
@@ -263,49 +264,50 @@
     }
   },
   "curation": {
-    "total": 31475,
-    "curated": 14951,
-    "percent": 47.50119142176331
+    "total": 31477,
+    "curated": 14946,
+    "percent": 47.48228865520856
   },
   "omdb": {
-    "total": 31475,
-    "matched": 14951,
-    "unmatched": 16524,
-    "percent": 47.50119142176331,
+    "total": 31477,
+    "matched": 14946,
+    "unmatched": 16531,
+    "percent": 47.48228865520856,
     "failed": 12144,
-    "failureRate": 44.820077505074735
+    "failureRate": 44.82834994462902
   },
   "ai": {
-    "totalUnmatched": 16524,
+    "totalUnmatched": 16531,
     "withAiData": 4741,
-    "withoutAiData": 11783,
-    "percent": 28.691600096828857
+    "withoutAiData": 11790,
+    "percent": 28.67945072893352
   },
   "quality": {
-    "totalMarked": 247,
+    "totalMarked": 250,
     "breakdown": {
       "blocked": 100,
+      "clip": 33,
       "interview": 19,
       "teaser": 6,
       "trailer": 85,
-      "clip": 31,
       "behind-the-scenes": 6,
       "promo": 3,
+      "incorrect": 1,
       "duplicate": 1
     },
-    "percent": 0.7847498014297062
+    "percent": 0.7942307081360993
   },
   "posters": {
-    "totalMovies": 31475,
-    "withPosterUrl": 13362,
-    "downloaded": 13274,
-    "missing": 88,
+    "totalMovies": 31477,
+    "withPosterUrl": 13359,
+    "downloaded": 13272,
+    "missing": 87,
     "failed": 12,
-    "failureRate": 0.09032063826584374,
-    "percentOfMoviesWithUrl": 99.34141595569525,
-    "percentOfAllMovies": 42.17315329626688,
-    "filesInDirectory": 13354,
-    "matchedPosters": 13274
+    "failureRate": 0.09033423667570009,
+    "percentOfMoviesWithUrl": 99.34875364922524,
+    "percentOfAllMovies": 42.16411983352925,
+    "filesInDirectory": 13357,
+    "matchedPosters": 13272
   },
-  "lastUpdated": "2026-01-02T19:52:22.626Z"
+  "lastUpdated": "2026-01-02T20:52:22.613Z"
 }
