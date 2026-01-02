@@ -1,17 +1,38 @@
 export const useCollectionsStore = defineStore('collections', () => {
   const collections = ref<Map<string, Collection>>(new Map())
   const isLoading = ref(false)
+  const isLoaded = ref(false) // Track if collections have been loaded
   const error = ref<string | null>(null)
 
+  /**
+   * Load all collections from JSON file once and cache them
+   * Subsequent calls will use the cached data
+   */
   const loadCollections = async () => {
+    // Return early if already loaded
+    if (isLoaded.value) {
+      return
+    }
+
     isLoading.value = true
     error.value = null
     try {
-      const data = await $fetch<Collection[]>('/api/collections')
+      // Fetch directly from static JSON file
+      const data = await $fetch<Collection[]>('/data/collections.json')
       collections.value.clear()
-      data.forEach(collection => {
+
+      // Handle both array and object formats
+      const collectionsArray = Array.isArray(data)
+        ? data
+        : Object.entries(data)
+            .filter(([key]) => !key.startsWith('_'))
+            .map(([_, value]) => value as Collection)
+
+      collectionsArray.forEach(collection => {
         collections.value.set(collection.id, collection)
       })
+
+      isLoaded.value = true
     } catch (err: unknown) {
       error.value = (err as Error).message || 'Failed to load collections'
     } finally {
@@ -19,20 +40,18 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
-  const getCollectionById = async (id: string) => {
-    // Check if we already have it with movies
-    const existing = collections.value.get(id)
-    if (existing && 'movies' in existing) {
-      return existing as Collection & { movies: MovieEntry[] }
+  /**
+   * Get a collection by ID from cache
+   * Loads collections if not loaded yet
+   */
+  const getCollectionById = async (id: string): Promise<Collection | null> => {
+    // Load collections if not loaded yet
+    if (!isLoaded.value) {
+      await loadCollections()
     }
 
-    try {
-      const data = await $fetch<Collection & { movies: MovieEntry[] }>(`/api/collections/${id}`)
-      collections.value.set(id, data)
-      return data
-    } catch {
-      return null
-    }
+    // Return from cache
+    return collections.value.get(id) || null
   }
 
   const addMovieToCollection = async (collectionId: string, movieId: string) => {
@@ -94,6 +113,10 @@ export const useCollectionsStore = defineStore('collections', () => {
       // If database is not ready, fall back to checking loaded collections
       // This prevents loading the entire SQLite DB just for collections
       if (!db.isReady.value) {
+        // Ensure collections are loaded
+        if (!isLoaded.value) {
+          await loadCollections()
+        }
         // Check in-memory collections store
         return Array.from(collections.value.values()).filter(c => c.movieIds.includes(movieId))
       }
@@ -108,6 +131,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   return {
     collections,
     isLoading,
+    isLoaded,
     error,
     loadCollections,
     getCollectionById,
