@@ -6,8 +6,6 @@ export interface ArchiveOrgMovie {
   description?: string
   date?: string
   year?: string
-  runtime?: string | string[]
-  length?: string | string[]
   downloads?: number
   collection?: string[]
   language?: string // 2-letter language code from Archive.org metadata
@@ -32,7 +30,7 @@ export async function fetchArchiveOrgMovies(
   url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
   url.searchParams.set(
     'fields',
-    'identifier,title,description,date,year,downloads,collection,language,runtime,length'
+    'identifier,title,description,date,year,downloads,collection,language'
   )
   url.searchParams.set('count', Math.max(100, rows).toString())
   if (cursor) {
@@ -66,31 +64,6 @@ export function extractYear(date?: string): number | undefined {
 }
 
 /**
- * Parse Archive.org duration formats into seconds
- */
-export function parseArchiveDuration(runtime: string | string[]): number | null {
-  const runtimeStr = Array.isArray(runtime) ? runtime[0] : runtime
-  if (!runtimeStr) return null
-
-  // Try parsing as seconds (pure numeric string)
-  if (/^\d+$/.test(runtimeStr)) {
-    return parseInt(runtimeStr, 10)
-  }
-
-  // Try parsing as HH:MM:SS or MM:SS
-  const parts = runtimeStr.split(':').map(p => parseInt(p, 10))
-  if (parts.length === 3 && parts.every(p => !isNaN(p))) {
-    // HH:MM:SS
-    return parts[0]! * 3600 + parts[1]! * 60 + parts[2]!
-  } else if (parts.length === 2 && parts.every(p => !isNaN(p))) {
-    // MM:SS
-    return parts[0]! * 60 + parts[1]!
-  }
-
-  return null
-}
-
-/**
  * Process a single Archive.org movie
  */
 export async function processArchiveMovie(
@@ -98,7 +71,6 @@ export async function processArchiveMovie(
   collection: string
 ): Promise<MovieEntry | null> {
   const year = extractYear(movie.date || movie.year)
-  const duration = parseArchiveDuration(movie.runtime || movie.length || '')
 
   const source: ArchiveOrgSource = {
     type: 'archive.org',
@@ -109,7 +81,6 @@ export async function processArchiveMovie(
     downloads: movie.downloads,
     description: movie.description,
     thumbnail: `https://archive.org/services/img/${movie.identifier}`,
-    duration: duration || undefined,
     releaseDate: movie.date || movie.year,
     language: movie.language, // 2-letter language code from Archive.org metadata
     addedAt: new Date().toISOString(),
