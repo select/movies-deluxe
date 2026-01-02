@@ -171,13 +171,24 @@ export default defineEventHandler(async event => {
         // Try multiple cleaning strategies for better OMDB matching
         let matchResult: MatchResult = { confidence: MatchConfidence.NONE }
 
-        // Strategy 1: Try with general cleaner (handles Archive.org, foreign titles, etc.)
-        const cleanedName = cleanTitleGeneral(name)
-        attempts.push({ query: cleanedName, year: yearToUse })
-        matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
+        // Strategy 1: Try with AI-extracted title if available (using primary source year)
+        if (movie.ai?.title) {
+          console.log(`[OMDB] Using AI-extracted title: "${movie.ai.title}" (year: ${yearToUse})`)
+          attempts.push({ query: movie.ai.title, year: yearToUse })
+          matchResult = await matchMovie(movie.ai.title, yearToUse, apiKey)
+        }
 
-        // Strategy 2: If cleaned version failed, try original parsed title
+        // Strategy 2: If AI title failed or not available, try with general cleaner
         if (matchResult.confidence === MatchConfidence.NONE) {
+          const cleanedName = cleanTitleGeneral(name)
+          console.log(`[OMDB] Using cleaned title: "${cleanedName}" (year: ${yearToUse})`)
+          attempts.push({ query: cleanedName, year: yearToUse })
+          matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
+        }
+
+        // Strategy 3: If cleaned version failed, try original parsed title
+        if (matchResult.confidence === MatchConfidence.NONE) {
+          console.log(`[OMDB] Using original parsed title: "${name}" (year: ${yearToUse})`)
           attempts.push({ query: name, year: yearToUse })
           matchResult = await matchMovie(name, yearToUse, apiKey)
         }
