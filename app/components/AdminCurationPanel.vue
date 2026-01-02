@@ -577,8 +577,7 @@ const selectMovie = async (imdbId: string) => {
         method: 'POST',
         body: {
           movieId: props.movie.imdbId,
-          metadata: details,
-          verified: true
+          metadata: details
         }
       })
 
