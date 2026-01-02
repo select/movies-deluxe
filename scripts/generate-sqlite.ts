@@ -101,8 +101,6 @@ async function generateSQLite(
         identifier TEXT NOT NULL,
         title TEXT,
         channelId TEXT,
-        label TEXT,
-        quality TEXT,
         addedAt TEXT,
         description TEXT,
         language TEXT,
@@ -193,8 +191,8 @@ async function generateSQLite(
 
     const insertSource = sqlite.prepare(`
       INSERT INTO sources (
-        movieId, type, identifier, title, channelId, label, quality, addedAt, description, language
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        movieId, type, identifier, title, channelId, addedAt, description, language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertFts = sqlite.prepare(`
@@ -306,8 +304,6 @@ async function generateSQLite(
               identifier,
               source.title || null,
               channelId,
-              source.label || null,
-              source.quality || null,
               source.addedAt,
               description,
               sourceLanguage

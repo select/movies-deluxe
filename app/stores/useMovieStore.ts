@@ -251,8 +251,7 @@ export const useMovieStore = defineStore('movie', () => {
           .split('###')
           .filter((s: string) => s.trim())
           .map((s: string) => {
-            const [type, id, title, label, quality, addedAt, description, channelName] =
-              s.split('|||')
+            const [type, id, title, addedAt, description, channelName] = s.split('|||')
             if (!type || !id) return null
 
             const base = {
@@ -260,8 +259,6 @@ export const useMovieStore = defineStore('movie', () => {
               url: generateSourceUrl(type as MovieSourceType, id),
               id,
               title: title || '',
-              label: label || undefined,
-              quality: quality || undefined,
               addedAt: addedAt || new Date().toISOString(),
               description: description || undefined,
             }
@@ -414,7 +411,7 @@ export const useMovieStore = defineStore('movie', () => {
                 END as title_priority,`
                    : ''
                }
-               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || COALESCE(s.label, '') || '|||' || COALESCE(s.quality, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
+               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
       from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId LEFT JOIN channels c ON s.channelId = c.id`,
       where: finalWhere,
       params,
