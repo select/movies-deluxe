@@ -4,6 +4,7 @@ import type {
   MovieSourceType,
   MovieMetadata,
   LightweightMovieEntry,
+  QualityLabel,
 } from '~/types'
 import {
   SORT_OPTIONS,
@@ -1282,6 +1283,111 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
+  /**
+   * Mark movie quality with labels and notes
+   */
+  const markMovieQuality = async (
+    movieId: string,
+    labels: QualityLabel[],
+    notes?: string,
+    markedBy: string = 'admin'
+  ) => {
+    try {
+      const response = await $fetch<{ success: boolean; movieId: string }>(
+        '/api/admin/movie/update',
+        {
+          method: 'POST',
+          body: {
+            movieId,
+            qualityLabels: labels,
+            qualityNotes: notes,
+            qualityMarkedBy: markedBy,
+          },
+        }
+      )
+
+      if (response.success) {
+        // Update local state in allMovies and movieDetailsCache
+        const updateMovie = (movie: ExtendedMovieEntry) => {
+          movie.qualityLabels = labels
+          movie.qualityNotes = notes
+          movie.qualityMarkedBy = markedBy
+          movie.qualityMarkedAt = new Date().toISOString()
+          movie.lastUpdated = new Date().toISOString()
+        }
+
+        const movie = allMovies.value.get(movieId)
+        if (movie) updateMovie(movie)
+
+        const cachedMovie = movieDetailsCache.value.get(movieId)
+        if (cachedMovie) updateMovie(cachedMovie)
+
+        return true
+      }
+      return false
+    } catch (err) {
+      console.error('[MovieStore] Failed to mark movie quality:', err)
+      return false
+    }
+  }
+
+  /**
+   * Clear quality markings from a movie
+   */
+  const clearMovieQuality = async (movieId: string) => {
+    try {
+      const response = await $fetch<{ success: boolean; movieId: string }>(
+        '/api/admin/movie/update',
+        {
+          method: 'POST',
+          body: {
+            movieId,
+            qualityLabels: [],
+          },
+        }
+      )
+
+      if (response.success) {
+        // Update local state
+        const clearMovie = (movie: ExtendedMovieEntry) => {
+          delete movie.qualityLabels
+          delete movie.qualityNotes
+          delete movie.qualityMarkedBy
+          delete movie.qualityMarkedAt
+          movie.lastUpdated = new Date().toISOString()
+        }
+
+        const movie = allMovies.value.get(movieId)
+        if (movie) clearMovie(movie)
+
+        const cachedMovie = movieDetailsCache.value.get(movieId)
+        if (cachedMovie) clearMovie(cachedMovie)
+
+        return true
+      }
+      return false
+    } catch (err) {
+      console.error('[MovieStore] Failed to clear movie quality:', err)
+      return false
+    }
+  }
+
+  /**
+   * Get all movies that have quality markings
+   */
+  const getMarkedMovies = (): ExtendedMovieEntry[] => {
+    return Array.from(allMovies.value.values()).filter(
+      (movie: ExtendedMovieEntry) => (movie.qualityLabels?.length || 0) > 0
+    )
+  }
+
+  /**
+   * Get movies filtered by quality (exclude marked ones by default)
+   */
+  const getQualityFilteredMovies = (movies: ExtendedMovieEntry[]): ExtendedMovieEntry[] => {
+    return movies.filter((movie: ExtendedMovieEntry) => (movie.qualityLabels?.length || 0) === 0)
+  }
+
   // ============================================
   // WATCHERS
   // ============================================
@@ -1441,6 +1547,10 @@ export const useMovieStore = defineStore('movie', () => {
     getPosterUrlSync,
     preloadPosters,
     enrichMovieMetadata,
+    markMovieQuality,
+    clearMovieQuality,
+    getMarkedMovies,
+    getQualityFilteredMovies,
   }
 })
 
