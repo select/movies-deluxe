@@ -471,11 +471,14 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Get related movies for a given movie ID
+   * Note: This does NOT use the database - it fetches from JSON files
    */
   const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
     try {
-      // Get the movie detail first to get related movies list
-      const movie = await getMovieById(movieId)
+      // Fetch movie details directly from JSON file (not from database)
+      // This avoids loading the database just for related movies
+      const movie = await $fetch<MovieEntry>(`/movies/${movieId}.json`)
+
       if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
         return []
       }

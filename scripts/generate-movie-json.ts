@@ -8,8 +8,10 @@
 import { join } from 'path'
 import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from '../server/utils/movieData'
+import { loadCollectionsDatabase } from '../server/utils/collections'
 import { createLogger } from '../server/utils/logger'
 import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../shared/types/movie'
+import type { Collection } from '../shared/types/collections'
 
 const logger = createLogger('MovieJSONGen')
 const MOVIES_DIR = join(process.cwd(), 'public/movies')
@@ -42,6 +44,28 @@ async function generateMovieJSON() {
   )
 
   logger.info(`Processing ${movies.length} movies`)
+
+  // 3.5. Load collections and build movie-to-collections map
+  logger.info('Loading collections...')
+  const collectionsDb = await loadCollectionsDatabase()
+  const collections = Object.entries(collectionsDb)
+    .filter(([key]) => !key.startsWith('_'))
+    .map(([_, value]) => value as Collection)
+
+  // Build a map of movieId -> collections
+  const movieToCollectionsMap = new Map<string, Array<{ id: string; name: string }>>()
+  for (const collection of collections) {
+    for (const movieId of collection.movieIds) {
+      if (!movieToCollectionsMap.has(movieId)) {
+        movieToCollectionsMap.set(movieId, [])
+      }
+      movieToCollectionsMap.get(movieId)!.push({
+        id: collection.id,
+        name: collection.name,
+      })
+    }
+  }
+  logger.info(`Loaded ${collections.length} collections`)
 
   // 4. Calculate Related Movies (copied from generate-sqlite.ts)
   logger.info('Calculating related movies...')
@@ -184,6 +208,7 @@ async function generateMovieJSON() {
             }
           : undefined,
         relatedMovies: relatedMap.get(movie.imdbId) || [],
+        collections: movieToCollectionsMap.get(movie.imdbId) || [],
         // Admin fields (localhost only)
         is_curated: !!movie.metadata,
         verified: !!movie.verified,

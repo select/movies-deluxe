@@ -149,6 +149,10 @@ export interface MovieEntry {
     title: string
     year?: number
   }>
+  collections?: Array<{
+    id: string
+    name: string
+  }>
 }
 
 /**
