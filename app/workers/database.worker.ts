@@ -42,7 +42,6 @@ async function loadRemoteDatabase(url: string) {
     }
 
     const arrayBuffer = await response.arrayBuffer()
-    console.log('Database fetched, size:', arrayBuffer.byteLength, 'bytes')
 
     // Create a new Uint8Array from the buffer
     const uint8Array = new Uint8Array(arrayBuffer)
@@ -57,7 +56,6 @@ async function loadRemoteDatabase(url: string) {
     db = new sqlite.oo1.DB(':memory:')
 
     // Log database pointer info
-    console.log('Database size:', uint8Array.byteLength, 'bytes')
 
     // Check if sqlite3_deserialize is available
     if (typeof sqlite.capi.sqlite3_deserialize !== 'function') {
@@ -71,7 +69,6 @@ async function loadRemoteDatabase(url: string) {
     if (!pMem) {
       throw new Error('Failed to allocate memory for database')
     }
-    console.log('Allocated memory at pointer:', pMem, 'size:', uint8Array.byteLength)
 
     // Copy the database content to the allocated memory
     try {
