@@ -143,17 +143,16 @@ async function generateMovieJSON() {
   for (const movie of movies) {
     const filePath = join(MOVIES_DIR, `${movie.imdbId}.json`)
     try {
-      // Only store necessary info in JSON
+      // Only store fields that are actually used in the UI
       const jsonData = {
         imdbId: movie.imdbId,
         title: movie.title,
         year: movie.year,
         sources: movie.sources.map(s => {
-          const base: Record<string, any> = {
+          const base: Partial<YouTubeSource | ArchiveOrgSource> = {
             type: s.type,
             url: s.url,
             title: s.title,
-            addedAt: s.addedAt,
             description: s.description,
             quality: s.quality,
             label: s.label,
@@ -167,9 +166,25 @@ async function generateMovieJSON() {
           }
           return base
         }),
-        metadata: movie.metadata,
+        // Only include metadata fields that are used in the UI
+        metadata: movie.metadata
+          ? {
+              Rated: movie.metadata.Rated,
+              Runtime: movie.metadata.Runtime,
+              imdbRating: movie.metadata.imdbRating,
+              imdbVotes: movie.metadata.imdbVotes,
+              Genre: movie.metadata.Genre,
+              Plot: movie.metadata.Plot,
+              Director: movie.metadata.Director,
+              Writer: movie.metadata.Writer,
+              Actors: movie.metadata.Actors,
+              Language: movie.metadata.Language,
+              Country: movie.metadata.Country,
+              Awards: movie.metadata.Awards,
+            }
+          : undefined,
         relatedMovies: relatedMap.get(movie.imdbId) || [],
-        // Move these from SQL to JSON
+        // Admin fields (localhost only)
         is_curated: !!movie.metadata,
         verified: !!movie.verified,
         qualityLabels: movie.qualityLabels || [],

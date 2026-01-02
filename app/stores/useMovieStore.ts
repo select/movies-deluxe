@@ -6,13 +6,7 @@ import type {
   LightweightMovieEntry,
   QualityLabel,
 } from '~/types'
-import {
-  SORT_OPTIONS,
-  sortMovies,
-  type SortOption,
-  type SortField,
-  type SortDirection,
-} from '~/utils/movieSort'
+import type { LightweightMovie } from '~/types/database'
 import { useStorage } from '@vueuse/core'
 
 /**
@@ -239,44 +233,42 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Map SQL row to ExtendedMovieEntry
+   * Map LightweightMovie to ExtendedMovieEntry
+   * Sources are now loaded separately from JSON files
+   */
+  const mapLightweightToMovie = (movie: LightweightMovie): ExtendedMovieEntry => {
+    return {
+      imdbId: movie.imdbId,
+      title: movie.title,
+      year: movie.year,
+      lastUpdated: new Date().toISOString(), // Not available in lightweight version
+      sources: [], // Sources will be loaded from JSON files when needed
+      metadata: {
+        imdbRating:
+          typeof movie.imdbRating === 'number'
+            ? movie.imdbRating.toString()
+            : movie.imdbRating?.toString(),
+        imdbVotes:
+          typeof movie.imdbVotes === 'number'
+            ? movie.imdbVotes.toLocaleString()
+            : movie.imdbVotes?.toString(),
+        imdbID: movie.imdbId,
+        Language: movie.language,
+      },
+    }
+  }
+
+  /**
+   * Map SQL row to ExtendedMovieEntry (lightweight version)
+   * Sources are now loaded separately from JSON files
    */
   const mapRowToMovie = (row: Record<string, unknown>): ExtendedMovieEntry => {
-    const sourcesRaw = (row.sources_raw as string) || ''
-    const sources: MovieSource[] = sourcesRaw
-      ? sourcesRaw
-          .split('###')
-          .filter((s: string) => s.trim())
-          .map((s: string) => {
-            const [type, id, title, addedAt, channelName] = s.split('|||')
-            if (!type || !id) return null
-
-            const base = {
-              type: type as MovieSourceType,
-              url: generateSourceUrl(type as MovieSourceType, id),
-              id,
-              title: title || '',
-              addedAt: addedAt || new Date().toISOString(),
-            }
-
-            if (type === 'youtube') {
-              return {
-                ...base,
-                type: 'youtube' as const,
-                channelName: channelName || '',
-              } as YouTubeSource
-            }
-            return base as ArchiveOrgSource
-          })
-          .filter((s: MovieSource | null): s is MovieSource => s !== null)
-      : []
-
     return {
       imdbId: row.imdbId as string,
       title: row.title as string,
       year: row.year as number,
       lastUpdated: row.lastUpdated as string,
-      sources,
+      sources: [], // Sources will be loaded from JSON files when needed
       metadata: {
         imdbRating: (row.imdbRating as number | undefined)?.toString(),
         imdbVotes: (row.imdbVotes as number | undefined)?.toLocaleString(),
@@ -357,7 +349,7 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fetch movies with filtering and pagination from SQLite
+   * Fetch movies from database (lightweight version)
    */
   const fetchMovies = async (options: {
     where?: string
@@ -372,47 +364,32 @@ export const useMovieStore = defineStore('movie', () => {
 
     const { searchQuery, where, params = [], orderBy, limit, offset, includeCount } = options
 
-    let from = 'movies m'
     let finalWhere = where || ''
+    const finalParams = [...params]
 
     if (searchQuery?.trim()) {
-      from = 'fts_movies f JOIN movies m ON f.imdbId = m.imdbId'
-      const searchWhere = 'fts_movies MATCH ?'
+      // Use FTS5 search
+      const searchWhere =
+        'EXISTS (SELECT 1 FROM fts_movies f WHERE f.imdbId = m.imdbId AND fts_movies MATCH ?)'
       finalWhere = finalWhere ? `(${finalWhere}) AND (${searchWhere})` : searchWhere
 
       // Sanitize search query for FTS5
       const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-      params.push(`"${sanitizedQuery}"`)
+      finalParams.push(`"${sanitizedQuery}"`)
     }
 
-    const { result, totalCount } = await db.extendedQuery<Record<string, unknown>>({
-      select: `m.*,
-               ${
-                 searchQuery?.trim()
-                   ? `CASE
-                  WHEN m.title LIKE '%${searchQuery.replace(/'/g, "''")}%' THEN 1
-                  ELSE 2
-                END as title_priority,`
-                   : ''
-               }
-               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
-      from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId LEFT JOIN channels c ON s.channelId = c.id`,
+    const { result, totalCount } = await db.lightweightQuery({
       where: finalWhere,
-      params,
-      groupBy: 'm.imdbId',
-      orderBy: searchQuery?.trim()
-        ? `title_priority ASC, rank ASC, m.imdbId`
-        : orderBy
-          ? `${orderBy}, m.imdbId`
-          : 'm.imdbId',
+      params: finalParams,
+      orderBy: orderBy || 'm.year DESC, m.imdbId',
       limit,
       offset,
       includeCount,
     })
 
     return {
-      result: result.map(mapRowToMovie),
-      totalCount,
+      result: result.map(mapLightweightToMovie),
+      totalCount: totalCount || 0,
     }
   }
 
@@ -477,10 +454,10 @@ export const useMovieStore = defineStore('movie', () => {
       }
     }
 
-    // Fetch full details from API
+    // Fetch full details from JSON file (static deployment)
     isLoading.value.movieDetails = true
     try {
-      const movie = await $fetch<ExtendedMovieEntry>(`/api/movie/${imdbId}`)
+      const movie = await $fetch<ExtendedMovieEntry>(`/movies/${imdbId}.json`)
       if (movie) {
         movieDetailsCache.value.set(imdbId, movie)
         return movie

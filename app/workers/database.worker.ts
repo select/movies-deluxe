@@ -233,7 +233,7 @@ self.onmessage = async e => {
 
       self.postMessage({ id, result, totalCount })
     } else if (type === 'query-by-ids') {
-      // Query full movie details for specific IDs
+      // Query lightweight movie details for specific IDs (sources now in JSON files)
       const { imdbIds } = e.data
 
       if (!imdbIds || imdbIds.length === 0) {
@@ -243,12 +243,9 @@ self.onmessage = async e => {
 
       const placeholders = imdbIds.map(() => '?').join(',')
       const sql = `
-        SELECT m.*, GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(c.name, ''), '###') as sources_raw
+        SELECT m.*
         FROM movies m
-        LEFT JOIN sources s ON m.imdbId = s.movieId
-        LEFT JOIN channels c ON s.channelId = c.id
         WHERE m.imdbId IN (${placeholders})
-        GROUP BY m.imdbId
       `
 
       const result = db.exec({
@@ -297,11 +294,11 @@ self.onmessage = async e => {
 
       const channels = db.exec({
         sql: `
-          SELECT c.id, c.name, COUNT(s.id) as count
-          FROM channels c
-          LEFT JOIN sources s ON s.channelId = c.id
-          GROUP BY c.id, c.name
-          ORDER BY c.name ASC
+          SELECT primaryChannelName as name, COUNT(*) as count
+          FROM movies
+          WHERE primaryChannelName IS NOT NULL
+          GROUP BY primaryChannelName
+          ORDER BY count DESC, primaryChannelName ASC
         `,
         returnValue: 'resultRows',
         rowMode: 'object',
