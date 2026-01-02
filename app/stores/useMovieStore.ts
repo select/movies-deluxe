@@ -10,11 +10,10 @@ import type { LightweightMovie } from '~/types/database'
 import { useStorage } from '@vueuse/core'
 
 /**
- * Extended MovieEntry with user metadata
- * User-specific data (likes) is stored separately in VueUse storage
- * Type alias kept for backwards compatibility
+ * Movie Store
+ * Manages movie data, filtering, sorting, and user interactions
+ * Uses SQLite WASM for efficient querying and VueUse for persistent storage
  */
-export type ExtendedMovieEntry = MovieEntry
 
 /**
  * Serializable sort state (for localStorage)
@@ -92,7 +91,7 @@ const DEFAULT_FILTERS: FilterState = {
  * into a single source of truth with computed views for filtered/liked/watchlist movies.
  *
  * Key Features:
- * - Single Map<string, ExtendedMovieEntry> for all movies (O(1) lookups)
+ * - Single Map<string, MovieEntry> for all movies (O(1) lookups)
  * - Computed properties for filtered views (no duplicate arrays)
  * - Embedded like/watchlist metadata in movie objects
  * - Reactive filters with automatic recomputation
@@ -107,11 +106,11 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Single source of truth - all movies stored here
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
-  const allMovies = shallowRef<Map<string, ExtendedMovieEntry>>(new Map())
+  const allMovies = shallowRef<Map<string, MovieEntry>>(new Map())
 
   // Cache for movie details
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
-  const movieDetailsCache = shallowRef<Map<string, ExtendedMovieEntry>>(new Map())
+  const movieDetailsCache = shallowRef<Map<string, MovieEntry>>(new Map())
 
   // Liked movie IDs stored in localStorage using VueUse
   const likedMovieIds = useStorage<string[]>('movies-deluxe-liked', [])
@@ -145,10 +144,9 @@ export const useMovieStore = defineStore('movie', () => {
   const lightweightMovies = ref<LightweightMovieEntry[]>([])
 
   /**
-   * Filtered and sorted movies based on current filters
-   * This is the primary computed property that applies all filters
+   * Filtered and sorted movies for display
    */
-  const filteredAndSortedMovies = ref<ExtendedMovieEntry[]>([])
+  const filteredAndSortedMovies = ref<MovieEntry[]>([])
 
   /**
    * Current movie list for navigation (uses lightweight movies for consistency with index page)
@@ -233,10 +231,10 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Map LightweightMovie to ExtendedMovieEntry
+   * Map LightweightMovie to MovieEntry
    * Sources are now loaded separately from JSON files
    */
-  const mapLightweightToMovie = (movie: LightweightMovie): ExtendedMovieEntry => {
+  const mapLightweightToMovie = (movie: LightweightMovie): MovieEntry => {
     return {
       imdbId: movie.imdbId,
       title: movie.title,
@@ -259,10 +257,10 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Map SQL row to ExtendedMovieEntry (lightweight version)
+   * Map SQL row to MovieEntry (lightweight version)
    * Sources are now loaded separately from JSON files
    */
-  const mapRowToMovie = (row: Record<string, unknown>): ExtendedMovieEntry => {
+  const mapRowToMovie = (row: Record<string, unknown>): MovieEntry => {
     return {
       imdbId: row.imdbId as string,
       title: row.title as string,
@@ -319,7 +317,7 @@ export const useMovieStore = defineStore('movie', () => {
         return
       }
 
-      const movieEntries: ExtendedMovieEntry[] = Object.entries(response)
+      const movieEntries: MovieEntry[] = Object.entries(response)
         .filter(([key]) => !key.startsWith('_'))
         .filter(([, value]) => {
           if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
@@ -333,7 +331,7 @@ export const useMovieStore = defineStore('movie', () => {
           }
           return false
         })
-        .map(([, value]) => value as ExtendedMovieEntry)
+        .map(([, value]) => value as MovieEntry)
 
       // Convert array to Map
       allMovies.value.clear()
@@ -397,7 +395,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch lightweight movie details for specific IDs (with caching)
    * Returns essential fields for grid display
    */
-  const fetchMoviesByIds = async (imdbIds: string[]): Promise<ExtendedMovieEntry[]> => {
+  const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
     if (!db.isReady.value) return []
     if (!imdbIds || imdbIds.length === 0) return []
 
@@ -440,7 +438,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get a single movie by ID (from cache or API)
    */
-  const getMovieById = async (imdbId: string): Promise<ExtendedMovieEntry | undefined> => {
+  const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
     // Check cache first
     if (movieDetailsCache.value.has(imdbId)) {
       return movieDetailsCache.value.get(imdbId)
@@ -457,7 +455,7 @@ export const useMovieStore = defineStore('movie', () => {
     // Fetch full details from JSON file (static deployment)
     isLoading.value.movieDetails = true
     try {
-      const movie = await $fetch<ExtendedMovieEntry>(`/movies/${imdbId}.json`)
+      const movie = await $fetch<MovieEntry>(`/movies/${imdbId}.json`)
       if (movie) {
         movieDetailsCache.value.set(imdbId, movie)
         return movie
@@ -474,10 +472,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get related movies for a given movie ID
    */
-  const getRelatedMovies = async (
-    movieId: string,
-    _limit: number = 8
-  ): Promise<ExtendedMovieEntry[]> => {
+  const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
     try {
       // Get the movie detail first to get related movies list
       const movie = await getMovieById(movieId)
@@ -485,7 +480,7 @@ export const useMovieStore = defineStore('movie', () => {
         return []
       }
 
-      // Map related movies (which are already lightweight in the JSON) to ExtendedMovieEntry
+      // Map related movies (which are already lightweight in the JSON) to MovieEntry
       return movie.relatedMovies.map(rm => ({
         ...rm,
         sources: [],
@@ -500,7 +495,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Search movies using FTS5 full-text search
    */
-  const searchMovies = async (searchQuery: string): Promise<ExtendedMovieEntry[]> => {
+  const searchMovies = async (searchQuery: string): Promise<MovieEntry[]> => {
     if (!searchQuery || !searchQuery.trim()) {
       return Array.from(allMovies.value.values())
     }
@@ -508,7 +503,7 @@ export const useMovieStore = defineStore('movie', () => {
     if (!db.isReady.value) {
       // Fallback to simple JS search if DB is not ready
       const lowerQuery = searchQuery.toLowerCase()
-      return Array.from(allMovies.value.values()).filter((movie: ExtendedMovieEntry) => {
+      return Array.from(allMovies.value.values()).filter((movie: MovieEntry) => {
         const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
         return titles.some((t: string) => t.toLowerCase().includes(lowerQuery))
       })
@@ -766,7 +761,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Apply all filters to a list of movies (for JS fallback or liked.vue)
    */
-  const applyFilters = (movies: ExtendedMovieEntry[]): ExtendedMovieEntry[] => {
+  const applyFilters = (movies: MovieEntry[]): MovieEntry[] => {
     let filtered = [...movies]
 
     // 0. Filter by quality (exclude marked movies by default)
@@ -934,7 +929,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get all unique genres from movies
    */
-  const getAvailableGenres = (movies: ExtendedMovieEntry[]): string[] => {
+  const getAvailableGenres = (movies: MovieEntry[]): string[] => {
     const genresSet = new Set<string>()
     movies.forEach(movie => {
       movie.metadata?.Genre?.split(', ').forEach((genre: string) => {
@@ -947,7 +942,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get all unique countries from movies
    */
-  const getAvailableCountries = (movies: ExtendedMovieEntry[]): string[] => {
+  const getAvailableCountries = (movies: MovieEntry[]): string[] => {
     const countriesSet = new Set<string>()
     movies.forEach(movie => {
       movie.metadata?.Country?.split(', ').forEach((country: string) => {
@@ -1040,8 +1035,8 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Filter movies by source type
    */
-  const filterBySource = (sourceType: MovieSourceType): ExtendedMovieEntry[] => {
-    return Array.from(allMovies.value.values()).filter((movie: ExtendedMovieEntry) =>
+  const filterBySource = (sourceType: MovieSourceType): MovieEntry[] => {
+    return Array.from(allMovies.value.values()).filter((movie: MovieEntry) =>
       movie.sources.some((source: MovieSource) => source.type === sourceType)
     )
   }
@@ -1049,25 +1044,25 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get movies that have OMDB metadata
    */
-  const getEnrichedMovies = (): ExtendedMovieEntry[] => {
+  const getEnrichedMovies = (): MovieEntry[] => {
     return Array.from(allMovies.value.values()).filter(
-      (movie: ExtendedMovieEntry) => movie.metadata !== undefined
+      (movie: MovieEntry) => movie.metadata !== undefined
     )
   }
 
   /**
    * Get movies without OMDB metadata
    */
-  const getUnenrichedMovies = (): ExtendedMovieEntry[] => {
+  const getUnenrichedMovies = (): MovieEntry[] => {
     return Array.from(allMovies.value.values()).filter(
-      (movie: ExtendedMovieEntry) => movie.metadata === undefined
+      (movie: MovieEntry) => movie.metadata === undefined
     )
   }
 
   /**
    * Get all sources for a movie grouped by type
    */
-  const getSourcesByType = (movie: ExtendedMovieEntry): Record<MovieSourceType, MovieSource[]> => {
+  const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
     return movie.sources.reduce(
       (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
         if (!grouped[source.type]) {
@@ -1086,7 +1081,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get the primary source for a movie
    */
-  const getPrimarySource = (movie: ExtendedMovieEntry): MovieSource | undefined => {
+  const getPrimarySource = (movie: MovieEntry): MovieSource | undefined => {
     if (movie.sources.length === 0) return undefined
 
     const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
@@ -1126,7 +1121,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get the best available poster URL
    */
-  const getPosterUrl = async (movie: ExtendedMovieEntry): Promise<string> => {
+  const getPosterUrl = async (movie: MovieEntry): Promise<string> => {
     const placeholder = '/images/poster-placeholder.jpg'
 
     if (!movie.imdbId) return placeholder
@@ -1147,7 +1142,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get poster URL synchronously
    */
-  const getPosterUrlSync = (movie: ExtendedMovieEntry, preferLocal: boolean = true): string => {
+  const getPosterUrlSync = (movie: MovieEntry, preferLocal: boolean = true): string => {
     const placeholder = '/images/poster-placeholder.jpg'
 
     if (!movie.imdbId) return placeholder
@@ -1186,7 +1181,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Runtime OMDB enrichment
    */
-  const enrichMovieMetadata = async (movie: ExtendedMovieEntry) => {
+  const enrichMovieMetadata = async (movie: MovieEntry) => {
     isLoading.value.imdbFetch = true
 
     const apiKey = useRuntimeConfig().public.OMDB_API_KEY
@@ -1253,7 +1248,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       if (response.success) {
         // Update local state in allMovies and movieDetailsCache
-        const updateMovie = (movie: ExtendedMovieEntry) => {
+        const updateMovie = (movie: MovieEntry) => {
           movie.qualityLabels = labels
           movie.qualityNotes = notes
           movie.qualityMarkedBy = markedBy
@@ -1294,7 +1289,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       if (response.success) {
         // Update local state
-        const clearMovie = (movie: ExtendedMovieEntry) => {
+        const clearMovie = (movie: MovieEntry) => {
           delete movie.qualityLabels
           delete movie.qualityNotes
           delete movie.qualityMarkedBy
@@ -1320,17 +1315,17 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get all movies that have quality markings
    */
-  const getMarkedMovies = (): ExtendedMovieEntry[] => {
+  const getMarkedMovies = (): MovieEntry[] => {
     return Array.from(allMovies.value.values()).filter(
-      (movie: ExtendedMovieEntry) => (movie.qualityLabels?.length || 0) > 0
+      (movie: MovieEntry) => (movie.qualityLabels?.length || 0) > 0
     )
   }
 
   /**
    * Get movies filtered by quality (exclude marked ones by default)
    */
-  const getQualityFilteredMovies = (movies: ExtendedMovieEntry[]): ExtendedMovieEntry[] => {
-    return movies.filter((movie: ExtendedMovieEntry) => (movie.qualityLabels?.length || 0) === 0)
+  const getQualityFilteredMovies = (movies: MovieEntry[]): MovieEntry[] => {
+    return movies.filter((movie: MovieEntry) => (movie.qualityLabels?.length || 0) === 0)
   }
 
   // ============================================
