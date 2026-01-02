@@ -12,6 +12,7 @@ import { loadMoviesDatabase } from '../server/utils/movieData'
 import { loadCollectionsDatabase } from '../server/utils/collections'
 import { createLogger } from '../server/utils/logger'
 import { normalizeLanguageCode } from '../shared/utils/languageNormalizer'
+import { generateMovieJSON } from './generate-movie-json'
 import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../shared/types/movie'
 import type { Collection } from '../shared/types/collections'
 
@@ -23,7 +24,11 @@ async function generateSQLite(
 ) {
   logger.info('Starting SQLite database generation...')
 
-  // 1. Load JSON data
+  // 1. Generate individual movie JSON files first
+  logger.info('Generating individual movie JSON files...')
+  await generateMovieJSON()
+
+  // 2. Load JSON data
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
   const movies = Object.values(db).filter(
@@ -37,13 +42,13 @@ async function generateSQLite(
   logger.info(`Processing ${movies.length} movies`)
   onProgress?.({ current: 0, total: movies.length, message: 'Loading movies from JSON' })
 
-  // 2. Remove existing DB if it exists
+  // 3. Remove existing DB if it exists
   if (existsSync(DB_PATH)) {
     logger.info('Removing existing database file')
     unlinkSync(DB_PATH)
   }
 
-  // 3. Initialize Database
+  // 4. Initialize Database
   const sqlite = new Database(DB_PATH)
 
   // Use DELETE mode instead of WAL for better compatibility with WASM
@@ -68,12 +73,6 @@ async function generateSQLite(
         lastUpdated TEXT
       );
 
-      CREATE TABLE channels (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      );
-
       CREATE TABLE genres (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
@@ -86,19 +85,6 @@ async function generateSQLite(
         name TEXT NOT NULL UNIQUE,
         movie_count INTEGER DEFAULT 0,
         created_at TEXT NOT NULL
-      );
-
-      CREATE TABLE sources (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        movieId TEXT NOT NULL,
-        type TEXT NOT NULL,
-        identifier TEXT NOT NULL,
-        title TEXT,
-        channelId TEXT,
-        addedAt TEXT,
-        language TEXT,
-        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
-        FOREIGN KEY (channelId) REFERENCES channels (id)
       );
 
       CREATE TABLE collections (
@@ -115,7 +101,7 @@ async function generateSQLite(
         addedAt TEXT NOT NULL,
         PRIMARY KEY (collectionId, movieId),
         FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,
-        FOREIGN KEY (movieId) REFERENCES movies(imdbId) ON DELETE CASCADE
+        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE
       );
 
       -- FTS5 Virtual Table for Search (title only)
@@ -130,10 +116,9 @@ async function generateSQLite(
       CREATE INDEX idx_movies_rating ON movies(imdbRating);
       CREATE INDEX idx_movies_votes ON movies(imdbVotes);
       CREATE INDEX idx_movies_title ON movies(title);
+      CREATE INDEX idx_movies_source_type ON movies(primarySourceType);
+      CREATE INDEX idx_movies_channel ON movies(primaryChannelName);
       
-      CREATE INDEX idx_sources_movieId ON sources(movieId);
-      CREATE INDEX idx_sources_type ON sources(type);
-      CREATE INDEX idx_sources_channelId ON sources(channelId);
       CREATE INDEX idx_genres_name ON genres(name);
       CREATE INDEX idx_genres_count ON genres(movie_count DESC);
       CREATE INDEX idx_countries_name ON countries(name);
@@ -150,11 +135,6 @@ async function generateSQLite(
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
-    const insertChannel = sqlite.prepare(`
-      INSERT OR IGNORE INTO channels (id, name, created_at)
-      VALUES (?, ?, ?)
-    `)
-
     const insertGenre = sqlite.prepare(`
       INSERT OR IGNORE INTO genres (name, movie_count, created_at)
       VALUES (?, ?, ?)
@@ -163,12 +143,6 @@ async function generateSQLite(
     const insertCountry = sqlite.prepare(`
       INSERT OR IGNORE INTO countries (name, movie_count, created_at)
       VALUES (?, ?, ?)
-    `)
-
-    const insertSource = sqlite.prepare(`
-      INSERT INTO sources (
-        movieId, type, identifier, title, channelId, addedAt, language
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertFts = sqlite.prepare(`
@@ -236,48 +210,7 @@ async function generateSQLite(
           movie.lastUpdated
         )
 
-        // Insert sources
-        for (const source of movie.sources) {
-          try {
-            // Normalize source language
-            const sourceLanguage =
-              source.type === 'archive.org'
-                ? normalizeLanguageCode((source as ArchiveOrgSource).language)
-                : normalizeLanguageCode((source as YouTubeSource).language)
-
-            // Get identifier - handle both 'id' and 'videoId' fields for YouTube sources
-            const identifier =
-              source.type === 'youtube'
-                ? (source as YouTubeSource).id
-                : (source as ArchiveOrgSource).id
-
-            // Insert channel if YouTube source
-            let channelId = null
-            if (source.type === 'youtube') {
-              const ytSource = source as YouTubeSource
-              const ytChannelId = ytSource.channelId
-              const ytChannelName = ytSource.channelName
-              if (ytChannelId && ytChannelName) {
-                insertChannel.run(ytChannelId, ytChannelName, new Date().toISOString())
-                channelId = ytChannelId
-              }
-            }
-
-            insertSource.run(
-              movie.imdbId,
-              source.type,
-              identifier,
-              source.title || null,
-              channelId,
-              source.addedAt,
-              sourceLanguage
-            )
-          } catch (err) {
-            logger.error(`Failed to insert source for movie ${movie.imdbId}:`, err)
-            logger.error('Source data:', JSON.stringify(source, null, 2))
-            throw err
-          }
-        }
+        // Sources are now stored in individual JSON files, not in the database
 
         // Insert into FTS
         const ftsTitle = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
