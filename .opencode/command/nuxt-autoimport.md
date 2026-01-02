@@ -6,6 +6,8 @@ Auto-imported means that if the modules export something there is not need for a
 
 If there are type errors because of the auto imports first try to run `nuxt prepare` to rebuild the auto-import list.
 
+Modules in /app import anything in app with `~`
+
 ```
 app/
 ├── components/
@@ -29,7 +31,7 @@ app/
 ├── plugins/
 │ └── dark-mode.client.ts # ❌ NOT auto-imported
 └── workers/
-└── database.worker.ts # ❌ NOT auto-imported
+  └── database.worker.ts # ❌ NOT auto-imported
 shared/
 ├── types/
 │ └── collections.ts # ✅ Auto-imported in both server and app
@@ -41,3 +43,5 @@ server/
 └── utils/
 └── movieData.ts # ❌ NOT auto-imported
 ```
+
+Look for bad or unnecessary imports and fix them
