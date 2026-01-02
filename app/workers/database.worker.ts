@@ -260,26 +260,8 @@ self.onmessage = async e => {
 
       self.postMessage({ id, result })
     } else if (type === 'query-related') {
-      // Query related movies for a specific ID
-      const { imdbId, limit = 8 } = e.data
-
-      const sql = `
-        SELECT m.imdbId, m.title, m.year, r.score
-        FROM related_movies r
-        JOIN movies m ON r.relatedMovieId = m.imdbId
-        WHERE r.movieId = ?
-        ORDER BY r.score DESC
-        LIMIT ?
-      `
-
-      const result = db.exec({
-        sql,
-        bind: [imdbId, limit],
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      })
-
-      self.postMessage({ id, result })
+      // Related movies are now stored in individual JSON files
+      self.postMessage({ id, result: [] })
     } else if (type === 'query-collections-for-movie') {
       // Query collections for a specific movie
       const { movieId } = e.data

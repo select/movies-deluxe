@@ -9,7 +9,7 @@ import { join } from 'path'
 import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from '../server/utils/movieData'
 import { createLogger } from '../server/utils/logger'
-import type { MovieEntry } from '../shared/types/movie'
+import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../shared/types/movie'
 
 const logger = createLogger('MovieJSONGen')
 const MOVIES_DIR = join(process.cwd(), 'public/movies')
@@ -43,12 +43,141 @@ async function generateMovieJSON() {
 
   logger.info(`Processing ${movies.length} movies`)
 
-  // 4. Write individual files
+  // 4. Calculate Related Movies (copied from generate-sqlite.ts)
+  logger.info('Calculating related movies...')
+  const processedMovies = movies.map(m => ({
+    imdbId: m.imdbId,
+    title: m.title,
+    year: m.year,
+    hasMetadata: !!m.metadata,
+    genres: m.metadata?.Genre
+      ? m.metadata.Genre.split(',')
+          .map(g => g.trim().toLowerCase())
+          .filter(Boolean)
+      : [],
+    actors: m.metadata?.Actors
+      ? m.metadata.Actors.split(',')
+          .map(a => a.trim().toLowerCase())
+          .filter(Boolean)
+      : [],
+    director: m.metadata?.Director ? m.metadata.Director.toLowerCase() : null,
+  }))
+
+  const genreMap = new Map<string, string[]>()
+  const actorMap = new Map<string, string[]>()
+  const directorMap = new Map<string, string[]>()
+
+  for (const m of processedMovies) {
+    for (const g of m.genres) {
+      if (!genreMap.has(g)) genreMap.set(g, [])
+      genreMap.get(g)!.push(m.imdbId)
+    }
+    for (const a of m.actors) {
+      if (!actorMap.has(a)) actorMap.set(a, [])
+      actorMap.get(a)!.push(m.imdbId)
+    }
+    if (m.director) {
+      if (!directorMap.has(m.director)) directorMap.set(m.director, [])
+      directorMap.get(m.director)!.push(m.imdbId)
+    }
+  }
+
+  const movieMap = new Map(processedMovies.map(m => [m.imdbId, m]))
+  const relatedMap = new Map<string, Array<{ imdbId: string; title: string; year?: number }>>()
+
+  for (let i = 0; i < processedMovies.length; i++) {
+    const m1 = processedMovies[i]!
+    const candidateScores = new Map<string, number>()
+
+    for (const g of m1.genres) {
+      for (const id of genreMap.get(g) || []) {
+        if (id === m1.imdbId) continue
+        candidateScores.set(id, (candidateScores.get(id) || 0) + 10)
+      }
+    }
+
+    if (m1.director) {
+      for (const id of directorMap.get(m1.director) || []) {
+        if (id === m1.imdbId) continue
+        candidateScores.set(id, (candidateScores.get(id) || 0) + 15)
+      }
+    }
+
+    for (const a of m1.actors) {
+      for (const id of actorMap.get(a) || []) {
+        if (id === m1.imdbId) continue
+        candidateScores.set(id, (candidateScores.get(id) || 0) + 5)
+      }
+    }
+
+    const finalScores: { id: string; score: number }[] = []
+    for (const [id2, baseScore] of candidateScores.entries()) {
+      const m2 = movieMap.get(id2)!
+      let score = baseScore
+      if (m1.year && m2.year) {
+        const yearDiff = Math.abs(m1.year - m2.year)
+        if (yearDiff <= 5) score += (5 - yearDiff) * 2
+      }
+      if (m2.hasMetadata) score += 1
+      finalScores.push({ id: id2, score })
+    }
+
+    finalScores.sort((a, b) => b.score - a.score)
+    const topRelated = finalScores.slice(0, 12).map(r => {
+      const rm = movieMap.get(r.id)!
+      return {
+        imdbId: rm.imdbId,
+        title: rm.title,
+        year: rm.year,
+      }
+    })
+    relatedMap.set(m1.imdbId, topRelated)
+
+    if ((i + 1) % 5000 === 0) {
+      logger.info(`Calculated related movies for ${i + 1} movies...`)
+    }
+  }
+
+  // 5. Write individual files
   let count = 0
   for (const movie of movies) {
     const filePath = join(MOVIES_DIR, `${movie.imdbId}.json`)
     try {
-      writeFileSync(filePath, JSON.stringify(movie, null, 2))
+      // Only store necessary info in JSON
+      const jsonData = {
+        imdbId: movie.imdbId,
+        title: movie.title,
+        year: movie.year,
+        sources: movie.sources.map(s => {
+          const base: Record<string, any> = {
+            type: s.type,
+            url: s.url,
+            title: s.title,
+            addedAt: s.addedAt,
+            description: s.description,
+            quality: s.quality,
+            label: s.label,
+          }
+          if (s.type === 'youtube') {
+            base.id = (s as YouTubeSource).id
+            base.channelName = (s as YouTubeSource).channelName
+            base.channelId = (s as YouTubeSource).channelId
+          } else {
+            base.id = (s as ArchiveOrgSource).id
+          }
+          return base
+        }),
+        metadata: movie.metadata,
+        relatedMovies: relatedMap.get(movie.imdbId) || [],
+        // Move these from SQL to JSON
+        is_curated: !!movie.metadata,
+        verified: !!movie.verified,
+        qualityLabels: movie.qualityLabels || [],
+        qualityNotes: movie.qualityNotes,
+        lastUpdated: movie.lastUpdated,
+      }
+
+      writeFileSync(filePath, JSON.stringify(jsonData, null, 2))
       count++
       if (count % 1000 === 0) {
         logger.info(`Generated ${count} files...`)
