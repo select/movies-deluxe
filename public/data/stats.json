@@ -1,13 +1,24 @@
 {
   "database": {
-    "total": 31571,
-    "matched": 14859,
-    "unmatched": 16712,
-    "archiveOrgSources": 26790,
-    "youtubeSources": 11205,
-    "curatedCount": 14859,
+    "total": 31475,
+    "matched": 14951,
+    "unmatched": 16524,
+    "archiveOrgSources": 26789,
+    "youtubeSources": 11202,
+    "curatedCount": 14951,
+    "qualityMarkedCount": 247,
+    "qualityBreakdown": {
+      "blocked": 100,
+      "interview": 19,
+      "teaser": 6,
+      "trailer": 85,
+      "clip": 31,
+      "behind-the-scenes": 6,
+      "promo": 3,
+      "duplicate": 1
+    },
     "collections": {
-      "feature_films": 26790
+      "feature_films": 26789
     },
     "youtubeChannels": [
       {
@@ -50,14 +61,14 @@
         "name": "Mosfilm",
         "language": "ru",
         "enabled": true,
-        "scraped": 269
+        "scraped": 268
       },
       {
         "id": "UCh4JH8axA_jUjB8YoRnm0cg",
         "name": "Moviedome",
         "language": "de",
         "enabled": true,
-        "scraped": 531
+        "scraped": 529
       },
       {
         "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -105,18 +116,18 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 27446,
-      "scraped": 26790,
-      "percent": 97.60985207316185,
+      "total": 27438,
+      "scraped": 26789,
+      "percent": 97.63466724979955,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11205,
-      "totalAvailable": 17837,
+      "totalScraped": 11202,
+      "totalAvailable": 17855,
       "totalFailed": 6022,
-      "failureRate": 34.95675393277994,
-      "percent": 62.81885967371195,
+      "failureRate": 34.962842545285646,
+      "percent": 62.73872864743769,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -124,7 +135,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2321,
-          "total": 2770,
+          "total": 2772,
           "failed": 435,
           "failureRate": 15.783744557329463
         },
@@ -154,7 +165,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2379,
-          "total": 2601,
+          "total": 2602,
           "failed": 205,
           "failureRate": 7.93343653250774
         },
@@ -173,7 +184,7 @@
           "name": "Mosfilm",
           "language": "ru",
           "enabled": true,
-          "scraped": 269,
+          "scraped": 268,
           "total": 293,
           "failed": 0,
           "failureRate": 0
@@ -183,10 +194,10 @@
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 531,
-          "total": 604,
+          "scraped": 529,
+          "total": 605,
           "failed": 106,
-          "failureRate": 16.64050235478807
+          "failureRate": 16.69291338582677
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -234,7 +245,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5073,
+          "total": 5087,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -252,35 +263,49 @@
     }
   },
   "curation": {
-    "total": 31571,
-    "curated": 14859,
-    "percent": 47.06534477843591
+    "total": 31475,
+    "curated": 14951,
+    "percent": 47.50119142176331
   },
   "omdb": {
-    "total": 31571,
-    "matched": 14859,
-    "unmatched": 16712,
-    "percent": 47.06534477843591,
-    "failed": 16721,
-    "failureRate": 52.94806839772007
+    "total": 31475,
+    "matched": 14951,
+    "unmatched": 16524,
+    "percent": 47.50119142176331,
+    "failed": 12144,
+    "failureRate": 44.820077505074735
   },
   "ai": {
-    "totalUnmatched": 16712,
-    "withAiData": 4934,
-    "withoutAiData": 11778,
-    "percent": 29.523695548109142
+    "totalUnmatched": 16524,
+    "withAiData": 4741,
+    "withoutAiData": 11783,
+    "percent": 28.691600096828857
+  },
+  "quality": {
+    "totalMarked": 247,
+    "breakdown": {
+      "blocked": 100,
+      "interview": 19,
+      "teaser": 6,
+      "trailer": 85,
+      "clip": 31,
+      "behind-the-scenes": 6,
+      "promo": 3,
+      "duplicate": 1
+    },
+    "percent": 0.7847498014297062
   },
   "posters": {
-    "totalMovies": 31571,
-    "withPosterUrl": 13287,
-    "downloaded": 13275,
-    "missing": 12,
+    "totalMovies": 31475,
+    "withPosterUrl": 13362,
+    "downloaded": 13274,
+    "missing": 88,
     "failed": 12,
-    "failureRate": 0.09031384059607135,
-    "percentOfMoviesWithUrl": 99.90968615940393,
-    "percentOfAllMovies": 42.048082100662,
-    "filesInDirectory": 13353,
-    "matchedPosters": 13275
+    "failureRate": 0.09032063826584374,
+    "percentOfMoviesWithUrl": 99.34141595569525,
+    "percentOfAllMovies": 42.17315329626688,
+    "filesInDirectory": 13354,
+    "matchedPosters": 13274
   },
-  "lastUpdated": "2026-01-02T09:49:18.001Z"
+  "lastUpdated": "2026-01-02T19:52:22.626Z"
 }
