@@ -31,15 +31,25 @@ async function generateSQLite(
   // 2. Load JSON data
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
-  const movies = Object.values(db).filter(
+  const allMovies = Object.values(db).filter(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
   )
+
+  // Filter out movies with quality labels (blocked, trailer, clip, etc.)
+  const movies = allMovies.filter(movie => !movie.qualityLabels || movie.qualityLabels.length === 0)
+
+  // Create a Set of valid movie IDs for quick lookup
+  const validMovieIds = new Set(movies.map(m => m.imdbId))
+
+  const excludedCount = allMovies.length - movies.length
+  logger.info(`Loaded ${allMovies.length} total movies`)
+  logger.info(`Excluded ${excludedCount} movies with quality labels`)
+  logger.info(`Processing ${movies.length} movies for database`)
 
   const collections = Object.values(collectionsDb).filter(
     (entry): entry is Collection => typeof entry === 'object' && entry !== null && 'id' in entry
   )
 
-  logger.info(`Processing ${movies.length} movies`)
   onProgress?.({ current: 0, total: movies.length, message: 'Loading movies from JSON' })
 
   // 3. Remove existing DB if it exists
@@ -285,8 +295,8 @@ async function generateSQLite(
         )
 
         for (const movieId of collection.movieIds) {
-          // Only insert if movie exists in our database
-          if (db[movieId]) {
+          // Only insert if movie exists in our filtered database (not quality-labeled)
+          if (validMovieIds.has(movieId)) {
             insertCollectionMovie.run(collection.id, movieId, collection.updatedAt)
           }
         }
