@@ -148,3 +148,19 @@ export interface DeduplicationResult {
     description: string
   }>
 }
+
+export interface CollectionCleanupResult {
+  success: boolean
+  stats: {
+    collectionsProcessed: number
+    moviesRemoved: number
+    moviesUpdated: number
+    collectionsModified: number
+  }
+  details: Array<{
+    collectionId: string
+    collectionName: string
+    removedMovies: string[]
+    updatedMovies: Array<{ oldId: string; newId: string }>
+  }>
+}

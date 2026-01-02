@@ -272,11 +272,16 @@
 	              <div class="i-mdi-broom text-orange-600" />
 	              Data Cleanup
 	            </h3>
-	            <div >
+	            <div class="space-y-4">
 	              <AdminDataDeduplication
 	                :loading="deduplicating"
 	                :results="deduplicationResults"
 	                @start="adminStore.deduplicateDescriptions"
+	              />
+	              <AdminCollectionCleanup
+	                :loading="cleaningCollections"
+	                :results="collectionCleanupResults"
+	                @start="adminStore.cleanupCollections"
 	              />
 	            </div>
 	          </div>
@@ -329,6 +334,8 @@ const {
   posterOptions,
   deduplicating,
   deduplicationResults,
+  cleaningCollections,
+  collectionCleanupResults,
   results,
   posterResults,
   databasePercentOfTotal,
@@ -346,6 +353,7 @@ const clearResults = () => {
   adminStore.results = null
   adminStore.posterResults = null
   adminStore.deduplicationResults = null
+  adminStore.collectionCleanupResults = null
 }
 
 onMounted(async () => {
