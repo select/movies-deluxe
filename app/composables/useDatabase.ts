@@ -1,4 +1,5 @@
 import type { WorkerResponse, FilterOptionsResponse, LightweightMovie } from '~/types/database'
+import type { Collection } from '~/shared/types/collections'
 
 // Singleton instance
 let dbInstance: ReturnType<typeof createDatabase> | null = null
@@ -143,6 +144,21 @@ function createDatabase() {
     })
   }
 
+  const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as Collection[]) ?? []),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'query-collections-for-movie', id, movieId })
+    })
+  }
+
   const getFilterOptions = async (): Promise<FilterOptionsResponse> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
@@ -170,6 +186,7 @@ function createDatabase() {
     lightweightQuery,
     queryByIds,
     getRelatedMovies,
+    getCollectionsForMovie,
     getFilterOptions,
     isReady,
   }

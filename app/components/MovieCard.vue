@@ -116,6 +116,7 @@
 
 <script setup lang="ts">
 import type { MovieEntry, LightweightMovieEntry } from '~/types'
+import type { Collection } from '~/shared/types/collections'
 
 interface Props {
   movie: MovieEntry | LightweightMovieEntry
@@ -127,12 +128,15 @@ const { isLiked: isLikedFn } = useMovieStore()
 const { getCollectionsForMovie } = useCollectionsStore()
 
 const imageLoaded = ref(false)
+const movieCollections = ref<Collection[]>([])
 
 // Check if movie is liked
 const isMovieLiked = computed(() => isLikedFn(props.movie.imdbId))
 
-// Get collections for this movie
-const movieCollections = computed(() => getCollectionsForMovie(props.movie.imdbId))
+// Fetch collections for this movie from database
+onMounted(async () => {
+  movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+})
 
 // Helper to check if we have full movie data
 const hasFullData = computed(() => 'sources' in props.movie && props.movie.sources.length > 0)
