@@ -94,7 +94,7 @@ const route = useRoute()
 const movieStore = useMovieStore()
 const collectionsStore = useCollectionsStore()
 
-const { applyFilters, resetFilters, fetchMoviesByIds } = movieStore
+const { applyFilters, resetFilters, fetchMoviesByIds, loadFromFile } = movieStore
 const { hasActiveFilters } = storeToRefs(movieStore)
 const { getCollectionById } = collectionsStore
 
@@ -112,6 +112,9 @@ onMounted(async () => {
 
   isLoading.value = true
   try {
+    // Initialize database first
+    await loadFromFile()
+    
     // Get collection from cache (loads if not loaded yet)
     collection.value = await getCollectionById(id)
     
