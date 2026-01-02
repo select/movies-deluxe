@@ -25,9 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ToastType } from '~/stores/useUiStore'
-
 const { toasts, removeToast } = useUiStore()
+
+type ToastType = 'success' | 'error' | 'info' | 'warning'
 
 const toastClasses = (type: ToastType) => {
   const classes = {

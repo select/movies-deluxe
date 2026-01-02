@@ -75,8 +75,6 @@
 </template>
 
 <script setup lang="ts">
-import type { ExtendedMovieEntry } from '~/stores/useMovieStore'
-
 // Set page title and meta
 useHead({
   title: 'Liked Movies - Movies Deluxe',
@@ -100,7 +98,7 @@ const { loadFromFile, fetchMoviesByIds, resetFilters, applyFilters } = movieStor
 const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 
 // Local state for liked movies (since store uses lazy loading)
-const likedMoviesData = ref<ExtendedMovieEntry[]>([])
+const likedMoviesData = ref<MovieEntry[]>([])
 const isLoadingLiked = ref(true)
 
 // Initialize database and load liked movies
