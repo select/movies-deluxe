@@ -37,17 +37,11 @@ defineEmits<{
 }>()
 
 const getSortIcon = (): string => {
-  const { field, direction } = props.option
+  const { field } = props.option
 
   switch (field) {
     case 'relevance':
       return 'i-mdi-target'
-    case 'year':
-      return direction === 'desc' ? 'i-mdi-calendar-arrow-right' : 'i-mdi-calendar-arrow-left'
-    case 'rating':
-      return direction === 'desc' ? 'i-mdi-star-arrow-up' : 'i-mdi-star-arrow-down'
-    case 'title':
-      return direction === 'asc' ? 'i-mdi-sort-alphabetical-ascending' : 'i-mdi-sort-alphabetical-descending'
     case 'votes':
       return 'i-mdi-account-group'
     default:
