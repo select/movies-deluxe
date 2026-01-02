@@ -576,8 +576,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry } from '~/types'
-import type { Collection } from '~/shared/types/collections'
+import type { MovieEntry, Collection } from '~/types'
 
 // Stores - get reactive state and methods once
 const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
@@ -811,7 +810,7 @@ const updateMetaTags = (movie: MovieEntry) => {
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: movie.metadata.imdbRating,
-              ...(movie.metadata.imdbVotes && { ratingCount: movie.metadata.imdbVotes.replace(/,/g, '') })
+          ...(movie.metadata.imdbVotes && { ratingCount: String(movie.metadata.imdbVotes).replace(/,/g, '') })
             }
           }),
           ...(movie.imdbId?.startsWith('tt') && { sameAs: `https://www.imdb.com/title/${movie.imdbId}/` })

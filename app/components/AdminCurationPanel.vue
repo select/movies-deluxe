@@ -376,8 +376,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, MovieSource, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
-import type { Collection } from '~/shared/types/collections'
+import type { MovieEntry, MovieSource, OMDBSearchResult, OMDBSearchResponse, MovieMetadata, Collection } from '~/types'
 
 interface UpdateResponse {
   success: boolean

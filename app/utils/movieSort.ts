@@ -97,8 +97,16 @@ export function sortByTitle(movies: MovieEntry[], direction: SortDirection): Mov
  */
 export function sortByVotes(movies: MovieEntry[], direction: SortDirection): MovieEntry[] {
   return [...movies].sort((a, b) => {
-    const votesA = parseInt(a.metadata?.imdbVotes?.replace(/,/g, '') || '0')
-    const votesB = parseInt(b.metadata?.imdbVotes?.replace(/,/g, '') || '0')
+    const votesAStr = a.metadata?.imdbVotes
+    const votesBStr = b.metadata?.imdbVotes
+    const votesA =
+      typeof votesAStr === 'number'
+        ? votesAStr
+        : parseInt(String(votesAStr || '0').replace(/,/g, ''))
+    const votesB =
+      typeof votesBStr === 'number'
+        ? votesBStr
+        : parseInt(String(votesBStr || '0').replace(/,/g, ''))
 
     // Movies without votes go to the end
     if (votesA === 0 && votesB === 0) return 0
