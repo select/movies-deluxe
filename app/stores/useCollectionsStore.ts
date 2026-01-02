@@ -19,7 +19,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     error.value = null
     try {
       // Fetch directly from static JSON file
-      console.log('[CollectionsStore] Fetching collections from /data/collections.json')
       const data =
         await $fetch<Record<string, Collection | { version: string }>>('/data/collections.json')
       collections.value.clear()
@@ -29,14 +28,12 @@ export const useCollectionsStore = defineStore('collections', () => {
         .filter(([key]) => !key.startsWith('_'))
         .map(([_, value]) => value as Collection)
 
-      console.log('[CollectionsStore] Loaded', collectionsArray.length, 'collections')
       collectionsArray.forEach(collection => {
         collections.value.set(collection.id, collection)
       })
 
       isLoaded.value = true
     } catch (err: unknown) {
-      console.error('[CollectionsStore] Failed to load collections:', err)
       error.value = (err as Error).message || 'Failed to load collections'
     } finally {
       isLoading.value = false
@@ -64,11 +61,9 @@ export const useCollectionsStore = defineStore('collections', () => {
         body: { collectionId, movieId },
       })
       if (response.success) {
-        const collection = collections.value.get(collectionId)
-        if (collection && !collection.movieIds.includes(movieId)) {
-          collection.movieIds.push(movieId)
-          collection.updatedAt = new Date().toISOString()
-        }
+        // Force reload collections from server to get latest data
+        isLoaded.value = false
+        await loadCollections()
       }
       return response.success
     } catch {
@@ -83,14 +78,9 @@ export const useCollectionsStore = defineStore('collections', () => {
         body: { collectionId, movieId },
       })
       if (response.success) {
-        const collection = collections.value.get(collectionId)
-        if (collection) {
-          const index = collection.movieIds.indexOf(movieId)
-          if (index !== -1) {
-            collection.movieIds.splice(index, 1)
-            collection.updatedAt = new Date().toISOString()
-          }
-        }
+        // Force reload collections from server to get latest data
+        isLoaded.value = false
+        await loadCollections()
       }
       return response.success
     } catch {
