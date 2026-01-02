@@ -260,21 +260,6 @@
                 </div>
               </div>
             </FilterSection>
-
-            <!-- Developer Tools (Localhost Only) -->
-            <FilterSection
-              v-if="isDev"
-              title="Developer Tools"
-              icon="i-mdi-dev-to"
-            >
-              <div class="space-y-3">
-                <AppInputCheckbox
-                  :checked="filters.showMissingMetadataOnly"
-                  label="Show Missing Metadata Only"
-                  @change="toggleMissingMetadata()"
-                />
-              </div>
-            </FilterSection>
           </div>
           <!-- Theme Section -->
           <FilterSection
@@ -439,7 +424,7 @@ defineExpose({
 
 // Use unified movie store
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
-const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleMissingMetadata, toggleGenre, toggleCountry, setSort, resetFilters } = useMovieStore()
+const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleGenre, toggleCountry, setSort, resetFilters } = useMovieStore()
 
 // Dynamic filter options
 const genres = ref<GenreOption[]>([])

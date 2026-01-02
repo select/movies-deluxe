@@ -134,6 +134,11 @@ export interface MovieEntry {
   qualityMarkedBy?: string // Admin username who marked the quality
   qualityNotes?: string // Additional notes about quality issues
   lastUpdated: string // ISO 8601 timestamp
+  relatedMovies?: Array<{
+    imdbId: string
+    title: string
+    year?: number
+  }>
 }
 
 /**

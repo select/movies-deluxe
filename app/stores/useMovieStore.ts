@@ -61,9 +61,6 @@ export interface FilterState {
   // Search query
   searchQuery: string
 
-  // Localhost-only filters
-  showMissingMetadataOnly: boolean
-
   // Pagination
   currentPage: number
   lastScrollY: number
@@ -90,7 +87,6 @@ const DEFAULT_FILTERS: FilterState = {
   genres: [],
   countries: [],
   searchQuery: '',
-  showMissingMetadataOnly: false,
   currentPage: 1,
   lastScrollY: 0,
 }
@@ -275,28 +271,20 @@ export const useMovieStore = defineStore('movie', () => {
           .filter((s: MovieSource | null): s is MovieSource => s !== null)
       : []
 
-    const metadata: MovieMetadata | undefined = row.is_curated
-      ? {
-          Genre: row.genre as string | undefined,
-          Language: row.language as string | undefined,
-          Country: row.country as string | undefined,
-          imdbRating: (row.imdbRating as number | undefined)?.toString(),
-          imdbVotes: (row.imdbVotes as number | undefined)?.toLocaleString(),
-          imdbID: row.imdbId as string,
-        }
-      : undefined
-
     return {
       imdbId: row.imdbId as string,
       title: row.title as string,
       year: row.year as number,
-      verified: !!row.verified,
       lastUpdated: row.lastUpdated as string,
       sources,
-      metadata,
-      qualityLabels: row.qualityLabels
-        ? ((row.qualityLabels as string).split(',') as QualityLabel[])
-        : undefined,
+      metadata: {
+        imdbRating: (row.imdbRating as number | undefined)?.toString(),
+        imdbVotes: (row.imdbVotes as number | undefined)?.toLocaleString(),
+        imdbID: row.imdbId as string,
+        Genre: row.genre as string | undefined,
+        Language: row.language as string | undefined,
+        Country: row.country as string | undefined,
+      },
     }
   }
 
@@ -511,41 +499,21 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const getRelatedMovies = async (
     movieId: string,
-    limit: number = 8
+    _limit: number = 8
   ): Promise<ExtendedMovieEntry[]> => {
     try {
-      // Fetch related movie IDs and basic info from database
-      const relatedRows = await db.getRelatedMovies<{
-        imdbId: string
-        title: string
-        year: number
-        score: number
-      }>(movieId, limit)
-
-      if (!relatedRows || relatedRows.length === 0) {
+      // Get the movie detail first to get related movies list
+      const movie = await getMovieById(movieId)
+      if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
         return []
       }
 
-      // Fetch full movie data for each related movie
-      const relatedMovieIds = relatedRows.map(row => row.imdbId)
-      const fullMovies = await db.queryByIds<Record<string, unknown>>(relatedMovieIds)
-
-      // Map to MovieEntry objects
-      const movies = fullMovies.map(mapRowToMovie)
-
-      // Sort by original score order (preserve database ordering)
-      const scoreMap = new Map(
-        relatedRows.map(row => {
-          return [row.imdbId, row.score]
-        })
-      )
-      movies.sort((a, b) => {
-        const scoreA = scoreMap.get(a.imdbId) || 0
-        const scoreB = scoreMap.get(b.imdbId) || 0
-        return scoreB - scoreA
-      })
-
-      return movies
+      // Map related movies (which are already lightweight in the JSON) to ExtendedMovieEntry
+      return movie.relatedMovies.map(rm => ({
+        ...rm,
+        sources: [],
+        lastUpdated: new Date().toISOString(),
+      }))
     } catch (err) {
       console.error('[MovieStore] Failed to fetch related movies:', err)
       return []
@@ -613,9 +581,6 @@ export const useMovieStore = defineStore('movie', () => {
       const params: unknown[] = []
       const where: string[] = []
 
-      // Exclude marked movies by default
-      where.push("(m.qualityLabels IS NULL OR m.qualityLabels = '')")
-
       // Apply filters
       if (filters.value.minRating > 0) {
         where.push('m.imdbRating >= ?')
@@ -628,9 +593,6 @@ export const useMovieStore = defineStore('movie', () => {
       if (filters.value.minVotes > 0) {
         where.push('m.imdbVotes >= ?')
         params.push(filters.value.minVotes)
-      }
-      if (filters.value.showMissingMetadataOnly) {
-        where.push('m.is_curated = 0')
       }
 
       // Genre filters
@@ -713,9 +675,6 @@ export const useMovieStore = defineStore('movie', () => {
       const params: unknown[] = []
       const where: string[] = []
 
-      // Exclude marked movies by default
-      where.push("(m.qualityLabels IS NULL OR m.qualityLabels = '')")
-
       // Filters
       if (filters.value.minRating > 0) {
         where.push('m.imdbRating >= ?')
@@ -728,9 +687,6 @@ export const useMovieStore = defineStore('movie', () => {
       if (filters.value.minVotes > 0) {
         where.push('m.imdbVotes >= ?')
         params.push(filters.value.minVotes)
-      }
-      if (filters.value.showMissingMetadataOnly) {
-        where.push('m.is_curated = 0')
       }
 
       // Source filters
@@ -900,11 +856,6 @@ export const useMovieStore = defineStore('movie', () => {
       })
     }
 
-    // 7. Filter by missing metadata
-    if (filters.value.showMissingMetadataOnly) {
-      filtered = filtered.filter(movie => !movie.metadata || !movie.metadata.imdbID)
-    }
-
     // 8. Apply sorting
     const sortOption =
       SORT_OPTIONS.find(
@@ -994,13 +945,6 @@ export const useMovieStore = defineStore('movie', () => {
     filters.value.countries = filters.value.countries.includes(country)
       ? filters.value.countries.filter(c => c !== country)
       : [...filters.value.countries, country]
-  }
-
-  /**
-   * Toggle missing metadata filter
-   */
-  const toggleMissingMetadata = () => {
-    filters.value.showMissingMetadataOnly = !filters.value.showMissingMetadataOnly
   }
 
   /**
@@ -1534,7 +1478,6 @@ export const useMovieStore = defineStore('movie', () => {
     setMinVotes,
     toggleGenre,
     toggleCountry,
-    toggleMissingMetadata,
     resetFilters,
     applyFilters,
     getAvailableGenres,
