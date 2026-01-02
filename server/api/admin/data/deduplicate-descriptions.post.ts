@@ -99,7 +99,7 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
 
   try {
     // Read the current movies.json file
-    const moviesPath = join(process.cwd(), 'public/data/movies.json')
+    const moviesPath = join(process.cwd(), 'data/movies.json')
     const rawData = readFileSync(moviesPath, 'utf8')
     const data = JSON.parse(rawData)
 

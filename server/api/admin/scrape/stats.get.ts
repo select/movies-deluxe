@@ -170,9 +170,9 @@ export default defineEventHandler(async _event => {
     lastUpdated: new Date().toISOString(),
   }
 
-  // Save to public/data/stats.json
+  // Save to data/stats.json
   try {
-    const dataDir = resolve(process.cwd(), 'public/data')
+    const dataDir = resolve(process.cwd(), 'data')
     if (!existsSync(dataDir)) {
       mkdirSync(dataDir, { recursive: true })
     }

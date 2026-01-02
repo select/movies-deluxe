@@ -1,7 +1,7 @@
 /**
  * Movie JSON Generation Script
  *
- * Splits the large public/data/movies.json into individual JSON files
+ * Splits the large data/movies.json into individual JSON files
  * in public/movies/[imdbId].json for on-demand loading.
  */
 

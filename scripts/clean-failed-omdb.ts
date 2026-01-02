@@ -2,8 +2,8 @@
 /**
  * Clean Failed OMDB Matches
  *
- * This script removes entries from public/data/failed-omdb.json if the corresponding
- * movie in public/data/movies.json already has AI-extracted metadata.
+ * This script removes entries from data/failed-omdb.json if the corresponding
+ * movie in data/movies.json already has AI-extracted metadata.
  */
 
 import { readFile, writeFile } from 'fs/promises'
@@ -21,8 +21,8 @@ interface FailedOmdbMatch {
 }
 
 async function cleanFailedOmdb() {
-  const moviesPath = join(process.cwd(), 'public/data/movies.json')
-  const failedPath = join(process.cwd(), 'public/data/failed-omdb.json')
+  const moviesPath = join(process.cwd(), 'data/movies.json')
+  const failedPath = join(process.cwd(), 'data/failed-omdb.json')
 
   console.log('📖 Reading movies database...')
   const moviesData = await readFile(moviesPath, 'utf-8')

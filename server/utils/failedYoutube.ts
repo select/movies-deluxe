@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
 import { join } from 'node:path'
 
-const FAILED_YOUTUBE_FILE = join(process.cwd(), 'public/data/failed-youtube.json')
+const FAILED_YOUTUBE_FILE = join(process.cwd(), 'data/failed-youtube.json')
 
 export type FailureReason = 'shorts' | 'duration' | 'trailer_clip' | 'missing_data' | 'api_error'
 
@@ -37,7 +37,7 @@ export function saveFailedYouTubeVideo(
   video: Omit<FailedYouTubeVideo, 'failedAt' | 'lastAttempt'>
 ): void {
   try {
-    const dataDir = join(process.cwd(), 'public/data')
+    const dataDir = join(process.cwd(), 'data')
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true })
     }

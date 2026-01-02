@@ -2,7 +2,7 @@
  * Centralized Movie Data Types
  *
  * This file defines the TypeScript interfaces for the centralized movie database
- * stored in public/data/movies.json. Movies are indexed by imdbId or temporary IDs.
+ * stored in data/movies.json. Movies are indexed by imdbId or temporary IDs.
  */
 
 /**

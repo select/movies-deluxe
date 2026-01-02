@@ -30,7 +30,7 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    const filePath = join(process.cwd(), 'public/data/movies.json')
+    const filePath = join(process.cwd(), 'data/movies.json')
     const content = await readFile(filePath, 'utf-8')
     const db = JSON.parse(content)
 

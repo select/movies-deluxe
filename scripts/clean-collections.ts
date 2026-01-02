@@ -20,9 +20,9 @@ interface CollectionsDatabase {
   [key: string]: Collection | CollectionsDatabase['_schema']
 }
 
-const DATA_DIR = join(process.cwd(), 'public/data')
+const DATA_DIR = join(process.cwd(), 'data')
 const COLLECTIONS_FILE = join(DATA_DIR, 'collections.json')
-const MOVIES_DB_FILE = join(DATA_DIR, 'movies.db')
+const MOVIES_DB_FILE = join(process.cwd(), 'public/data/movies.db')
 
 async function cleanCollections() {
   console.log('🧹 Cleaning collections from movies not in database...\n')

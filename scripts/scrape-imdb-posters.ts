@@ -4,7 +4,7 @@ import * as http from 'node:http'
 import { join } from 'node:path'
 
 const POSTERS_DIR = join(process.cwd(), 'public/posters')
-const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'public/data/failed-posters.json')
+const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'data/failed-posters.json')
 
 interface FailedDownload {
   imdbId: string

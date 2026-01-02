@@ -23,6 +23,10 @@ logs
 .env.*
 !.env.example
 
+# Large generated data files
+public/data/movies.db
+data/stats.json
+
 # Poster images (keep directory structure)
 public/posters/*.jpg
 public/posters/*.png

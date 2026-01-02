@@ -3,7 +3,7 @@ import * as https from 'node:https'
 import * as http from 'node:http'
 import { join } from 'node:path'
 
-const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'public/data/failed-posters.json')
+const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'data/failed-posters.json')
 
 interface FailedDownload {
   imdbId: string
@@ -34,7 +34,7 @@ export function loadFailedPosterIds(): Set<string> {
  */
 function saveFailedDownload(imdbId: string, url: string, error: string): void {
   try {
-    const dataDir = join(process.cwd(), 'public/data')
+    const dataDir = join(process.cwd(), 'data')
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true })
     }

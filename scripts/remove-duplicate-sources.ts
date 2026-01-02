@@ -105,7 +105,7 @@ function deduplicateSources(sources: MovieSource[]): {
 }
 
 async function removeDuplicateSources() {
-  const dbPath = join(process.cwd(), 'public/data/movies.json')
+  const dbPath = join(process.cwd(), 'data/movies.json')
 
   console.log('📖 Reading movies database...')
   const data = await readFile(dbPath, 'utf-8')
