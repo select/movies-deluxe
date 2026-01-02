@@ -4,7 +4,7 @@ import { join } from 'path'
 import { normalizeTitleForComparison } from '../../shared/utils/movieTitle'
 import type { MoviesDatabase, MovieEntry, MovieSource } from '../../shared/types/movie'
 
-const DATA_DIR = join(process.cwd(), 'public/data')
+const DATA_DIR = join(process.cwd(), 'data')
 const MOVIES_FILE = join(DATA_DIR, 'movies.json')
 
 /**

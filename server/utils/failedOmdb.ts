@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
 import { join } from 'node:path'
 
-const FAILED_OMDB_FILE = join(process.cwd(), 'public/data/failed-omdb.json')
+const FAILED_OMDB_FILE = join(process.cwd(), 'data/failed-omdb.json')
 
 interface TitleAttempt {
   query: string
@@ -50,7 +50,7 @@ export function saveFailedOmdbMatch(
   year?: number
 ): void {
   try {
-    const dataDir = join(process.cwd(), 'public/data')
+    const dataDir = join(process.cwd(), 'data')
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true })
     }

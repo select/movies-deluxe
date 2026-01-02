@@ -4,7 +4,7 @@ import { join } from 'path'
 
 export default defineEventHandler(async () => {
   try {
-    const filePath = join(process.cwd(), 'public/data/movies.json')
+    const filePath = join(process.cwd(), 'data/movies.json')
     const content = await readFile(filePath, 'utf-8')
     return JSON.parse(content)
   } catch (error) {

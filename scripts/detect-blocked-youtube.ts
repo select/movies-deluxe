@@ -27,7 +27,7 @@ config()
 const logger = createLogger('BlockedYouTubeDetector')
 
 // File paths
-const MOVIES_FILE = join(process.cwd(), 'public/data/movies.json')
+const MOVIES_FILE = join(process.cwd(), 'data/movies.json')
 
 interface YouTubeRegionRestriction {
   allowed?: string[]

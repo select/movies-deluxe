@@ -3,7 +3,7 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 import type { CollectionsDatabase, Collection } from '../../shared/types/collections'
 
-const DATA_DIR = join(process.cwd(), 'public/data')
+const DATA_DIR = join(process.cwd(), 'data')
 const COLLECTIONS_FILE = join(DATA_DIR, 'collections.json')
 
 /**

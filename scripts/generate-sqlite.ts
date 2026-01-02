@@ -1,7 +1,7 @@
 /**
  * SQLite Database Generation Script
  *
- * Converts public/data/movies.json to public/data/movies.db
+ * Converts data/movies.json to public/data/movies.db
  * Optimized for client-side SQLite Wasm usage.
  */
 
