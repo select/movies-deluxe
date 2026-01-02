@@ -19,7 +19,7 @@
       <button
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         title="Search (Shift+S)"
-        @click="setSearchOpen(true)"
+        @click="handleSearchClick"
       >
         <div class="i-mdi-magnify text-xl" />
       </button>
@@ -130,7 +130,7 @@
       <button
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
         aria-label="Search"
-        @click="setSearchOpen(true)"
+        @click="handleSearchClick"
       >
         <div class="i-mdi-magnify text-2xl" />
       </button>
@@ -299,5 +299,14 @@ const scroll = (direction: 'left' | 'right') => {
     left: direction === 'left' ? -scrollAmount : scrollAmount,
     behavior: 'smooth',
   })
+}
+
+const handleSearchClick = async () => {
+  // Navigate to home page if not already there
+  if (route.path !== '/') {
+    await navigateTo('/')
+  }
+  // Open search header
+  setSearchOpen(true)
 }
 </script>
