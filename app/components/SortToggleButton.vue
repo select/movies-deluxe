@@ -11,7 +11,13 @@
     >
       <div
         class="text-sm"
-        :class="[icon, isOptionAActive ? 'text-white' : 'text-theme-textmuted']"
+        :class="[
+          icon,
+          {
+            'text-white': isOptionAActive,
+            'text-theme-textmuted': !isOptionAActive
+          }
+        ]"
       />
       <span>{{ optionA.label }}</span>
     </button>
