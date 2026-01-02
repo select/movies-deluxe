@@ -199,11 +199,11 @@ self.onmessage = async e => {
 
       self.postMessage({ id, result, totalCount })
     } else if (type === 'query-lightweight') {
-      // Lightweight query for IDs and titles only (no joins, minimal data)
+      // Lightweight query for grid display (minimal data, no joins)
       const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e.data
 
-      // Only select imdbId, title, and year for lightweight queries
-      let sql = `SELECT m.imdbId, m.title, m.year FROM movies m`
+      // Select essential fields for grid display and filtering
+      let sql = `SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, m.primarySourceType as sourceType, m.primaryChannelName as channelName FROM movies m`
       if (where) sql += ` WHERE ${where}`
       if (orderBy) sql += ` ORDER BY ${orderBy}`
       if (limit !== undefined) sql += ` LIMIT ${limit}`
@@ -243,7 +243,7 @@ self.onmessage = async e => {
 
       const placeholders = imdbIds.map(() => '?').join(',')
       const sql = `
-        SELECT m.*, GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw
+        SELECT m.*, GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(c.name, ''), '###') as sources_raw
         FROM movies m
         LEFT JOIN sources s ON m.imdbId = s.movieId
         LEFT JOIN channels c ON s.channelId = c.id

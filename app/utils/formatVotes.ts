@@ -1,13 +1,19 @@
 /**
  * Format IMDB vote count for display
- * @param votes - Vote count as string (e.g., "1234" or "1,234")
+ * @param votes - Vote count as string (e.g., "1234" or "1,234") or number
  * @returns Formatted string (e.g., "1.2K votes" or "995 votes")
  */
-export function formatVotes(votes: string | undefined): string {
-  if (!votes) return ''
+export function formatVotes(votes: string | number | undefined): string {
+  if (votes === undefined || votes === null || votes === '') return ''
 
-  // Remove commas and parse to number
-  const voteCount = parseInt(votes.replace(/,/g, ''), 10)
+  // Convert to number
+  let voteCount: number
+  if (typeof votes === 'number') {
+    voteCount = votes
+  } else {
+    // Remove commas and parse to number
+    voteCount = parseInt(votes.replace(/,/g, ''), 10)
+  }
 
   if (isNaN(voteCount)) return ''
 

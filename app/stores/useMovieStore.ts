@@ -252,7 +252,7 @@ export const useMovieStore = defineStore('movie', () => {
           .split('###')
           .filter((s: string) => s.trim())
           .map((s: string) => {
-            const [type, id, title, addedAt, description, channelName] = s.split('|||')
+            const [type, id, title, addedAt, channelName] = s.split('|||')
             if (!type || !id) return null
 
             const base = {
@@ -261,7 +261,6 @@ export const useMovieStore = defineStore('movie', () => {
               id,
               title: title || '',
               addedAt: addedAt || new Date().toISOString(),
-              description: description || undefined,
             }
 
             if (type === 'youtube') {
@@ -278,16 +277,9 @@ export const useMovieStore = defineStore('movie', () => {
 
     const metadata: MovieMetadata | undefined = row.is_curated
       ? {
-          Rated: row.rated as string | undefined,
-          Runtime: row.runtime as string | undefined,
           Genre: row.genre as string | undefined,
-          Director: row.director as string | undefined,
-          Writer: row.writer as string | undefined,
-          Actors: row.actors as string | undefined,
-          Plot: row.plot as string | undefined,
           Language: row.language as string | undefined,
           Country: row.country as string | undefined,
-          Awards: row.awards as string | undefined,
           imdbRating: (row.imdbRating as number | undefined)?.toString(),
           imdbVotes: (row.imdbVotes as number | undefined)?.toLocaleString(),
           imdbID: row.imdbId as string,
@@ -305,7 +297,6 @@ export const useMovieStore = defineStore('movie', () => {
       qualityLabels: row.qualityLabels
         ? ((row.qualityLabels as string).split(',') as QualityLabel[])
         : undefined,
-      qualityNotes: row.qualityNotes as string | undefined,
     }
   }
 
@@ -416,7 +407,7 @@ export const useMovieStore = defineStore('movie', () => {
                 END as title_priority,`
                    : ''
                }
-               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(s.description, '') || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
+               GROUP_CONCAT(s.type || '|||' || COALESCE(s.identifier, '') || '|||' || COALESCE(s.title, '') || '|||' || s.addedAt || '|||' || COALESCE(c.name, ''), '###') as sources_raw`,
       from: `${from} LEFT JOIN sources s ON m.imdbId = s.movieId LEFT JOIN channels c ON s.channelId = c.id`,
       where: finalWhere,
       params,
@@ -438,7 +429,8 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fetch full movie details for specific IDs (with caching)
+   * Fetch lightweight movie details for specific IDs (with caching)
+   * Returns essential fields for grid display
    */
   const fetchMoviesByIds = async (imdbIds: string[]): Promise<ExtendedMovieEntry[]> => {
     if (!db.isReady.value) return []
@@ -481,22 +473,37 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Get a single movie by ID (from cache or database)
+   * Get a single movie by ID (from cache or API)
    */
   const getMovieById = async (imdbId: string): Promise<ExtendedMovieEntry | undefined> => {
-    // Check allMovies first
-    if (allMovies.value.has(imdbId)) {
-      return allMovies.value.get(imdbId)
-    }
-
-    // Check cache
+    // Check cache first
     if (movieDetailsCache.value.has(imdbId)) {
       return movieDetailsCache.value.get(imdbId)
     }
 
-    // Fetch from database
-    const movies = await fetchMoviesByIds([imdbId])
-    return movies[0]
+    // Check allMovies - if it has sources, it's a full entry
+    if (allMovies.value.has(imdbId)) {
+      const movie = allMovies.value.get(imdbId)
+      if (movie && movie.sources && movie.sources.length > 0) {
+        return movie
+      }
+    }
+
+    // Fetch full details from API
+    isLoading.value.movieDetails = true
+    try {
+      const movie = await $fetch<ExtendedMovieEntry>(`/api/movie/${imdbId}`)
+      if (movie) {
+        movieDetailsCache.value.set(imdbId, movie)
+        return movie
+      }
+    } catch (err) {
+      console.error(`[MovieStore] Failed to fetch movie details for ${imdbId}:`, err)
+    } finally {
+      isLoading.value.movieDetails = false
+    }
+
+    return undefined
   }
 
   /**
@@ -865,7 +872,11 @@ export const useMovieStore = defineStore('movie', () => {
     // 4. Filter by minimum votes
     if (filters.value.minVotes > 0) {
       filtered = filtered.filter(movie => {
-        const votes = parseInt(movie.metadata?.imdbVotes?.replace(/,/g, '') || '0')
+        const votesStr = movie.metadata?.imdbVotes
+        const votes =
+          typeof votesStr === 'number'
+            ? votesStr
+            : parseInt(String(votesStr || '0').replace(/,/g, ''))
         return votes >= filters.value.minVotes
       })
     }

@@ -72,7 +72,7 @@
         v-if="movieCollections.length > 0"
         class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center z-10"
         :class="{ 'ml-8': isMovieLiked }"
-        :title="movieCollections.map(c => c.name).join(', ')"
+        :title="movieCollections.map((c: Collection) => c.name).join(', ')"
       >
         <div class="i-mdi:movie-roll text-theme-accent text-lg" />
         <span
@@ -115,8 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, LightweightMovieEntry } from '~/types'
-import type { Collection } from '~/shared/types/collections'
+import type { MovieEntry, LightweightMovieEntry, Collection } from '~/types'
 
 interface Props {
   movie: MovieEntry | LightweightMovieEntry
@@ -139,13 +138,35 @@ onMounted(async () => {
 })
 
 // Helper to check if we have full movie data
-const hasFullData = computed(() => 'sources' in props.movie && props.movie.sources.length > 0)
+const hasFullData = computed(() => {
+  if ('sources' in props.movie && props.movie.sources.length > 0) return true
+  return 'sourceType' in props.movie && !!(props.movie as LightweightMovieEntry).sourceType
+})
 
 // Safe access to metadata
-const metadata = computed(() => 'metadata' in props.movie ? props.movie.metadata : undefined)
+const metadata = computed(() => {
+  if ('metadata' in props.movie) return props.movie.metadata
+  const m = props.movie as LightweightMovieEntry
+  return {
+    imdbRating: m.imdbRating as string | undefined,
+    imdbVotes: m.imdbVotes as string | undefined,
+    Language: m.language,
+  }
+})
 
 // Safe access to sources
-const firstSource = computed(() => 'sources' in props.movie ? props.movie.sources[0] : undefined)
+const firstSource = computed(() => {
+  if ('sources' in props.movie) return props.movie.sources[0]
+  const m = props.movie as LightweightMovieEntry
+  if (m.sourceType) {
+    return {
+      type: m.sourceType,
+      channelName: m.channelName,
+      language: m.language,
+    }
+  }
+  return undefined
+})
 
 // Computed language code
 const languageCode = computed(() => {

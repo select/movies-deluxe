@@ -58,23 +58,17 @@ async function generateSQLite(
         imdbId TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         year INTEGER,
-        verified INTEGER DEFAULT 0,
-        is_curated INTEGER DEFAULT 0,
-        lastUpdated TEXT,
-        rated TEXT,
-        runtime TEXT,
-        genre TEXT,
-        director TEXT,
-        writer TEXT,
-        actors TEXT,
-        plot TEXT,
-        language TEXT,
-        country TEXT,
-        awards TEXT,
         imdbRating REAL,
         imdbVotes INTEGER,
+        language TEXT,
+        genre TEXT,
+        country TEXT,
+        primarySourceType TEXT,
+        primaryChannelName TEXT,
+        is_curated INTEGER DEFAULT 0,
+        verified INTEGER DEFAULT 0,
         qualityLabels TEXT,
-        qualityNotes TEXT
+        lastUpdated TEXT
       );
 
       CREATE TABLE channels (
@@ -105,7 +99,6 @@ async function generateSQLite(
         title TEXT,
         channelId TEXT,
         addedAt TEXT,
-        description TEXT,
         language TEXT,
         FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
         FOREIGN KEY (channelId) REFERENCES channels (id)
@@ -168,10 +161,10 @@ async function generateSQLite(
     // 5. Prepare Statements
     const insertMovie = sqlite.prepare(`
       INSERT INTO movies (
-        imdbId, title, year, verified, is_curated, lastUpdated, rated, runtime, genre,
-        director, writer, actors, plot, language, country, awards,
-        imdbRating, imdbVotes, qualityLabels, qualityNotes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        imdbId, title, year, imdbRating, imdbVotes, language, genre, country,
+        primarySourceType, primaryChannelName, is_curated, verified,
+        qualityLabels, lastUpdated
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertChannel = sqlite.prepare(`
@@ -191,8 +184,8 @@ async function generateSQLite(
 
     const insertSource = sqlite.prepare(`
       INSERT INTO sources (
-        movieId, type, identifier, title, channelId, addedAt, description, language
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        movieId, type, identifier, title, channelId, addedAt, language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertFts = sqlite.prepare(`
@@ -243,39 +236,34 @@ async function generateSQLite(
           language = normalizeLanguageCode(m.Language)
         }
 
+        // Determine primary source info for lightweight grid display
+        const primarySource = movie.sources[0]
+        const primarySourceType = primarySource?.type || null
+        let primaryChannelName = null
+        if (primarySource?.type === 'youtube') {
+          primaryChannelName = (primarySource as YouTubeSource).channelName || null
+        }
+
         insertMovie.run(
           movie.imdbId,
           Array.isArray(movie.title) ? movie.title[0] : movie.title,
           movie.year || null,
-          movie.verified ? 1 : 0,
-          movie.metadata ? 1 : 0,
-          movie.lastUpdated,
-          m.Rated || null,
-          m.Runtime || null,
-          m.Genre || null,
-          m.Director || null,
-          m.Writer || null,
-          m.Actors || null,
-          m.Plot || null,
-          language,
-          m.Country || null,
-          m.Awards || null,
           imdbRating,
           imdbVotes,
+          language,
+          m.Genre || null,
+          m.Country || null,
+          primarySourceType,
+          primaryChannelName,
+          movie.metadata ? 1 : 0,
+          movie.verified ? 1 : 0,
           movie.qualityLabels ? movie.qualityLabels.join(',') : null,
-          movie.qualityNotes || null
+          movie.lastUpdated
         )
 
         // Insert sources
         for (const source of movie.sources) {
           try {
-            // Handle description - can be string or array
-            const description = source.description
-              ? Array.isArray(source.description)
-                ? source.description.join(' | ')
-                : source.description
-              : null
-
             // Normalize source language
             const sourceLanguage =
               source.type === 'archive.org'
@@ -307,7 +295,6 @@ async function generateSQLite(
               source.title || null,
               channelId,
               source.addedAt,
-              description,
               sourceLanguage
             )
           } catch (err) {

@@ -16,7 +16,9 @@
     "format:check": "prettier --check .",
     "typecheck": "nuxt typecheck",
     "typecheck:watch": "nuxt typecheck --watch",
-    "db:generate": "tsx scripts/generate-sqlite.ts",
+    "db:generate": "tsx scripts/generate-sqlite.ts && tsx scripts/generate-movie-json.ts",
+    "db:generate-sqlite": "tsx scripts/generate-sqlite.ts",
+    "db:generate-json": "tsx scripts/generate-movie-json.ts",
     "youtube:setup": "tsx scripts/setup-youtube-api.ts",
     "youtube:test": "tsx scripts/test-youtube-data-api.ts"
   },

@@ -20,7 +20,7 @@
         <MovieCard
           v-for="movie in row.movies"
           :key="movie.imdbId"
-          :movie="getMovieEntry(movie)"
+          :movie="movie"
         />
       </div>
 
@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize, useElementSize } from '@vueuse/core'
-import type { MovieEntry, LightweightMovieEntry } from '~/types'
+import type { LightweightMovieEntry } from '~/types'
 
 const props = defineProps<{
   movies: LightweightMovieEntry[]
@@ -45,15 +45,9 @@ const emit = defineEmits<{
   (e: 'load-more'): void
 }>()
 
-const { fetchMoviesByIds } = useMovieStore()
 const { y: windowScrollY } = useWindowScroll()
 const { height: windowHeight, width: windowWidth } = useWindowSize()
 const breakpoints = useBreakpoints(breakpointsTailwind)
-
-// Map to store loaded movie details
-// Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
-const loadedMovies = shallowRef<Map<string, MovieEntry>>(new Map())
-const loadingIds = ref<Set<string>>(new Set())
 
 const cols = computed(() => {
   if (breakpoints.xl.value) return 6
@@ -157,60 +151,6 @@ const visibleRows = computed(() => {
   }
   return rows
 })
-
-// Get visible movie IDs
-const visibleMovieIds = computed(() => {
-  const ids = new Set<string>()
-  visibleRows.value.forEach(row => {
-    row.movies.forEach(movie => {
-      ids.add(movie.imdbId)
-    })
-  })
-  return Array.from(ids)
-})
-
-
-// Lazy load movie details for visible items
-watch(visibleMovieIds, async (newIds) => {
-  // Filter out IDs that are already loaded or being loaded
-  const idsToLoad = newIds.filter(id =>
-    !loadedMovies.value.has(id) && !loadingIds.value.has(id)
-  )
-
-  if (idsToLoad.length === 0) {
-    return
-  }
-
-  // Mark as loading
-  idsToLoad.forEach(id => loadingIds.value.add(id))
-
-  try {
-    const movies = await fetchMoviesByIds(idsToLoad)
-    movies.forEach(movie => {
-      loadedMovies.value.set(movie.imdbId, movie)
-    })
-  } catch (err) {
-    window.console.error('Failed to load movie details:', err)
-  } finally {
-    // Remove from loading set
-    idsToLoad.forEach(id => loadingIds.value.delete(id))
-  }
-}, { immediate: true })
-
-// Get full movie entry or create a placeholder
-const getMovieEntry = (lightweight: LightweightMovieEntry): MovieEntry => {
-  const loaded = loadedMovies.value.get(lightweight.imdbId)
-  if (loaded) return loaded
-
-  // Return a minimal movie entry as placeholder
-  return {
-    imdbId: lightweight.imdbId,
-    title: lightweight.title,
-    year: lightweight.year,
-    sources: [],
-    lastUpdated: new Date().toISOString(),
-  }
-}
 
 // Load more when approaching end of currently loaded content
 watch(visibleRows, () => {
