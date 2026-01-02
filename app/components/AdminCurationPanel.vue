@@ -404,7 +404,7 @@ const sourceSearchTitles = reactive<Record<string, string>>({})
 
 const initSourceSearchTitles = () => {
   props.movie.sources.forEach((source: MovieSource) => {
-    const rawTitle = source.title || getPrimaryTitle(props.movie)
+    const rawTitle = source.title || props.movie.title
     sourceSearchTitles[source.id] = cleanTitleForSearch(rawTitle)
   })
 }
@@ -425,7 +425,7 @@ const availableCollections = computed(() => {
 
 onMounted(() => {
   isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  searchTitle.value = getPrimaryTitle(props.movie)
+  searchTitle.value = props.movie.title
   searchYear.value = props.movie.year?.toString() || ''
   initSourceSearchTitles()
 
@@ -465,7 +465,7 @@ const removeFromCollection = async (collectionId: string) => {
 
 // Watch for movie changes to update search fields
 watch(() => props.movie.imdbId, () => {
-  searchTitle.value = getPrimaryTitle(props.movie)
+  searchTitle.value = props.movie.title
   searchYear.value = props.movie.year?.toString() || ''
   imdbIdInput.value = ''
   searchResults.value = []

@@ -6,7 +6,7 @@
  */
 
 import { defineEventHandler, readBody, createError } from 'h3'
-import { getPrimaryTitle, normalizeTitleForComparison } from '../../../../shared/utils/movieTitle'
+import { normalizeTitleForComparison } from '../../../../shared/utils/movieTitle'
 
 interface DeduplicateOptions {
   dryRun?: boolean
@@ -83,7 +83,7 @@ function findDuplicateGroups(
 
     const group: Array<[string, MovieEntry]> = [[key1, entry1]]
     processed.add(key1)
-    const normalized1 = normalizeTitleForComparison(getPrimaryTitle(entry1))
+    const normalized1 = normalizeTitleForComparison(entry1.title)
 
     for (let j = i + 1; j < entries.length; j++) {
       const entry2 = entries[j]
@@ -91,7 +91,7 @@ function findDuplicateGroups(
       const [key2, entry2Data] = entry2
       if (processed.has(key2)) continue
 
-      const normalized2 = normalizeTitleForComparison(getPrimaryTitle(entry2Data))
+      const normalized2 = normalizeTitleForComparison(entry2Data.title)
       const similarity = similarityRatio(normalized1, normalized2)
 
       if (similarity >= threshold) {
@@ -258,7 +258,7 @@ export default defineEventHandler(async event => {
         type: imdbIdGroups.includes(group) ? 'imdbId' : 'title',
         entries: group.map(([id, entry]) => ({
           id,
-          title: getPrimaryTitle(entry),
+          title: entry.title,
           sources: entry.sources.length,
         })),
       }))
