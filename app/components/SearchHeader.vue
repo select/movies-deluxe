@@ -12,7 +12,7 @@
           </div>
           <input
             ref="searchInput"
-            v-model="searchQuery"
+            v-model="localQuery"
             type="text"
             class="block w-full pl-12 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
             placeholder="Search movies, actors, directors..."
@@ -20,7 +20,7 @@
             @keydown.enter="handleEnter"
           >
           <button
-            v-if="searchQuery"
+            v-if="localQuery"
             class="absolute inset-y-0 right-0 pr-4 flex items-center"
             @click="clearSearch"
           >
@@ -28,7 +28,7 @@
           </button>
         </div>
         <button
-          v-if="!searchQuery"
+          v-if="!localQuery"
           class="p-2 md:p-3 rounded-xl hover:bg-theme-background text-theme-textmuted hover:text-theme-text transition-colors"
           title="Close search"
           @click="closeSearch"
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from '@vueuse/core'
+import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
@@ -52,8 +52,41 @@ const { setSearchOpen } = uiStore
 
 const searchInput = ref<HTMLInputElement | null>(null)
 const searchContainer = ref<HTMLElement | null>(null)
-const searchQuery = ref(filters.value.searchQuery)
 const route = useRoute()
+
+// Local query for immediate UI updates
+const localQuery = ref(filters.value.searchQuery)
+
+// Debounced function to update store (500ms delay)
+const debouncedSetSearchQuery = useDebounceFn((query: string) => {
+  setSearchQuery(query)
+
+  // If searching from a non-grid page, navigate to home
+  const isGridPage = 
+    route.path === '/' ||
+    route.path === '/liked' ||
+    route.path === '/collections'
+  
+  if (query && !isGridPage) {
+    navigateTo('/')
+  }
+
+  if (query && filters.value.sort.field !== 'relevance') {
+    setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
+  }
+}, 500)
+
+// Watch local query and debounce updates to store
+watch(localQuery, (newVal) => {
+  debouncedSetSearchQuery(newVal)
+})
+
+// Sync local query when store changes externally (e.g., clear filters)
+watch(() => filters.value.searchQuery, (newVal) => {
+  if (newVal !== localQuery.value) {
+    localQuery.value = newVal
+  }
+})
 
 // Track if we should show search based on route and state
 const shouldShowSearch = computed(() => {
@@ -69,31 +102,7 @@ const shouldShowSearch = computed(() => {
   }
   
   // Show if search is open OR if there's an active query
-  return isSearchOpen.value || searchQuery.value !== ''
-})
-
-// Sync local query with store
-watch(() => filters.value.searchQuery, (newVal) => {
-  searchQuery.value = newVal
-})
-
-// Update store when local query changes
-watch(searchQuery, (newVal) => {
-  setSearchQuery(newVal)
-
-  // If searching from a non-grid page, navigate to home
-  const isGridPage = 
-    route.path === '/' ||
-    route.path === '/liked' ||
-    route.path === '/collections'
-  
-  if (newVal && !isGridPage) {
-    navigateTo('/')
-  }
-
-  if (newVal && filters.value.sort.field !== 'relevance') {
-    setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
-  }
+  return isSearchOpen.value || localQuery.value !== ''
 })
 
 // Auto-focus input when opened
@@ -112,21 +121,21 @@ watch(() => route.path, (newPath) => {
     newPath === '/liked' ||
     newPath === '/collections'
   
-  if (isGridPage && searchQuery.value) {
+  if (isGridPage && localQuery.value) {
     setSearchOpen(true)
   }
 })
 
 // Click outside to close (only when query is empty)
 onClickOutside(searchContainer, () => {
-  if (!searchQuery.value) {
+  if (!localQuery.value) {
     closeSearch()
   }
 })
 
 // Clear search query
 const clearSearch = () => {
-  searchQuery.value = ''
+  localQuery.value = ''
 }
 
 // Close search overlay
@@ -136,7 +145,7 @@ const closeSearch = () => {
 
 // Handle ESC key: first press clears query, second press closes
 const handleEscape = () => {
-  if (searchQuery.value) {
+  if (localQuery.value) {
     // First ESC: clear the query
     clearSearch()
   } else {
