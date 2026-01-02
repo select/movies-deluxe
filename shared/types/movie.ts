@@ -18,6 +18,8 @@ export interface MovieSourceBase {
   url: string
   title: string // Original title from the source (before cleaning/processing)
   description?: string // Original source description (e.g., YouTube description)
+  label?: string // Custom label for this source (e.g. "Director's Cut")
+  quality?: string // Quality info (e.g. "1080p", "SD")
   addedAt: string // ISO 8601 timestamp
 }
 

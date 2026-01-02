@@ -146,6 +146,11 @@ export default defineEventHandler(async _event => {
       withoutAiData,
       percent: unmatchedMovies.length > 0 ? (withAiData / unmatchedMovies.length) * 100 : 0,
     },
+    quality: {
+      totalMarked: dbStats.qualityMarkedCount,
+      breakdown: dbStats.qualityBreakdown,
+      percent: dbStats.total > 0 ? (dbStats.qualityMarkedCount / dbStats.total) * 100 : 0,
+    },
     posters: {
       totalMovies: entries.length,
       withPosterUrl: totalWithPosterUrl,

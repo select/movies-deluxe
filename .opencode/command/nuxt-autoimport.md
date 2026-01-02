@@ -4,7 +4,7 @@ description: Check for correct usage of Nuxt 4 auto-import
 
 Auto-imported means that if the modules export something there is not need for an `import` statement to use the exported functions or variables.
 
-If there are type errors because of the auto imports first try to
+If there are type errors because of the auto imports first try to run `nuxt prepare` to rebuild the auto-import list.
 
 ```
 app/

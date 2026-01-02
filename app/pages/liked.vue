@@ -76,7 +76,6 @@
 
 <script setup lang="ts">
 import type { ExtendedMovieEntry } from '~/stores/useMovieStore'
-import type { MovieSource } from '~/types'
 
 // Set page title and meta
 useHead({
@@ -95,8 +94,7 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
-const { loadFromFile, fetchMoviesByIds, resetFilters } = movieStore
+const { loadFromFile, fetchMoviesByIds, resetFilters, applyFilters } = movieStore
 
 // Get likedMovieIds directly from store (VueUse storage)
 const { likedMovieIds, likedCount } = storeToRefs(movieStore)
@@ -126,60 +124,6 @@ onMounted(async () => {
 
 // Filtered liked movies - apply current filters to liked movies
 const filteredLikedMovies = computed(() => {
-  const liked = likedMoviesData.value
-  if (liked.length === 0) return []
-
-  // Apply filters manually since we're showing a subset (liked movies only)
-  let filtered = liked
-
-  // Apply search query
-  const searchQuery = filters.value.searchQuery?.toLowerCase().trim()
-  if (searchQuery) {
-    filtered = filtered.filter((movie: ExtendedMovieEntry) => {
-      const title = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
-      const plot = movie.metadata?.Plot || ''
-      return title.toLowerCase().includes(searchQuery) || plot.toLowerCase().includes(searchQuery)
-    })
-  }
-
-  // Apply genre filter
-  if (filters.value.genres && filters.value.genres.length > 0) {
-    filtered = filtered.filter((movie: ExtendedMovieEntry) => {
-      const movieGenres = movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-      return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
-    })
-  }
-
-  // Apply year filter
-  if (filters.value.minYear > 0) {
-    filtered = filtered.filter((movie: ExtendedMovieEntry) => {
-      return (movie.year || 0) >= filters.value.minYear
-    })
-  }
-
-  // Apply rating filter
-  if (filters.value.minRating > 0) {
-    filtered = filtered.filter((movie: ExtendedMovieEntry) => {
-      const rating = parseFloat(movie.metadata?.imdbRating || '0')
-      return rating >= filters.value.minRating
-    })
-  }
-
-  // Apply source filter
-  if (filters.value.sources && filters.value.sources.length > 0) {
-    filtered = filtered.filter((movie: ExtendedMovieEntry) =>
-      movie.sources?.some((source: MovieSource) => {
-        if (source.type === 'archive.org') {
-          return filters.value.sources.includes('archive.org')
-        }
-        if (source.type === 'youtube') {
-          return filters.value.sources.includes(source.channelName || '')
-        }
-        return false
-      })
-    )
-  }
-
-  return filtered
+  return applyFilters(likedMoviesData.value)
 })
 </script>
