@@ -107,14 +107,28 @@
     </div>
   </aside>
 
-  <!-- Mobile: Horizontal Sidebar (bottom right) -->
+  <!-- Mobile: Horizontal Sidebar (bottom center) -->
   <aside
-    class="md:hidden fixed bottom-6 right-6 z-50 glass shadow-2xl rounded-full h-14 border-theme-border/30"
+    class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass shadow-2xl rounded-full h-14 border-theme-border/30 max-w-[calc(100vw-2rem)] flex items-center group/sidebar"
   >
-    <div class="flex items-center gap-2 px-2 h-full">
+    <!-- Left Scroll Indicator -->
+    <button
+      v-if="canScrollLeft"
+      class="absolute left-1 z-10 p-1 rounded-full bg-theme-surface/80 backdrop-blur-sm text-theme-textmuted animate-pulse hover:bg-theme-selection transition-colors"
+      aria-label="Scroll left"
+      @click="scroll('left')"
+    >
+      <div class="i-mdi-chevron-left text-lg" />
+    </button>
+
+    <div
+      ref="scrollContainer"
+      class="flex items-center gap-1 px-2 h-full overflow-x-auto scrollbar-hidden scroll-smooth"
+      @scroll="updateScrollState"
+    >
       <!-- Search -->
       <button
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
         aria-label="Search"
         @click="setSearchOpen(true)"
       >
@@ -124,7 +138,7 @@
       <!-- Home -->
       <NuxtLink
         to="/"
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
         aria-label="All Movies"
         :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
@@ -135,7 +149,7 @@
 
       <NuxtLink
         to="/liked"
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group flex-shrink-0"
         aria-label="Liked Movies"
         :class="{ 'bg-theme-accent/20': route.path === '/liked' }"
       >
@@ -151,7 +165,7 @@
       <!-- Collections -->
       <NuxtLink
         to="/collections"
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group flex-shrink-0"
         aria-label="Collections"
         :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
       >
@@ -160,7 +174,7 @@
 
       <!-- Dark Mode Toggle -->
       <button
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors flex-shrink-0"
         aria-label="Theme Selection"
         @click="openThemeSelection"
       >
@@ -175,7 +189,7 @@
       </button>
 
       <!-- Filters -->
-      <div class="relative group">
+      <div class="relative group flex-shrink-0">
         <button
           class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
           aria-label="Filters"
@@ -207,12 +221,22 @@
         href="https://github.com/select/movies-deluxe"
         target="_blank"
         rel="noopener noreferrer"
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors flex-shrink-0"
         aria-label="View on GitHub"
       >
         <div class="i-mdi-github text-2xl" />
       </a>
     </div>
+
+    <!-- Right Scroll Indicator -->
+    <button
+      v-if="canScrollRight"
+      class="absolute right-1 z-10 p-1 rounded-full bg-theme-surface/80 backdrop-blur-sm text-theme-textmuted animate-pulse hover:bg-theme-selection transition-colors"
+      aria-label="Scroll right"
+      @click="scroll('right')"
+    >
+      <div class="i-mdi-chevron-right text-lg" />
+    </button>
   </aside>
 </template>
 
@@ -231,6 +255,31 @@ const { isDark } = storeToRefs(uiStore)
 
 const route = useRoute()
 
+const scrollContainer = ref<HTMLElement | null>(null)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+
+const updateScrollState = () => {
+  if (!scrollContainer.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.value
+  canScrollLeft.value = scrollLeft > 5
+  canScrollRight.value = scrollLeft + clientWidth < scrollWidth - 5
+}
+
+onMounted(() => {
+  updateScrollState()
+  window.addEventListener('resize', updateScrollState)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateScrollState)
+})
+
+// Watch for changes in active filters count as it might change width
+watch(activeFiltersCount, () => {
+  nextTick(updateScrollState)
+})
+
 const openFilters = () => {
   emit('openFilters')
 }
@@ -241,5 +290,14 @@ const openThemeSelection = () => {
 
 const clearFilters = () => {
   movieStore.resetFilters()
+}
+
+const scroll = (direction: 'left' | 'right') => {
+  if (!scrollContainer.value) return
+  const scrollAmount = 100
+  scrollContainer.value.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth',
+  })
 }
 </script>
