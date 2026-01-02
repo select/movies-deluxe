@@ -394,7 +394,6 @@
 import type { SortOption, GenreOption, CountryOption, ChannelOption } from '~/types'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { onClickOutside, useScrollLock } from '@vueuse/core'
-import { getAllThemes } from '~/utils/themes'
 
 interface Props {
   isOpen: boolean

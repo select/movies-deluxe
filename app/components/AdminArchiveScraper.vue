@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+    class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface"
   >
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
       <div class="i-mdi-archive text-amber-500" />
@@ -8,7 +8,7 @@
     </h2>
 
     <div class="space-y-6">
-      <p class="text-gray-600 dark:text-gray-400 text-sm">
+      <p class="text-theme-textmuted text-sm">
         Scrapes all available movies from Archive.org's "Feature Films" collection.
         Always fetches 500 rows per page to minimize API calls and scrapes all pages until completion.
       </p>
@@ -35,10 +35,10 @@
         class="mt-4 space-y-2"
       >
         <div class="flex items-center justify-between text-xs">
-          <span class="text-gray-500 truncate mr-2">{{ progress.archive.message }}</span>
+          <span class="text-theme-textmuted truncate mr-2">{{ progress.archive.message }}</span>
           <span class="font-mono text-nowrap">{{ progress.archive.current }} / {{ progress.archive.total }}</span>
         </div>
-        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div class="h-2 bg-theme-border rounded-full overflow-hidden">
           <div
             class="h-full bg-amber-500 transition-all duration-300"
             :style="{ width: `${(progress.archive.current / progress.archive.total) * 100}%` }"

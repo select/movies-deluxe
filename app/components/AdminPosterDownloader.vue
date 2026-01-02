@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+    class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface"
   >
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
       <div class="i-mdi-image-multiple text-purple-500" />
@@ -43,10 +43,10 @@
         class="mt-4 space-y-2"
       >
         <div class="flex items-center justify-between text-xs">
-          <span class="text-gray-500 truncate mr-2">{{ progress.posters.message }}</span>
+          <span class="text-theme-textmuted truncate mr-2">{{ progress.posters.message }}</span>
           <span class="font-mono text-nowrap">{{ progress.posters.current }} / {{ progress.posters.total }}</span>
         </div>
-        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div class="h-2 bg-theme-border rounded-full overflow-hidden">
           <div
             class="h-full bg-purple-500 transition-all duration-300"
             :style="{ width: `${(progress.posters.current / progress.posters.total) * 100}%` }"

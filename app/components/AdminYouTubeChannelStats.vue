@@ -8,7 +8,7 @@
       <div
         v-for="channel in channels"
         :key="channel.id"
-        class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+        class="p-4 rounded-xl shadow-sm border border-theme-border bg-theme-surface"
       >
         <div class="flex items-center justify-between mb-2">
           <span class="text-sm font-bold truncate pr-2">{{ channel.name }}</span>
@@ -29,7 +29,7 @@
           </span>
         </div>
         <div class="mt-1 flex items-center gap-2">
-          <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
+          <div class="flex-1 h-1 bg-theme-border rounded-full overflow-hidden flex">
             <div
               class="h-full bg-red-500 transition-all duration-1000"
               :style="{ width: `${channel.total > 0 ? (channel.scraped / channel.total) * 100 : 0}%` }"
@@ -42,7 +42,7 @@
           </div>
           <span class="text-[10px] font-medium">{{ channel.total > 0 ? ((channel.scraped / channel.total) * 100).toFixed(0) : 0 }}%</span>
         </div>
-        <div class="flex items-center justify-between text-[10px] text-gray-500 mt-1">
+        <div class="flex items-center justify-between text-[10px] text-theme-textmuted mt-1">
           <span>{{ channel.scraped }} / {{ channel.total || '?' }} videos</span>
           <span
             v-if="channel.failureRate"

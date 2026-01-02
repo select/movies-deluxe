@@ -12,12 +12,12 @@
         @change="handleChange"
       >
       <div
-        class="w-10 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
+        class="w-10 h-6 bg-theme-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-theme-primary"
       />
     </div>
     <span
       v-if="label"
-      class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors"
+      class="text-sm font-medium text-theme-text group-hover:text-theme-primary transition-colors"
       :class="{ 'text-gray-500': disabled }"
     >
       {{ label }}

@@ -19,21 +19,21 @@
       <div
         v-for="collection in collectionsList"
         :key="collection.id"
-        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+        class="bg-theme-surface border border-theme-border rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div class="flex-1">
           <div class="flex items-center gap-2 mb-1">
             <h3 class="font-bold text-lg">
               {{ collection.name }}
             </h3>
-            <span class="text-xs font-mono text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">
+            <span class="text-xs font-mono text-theme-textmuted bg-theme-selection px-1.5 py-0.5 rounded">
               {{ collection.id }}
             </span>
           </div>
-          <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+          <p class="text-sm text-theme-textmuted dark:text-theme-textmuted line-clamp-1">
             {{ collection.description }}
           </p>
-          <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+          <div class="flex items-center gap-4 mt-2 text-xs text-theme-textmuted">
             <span class="flex items-center gap-1">
               <div class="i-mdi-movie" />
               {{ collection.movieIds.length }} movies
@@ -48,13 +48,13 @@
         <div class="flex items-center gap-2">
           <NuxtLink
             :to="`/collections/${collection.id}`"
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 transition-colors"
+            class="p-2 hover:bg-theme-selection rounded-lg text-theme-textmuted transition-colors"
             title="View Collection"
           >
             <div class="i-mdi-eye text-xl" />
           </NuxtLink>
           <button
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-blue-500 transition-colors"
+            class="p-2 hover:bg-theme-selection rounded-lg text-blue-500 transition-colors"
             title="Edit Collection"
             @click="editCollection(collection)"
           >
@@ -72,7 +72,7 @@
 
       <div
         v-if="collectionsList.length === 0"
-        class="py-12 text-center text-gray-500 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl"
+        class="py-12 text-center text-theme-textmuted border-2 border-dashed border-theme-border rounded-xl"
       >
         No collections found. Create one to get started.
       </div>
@@ -83,13 +83,13 @@
       v-if="showCreateModal || editingCollection"
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
     >
-      <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+      <div class="bg-theme-surface rounded-2xl w-full max-w-lg shadow-2xl border border-theme-border overflow-hidden">
+        <div class="p-6 border-b border-theme-border flex items-center justify-between">
           <h3 class="text-xl font-bold">
             {{ editingCollection ? 'Edit Collection' : 'Create New Collection' }}
           </h3>
           <button
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            class="p-2 hover:bg-theme-selection rounded-full transition-colors"
             @click="closeModal"
           >
             <div class="i-mdi-close text-xl" />
@@ -106,7 +106,7 @@
               v-model="form.id"
               type="text"
               placeholder="e.g. charlie-chaplin"
-              class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-mono"
+              class="w-full px-4 py-2 rounded-lg border border-theme-border bg-theme-surface text-sm font-mono"
               :disabled="!!editingCollection"
               required
             >
@@ -117,7 +117,7 @@
               v-model="form.name"
               type="text"
               placeholder="e.g. Charlie Chaplin"
-              class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+              class="w-full px-4 py-2 rounded-lg border border-theme-border bg-theme-surface text-sm"
               required
             >
           </div>
@@ -127,14 +127,14 @@
               v-model="form.description"
               rows="3"
               placeholder="Describe this collection..."
-              class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+              class="w-full px-4 py-2 rounded-lg border border-theme-border bg-theme-surface text-sm"
             />
           </div>
 
           <div class="pt-4 flex gap-3">
             <button
               type="button"
-              class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              class="flex-1 px-4 py-2 border border-theme-border rounded-lg font-bold hover:bg-theme-selection transition-colors"
               @click="closeModal"
             >
               Cancel

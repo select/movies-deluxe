@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 md:p-8">
+  <div class="min-h-screen bg-theme-background text-theme-text p-4 md:p-8 transition-colors duration-300">
     <div
       v-if="!isDev"
       class="flex flex-col items-center justify-center h-[60vh] text-center"
@@ -8,7 +8,7 @@
       <h1 class="text-2xl font-bold mb-2">
         Access Denied
       </h1>
-      <p class="text-gray-500">
+      <p class="text-theme-textmuted">
         The admin interface is only available on localhost.
       </p>
       <NuxtLink
@@ -30,7 +30,7 @@
             <div class="i-mdi-shield-crown text-blue-600" />
             Admin Dashboard
           </h1>
-          <p class="text-gray-500 mt-1 flex items-center gap-2">
+          <p class="text-theme-textmuted mt-1 flex items-center gap-2">
             Manage movie scraping and curation
             <span
               v-if="isConnected"
@@ -59,10 +59,9 @@
           </p>
         </div>
         <div class="flex items-center gap-3">
-          <AppDarkModeToggle />
           <NuxtLink
             to="/"
-            class="px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
           >
             <div class="i-mdi-home" />
             View Site
@@ -191,9 +190,9 @@
       <!-- Quality Breakdown -->
       <section
         v-if="stats && stats.quality && stats.quality.totalMarked > 0"
-        class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
+        class="bg-theme-surface p-6 rounded-xl border border-theme-border shadow-sm"
       >
-        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-theme-text">
           <div class="i-mdi-quality-low text-orange-600" />
           Quality Label Breakdown
         </h2>
@@ -201,10 +200,10 @@
           <div
             v-for="(count, label) in stats.quality.breakdown"
             :key="label"
-            class="flex flex-col p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700"
+            class="flex flex-col p-3 rounded-lg bg-theme-background border border-gray-100 dark:border-gray-700"
           >
-            <span class="text-[10px] text-gray-500 uppercase font-bold truncate">{{ label }}</span>
-            <span class="text-2xl font-black text-gray-900 dark:text-gray-100">{{ count }}</span>
+            <span class="text-[10px] text-theme-textmuted uppercase font-bold truncate">{{ label }}</span>
+            <span class="text-2xl font-black text-theme-text">{{ count }}</span>
           </div>
         </div>
       </section>

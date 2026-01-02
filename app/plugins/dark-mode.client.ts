@@ -1,5 +1,3 @@
-import { generateThemeVariables } from '~/utils/themes'
-
 /**
  * Client-side plugin to sync theme state with document element.
  * This ensures UnoCSS dark mode styles work correctly and injects
