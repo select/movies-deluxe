@@ -82,24 +82,20 @@ export const useCollectionsStore = defineStore('collections', () => {
   }
 
   /**
-   * Get collections for a movie
-   * Note: This is now deprecated - collections are embedded in movie JSON files
-   * This method is kept for backward compatibility but will return empty if DB is not ready
+   * Get all collections that contain a specific movie
+   * Queries the database to find which collections include this movie
    */
   const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
-    console.warn(
-      '[CollectionsStore] getCollectionsForMovie is deprecated - use movie.collections instead'
-    )
     try {
       // Use database only if it's already initialized (e.g., from index page)
       // This avoids loading the database just for collections on detail pages
       const db = useDatabase()
 
-      // If database is not ready, fall back to API or return empty
+      // If database is not ready, fall back to checking loaded collections
       // This prevents loading the entire SQLite DB just for collections
       if (!db.isReady.value) {
-        console.log('[CollectionsStore] Database not ready, skipping collections query')
-        return []
+        // Check in-memory collections store
+        return Array.from(collections.value.values()).filter(c => c.movieIds.includes(movieId))
       }
 
       return await db.getCollectionsForMovie(movieId)
