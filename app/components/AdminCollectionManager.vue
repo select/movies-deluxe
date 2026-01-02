@@ -2,7 +2,7 @@
   <section class="space-y-6">
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold flex items-center gap-2">
-        <div class="i-mdi:movie-roll-multiple text-blue-600" />
+        <div class="i-mdi:movie-roll text-blue-600" />
         Collection Management
       </h2>
       <button
