@@ -1,0 +1,123 @@
+import { loadCollectionsDatabase, saveCollectionsDatabase } from '../../../utils/collections'
+import { loadMoviesDatabase } from '../../../utils/movieData'
+import type { Collection } from '../../../../shared/types/collections'
+import type { MovieEntry } from '../../../../shared/types/movie'
+
+interface CleanupResult {
+  success: boolean
+  stats: {
+    collectionsProcessed: number
+    moviesRemoved: number
+    moviesUpdated: number
+    collectionsModified: number
+  }
+  details: Array<{
+    collectionId: string
+    collectionName: string
+    removedMovies: string[]
+    updatedMovies: Array<{ oldId: string; newId: string }>
+  }>
+}
+
+export default defineEventHandler(async (): Promise<CleanupResult> => {
+  try {
+    // Load databases
+    const collectionsDb = await loadCollectionsDatabase()
+    const moviesDb = await loadMoviesDatabase()
+
+    // Build movie lookup maps
+    const moviesByImdbId = new Map<string, MovieEntry>()
+    const moviesBySourceId = new Map<string, MovieEntry>()
+
+    for (const entry of Object.values(moviesDb)) {
+      if (typeof entry === 'object' && entry !== null && 'imdbId' in entry) {
+        const movie = entry as MovieEntry
+        moviesByImdbId.set(movie.imdbId, movie)
+
+        // Index by all source IDs for lookup
+        if (movie.sources) {
+          for (const source of movie.sources) {
+            if (source.id) {
+              moviesBySourceId.set(source.id, movie)
+            }
+          }
+        }
+      }
+    }
+
+    const stats = {
+      collectionsProcessed: 0,
+      moviesRemoved: 0,
+      moviesUpdated: 0,
+      collectionsModified: 0,
+    }
+
+    const details: CleanupResult['details'] = []
+
+    // Process each collection
+    for (const [key, value] of Object.entries(collectionsDb)) {
+      // Skip schema entry
+      if (key.startsWith('_')) continue
+
+      const collection = value as Collection
+      stats.collectionsProcessed++
+
+      const removedMovies: string[] = []
+      const updatedMovies: Array<{ oldId: string; newId: string }> = []
+      const newMovieIds: string[] = []
+
+      for (const movieId of collection.movieIds) {
+        // Check if movie exists by IMDB ID
+        if (moviesByImdbId.has(movieId)) {
+          newMovieIds.push(movieId)
+          continue
+        }
+
+        // Try to find by source ID
+        const movieBySource = moviesBySourceId.get(movieId)
+        if (movieBySource) {
+          // Movie exists but with different IMDB ID - update reference
+          newMovieIds.push(movieBySource.imdbId)
+          updatedMovies.push({ oldId: movieId, newId: movieBySource.imdbId })
+          stats.moviesUpdated++
+        } else {
+          // Movie doesn't exist - remove from collection
+          removedMovies.push(movieId)
+          stats.moviesRemoved++
+        }
+      }
+
+      // Update collection if changes were made
+      if (removedMovies.length > 0 || updatedMovies.length > 0) {
+        collection.movieIds = newMovieIds
+        collection.updatedAt = new Date().toISOString()
+        collectionsDb[key] = collection
+        stats.collectionsModified++
+
+        details.push({
+          collectionId: collection.id,
+          collectionName: collection.name,
+          removedMovies,
+          updatedMovies,
+        })
+      }
+    }
+
+    // Save updated collections if any changes were made
+    if (stats.collectionsModified > 0) {
+      await saveCollectionsDatabase(collectionsDb)
+    }
+
+    return {
+      success: true,
+      stats,
+      details,
+    }
+  } catch (error) {
+    console.error('Failed to cleanup collections:', error)
+    throw createError({
+      statusCode: 500,
+      message: error instanceof Error ? error.message : 'Failed to cleanup collections',
+    })
+  }
+})

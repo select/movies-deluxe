@@ -8,6 +8,7 @@ import type {
   PosterOptions,
   OMDBOptions,
   DeduplicationResult,
+  CollectionCleanupResult,
 } from '~/types/admin'
 
 export interface ProgressUpdate {
@@ -27,10 +28,12 @@ export const useAdminStore = defineStore('admin', () => {
   const scraping = ref(false)
   const generatingSqlite = ref(false)
   const deduplicating = ref(false)
+  const cleaningCollections = ref(false)
   const stats = ref<ScrapeStats | null>(null)
   const results = ref<ScrapeResults | null>(null)
   const posterResults = ref<PosterResults | null>(null)
   const deduplicationResults = ref<DeduplicationResult | null>(null)
+  const collectionCleanupResults = ref<CollectionCleanupResult | null>(null)
   const youtubeChannels = ref<YouTubeChannelConfig[]>([])
   const progress = ref<Record<string, ProgressUpdate>>({})
 
@@ -283,15 +286,45 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  const cleanupCollections = async () => {
+    cleaningCollections.value = true
+    collectionCleanupResults.value = null
+    try {
+      collectionCleanupResults.value = await $fetch<CollectionCleanupResult>(
+        '/api/admin/collections/cleanup',
+        {
+          method: 'POST',
+        }
+      )
+      await refreshStats()
+    } catch (e: unknown) {
+      window.console.error('Collection cleanup failed', e)
+      collectionCleanupResults.value = {
+        success: false,
+        stats: {
+          collectionsProcessed: 0,
+          moviesRemoved: 0,
+          moviesUpdated: 0,
+          collectionsModified: 0,
+        },
+        details: [],
+      }
+    } finally {
+      cleaningCollections.value = false
+    }
+  }
+
   return {
     loading,
     scraping,
     generatingSqlite,
     deduplicating,
+    cleaningCollections,
     stats,
     results,
     posterResults,
     deduplicationResults,
+    collectionCleanupResults,
     youtubeChannels,
     progress,
     archiveOptions,
@@ -310,6 +343,7 @@ export const useAdminStore = defineStore('admin', () => {
     startAIExtraction,
     generateSqlite,
     deduplicateDescriptions,
+    cleanupCollections,
     totalExternalVideos,
     youtubeTotalScraped,
     youtubeTotalAvailable,
