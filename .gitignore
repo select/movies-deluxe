@@ -40,3 +40,6 @@ public/sqlite-wasm/
 
 # SQLite temporary files
 *.db-journal
+
+# Generated movie metadata JSONs
+public/movies/
