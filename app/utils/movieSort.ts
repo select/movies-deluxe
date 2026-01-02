@@ -32,9 +32,10 @@ export function sortByYear(movies: MovieEntry[], direction: SortDirection): Movi
 
     // Tie-breaker: title then imdbId
     if (yearA === yearB) {
-      const titleA = getPrimaryTitle(a)
-      const titleB = getPrimaryTitle(b)
+      const titleA = a.title
+      const titleB = b.title
       const titleCompare = titleA.localeCompare(titleB)
+
       if (titleCompare !== 0) return titleCompare
       const imdbIdA = a.imdbId || ''
       const imdbIdB = b.imdbId || ''
@@ -60,9 +61,10 @@ export function sortByRating(movies: MovieEntry[], direction: SortDirection): Mo
 
     // Tie-breaker: title then imdbId
     if (ratingA === ratingB) {
-      const titleA = getPrimaryTitle(a)
-      const titleB = getPrimaryTitle(b)
+      const titleA = a.title
+      const titleB = b.title
       const titleCompare = titleA.localeCompare(titleB)
+
       if (titleCompare !== 0) return titleCompare
       const imdbIdA = a.imdbId || ''
       const imdbIdB = b.imdbId || ''
@@ -78,10 +80,11 @@ export function sortByRating(movies: MovieEntry[], direction: SortDirection): Mo
  */
 export function sortByTitle(movies: MovieEntry[], direction: SortDirection): MovieEntry[] {
   return [...movies].sort((a, b) => {
-    const titleA = getPrimaryTitle(a).toLowerCase()
-    const titleB = getPrimaryTitle(b).toLowerCase()
+    const titleA = a.title.toLowerCase()
+    const titleB = b.title.toLowerCase()
 
     const comparison = titleA.localeCompare(titleB)
+
     if (comparison !== 0) return direction === 'asc' ? comparison : -comparison
     const imdbIdA = a.imdbId || ''
     const imdbIdB = b.imdbId || ''
@@ -104,9 +107,10 @@ export function sortByVotes(movies: MovieEntry[], direction: SortDirection): Mov
 
     // Tie-breaker: title then imdbId
     if (votesA === votesB) {
-      const titleA = getPrimaryTitle(a)
-      const titleB = getPrimaryTitle(b)
+      const titleA = a.title
+      const titleB = b.title
       const titleCompare = titleA.localeCompare(titleB)
+
       if (titleCompare !== 0) return titleCompare
       const imdbIdA = a.imdbId || ''
       const imdbIdB = b.imdbId || ''

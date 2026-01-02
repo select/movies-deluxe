@@ -105,7 +105,7 @@
                 <img
                   v-if="movie.imdbId.startsWith('tt')"
                   :src="`/posters/${movie.imdbId}.jpg`"
-                  :alt="getPrimaryTitle(movie)"
+                  :alt="movie.title"
                   class="w-full h-full object-cover object-center"
                   @error="handlePosterError"
                 >
@@ -121,7 +121,7 @@
             <!-- Movie Info -->
             <div class="flex-1">
               <h1 class="text-4xl font-bold mb-4">
-                {{ getPrimaryTitle(movie) }}
+                {{ movie.title }}
               </h1>
 
               <!-- Metadata Row -->
@@ -759,8 +759,8 @@ const handleMovieUpdated = async (newId: string) => {
 
 // Update meta tags for SEO and social sharing
 const updateMetaTags = (movie: MovieEntry) => {
-  const title = getPrimaryTitle(movie) + (movie.year ? ` (${movie.year})` : '')
-  const description = movie.metadata?.Plot || `Watch ${getPrimaryTitle(movie)} for free on Movies Deluxe`
+  const title = movie.title + (movie.year ? ` (${movie.year})` : '')
+  const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
   const poster = movie.metadata?.Poster || '/favicon.ico'
   const url = `https://movies-deluxe.app/movie/${movie.imdbId}`
 
@@ -797,7 +797,7 @@ const updateMetaTags = (movie: MovieEntry) => {
         textContent: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'Movie',
-          name: getPrimaryTitle(movie),
+          name: movie.title,
           ...(movie.year && { datePublished: movie.year.toString() }),
           ...(movie.metadata?.Plot && { description: movie.metadata.Plot }),
           ...(movie.metadata?.Poster && { image: poster }),
