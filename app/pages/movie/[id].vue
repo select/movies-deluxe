@@ -576,7 +576,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry } from '~/types'
+import type { MovieEntry, LightweightMovieEntry } from '~/types'
 
 // Stores - get reactive state and methods once
 const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
@@ -714,7 +714,7 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   if (!currentId) return
 
   const movies = currentMovieList.value
-  const currentIndex = movies.findIndex(m => m.imdbId === currentId)
+  const currentIndex = movies.findIndex((m: LightweightMovieEntry) => m.imdbId === currentId)
 
   if (currentIndex === -1) return
 

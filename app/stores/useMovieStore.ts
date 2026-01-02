@@ -1,7 +1,6 @@
 import type {
   MovieEntry,
   MovieSource,
-  MovieSourceType,
   MovieMetadata,
   LightweightMovieEntry,
   QualityLabel,
@@ -1032,52 +1031,6 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Filter movies by source type
-   */
-  const filterBySource = (sourceType: MovieSourceType): MovieEntry[] => {
-    return Array.from(allMovies.value.values()).filter((movie: MovieEntry) =>
-      movie.sources.some((source: MovieSource) => source.type === sourceType)
-    )
-  }
-
-  /**
-   * Get movies that have OMDB metadata
-   */
-  const getEnrichedMovies = (): MovieEntry[] => {
-    return Array.from(allMovies.value.values()).filter(
-      (movie: MovieEntry) => movie.metadata !== undefined
-    )
-  }
-
-  /**
-   * Get movies without OMDB metadata
-   */
-  const getUnenrichedMovies = (): MovieEntry[] => {
-    return Array.from(allMovies.value.values()).filter(
-      (movie: MovieEntry) => movie.metadata === undefined
-    )
-  }
-
-  /**
-   * Get all sources for a movie grouped by type
-   */
-  const getSourcesByType = (movie: MovieEntry): Record<MovieSourceType, MovieSource[]> => {
-    return movie.sources.reduce(
-      (grouped: Record<MovieSourceType, MovieSource[]>, source: MovieSource) => {
-        if (!grouped[source.type]) {
-          grouped[source.type] = []
-        }
-        grouped[source.type]!.push(source)
-        return grouped
-      },
-      {
-        'archive.org': [],
-        youtube: [],
-      } as Record<MovieSourceType, MovieSource[]>
-    )
-  }
-
-  /**
    * Get the primary source for a movie
    */
   const getPrimarySource = (movie: MovieEntry): MovieSource | undefined => {
@@ -1457,10 +1410,6 @@ export const useMovieStore = defineStore('movie', () => {
     // ============================================
     // UTILITY FUNCTIONS
     // ============================================
-    filterBySource,
-    getEnrichedMovies,
-    getUnenrichedMovies,
-    getSourcesByType,
     getPrimarySource,
     posterExists,
     getPosterUrl,
