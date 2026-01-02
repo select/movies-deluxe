@@ -10,7 +10,17 @@ import {
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const { movieId, newImdbId, metadata, removeMetadata, verified, ai } = body
+  const {
+    movieId,
+    newImdbId,
+    metadata,
+    removeMetadata,
+    verified,
+    ai,
+    qualityLabels,
+    qualityNotes,
+    qualityMarkedBy,
+  } = body
 
   if (!movieId) {
     throw createError({
@@ -107,6 +117,25 @@ export default defineEventHandler(async event => {
 
     if (ai !== undefined) {
       movie.ai = ai
+    }
+
+    if (qualityLabels !== undefined) {
+      movie.qualityLabels = qualityLabels
+      if (qualityLabels && qualityLabels.length > 0) {
+        movie.qualityMarkedAt = new Date().toISOString()
+        if (qualityMarkedBy) {
+          movie.qualityMarkedBy = qualityMarkedBy
+        }
+      } else {
+        // Clear quality fields if labels are removed
+        delete movie.qualityMarkedAt
+        delete movie.qualityMarkedBy
+        delete movie.qualityNotes
+      }
+    }
+
+    if (qualityNotes !== undefined && (movie.qualityLabels?.length || 0) > 0) {
+      movie.qualityNotes = qualityNotes
     }
 
     movie.lastUpdated = new Date().toISOString()

@@ -23,6 +23,7 @@ export type {
   YouTubeSource,
   MovieMetadata,
   AIMetadata,
+  QualityLabel,
 
   // Database types
   DatabaseSchema,
