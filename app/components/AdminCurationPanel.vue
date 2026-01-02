@@ -377,6 +377,7 @@
 
 <script setup lang="ts">
 import type { MovieEntry, MovieSource, OMDBSearchResult, OMDBSearchResponse, MovieMetadata } from '~/types'
+import type { Collection } from '~/shared/types/collections'
 
 interface UpdateResponse {
   success: boolean
@@ -416,14 +417,14 @@ const { getCollectionsForMovie, loadCollections, addMovieToCollection, removeMov
 const selectedCollectionId = ref('')
 const isUpdatingCollection = ref(false)
 
-const movieCollections = computed(() => getCollectionsForMovie(props.movie.imdbId))
+const movieCollections = ref<Collection[]>([])
 const availableCollections = computed(() => {
   return Array.from(collections.value.values()).filter(
     c => !c.movieIds.includes(props.movie.imdbId)
   )
 })
 
-onMounted(() => {
+onMounted(async () => {
   isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   searchTitle.value = props.movie.title
   searchYear.value = props.movie.year?.toString() || ''
@@ -432,6 +433,16 @@ onMounted(() => {
   // Load collections if not already loaded
   if (collections.value.size === 0) {
     loadCollections()
+  }
+
+  // Load collections for this movie from database
+  movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+})
+
+// Watch for movie changes and reload collections
+watch(() => props.movie.imdbId, async (newId) => {
+  if (newId) {
+    movieCollections.value = await getCollectionsForMovie(newId)
   }
 })
 
@@ -446,6 +457,8 @@ const addToCollection = async () => {
     )
     if (success) {
       selectedCollectionId.value = ''
+      // Reload collections for this movie from database
+      movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
     }
   } finally {
     isUpdatingCollection.value = false
@@ -458,6 +471,8 @@ const removeFromCollection = async (collectionId: string) => {
   isUpdatingCollection.value = true
   try {
     await removeMovieFromCollection(collectionId, props.movie.imdbId)
+    // Reload collections for this movie from database
+    movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
   } finally {
     isUpdatingCollection.value = false
   }

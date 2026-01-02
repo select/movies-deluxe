@@ -81,8 +81,14 @@ export const useCollectionsStore = defineStore('collections', () => {
     return collection ? collection.movieIds.includes(movieId) : false
   }
 
-  const getCollectionsForMovie = (movieId: string) => {
-    return Array.from(collections.value.values()).filter(c => c.movieIds.includes(movieId))
+  const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
+    try {
+      const db = useDatabase()
+      return await db.getCollectionsForMovie(movieId)
+    } catch (error) {
+      console.error('Failed to get collections for movie:', error)
+      return []
+    }
   }
 
   return {

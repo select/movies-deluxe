@@ -280,6 +280,26 @@ self.onmessage = async e => {
       })
 
       self.postMessage({ id, result })
+    } else if (type === 'query-collections-for-movie') {
+      // Query collections for a specific movie
+      const { movieId } = e.data
+
+      const sql = `
+        SELECT c.id, c.name, c.description, c.createdAt, c.updatedAt
+        FROM collections c
+        INNER JOIN collection_movies cm ON c.id = cm.collectionId
+        WHERE cm.movieId = ?
+        ORDER BY c.name ASC
+      `
+
+      const result = db.exec({
+        sql,
+        bind: [movieId],
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      self.postMessage({ id, result })
     } else if (type === 'get-filter-options') {
       const genres = db.exec({
         sql: 'SELECT name, movie_count as count FROM genres ORDER BY movie_count DESC, name ASC',

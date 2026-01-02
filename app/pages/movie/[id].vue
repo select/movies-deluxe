@@ -577,11 +577,12 @@
 
 <script setup lang="ts">
 import type { MovieEntry } from '~/types'
+import type { Collection } from '~/shared/types/collections'
 
 // Stores - get reactive state and methods once
 const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
 const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile, toggleLike } = useMovieStore()
-const { getCollectionsForMovie, loadCollections } = useCollectionsStore()
+const { getCollectionsForMovie } = useCollectionsStore()
 const { showToast } = useUiStore()
 const route = useRoute()
 
@@ -597,10 +598,7 @@ const selectedSourceIndex = ref(0)
 const isPlotExpanded = ref(false)
 
 // Collections
-const movieCollections = computed(() => {
-  if (!movie.value) return []
-  return getCollectionsForMovie(movie.value.imdbId)
-})
+const movieCollections = ref<Collection[]>([])
 
 // Current selected source
 const currentSource = computed(() => {
@@ -649,6 +647,9 @@ const loadMovieData = async (movieId: string) => {
   // Load related movies
   loadRelatedMovies(movieId)
 
+  // Load collections for this movie
+  movieCollections.value = await getCollectionsForMovie(movieId)
+
   isLoading.value = false
 }
 
@@ -656,9 +657,6 @@ const loadMovieData = async (movieId: string) => {
 onMounted(async () => {
   // Scroll to top when entering movie detail page
   scrollY.value = 0
-
-  // Load collections
-  loadCollections()
 
   // Get movie by ID from route params
   const movieId = route.params.id as string
