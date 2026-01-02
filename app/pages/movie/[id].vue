@@ -576,12 +576,11 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, Collection } from '~/types'
+import type { MovieEntry } from '~/types'
 
 // Stores - get reactive state and methods once
 const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
 const { isLiked: isLikedFn, getMovieById, getRelatedMovies, loadFromFile, toggleLike } = useMovieStore()
-const { getCollectionsForMovie } = useCollectionsStore()
 const { showToast } = useUiStore()
 const route = useRoute()
 
@@ -597,7 +596,9 @@ const selectedSourceIndex = ref(0)
 const isPlotExpanded = ref(false)
 
 // Collections
-const movieCollections = ref<Collection[]>([])
+const movieCollections = computed(() => {
+  return movie.value?.collections || []
+})
 
 // Current selected source
 const currentSource = computed(() => {
@@ -645,9 +646,6 @@ const loadMovieData = async (movieId: string) => {
 
   // Load related movies
   loadRelatedMovies(movieId)
-
-  // Load collections for this movie
-  movieCollections.value = await getCollectionsForMovie(movieId)
 
   isLoading.value = false
 }
