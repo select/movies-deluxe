@@ -75,16 +75,16 @@ export default withNuxt(
                 'Composables from app/composables/ are auto-imported. Remove this import statement.',
             },
             {
-              group: ['shared/types/*', '~~/shared/types/*'],
+              group: ['~/shared/types/*', 'shared/types/*', '~~/shared/types/*'],
               message:
                 'Types from shared/types/ are auto-imported. Remove this import statement and use the type directly.',
             },
             {
-              group: ['shared/utils/*', '~~/shared/utils/*'],
+              group: ['~/shared/utils/*', 'shared/utils/*', '~~/shared/utils/*'],
               message: 'Utils from shared/utils/ are auto-imported. Remove this import statement.',
             },
             {
-              group: ['~/utils/*.ts', '~~/app/utils/*.ts', '@/utils/*.ts'],
+              group: ['~/utils/*', '~~/app/utils/*.ts', '@/utils/*.ts'],
               message:
                 'Root-level utils from app/utils/ are auto-imported. Remove this import statement. Note: Nested utils (e.g., utils/nested/helper.ts) require manual imports.',
             },
