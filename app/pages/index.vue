@@ -9,7 +9,7 @@
         </div>
 
         <div class="relative">
-          <template v-if="isInitialLoading">
+          <template v-if="isInitialLoading || isFiltering">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4 lg:px-[6%]">
               <MovieCardSkeleton
                 v-for="i in 12"
@@ -68,7 +68,7 @@ useHead({
   ],
 })
 
-const { isInitialLoading, currentMovieList, totalFiltered, filters } = storeToRefs(useMovieStore())
+const { isInitialLoading, isFiltering, currentMovieList, totalFiltered, filters } = storeToRefs(useMovieStore())
 const { loadFromFile, setCurrentPage, setScrollY } = useMovieStore()
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
