@@ -15,6 +15,20 @@
         <div class="i-mdi-check-decagram" />
         Verified
       </div>
+      <div
+        v-if="movie.qualityLabels?.length"
+        class="flex flex-wrap gap-1"
+      >
+        <div
+          v-for="label in movie.qualityLabels"
+          :key="label"
+          class="flex items-center gap-1 text-[10px] font-bold text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded border border-yellow-200 dark:border-yellow-900/50 uppercase tracking-tighter"
+          :title="movie.qualityNotes"
+        >
+          <div class="i-mdi-alert-circle-outline" />
+          {{ label }}
+        </div>
+      </div>
       <span class="ml-auto text-xs font-mono bg-yellow-200 dark:bg-gray-700 px-2 py-1 rounded">
         localhost only
       </span>
@@ -177,6 +191,14 @@
           >
             <div class="i-mdi-check-decagram text-lg" />
             Mark as Verified
+          </button>
+          <button
+            class="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded transition-colors text-sm font-bold disabled:opacity-50"
+            :disabled="isSearching"
+            @click="showQualityDialog = true"
+          >
+            <div class="i-mdi-alert-decagram text-lg" />
+            Mark Quality
           </button>
           <button
             class="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors text-sm font-bold disabled:opacity-50"
@@ -344,6 +366,12 @@
         </div>
       </div>
     </div>
+    
+    <AdminQualityMarkingDialog
+      v-model="showQualityDialog"
+      :movie="movie"
+      @saved="emit('updated', movie.imdbId)"
+    />
   </div>
 </template>
 
@@ -368,6 +396,7 @@ const searchTitle = ref('')
 const searchYear = ref('')
 const imdbIdInput = ref('')
 const isSearching = ref(false)
+const showQualityDialog = ref(false)
 const searchResults = ref<OMDBSearchResult[]>([])
 const googleResults = ref<OMDBSearchResult[]>([])
 const searchError = ref('')
