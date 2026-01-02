@@ -1376,24 +1376,6 @@ export const useMovieStore = defineStore('movie', () => {
     { immediate: true }
   )
 
-  // Reload filters from localStorage on mount
-  if (typeof window !== 'undefined') {
-    onMounted(() => {
-      const stored = localStorage.getItem('movies-deluxe-filters')
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored)
-          const merged = { ...DEFAULT_FILTERS, ...parsed }
-          if (JSON.stringify(filters.value) !== JSON.stringify(merged)) {
-            filters.value = merged
-          }
-        } catch {
-          // Failed to reload from localStorage
-        }
-      }
-    })
-  }
-
   // ============================================
   // RETURN STORE API
   // ============================================
