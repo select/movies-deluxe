@@ -26,9 +26,18 @@ async function generateSQLite(
   // 1. Load JSON data
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
-  const movies = Object.values(db).filter(
+  const allMovies = Object.values(db).filter(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
   )
+
+  // Filter out movies with quality labels
+  const movies = allMovies.filter(m => (m.qualityLabels?.length || 0) === 0)
+  const excludedCount = allMovies.length - movies.length
+
+  if (excludedCount > 0) {
+    logger.info(`Excluded ${excludedCount} movies due to quality markings`)
+  }
+
   const collections = Object.values(collectionsDb).filter(
     (entry): entry is Collection => typeof entry === 'object' && entry !== null && 'id' in entry
   )
