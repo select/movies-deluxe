@@ -1,3 +1,12 @@
+import {
+  isTemporaryId,
+  isImdbId,
+  generateArchiveId,
+  generateYouTubeId,
+  extractIdentifier,
+  QualityLabel,
+} from '../../shared/types/movie'
+
 /**
  * Frontend Type Definitions
  *
@@ -23,7 +32,6 @@ export type {
   YouTubeSource,
   MovieMetadata,
   AIMetadata,
-  QualityLabel,
 
   // Database types
   DatabaseSchema,
@@ -55,7 +63,14 @@ export type {
 }
 
 // Re-export utility functions
-export { isTemporaryId, isImdbId, generateArchiveId, generateYouTubeId, extractIdentifier }
+export {
+  isTemporaryId,
+  isImdbId,
+  generateArchiveId,
+  generateYouTubeId,
+  extractIdentifier,
+  QualityLabel,
+}
 
 export type {
   ThemeVariant,
