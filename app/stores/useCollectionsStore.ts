@@ -11,6 +11,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const loadCollections = async () => {
     // Return early if already loaded
     if (isLoaded.value) {
+      console.log('[CollectionsStore] Already loaded, skipping')
       return
     }
 
@@ -18,22 +19,24 @@ export const useCollectionsStore = defineStore('collections', () => {
     error.value = null
     try {
       // Fetch directly from static JSON file
-      const data = await $fetch<Collection[]>('/data/collections.json')
+      console.log('[CollectionsStore] Fetching collections from /data/collections.json')
+      const data =
+        await $fetch<Record<string, Collection | { version: string }>>('/data/collections.json')
       collections.value.clear()
 
-      // Handle both array and object formats
-      const collectionsArray = Array.isArray(data)
-        ? data
-        : Object.entries(data)
-            .filter(([key]) => !key.startsWith('_'))
-            .map(([_, value]) => value as Collection)
+      // Filter out schema keys and convert to array
+      const collectionsArray = Object.entries(data)
+        .filter(([key]) => !key.startsWith('_'))
+        .map(([_, value]) => value as Collection)
 
+      console.log('[CollectionsStore] Loaded', collectionsArray.length, 'collections')
       collectionsArray.forEach(collection => {
         collections.value.set(collection.id, collection)
       })
 
       isLoaded.value = true
     } catch (err: unknown) {
+      console.error('[CollectionsStore] Failed to load collections:', err)
       error.value = (err as Error).message || 'Failed to load collections'
     } finally {
       isLoading.value = false
