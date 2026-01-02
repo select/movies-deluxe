@@ -24,3 +24,6 @@ public/sqlite-wasm
 
 # Vue files (prettier-plugin-vue has parsing issues)
 *.vue
+# Movie assets
+public/movies
+public/posters
