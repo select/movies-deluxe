@@ -91,10 +91,9 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 
-const { applyFilters, resetFilters } = movieStore
+const { applyFilters, resetFilters, fetchMoviesByIds } = movieStore
 const { hasActiveFilters } = storeToRefs(movieStore)
 
 const collection = ref<Collection | null>(null)
@@ -111,13 +110,15 @@ onMounted(async () => {
 
   isLoading.value = true
   try {
-    const data = await collectionsStore.getCollectionById(id)
-    if (data) {
-      collection.value = data
-      movies.value = data.movies || []
+    // Fetch collection metadata only (without movies)
+    collection.value = await $fetch<Collection>(`/api/collections/${id}`)
+    
+    // Fetch movies using movie store (which uses embedded collection data)
+    if (collection.value?.movieIds && collection.value.movieIds.length > 0) {
+      movies.value = await fetchMoviesByIds(collection.value.movieIds)
     }
   } catch {
-    // Error handled by store
+    // Error loading collection - handled silently
   } finally {
     isLoading.value = false
   }
