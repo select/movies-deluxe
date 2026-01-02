@@ -26,17 +26,9 @@ async function generateSQLite(
   // 1. Load JSON data
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
-  const allMovies = Object.values(db).filter(
+  const movies = Object.values(db).filter(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
   )
-
-  // Filter out movies with quality labels
-  const movies = allMovies.filter(m => (m.qualityLabels?.length || 0) === 0)
-  const excludedCount = allMovies.length - movies.length
-
-  if (excludedCount > 0) {
-    logger.info(`Excluded ${excludedCount} movies due to quality markings`)
-  }
 
   const collections = Object.values(collectionsDb).filter(
     (entry): entry is Collection => typeof entry === 'object' && entry !== null && 'id' in entry
@@ -80,7 +72,9 @@ async function generateSQLite(
         country TEXT,
         awards TEXT,
         imdbRating REAL,
-        imdbVotes INTEGER
+        imdbVotes INTEGER,
+        qualityLabels TEXT,
+        qualityNotes TEXT
       );
 
       CREATE TABLE channels (
@@ -179,8 +173,8 @@ async function generateSQLite(
       INSERT INTO movies (
         imdbId, title, year, verified, is_curated, lastUpdated, rated, runtime, genre,
         director, writer, actors, plot, language, country, awards,
-        imdbRating, imdbVotes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        imdbRating, imdbVotes, qualityLabels, qualityNotes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertChannel = sqlite.prepare(`
@@ -270,7 +264,9 @@ async function generateSQLite(
           m.Country || null,
           m.Awards || null,
           imdbRating,
-          imdbVotes
+          imdbVotes,
+          movie.qualityLabels ? movie.qualityLabels.join(',') : null,
+          movie.qualityNotes || null
         )
 
         // Insert sources

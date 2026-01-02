@@ -14,6 +14,8 @@ export interface ScrapeStats {
       enabled: boolean
       scraped: number
     }>
+    qualityMarkedCount: number
+    qualityBreakdown: Record<string, number>
   }
   external: {
     archiveOrg: {
@@ -70,6 +72,11 @@ export interface ScrapeStats {
     totalUnmatched: number
     withAiData: number
     withoutAiData: number
+    percent: number
+  }
+  quality: {
+    totalMarked: number
+    breakdown: Record<string, number>
     percent: number
   }
   lastUpdated: string

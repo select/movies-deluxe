@@ -302,6 +302,10 @@ export const useMovieStore = defineStore('movie', () => {
       lastUpdated: row.lastUpdated as string,
       sources,
       metadata,
+      qualityLabels: row.qualityLabels
+        ? ((row.qualityLabels as string).split(',') as QualityLabel[])
+        : undefined,
+      qualityNotes: row.qualityNotes as string | undefined,
     }
   }
 
@@ -602,6 +606,9 @@ export const useMovieStore = defineStore('movie', () => {
       const params: unknown[] = []
       const where: string[] = []
 
+      // Exclude marked movies by default
+      where.push("(m.qualityLabels IS NULL OR m.qualityLabels = '')")
+
       // Apply filters
       if (filters.value.minRating > 0) {
         where.push('m.imdbRating >= ?')
@@ -698,6 +705,9 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       const params: unknown[] = []
       const where: string[] = []
+
+      // Exclude marked movies by default
+      where.push("(m.qualityLabels IS NULL OR m.qualityLabels = '')")
 
       // Filters
       if (filters.value.minRating > 0) {
@@ -818,6 +828,9 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const applyFilters = (movies: ExtendedMovieEntry[]): ExtendedMovieEntry[] => {
     let filtered = [...movies]
+
+    // 0. Filter by quality (exclude marked movies by default)
+    filtered = getQualityFilteredMovies(filtered)
 
     // 1. Filter by source
     if (filters.value.sources.length > 0) {

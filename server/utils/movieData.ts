@@ -238,6 +238,8 @@ export interface DatabaseStats {
   archiveOrgSources: number
   youtubeSources: number
   curatedCount: number
+  qualityMarkedCount: number
+  qualityBreakdown: Record<string, number>
   collections: Record<string, number>
   youtubeChannels: ChannelStats[]
 }
@@ -257,6 +259,8 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
     archiveOrgSources: 0,
     youtubeSources: 0,
     curatedCount: 0,
+    qualityMarkedCount: 0,
+    qualityBreakdown: {} as Record<string, number>,
     collections: {} as Record<string, number>,
     youtubeChannels: [],
   }
@@ -278,6 +282,15 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
 
   entries.forEach(([_, entry]) => {
     const movieEntry = entry as MovieEntry
+
+    // Quality stats
+    if (movieEntry.qualityLabels && movieEntry.qualityLabels.length > 0) {
+      stats.qualityMarkedCount++
+      movieEntry.qualityLabels.forEach(label => {
+        stats.qualityBreakdown[label] = (stats.qualityBreakdown[label] || 0) + 1
+      })
+    }
+
     movieEntry.sources?.forEach((source: MovieSource) => {
       if (source.type === 'archive.org') {
         stats.archiveOrgSources++

@@ -40,11 +40,11 @@ export default defineEventHandler(async event => {
       })
     }
 
-    // Remove the source
-    const [removedSource] = movie.sources.splice(sourceIndex, 1)
-
     // Recreate the removed source as a new standalone movie entry
     // This ensures data is not lost when unlinking sources from a movie
+    const removedSource = movie.sources[sourceIndex]!
+    movie.sources.splice(sourceIndex, 1)
+
     let removedSourceTempId: string
     if (removedSource.type === 'youtube') {
       removedSourceTempId = generateYouTubeId(removedSource.id)
@@ -64,9 +64,17 @@ export default defineEventHandler(async event => {
         }
 
         // Try to preserve year if available
-        if (removedSource.type === 'youtube' && removedSource.releaseYear) {
+        if (
+          removedSource.type === 'youtube' &&
+          'releaseYear' in removedSource &&
+          removedSource.releaseYear
+        ) {
           newEntry.year = removedSource.releaseYear
-        } else if (removedSource.type === 'archive.org' && removedSource.releaseDate) {
+        } else if (
+          removedSource.type === 'archive.org' &&
+          'releaseDate' in removedSource &&
+          removedSource.releaseDate
+        ) {
           try {
             const year = new Date(removedSource.releaseDate).getFullYear()
             if (!isNaN(year)) {

@@ -174,6 +174,39 @@
           progress-color="bg-purple-500"
           :subtitle="`${stats.ai.withAiData} / ${stats.ai.totalUnmatched} unmatched`"
         />
+
+        <AdminStatsCard
+          v-if="stats && stats.quality"
+          title="Low Quality"
+          :value="stats.quality.totalMarked"
+          icon="i-mdi-quality-low"
+          icon-color="text-orange-600"
+          show-progress
+          :percent="stats.quality.percent"
+          progress-color="bg-orange-600"
+          :subtitle="`${stats.quality.totalMarked} marked as low quality`"
+        />
+      </section>
+
+      <!-- Quality Breakdown -->
+      <section
+        v-if="stats && stats.quality && stats.quality.totalMarked > 0"
+        class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
+      >
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+          <div class="i-mdi-quality-low text-orange-600" />
+          Quality Label Breakdown
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div
+            v-for="(count, label) in stats.quality.breakdown"
+            :key="label"
+            class="flex flex-col p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700"
+          >
+            <span class="text-[10px] text-gray-500 uppercase font-bold truncate">{{ label }}</span>
+            <span class="text-2xl font-black text-gray-900 dark:text-gray-100">{{ count }}</span>
+          </div>
+        </div>
       </section>
 
       <!-- YouTube Channel Stats -->
