@@ -132,18 +132,18 @@ function createEmptyDatabase(): MoviesDatabase {
 }
 
 /**
- * Find a movie entry that contains a specific source
+ * Find a movie entry by any source ID (regardless of type)
  * Returns [movieId, entry] if found, undefined otherwise
+ * Useful for finding movies when you have an old ID that might be in sources
  */
-function findMovieBySource(
+export function findMovieByAnySourceId(
   db: MoviesDatabase,
-  sourceType: 'archive.org' | 'youtube',
   sourceId: string
 ): [string, MovieEntry] | undefined {
   for (const [key, value] of Object.entries(db)) {
     if (key.startsWith('_')) continue
     const entry = value as MovieEntry
-    const hasSource = entry.sources?.some(s => s.type === sourceType && s.id === sourceId)
+    const hasSource = entry.sources?.some(s => s.id === sourceId)
     if (hasSource) {
       return [key, entry]
     }
@@ -165,7 +165,7 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
   // This handles the case where a movie was enriched and got a new IMDb ID
   if (!existing && entry.sources && entry.sources.length > 0) {
     for (const source of entry.sources) {
-      const found = findMovieBySource(db, source.type, source.id)
+      const found = findMovieByAnySourceId(db, source.id)
       if (found) {
         ;[existingKey, existing] = found
         break

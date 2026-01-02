@@ -1,5 +1,5 @@
 import { loadCollectionsDatabase, saveCollectionsDatabase } from '../../../utils/collections'
-import { loadMoviesDatabase } from '../../../utils/movieData'
+import { loadMoviesDatabase, findMovieByAnySourceId } from '../../../utils/movieData'
 import type { Collection } from '../../../../shared/types/collections'
 import type { MovieEntry } from '../../../../shared/types/movie'
 
@@ -25,23 +25,13 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
     const collectionsDb = await loadCollectionsDatabase()
     const moviesDb = await loadMoviesDatabase()
 
-    // Build movie lookup maps
+    // Build movie lookup map by IMDB ID
     const moviesByImdbId = new Map<string, MovieEntry>()
-    const moviesBySourceId = new Map<string, MovieEntry>()
 
     for (const entry of Object.values(moviesDb)) {
       if (typeof entry === 'object' && entry !== null && 'imdbId' in entry) {
         const movie = entry as MovieEntry
         moviesByImdbId.set(movie.imdbId, movie)
-
-        // Index by all source IDs for lookup
-        if (movie.sources) {
-          for (const source of movie.sources) {
-            if (source.id) {
-              moviesBySourceId.set(source.id, movie)
-            }
-          }
-        }
       }
     }
 
@@ -73,9 +63,10 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
           continue
         }
 
-        // Try to find by source ID
-        const movieBySource = moviesBySourceId.get(movieId)
-        if (movieBySource) {
+        // Try to find by source ID using utility function
+        const found = findMovieByAnySourceId(moviesDb, movieId)
+        if (found) {
+          const [_, movieBySource] = found
           // Movie exists but with different IMDB ID - update reference
           newMovieIds.push(movieBySource.imdbId)
           updatedMovies.push({ oldId: movieId, newId: movieBySource.imdbId })
