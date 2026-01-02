@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700 p-6">
+  <div class="bg-theme-surface rounded-3xl border border-theme-border p-6">
     <div class="mb-4">
       <div>
         <h3 class="text-lg font-semibold flex items-center gap-2">
           <div class="i-mdi-broom text-orange-500" />
           Smart Description Cleanup
         </h3>
-        <p class="text-sm text-gray-500 mt-1">
+        <p class="text-sm text-theme-textmuted mt-1">
           Remove boilerplate and promotional descriptions using pattern detection
         </p>
       </div>
@@ -30,12 +30,12 @@
     >
       <!-- Summary Stats -->
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-          <div class="text-sm text-gray-500">Total Sources</div>
+        <div class="bg-theme-background rounded-lg p-3">
+          <div class="text-sm text-theme-textmuted">Total Sources</div>
           <div class="text-xl font-semibold">{{ results.totalSources.toLocaleString() }}</div>
         </div>
-        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-          <div class="text-sm text-gray-500">With Descriptions</div>
+        <div class="bg-theme-background rounded-lg p-3">
+          <div class="text-sm text-theme-textmuted">With Descriptions</div>
           <div class="text-xl font-semibold">{{ results.sourcesWithDescriptions.toLocaleString() }}</div>
         </div>
         <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
@@ -63,24 +63,24 @@
         v-if="results.patterns.length > 0"
         class="space-y-2"
       >
-        <h4 class="font-medium text-gray-900 dark:text-gray-100">
+        <h4 class="font-medium text-theme-text">
           Boilerplate Patterns Detected & Removed
         </h4>
         <div class="space-y-2 max-h-64 overflow-y-auto">
           <div
             v-for="(pattern, index) in results.patterns"
             :key="index"
-            class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3"
+            class="bg-theme-background rounded-lg p-3"
           >
             <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+              <span class="text-sm font-medium text-theme-text">
                 {{ pattern.count.toLocaleString() }} instances removed
               </span>
-              <span class="text-xs text-gray-500 font-mono bg-white dark:bg-gray-800 px-2 py-1 rounded">
+              <span class="text-xs text-theme-textmuted font-mono bg-theme-surface px-2 py-1 rounded">
                 {{ pattern.pattern }}
               </span>
             </div>
-            <div class="text-sm text-gray-600 dark:text-gray-400">
+            <div class="text-sm text-theme-textmuted">
               {{ pattern.description }}
             </div>
           </div>

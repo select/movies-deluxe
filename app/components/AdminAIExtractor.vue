@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
       <div class="i-mdi-robot text-purple-600" />
       AI Metadata Extraction
@@ -46,12 +46,12 @@
         class="mt-4 space-y-3"
       >
         <div class="flex items-center justify-between text-xs">
-          <span class="text-gray-500 truncate mr-2">{{ progress.ai.message }}</span>
+          <span class="text-theme-textmuted truncate mr-2">{{ progress.ai.message }}</span>
           <span class="font-mono text-nowrap">{{ progress.ai.current }} / {{ progress.ai.total || '?' }}</span>
         </div>
 
         <!-- Dual Progress Bar -->
-        <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
+        <div class="h-3 bg-theme-border rounded-full overflow-hidden flex">
           <div
             v-if="progress.ai.total"
             class="h-full bg-purple-500 transition-all duration-300"

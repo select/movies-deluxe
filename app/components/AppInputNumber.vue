@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <label
       v-if="label"
-      class="text-sm font-medium text-gray-600 dark:text-gray-400"
+      class="text-sm font-medium text-theme-textmuted"
     >
       {{ label }}
     </label>
@@ -14,7 +14,7 @@
       :step="step"
       :disabled="disabled"
       :placeholder="placeholder"
-      class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      class="w-full px-4 py-2 bg-theme-surface border border-theme-border rounded-xl focus:ring-2 focus:ring-theme-primary outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       :class="{ 'opacity-50 cursor-not-allowed': disabled }"
       @input="handleInput"
     >

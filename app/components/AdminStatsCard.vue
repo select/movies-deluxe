@@ -1,7 +1,7 @@
 <template>
-  <div class="p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+  <div class="p-4 rounded-xl shadow-sm border border-theme-border bg-theme-surface">
     <div class="flex items-center justify-between mb-2">
-      <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ title }}</span>
+      <span class="text-xs font-medium text-theme-textmuted uppercase tracking-wider">{{ title }}</span>
       <div
         class="text-xl"
         :class="[icon, iconColor]"
@@ -21,7 +21,7 @@
       v-if="showProgress"
       class="mt-1 flex items-center gap-2"
     >
-      <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
+      <div class="flex-1 h-1 bg-theme-border rounded-full overflow-hidden flex">
         <div
           class="h-full transition-all duration-1000"
           :class="progressColor"
@@ -41,7 +41,7 @@
     >
       <span
         v-if="subtitle"
-        class="text-gray-400"
+        class="text-theme-textmuted"
       >
         {{ subtitle }}
       </span>

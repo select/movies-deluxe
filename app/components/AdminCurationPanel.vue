@@ -1,9 +1,9 @@
 <template>
   <div
     v-if="isLocalhost"
-    class="mt-8 p-6 bg-yellow-50 dark:bg-gray-800 border-2 border-yellow-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100"
+    class="mt-8 p-6 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-text"
   >
-    <div class="flex items-center gap-2 mb-4 text-yellow-800 dark:text-gray-100">
+    <div class="flex items-center gap-2 mb-4 text-theme-text">
       <div class="i-mdi-shield-edit text-2xl" />
       <h2 class="text-xl font-bold">
         Admin Curation
@@ -22,14 +22,14 @@
         <div
           v-for="label in movie.qualityLabels"
           :key="label"
-          class="flex items-center gap-1 text-[10px] font-bold text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded border border-yellow-200 dark:border-yellow-900/50 uppercase tracking-tighter"
+          class="flex items-center gap-1 text-[10px] font-bold text-theme-textmuted bg-theme-selection px-1.5 py-0.5 rounded border border-theme-border uppercase tracking-tighter"
           :title="movie.qualityNotes"
         >
           <div class="i-mdi-alert-circle-outline" />
           {{ label }}
         </div>
       </div>
-      <span class="ml-auto text-xs font-mono bg-yellow-200 dark:bg-gray-700 px-2 py-1 rounded">
+      <span class="ml-auto text-xs font-mono bg-theme-selection px-2 py-1 rounded">
         localhost only
       </span>
     </div>
@@ -38,22 +38,22 @@
       <!-- Left: Current Info & Search -->
       <div class="space-y-6">
         <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300 mb-2">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted mb-2">
             Source Info
           </h3>
           <div
             v-for="source in movie.sources"
             :key="source.id"
-            class="bg-white dark:bg-gray-800/50 p-3 rounded border border-yellow-100 dark:border-gray-700 mb-2"
+            class="bg-theme-surface/50 p-3 rounded border border-theme-border mb-2"
           >
             <div class="flex items-center gap-2 mb-1">
               <div
                 :class="source.type === 'youtube' ? 'i-mdi-youtube text-red-600' : 'i-mdi-bank text-blue-600'"
                 class="text-lg"
               />
-              <span class="font-medium text-gray-900 dark:text-gray-100">{{ source.type }}</span>
+              <span class="font-medium text-theme-text">{{ source.type }}</span>
               <button
-                class="ml-auto p-1 text-gray-400 hover:text-red-500 transition-colors"
+                class="ml-auto p-1 text-theme-textmuted hover:text-red-500 transition-colors"
                 title="Remove source"
                 @click="removeSource(source.id)"
               >
@@ -64,30 +64,30 @@
             <!-- Original title from source -->
             <div
               v-if="source.title"
-              class="mb-2 p-2 bg-gray-50 dark:bg-gray-700/50 rounded text-xs"
+              class="mb-2 p-2 bg-theme-background/50 rounded text-xs"
             >
-              <span class="font-medium text-gray-700 dark:text-gray-300">Original title:</span>
-              <span class="text-gray-600 dark:text-gray-400 ml-1">{{ source.title }}</span>
+              <span class="font-medium text-theme-text">Original title:</span>
+              <span class="text-theme-textmuted ml-1">{{ source.title }}</span>
             </div>
             <p
               v-if="source.description"
-              class="text-xs text-gray-600 dark:text-gray-400 line-clamp-4 whitespace-pre-wrap"
+              class="text-xs text-theme-textmuted line-clamp-4 whitespace-pre-wrap"
             >
               {{ source.description.length > 1000 ? source.description.substring(0, 1000) + '...' : source.description }}
             </p>
             <p
               v-else
-              class="text-xs italic text-gray-400"
+              class="text-xs italic text-theme-textmuted"
             >
               No description available in database
             </p>
 
-            <div class="mt-3 pt-2 border-t border-yellow-50 dark:border-gray-700">
+            <div class="mt-3 pt-2 border-t border-theme-border">
               <div class="flex gap-1 mb-2">
                 <input
                   v-model="sourceSearchTitles[source.id]"
                   type="text"
-                  class="flex-1 px-2 py-1 text-[10px] rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  class="flex-1 px-2 py-1 text-[10px] rounded border border-theme-border bg-theme-surface text-theme-text"
                   placeholder="Search query..."
                   @keyup.enter="handleGoogleSearch(sourceSearchTitles[source.id] || '')"
                 >
@@ -101,14 +101,14 @@
               <div class="flex flex-wrap gap-2">
                 <button
                   v-if="source.description"
-                  class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                  class="px-2 py-1 bg-theme-selection hover:bg-theme-selection/80 text-theme-text text-[10px] font-bold rounded transition-colors"
                   @click="searchByDescription(source)"
                 >
                   Search Desc
                 </button>
                 <button
                   v-if="source.title && source.description"
-                  class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 text-[10px] font-bold rounded transition-colors"
+                  class="px-2 py-1 bg-theme-selection hover:bg-theme-selection/80 text-theme-text text-[10px] font-bold rounded transition-colors"
                   @click="searchBoth(source)"
                 >
                   Search Both
@@ -119,7 +119,7 @@
         </div>
 
         <div class="space-y-4">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted">
             Search OMDB
           </h3>
           <div class="flex gap-2">
@@ -127,14 +127,14 @@
               v-model.trim="searchTitle"
               type="text"
               placeholder="Movie Title"
-              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm"
+              class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
               @keyup.enter="handleSearch"
             >
             <input
               v-model.trim="searchYear"
               type="text"
               placeholder="Year"
-              class="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm"
+              class="w-20 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
               @keyup.enter="handleSearch"
             >
             <button
@@ -152,7 +152,7 @@
 
           <div class="pt-2">
             <div class="flex items-center gap-2 mb-2">
-              <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted">
                 Direct IMDB ID
               </h3>
             </div>
@@ -161,7 +161,7 @@
                 v-model.trim="imdbIdInput"
                 type="text"
                 placeholder="tt1234567"
-                class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm font-mono"
+                class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm font-mono"
                 @keyup.enter="handleDirectImdbFetch"
               >
               <button
@@ -182,7 +182,7 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t border-yellow-200 dark:border-gray-700 flex flex-wrap gap-4">
+        <div class="pt-4 border-t border-theme-border flex flex-wrap gap-4">
           <button
             v-if="!movie.verified"
             class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition-colors text-sm font-bold disabled:opacity-50"
@@ -211,8 +211,8 @@
         </div>
 
         <!-- Collections Management -->
-        <div class="pt-6 border-t border-yellow-200 dark:border-gray-700">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300 mb-3">
+        <div class="pt-6 border-t border-theme-border">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted mb-3">
             Collections
           </h3>
           <div class="flex flex-wrap gap-2 mb-4">
@@ -233,7 +233,7 @@
             </div>
             <div
               v-if="movieCollections.length === 0"
-              class="text-sm text-gray-500 italic py-1.5"
+              class="text-sm text-theme-textmuted italic py-1.5"
             >
               Not in any collections
             </div>
@@ -242,7 +242,7 @@
           <div class="flex gap-2">
             <select
               v-model="selectedCollectionId"
-              class="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 text-sm"
+              class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
             >
               <option
                 value=""
@@ -275,7 +275,7 @@
 
       <!-- Right: Search Results -->
       <div>
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300 mb-2">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted mb-2">
           Search Results
         </h3>
         <div
@@ -285,7 +285,7 @@
           <div
             v-for="result in searchResults"
             :key="result.imdbID"
-            class="flex gap-3 p-2 bg-white dark:bg-gray-800/50 rounded border border-gray-200 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-gray-500 transition-colors group"
+            class="flex gap-3 p-2 bg-theme-surface/50 rounded border border-theme-border hover:border-yellow-400 dark:hover:border-gray-500 transition-colors group"
           >
             <img
               :src="result.Poster !== 'N/A' ? result.Poster : '/favicon.ico'"
@@ -293,13 +293,13 @@
               alt="Poster"
             >
             <div class="flex-1 min-w-0">
-              <h4 class="font-bold text-sm truncate text-gray-900 dark:text-gray-100">
+              <h4 class="font-bold text-sm truncate text-theme-text">
                 {{ result.Title }}
               </h4>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-theme-textmuted dark:text-theme-textmuted">
                 {{ result.Year }} • {{ result.Type }}
               </p>
-              <p class="text-[10px] font-mono text-gray-400">
+              <p class="text-[10px] font-mono text-theme-textmuted">
                 {{ result.imdbID }}
               </p>
             </div>
@@ -314,7 +314,7 @@
         </div>
         <div
           v-else-if="!isSearching"
-          class="h-[200px] flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg"
+          class="h-[200px] flex flex-col items-center justify-center text-theme-textmuted border-2 border-dashed border-theme-border rounded-lg"
         >
           <div class="i-mdi-magnify text-4xl mb-2" />
           <p class="text-sm">
@@ -326,11 +326,11 @@
         <div
           v-if="googleResults.length > 0"
           id="google-results"
-          class="mt-8 pt-6 border-t border-yellow-200 dark:border-gray-700"
+          class="mt-8 pt-6 border-t border-theme-border"
         >
           <div class="flex items-center gap-2 mb-3">
             <div class="i-mdi-google text-blue-600" />
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-yellow-700 dark:text-gray-300">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted">
               Google Results (IMDb)
             </h3>
           </div>
@@ -338,19 +338,19 @@
             <div
               v-for="result in googleResults"
               :key="result.imdbID"
-              class="flex gap-3 p-2 bg-white dark:bg-gray-800/50 rounded border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-gray-500 transition-colors group"
+              class="flex gap-3 p-2 bg-theme-surface/50 rounded border border-theme-border hover:border-blue-400 dark:hover:border-gray-500 transition-colors group"
             >
-              <div class="w-12 h-18 bg-gray-100 dark:bg-gray-700 flex items-center justify-center rounded">
-                <div class="i-mdi-movie-open text-2xl text-gray-400" />
+              <div class="w-12 h-18 bg-theme-selection flex items-center justify-center rounded">
+                <div class="i-mdi-movie-open text-2xl text-theme-textmuted" />
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="font-bold text-sm truncate text-gray-900 dark:text-gray-100">
+                <h4 class="font-bold text-sm truncate text-theme-text">
                   {{ result.Title }}
                 </h4>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-theme-textmuted dark:text-theme-textmuted">
                   {{ result.Year }} • {{ result.Type }}
                 </p>
-                <p class="text-[10px] font-mono text-gray-400">
+                <p class="text-[10px] font-mono text-theme-textmuted">
                   {{ result.imdbID }}
                 </p>
               </div>

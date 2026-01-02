@@ -1,5 +1,4 @@
 import { useStorage } from '@vueuse/core'
-import { getThemeWithFallback, DEFAULT_DARK_THEME_ID, DEFAULT_LIGHT_THEME_ID } from '~/utils/themes'
 import type { ThemeDefinition } from '~/types/theme'
 
 /**
