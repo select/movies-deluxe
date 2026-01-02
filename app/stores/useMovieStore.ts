@@ -516,18 +516,13 @@ export const useMovieStore = defineStore('movie', () => {
       const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
       const results = await db.query<Record<string, unknown>>(
         `
-        SELECT m.imdbId,
-               CASE
-                 WHEN m.title LIKE ? THEN 3
-                 WHEN m.title LIKE ? THEN 2
-                 ELSE 1
-               END as relevance_score
+        SELECT m.imdbId
         FROM fts_movies f
         JOIN movies m ON f.imdbId = m.imdbId
         WHERE fts_movies MATCH ?
-        ORDER BY relevance_score DESC, rank
+        ORDER BY m.title ASC
       `,
-        [`%${sanitizedQuery}%`, `%${sanitizedQuery.toLowerCase()}%`, `"${sanitizedQuery}"`]
+        [`"${sanitizedQuery}"`]
       )
 
       const matchedIds = new Set(results.map(r => r.imdbId as string))
@@ -703,8 +698,9 @@ export const useMovieStore = defineStore('movie', () => {
       const sortField = filters.value.sort.field
       const sortDir = filters.value.sort.direction.toUpperCase()
 
+      // When searching, ignore relevance sort and just use title
       if (sortField === 'relevance' && filters.value.searchQuery) {
-        orderBy = `rank ${sortDir}`
+        orderBy = `m.title ${sortDir}`
       } else if (sortField === 'rating') {
         orderBy = `m.imdbRating ${sortDir}`
       } else if (sortField === 'year') {
