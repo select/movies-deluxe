@@ -30,15 +30,21 @@
         :key="movie.imdbId"
         class="p-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
       >
-        <img
-          :src="
-            movie.metadata?.Poster && movie.metadata?.Poster !== 'N/A'
-              ? movie.metadata?.Poster
-              : '/placeholder.png'
-          "
-          class="w-12 h-16 object-cover rounded bg-theme-bg"
-          alt=""
-        >
+        <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
+          <img
+            v-if="movie.imdbId?.startsWith('tt')"
+            :src="`/posters/${movie.imdbId}.jpg`"
+            :alt="movie.title"
+            class="w-full h-full object-cover"
+            @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+          >
+          <div
+            v-else
+            class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
+          >
+            <div class="i-mdi-movie text-2xl" />
+          </div>
+        </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
             <h4 class="font-bold truncate">
