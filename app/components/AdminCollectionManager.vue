@@ -5,22 +5,13 @@
         <div class="i-mdi:movie-roll text-blue-600" />
         Collection Management
       </h2>
-      <div class="flex items-center gap-2">
-        <NuxtLink
-          to="/admin/collections"
-          class="px-4 py-2 bg-theme-surface border border-theme-border hover:bg-theme-selection text-theme-text rounded-lg text-sm font-bold transition-colors flex items-center gap-2"
-        >
-          <div class="i-mdi-movie-edit" />
-          Collection Editor
-        </NuxtLink>
-        <button
-          class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2"
-          @click="showCreateModal = true"
-        >
-          <div class="i-mdi-plus" />
-          Create Collection
-        </button>
-      </div>
+      <button
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2"
+        @click="showCreateModal = true"
+      >
+        <div class="i-mdi-plus" />
+        Create Collection
+      </button>
     </div>
 
     <!-- Collections List -->
