@@ -73,8 +73,8 @@ const props = defineProps<{
 }>()
 
 const collectionsStore = useCollectionsStore()
+const movieStore = useMovieStore()
 const uiStore = useUiStore()
-const db = useDatabase()
 const movies = ref<any[]>([])
 const isLoading = ref(false)
 const isRemoving = ref('')
@@ -90,14 +90,17 @@ const loadCollectionMovies = async () => {
       return
     }
 
-    if (!db.isReady.value) {
-      await db.init()
+    // Ensure database is initialized
+    if (!movieStore.allMovies.size && !movieStore.isLoading.movies) {
+      await movieStore.loadFromFile()
     }
 
-    const data = await db.queryByIds(collection.movieIds)
+    // Use toRaw to avoid Proxy cloning issues with Web Workers
+    const movieIds = toRaw(collection.movieIds)
+    const data = await movieStore.fetchMoviesByIds(movieIds)
 
     // Sort by the order in movieIds
-    movies.value = collection.movieIds
+    movies.value = movieIds
       .map(id => data.find((m: any) => m.imdbId === id))
       .filter(Boolean)
   } catch (err) {

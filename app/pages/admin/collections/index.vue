@@ -81,8 +81,13 @@ const isLocal = ref(false)
 const selectedCollectionId = ref('')
 const moviesList = ref<any>(null)
 
-onMounted(() => {
+const movieStore = useMovieStore()
+
+onMounted(async () => {
   isLocal.value = isLocalhost()
+  if (isLocal.value) {
+    await movieStore.loadFromFile()
+  }
 })
 
 const onMovieAdded = () => {
