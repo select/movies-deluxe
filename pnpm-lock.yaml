@@ -17,6 +17,9 @@ importers:
       '@sqlite.org/sqlite-wasm':
         specifier: 3.51.1-build2
         version: 3.51.1-build2
+      '@types/tar':
+        specifier: 6.1.13
+        version: 6.1.13
       '@vueuse/core':
         specifier: 14.1.0
         version: 14.1.0(vue@3.5.25(typescript@5.9.3))
@@ -39,19 +42,19 @@ importers:
         specifier: 169.0.0
         version: 169.0.0
       nuxt:
-        specifier: ^4.2.2
+        specifier: 4.2.2
         version: 4.2.2(@parcel/watcher@2.5.1)(@types/node@25.0.2)(@vue/compiler-sfc@3.5.25)(better-sqlite3@12.5.0)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.5.1)(optionator@0.9.4)(oxlint@1.33.0)(rollup@4.53.4)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(yaml@2.8.2)
-      openai:
-        specifier: 6.13.0
-        version: 6.13.0(ws@8.18.3)(zod@3.25.76)
       pinia:
         specifier: 3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
+      tar:
+        specifier: 7.5.2
+        version: 7.5.2
       vue:
-        specifier: ^3.5.25
+        specifier: 3.5.25
         version: 3.5.25(typescript@5.9.3)
       vue-router:
-        specifier: ^4.6.4
+        specifier: 4.6.4
         version: 4.6.4(vue@3.5.25(typescript@5.9.3))
     devDependencies:
       '@commitlint/cli':
@@ -63,9 +66,6 @@ importers:
       '@iconify-json/carbon':
         specifier: 1.2.15
         version: 1.2.15
-      '@iconify-json/material-symbols':
-        specifier: 1.2.50
-        version: 1.2.50
       '@iconify-json/material-symbols-light':
         specifier: 1.2.50
         version: 1.2.50
@@ -139,7 +139,7 @@ importers:
         specifier: 66.5.10
         version: 66.5.10(@unocss/webpack@66.5.10(webpack@5.104.1(esbuild@0.27.1)))(postcss@8.5.6)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       youtubei.js:
-        specifier: ^16.0.1
+        specifier: 16.0.1
         version: 16.0.1
 
 packages:
@@ -791,9 +791,6 @@ packages:
 
   '@iconify-json/material-symbols-light@1.2.50':
     resolution: {integrity: sha512-Ehvmar2TPoYxmKgB5szeIMlmvA/mIc7gzUoQ5/AWFG+N6d4T53uCHwxnXFf1nXPWlpf0+cv26AXMJC6W5mkdrQ==}
-
-  '@iconify-json/material-symbols@1.2.50':
-    resolution: {integrity: sha512-71tjHR70h46LHtBFab3fAd2V/wPTO7JMV5lKnRn3IcF303LaFgAlO0BZeTJDcmCv9d0snRZmnoLZAJVD7/eisw==}
 
   '@iconify-json/mdi@1.2.3':
     resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
@@ -1618,6 +1615,9 @@ packages:
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
+
+  '@types/tar@6.1.13':
+    resolution: {integrity: sha512-IznnlmU5f4WcGTh2ltRu/Ijpmk8wiWXfF0VA4s+HPjHZgvFggk1YaIkbo5krX/zUCzWF8N/l4+W/LNxnvAJ8nw==}
 
   '@types/web-bluetooth@0.0.21':
     resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
@@ -3727,6 +3727,10 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
+  minipass@4.2.8:
+    resolution: {integrity: sha512-fNzuVyifolSLFL4NzpF+wEF4qrgqaaKX0haXPQEdQ7NKAN+WecoKMHV09YcuL/DHxrUsYQOK3MiuDf7Ip2OXfQ==}
+    engines: {node: '>=8'}
+
   minipass@7.1.2:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -3920,18 +3924,6 @@ packages:
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
-
-  openai@6.13.0:
-    resolution: {integrity: sha512-yHbMo+EpNGPG3sRrXvmo0LhUPFN4bAURJw3G17bE+ax1G4tcTFCa9ZjvCWh3cvni0aHY0uWlk2IxcsPH4NR9Ow==}
-    hasBin: true
-    peerDependencies:
-      ws: ^8.18.0
-      zod: ^3.25 || ^4.0
-    peerDependenciesMeta:
-      ws:
-        optional: true
-      zod:
-        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -5273,9 +5265,6 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
 snapshots:
 
   '@antfu/install-pkg@1.1.0':
@@ -5891,10 +5880,6 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/material-symbols-light@1.2.50':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/material-symbols@1.2.50':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -6811,6 +6796,11 @@ snapshots:
       parse-path: 7.1.0
 
   '@types/resolve@1.20.2': {}
+
+  '@types/tar@6.1.13':
+    dependencies:
+      '@types/node': 25.0.2
+      minipass: 4.2.8
 
   '@types/web-bluetooth@0.0.21': {}
 
@@ -9124,6 +9114,8 @@ snapshots:
 
   minimist@1.2.8: {}
 
+  minipass@4.2.8: {}
+
   minipass@7.1.2: {}
 
   minizlib@3.1.0:
@@ -9489,11 +9481,6 @@ snapshots:
       define-lazy-prop: 2.0.0
       is-docker: 2.2.1
       is-wsl: 2.2.0
-
-  openai@6.13.0(ws@8.18.3)(zod@3.25.76):
-    optionalDependencies:
-      ws: 8.18.3
-      zod: 3.25.76
 
   optionator@0.9.4:
     dependencies:
@@ -10915,6 +10902,3 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
-
-  zod@3.25.76:
-    optional: true
