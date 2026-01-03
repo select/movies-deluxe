@@ -74,6 +74,12 @@ export async function generateMovieJSON() {
     title: m.title,
     year: m.year,
     hasMetadata: !!m.metadata,
+    imdbRating: m.metadata?.imdbRating,
+    imdbVotes: m.metadata?.imdbVotes,
+    language: m.metadata?.Language,
+    sourceType: m.sources[0]?.type,
+    channelName:
+      m.sources[0]?.type === 'youtube' ? (m.sources[0] as YouTubeSource).channelName : undefined,
     genres: m.metadata?.Genre
       ? m.metadata.Genre.split(',')
           .map(g => g.trim().toLowerCase())
@@ -107,7 +113,19 @@ export async function generateMovieJSON() {
   }
 
   const movieMap = new Map(processedMovies.map(m => [m.imdbId, m]))
-  const relatedMap = new Map<string, Array<{ imdbId: string; title: string; year?: number }>>()
+  const relatedMap = new Map<
+    string,
+    Array<{
+      imdbId: string
+      title: string
+      year?: number
+      imdbRating?: string | number
+      imdbVotes?: string | number
+      language?: string
+      sourceType?: 'archive.org' | 'youtube'
+      channelName?: string
+    }>
+  >()
 
   for (let i = 0; i < processedMovies.length; i++) {
     const m1 = processedMovies[i]!
@@ -153,6 +171,11 @@ export async function generateMovieJSON() {
         imdbId: rm.imdbId,
         title: rm.title,
         year: rm.year,
+        imdbRating: rm.imdbRating,
+        imdbVotes: rm.imdbVotes,
+        language: rm.language,
+        sourceType: rm.sourceType,
+        channelName: rm.channelName,
       }
     })
     relatedMap.set(m1.imdbId, topRelated)

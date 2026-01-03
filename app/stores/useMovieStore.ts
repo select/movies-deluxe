@@ -468,23 +468,36 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Get related movies for a given movie ID
-   * Note: This does NOT use the database - it fetches from JSON files
+   * Fetches full lightweight data from database for proper display
    */
   const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
     try {
-      // Fetch movie details directly from JSON file (not from database)
-      // This avoids loading the database just for related movies
+      // Fetch movie details directly from JSON file to get related movie IDs
       const movie = await $fetch<MovieEntry>(`/movies/${movieId}.json`)
 
       if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
         return []
       }
 
-      // Map related movies (which are already lightweight in the JSON) to MovieEntry
+      // If database is ready, fetch full lightweight data for related movies
+      if (db.isReady.value) {
+        const relatedIds = movie.relatedMovies.map(rm => rm.imdbId)
+        const fullMovies = await fetchMoviesByIds(relatedIds)
+        return fullMovies
+      }
+
+      // Fallback: use the lightweight data from JSON if database is not ready
       return movie.relatedMovies.map(rm => ({
-        ...rm,
+        imdbId: rm.imdbId,
+        title: rm.title,
+        year: rm.year,
         sources: [],
         lastUpdated: new Date().toISOString(),
+        metadata: {
+          imdbRating: rm.imdbRating?.toString(),
+          imdbVotes: rm.imdbVotes?.toString(),
+          Language: rm.language,
+        },
       }))
     } catch (err) {
       window.console.error('[MovieStore] Failed to fetch related movies:', err)
