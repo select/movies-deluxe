@@ -228,6 +228,14 @@
         />
       </section>
 
+      <!-- YouTube Channel Stats -->
+      <section>
+      <AdminYouTubeChannelStats
+        v-if="stats?.external.youtube.channels.length"
+        :channels="stats.external.youtube.channels"
+      />
+      </section>
+
       <!-- Quality Breakdown -->
       <section
         v-if="stats && stats.quality && stats.quality.totalMarked > 0"
@@ -247,14 +255,6 @@
             <span class="text-2xl font-black text-theme-text">{{ count }}</span>
           </div>
         </div>
-      </section>
-
-      <!-- YouTube Channel Stats -->
-      <section>
-      <AdminYouTubeChannelStats
-        v-if="stats?.external.youtube.channels.length"
-        :channels="stats.external.youtube.channels"
-      />
       </section>
 
       <!-- Scrape Controls -->
