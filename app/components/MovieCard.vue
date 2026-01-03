@@ -88,7 +88,10 @@
       <div
         v-if="isVerified"
         class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full bg-green-600 flex items-center justify-center z-10"
-        :class="{ 'ml-8': isMovieLiked, 'ml-16': isMovieLiked && movieCollections.length > 0, 'ml-8': !isMovieLiked && movieCollections.length > 0 }"
+        :class="{ 
+          'ml-8': (isMovieLiked && movieCollections.length === 0) || (!isMovieLiked && movieCollections.length > 0),
+          'ml-16': isMovieLiked && movieCollections.length > 0
+        }"
         title="Verified Source"
       >
         <div class="i-mdi-check-circle text-white text-lg" />

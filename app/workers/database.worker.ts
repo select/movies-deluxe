@@ -200,7 +200,7 @@ self.onmessage = async e => {
       const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e.data
 
       // Select essential fields for grid display and filtering
-      let sql = `SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, m.primarySourceType as sourceType, m.primaryChannelName as channelName FROM movies m`
+      let sql = `SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, m.primarySourceType as sourceType, m.primaryChannelName as channelName, m.verified FROM movies m`
       if (where) sql += ` WHERE ${where}`
       if (orderBy) sql += ` ORDER BY ${orderBy}`
       if (limit !== undefined) sql += ` LIMIT ${limit}`
@@ -252,7 +252,13 @@ self.onmessage = async e => {
         rowMode: 'object',
       })
 
-      self.postMessage({ id, result })
+      // Transform verified from integer (0/1) to boolean
+      const transformedResult = result.map((row: any) => ({
+        ...row,
+        verified: row.verified === 1,
+      }))
+
+      self.postMessage({ id, result: transformedResult })
     } else if (type === 'query-related') {
       // Related movies are now stored in individual JSON files
       self.postMessage({ id, result: [] })
