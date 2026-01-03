@@ -1,5 +1,6 @@
 <template>
   <NuxtLink
+    v-if="movie.imdbId"
     :to="`/movie/${movie.imdbId}`"
     class="flex flex-col border border-theme-border/50 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-theme-surface text-theme-text"
   >
@@ -7,14 +8,14 @@
     <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
       <!-- Shimmer loading state -->
       <div
-        v-if="movie.imdbId.startsWith('tt')"
+        v-if="hasImdbId"
         class="absolute inset-0 shimmer z-10 transition-opacity duration-500"
         :class="{ 'opacity-0 pointer-events-none': imageLoaded, 'opacity-100': !imageLoaded }"
       />
 
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
-        v-if="movie.imdbId.startsWith('tt')"
+        v-if="hasImdbId"
         :src="`/posters/${movie.imdbId}.jpg`"
         :alt="movie.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
@@ -112,6 +113,27 @@
       </div>
     </div>
   </NuxtLink>
+
+  <!-- Fallback for movies without imdbId -->
+  <div
+    v-else
+    class="flex flex-col border border-red-500/50 rounded-xl overflow-hidden bg-theme-surface text-theme-text opacity-50"
+    title="Invalid movie data: missing imdbId"
+  >
+    <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
+      <div class="w-full h-full flex items-center justify-center text-red-400">
+        <div class="i-mdi-alert-circle text-6xl" />
+      </div>
+    </div>
+    <div class="p-3 flex-shrink-0">
+      <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem] text-red-400">
+        {{ movie.title || 'Unknown Movie' }}
+      </h3>
+      <div class="text-[11px] text-red-400 font-medium">
+        Missing ID
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -129,12 +151,17 @@ const { getCollectionsForMovie } = useCollectionsStore()
 const imageLoaded = ref(false)
 const movieCollections = ref<Collection[]>([])
 
+// Check if movie has a valid IMDB ID (starts with 'tt')
+const hasImdbId = computed(() => props.movie.imdbId?.startsWith('tt') ?? false)
+
 // Check if movie is liked
-const isMovieLiked = computed(() => isLikedFn(props.movie.imdbId))
+const isMovieLiked = computed(() => props.movie.imdbId ? isLikedFn(props.movie.imdbId) : false)
 
 // Fetch collections for this movie from database
 onMounted(async () => {
-  movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+  if (props.movie.imdbId) {
+    movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+  }
 })
 
 // Helper to check if we have full movie data
