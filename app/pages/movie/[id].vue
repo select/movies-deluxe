@@ -606,24 +606,30 @@ const loadMovieData = async (movieId: string) => {
   relatedMovies.value = []
   isPlotExpanded.value = false
 
-  // Ensure movies are loaded in store
-  if (totalMovies.value === 0) await loadFromFile()
+  try {
+    // Ensure movies are loaded in store
+    if (totalMovies.value === 0) await loadFromFile()
 
-  const foundMovie = await getMovieById(movieId)
+    const foundMovie = await getMovieById(movieId)
 
-  if (!foundMovie) {
-    error.value = `Movie with ID "${movieId}" not found.`
+    if (!foundMovie) {
+      error.value = `Movie with ID "${movieId}" not found.`
+      isLoading.value = false
+      return
+    }
+
+    movie.value = foundMovie
+    updateMetaTags(foundMovie)
+
+    // Load related movies
+    loadRelatedMovies(movieId)
+
     isLoading.value = false
-    return
+  } catch (err) {
+    console.error('Failed to load movie:', err)
+    error.value = `Failed to load movie data. ${err instanceof Error ? err.message : 'Please try again.'}`
+    isLoading.value = false
   }
-
-  movie.value = foundMovie
-  updateMetaTags(foundMovie)
-
-  // Load related movies
-  loadRelatedMovies(movieId)
-
-  isLoading.value = false
 }
 
 // Load movie on mount
