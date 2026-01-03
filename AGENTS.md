@@ -93,13 +93,11 @@ bd dep add beads-yyy beads-xxx  # Tests depend on Feature (Feature blocks tests)
 ```bash
 # Development
 pnpm dev                    # Dev server (port 3003)
-pnpm build                  # Production build
 pnpm tsx scripts/<name>.ts  # Run scripts
 
 # Code Quality
 pnpm lint                   # Run oxlint + eslint
 pnpm lint:fix               # Auto-fix issues
-pnpm format                 # Format with Prettier
 pnpm typecheck              # TypeScript checking
 
 # Database
@@ -107,6 +105,44 @@ pnpm db:generate            # Generate SQLite from movies.json
 ```
 
 **Testing**: ❌ No test framework configured. Do NOT run tests.
+
+## Issue Tracking with bd (beads)
+
+**IMPORTANT**: Use **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs or task lists.
+
+**Why bd?** Dependency-aware, git-friendly (auto-syncs to `.beads/issues.jsonl`), agent-optimized with JSON output.
+
+**Auto-Sync**: Exports to JSONL after changes (5s debounce), imports on `git pull`. Always commit `.beads/issues.jsonl` with code changes.
+
+**AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean.
+
+## Commit Message Format (Conventional Commits)
+
+**Format**: `<type>(<scope>): <subject>` (max 120 chars, lowercase subject, no period)
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+**Common Scopes**: `scraper`, `validation`, `enrichment`, `store`, `types`, `utils`, `config`, `deps`
+
+**Rules**:
+
+- ✅ Present tense, imperative mood: "add feature" not "added feature"
+- ✅ Be specific, reference issues in footer: `Closes #123`
+- ❌ No past tense, vague descriptions, capitalized subject, or trailing period
+
+**Examples**:
+
+```bash
+feat(scraper): add youtube channel scraping
+fix(validation): handle missing imdb ids correctly
+feat(enrichment): add omdb api integration
+
+Integrate OMDB API to enrich movie metadata.
+
+Closes movies-deluxe-uq0.12
+```
+
+**Breaking Changes**: Add `BREAKING CHANGE:` in footer
 
 ## Code Style
 
@@ -132,127 +168,7 @@ pnpm db:generate            # Generate SQLite from movies.json
 
 **Error Handling**: Always use try/catch for async operations, return fallback values
 
-**Vue**: Use `<script setup lang="ts">`, `ref()` for primitives, `reactive()` for objects
-
-## Issue Tracking with bd (beads)
-
-**IMPORTANT**: Use **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs or task lists.
-
-**Why bd?** Dependency-aware, git-friendly (auto-syncs to `.beads/issues.jsonl`), agent-optimized with JSON output.
-
-**Auto-Sync**: Exports to JSONL after changes (5s debounce), imports on `git pull`. Always commit `.beads/issues.jsonl` with code changes.
-
-**MCP Server** (optional): `pip install beads-mcp`, then add to MCP config for `mcp__beads__*` functions.
-
-**AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean.
-
-## Commit Message Format (Conventional Commits)
-
-**IMPORTANT**: This project uses **Conventional Commits** for ALL commit messages. Commits are automatically validated using commitlint and git hooks.
-
-### Format Specification
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-**Header (required)**: `<type>(<scope>): <subject>`
-
-- Maximum 120 characters
-- Type and subject are required, scope is optional
-- Subject must be lowercase, no period at end
-
-### Commit Types
-
-| Type       | Description               | Example                                               |
-| ---------- | ------------------------- | ----------------------------------------------------- |
-| `feat`     | New feature               | `feat(scraper): add youtube channel scraping`         |
-| `fix`      | Bug fix                   | `fix(validation): handle missing imdb ids correctly`  |
-| `docs`     | Documentation only        | `docs(readme): update installation instructions`      |
-| `style`    | Code style/formatting     | `style(app): fix indentation in movie store`          |
-| `refactor` | Code refactoring          | `refactor(utils): simplify data manager logic`        |
-| `perf`     | Performance improvement   | `perf(store): add caching for movie queries`          |
-| `test`     | Add/update tests          | `test(validation): add tests for duplicate detection` |
-| `build`    | Build system/dependencies | `build: add commitlint and git hooks`                 |
-| `ci`       | CI/CD changes             | `ci: add github actions workflow`                     |
-| `chore`    | Maintenance tasks         | `chore: update dependencies`                          |
-| `revert`   | Revert previous commit    | `revert: feat(scraper): add youtube scraping`         |
-
-### Common Scopes
-
-`scraper`, `validation`, `enrichment`, `store`, `types`, `utils`, `config`, `deps`
-
-### Breaking Changes
-
-Use `BREAKING CHANGE:` in footer:
-
-```
-feat(api): change movie data structure
-
-BREAKING CHANGE: Movie entries now use nested source objects instead of flat structure.
-```
-
-### Good Examples
-
-```bash
-feat(scraper): add youtube channel scraping
-fix(validation): handle missing imdb ids correctly
-feat(enrichment): add omdb api integration
-
-Integrate OMDB API to enrich movie metadata with ratings,
-plot summaries, and additional details.
-
-Closes movies-deluxe-uq0.12
-```
-
-### Rules
-
-**DO:**
-
-- ✅ Use present tense: "add feature" not "added feature"
-- ✅ Use imperative mood: "fix bug" not "fixes bug"
-- ✅ Be specific: "fix validation for imdb ids" not "fix bug"
-- ✅ Reference issues: "Closes #123" in footer
-- ✅ Explain WHY in body, not WHAT
-
-**DON'T:**
-
-- ❌ Use past tense: "added", "fixed"
-- ❌ Use vague descriptions: "update", "change", "modify"
-- ❌ Capitalize subject
-- ❌ End subject with period
-- ❌ Use `--no-verify` for regular commits
-
-### Emergency Bypass
-
-```bash
-git commit --no-verify -m "emergency fix"
-```
-
-Use ONLY for emergency hotfixes, reverting broken commits, or fixing broken git hooks.
-
-### Validation
-
-Commits are validated on every commit. If validation fails:
-
-```bash
-$ git commit -m "Add feature"
-⧗   input: Add feature
-✖   type must be one of [feat, fix, docs, ...] [type-enum]
-```
-
-**Test your setup:**
-
-```bash
-echo "feat: add new feature" | npx commitlint  # Should pass
-echo "invalid message" | npx commitlint        # Should fail
-```
-
-For more details, see https://www.conventionalcommits.org/
+**Vue**: Use `<script setup lang="ts">`, `ref()` for reactivity
 
 ## Nuxt 4 Directory Structure
 
@@ -280,10 +196,8 @@ For more details, see https://www.conventionalcommits.org/
 **Important Rules:**
 
 - ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files
-- ✅ Leverage auto-imports (components, composables, utils)
+- ✅ Leverage auto-imports
 - ✅ Use file-based routing in `app/pages/`
-- ❌ Do NOT manually import auto-imported items
-- ❌ Do NOT put processed assets in `public/`
 
 ### Naming Conventions
 
@@ -296,22 +210,12 @@ For more details, see https://www.conventionalcommits.org/
 
 **Auto-imported (no import needed):**
 
-- Components from `app/components/`
-- Composables from `app/composables/`
-- Utils from `app/utils/`
-- Nuxt/Vue built-ins: `ref`, `computed`, `useState`, `useFetch`, etc.
-
-**Manual import required:**
-
-- Types from `types/` (e.g., `import type { MovieEntry } from '~/types/movie'`)
-- External packages
-- Scripts
+When you see import errors please read @.opencode/command/nuxt-autoimport.md
 
 ### Development Commands
 
 ```bash
 pnpm dev                              # Start dev server (port 3003)
-pnpm build                            # Build for production
 pnpm tsx scripts/<name>.ts            # Run scripts
 ```
 
