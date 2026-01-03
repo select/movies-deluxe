@@ -52,7 +52,7 @@ function createDatabase() {
         resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
         reject,
       })
-      worker.value!.postMessage({ type: 'exec', id, sql, params })
+      worker.value!.postMessage({ type: 'exec', id, sql, params: toRaw(params) })
     })
   }
 
@@ -78,7 +78,14 @@ function createDatabase() {
           resolve({ result: (data.result as T[]) ?? [], totalCount: data.totalCount }),
         reject,
       })
-      worker.value!.postMessage({ type: 'query', id, ...options })
+
+      // Clone options and ensure params is raw
+      const rawOptions = { ...options }
+      if (rawOptions.params) {
+        rawOptions.params = toRaw(rawOptions.params)
+      }
+
+      worker.value!.postMessage({ type: 'query', id, ...rawOptions })
     })
   }
 
@@ -107,7 +114,14 @@ function createDatabase() {
           }),
         reject,
       })
-      worker.value!.postMessage({ type: 'query-lightweight', id, ...options })
+
+      // Clone options and ensure params is raw
+      const rawOptions = { ...options }
+      if (rawOptions.params) {
+        rawOptions.params = toRaw(rawOptions.params)
+      }
+
+      worker.value!.postMessage({ type: 'query-lightweight', id, ...rawOptions })
     })
   }
 
@@ -122,7 +136,8 @@ function createDatabase() {
         resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
         reject,
       })
-      worker.value!.postMessage({ type: 'query-by-ids', id, imdbIds })
+      // Use toRaw to ensure we don't pass Proxy objects to the worker
+      worker.value!.postMessage({ type: 'query-by-ids', id, imdbIds: toRaw(imdbIds) })
     })
   }
 
