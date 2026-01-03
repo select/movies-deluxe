@@ -67,6 +67,13 @@
               <div class="i-mdi-home" />
               View Site
             </NuxtLink>
+            <NuxtLink
+              to="/admin/collections"
+              class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              <div class="i-mdi-movie-edit" />
+              Collection Editor
+            </NuxtLink>
             <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               :disabled="loading || generatingSqlite"
@@ -323,10 +330,6 @@
 	          </div>
           </div>
 
-        </section>
-        <!-- Collection Management Section -->
-        <section>
-          <AdminCollectionManager />
         </section>
       </div>
 

@@ -43,7 +43,10 @@
           </NuxtLink>
         </header>
 
-        <!-- Collection Selector -->
+        <!-- Collection Management -->
+        <AdminCollectionManager />
+
+        <!-- Movie Editor -->
         <section class="bg-theme-surface border border-theme-border rounded-2xl p-6">
           <AdminCollectionSelector @select="selectedCollectionId = $event" />
         </section>
