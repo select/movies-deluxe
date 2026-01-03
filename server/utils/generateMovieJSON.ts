@@ -208,6 +208,7 @@ export async function generateMovieJSON() {
             base.id = (s as YouTubeSource).id
             base.channelName = (s as YouTubeSource).channelName
             base.channelId = (s as YouTubeSource).channelId
+            base.regionRestriction = (s as YouTubeSource).regionRestriction
           } else {
             base.id = (s as ArchiveOrgSource).id
           }

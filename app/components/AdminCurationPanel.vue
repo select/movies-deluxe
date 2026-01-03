@@ -61,6 +61,39 @@
               </button>
             </div>
 
+            <!-- Region Restrictions (YouTube only) -->
+            <div
+              v-if="source.type === 'youtube' && source.regionRestriction"
+              class="mb-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs"
+            >
+              <div class="flex items-center gap-1.5 mb-1">
+                <div class="i-mdi-earth-off text-yellow-600 dark:text-yellow-400" />
+                <span class="font-semibold text-yellow-700 dark:text-yellow-300">Region Restrictions</span>
+              </div>
+              <div
+                v-if="source.regionRestriction.blocked"
+                class="flex items-start gap-1.5"
+              >
+                <div class="i-mdi-close-circle text-red-600 dark:text-red-400 mt-0.5" />
+                <div>
+                  <span class="font-medium text-red-700 dark:text-red-300">Blocked in:</span>
+                  <span class="text-theme-textmuted ml-1">{{ source.regionRestriction.blocked.join(', ') }}</span>
+                  <span class="text-theme-textmuted ml-1">({{ source.regionRestriction.blocked.length }} regions)</span>
+                </div>
+              </div>
+              <div
+                v-if="source.regionRestriction.allowed"
+                class="flex items-start gap-1.5"
+              >
+                <div class="i-mdi-check-circle text-green-600 dark:text-green-400 mt-0.5" />
+                <div>
+                  <span class="font-medium text-green-700 dark:text-green-300">Only allowed in:</span>
+                  <span class="text-theme-textmuted ml-1">{{ source.regionRestriction.allowed.join(', ') }}</span>
+                  <span class="text-theme-textmuted ml-1">({{ source.regionRestriction.allowed.length }} regions)</span>
+                </div>
+              </div>
+            </div>
+
             <!-- Original title from source -->
             <div
               v-if="source.title"
