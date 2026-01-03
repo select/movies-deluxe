@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-02T22:52:59.484Z"
+    "lastUpdated": "2026-01-03T19:00:00.000Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1344,10 +1344,11 @@
       "youtube-iGGk97eT384",
       "youtube-bmHFoKFsxjQ",
       "youtube-ZjKwt3FgkvY",
-      "youtube-2u-Le5E7v6U"
+      "youtube-2u-Le5E7v6U",
+      "tt0133226"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-02T20:52:21.165Z"
+    "updatedAt": "2026-01-03T04:51:44.239Z"
   },
   "canine-cinema": {
     "id": "canine-cinema",
@@ -1468,9 +1469,30 @@
       "tt0015634",
       "tt0076085",
       "tt0470941",
-      "tt0103905"
+      "tt0103905",
+      "tt0025316"
     ],
     "createdAt": "2025-12-31T02:45:00.000Z",
-    "updatedAt": "2026-01-02T20:52:21.165Z"
+    "updatedAt": "2026-01-03T04:29:30.288Z"
+  },
+  "abbott-and-costello": {
+    "id": "abbott-and-costello",
+    "name": "Abbott and Costello",
+    "description": "Classic comedy films featuring the legendary duo Bud Abbott and Lou Costello, masters of slapstick and wordplay.",
+    "movieIds": [
+      "archive-ColgateComedyHour_AbbottCostello",
+      "tt0040068",
+      "tt0041085",
+      "tt0042179",
+      "tt0043255",
+      "tt0047794",
+      "tt0047795",
+      "youtube-0pY7ZTFkuBE",
+      "youtube-5myY1ILoN8E",
+      "youtube-F89AU80mkQM",
+      "youtube-u95Au5SqU10"
+    ],
+    "createdAt": "2026-01-03T19:00:00.000Z",
+    "updatedAt": "2026-01-03T19:00:00.000Z"
   }
 }
