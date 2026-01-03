@@ -91,8 +91,6 @@ const DEFAULT_FILTERS: FilterState = {
  * - localStorage persistence for user data and filters
  */
 export const useMovieStore = defineStore('movie', () => {
-  console.log('[MovieStore] Initializing unified movie store')
-
   // ============================================
   // STATE
   // ============================================
@@ -288,7 +286,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       isInitialLoading.value = false
     } catch (err) {
-      console.error('Failed to initialize SQLite:', err)
+      window.console.error('Failed to initialize SQLite:', err)
       // Fallback to JSON API if SQLite fails
       await loadFromApi()
     } finally {
@@ -306,7 +304,7 @@ export const useMovieStore = defineStore('movie', () => {
       const response = await $fetch<Record<string, unknown>>('/api/movies')
 
       if (response.error) {
-        console.error('Failed to load movies from JSON:', response.message)
+        window.console.error('Failed to load movies from JSON:', response.message)
         return
       }
 
@@ -332,7 +330,7 @@ export const useMovieStore = defineStore('movie', () => {
         allMovies.value.set(movie.imdbId, movie)
       })
     } catch (err) {
-      console.error('Failed to load movies from JSON fallback:', err)
+      window.console.error('Failed to load movies from JSON fallback:', err)
     } finally {
       isLoading.value.movies = false
       isInitialLoading.value = false
@@ -423,7 +421,7 @@ export const useMovieStore = defineStore('movie', () => {
       // Return all requested movies (cached + newly fetched)
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     } catch (err) {
-      console.error('[MovieStore] Failed to fetch movies by IDs:', err)
+      window.console.error('[MovieStore] Failed to fetch movies by IDs:', err)
       return []
     }
   }
@@ -461,7 +459,7 @@ export const useMovieStore = defineStore('movie', () => {
       console.warn(`[MovieStore] Invalid movie data for ${imdbId}`)
       return undefined
     } catch (err) {
-      console.error(`[MovieStore] Failed to fetch movie details for ${imdbId}:`, err)
+      window.console.error(`[MovieStore] Failed to fetch movie details for ${imdbId}:`, err)
       return undefined
     } finally {
       isLoading.value.movieDetails = false
@@ -489,7 +487,7 @@ export const useMovieStore = defineStore('movie', () => {
         lastUpdated: new Date().toISOString(),
       }))
     } catch (err) {
-      console.error('[MovieStore] Failed to fetch related movies:', err)
+      window.console.error('[MovieStore] Failed to fetch related movies:', err)
       return []
     }
   }
@@ -527,7 +525,7 @@ export const useMovieStore = defineStore('movie', () => {
       const matchedIds = new Set(results.map(r => r.imdbId as string))
       return Array.from(allMovies.value.values()).filter(m => matchedIds.has(m.imdbId))
     } catch (err) {
-      console.error('[MovieStore] Search failed:', err)
+      window.console.error('[MovieStore] Search failed:', err)
       return []
     }
   }
@@ -617,7 +615,7 @@ export const useMovieStore = defineStore('movie', () => {
         totalFiltered.value = totalCount
       }
     } catch (err: unknown) {
-      window.console.error('[MovieStore] Lightweight query failed:', err)
+      window.window.console.error('[MovieStore] Lightweight query failed:', err)
       lightweightMovies.value = []
     } finally {
       isFiltering.value = false
@@ -630,7 +628,7 @@ export const useMovieStore = defineStore('movie', () => {
   const fetchFilteredMovies = async (append = false) => {
     if (!db.isReady.value) {
       // Fallback to JS filtering if DB not ready
-      window.console.error('DB not ready, using JS filtering')
+      window.window.console.error('DB not ready, using JS filtering')
       const allMoviesArray = await searchMovies(filters.value.searchQuery)
       filteredAndSortedMovies.value = applyFilters(allMoviesArray)
       totalFiltered.value = filteredAndSortedMovies.value.length
@@ -749,7 +747,7 @@ export const useMovieStore = defineStore('movie', () => {
         totalFiltered.value = totalCount
       }
     } catch (err: unknown) {
-      window.console.error('[MovieStore] SQL filtering failed:', err)
+      window.window.console.error('[MovieStore] SQL filtering failed:', err)
       filteredAndSortedMovies.value = []
     } finally {
       isFiltering.value = false
@@ -1104,7 +1102,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
       return false
     } catch (err) {
-      console.error('[MovieStore] Failed to mark movie quality:', err)
+      window.console.error('[MovieStore] Failed to mark movie quality:', err)
       return false
     }
   }
@@ -1145,7 +1143,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
       return false
     } catch (err) {
-      console.error('[MovieStore] Failed to clear movie quality:', err)
+      window.console.error('[MovieStore] Failed to clear movie quality:', err)
       return false
     }
   }

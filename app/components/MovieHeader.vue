@@ -1,7 +1,7 @@
 <template>
   <header class="transition-all duration-300">
     <div
-    class="md:ml-16 max-w-none mx-auto px-4  flex lg:flex-row flex-col md:items-baseline justify-between"
+    class="md:ml-16 max-w-none mx-auto px-4  flex lg:flex-row flex-col md:items-baseline justify-between gap-8"
       :class="{
 	      'py-6 md:py-10 lg:px-[6%]': isHeroPage,
 	      'py-3': !isHeroPage
@@ -9,7 +9,7 @@
     >
       <NuxtLink to="/">
         <h1
-          class="font-imperial text-theme-text transition-all duration-300"
+          class=" text-nowrap font-imperial text-theme-text transition-all duration-300"
           :class="{
             'text-6xl md:text-7xl lg:text-8xl': isHeroPage,
             'text-5xl md:text-6xl': !isHeroPage

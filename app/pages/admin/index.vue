@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-theme-background text-theme-text p-4 md:p-8 md:ml-16 transition-colors duration-300">
+  <div class="min-h-screen bg-theme-background text-theme-text p-4 md:ml-16 transition-colors duration-300">
     <div
       v-if="!isDev"
       class="flex flex-col items-center justify-center h-[60vh] text-center"
