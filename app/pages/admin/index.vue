@@ -58,36 +58,54 @@
             </span>
           </p>
         </div>
-        <div class="flex items-center gap-3">
-          <NuxtLink
-            to="/"
-            class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+        <div class="flex flex-col items-end gap-3">
+          <div class="flex items-center gap-3">
+            <NuxtLink
+              to="/"
+              class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              <div class="i-mdi-home" />
+              View Site
+            </NuxtLink>
+            <button
+              class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              :disabled="loading || generatingSqlite"
+              @click="adminStore.generateSqlite"
+            >
+              <div
+                class="i-mdi-database-export"
+                :class="{ 'animate-spin': generatingSqlite }"
+              />
+              Generate SQLite
+            </button>
+            <button
+              class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              :disabled="loading"
+              @click="adminStore.refreshStats"
+            >
+              <div
+                class="i-mdi-refresh"
+                :class="{ 'animate-spin': loading }"
+              />
+              Refresh Stats
+            </button>
+          </div>
+          <!-- SQLite Generation Progress -->
+          <div
+            v-if="progress.sqlite && progress.sqlite.status === 'in_progress'"
+            class="w-full max-w-md space-y-2"
           >
-            <div class="i-mdi-home" />
-            View Site
-          </NuxtLink>
-          <button
-            class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            :disabled="loading || generatingSqlite"
-            @click="adminStore.generateSqlite"
-          >
-            <div
-              class="i-mdi-database-export"
-              :class="{ 'animate-spin': generatingSqlite }"
-            />
-            Generate SQLite
-          </button>
-          <button
-            class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            :disabled="loading"
-            @click="adminStore.refreshStats"
-          >
-            <div
-              class="i-mdi-refresh"
-              :class="{ 'animate-spin': loading }"
-            />
-            Refresh Stats
-          </button>
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-theme-textmuted truncate mr-2">{{ progress.sqlite.message }}</span>
+              <span class="font-mono text-nowrap">{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span>
+            </div>
+            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
+              <div
+                class="h-full bg-blue-500 transition-all duration-300"
+                :style="{ width: `${(progress.sqlite.current / progress.sqlite.total) * 100}%` }"
+              />
+            </div>
+          </div>
         </div>
       </header>
 
@@ -338,6 +356,7 @@ const {
   collectionCleanupResults,
   results,
   posterResults,
+  progress,
   databasePercentOfTotal,
   totalExternalVideos,
   youtubeTotalScraped,
