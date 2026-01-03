@@ -276,7 +276,7 @@
 
           <!-- Source Selector (if multiple sources) -->
           <div
-            v-if="movie.sources.length > 1"
+            v-if="movie.sources && movie.sources.length > 1"
             class="mb-4"
           >
             <h3 class="movie-label">
@@ -344,7 +344,7 @@
 
           <!-- Source Links -->
           <div
-            v-if="movie.sources.length > 0"
+            v-if="movie.sources && movie.sources.length > 0"
             class="flex flex-wrap gap-6 py-4 px-6 bg-theme-surface rounded-lg border border-theme-border/50"
           >
             <div
@@ -420,30 +420,6 @@
             <div v-if="movie.metadata.Language">
               <h3 class="movie-label">
                 Language
-              </h3>
-              <p class="text-theme-text">
-                {{ movie.metadata.Language }}
-              </p>
-            </div>
-            <div v-if="movie.metadata.Country">
-              <h3 class="movie-label">
-                Country
-              </h3>
-              <p class="text-theme-text">
-                {{ movie.metadata.Country }}
-              </p>
-            </div>
-            <div v-if="movie.metadata.Awards">
-              <h3 class="movie-label">
-                Awards
-              </h3>
-              <p class="text-theme-text">
-                {{ movie.metadata.Awards }}
-              </p>
-            </div>
-            <div v-if="movie.imdbId?.startsWith('tt')">
-              <h3 class="movie-label">
-                IMDB
               </h3>
               <p class="text-theme-text">
                 {{ movie.metadata.Language }}
