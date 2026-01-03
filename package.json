@@ -17,6 +17,7 @@
     "typecheck": "nuxt typecheck",
     "typecheck:watch": "nuxt typecheck --watch",
     "db:generate": "tsx scripts/generate-sqlite.ts",
+    "posters:extract": "tsx scripts/extract-posters.ts",
     "youtube:setup": "tsx scripts/setup-youtube-api.ts",
     "youtube:detect-blocked": "tsx scripts/detect-blocked-youtube.ts"
   },
