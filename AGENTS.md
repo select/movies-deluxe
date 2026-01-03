@@ -319,18 +319,17 @@ pnpm tsx scripts/<name>.ts            # Run scripts
 
 **IMPORTANT**: Always verify frontend changes using the **chrome-devtools** MCP.
 
+- When using the MCP server nerver kill chorme before or after usage
+
 ### Dev Server Management
 
-- **Check first**: Always check if dev server is already running before starting it
+- **Check first**: Always check if dev server is already running
   - Use `curl -s http://localhost:3003/api/readyz` to check server status
   - If returns JSON with `"status": "ready"`, server is running
-- **Start if needed**: Only start the server if it's not already running (`pnpm dev`)
-- **Restart anytime**: You can restart the server whenever needed (e.g., after config changes, dependency updates)
-  - Kill existing server first, then start new one
-  - Always wait until ready before testing (use `/api/readyz` endpoint)
+- **Ask user to start Dev server**: if it's not already running
+- **Ask user for restart if new files were created**:
 - **NEVER stop at end**: Do NOT kill the server when you're done working
   - Leave it running for continuous frontend verification
-  - Prevents unnecessary restarts in future sessions
 
 ### Verification Steps
 
