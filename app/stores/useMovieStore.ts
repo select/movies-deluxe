@@ -452,17 +452,20 @@ export const useMovieStore = defineStore('movie', () => {
     isLoading.value.movieDetails = true
     try {
       const movie = await $fetch<MovieEntry>(`/movies/${imdbId}.json`)
-      if (movie) {
+      // Validate that we got a proper movie object (not HTML or malformed data)
+      if (movie && typeof movie === 'object' && movie.imdbId && movie.title) {
         movieDetailsCache.value.set(imdbId, movie)
         return movie
       }
+      // If we got invalid data, treat it as not found
+      console.warn(`[MovieStore] Invalid movie data for ${imdbId}`)
+      return undefined
     } catch (err) {
       console.error(`[MovieStore] Failed to fetch movie details for ${imdbId}:`, err)
+      return undefined
     } finally {
       isLoading.value.movieDetails = false
     }
-
-    return undefined
   }
 
   /**

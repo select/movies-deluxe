@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isLocalhost"
+    v-if="isLocalhost && movie.sources && movie.sources.length > 0"
     class="mt-8 p-6 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-text"
   >
     <div class="flex items-center gap-2 mb-4 text-theme-text">
@@ -403,6 +403,7 @@ const searchError = ref('')
 const sourceSearchTitles = reactive<Record<string, string>>({})
 
 const initSourceSearchTitles = () => {
+  if (!props.movie.sources || props.movie.sources.length === 0) return
   props.movie.sources.forEach((source: MovieSource) => {
     const rawTitle = source.title || props.movie.title
     sourceSearchTitles[source.id] = cleanTitleForSearch(rawTitle)
