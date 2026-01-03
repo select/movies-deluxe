@@ -32,7 +32,7 @@
       "prettier --write"
     ],
     "*.{json,md,yml,yaml}": [
-      "prettier --write"
+      "prettier --write --ignore-path .prettierignore"
     ]
   },
   "dependencies": {

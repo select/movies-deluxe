@@ -27,3 +27,6 @@ public/sqlite-wasm
 # Movie assets
 public/movies
 public/posters
+
+# Large data files (do not auto-format)
+data/movies.json
