@@ -80,6 +80,7 @@ export async function generateSQLite(
         country TEXT,
         primarySourceType TEXT,
         primaryChannelName TEXT,
+        verified INTEGER DEFAULT 0,
         lastUpdated TEXT
       );
 
@@ -141,8 +142,8 @@ export async function generateSQLite(
     const insertMovie = sqlite.prepare(`
       INSERT INTO movies (
         imdbId, title, year, imdbRating, imdbVotes, language, genre, country,
-        primarySourceType, primaryChannelName, lastUpdated
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        primarySourceType, primaryChannelName, verified, lastUpdated
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
 
     const insertGenre = sqlite.prepare(`
@@ -217,6 +218,7 @@ export async function generateSQLite(
           m.Country || null,
           primarySourceType,
           primaryChannelName,
+          movie.verified ? 1 : 0,
           movie.lastUpdated
         )
 
