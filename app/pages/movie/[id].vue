@@ -103,7 +103,7 @@
             <div class="flex-shrink-0">
               <div class="w-full md:w-80 aspect-[2/3] bg-theme-selection rounded-lg overflow-hidden border border-theme-border/50">
                 <img
-                  v-if="movie.imdbId.startsWith('tt')"
+                  v-if="movie.imdbId?.startsWith('tt')"
                   :src="`/posters/${movie.imdbId}.jpg`"
                   :alt="movie.title"
                   class="w-full h-full object-cover object-center"
@@ -441,7 +441,7 @@
                 {{ movie.metadata.Awards }}
               </p>
             </div>
-            <div v-if="movie.imdbId.startsWith('tt')">
+            <div v-if="movie.imdbId?.startsWith('tt')">
               <h3 class="movie-label">
                 IMDB
               </h3>
@@ -465,7 +465,7 @@
                 {{ movie.metadata.Awards }}
               </p>
             </div>
-            <div v-if="movie.imdbId.startsWith('tt')">
+            <div v-if="movie.imdbId?.startsWith('tt')">
               <h3 class="movie-label">
                 IMDB
               </h3>
