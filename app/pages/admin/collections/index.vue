@@ -1,26 +1,30 @@
 <template>
-  <div class="min-h-screen bg-theme-bg text-theme-text pb-12">
-    <MovieHeader />
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="min-h-screen bg-theme-background text-theme-text p-4 md:ml-16 transition-colors duration-300">
+    <main class="max-w-7xl mx-auto space-y-8">
       <div
         v-if="!isLocal"
-        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center"
+        class="flex flex-col items-center justify-center h-[60vh] text-center"
       >
-        <div class="i-mdi-lock text-4xl text-red-500 mx-auto mb-4" />
-        <h1 class="text-xl font-bold text-red-700 dark:text-red-400 mb-2">
+        <div class="i-mdi-lock text-64px text-gray-300 dark:text-gray-700 mb-4" />
+        <h1 class="text-2xl font-bold mb-2">
           Access Denied
         </h1>
         <p class="text-theme-textmuted">
-          Admin features are only available from localhost.
+          The admin interface is only available on localhost.
         </p>
+        <NuxtLink
+          to="/"
+          class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+        >
+          Back to Home
+        </NuxtLink>
       </div>
 
       <div
         v-else
-        class="space-y-8"
       >
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 class="text-3xl font-bold flex items-center gap-3">
               <div class="i-mdi-movie-edit text-blue-600" />
@@ -32,18 +36,20 @@
           </div>
           <NuxtLink
             to="/admin"
-            class="text-sm font-bold text-blue-600 hover:text-blue-500 flex items-center gap-1"
+            class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
           >
             <div class="i-mdi-arrow-left" />
             Back to Dashboard
           </NuxtLink>
-        </div>
+        </header>
 
-        <div class="bg-theme-surface border border-theme-border rounded-2xl p-6">
+        <!-- Collection Selector -->
+        <section class="bg-theme-surface border border-theme-border rounded-2xl p-6">
           <AdminCollectionSelector @select="selectedCollectionId = $event" />
-        </div>
+        </section>
 
-        <div
+        <!-- Collection Editor -->
+        <section
           v-if="selectedCollectionId"
           class="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
@@ -70,7 +76,7 @@
               :collection-id="selectedCollectionId"
             />
           </div>
-        </div>
+        </section>
       </div>
     </main>
   </div>
