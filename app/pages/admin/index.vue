@@ -80,12 +80,12 @@
             </button>
             <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              :disabled="loading"
+              :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
             >
               <div
                 class="i-mdi-refresh"
-                :class="{ 'animate-spin': loading }"
+                :class="{ 'animate-spin': refreshingStats }"
               />
               Refresh Stats
             </button>
@@ -103,6 +103,22 @@
               <div
                 class="h-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${(progress.sqlite.current / progress.sqlite.total) * 100}%` }"
+              />
+            </div>
+          </div>
+          <!-- Stats Refresh Progress -->
+          <div
+            v-if="progress.stats && progress.stats.status === 'in_progress'"
+            class="w-full max-w-md space-y-2"
+          >
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-theme-textmuted truncate mr-2">{{ progress.stats.message }}</span>
+              <span class="font-mono text-nowrap">{{ progress.stats.current }} / {{ progress.stats.total }}</span>
+            </div>
+            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
+              <div
+                class="h-full bg-green-500 transition-all duration-300"
+                :style="{ width: `${(progress.stats.current / progress.stats.total) * 100}%` }"
               />
             </div>
           </div>
@@ -366,6 +382,11 @@ const {
   omdbFailedPercent,
   postersFailedPercent
 } = storeToRefs(adminStore)
+
+// Computed property to check if stats are being refreshed
+const refreshingStats = computed(() => {
+  return progress.value.stats?.status === 'in_progress' || loading.value
+})
 
 // Clear results
 const clearResults = () => {

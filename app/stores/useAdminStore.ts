@@ -12,7 +12,7 @@ import type {
 } from '~/types/admin'
 
 export interface ProgressUpdate {
-  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai'
+  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai' | 'stats'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number
