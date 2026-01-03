@@ -1,7 +1,4 @@
-import { exec } from 'node:child_process'
-import { promisify } from 'node:util'
-
-const execPromise = promisify(exec)
+import { generateSQLite } from '../../../../scripts/generate-sqlite'
 
 export default defineEventHandler(async () => {
   try {
@@ -13,13 +10,16 @@ export default defineEventHandler(async () => {
       total: 100,
     })
 
-    // Run the generation script as a separate process
-    // This avoids issues with native bindings in the main Nitro process if any
-    const { stdout, stderr } = await execPromise('pnpm db:generate')
-
-    if (stderr && !stdout) {
-      throw new Error(stderr)
-    }
+    // Call the generation function directly with progress callback
+    await generateSQLite(progress => {
+      emitProgress({
+        type: 'sqlite',
+        status: 'in_progress',
+        current: progress.current,
+        total: progress.total,
+        message: progress.message,
+      })
+    })
 
     emitProgress({
       type: 'sqlite',
@@ -32,7 +32,6 @@ export default defineEventHandler(async () => {
     return {
       success: true,
       message: 'SQLite database generated successfully',
-      output: stdout,
     }
   } catch (error: unknown) {
     console.error('SQLite generation failed:', error)
