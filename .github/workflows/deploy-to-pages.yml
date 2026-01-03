@@ -1,0 +1,69 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate database
+        run: pnpm db:generate
+
+      - name: Generate static site
+        run: pnpm build
+
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: select/select.github.io
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: target-repo
+          fetch-depth: 0
+
+      - name: Copy content to movies folder
+        run: |
+          mkdir -p target-repo/movies
+          rm -rf target-repo/movies/*
+          rm -rf target-repo/movies/.[!.]*
+          cp -r .output/public/* target-repo/movies/
+
+      - name: Extract posters
+        run: pnpm tsx scripts/extract-posters.ts target-repo/movies/posters
+
+      - name: Commit and push changes
+        run: |
+          cd target-repo
+          git config user.name "GitHub Actions Bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Deploy movies deluxe - $(date +'%Y-%m-%d %H:%M:%S')"
+          git push origin master
