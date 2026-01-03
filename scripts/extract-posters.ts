@@ -1,36 +1,50 @@
 /**
  * Extract Posters Script
  *
- * Checks if public/posters directory is empty (or has only .gitkeep),
+ * Checks if target directory is empty (or has only .gitkeep),
  * and if so, extracts all poster images from data/posters-part*.tar.gz
- * archives into public/posters/ directory.
+ * archives into the specified directory.
+ *
+ * Usage:
+ *   pnpm tsx scripts/extract-posters.ts [output-path]
+ *
+ * Examples:
+ *   pnpm tsx scripts/extract-posters.ts                    # Extract to public/posters
+ *   pnpm tsx scripts/extract-posters.ts /tmp/posters       # Extract to /tmp/posters
+ *   pnpm tsx scripts/extract-posters.ts ./custom/path     # Extract to custom/path
  */
 
-import { join } from 'path'
-import { readdirSync, existsSync } from 'fs'
+import { join, resolve } from 'path'
+import { readdirSync, existsSync, mkdirSync } from 'fs'
 import { extract } from 'tar'
 import { createLogger } from '../server/utils/logger'
 import { glob } from 'glob'
 
 const logger = createLogger('PosterExtract')
-const POSTERS_DIR = join(process.cwd(), 'public/posters')
+
+// Get output path from command line argument or use default
+const customPath = process.argv[2]
+const POSTERS_DIR = customPath
+  ? resolve(process.cwd(), customPath)
+  : join(process.cwd(), 'public/posters')
 const DATA_DIR = join(process.cwd(), 'data')
 
 async function extractPosters() {
+  logger.info(`Target directory: ${POSTERS_DIR}`)
   logger.info('Checking posters directory...')
 
-  // Check if posters directory exists
+  // Create directory if it doesn't exist
   if (!existsSync(POSTERS_DIR)) {
-    logger.error('Posters directory does not exist:', POSTERS_DIR)
-    process.exit(1)
+    logger.info('Directory does not exist. Creating it...')
+    mkdirSync(POSTERS_DIR, { recursive: true })
   }
 
   // Check if directory is empty (ignoring .gitkeep)
   const files = readdirSync(POSTERS_DIR).filter(f => f !== '.gitkeep')
 
   if (files.length > 0) {
-    logger.info(`Posters directory already contains ${files.length} files. Skipping extraction.`)
-    logger.info('To force re-extraction, delete all files in public/posters/ (except .gitkeep)')
+    logger.info(`Directory already contains ${files.length} files. Skipping extraction.`)
+    logger.info(`To force re-extraction, delete all files in ${POSTERS_DIR} (except .gitkeep)`)
     return
   }
 
