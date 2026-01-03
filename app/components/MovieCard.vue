@@ -83,6 +83,16 @@
           {{ movieCollections.length }}
         </span>
       </div>
+
+      <!-- Verified Badge -->
+      <div
+        v-if="isVerified"
+        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full bg-green-600 flex items-center justify-center z-10"
+        :class="{ 'ml-8': isMovieLiked, 'ml-16': isMovieLiked && movieCollections.length > 0, 'ml-8': !isMovieLiked && movieCollections.length > 0 }"
+        title="Verified Source"
+      >
+        <div class="i-mdi-check-circle text-white text-lg" />
+      </div>
     </div>
 
     <!-- Movie Info -->
@@ -156,6 +166,12 @@ const hasImdbId = computed(() => props.movie.imdbId?.startsWith('tt') ?? false)
 
 // Check if movie is liked
 const isMovieLiked = computed(() => props.movie.imdbId ? isLikedFn(props.movie.imdbId) : false)
+
+// Check if movie is verified
+const isVerified = computed(() => {
+  if ('verified' in props.movie) return props.movie.verified
+  return false
+})
 
 // Fetch collections for this movie from database
 onMounted(async () => {
