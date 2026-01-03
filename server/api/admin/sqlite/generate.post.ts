@@ -1,4 +1,4 @@
-import { generateSQLite } from '../../../../scripts/generate-sqlite'
+import { generateSQLite } from '../../../utils/generateSQLite'
 
 export default defineEventHandler(async () => {
   try {
@@ -10,7 +10,7 @@ export default defineEventHandler(async () => {
       total: 100,
     })
 
-    // Call the generation function directly with progress callback
+    // Call the generation function with progress callback
     await generateSQLite(progress => {
       emitProgress({
         type: 'sqlite',
