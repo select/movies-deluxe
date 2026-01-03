@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-03T19:00:00.000Z"
+    "lastUpdated": "2026-01-03T20:49:25.184Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -53,10 +53,14 @@
       "tt0079944",
       "tt0060827",
       "tt0048424",
-      "tt0051808"
+      "tt0051808",
+      "tt0071411",
+      "tt0057565",
+      "tt0100998",
+      "tt0080979"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-02T22:52:59.482Z"
+    "updatedAt": "2026-01-03T20:49:25.184Z"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -1494,5 +1498,13 @@
     ],
     "createdAt": "2026-01-03T19:00:00.000Z",
     "updatedAt": "2026-01-03T19:00:00.000Z"
+  },
+  "akira-kurosawa": {
+    "id": "akira-kurosawa",
+    "name": "Akira Kurosawa",
+    "description": "Masterful films directed by Akira Kurosawa, one of cinema's greatest filmmakers, known for his epic samurai films and profound human dramas.",
+    "movieIds": [],
+    "createdAt": "2026-01-03T20:30:00.000Z",
+    "updatedAt": "2026-01-03T20:30:00.000Z"
   }
 }
