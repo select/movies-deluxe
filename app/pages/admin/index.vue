@@ -300,6 +300,8 @@
               :loading="scraping"
               @start="adminStore.startPosterDownload"
             />
+
+            <AdminPosterArchiver />
 	          <!-- Data Cleanup Section -->
 	          <div>
 	            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
