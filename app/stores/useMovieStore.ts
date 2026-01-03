@@ -266,6 +266,7 @@ export const useMovieStore = defineStore('movie', () => {
         Language: row.language as string | undefined,
         Country: row.country as string | undefined,
       },
+      verified: row.verified as boolean | undefined,
     }
   }
 
