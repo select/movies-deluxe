@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.0.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-03T20:49:25.184Z"
+    "lastUpdated": "2026-01-03T20:53:18.150Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1503,8 +1503,27 @@
     "id": "akira-kurosawa",
     "name": "Akira Kurosawa",
     "description": "Masterful films directed by Akira Kurosawa, one of cinema's greatest filmmakers, known for his epic samurai films and profound human dramas.",
-    "movieIds": [],
+    "movieIds": [
+      "tt0071411",
+      "tt0100998",
+      "tt0057565",
+      "tt0080979",
+      "tt0039090",
+      "tt0039871",
+      "tt0058888",
+      "tt0056443",
+      "tt0036400",
+      "tt0038268",
+      "tt0042958",
+      "tt0041699",
+      "tt0051808",
+      "tt0043614",
+      "tt0050330",
+      "tt0036947",
+      "tt0050613",
+      "tt0055630"
+    ],
     "createdAt": "2026-01-03T20:30:00.000Z",
-    "updatedAt": "2026-01-03T20:30:00.000Z"
+    "updatedAt": "2026-01-03T20:53:18.150Z"
   }
 }
