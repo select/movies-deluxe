@@ -4,34 +4,11 @@ A Nuxt application for discovering and managing free legal movie streams.
 
 ## Gallery
 
-<table>
-  <tr>
-    <td width="15%">
-      <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-movie.png?raw=true" alt="Movie Detail View" />
-      <p align="center"><em>Movie Detail View</em></p>
-    </td>
-    <td width="15%">
-      <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-filters.png?raw=true" alt="Advanced Filters" />
-      <p align="center"><em>Advanced Filters</em></p>
-    </td>
-    <td width="15%">
-      <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-collections.png?raw=true" alt="Curated Collections" />
-      <p align="center"><em>Curated Collections</em></p>
-    </td>
-    <td width="15%">
-      <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-liked.png?raw=true" alt="Liked Movies" />
-      <p align="center"><em>Liked Movies</em></p>
-    </td>
-    <td width="15%">
-      <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-themes.png?raw=true" alt="Theme Options" />
-      <p align="center"><em>Theme Options</em></p>
-    </td>
-    <td width="15%">
-      <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-mobile.png?raw=true" alt="Mobile View" />
-      <p align="center"><em>Mobile View</em></p>
-    </td>
-  </tr>
-</table>
+<img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-collections.png?raw=true" alt="Curated Collections" width="60%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-liked.png?raw=true" alt="Liked Movies" width="16%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-movie.png?raw=true" alt="Movie View" width="18%" />
+
+Filter, Sort, and Theme
+
+<img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-filters.png?raw=true" alt="Advanced Filters" width="25%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-themes.png?raw=true" alt="Theme Options" width="25%" />
 
 ## About
 
@@ -39,8 +16,22 @@ I dreamt about his project for while, but it always flet too big, finally this C
 
 ## Tech Stack
 
-This project is built with [Nuxt 4](https://nuxt.com/), [UnoCSS](https://unocss.dev/), [VueUse](https://vueuse.org/), and [Pinia](https://pinia.vuejs.org/). The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an **in-browser SQLite database** via [WebAssembly](https://github.com/sql-js/sql.js), enabling offline-capable search functionality directly in the user's browser, next to static files.
-Data is collected via multiple APIs (Archive.org, YouTube, OMDB) as well as with the help of a local LLM (using Ollama). The curation of the data is done with various smaller algorithms and with the admin UI of this project.
+This project is built with
+
+- [Nuxt 4](https://nuxt.com/),
+- [UnoCSS](https://unocss.dev/),
+- [VueUse](https://vueuse.org/), and
+- [Pinia](https://pinia.vuejs.org/).
+
+The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an **in-browser SQLite database** via [WebAssembly](https://github.com/sql-js/sql.js), enabling offline-capable search functionality directly in the user's browser, next to static files.
+
+Data is collected via multiple APIs
+
+- [Archive.org](https://archive.org/),
+- [YouTube](https://www.youtube.com/),
+- [OMDB](https://www.omdbapi.com/))
+
+as well as with the help of a local LLM (using [Ollama](https://ollama.com/)). The curation of the data is done with various smaller algorithms and with the admin UI of this project.
 
 ## Setup
 
