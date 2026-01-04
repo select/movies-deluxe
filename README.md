@@ -2,8 +2,6 @@
 
 A Nuxt application for discovering and managing free legal movie streams.
 
-## Gallery
-
 <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-collections.png?raw=true" alt="Curated Collections" width="60%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-liked.png?raw=true" alt="Liked Movies" width="16%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-movie.png?raw=true" alt="Movie View" width="18%" />
 
 Filter, Sort, and Theme
@@ -12,7 +10,7 @@ Filter, Sort, and Theme
 
 ## About
 
-I dreamt about his project for while, but it always flet too big, finally this Christmas break 2025 I took the curage to start it. I heavily relied on agentic development and created most of the project in under 2 weeks (check the git history) using [OpenCode](https://opencode.ai/) (with [Sonnet 4.5](https://aws.amazon.com/bedrock/anthropic/) and [Gemini 3 Flash](https://deepmind.google/models/gemini/flash/) and the [beads tracker](https://github.com/steveyegge/beads)). With this huge [amount of data](./public/data/stats.json) (31,477 movies) the curation and linking to the correct metadata is not easy and there are many wrong matches and "bad" entries like trailers and clips. Over time I will implement more data curation strategies, so please be patient.
+I dreamt about his project for while, but it flet too big to start. Finally this Christmas break 2025 I took the curage and started. I heavily relied on agentic development (as an additional learning goal) and created the project in under 2 weeks (check the git history) using [OpenCode](https://opencode.ai/) (with [Sonnet 4.5](https://aws.amazon.com/bedrock/anthropic/) and [Gemini 3 Flash](https://deepmind.google/models/gemini/flash/) and the [beads tracker](https://github.com/steveyegge/beads)). With this huge [amount of data](./public/data/stats.json) (31,477 movies) the curation and linking to the correct metadata is not easy and there are many wrong matches and "bad" entries like trailers and clips. Over time I will implement more data curation strategies, so please be patient.
 
 ## Tech Stack
 
@@ -23,15 +21,17 @@ This project is built with
 - [VueUse](https://vueuse.org/), and
 - [Pinia](https://pinia.vuejs.org/).
 
-The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an **in-browser SQLite database** via [WebAssembly](https://github.com/sql-js/sql.js), enabling offline-capable search functionality directly in the user's browser, next to static files.
+The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an [in-browser SQLite database](https://github.com/sql-js/sql.js) via WebAssembly, enabling offline-capable search functionality directly in the user's browser, next to static files.
 
 Data is collected via multiple APIs
 
 - [Archive.org](https://archive.org/),
 - [YouTube](https://www.youtube.com/),
-- [OMDB](https://www.omdbapi.com/))
+- [OMDB](https://www.omdbapi.com/)
 
-as well as with the help of a local LLM (using [Ollama](https://ollama.com/)). The curation of the data is done with various smaller algorithms and with the admin UI of this project.
+as well as with the help of a local LLM (using [Ollama](https://ollama.com/)). The curation of the data is done with various regexes, small algorithms and manually via the admin UI of this project.
+
+<img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-curation.png?raw=true" alt="Movie View" width="20%" />
 
 ## Setup
 
