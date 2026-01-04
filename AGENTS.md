@@ -128,6 +128,7 @@ pnpm db:generate            # Generate SQLite from movies.json
 
 - ✅ Present tense, imperative mood: "add feature" not "added feature"
 - ✅ Be specific, reference issues in footer: `Closes #123`
+- body's lines must not be longer than 120 characters
 - ❌ No past tense, vague descriptions, capitalized subject, or trailing period
 
 **Examples**:
