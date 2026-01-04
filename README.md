@@ -47,9 +47,7 @@ pnpm posters:extract
 
 The admin features require API keys for various services. See the [API Keys Setup Guide](./docs/api-keys.md) for detailed configuration instructions.
 
-## Configuration
-
-### Project Structure
+## Project Structure
 
 ```
 movies-deluxe/
@@ -91,29 +89,10 @@ movies-deluxe/
     └── utils/              # Shared utility functions
 ```
 
-### YouTube Channels
-
-Edit `config/youtube-channels.json` to configure which YouTube channels to scrape:
-
-```json
-{
-  "channels": [
-    {
-      "id": "UCxKJ3RQQYlDmI8JLpt5HvWg",
-      "name": "FilmRise Movies",
-      "enabled": true,
-      "language": "en"
-    }
-  ]
-}
-```
-
 ## Admin Dashboard
 
-The application includes an admin dashboard at `/admin` for managing movie data:
-
-### Data Collection
-
 The admin dashboard started of as individual scripts that were migrated to server API endpoints. Progress is reported via [SSE](https://en.wikipedia.org/wiki/Server-sent_events) in real time since the actions can take from minutes to multiple days.
+
+The dashboard can only be reached on `localhost` at `/admin`.
 
 <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-admin-stats.png?raw=true" alt="Admin Statistics" width="20%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-admin-scrape.png?raw=true" alt="Admin Scrape" width="20%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-admin-collection.png?raw=true" alt="Admin Collection Manager" width="20%" />
