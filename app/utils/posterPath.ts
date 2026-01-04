@@ -13,11 +13,7 @@
 export function getPosterPath(imdbId: string): string {
   // Get base URL from Nuxt config (e.g., '/movies/' for GitHub Pages)
   const config = useRuntimeConfig()
-  const baseURL = config.app.baseURL || '/'
 
   // Construct poster path
-  const posterPath = `/posters/${imdbId}.jpg`
-
-  // Return full path with base URL
-  return baseURL === '/' ? posterPath : `${baseURL}${posterPath.slice(1)}`
+  return `${config.app.baseURL}posters/${imdbId}.jpg`
 }
