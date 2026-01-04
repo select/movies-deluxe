@@ -29,7 +29,10 @@
             </p>
           </div>
           <div class="flex flex-col items-start md:items-end gap-2">
-            <div class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm">
+            <div
+              v-if="collection?.movieIds"
+              class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm"
+            >
               {{ collection.movieIds.length }} movies
             </div>
             <div
@@ -54,10 +57,10 @@
       </div>
 
       <!-- Movies Grid -->
-      <template v-else-if="filteredMovies.length > 0">
+      <template v-else-if="filteredMovies && filteredMovies.length > 0">
         <MovieVirtualGrid
           :movies="filteredMovies"
-          :total-movies="collection.movieIds.length"
+          :total-movies="collection?.movieIds?.length || 0"
         />
       </template>
 
@@ -93,6 +96,9 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeRouteLeave } from 'vue-router'
+import { useWindowScroll, useStorage } from '@vueuse/core'
+
 const route = useRoute()
 const movieStore = useMovieStore()
 const collectionsStore = useCollectionsStore()
@@ -104,6 +110,10 @@ const { getCollectionById } = collectionsStore
 const collection = ref<Collection | null>(null)
 const movies = ref<MovieEntry[]>([])
 const isLoading = ref(true)
+
+// Track window scroll position
+const { y: windowScrollY } = useWindowScroll()
+const scrollPositions = useStorage<Record<string, number>>('movies-deluxe-collection-scroll', {})
 
 const filteredMovies = computed(() => {
   return applyFilters(movies.value)
@@ -117,13 +127,24 @@ onMounted(async () => {
   try {
     // Initialize database first
     await loadFromFile()
-    
+
     // Get collection from cache (loads if not loaded yet)
     collection.value = await getCollectionById(id)
-    
+
     // Fetch movies using movie store (which uses embedded collection data)
     if (collection.value?.movieIds && collection.value.movieIds.length > 0) {
       movies.value = await fetchMoviesByIds(collection.value.movieIds)
+    }
+
+    // Restore scroll position
+    await nextTick()
+    await nextTick()
+
+    const savedScrollY = scrollPositions.value[id]
+    if (savedScrollY && savedScrollY > 0) {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: savedScrollY, behavior: 'instant' })
+      })
     }
   } catch {
     // Error loading collection - handled silently
@@ -132,10 +153,21 @@ onMounted(async () => {
   }
 })
 
+// Save scroll position before leaving
+onBeforeRouteLeave(() => {
+  const id = route.params.id as string
+  if (id) {
+    scrollPositions.value[id] = windowScrollY.value
+  }
+})
+
 useHead({
   title: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
   meta: [
-    { name: 'description', content: computed(() => collection.value?.description || 'Movie collection.') }
-  ]
+    {
+      name: 'description',
+      content: computed(() => collection.value?.description || 'Movie collection.'),
+    },
+  ],
 })
 </script>
