@@ -2,6 +2,8 @@
 
 A Nuxt application for discovering and managing free legal movie streams.
 
+Visit [Movies Deluxe](https://select.github.io/movies/)
+
 <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-collections.png?raw=true" alt="Curated Collections" width="60%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-liked.png?raw=true" alt="Liked Movies" width="16%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-movie.png?raw=true" alt="Movie View" width="18%" />
 
 Filter, Sort, and Theme
@@ -30,8 +32,6 @@ Data is collected via multiple APIs
 - [OMDB](https://www.omdbapi.com/)
 
 as well as with the help of a local LLM (using [Ollama](https://ollama.com/)). The curation of the data is done with various regexes, small algorithms and manually via the admin UI of this project.
-
-<img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-curation.png?raw=true" alt="Movie View" width="20%" />
 
 ## Setup
 
@@ -114,17 +114,6 @@ The application includes an admin dashboard at `/admin` for managing movie data:
 
 ### Data Collection
 
-- **Archive.org Scraper**: Scrape movies from Archive.org's feature films collection
-- **YouTube Scraper**: Scrape movies from configured YouTube channels
-- **Scraping Stats**: View scraping progress and statistics
+The admin dashboard started of as individual scripts that were migrated to server API endpoints. Progress is reported via [SSE](https://en.wikipedia.org/wiki/Server-sent_events) in real time since the actions can take from minutes to multiple days.
 
-### Data Processing
-
-- **OMDB Enrichment**: Enrich movie metadata with ratings, plot, cast, etc.
-- **Poster Download**: Download and cache movie posters locally
-
-### Database
-
-- **SQLite Generation**: Generate SQLite database from movies.json for offline use
-
-All operations include progress tracking and detailed logging.
+<img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-admin-stats.png?raw=true" alt="Admin Statistics" width="20%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-admin-scrape.png?raw=true" alt="Admin Scrape" width="20%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-admin-collection.png?raw=true" alt="Admin Collection Manager" width="20%" />
