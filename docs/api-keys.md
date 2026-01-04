@@ -16,7 +16,7 @@ YOUTUBE_API_KEY=your_youtube_api_key_here
 GOOGLE_SEARCH_CX=your_search_engine_id_here
 ```
 
-## YouTube Data API v3 (Required)
+## YouTube Data API v3
 
 Required for scraping movies from YouTube channels.
 
@@ -30,7 +30,7 @@ Required for scraping movies from YouTube channels.
 
 See [YouTube Data API Integration Guide](./youtube-data-api-integration.md) for detailed setup.
 
-## OMDB API (Optional)
+## OMDB API
 
 Used for enriching movie metadata with ratings, plot summaries, cast information, and posters.
 
@@ -47,7 +47,7 @@ Used for enriching movie metadata with ratings, plot summaries, cast information
 - Download high-quality movie posters
 - Automatic rate limiting to respect API limits
 
-## Google Custom Search API (Optional)
+## Google Custom Search API
 
 Used for IMDb curation and movie search functionality.
 
