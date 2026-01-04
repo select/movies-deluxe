@@ -104,7 +104,7 @@
               <div class="w-full md:w-80 aspect-[2/3] bg-theme-selection rounded-lg overflow-hidden border border-theme-border/50">
                 <img
                   v-if="movie.imdbId?.startsWith('tt')"
-                  :src="`/posters/${movie.imdbId}.jpg`"
+                  :src="getPosterPath(movie.imdbId)"
                   :alt="movie.title"
                   class="w-full h-full object-cover object-center"
                   @error="handlePosterError"

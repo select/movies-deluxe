@@ -16,7 +16,7 @@
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
         v-if="hasImdbId"
-        :src="`/posters/${movie.imdbId}.jpg`"
+        :src="getPosterPath(movie.imdbId!)"
         :alt="movie.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
         :class="{ 'opacity-0': !imageLoaded, 'opacity-100': imageLoaded }"
