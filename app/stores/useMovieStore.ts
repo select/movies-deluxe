@@ -282,8 +282,13 @@ export const useMovieStore = defineStore('movie', () => {
     isLoading.value.movies = true
 
     try {
+      // Get base URL from Nuxt config (e.g., '/movies/' for GitHub Pages)
+      const config = useRuntimeConfig()
+      const baseURL = config.app.baseURL || '/'
+      const dbPath = baseURL === '/' ? '/data/movies.db' : `${baseURL}data/movies.db`
+
       // Initialize database from remote file
-      await db.init('/data/movies.db')
+      await db.init(dbPath)
 
       isInitialLoading.value = false
     } catch (err) {
