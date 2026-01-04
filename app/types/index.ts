@@ -128,7 +128,7 @@ export interface LoadingState {
  * const posterStatus: PosterStatus = {
  *   hasLocal: true,
  *   hasOmdb: false,
- *   url: '/posters/tt1234567.jpg'
+ *   url: getPosterPath('tt1234567')
  * }
  * ```
  */

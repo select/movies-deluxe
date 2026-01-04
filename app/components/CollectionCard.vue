@@ -106,7 +106,7 @@ const posters = computed(() => {
     const movieId = previewMovieIds[i]
     if (movieId) {
       // Construct poster URL directly from IMDb ID
-      posterUrls.push(`/posters/${movieId}.jpg`)
+      posterUrls.push(getPosterPath(movieId))
     } else {
       posterUrls.push(null)
     }

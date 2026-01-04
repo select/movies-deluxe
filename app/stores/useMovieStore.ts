@@ -1027,7 +1027,7 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     try {
-      const response = await fetch(`/posters/${imdbId}.jpg`, { method: 'HEAD' })
+      const response = await fetch(getPosterPath(imdbId), { method: 'HEAD' })
       const exists = response.ok
       posterCache.value.set(imdbId, exists)
       return exists
@@ -1047,7 +1047,7 @@ export const useMovieStore = defineStore('movie', () => {
 
     const hasLocal = await posterExists(movie.imdbId)
     if (hasLocal) {
-      return `/posters/${movie.imdbId}.jpg`
+      return getPosterPath(movie.imdbId)
     }
 
     const omdbPoster = movie.metadata?.Poster
@@ -1067,7 +1067,7 @@ export const useMovieStore = defineStore('movie', () => {
     if (!movie.imdbId) return placeholder
 
     if (preferLocal) {
-      return `/posters/${movie.imdbId}.jpg`
+      return getPosterPath(movie.imdbId)
     }
 
     const omdbPoster = movie.metadata?.Poster

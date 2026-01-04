@@ -19,7 +19,7 @@
         <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
           <img
             v-if="movie.imdbId?.startsWith('tt')"
-            :src="`/posters/${movie.imdbId}.jpg`"
+            :src="getPosterPath(movie.imdbId)"
             :alt="movie.title"
             class="w-full h-full object-cover"
             @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
