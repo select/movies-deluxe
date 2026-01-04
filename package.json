@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "build:prod": "NUXT_APP_BASE_URL=/movies/ nuxt generate --preset github_pages",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare && tsx scripts/copy-sqlite-wasm.ts",

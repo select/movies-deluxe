@@ -33,7 +33,7 @@ jobs:
         run: pnpm db:generate
 
       - name: Generate static site
-        run: pnpm generate
+        run: pnpm build:prod
 
       - name: Checkout target repository
         uses: actions/checkout@v4
