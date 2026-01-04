@@ -55,7 +55,10 @@
 
       <!-- Movies Grid -->
       <template v-else-if="filteredMovies.length > 0">
-        <MovieGrid :movies="filteredMovies" />
+        <MovieVirtualGrid
+          :movies="filteredMovies"
+          :total-movies="collection.movieIds.length"
+        />
       </template>
 
       <!-- Empty State / No Results -->
