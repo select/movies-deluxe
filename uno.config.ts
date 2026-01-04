@@ -8,6 +8,12 @@ import {
 } from 'unocss'
 import presetWind from '@unocss/preset-wind4'
 import presetWebFonts from '@unocss/preset-web-fonts'
+import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local'
+import { readFileSync } from 'node:fs'
+
+const logoSvg = readFileSync('./app/assets/logo.svg', 'utf-8')
+  .replace(/^<\?xml.*?\?>\s*/, '')
+  .replace(/<svg/, '<svg fill="currentColor"')
 
 export default defineConfig({
   presets: [
@@ -21,16 +27,26 @@ export default defineConfig({
         carbon: () => import('@iconify-json/carbon/icons.json').then(i => i.default),
         'material-symbols-light': () =>
           import('@iconify-json/material-symbols-light/icons.json').then(i => i.default),
+        app: {
+          logo: logoSvg,
+        },
       },
     }),
     presetTypography(),
     presetWebFonts({
-      provider: 'google',
+      provider: 'none',
       fonts: {
         sans: 'Ubuntu:300,400,500,700',
         mono: 'Ubuntu Mono',
-        imperial: 'Imperial Script',
       },
+      processors: createLocalFontProcessor({
+        // Directory to cache the fonts
+        cacheDir: 'node_modules/.cache/unocss/fonts',
+        // Directory to save the fonts assets
+        fontAssetsDir: 'public/fonts',
+        // Base URL to serve the fonts from the client
+        fontServeBaseUrl: '/fonts',
+      }),
     }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],

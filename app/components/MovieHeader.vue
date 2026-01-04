@@ -1,22 +1,20 @@
 <template>
   <header class="transition-all duration-300">
     <div
-    class="md:ml-16 max-w-none mx-auto px-4  flex lg:flex-row flex-col md:items-baseline justify-between gap-8"
+    class="md:ml-16 max-w-none mx-auto px-4 flex lg:flex-row flex-col lg:items-end justify-between gap-8"
       :class="{
 	      'py-6 md:py-10 lg:px-[6%]': isHeroPage,
 	      'py-3': !isHeroPage
 	     }"
     >
-      <NuxtLink to="/">
-        <h1
-          class=" text-nowrap font-imperial text-theme-text transition-all duration-300"
+      <NuxtLink to="/" class="grow">
+        <div
+          class="w-full i-app-logo text-theme-text transition-all duration-300"
           :class="{
-            'text-6xl md:text-7xl lg:text-8xl': isHeroPage,
-            'text-5xl md:text-6xl': !isHeroPage
+            ' max-w-md h-16': isHeroPage,
+            'max-w-xs h-12': !isHeroPage
           }"
-        >
-          Movies Deluxe
-        </h1>
+        />
       </NuxtLink>
       <p
         v-if="isHeroPage"
