@@ -8,9 +8,9 @@
           />
         </div>
 
-        <div class="relative">
+        <div class="relative lg:px-[6%] px-4 ">
           <template v-if="isInitialLoading || isFiltering">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4 lg:px-[6%]">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ">
               <MovieCardSkeleton
                 v-for="i in 12"
                 :key="i"

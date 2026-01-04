@@ -14,7 +14,7 @@
         v-for="row in visibleRows"
         :key="row.index"
         :ref="row.index === 0 ? (el) => firstRowRef = el as HTMLElement : undefined"
-        class="grid gap-4 px-4 lg:px-[6%] mb-4"
+        class="grid gap-4 mb-4"
         :class="gridClass"
       >
         <MovieCard
