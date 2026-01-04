@@ -282,13 +282,8 @@ export const useMovieStore = defineStore('movie', () => {
     isLoading.value.movies = true
 
     try {
-      // Get base URL from Nuxt config (e.g., '/movies/' for GitHub Pages)
-      const config = useRuntimeConfig()
-      const baseURL = config.app.baseURL || '/'
-      const dbPath = baseURL === '/' ? '/data/movies.db' : `${baseURL}data/movies.db`
-
       // Initialize database from remote file
-      await db.init(dbPath)
+      await db.init(`${useRuntimeConfig().app.baseURL}data/movies.db`)
 
       isInitialLoading.value = false
     } catch (err) {
@@ -455,7 +450,9 @@ export const useMovieStore = defineStore('movie', () => {
     // Fetch full details from JSON file (static deployment)
     isLoading.value.movieDetails = true
     try {
-      const movie = await $fetch<MovieEntry>(`/movies/${imdbId}.json`)
+      const movie = await $fetch<MovieEntry>(
+        `${useRuntimeConfig().app.baseURL}movies/${imdbId}.json`
+      )
       // Validate that we got a proper movie object (not HTML or malformed data)
       if (movie && typeof movie === 'object' && movie.imdbId && movie.title) {
         movieDetailsCache.value.set(imdbId, movie)
@@ -479,7 +476,9 @@ export const useMovieStore = defineStore('movie', () => {
   const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
     try {
       // Fetch movie details directly from JSON file to get related movie IDs
-      const movie = await $fetch<MovieEntry>(`/movies/${movieId}.json`)
+      const movie = await $fetch<MovieEntry>(
+        `${useRuntimeConfig().app.baseURL}movies/${movieId}.json`
+      )
 
       if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
         return []
