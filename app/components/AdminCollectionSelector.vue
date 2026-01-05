@@ -324,18 +324,41 @@ const closeModal = () => {
 const saveCollection = async () => {
   isSaving.value = true
   try {
-    const endpoint = editingCollection.value
-      ? '/api/admin/collections/update'
-      : '/api/admin/collections/create'
+    if (editingCollection.value) {
+      // Use unified update endpoint
+      const response = await $fetch<{ success: boolean; collection: Collection }>(
+        '/api/admin/collections/update-collection',
+        {
+          method: 'POST',
+          body: {
+            collectionId: form.id,
+            updates: {
+              name: form.name,
+              description: form.description,
+              tags: { action: 'set', values: form.tags },
+            },
+          },
+        }
+      )
 
-    const response = await $fetch<{ success: boolean; collection: Collection }>(endpoint, {
-      method: 'POST',
-      body: form,
-    })
+      if (response.success) {
+        await collectionsStore.loadCollections()
+        closeModal()
+      }
+    } else {
+      // Create new collection
+      const response = await $fetch<{ success: boolean; collection: Collection }>(
+        '/api/admin/collections/create',
+        {
+          method: 'POST',
+          body: form,
+        }
+      )
 
-    if (response.success) {
-      await collectionsStore.loadCollections()
-      closeModal()
+      if (response.success) {
+        await collectionsStore.loadCollections()
+        closeModal()
+      }
     }
   } catch {
     // Error handled by store
