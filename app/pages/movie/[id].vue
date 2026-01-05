@@ -2,15 +2,6 @@
   <div>
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8 md:ml-16">
-    <!-- Back Button -->
-    <NuxtLink
-      to="/"
-      class="inline-flex items-center gap-2 mb-6 p-2 px-4 rounded-full bg-theme-surface hover:bg-theme-selection transition-colors border border-theme-border/50 text-theme-text"
-      aria-label="Back to movies"
-    >
-      <div class="i-mdi-arrow-left text-xl" />
-      <span class="text-sm font-medium">Back to movies</span>
-    </NuxtLink>
         <!-- Loading State - Skeleton -->
         <div
           v-if="isLoading"
