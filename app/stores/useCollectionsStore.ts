@@ -94,10 +94,18 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const addQueryToCollection = async (collectionId: string, query: SavedQuery) => {
     try {
-      const response = await $fetch<{ success: boolean }>('/api/admin/collections/add-query', {
-        method: 'POST',
-        body: { collectionId, query },
-      })
+      const response = await $fetch<{ success: boolean }>(
+        '/api/admin/collections/update-collection',
+        {
+          method: 'POST',
+          body: {
+            collectionId,
+            updates: {
+              queries: { action: 'add', query },
+            },
+          },
+        }
+      )
       if (response.success) {
         isLoaded.value = false
         await loadCollections()
@@ -110,10 +118,18 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const removeQueryFromCollection = async (collectionId: string, queryIndex: number) => {
     try {
-      const response = await $fetch<{ success: boolean }>('/api/admin/collections/remove-query', {
-        method: 'POST',
-        body: { collectionId, queryIndex },
-      })
+      const response = await $fetch<{ success: boolean }>(
+        '/api/admin/collections/update-collection',
+        {
+          method: 'POST',
+          body: {
+            collectionId,
+            updates: {
+              queries: { action: 'remove', index: queryIndex },
+            },
+          },
+        }
+      )
       if (response.success) {
         isLoaded.value = false
         await loadCollections()
@@ -126,10 +142,18 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const updateCollectionTags = async (collectionId: string, tags: string[]) => {
     try {
-      const response = await $fetch<{ success: boolean }>('/api/admin/collections/update-tags', {
-        method: 'POST',
-        body: { collectionId, tags },
-      })
+      const response = await $fetch<{ success: boolean }>(
+        '/api/admin/collections/update-collection',
+        {
+          method: 'POST',
+          body: {
+            collectionId,
+            updates: {
+              tags: { action: 'set', values: tags },
+            },
+          },
+        }
+      )
       if (response.success) {
         isLoaded.value = false
         await loadCollections()
