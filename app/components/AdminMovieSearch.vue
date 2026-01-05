@@ -8,6 +8,7 @@
           <div class="i-mdi-magnify text-xl" />
         </div>
         <input
+          ref="searchInput"
           v-model="searchQuery"
           type="text"
           placeholder="Search by title, director, writer, plot or IMDb ID..."
@@ -164,6 +165,8 @@
 </template>
 
 <script setup lang="ts">
+import { useDebounceFn, onKeyStroke } from '@vueuse/core'
+
 const props = defineProps<{
   collectionId: string
 }>()
@@ -178,11 +181,25 @@ const { filters, activeFiltersCount, hasActiveFilters } = storeToRefs(movieStore
 const { resetFilters } = movieStore
 const uiStore = useUiStore()
 
+const searchInput = ref<HTMLInputElement | null>(null)
 const searchQuery = ref('')
 const results = ref<MovieEntry[]>([])
 const isLoading = ref(false)
 const isAdding = ref('')
 const showFilters = ref(false)
+
+// Local shortcut to focus search
+onKeyStroke('/', (e) => {
+  const activeElement = window.document.activeElement
+  const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+  
+  // Always prevent default to avoid triggering global search
+  e.preventDefault()
+  
+  if (!isTyping) {
+    searchInput.value?.focus()
+  }
+})
 
 // Sync searchQuery with store
 watch(searchQuery, newVal => {
@@ -199,19 +216,12 @@ watch(
   }
 )
 
-let debounceTimeout: NodeJS.Timeout
-
-const onInput = () => {
-  clearTimeout(debounceTimeout)
+const performSearch = async () => {
   if (searchQuery.value.length < 3) {
     results.value = []
     return
   }
 
-  debounceTimeout = setTimeout(performSearch, 300)
-}
-
-const performSearch = async () => {
   isLoading.value = true
   try {
     const data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
@@ -223,6 +233,12 @@ const performSearch = async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+const debouncedSearch = useDebounceFn(performSearch, 300)
+
+const onInput = () => {
+  debouncedSearch()
 }
 
 const isInCollection = (movieId: string) => {
