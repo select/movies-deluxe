@@ -83,6 +83,7 @@ export type {
   // Collection types
   Collection,
   CollectionsDatabase,
+  SavedQuery,
 
   // Filter types
   Genre,
@@ -99,7 +100,6 @@ export type {
   SortOption,
   SortState,
   FilterState,
-  SavedQuery,
 }
 
 // Re-export utility functions

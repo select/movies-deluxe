@@ -41,6 +41,7 @@
             <div class="flex flex-wrap gap-2">
               <!-- Sort -->
               <div
+                v-if="query.filterState.sort"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
                 <div class="i-mdi-sort" />
@@ -131,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SavedQuery } from '~/types'
+// SavedQuery and SavedQueryFilterState are auto-imported from shared/types/
 
 const props = defineProps<{
   collectionId: string
@@ -145,9 +146,16 @@ const { filters } = storeToRefs(movieStore)
 const isRefreshing = ref(false)
 
 const saveCurrentQuery = async () => {
+  // Default values to compare against
+  const DEFAULT_SORT = { field: 'year', direction: 'desc' }
+  
+  // Only include sort if it's not the default
+  const isDefaultSort = filters.value.sort.field === DEFAULT_SORT.field 
+    && filters.value.sort.direction === DEFAULT_SORT.direction
+  
   // Create a clean FilterState without frontend-only fields
-  const filterState = {
-    sort: { ...filters.value.sort },
+  const filterState: SavedQueryFilterState = {
+    ...(isDefaultSort ? {} : { sort: { ...filters.value.sort } }),
     sources: [...filters.value.sources],
     minRating: filters.value.minRating,
     minYear: filters.value.minYear,
@@ -177,8 +185,17 @@ const removeQuery = async (index: number) => {
 
 const applyQuery = (query: SavedQuery) => {
   movieStore.resetFilters()
-  movieStore.setSearchQuery(query.searchQuery)
-  movieStore.setSort(query.filterState.sort)
+  
+  // Restore search query from the saved query
+  if (query.searchQuery) {
+    movieStore.setSearchQuery(query.searchQuery)
+  }
+  
+  // Apply sort if it was saved (otherwise use default)
+  if (query.filterState.sort) {
+    movieStore.setSort(query.filterState.sort)
+  }
+  
   movieStore.setMinRating(query.filterState.minRating)
   movieStore.setMinYear(query.filterState.minYear)
   if (query.filterState.maxYear) movieStore.setMaxYear(query.filterState.maxYear)
