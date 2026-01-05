@@ -1,12 +1,12 @@
 import { querySqlite } from './sqlite'
-import type { FilterState } from '../../shared/types/filters'
+import type { SavedQueryFilterState } from '../../shared/types/collections'
 
 /**
  * Execute a saved query against the movie database and return matching IMDB IDs
  */
 export async function executeSavedQuery(
   searchQuery: string,
-  filterState: FilterState
+  filterState: SavedQueryFilterState
 ): Promise<string[]> {
   const params: unknown[] = []
   const where: string[] = []
@@ -88,9 +88,9 @@ export async function executeSavedQuery(
     sql += ' WHERE ' + where.join(' AND ')
   }
 
-  // Sorting
-  const sortField = filterState.sort.field
-  const sortDir = filterState.sort.direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
+  // Sorting (use default if not specified)
+  const sortField = filterState.sort?.field || 'year'
+  const sortDir = (filterState.sort?.direction || 'desc').toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
 
   if (sortField === 'rating') {
     sql += ` ORDER BY m.imdbRating ${sortDir}`
