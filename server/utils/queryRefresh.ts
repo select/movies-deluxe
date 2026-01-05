@@ -18,12 +18,12 @@ export async function executeSavedQuery(
     params.push(`"${sanitizedQuery}"`)
   }
 
-  // 2. Basic Filters
-  if (filterState.minRating > 0) {
+  // 2. Basic Filters (only apply if set)
+  if (filterState.minRating && filterState.minRating > 0) {
     where.push('m.imdbRating >= ?')
     params.push(filterState.minRating)
   }
-  if (filterState.minYear > 0) {
+  if (filterState.minYear && filterState.minYear > 0) {
     where.push('m.year >= ?')
     params.push(filterState.minYear)
   }
@@ -31,7 +31,7 @@ export async function executeSavedQuery(
     where.push('m.year <= ?')
     params.push(filterState.maxYear)
   }
-  if (filterState.minVotes > 0) {
+  if (filterState.minVotes && filterState.minVotes > 0) {
     where.push('m.imdbVotes >= ?')
     params.push(filterState.minVotes)
   }
