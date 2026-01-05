@@ -74,18 +74,6 @@
 
           <!-- Right: Collection Movies -->
           <div class="space-y-6">
-          <!-- Tags Editor -->
-          <div class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-6">
-            <h2 class="text-xl font-bold flex items-center gap-2">
-              <div class="i-mdi-tag-multiple text-blue-600" />
-              Collection Metadata
-            </h2>
-            <AdminCollectionTagsEditor
-              :collection-id="selectedCollectionId"
-              :initial-tags="selectedCollection?.tags"
-            />
-          </div>
-
           <!-- Saved Queries -->
           <div class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-6">
             <h2 class="text-xl font-bold flex items-center gap-2">

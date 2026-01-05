@@ -142,6 +142,56 @@
             />
           </div>
 
+          <!-- Tags Editor -->
+          <div>
+            <label class="block text-sm font-bold mb-1">Tags</label>
+            <div class="flex flex-wrap gap-2 p-3 bg-theme-background border border-theme-border rounded-lg min-h-[50px]">
+              <div
+                v-for="tag in form.tags"
+                :key="tag"
+                class="flex items-center gap-1.5 px-3 py-1 bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 rounded-full text-sm font-medium group"
+              >
+                {{ tag }}
+                <button
+                  type="button"
+                  class="p-0.5 hover:bg-blue-600/20 rounded-full transition-colors"
+                  @click="removeTag(tag)"
+                >
+                  <div class="i-mdi-close text-xs" />
+                </button>
+              </div>
+
+              <div class="relative flex-1 min-w-[120px]">
+                <input
+                  v-model="newTag"
+                  type="text"
+                  placeholder="Add tag..."
+                  class="w-full bg-transparent border-none focus:ring-0 text-sm py-1"
+                  @keydown.enter.prevent="addTag"
+                  @keydown.backspace="handleBackspace"
+                  @focus="showTagSuggestions = true"
+                  @blur="handleTagBlur"
+                >
+
+                <!-- Suggestions Dropdown -->
+                <div
+                  v-if="showTagSuggestions && filteredTagSuggestions.length > 0"
+                  class="absolute z-10 left-0 right-0 mt-2 bg-theme-surface border border-theme-border rounded-lg shadow-xl max-h-48 overflow-y-auto"
+                >
+                  <button
+                    v-for="suggestion in filteredTagSuggestions"
+                    :key="suggestion"
+                    type="button"
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-theme-selection transition-colors"
+                    @mousedown.prevent="selectTagSuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="pt-4 flex gap-3">
             <button
               type="button"
@@ -195,13 +245,69 @@ const form = reactive({
   id: '',
   name: '',
   description: '',
+  tags: [] as string[],
 })
+
+const newTag = ref('')
+const showTagSuggestions = ref(false)
+
+// Get all existing tags from all collections for suggestions
+const allExistingTags = computed(() => {
+  const allTags = new Set<string>()
+  collections.value.forEach(c => {
+    if (c.tags) {
+      c.tags.forEach(t => allTags.add(t))
+    }
+  })
+  return Array.from(allTags).sort()
+})
+
+const filteredTagSuggestions = computed(() => {
+  const query = newTag.value.toLowerCase().trim()
+  return allExistingTags.value.filter(t =>
+    t.toLowerCase().includes(query) && !form.tags.includes(t)
+  )
+})
+
+const addTag = () => {
+  const tag = newTag.value.trim()
+  if (tag && !form.tags.includes(tag)) {
+    form.tags.push(tag)
+    newTag.value = ''
+  }
+}
+
+const removeTag = (tag: string) => {
+  form.tags = form.tags.filter(t => t !== tag)
+}
+
+const handleBackspace = () => {
+  if (newTag.value === '' && form.tags.length > 0) {
+    form.tags.pop()
+  }
+}
+
+const selectTagSuggestion = (suggestion: string) => {
+  if (!form.tags.includes(suggestion)) {
+    form.tags.push(suggestion)
+  }
+  newTag.value = ''
+  showTagSuggestions.value = false
+}
+
+const handleTagBlur = () => {
+  // Small delay to allow mousedown on suggestions
+  setTimeout(() => {
+    showTagSuggestions.value = false
+  }, 200)
+}
 
 const editCollection = (collection: Collection) => {
   editingCollection.value = collection
   form.id = collection.id
   form.name = collection.name
   form.description = collection.description
+  form.tags = [...(collection.tags || [])]
 }
 
 const closeModal = () => {
@@ -210,6 +316,9 @@ const closeModal = () => {
   form.id = ''
   form.name = ''
   form.description = ''
+  form.tags = []
+  newTag.value = ''
+  showTagSuggestions.value = false
 }
 
 const saveCollection = async () => {
