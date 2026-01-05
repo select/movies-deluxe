@@ -194943,5 +194943,3019 @@
     "failedAt": "2026-01-02T19:47:25.660Z",
     "lastAttempt": "2026-01-02T19:47:25.660Z",
     "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-man-rede-mir-nicht-von-liebe-mathias-wiemann-hilde-sessak",
+    "originalTitle": "1935 Man Rede Mir Nicht Von Liebe ( Mathias Wiemann, Hilde Sessak)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Man Rede Mir Nicht Von Liebe",
+        "year": 1935
+      },
+      {
+        "query": "Man Rede Mir Nicht Von Liebe",
+        "year": 1935
+      },
+      {
+        "query": "Man Rede Mir Nicht Von Liebe ( Mathias Wiemann, Hilde Sessak)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:08:54.592Z",
+    "lastAttempt": "2026-01-05T21:08:54.592Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-ostpreussen-jagd-in-trakehnen",
+    "originalTitle": "1935 Ostpreußen Jagd In Trakehnen",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Ostpreussen Jagd In Trakehnen",
+        "year": 1935
+      },
+      {
+        "query": "Ostpreußen Jagd In Trakehnen",
+        "year": 1935
+      },
+      {
+        "query": "Ostpreußen Jagd In Trakehnen",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:01.432Z",
+    "lastAttempt": "2026-01-05T21:09:01.432Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-pat-und-patachon-in-madchenrauber-paul-westermeier",
+    "originalTitle": "1935 Pat Und Patachon In Mädchenräuber( Paul Westermeier)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Pat Und Patachon In Madchenrauber",
+        "year": 1935
+      },
+      {
+        "query": "Paul Westermeier",
+        "year": 1935
+      },
+      {
+        "query": "Pat Und Patachon In Mädchenräuber( Paul Westermeier)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:03.554Z",
+    "lastAttempt": "2026-01-05T21:09:03.554Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-philine-ein-madel-fur-frohe-stunden-theo-lingen-hilde-sessak-lucie-englisch",
+    "originalTitle": "1935 Philine Ein Mädel Für Frohe Stunden ( Theo Lingen, Hilde Sessak, Lucie Englisch)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Philine Ein Madel Fur Frohe Stunden",
+        "year": 1935
+      },
+      {
+        "query": "Philine Ein Mädel Für Frohe Stunden",
+        "year": 1935
+      },
+      {
+        "query": "Philine Ein Mädel Für Frohe Stunden ( Theo Lingen, Hilde Sessak, Lucie Englisch)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:05.779Z",
+    "lastAttempt": "2026-01-05T21:09:05.779Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-plattdeutsches-land-am-ostseestrand-mecklenburg",
+    "originalTitle": "1935 Plattdeutsches Land Am Ostseestrand Mecklenburg",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Plattdeutsches Land",
+        "year": 1935
+      },
+      {
+        "query": "Plattdeutsches Land Am Ostseestrand Mecklenburg",
+        "year": 1935
+      },
+      {
+        "query": "Plattdeutsches Land Am Ostseestrand Mecklenburg",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:08.646Z",
+    "lastAttempt": "2026-01-05T21:09:08.646Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-punks-kommt-aus-ameika-attila-horbiger-ralph-arthur-roberts-sybille-schmitz",
+    "originalTitle": "1935 Punks Kommt Aus Ameika ( Attila Hörbiger, Ralph Arthur Roberts, Sybille Schmitz, Oskar Sima, Joseph Sieber)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "1935 Punks Kommt Aus Ameika",
+        "year": 1935
+      },
+      {
+        "query": "Punks Kommt Aus Ameika",
+        "year": 1935
+      },
+      {
+        "query": "Punks Kommt Aus Ameika ( Attila Hörbiger, Ralph Arthur Roberts, Sybille Schmitz, Oskar Sima, Joseph Sieber)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:10.981Z",
+    "lastAttempt": "2026-01-05T21:09:10.981Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-stutzen-der-gesellschaft-heinrich-george-albrecht-schonhals-oscar-sima",
+    "originalTitle": "1935 Stützen Der Gesellschaft ( Heinrich George, Albrecht Schönhals, Oscar Sima)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Stutzen Der Gesellschaft",
+        "year": 1935
+      },
+      {
+        "query": "Stützen Der Gesellschaft",
+        "year": 1935
+      },
+      {
+        "query": "Stützen Der Gesellschaft ( Heinrich George, Albrecht Schönhals, Oscar Sima)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:13.252Z",
+    "lastAttempt": "2026-01-05T21:09:13.252Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-variete-hans-albers-attila-horbiger",
+    "originalTitle": "1935 Variete ( Hans Albers, Attila Hörbiger)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Variete",
+        "year": 1935
+      },
+      {
+        "query": "Variete",
+        "year": 1935
+      },
+      {
+        "query": "Variete ( Hans Albers, Attila Hörbiger)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:16.081Z",
+    "lastAttempt": "2026-01-05T21:09:16.081Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935-winternachtstraum-wolf-albach-retty-walter-steinbeck-theo-lingenhans-moser-",
+    "originalTitle": "1935 Winternachtstraum ( Wolf Albach Retty, Walter Steinbeck, Theo Lingen,hans Moser, Magda Schneider, Gustav Waldau)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Winternachtstraum",
+        "year": 1935
+      },
+      {
+        "query": "Winternachtstraum ( Wolf Albach Retty, Walter Steinbeck, Theo Lingen,hans Moser, Magda Schneider, Gustav Waldau)",
+        "year": 1935
+      },
+      {
+        "query": "Winternachtstraum ( Wolf Albach Retty, Walter Steinbeck, Theo Lingen,hans Moser, Magda Schneider, Gustav Waldau)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:21.193Z",
+    "lastAttempt": "2026-01-05T21:09:21.193Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935BrandedACowardJohnnyMackBrown",
+    "originalTitle": "1935 Branded A Coward ( Johnny Mack Brown)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "1935BrandedACowardJohnnyMackBrown",
+        "year": 1935
+      },
+      {
+        "query": "Johnny Mack Brown",
+        "year": 1935
+      },
+      {
+        "query": "Branded A Coward ( Johnny Mack Brown)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:23.362Z",
+    "lastAttempt": "2026-01-05T21:09:23.362Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1935JosephHenaberyThruTrafficPaulKellyMargueriteChurchill",
+    "originalTitle": "1935 Joseph Henabery Thru Traffic ( Paul Kelly, Marguerite Churchill)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Thru Traffic",
+        "year": 1935
+      },
+      {
+        "query": "Joseph Henabery Thru Traffic",
+        "year": 1935
+      },
+      {
+        "query": "Joseph Henabery Thru Traffic ( Paul Kelly, Marguerite Churchill)",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:25.224Z",
+    "lastAttempt": "2026-01-05T21:09:25.224Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-4-treppen-rechts-paul-klinger-gustav-waldau-karin-hardt",
+    "originalTitle": "1936 4 Treppen Rechts ( Paul Klinger, Gustav Waldau, Karin Hardt)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "4 Treppen Rechts",
+        "year": 1936
+      },
+      {
+        "query": "4 Treppen Rechts",
+        "year": 1936
+      },
+      {
+        "query": "4 Treppen Rechts ( Paul Klinger, Gustav Waldau, Karin Hardt)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:36.379Z",
+    "lastAttempt": "2026-01-05T21:09:36.379Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Adolf-Hitler-Eroeffnung-des-Winterhilfswerks",
+    "originalTitle": "1936 - Adolf Hitler - Eroeffnung des Winterhilfswerks (4m 43s, 320x240)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Adolf Hitler Eroeffnung Des Winterhilfswerks",
+        "year": 1936
+      },
+      {
+        "query": "Adolf Hitler",
+        "year": 1936
+      },
+      {
+        "query": "- Adolf Hitler - Eroeffnung des Winterhilfswerks (4m 43s, 320x240)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:39.102Z",
+    "lastAttempt": "2026-01-05T21:09:39.102Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Berlin-Reichshauptstadt-Ein-farbiges-Staedtebild",
+    "originalTitle": "1936 - Der Fuehrer besichtigt die Leibstandarte - Auszug vom Reichsparteitag (5m 19s, 352x264)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Fuehrer besichtigt die Leibstandarte",
+        "year": 1936
+      },
+      {
+        "query": "Der Fuehrer besichtigt die Leibstandarte",
+        "year": 1936
+      },
+      {
+        "query": "- Der Fuehrer besichtigt die Leibstandarte - Auszug vom Reichsparteitag (5m 19s, 352x264)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:41.685Z",
+    "lastAttempt": "2026-01-05T21:09:41.685Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Der-Fuehrer-besichtigt-die-Leibstandarte",
+    "originalTitle": "1936 - Der Fuehrer besichtigt die Leibstandarte - Auszug vom Reichsparteitag (5m 19s, 352x264)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Fuehrer Besichtigt Die Leibstandarte",
+        "year": 1936
+      },
+      {
+        "query": "Der Fuehrer besichtigt die Leibstandarte",
+        "year": 1936
+      },
+      {
+        "query": "- Der Fuehrer besichtigt die Leibstandarte - Auszug vom Reichsparteitag (5m 19s, 352x264)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:43.825Z",
+    "lastAttempt": "2026-01-05T21:09:43.825Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Der-Fuehrer-eroeffnet-das-Winterhilfswerk",
+    "originalTitle": "1936 - Der Fuehrer eroeffnet das Winterhilfswerk (3m 26s, 352x288)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Fuehrer Eroeffnet Das Winterhilfswerk",
+        "year": 1936
+      },
+      {
+        "query": "Der Fuehrer eroeffnet das Winterhilfswerk (3m 26s, 352x288)",
+        "year": 1936
+      },
+      {
+        "query": "- Der Fuehrer eroeffnet das Winterhilfswerk (3m 26s, 352x288)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:46.057Z",
+    "lastAttempt": "2026-01-05T21:09:46.057Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Die-Stadt-der-sieben-Tuerme",
+    "originalTitle": "1936 - Die Stadt der sieben Tuerme - Seestadt Rostock (14m 21s, 352x288)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Die Stadt Der Sieben Tuerme",
+        "year": 1936
+      },
+      {
+        "query": "Die Stadt der sieben Tuerme",
+        "year": 1936
+      },
+      {
+        "query": "- Die Stadt der sieben Tuerme - Seestadt Rostock (14m 21s, 352x288)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:48.277Z",
+    "lastAttempt": "2026-01-05T21:09:48.277Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Drei-Jahre-Adolf-Hitler",
+    "originalTitle": "1936 - Drei Jahre Adolf Hitler (falsche englische Untertitel, 4m 49s, 320x240)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Drei Jahre Adolf Hitler",
+        "year": 1936
+      },
+      {
+        "query": "Drei Jahre Adolf Hitler (falsche englische Untertitel, 4m 49s, 320x240)",
+        "year": 1936
+      },
+      {
+        "query": "- Drei Jahre Adolf Hitler (falsche englische Untertitel, 4m 49s, 320x240)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:50.581Z",
+    "lastAttempt": "2026-01-05T21:09:50.581Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Ehre-der-Arbeit",
+    "originalTitle": "1936 - Ehre der Arbeit (27m 00s, 320x240, EN Untertitel)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Ehre Der Arbeit",
+        "year": 1936
+      },
+      {
+        "query": "Ehre der Arbeit (27m 00s, 320x240, EN Untertitel)",
+        "year": 1936
+      },
+      {
+        "query": "- Ehre der Arbeit (27m 00s, 320x240, EN Untertitel)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:09:58.501Z",
+    "lastAttempt": "2026-01-05T21:09:58.501Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Goering-bedankt-sich-beim-Volk",
+    "originalTitle": "1936 - Goering bedankt sich beim Volk nach Autounfall (44s, 512x384)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Goering Bedankt Sich Beim Volk",
+        "year": 1936
+      },
+      {
+        "query": "Goering bedankt sich beim Volk nach Autounfall (44s, 512x384)",
+        "year": 1936
+      },
+      {
+        "query": "- Goering bedankt sich beim Volk nach Autounfall (44s, 512x384)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:04.357Z",
+    "lastAttempt": "2026-01-05T21:10:04.357Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Heer-im-Werden",
+    "originalTitle": "1936 - Heer im Werden (1h 09m, 640x480)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Heer im Werden",
+        "year": 1936
+      },
+      {
+        "query": "Heer im Werden (1h 09m, 640x480)",
+        "year": 1936
+      },
+      {
+        "query": "- Heer im Werden (1h 09m, 640x480)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:06.100Z",
+    "lastAttempt": "2026-01-05T21:10:06.100Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Rassenpolitisches-Amt-der-NSDAP-Erbkrank",
+    "originalTitle": "1936 - Rassenpolitisches Amt der NSDAP - Erbkrank (23m 40s, 352x288, Stummfilm)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Rassenpolitisches Amt Der NSDAP Erbkrank",
+        "year": 1936
+      },
+      {
+        "query": "Rassenpolitisches Amt der NSDAP",
+        "year": 1936
+      },
+      {
+        "query": "- Rassenpolitisches Amt der NSDAP - Erbkrank (23m 40s, 352x288, Stummfilm)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:13.562Z",
+    "lastAttempt": "2026-01-05T21:10:13.562Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-Verraeter",
+    "originalTitle": "1936 - Verraeter (1h 26m, 640x480)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Verraeter",
+        "year": 1936
+      },
+      {
+        "query": "Verraeter (1h 26m, 640x480)",
+        "year": 1936
+      },
+      {
+        "query": "- Verraeter (1h 26m, 640x480)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:17.744Z",
+    "lastAttempt": "2026-01-05T21:10:17.744Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-a-floresta-petrificada-archie-mayo",
+    "originalTitle": "A Floresta Petrificada | 1936 | Archie Mayo",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "A Floresta Petrificada",
+        "year": 1936
+      },
+      {
+        "query": "A Floresta Petrificada | 1936 | Archie Mayo",
+        "year": 1936
+      },
+      {
+        "query": "A Floresta Petrificada | 1936 | Archie Mayo",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:19.905Z",
+    "lastAttempt": "2026-01-05T21:10:19.905Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-alles-fur-veronika-hans-moser-theo-lingen-grethe-weiser-hilde-hildebrand-ilse-furstenberg",
+    "originalTitle": "1936 Alles Für Veronika ( Hans Moser, Theo Lingen, Grethe Weiser, Hilde Hildebrand, Ilse Fürstenberg)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Alles Fur Veronika",
+        "year": 1936
+      },
+      {
+        "query": "Alles Für Veronika",
+        "year": 1936
+      },
+      {
+        "query": "Alles Für Veronika ( Hans Moser, Theo Lingen, Grethe Weiser, Hilde Hildebrand, Ilse Fürstenberg)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:21.896Z",
+    "lastAttempt": "2026-01-05T21:10:21.896Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-alles-fur-veronika-veit-harlan",
+    "originalTitle": "1936 Alles Für Veronika ( Veit Harlan)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Alles Fur Veronika",
+        "year": 1936
+      },
+      {
+        "query": "Veit Harlan",
+        "year": 1936
+      },
+      {
+        "query": "Alles Für Veronika ( Veit Harlan)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:23.889Z",
+    "lastAttempt": "2026-01-05T21:10:23.889Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-arme-kleine-inge-rolf-wanka-ellen-schwannecke",
+    "originalTitle": "1936 Arme Kleine Inge ( Rolf Wanka, Ellen Schwannecke)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Arme Kleine Inge",
+        "year": 1936
+      },
+      {
+        "query": "Arme Kleine Inge",
+        "year": 1936
+      },
+      {
+        "query": "Arme Kleine Inge ( Rolf Wanka, Ellen Schwannecke)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:25.928Z",
+    "lastAttempt": "2026-01-05T21:10:25.928Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-beim-rechtsanwalt-karl-valentin",
+    "originalTitle": "1936 Beim Rechtsanwalt ( Karl Valentin)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Beim Rechtsanwalt Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Beim Rechtsanwalt ( Karl Valentin)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:28.105Z",
+    "lastAttempt": "2026-01-05T21:10:28.105Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-das-frauenparadies-georg-alexander-hans-richter-leo-slezak-ivan-petrovich",
+    "originalTitle": "1936 Das Frauenparadies ( Georg Alexander, Hans Richter, Leo Slezak, Ivan Petrovich)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Das Frauenparadies",
+        "year": 1936
+      },
+      {
+        "query": "Das Frauenparadies",
+        "year": 1936
+      },
+      {
+        "query": "Das Frauenparadies ( Georg Alexander, Hans Richter, Leo Slezak, Ivan Petrovich)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:33.636Z",
+    "lastAttempt": "2026-01-05T21:10:33.636Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-das-madchen-irene-lil-dagover-sabine-peters-hedwig-bleibtreu-elsa-wagner-karl-schonbock",
+    "originalTitle": "1936 Das Mädchen Irene ( Lil Dagover, Sabine Peters, Hedwig Bleibtreu, Elsa Wagner, Karl Schönböck)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Das Madchen Irene",
+        "year": 1936
+      },
+      {
+        "query": "Das Mädchen Irene",
+        "year": 1936
+      },
+      {
+        "query": "Das Mädchen Irene ( Lil Dagover, Sabine Peters, Hedwig Bleibtreu, Elsa Wagner, Karl Schönböck)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:38.009Z",
+    "lastAttempt": "2026-01-05T21:10:38.009Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-das-veilchen-vom-potsdamer-platz-fritz-kampers-else-elster-paul-westermeier",
+    "originalTitle": "1936 Das Veilchen Vom Potsdamer Platz ( Fritz Kampers, Else Elster, Paul Westermeier)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Das Veilchen Vom Potsdamer Platz",
+        "year": 1936
+      },
+      {
+        "query": "Das Veilchen Vom Potsdamer Platz",
+        "year": 1936
+      },
+      {
+        "query": "Das Veilchen Vom Potsdamer Platz ( Fritz Kampers, Else Elster, Paul Westermeier)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:40.310Z",
+    "lastAttempt": "2026-01-05T21:10:40.310Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-bettelstudent-marika-rokkida-wust-carola-hohn-fritz-kampers-johannes-heesters",
+    "originalTitle": "1936 Der Bettelstudent ( Marika Rökk,ida Wüst, Carola Höhn, Fritz Kampers, Johannes Heesters)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Der Bettelstudent Marika Rokkida Wust Carola Hohn Fritz Kampers Johannes Heesters",
+        "year": 1936
+      },
+      {
+        "query": "Der Bettelstudent ( Marika Rökk,ida Wüst, Carola Höhn, Fritz Kampers, Johannes Heesters)",
+        "year": 1936
+      },
+      {
+        "query": "Der Bettelstudent ( Marika Rökk,ida Wüst, Carola Höhn, Fritz Kampers, Johannes Heesters)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:42.528Z",
+    "lastAttempt": "2026-01-05T21:10:42.528Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-geheimnisvolle-mister-x-ralph-arthur-roberts-hermann-thimig-mady-rahl-eugen-rex",
+    "originalTitle": "1936 Der Geheimnisvolle Mister X ( Ralph Arthur Roberts, Hermann Thimig, Mady Rahl, Eugen Rex)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Der Geheimnisvolle Mister X",
+        "year": 1936
+      },
+      {
+        "query": "Der Geheimnisvolle Mister X",
+        "year": 1936
+      },
+      {
+        "query": "Der Geheimnisvolle Mister X ( Ralph Arthur Roberts, Hermann Thimig, Mady Rahl, Eugen Rex)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:45.078Z",
+    "lastAttempt": "2026-01-05T21:10:45.078Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-glaserne-zug-reichsbahn-film",
+    "originalTitle": "1936 Der Gläserne Zug ( Reichsbahn Film)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Der Glaserne Zug",
+        "year": 1936
+      },
+      {
+        "query": "Reichsbahn Film",
+        "year": 1936
+      },
+      {
+        "query": "Der Gläserne Zug ( Reichsbahn Film)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:47.272Z",
+    "lastAttempt": "2026-01-05T21:10:47.272Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-jager-von-fall-paul-richter-josef-eichheim-hans-adalbert-von-schlettow",
+    "originalTitle": "1936 Der Jäger Von Fall ( Paul Richter, Josef Eichheim, Hans Adalbert Von Schlettow)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Jäger von Fall",
+        "year": 1936
+      },
+      {
+        "query": "Der Jäger Von Fall",
+        "year": 1936
+      },
+      {
+        "query": "Der Jäger Von Fall ( Paul Richter, Josef Eichheim, Hans Adalbert Von Schlettow)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:49.631Z",
+    "lastAttempt": "2026-01-05T21:10:49.631Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-kurier-des-zaren-adolf-wohlbruck-lucie-hoflich-maria-andergast-kurt-ves",
+    "originalTitle": "1936 Der Kurier Des Zaren ( Adolf Wohlbrück, Lucie Höflich, Maria Andergast, Kurt Vespermann, Theo Lingen, Hilde Hildebrand, Bernhard Götzke, Herbert Hübner)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Kurier Des Zaren",
+        "year": 1936
+      },
+      {
+        "query": "Der Kurier Des Zaren",
+        "year": 1936
+      },
+      {
+        "query": "Der Kurier Des Zaren ( Adolf Wohlbrück, Lucie Höflich, Maria Andergast, Kurt Vespermann, Theo Lingen, Hilde Hildebrand, Bernhard Götzke, Herbert Hübner)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:51.542Z",
+    "lastAttempt": "2026-01-05T21:10:51.542Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-mude-theodor-gretel-theimer-paul-westermeier",
+    "originalTitle": "1936 Der Müde Theodor ( Gretel Theimer, Paul Westermeier)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Mude Theodor Gretel Theimer Paul Westermeier",
+        "year": 1936
+      },
+      {
+        "query": "Der Müde Theodor",
+        "year": 1936
+      },
+      {
+        "query": "Der Müde Theodor ( Gretel Theimer, Paul Westermeier)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:53.512Z",
+    "lastAttempt": "2026-01-05T21:10:53.512Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-schuchterne-casanova-paul-kemp-fita-benkhof-adele-sandrock",
+    "originalTitle": "1936 Der Schüchterne Casanova ( Paul Kemp, Fita Benkhof, Adele Sandrock)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Der Schuchterne Casanova Paul Kemp Fita Benkhof Adele Sandrock",
+        "year": 1936
+      },
+      {
+        "query": "Der Schüchterne Casanova",
+        "year": 1936
+      },
+      {
+        "query": "Der Schüchterne Casanova ( Paul Kemp, Fita Benkhof, Adele Sandrock)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:55.640Z",
+    "lastAttempt": "2026-01-05T21:10:55.640Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-teufelsbruder-fra-diavolo-brigitte-horney-tino-pattiera",
+    "originalTitle": "1936 Der Teufelsbruder Fra Diavolo ( Brigitte Horney, Tino Pattiera)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Teufelsbruder Fra Diavolo",
+        "year": 1936
+      },
+      {
+        "query": "Der Teufelsbruder Fra Diavolo",
+        "year": 1936
+      },
+      {
+        "query": "Der Teufelsbruder Fra Diavolo ( Brigitte Horney, Tino Pattiera)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:57.643Z",
+    "lastAttempt": "2026-01-05T21:10:57.643Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-verkannte-lebemannhans-junkermann-ralph-arthur-roberts-hilde-sessak-gre",
+    "originalTitle": "1936 Der Verkannte Lebemann(hans Junkermann, Ralph Arthur Roberts, Hilde Sessak, Grethe Weisser, Kurt Vespermann)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Verkannte Lebemann",
+        "year": 1936
+      },
+      {
+        "query": "Der Verkannte Lebemann(hans Junkermann, Ralph Arthur Roberts, Hilde Sessak, Grethe Weisser, Kurt Vespermann)",
+        "year": 1936
+      },
+      {
+        "query": "Der Verkannte Lebemann(hans Junkermann, Ralph Arthur Roberts, Hilde Sessak, Grethe Weisser, Kurt Vespermann)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:10:59.491Z",
+    "lastAttempt": "2026-01-05T21:10:59.491Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-weg-des-herzens-magda-schneider-hans-olden-hilde-von-stolz",
+    "originalTitle": "1936 Der Weg Des Herzens ( Magda Schneider, Hans Olden, Hilde Von Stolz)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Weg Des Herzens",
+        "year": 1936
+      },
+      {
+        "query": "Der Weg Des Herzens",
+        "year": 1936
+      },
+      {
+        "query": "Der Weg Des Herzens ( Magda Schneider, Hans Olden, Hilde Von Stolz)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:01.581Z",
+    "lastAttempt": "2026-01-05T21:11:01.581Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-der-zithervirtuose-karl-valentin",
+    "originalTitle": "1936 Der Zithervirtuose ( Karl Valentin)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Der Zithervirtuose Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Der Zithervirtuose ( Karl Valentin)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:03.604Z",
+    "lastAttempt": "2026-01-05T21:11:03.604Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-die-frau-des-anderen-herbert-hubner-trude-marlen-fritz-imhoff",
+    "originalTitle": "1936 Die Frau Des Anderen ( Herbert Hübner, Trude Marlen, Fritz Imhoff)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Die Frau Des Anderen",
+        "year": 1936
+      },
+      {
+        "query": "Die Frau Des Anderen",
+        "year": 1936
+      },
+      {
+        "query": "Die Frau Des Anderen ( Herbert Hübner, Trude Marlen, Fritz Imhoff)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:05.457Z",
+    "lastAttempt": "2026-01-05T21:11:05.457Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-die-karierte-weste-karl-valentin",
+    "originalTitle": "1936 Die Karierte Weste ( Karl Valentin)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Die Karierte Weste Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Die Karierte Weste ( Karl Valentin)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:07.644Z",
+    "lastAttempt": "2026-01-05T21:11:07.644Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-die-nacht-mit-dem-kaiser-hans-leibelt-jenny-jugo-richard-romanowsky-walter-",
+    "originalTitle": "1936 Die Nacht Mit Dem Kaiser ( Hans Leibelt, Jenny Jugo, Richard Romanowsky, Walter Steinbeck, Paul Henckels, Olga Limburg)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Die Nacht Mit Dem Kaiser Hans Leibelt Jenny Jugo Richard Romanowsky Walter",
+        "year": 1936
+      },
+      {
+        "query": "Die Nacht Mit Dem Kaiser",
+        "year": 1936
+      },
+      {
+        "query": "Die Nacht Mit Dem Kaiser ( Hans Leibelt, Jenny Jugo, Richard Romanowsky, Walter Steinbeck, Paul Henckels, Olga Limburg)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:09.685Z",
+    "lastAttempt": "2026-01-05T21:11:09.685Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-die-puppenfee-adele-sandrock-magda-schneider-paul-horbiger-lizzi-holzschuh-wolf-albach-retty",
+    "originalTitle": "1936 Die Puppenfee ( Adele Sandrock, Magda Schneider, Paul Hörbiger, Lizzi Holzschuh, Wolf Albach Retty)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Die Puppenfee",
+        "year": 1936
+      },
+      {
+        "query": "Die Puppenfee",
+        "year": 1936
+      },
+      {
+        "query": "Die Puppenfee ( Adele Sandrock, Magda Schneider, Paul Hörbiger, Lizzi Holzschuh, Wolf Albach Retty)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:11.606Z",
+    "lastAttempt": "2026-01-05T21:11:11.606Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-die-stadt-der-sieben-turme-kulturfilm-einer-deutschen-seestadt-hansestadt-rostock",
+    "originalTitle": "1936 Die Stadt Der Sieben Türme Kulturfilm Einer Deutschen Seestadt ( Hansestadt Rostock)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Die Stadt Der Sieben Turme",
+        "year": 1936
+      },
+      {
+        "query": "Hansestadt Rostock",
+        "year": 1936
+      },
+      {
+        "query": "Die Stadt Der Sieben Türme Kulturfilm Einer Deutschen Seestadt ( Hansestadt Rostock)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:13.517Z",
+    "lastAttempt": "2026-01-05T21:11:13.517Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-donogoo-tonka-die-geheimnisvolle-stadt-anny-ondra-viktor-staal-aribert-wascher-oscar-sima",
+    "originalTitle": "1936 Donogoo Tonka Die Geheimnisvolle Stadt ( Anny Ondra, Viktor Staal, Aribert Wäscher, Oscar Sima)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Donogoo Tonka Die Geheimnisvolle Stadt",
+        "year": 1936
+      },
+      {
+        "query": "Donogoo Tonka Die Geheimnisvolle Stadt",
+        "year": 1936
+      },
+      {
+        "query": "Donogoo Tonka Die Geheimnisvolle Stadt ( Anny Ondra, Viktor Staal, Aribert Wäscher, Oscar Sima)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:15.384Z",
+    "lastAttempt": "2026-01-05T21:11:15.384Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-drei-maderl-um-schubert-maria-andergast-else-elster-gretl-theimer-gustav-waldau",
+    "originalTitle": "1936 Drei Mäderl Um Schubert ( Maria Andergast, Else Elster, Gretl Theimer, Gustav Waldau)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Drei Maderl Um Schubert",
+        "year": 1936
+      },
+      {
+        "query": "Drei Mäderl Um Schubert",
+        "year": 1936
+      },
+      {
+        "query": "Drei Mäderl Um Schubert ( Maria Andergast, Else Elster, Gretl Theimer, Gustav Waldau)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:20.630Z",
+    "lastAttempt": "2026-01-05T21:11:20.630Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-du-bist-mein-gluck-benjamin-gigli-gustav-waldau-josef-sieber-joe-stockel",
+    "originalTitle": "1936 Du Bist Mein Glück ( Benjamin Gigli, Gustav Waldau, Josef Sieber, Joe Stöckel)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Du Bist Mein Glück",
+        "year": 1936
+      },
+      {
+        "query": "Du Bist Mein Glück",
+        "year": 1936
+      },
+      {
+        "query": "Du Bist Mein Glück ( Benjamin Gigli, Gustav Waldau, Josef Sieber, Joe Stöckel)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:22.467Z",
+    "lastAttempt": "2026-01-05T21:11:22.467Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-ein-hochzeitstraum-ida-wust-inge-list-theo-lingen-hans-junkermann-hans-leibelt-ferdinand-marian",
+    "originalTitle": "1936 Ein Hochzeitstraum ( Ida Wüst, Inge List, Theo Lingen, Hans Junkermann, Hans Leibelt, Ferdinand Marian)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Ein Hochzeitstraum",
+        "year": 1936
+      },
+      {
+        "query": "Ein Hochzeitstraum",
+        "year": 1936
+      },
+      {
+        "query": "Ein Hochzeitstraum ( Ida Wüst, Inge List, Theo Lingen, Hans Junkermann, Hans Leibelt, Ferdinand Marian)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:24.258Z",
+    "lastAttempt": "2026-01-05T21:11:24.258Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-eine-frau-ohne-bedeutung-kathe-dorsch-marianne-hoppe-paul-henckels-hans-lei",
+    "originalTitle": "1936 Eine Frau Ohne Bedeutung ( Käthe Dorsch, Marianne Hoppe, Paul Henckels, Hans Leibelt, Gustaf Gründgens, Friedrich Kayssler)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Eine Frau Ohne Bedeutung",
+        "year": 1936
+      },
+      {
+        "query": "Eine Frau Ohne Bedeutung",
+        "year": 1936
+      },
+      {
+        "query": "Eine Frau Ohne Bedeutung ( Käthe Dorsch, Marianne Hoppe, Paul Henckels, Hans Leibelt, Gustaf Gründgens, Friedrich Kayssler)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:26.128Z",
+    "lastAttempt": "2026-01-05T21:11:26.128Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-fahrmann-maria-sybille-schmitz-aribert-mog-peter-voss-karl-platen-frank-wysbar",
+    "originalTitle": "1936 Fährmann Maria ( Sybille Schmitz, Aribert Mog, Peter Voss, Karl Platen) Frank Wysbar",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Fahrmann Maria Sybille Schmitz Aribert Mog Peter Voss Karl Platen Frank Wysbar",
+        "year": 1936
+      },
+      {
+        "query": "Fährmann Maria ( Sybille Schmitz, Aribert Mog, Peter Voss, Karl Platen) Frank Wysbar",
+        "year": 1936
+      },
+      {
+        "query": "Fährmann Maria ( Sybille Schmitz, Aribert Mog, Peter Voss, Karl Platen) Frank Wysbar",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:27.895Z",
+    "lastAttempt": "2026-01-05T21:11:27.895Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-fiakerlied-paul-horbiger-gusti-huber",
+    "originalTitle": "1936 Fiakerlied ( Paul Hörbiger, Gusti Huber)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Fiakerlied",
+        "year": 1936
+      },
+      {
+        "query": "Fiakerlied",
+        "year": 1936
+      },
+      {
+        "query": "Fiakerlied ( Paul Hörbiger, Gusti Huber)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:29.543Z",
+    "lastAttempt": "2026-01-05T21:11:29.543Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-fiakerlied-paul-horbiger-gusti-huber_202406",
+    "originalTitle": "1936 Fiakerlied ( Paul Hörbiger, Gusti Huber)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Fiakerlied Paul Horbiger",
+        "year": 1936
+      },
+      {
+        "query": "Fiakerlied",
+        "year": 1936
+      },
+      {
+        "query": "Fiakerlied ( Paul Hörbiger, Gusti Huber)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:31.156Z",
+    "lastAttempt": "2026-01-05T21:11:31.156Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-fraulein-lilly-franziska-gaal-szoke-szakall",
+    "originalTitle": "1936 Fräulein Lilly ( Franziska Gaal, Szöke Szakall)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Fraulein Lilly",
+        "year": 1936
+      },
+      {
+        "query": "Fräulein Lilly",
+        "year": 1936
+      },
+      {
+        "query": "Fräulein Lilly ( Franziska Gaal, Szöke Szakall)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:32.808Z",
+    "lastAttempt": "2026-01-05T21:11:32.808Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-geschichten-ausm-wienerwald-magda-schneider-wolf-albach-retty-leo-slezat-ge",
+    "originalTitle": "1936 Geschichten Aus'm Wienerwald ( Magda Schneider, Wolf Albach Retty, Leo Slezat, Georg Alexander, Oscar Sabo, Lotte Lang, Herbert Hübner)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Geschichten Ausm Wienerwald",
+        "year": 1936
+      },
+      {
+        "query": "Geschichten Aus'm Wienerwald",
+        "year": 1936
+      },
+      {
+        "query": "Geschichten Aus'm Wienerwald ( Magda Schneider, Wolf Albach Retty, Leo Slezat, Georg Alexander, Oscar Sabo, Lotte Lang, Herbert Hübner)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:34.601Z",
+    "lastAttempt": "2026-01-05T21:11:34.601Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-gleisdreieck-gustav-frohlich-heli-finkenzeller-hilde-sessakfritz-genschow-wolfgang-staudte",
+    "originalTitle": "1936 Gleisdreieck ( Gustav Fröhlich, Heli Finkenzeller, Hilde Sessak,fritz Genschow, Wolfgang Staudte)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Glaisdreieck",
+        "year": 1936
+      },
+      {
+        "query": "Gleisdreieck ( Gustav Fröhlich, Heli Finkenzeller, Hilde Sessak,fritz Genschow, Wolfgang Staudte)",
+        "year": 1936
+      },
+      {
+        "query": "Gleisdreieck ( Gustav Fröhlich, Heli Finkenzeller, Hilde Sessak,fritz Genschow, Wolfgang Staudte)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:36.261Z",
+    "lastAttempt": "2026-01-05T21:11:36.261Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-hannerl-und-ihr-liebhaber-albrecht-schonhals-hans-moser-olga-tschechowa-hans-holt",
+    "originalTitle": "1936 Hannerl Und Ihr Liebhaber ( Albrecht Schönhals, Hans Moser, Olga Tschechowa, Hans Holt)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Hannerl Und Ihr Liebhaber",
+        "year": 1936
+      },
+      {
+        "query": "Hannerl Und Ihr Liebhaber",
+        "year": 1936
+      },
+      {
+        "query": "Hannerl Und Ihr Liebhaber ( Albrecht Schönhals, Hans Moser, Olga Tschechowa, Hans Holt)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:46.769Z",
+    "lastAttempt": "2026-01-05T21:11:46.769Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-heiteres-und-ernstes-um-den-grossen-konig-otto-gebuhr",
+    "originalTitle": "1936 Heiteres Und Ernstes Um Den Großen König( Otto Gebühr)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Heiteres Und Ernstes Um Den Grossen Konig Otto Gebuhr",
+        "year": 1936
+      },
+      {
+        "query": "Otto Gebühr",
+        "year": 1936
+      },
+      {
+        "query": "Heiteres Und Ernstes Um Den Großen König( Otto Gebühr)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:52.483Z",
+    "lastAttempt": "2026-01-05T21:11:52.483Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-heute-ist-der-schonste-tag-meinens-lebens-hans-holt-otto-walburg-felix-bressart",
+    "originalTitle": "1936 Heute Ist Der Schönste Tag Meinens Lebens ( Hans Holt, Otto Walburg, Felix Bressart)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Heute Ist Der Schonste Tag Meinens Lebens",
+        "year": 1936
+      },
+      {
+        "query": "Heute Ist Der Schönste Tag Meinens Lebens",
+        "year": 1936
+      },
+      {
+        "query": "Heute Ist Der Schönste Tag Meinens Lebens ( Hans Holt, Otto Walburg, Felix Bressart)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:54.893Z",
+    "lastAttempt": "2026-01-05T21:11:54.893Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-hochzeitsreise-zu-50-prozent-irene-argay-ernst-verebes",
+    "originalTitle": "1936 Hochzeitsreise Zu 50 Prozent ( Irene Argay, Ernst Verebes)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Hochzeitsreise Zu 50 Prozent",
+        "year": 1936
+      },
+      {
+        "query": "Hochzeitsreise Zu 50 Prozent",
+        "year": 1936
+      },
+      {
+        "query": "Hochzeitsreise Zu 50 Prozent ( Irene Argay, Ernst Verebes)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:11:57.821Z",
+    "lastAttempt": "2026-01-05T21:11:57.821Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-im-sonnenschein-jan-kiepura-friedl-czepa-theo-lingen",
+    "originalTitle": "1936 Im Sonnenschein ( Jan Kiepura, Friedl Czepa, Theo Lingen)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Im Sonnenschein",
+        "year": 1936
+      },
+      {
+        "query": "Im Sonnenschein",
+        "year": 1936
+      },
+      {
+        "query": "Im Sonnenschein ( Jan Kiepura, Friedl Czepa, Theo Lingen)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:02.436Z",
+    "lastAttempt": "2026-01-05T21:12:02.436Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-in-munchen-steht-ein-hofbrauhaus-diener-lassen-bitten-fita-benkhoff-paul-ke",
+    "originalTitle": "1936 In München Steht Ein Hofbräuhaus Diener Lassen Bitten ( Fita Benkhoff, Paul Kemp, Liesl Karlstadt, Hans Richter)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "In Munchen Steht Ein Hofbräuhaus",
+        "year": 1936
+      },
+      {
+        "query": "In München Steht Ein Hofbräuhaus Diener Lassen Bitten",
+        "year": 1936
+      },
+      {
+        "query": "In München Steht Ein Hofbräuhaus Diener Lassen Bitten ( Fita Benkhoff, Paul Kemp, Liesl Karlstadt, Hans Richter)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:04.500Z",
+    "lastAttempt": "2026-01-05T21:12:04.500Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-katharina-die-letzte",
+    "originalTitle": "1936 Katharina Die Letzte",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Katharina Die Letzte",
+        "year": 1936
+      },
+      {
+        "query": "Katharina Die Letzte",
+        "year": 1936
+      },
+      {
+        "query": "Katharina Die Letzte",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:06.871Z",
+    "lastAttempt": "2026-01-05T21:12:06.871Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-kiel-die-stadt-der-deutschen-kriegsmarine",
+    "originalTitle": "1936 Kiel Die Stadt Der Deutschen Kriegsmarine",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Kiel Die Stadt Der Deutschen Kriegsmarine",
+        "year": 1936
+      },
+      {
+        "query": "Kiel Die Stadt Der Deutschen Kriegsmarine",
+        "year": 1936
+      },
+      {
+        "query": "Kiel Die Stadt Der Deutschen Kriegsmarine",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:09.229Z",
+    "lastAttempt": "2026-01-05T21:12:09.229Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-krach-im-hinterhaus-else-elster-ilse-furstenberg-hilde-sessak-eduard-von-winterstein",
+    "originalTitle": "1936 Krach Im Hinterhaus ( Else Elster, Ilse Fürstenberg, Hilde Sessak, Eduard Von Winterstein)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Krach Im Hinterhaus",
+        "year": 1936
+      },
+      {
+        "query": "Krach Im Hinterhaus",
+        "year": 1936
+      },
+      {
+        "query": "Krach Im Hinterhaus ( Else Elster, Ilse Fürstenberg, Hilde Sessak, Eduard Von Winterstein)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:11.090Z",
+    "lastAttempt": "2026-01-05T21:12:11.090Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-madchenjahre-einer-konigin-jenny-jugo-olga-limburg-paul-henckels-gustav-waldau-otto-tressler",
+    "originalTitle": "1936 Mädchenjahre Einer Königin ( Jenny Jugo, Olga Limburg, Paul Henckels, Gustav Waldau, Otto Tressler)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Madchenjahre einer Königin Jenny Jugo",
+        "year": 1936
+      },
+      {
+        "query": "Mädchenjahre Einer Königin",
+        "year": 1936
+      },
+      {
+        "query": "Mädchenjahre Einer Königin ( Jenny Jugo, Olga Limburg, Paul Henckels, Gustav Waldau, Otto Tressler)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:14.009Z",
+    "lastAttempt": "2026-01-05T21:12:14.009Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-marthas-letzte-rose-fritz-kampers-eduard-von-winterstein-grethe-weiser",
+    "originalTitle": "1936 Marthas Letzte Rose ( Fritz Kampers, Eduard Von Winterstein, Grethe Weiser)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Marthas letzte Rose",
+        "year": 1936
+      },
+      {
+        "query": "Marthas Letzte Rose",
+        "year": 1936
+      },
+      {
+        "query": "Marthas Letzte Rose ( Fritz Kampers, Eduard Von Winterstein, Grethe Weiser)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:16.300Z",
+    "lastAttempt": "2026-01-05T21:12:16.300Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-moraljoe-stockel-herbert-hubner",
+    "originalTitle": "1936 Moral(joe Stöckel, Herbert Hübner)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Moraljoe Stockel Herbert Hubner",
+        "year": 1936
+      },
+      {
+        "query": "Moral(joe Stöckel, Herbert Hübner)",
+        "year": 1936
+      },
+      {
+        "query": "Moral(joe Stöckel, Herbert Hübner)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:19.933Z",
+    "lastAttempt": "2026-01-05T21:12:19.933Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-neunzig-minuten-auffenthalt-harry-piel-eduard-von-winterstein",
+    "originalTitle": "1936 Neunzig Minuten Auffenthalt( Harry Piel, Eduard Von Winterstein)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Neunzig Minuten Auffenthalt",
+        "year": 1936
+      },
+      {
+        "query": "Neunzig Minuten Auffenthalt",
+        "year": 1936
+      },
+      {
+        "query": "Neunzig Minuten Auffenthalt( Harry Piel, Eduard Von Winterstein)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:22.682Z",
+    "lastAttempt": "2026-01-05T21:12:22.682Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-ostpreussen-das-land-am-meer",
+    "originalTitle": "1936 Ostpreußen Das Land Am Meer",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Ostpreussen Das Land Am Meer",
+        "year": 1936
+      },
+      {
+        "query": "Ostpreußen Das Land Am Meer",
+        "year": 1936
+      },
+      {
+        "query": "Ostpreußen Das Land Am Meer",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:24.962Z",
+    "lastAttempt": "2026-01-05T21:12:24.962Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-ostpreussen-heimat-und-volkskunst",
+    "originalTitle": "1936 Ostpreußen Heimat Und Volkskunst",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Ostpreussen Heimat Und Volkskunst",
+        "year": 1936
+      },
+      {
+        "query": "Ostpreußen Heimat Und Volkskunst",
+        "year": 1936
+      },
+      {
+        "query": "Ostpreußen Heimat Und Volkskunst",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:28.378Z",
+    "lastAttempt": "2026-01-05T21:12:28.378Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-rendezvous-in-wien-magda-schneider-wolf-albach-retty-lizzi-holzschuh-adele-",
+    "originalTitle": "1936 Rendezvous In Wien ( Magda Schneider, Wolf Albach Retty, Lizzi Holzschuh, Adele Sandrock, Leo Slezak, Fritz Odemar, Georg Alexander)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "1936 Rendezvous In Wien",
+        "year": 1936
+      },
+      {
+        "query": "Wien",
+        "year": 1936
+      },
+      {
+        "query": "Rendezvous In Wien ( Magda Schneider, Wolf Albach Retty, Lizzi Holzschuh, Adele Sandrock, Leo Slezak, Fritz Odemar, Georg Alexander)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:31.092Z",
+    "lastAttempt": "2026-01-05T21:12:31.092Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-sommersonntag-in-berlin-filmdokument-albert-baumeister",
+    "originalTitle": "1936 Sommersonntag In Berlin ( Filmdokument) Albert Baumeister",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Sommersonntag In Berlin",
+        "year": 1936
+      },
+      {
+        "query": "Berlin ( Filmdokument) Albert Baumeister",
+        "year": 1936
+      },
+      {
+        "query": "Sommersonntag In Berlin ( Filmdokument) Albert Baumeister",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:39.377Z",
+    "lastAttempt": "2026-01-05T21:12:39.377Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-strassenmusikfritz-genschow-hans-deppe-fita-benkhoff-karl-valentin",
+    "originalTitle": "1936 Straßenmusik(fritz Genschow, Hans Deppe, Fita Benkhoff, Karl Valentin)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Strassenmusikfritz Genschow Hans Deppe Fita Benkhoff Karl Valentin",
+        "year": 1936
+      },
+      {
+        "query": "Straßenmusik(fritz Genschow, Hans Deppe, Fita Benkhoff, Karl Valentin)",
+        "year": 1936
+      },
+      {
+        "query": "Straßenmusik(fritz Genschow, Hans Deppe, Fita Benkhoff, Karl Valentin)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:44.480Z",
+    "lastAttempt": "2026-01-05T21:12:44.480Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-verrater-willy-birgel-rudolf-fernau-theodor-loos-sepp-rist-paul-dahlke",
+    "originalTitle": "1936 Verräter ( Willy Birgel, Rudolf Fernau, Theodor Loos, Sepp Rist, Paul Dahlke)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Verrater Willy Birgel Rudolf Fernau Theodor Loos Sepp Rist Paul Dahlke",
+        "year": 1936
+      },
+      {
+        "query": "Verräter",
+        "year": 1936
+      },
+      {
+        "query": "Verräter ( Willy Birgel, Rudolf Fernau, Theodor Loos, Sepp Rist, Paul Dahlke)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:12:58.914Z",
+    "lastAttempt": "2026-01-05T21:12:58.914Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-waldwinter",
+    "originalTitle": "1936 Waldwinter",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      },
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      },
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:00.638Z",
+    "lastAttempt": "2026-01-05T21:13:00.638Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-waldwinter-viktor-staal-hansi-knotek-eduard-von-winterstein",
+    "originalTitle": "1936 Waldwinter ( Viktor Staal, Hansi Knotek, Eduard Von Winterstein)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      },
+      {
+        "query": "Waldwinter",
+        "year": 1936
+      },
+      {
+        "query": "Waldwinter ( Viktor Staal, Hansi Knotek, Eduard Von Winterstein)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:02.366Z",
+    "lastAttempt": "2026-01-05T21:13:02.366Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-weiberregiment",
+    "originalTitle": "1936 Weiberregiment",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Weiberregiment",
+        "year": 1936
+      },
+      {
+        "query": "Weiberregiment",
+        "year": 1936
+      },
+      {
+        "query": "Weiberregiment",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:04.302Z",
+    "lastAttempt": "2026-01-05T21:13:04.302Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-wenn-der-hahn-kraht-heinrich-george-hans-brausewetter-marianne-hoppe",
+    "originalTitle": "1936 Wenn Der Hahn Kräht ( Heinrich George, Hans Brausewetter, Marianne Hoppe)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Wenn Der Hahn Kraht",
+        "year": 1936
+      },
+      {
+        "query": "Wenn Der Hahn Kräht",
+        "year": 1936
+      },
+      {
+        "query": "Wenn Der Hahn Kräht ( Heinrich George, Hans Brausewetter, Marianne Hoppe)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:06.220Z",
+    "lastAttempt": "2026-01-05T21:13:06.220Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-wenn-wir-alle-englein-waren",
+    "originalTitle": "1936 Wenn Wir Alle Englein Wären",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Wenn Wir Alle Englein Waren",
+        "year": 1936
+      },
+      {
+        "query": "Wenn Wir Alle Englein Wären",
+        "year": 1936
+      },
+      {
+        "query": "Wenn Wir Alle Englein Wären",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:08.077Z",
+    "lastAttempt": "2026-01-05T21:13:08.077Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-wo-die-lerche-singt-martha-eggerth-lucie-englisch-hans-sohnker",
+    "originalTitle": "1936 Wo Die Lerche Singt (martha Eggerth, Lucie Englisch, Hans Söhnker)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Wo Die Lerche Singt Martha Eggerth",
+        "year": 1936
+      },
+      {
+        "query": "Wo Die Lerche Singt (martha Eggerth, Lucie Englisch, Hans Söhnker)",
+        "year": 1936
+      },
+      {
+        "query": "Wo Die Lerche Singt (martha Eggerth, Lucie Englisch, Hans Söhnker)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:10.167Z",
+    "lastAttempt": "2026-01-05T21:13:10.167Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936-zwischen-moskau-und-shanghai-pola-negri-gustav-diessl",
+    "originalTitle": "1936 Zwischen Moskau Und Shanghai ( Pola Negri, Gustav Diessl)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Zwischen Moskau Und Shanghai",
+        "year": 1936
+      },
+      {
+        "query": "Zwischen Moskau Und Shanghai",
+        "year": 1936
+      },
+      {
+        "query": "Zwischen Moskau Und Shanghai ( Pola Negri, Gustav Diessl)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:12.565Z",
+    "lastAttempt": "2026-01-05T21:13:12.565Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1936HarryFraserGhostTownHarryCareyRuthFindlay",
+    "originalTitle": "1936 Harry Fraser Ghost Town ( Harry Carey, Ruth Findlay)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Harry Frasier Ghost Town",
+        "year": 1936
+      },
+      {
+        "query": "Harry Fraser Ghost Town",
+        "year": 1936
+      },
+      {
+        "query": "Harry Fraser Ghost Town ( Harry Carey, Ruth Findlay)",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:14.867Z",
+    "lastAttempt": "2026-01-05T21:13:14.867Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-7-ohrfeigen-willy-fritsch-lilian-harvey-alfred-abel-erich-fiedler-oscar-sima",
+    "originalTitle": "1937 7 Ohrfeigen ( Willy Fritsch, Lilian Harvey, Alfred Abel, Erich Fiedler, Oscar Sima)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "1937 7 Ohrfeigen",
+        "year": 1937
+      },
+      {
+        "query": "7 Ohrfeigen",
+        "year": 1937
+      },
+      {
+        "query": "7 Ohrfeigen ( Willy Fritsch, Lilian Harvey, Alfred Abel, Erich Fiedler, Oscar Sima)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:16.972Z",
+    "lastAttempt": "2026-01-05T21:13:16.972Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-9.-Reichsparteitag-der-NSDAP",
+    "originalTitle": "1937 - 9. Reichsparteitag der NSDAP vom 6.-13. September (8m 27s, 688x512)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Reichsparteitag Der NSDAP",
+        "year": 1937
+      },
+      {
+        "query": "9. Reichsparteitag der NSDAP vom 6",
+        "year": 1937
+      },
+      {
+        "query": "- 9. Reichsparteitag der NSDAP vom 6.-13. September (8m 27s, 688x512)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:19.017Z",
+    "lastAttempt": "2026-01-05T21:13:19.017Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Damals-zu-Hause-Elbing",
+    "originalTitle": "1937 - Damals zu Hause - Elbing - Land an der Weichsel (10m 55s, 352x240)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Damals Zu Hause Elbing",
+        "year": 1937
+      },
+      {
+        "query": "Damals zu Hause",
+        "year": 1937
+      },
+      {
+        "query": "- Damals zu Hause - Elbing - Land an der Weichsel (10m 55s, 352x240)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:21.099Z",
+    "lastAttempt": "2026-01-05T21:13:21.099Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Der-Fuehrer-eroeffnet-das-Winterhilfswerk",
+    "originalTitle": "1937 - Der Fuehrer eroeffnet das Winterhilfswerk im Oktober 1937 (2m 08s, 512x384)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Der Fuehrer Eroeffnet Das Winterhilfswerk",
+        "year": 1937
+      },
+      {
+        "query": "Der Fuehrer eroeffnet das Winterhilfswerk im Oktober 1937 (2m 08s, 512x384)",
+        "year": 1937
+      },
+      {
+        "query": "- Der Fuehrer eroeffnet das Winterhilfswerk im Oktober 1937 (2m 08s, 512x384)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:23.108Z",
+    "lastAttempt": "2026-01-05T21:13:23.108Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Deutsche-Frauenkolonialschule-Rendsburg",
+    "originalTitle": "1937 - Deutsche Frauenkolonialschule Rendsburg (20m 29s, 512x384)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Deutsche Frauenkolonialschule Rendsburg",
+        "year": 1937
+      },
+      {
+        "query": "Deutsche Frauenkolonialschule Rendsburg (20m 29s, 512x384)",
+        "year": 1937
+      },
+      {
+        "query": "- Deutsche Frauenkolonialschule Rendsburg (20m 29s, 512x384)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:25.239Z",
+    "lastAttempt": "2026-01-05T21:13:25.239Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Die-Kamera-faehrt-mit",
+    "originalTitle": "1937 - Die Kamera faehrt mit - Aus der Arbeit der Wochenschau (12m 19s, 640x480)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Kamera Faehrt Mit",
+        "year": 1937
+      },
+      {
+        "query": "Die Kamera faehrt mit",
+        "year": 1937
+      },
+      {
+        "query": "- Die Kamera faehrt mit - Aus der Arbeit der Wochenschau (12m 19s, 640x480)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:27.132Z",
+    "lastAttempt": "2026-01-05T21:13:27.132Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Farbaufnahmen-vom-Erntedankfest",
+    "originalTitle": "1937 - Farbaufnahmen vom Erntedankfest (2m 17s, 320x240)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Farbaufnahmen Vom Erntedankfest",
+        "year": 1937
+      },
+      {
+        "query": "Farbaufnahmen vom Erntedankfest (2m 17s, 320x240)",
+        "year": 1937
+      },
+      {
+        "query": "- Farbaufnahmen vom Erntedankfest (2m 17s, 320x240)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:48.019Z",
+    "lastAttempt": "2026-01-05T21:13:48.019Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Festliches-Nuernberg",
+    "originalTitle": "1937 - Festliches Nuernberg - Ein Film aus der Stadt der Reichsparteitage (20m 22s, 512x384)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Festliches Nuernberg",
+        "year": 1937
+      },
+      {
+        "query": "Festliches Nuernberg",
+        "year": 1937
+      },
+      {
+        "query": "- Festliches Nuernberg - Ein Film aus der Stadt der Reichsparteitage (20m 22s, 512x384)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:50.365Z",
+    "lastAttempt": "2026-01-05T21:13:50.365Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Flieger-Funker-Kanoniere",
+    "originalTitle": "1937 - Flieger, Funker, Kanoniere - Hermann Goering erklaert die neue Luftwaffe (10m 48s, 640x480, EN Untertitel)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Flieger Funker Kanoniere",
+        "year": 1937
+      },
+      {
+        "query": "Flieger, Funker, Kanoniere",
+        "year": 1937
+      },
+      {
+        "query": "- Flieger, Funker, Kanoniere - Hermann Goering erklaert die neue Luftwaffe (10m 48s, 640x480, EN Untertitel)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:52.727Z",
+    "lastAttempt": "2026-01-05T21:13:52.727Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Gardetag-in-Duesseldorf",
+    "originalTitle": "1937 - Gardetag in Duesseldorf (7m 03s, 640x480)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Gardetag In Duesseldorf",
+        "year": 1937
+      },
+      {
+        "query": "Duesseldorf (7m 03s, 640x480)",
+        "year": 1937
+      },
+      {
+        "query": "- Gardetag in Duesseldorf (7m 03s, 640x480)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:55.251Z",
+    "lastAttempt": "2026-01-05T21:13:55.251Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Gebt-mir-4-Zeit",
+    "originalTitle": "1937 - Gebt mir 4 Jahre Zeit - Des Fuehrers Kampf fuer Volk und Reich (16m 25s, 384x288)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Gebt Mir 4 Zeit",
+        "year": 1937
+      },
+      {
+        "query": "Gebt mir 4 Jahre Zeit",
+        "year": 1937
+      },
+      {
+        "query": "- Gebt mir 4 Jahre Zeit - Des Fuehrers Kampf fuer Volk und Reich (16m 25s, 384x288)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:13:57.811Z",
+    "lastAttempt": "2026-01-05T21:13:57.811Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Joseph-Goebbels-und-Adolf-Hitler",
+    "originalTitle": "1937 - Joseph Goebbels und Adolf Hitler sprechen zur HJ im Berliner Olympiastadion - September 1937 (3m 18s, 512x384)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Joseph Goebbels Und Adolf Hitler",
+        "year": 1937
+      },
+      {
+        "query": "Joseph Goebbels und Adolf Hitler sprechen zur HJ im Berliner Olympiastadion",
+        "year": 1937
+      },
+      {
+        "query": "- Joseph Goebbels und Adolf Hitler sprechen zur HJ im Berliner Olympiastadion - September 1937 (3m 18s, 512x384)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:00.271Z",
+    "lastAttempt": "2026-01-05T21:14:00.271Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Juden-ohne-Maske",
+    "originalTitle": "1937 - Juden ohne Maske (13m 02s, 448x336, ohne Ton)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Juden ohne Maske",
+        "year": 1937
+      },
+      {
+        "query": "Juden ohne Maske (13m 02s, 448x336, ohne Ton)",
+        "year": 1937
+      },
+      {
+        "query": "- Juden ohne Maske (13m 02s, 448x336, ohne Ton)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:02.776Z",
+    "lastAttempt": "2026-01-05T21:14:02.776Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Kavalleristen-Tag-1937-in-Duesseldorf",
+    "originalTitle": "1937 - Kavalleristen-Tag 1937 in Duesseldorf (6m 03s, 640x480)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Kavalleristen Tag",
+        "year": 1937
+      },
+      {
+        "query": "Kavalleristen-Tag 1937 in Duesseldorf (6m 03s, 640x480)",
+        "year": 1937
+      },
+      {
+        "query": "- Kavalleristen-Tag 1937 in Duesseldorf (6m 03s, 640x480)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:05.235Z",
+    "lastAttempt": "2026-01-05T21:14:05.235Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Panzerkreuzer-Sebastopol",
+    "originalTitle": "1937 - Panzerkreuzer Sebastopol - Weisse Sklaven (1h 47m, 416x320)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Panzerkreuzer Sebastopol",
+        "year": 1937
+      },
+      {
+        "query": "Panzerkreuzer Sebastopol",
+        "year": 1937
+      },
+      {
+        "query": "- Panzerkreuzer Sebastopol - Weisse Sklaven (1h 47m, 416x320)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:07.764Z",
+    "lastAttempt": "2026-01-05T21:14:07.764Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Patrioten",
+    "originalTitle": "1937 - Patrioten (1h 17m, 640x480)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Patrioten",
+        "year": 1937
+      },
+      {
+        "query": "Patrioten (1h 17m, 640x480)",
+        "year": 1937
+      },
+      {
+        "query": "- Patrioten (1h 17m, 640x480)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:09.819Z",
+    "lastAttempt": "2026-01-05T21:14:09.819Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Rassenpolitisches-Amt-der-NSDAP",
+    "originalTitle": "1937 - Rassenpolitisches Amt der NSDAP - Alles Leben ist Kampf (25m 11s, 352x240, Stummfilm)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Rassenpolitisches Amt Der NSDAP",
+        "year": 1937
+      },
+      {
+        "query": "Rassenpolitisches Amt der NSDAP",
+        "year": 1937
+      },
+      {
+        "query": "- Rassenpolitisches Amt der NSDAP - Alles Leben ist Kampf (25m 11s, 352x240, Stummfilm)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:11.844Z",
+    "lastAttempt": "2026-01-05T21:14:11.844Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-Unternehmen-Michael",
+    "originalTitle": "1937 - Unternehmen Michael (1h 16m, 640x480)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Unternehmen Michael",
+        "year": 1937
+      },
+      {
+        "query": "Unternehmen Michael (1h 16m, 640x480)",
+        "year": 1937
+      },
+      {
+        "query": "- Unternehmen Michael (1h 16m, 640x480)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:13.785Z",
+    "lastAttempt": "2026-01-05T21:14:13.785Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-autobus-s-ein-mann-kam-nicht-nach-hause",
+    "originalTitle": "1937 Autobus S Ein Mann Kam Nicht Nach Hause",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Autobus S Ein Mann Kam Nicht Nach Hause",
+        "year": 1937
+      },
+      {
+        "query": "Autobus S Ein Mann Kam Nicht Nach Hause",
+        "year": 1937
+      },
+      {
+        "query": "Autobus S Ein Mann Kam Nicht Nach Hause",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:16.304Z",
+    "lastAttempt": "2026-01-05T21:14:16.304Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-beco-sem-saida-william-wyler",
+    "originalTitle": "( 1937) Beco Sem Saída ( William Wyler)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Beco Sem Saida",
+        "year": 1937
+      },
+      {
+        "query": "William Wyler",
+        "year": 1937
+      },
+      {
+        "query": "Beco Sem Saída ( William Wyler)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:19.080Z",
+    "lastAttempt": "2026-01-05T21:14:19.080Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-damals-zu-hause-elbing-land-an-der-weichsel",
+    "originalTitle": "1937 Damals Zu Hause Elbing Land An Der Weichsel",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Damals Zu Hause Elbing Land An Der Weichsel",
+        "year": 1937
+      },
+      {
+        "query": "Damals Zu Hause Elbing Land An Der Weichsel",
+        "year": 1937
+      },
+      {
+        "query": "Damals Zu Hause Elbing Land An Der Weichsel",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:21.864Z",
+    "lastAttempt": "2026-01-05T21:14:21.864Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-das-quartett-paul-kemp-kurzfilm",
+    "originalTitle": "1937 Das Quartett ( Paul Kemp) Kurzfilm",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Das Quartett Paul Kemp",
+        "year": 1937
+      },
+      {
+        "query": "Das Quartett ( Paul Kemp) Kurzfilm",
+        "year": 1937
+      },
+      {
+        "query": "Das Quartett ( Paul Kemp) Kurzfilm",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:24.312Z",
+    "lastAttempt": "2026-01-05T21:14:24.312Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-das-schone-fraulein-schragg-otto-gebuhr-hansi-knotek-paul-klinger-hans-adal",
+    "originalTitle": "1937 Das Schöne Fräulein Schragg ( Otto Gebühr, Hansi Knotek, Paul Klinger, Hans Adalbert Von Schlettow, Eduard Von Winterstein)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Das Schone Fraulein Schragg Otto Gebuhr Hansi Knotek Paul Klinger Hans Adal",
+        "year": 1937
+      },
+      {
+        "query": "Das Schöne Fräulein Schragg",
+        "year": 1937
+      },
+      {
+        "query": "Das Schöne Fräulein Schragg ( Otto Gebühr, Hansi Knotek, Paul Klinger, Hans Adalbert Von Schlettow, Eduard Von Winterstein)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:26.957Z",
+    "lastAttempt": "2026-01-05T21:14:26.957Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-der-gestiefelte-kater-zeichentrick-stummfilm",
+    "originalTitle": "1937 Der Gestiefelte Kater( Zeichentrick, Stummfilm)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Der Gestiefelte Kater",
+        "year": 1937
+      },
+      {
+        "query": "Der Gestiefelte Kater",
+        "year": 1937
+      },
+      {
+        "query": "Der Gestiefelte Kater( Zeichentrick, Stummfilm)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:29.382Z",
+    "lastAttempt": "2026-01-05T21:14:29.382Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-der-kleine-kavallier-szoke-szakall-otto-walburg-hans-holt-sigurd-lohde",
+    "originalTitle": "1937 Der Kleine Kavallier ( Szöke Szakall, Otto Walburg, Hans Holt, Sigurd Lohde)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Der Kleine Kavallier",
+        "year": 1937
+      },
+      {
+        "query": "Der Kleine Kavallier",
+        "year": 1937
+      },
+      {
+        "query": "Der Kleine Kavallier ( Szöke Szakall, Otto Walburg, Hans Holt, Sigurd Lohde)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:32.204Z",
+    "lastAttempt": "2026-01-05T21:14:32.204Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-deutsche-frauenkolonialschule-rendsburg-filmdokument",
+    "originalTitle": "1937 Deutsche Frauenkolonialschule Rendsburg ( Filmdokument)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Deutsche Frauenkolonialschule Rendsburg",
+        "year": 1937
+      },
+      {
+        "query": "Filmdokument",
+        "year": 1937
+      },
+      {
+        "query": "Deutsche Frauenkolonialschule Rendsburg ( Filmdokument)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:34.399Z",
+    "lastAttempt": "2026-01-05T21:14:34.399Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-fliegende-ahnfrau-der-herr-senator-paul-henckels-adele-sandrock-rudolf-",
+    "originalTitle": "1937 Die Fliegende Ahnfrau Der Herr Senator ( Paul Henckels, Adele Sandrock, Rudolf Platte, Fritz Kampers, Paul Westermeier)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Fliegende Ahnfrau",
+        "year": 1937
+      },
+      {
+        "query": "Die Fliegende Ahnfrau Der Herr Senator",
+        "year": 1937
+      },
+      {
+        "query": "Die Fliegende Ahnfrau Der Herr Senator ( Paul Henckels, Adele Sandrock, Rudolf Platte, Fritz Kampers, Paul Westermeier)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:36.716Z",
+    "lastAttempt": "2026-01-05T21:14:36.716Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-glaserne-kugel-hilde-von-stolz-theodor-loos-albrecht-schonhals-paul-henckels-sabine-peters",
+    "originalTitle": "1937 Die Gläserne Kugel ( Hilde Von Stolz, Theodor Loos, Albrecht Schönhals, Paul Henckels, Sabine Peters)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Glaserne Kugel",
+        "year": 1937
+      },
+      {
+        "query": "Die Gläserne Kugel",
+        "year": 1937
+      },
+      {
+        "query": "Die Gläserne Kugel ( Hilde Von Stolz, Theodor Loos, Albrecht Schönhals, Paul Henckels, Sabine Peters)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:39.322Z",
+    "lastAttempt": "2026-01-05T21:14:39.322Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-glucklichste-ehe-der-welt-maria-andergast-wolf-albach-retty-hans-moser-",
+    "originalTitle": "1937 Die Glücklichste Ehe Der Welt ( Maria Andergast, Wolf Albach Retty, Hans Moser, Hans Thimig, Leo Slezak)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "1937 Die Glucklichste Ehe Der Welt",
+        "year": 1937
+      },
+      {
+        "query": "Die Glücklichste Ehe Der Welt",
+        "year": 1937
+      },
+      {
+        "query": "Die Glücklichste Ehe Der Welt ( Maria Andergast, Wolf Albach Retty, Hans Moser, Hans Thimig, Leo Slezak)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:42.793Z",
+    "lastAttempt": "2026-01-05T21:14:42.793Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-gottliche-jette-grethe-weiser-viktor-de-kowa-hans-junkermann-olga-limburg-ernst-waldow",
+    "originalTitle": "1937 Die Göttliche Jette ( Grethe Weiser, Viktor De Kowa, Hans Junkermann, Olga Limburg, Ernst Waldow)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Gottliche Jette",
+        "year": 1937
+      },
+      {
+        "query": "Die Göttliche Jette",
+        "year": 1937
+      },
+      {
+        "query": "Die Göttliche Jette ( Grethe Weiser, Viktor De Kowa, Hans Junkermann, Olga Limburg, Ernst Waldow)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:45.347Z",
+    "lastAttempt": "2026-01-05T21:14:45.347Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-kreutzersonate-lil-dagover-hilde-korber-albrecht-schonhals-gunther-luders-leo-peukert",
+    "originalTitle": "1937 Die Kreutzersonate ( Lil Dagover, Hilde Körber, Albrecht Schönhals, Günther Lüders, Leo Peukert)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Kreutzersonate",
+        "year": 1937
+      },
+      {
+        "query": "Die Kreutzersonate",
+        "year": 1937
+      },
+      {
+        "query": "Die Kreutzersonate ( Lil Dagover, Hilde Körber, Albrecht Schönhals, Günther Lüders, Leo Peukert)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:49.150Z",
+    "lastAttempt": "2026-01-05T21:14:49.150Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-rache-einer-fledermaus-hans-sohnker-jola-jobst-hans-moser-hans-stiebner",
+    "originalTitle": "1937 Die Rache Einer Fledermaus ( Hans Söhnker, Jola Jobst, Hans Moser, Hans Stiebner)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Rache Einer Fledermaus",
+        "year": 1937
+      },
+      {
+        "query": "Die Rache Einer Fledermaus",
+        "year": 1937
+      },
+      {
+        "query": "Die Rache Einer Fledermaus ( Hans Söhnker, Jola Jobst, Hans Moser, Hans Stiebner)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:51.730Z",
+    "lastAttempt": "2026-01-05T21:14:51.730Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-die-resche-strohwitwe-der-klapperstorchverband-lucie-englisch-fritz-genscho",
+    "originalTitle": "1937 Die Resche Strohwitwe Der Klapperstorchverband ( Lucie Englisch, Fritz Genschow, Hans Brausewetter, Georg Alexander, Hans Richter)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Die Resche Strohwitwe",
+        "year": 1937
+      },
+      {
+        "query": "Die Resche Strohwitwe Der Klapperstorchverband",
+        "year": 1937
+      },
+      {
+        "query": "Die Resche Strohwitwe Der Klapperstorchverband ( Lucie Englisch, Fritz Genschow, Hans Brausewetter, Georg Alexander, Hans Richter)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:54.239Z",
+    "lastAttempt": "2026-01-05T21:14:54.239Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-ein-volksfeind",
+    "originalTitle": "1937 Ein Volksfeind",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Ein Volksfeind",
+        "year": 1937
+      },
+      {
+        "query": "Ein Volksfeind",
+        "year": 1937
+      },
+      {
+        "query": "Ein Volksfeind",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:14:58.885Z",
+    "lastAttempt": "2026-01-05T21:14:58.885Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-fremdenheim-familoda-ida-wustmady-rahl-sabine-peters-theo-lingen-paul-henck",
+    "originalTitle": "1937 Fremdenheim Familoda( Ida Wüst,mady Rahl, Sabine Peters, Theo Lingen, Paul Henckels, Paul Westermeier, Rudolf Platte)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Fremdenheim Familoda",
+        "year": 1937
+      },
+      {
+        "query": "Fremdenheim Familoda( Ida Wüst,mady Rahl, Sabine Peters, Theo Lingen, Paul Henckels, Paul Westermeier, Rudolf Platte)",
+        "year": 1937
+      },
+      {
+        "query": "Fremdenheim Familoda( Ida Wüst,mady Rahl, Sabine Peters, Theo Lingen, Paul Henckels, Paul Westermeier, Rudolf Platte)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:01.337Z",
+    "lastAttempt": "2026-01-05T21:15:01.337Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-funeral-of-a-great-general-erich-ludendorff_202303",
+    "originalTitle": "1937 Funeral Of A Great General Erich Ludendorff",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Funeral Of A Great General Erich Ludendorff",
+        "year": 1937
+      },
+      {
+        "query": "Funeral Of A Great General Erich Ludendorff",
+        "year": 1937
+      },
+      {
+        "query": "Funeral Of A Great General Erich Ludendorff",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:03.695Z",
+    "lastAttempt": "2026-01-05T21:15:03.695Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-fur-uns-nsdap-filmdokument",
+    "originalTitle": "1937 Für Uns NSDAP Filmdokument",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Fur Uns Nsdap",
+        "year": 1937
+      },
+      {
+        "query": "Für Uns NSDAP Filmdokument",
+        "year": 1937
+      },
+      {
+        "query": "Für Uns NSDAP Filmdokument",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:06.201Z",
+    "lastAttempt": "2026-01-05T21:15:06.201Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-gebt-mir-4-jahre-zeit-filmdokument-nsdap",
+    "originalTitle": "1937 Gebt Mir 4 Jahre Zeit ( Filmdokument NSDAP)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "1937 Gebt Mir 4 Jahre Zeit",
+        "year": 1937
+      },
+      {
+        "query": "Filmdokument NSDAP",
+        "year": 1937
+      },
+      {
+        "query": "Gebt Mir 4 Jahre Zeit ( Filmdokument NSDAP)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:10.186Z",
+    "lastAttempt": "2026-01-05T21:15:10.186Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-gordian-der-tyrann-paul-richter-leo-peukert-josef-eichheim",
+    "originalTitle": "1937 Gordian, Der Tyrann ( Paul Richter, Leo Peukert, Josef Eichheim)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Gordian Der Tyrann",
+        "year": 1937
+      },
+      {
+        "query": "Gordian, Der Tyrann",
+        "year": 1937
+      },
+      {
+        "query": "Gordian, Der Tyrann ( Paul Richter, Leo Peukert, Josef Eichheim)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:12.807Z",
+    "lastAttempt": "2026-01-05T21:15:12.807Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-ia-in-oberbayern-ursula-grabley-joe-stockel-beppo-brem",
+    "originalTitle": "1937 IA In Oberbayern ( Ursula Grabley, Joe Stöckel, Beppo Brem)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "1937 Ia In Oberbayern Ursula Grabley Joe Stockel Beppo Brem",
+        "year": 1937
+      },
+      {
+        "query": "Oberbayern",
+        "year": 1937
+      },
+      {
+        "query": "IA In Oberbayern ( Ursula Grabley, Joe Stöckel, Beppo Brem)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:15.234Z",
+    "lastAttempt": "2026-01-05T21:15:15.234Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-ich-hab-von-dir-getraumt-fita-benkhoff-karl-schonbock-else-von-mollendorf-b",
+    "originalTitle": "1937 Ich Hab Von Dir Geträumt ( Fita Benkhoff, Karl Schönböck, Else Von Möllendorf, Bruno Hübner, Erich Fiedler)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "1937 Ich Hab Von Dir Getraumt",
+        "year": 1937
+      },
+      {
+        "query": "Ich Hab Von Dir Geträumt",
+        "year": 1937
+      },
+      {
+        "query": "Ich Hab Von Dir Geträumt ( Fita Benkhoff, Karl Schönböck, Else Von Möllendorf, Bruno Hübner, Erich Fiedler)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:17.403Z",
+    "lastAttempt": "2026-01-05T21:15:17.403Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-jetzt-schlagts-13-theo-lingen-hans-moser",
+    "originalTitle": "1951-Jetzt Schlägt`s 13( Theo Lingen, Hans Moser)",
+    "year": 1951,
+    "attempts": [
+      {
+        "query": "1937 Jetzt Schlagts 13 Theo Lingen Hans Moser",
+        "year": 1951
+      },
+      {
+        "query": "1951-Jetzt Schlägt`s 13",
+        "year": 1951
+      },
+      {
+        "query": "1951-Jetzt Schlägt`s 13( Theo Lingen, Hans Moser)",
+        "year": 1951
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:19.567Z",
+    "lastAttempt": "2026-01-05T21:15:19.567Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-juden-ohne-maske-13m-02s-448x-336-ohne-ton",
+    "originalTitle": "1937 Juden Ohne Maske ( 13m 02s, 448x 336, Ohne Ton)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Juden Ohne Maske",
+        "year": 1937
+      },
+      {
+        "query": "Juden Ohne Maske ( 13m 02s, 448x 336, Ohne Ton)",
+        "year": 1937
+      },
+      {
+        "query": "Juden Ohne Maske ( 13m 02s, 448x 336, Ohne Ton)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:21.910Z",
+    "lastAttempt": "2026-01-05T21:15:21.910Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-kapriolen-marianne-hoppe-fita-benkhoff-gustaf-grundgens",
+    "originalTitle": "1937 Kapriolen ( Marianne Hoppe, Fita Benkhoff, Gustaf Gründgens)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Kapriolen Marianne Hoppe Fita Benkhoff Gustaf Grundgens",
+        "year": 1937
+      },
+      {
+        "query": "Kapriolen",
+        "year": 1937
+      },
+      {
+        "query": "Kapriolen ( Marianne Hoppe, Fita Benkhoff, Gustaf Gründgens)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:24.194Z",
+    "lastAttempt": "2026-01-05T21:15:24.194Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-karussel-marika-rokk-paul-henckels",
+    "originalTitle": "1937 Karussel ( Marika Rökk, Paul Henckels)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Karussel",
+        "year": 1937
+      },
+      {
+        "query": "Karussel",
+        "year": 1937
+      },
+      {
+        "query": "Karussel ( Marika Rökk, Paul Henckels)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:26.530Z",
+    "lastAttempt": "2026-01-05T21:15:26.530Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-meine-freundin-barbara-grethe-weiser-paul-hoffmann-hans-leibelt",
+    "originalTitle": "1937 Meine Freundin Barbara ( Grethe Weiser, Paul Hoffmann, Hans Leibelt)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Meine Freundin Barbara",
+        "year": 1937
+      },
+      {
+        "query": "Meine Freundin Barbara",
+        "year": 1937
+      },
+      {
+        "query": "Meine Freundin Barbara ( Grethe Weiser, Paul Hoffmann, Hans Leibelt)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:28.692Z",
+    "lastAttempt": "2026-01-05T21:15:28.692Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-monika-eine-mutter-kampft-um-ihr-kind-maria-andergast-theodor-loos-rudolf-p",
+    "originalTitle": "1937 Monika Eine Mutter Kämpft Um Ihr Kind ( Maria Andergast, Theodor Loos, Rudolf Platte, Walter Steinbeck)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Monika Eine Mutter Kampft Um Ihr Kind",
+        "year": 1937
+      },
+      {
+        "query": "Monika Eine Mutter Kämpft Um Ihr Kind",
+        "year": 1937
+      },
+      {
+        "query": "Monika Eine Mutter Kämpft Um Ihr Kind ( Maria Andergast, Theodor Loos, Rudolf Platte, Walter Steinbeck)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:31.273Z",
+    "lastAttempt": "2026-01-05T21:15:31.273Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-mutterlied-benjamin-gigli-peter-bosse-hans-moser-hilde-hildebrand",
+    "originalTitle": "1937 Mutterlied ( Benjamin Gigli, Peter Bosse, Hans Moser, Hilde Hildebrand)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Mutterlied",
+        "year": 1937
+      },
+      {
+        "query": "Mutterlied",
+        "year": 1937
+      },
+      {
+        "query": "Mutterlied ( Benjamin Gigli, Peter Bosse, Hans Moser, Hilde Hildebrand)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:34.233Z",
+    "lastAttempt": "2026-01-05T21:15:34.233Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-ostpreussen-mensch-und-scholle",
+    "originalTitle": "1937 Ostpreußen Mensch Und Scholle",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Ostpreussen Mensch Und Scholle",
+        "year": 1937
+      },
+      {
+        "query": "Ostpreußen Mensch Und Scholle",
+        "year": 1937
+      },
+      {
+        "query": "Ostpreußen Mensch Und Scholle",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:36.555Z",
+    "lastAttempt": "2026-01-05T21:15:36.555Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-pan-das-schicksal-des-leutnant-thomas-glahn-hilde-sessak-christian-kayssler",
+    "originalTitle": "1937 Pan Das Schicksal Des Leutnant Thomas Glahn ( Hilde Sessak, Christian Kayssler)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Pan - Das Schicksal des Leutnant Thomas Glahn",
+        "year": 1937
+      },
+      {
+        "query": "Pan Das Schicksal Des Leutnant Thomas Glahn",
+        "year": 1937
+      },
+      {
+        "query": "Pan Das Schicksal Des Leutnant Thomas Glahn ( Hilde Sessak, Christian Kayssler)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:39.036Z",
+    "lastAttempt": "2026-01-05T21:15:39.036Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-panzerkreuzer-sebastopl-weisse-sklaven-camilla-horn-theodor-loos-werner-hinz-fritz-kampers",
+    "originalTitle": "1937 Panzerkreuzer Sebastopl Weisse Sklaven ( Camilla Horn, Theodor Loos, Werner Hinz, Fritz Kampers)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Panzerkreuzer Sebastopl Weisse Sklaven",
+        "year": 1937
+      },
+      {
+        "query": "Panzerkreuzer Sebastopl Weisse Sklaven",
+        "year": 1937
+      },
+      {
+        "query": "Panzerkreuzer Sebastopl Weisse Sklaven ( Camilla Horn, Theodor Loos, Werner Hinz, Fritz Kampers)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:41.102Z",
+    "lastAttempt": "2026-01-05T21:15:41.102Z",
+    "reason": "No OMDB match found"
+  },
+  {
+    "identifier": "archive-1937-ritt-in-die-freiheit-willy-birgel-viktor-staal-hansi-knotek",
+    "originalTitle": "1937 Ritt In Die Freiheit( Willy Birgel, Viktor Staal, Hansi Knotek)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Ritt In Die Freiheit",
+        "year": 1937
+      },
+      {
+        "query": "Die Freiheit",
+        "year": 1937
+      },
+      {
+        "query": "Ritt In Die Freiheit( Willy Birgel, Viktor Staal, Hansi Knotek)",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-01-05T21:15:47.513Z",
+    "lastAttempt": "2026-01-05T21:15:47.513Z",
+    "reason": "No OMDB match found"
   }
 ]
