@@ -50,7 +50,7 @@
 
               <!-- Year Range -->
               <div
-                v-if="query.filterState.minYear > 0 || query.filterState.maxYear"
+                v-if="(query.filterState.minYear && query.filterState.minYear > 0) || query.filterState.maxYear"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
                 <div class="i-mdi-calendar" />
@@ -59,7 +59,7 @@
 
               <!-- Rating -->
               <div
-                v-if="query.filterState.minRating > 0"
+                v-if="query.filterState.minRating && query.filterState.minRating > 0"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
                 <div class="i-mdi-star" />
@@ -68,11 +68,11 @@
 
               <!-- Votes -->
               <div
-                v-if="query.filterState.minVotes > 0 || query.filterState.maxVotes"
+                v-if="(query.filterState.minVotes && query.filterState.minVotes > 0) || query.filterState.maxVotes"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
                 <div class="i-mdi-account-group" />
-                {{ query.filterState.minVotes.toLocaleString() }} -
+                {{ (query.filterState.minVotes || 0).toLocaleString() }} -
                 {{
                   query.filterState.maxVotes ? query.filterState.maxVotes.toLocaleString() : 'Any'
                 }}
@@ -153,20 +153,40 @@ const saveCurrentQuery = async () => {
   const isDefaultSort = filters.value.sort.field === DEFAULT_SORT.field 
     && filters.value.sort.direction === DEFAULT_SORT.direction
   
-  // Create a clean FilterState without frontend-only fields
+  // Create a clean FilterState, only including non-default values
   const filterState: SavedQueryFilterState = {
-    ...(isDefaultSort ? {} : { sort: { ...filters.value.sort } }),
-    sources: [...filters.value.sources],
-    minRating: filters.value.minRating,
-    minYear: filters.value.minYear,
-    maxYear: filters.value.maxYear,
-    minVotes: filters.value.minVotes,
-    maxVotes: filters.value.maxVotes,
-    genres: [...filters.value.genres],
-    countries: [...filters.value.countries],
     searchQuery: filters.value.searchQuery,
     currentPage: 1,
     lastScrollY: 0,
+  }
+
+  // Only add non-default values
+  if (!isDefaultSort) {
+    filterState.sort = { ...filters.value.sort }
+  }
+  if (filters.value.sources.length > 0) {
+    filterState.sources = [...filters.value.sources]
+  }
+  if (filters.value.minRating > 0) {
+    filterState.minRating = filters.value.minRating
+  }
+  if (filters.value.minYear > 0) {
+    filterState.minYear = filters.value.minYear
+  }
+  if (filters.value.maxYear && filters.value.maxYear > 0) {
+    filterState.maxYear = filters.value.maxYear
+  }
+  if (filters.value.minVotes > 0) {
+    filterState.minVotes = filters.value.minVotes
+  }
+  if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+    filterState.maxVotes = filters.value.maxVotes
+  }
+  if (filters.value.genres.length > 0) {
+    filterState.genres = [...filters.value.genres]
+  }
+  if (filters.value.countries.length > 0) {
+    filterState.countries = [...filters.value.countries]
   }
 
   const query: SavedQuery = {
@@ -191,20 +211,32 @@ const applyQuery = (query: SavedQuery) => {
     movieStore.setSearchQuery(query.searchQuery)
   }
   
-  // Apply sort if it was saved (otherwise use default)
+  // Apply sort if it was saved (otherwise use default from resetFilters)
   if (query.filterState.sort) {
     movieStore.setSort(query.filterState.sort)
   }
   
-  movieStore.setMinRating(query.filterState.minRating)
-  movieStore.setMinYear(query.filterState.minYear)
-  if (query.filterState.maxYear) movieStore.setMaxYear(query.filterState.maxYear)
-  movieStore.setMinVotes(query.filterState.minVotes)
-  if (query.filterState.maxVotes) movieStore.setMaxVotes(query.filterState.maxVotes)
+  // Apply filters only if they were saved
+  if (query.filterState.minRating) {
+    movieStore.setMinRating(query.filterState.minRating)
+  }
+  if (query.filterState.minYear) {
+    movieStore.setMinYear(query.filterState.minYear)
+  }
+  if (query.filterState.maxYear) {
+    movieStore.setMaxYear(query.filterState.maxYear)
+  }
+  if (query.filterState.minVotes) {
+    movieStore.setMinVotes(query.filterState.minVotes)
+  }
+  if (query.filterState.maxVotes) {
+    movieStore.setMaxVotes(query.filterState.maxVotes)
+  }
 
-  query.filterState.genres.forEach(g => movieStore.toggleGenre(g))
-  query.filterState.countries.forEach(c => movieStore.toggleCountry(c))
-  query.filterState.sources.forEach(s => movieStore.toggleSource(s))
+  // Apply array filters
+  query.filterState.genres?.forEach(g => movieStore.toggleGenre(g))
+  query.filterState.countries?.forEach(c => movieStore.toggleCountry(c))
+  query.filterState.sources?.forEach(s => movieStore.toggleSource(s))
 }
 
 const refreshCollection = async () => {
