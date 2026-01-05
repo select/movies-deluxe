@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-05T23:47:01.907Z"
+    "lastUpdated": "2026-01-06T00:48:00.000Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -62,7 +62,7 @@
     "createdAt": "2025-12-29T00:00:00.000Z",
     "updatedAt": "2026-01-03T20:49:25.184Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["classics", "highly-rated", "must-watch", "cinema-history", "masterpieces"]
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -155,7 +155,7 @@
         }
       }
     ],
-    "tags": []
+    "tags": ["comedy", "silent-film", "slapstick", "classic-hollywood", "shorts"]
   },
   "animation-shorts": {
     "id": "animation-shorts",
@@ -1332,7 +1332,7 @@
         }
       }
     ],
-    "tags": []
+    "tags": ["animation", "shorts", "golden-age", "cartoons", "family"]
   },
   "martial-arts": {
     "id": "martial-arts",
@@ -1386,7 +1386,7 @@
     "createdAt": "2025-12-29T16:08:00.000Z",
     "updatedAt": "2026-01-03T04:51:44.239Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["action", "kung-fu", "martial-arts", "asian-cinema", "fight-scenes"]
   },
   "canine-cinema": {
     "id": "canine-cinema",
@@ -1402,7 +1402,7 @@
     "createdAt": "2025-12-29T16:18:00.000Z",
     "updatedAt": "2026-01-02T22:52:59.483Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["family", "animals", "dogs", "heartwarming", "adventure"]
   },
   "buster-keaton": {
     "id": "buster-keaton",
@@ -1493,7 +1493,7 @@
     "createdAt": "2025-12-30T00:00:00.000Z",
     "updatedAt": "2026-01-02T20:52:21.165Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["comedy", "silent-film", "slapstick", "physical-comedy", "classic-hollywood"]
   },
   "criterion-collection": {
     "id": "criterion-collection",
@@ -1517,7 +1517,7 @@
     "createdAt": "2025-12-31T02:45:00.000Z",
     "updatedAt": "2026-01-03T04:29:30.288Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["classics", "art-house", "prestigious", "restored", "cinema-history"]
   },
   "abbott-and-costello": {
     "id": "abbott-and-costello",
@@ -1539,7 +1539,7 @@
     "createdAt": "2026-01-03T19:00:00.000Z",
     "updatedAt": "2026-01-03T19:00:00.000Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["comedy", "classic-hollywood", "duo", "slapstick", "wordplay"]
   },
   "akira-kurosawa": {
     "id": "akira-kurosawa",
@@ -1568,6 +1568,6 @@
     "createdAt": "2026-01-03T20:30:00.000Z",
     "updatedAt": "2026-01-03T20:53:18.150Z",
     "savedQueries": [],
-    "tags": []
+    "tags": ["japanese-cinema", "samurai", "drama", "masterpieces", "auteur"]
   }
 }
