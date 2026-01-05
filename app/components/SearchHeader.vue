@@ -78,13 +78,8 @@ const debouncedSetSearchQuery = useDebounceFn((query: string) => {
     router.replace({ query: {} })
   }
 
-  // If searching from a non-grid page, navigate to home
-  const isGridPage = 
-    route.path === '/' ||
-    route.path === '/liked' ||
-    route.path === '/collections'
-  
-  if (query && !isGridPage) {
+  // If searching from a non-home page, navigate to home
+  if (query && route.path !== '/') {
     navigateTo('/')
   }
 
@@ -107,14 +102,8 @@ watch(() => filters.value.searchQuery, (newVal) => {
 
 // Track if we should show search based on route and state
 const shouldShowSearch = computed(() => {
-  // Determine if current route is a grid page (where search should be visible)
-  const isGridPage = 
-    route.path === '/' ||
-    route.path === '/liked' ||
-    route.path === '/collections'
-  
-  // Hide search on non-grid pages (movie detail, collection detail, admin)
-  if (!isGridPage) {
+  // Only show search on home page
+  if (route.path !== '/') {
     return false
   }
   
@@ -131,14 +120,9 @@ watch(isSearchOpen, (isOpen) => {
   }
 })
 
-// Restore search visibility when returning to grid pages with active query
+// Restore search visibility when returning to home page with active query
 watch(() => route.path, (newPath) => {
-  const isGridPage = 
-    newPath === '/' ||
-    newPath === '/liked' ||
-    newPath === '/collections'
-  
-  if (isGridPage && localQuery.value) {
+  if (newPath === '/' && localQuery.value) {
     setSearchOpen(true)
   }
 })
