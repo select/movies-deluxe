@@ -57,9 +57,26 @@ const route = useRoute()
 // Local query for immediate UI updates
 const localQuery = ref(filters.value.searchQuery)
 
+// Initialize search from URL query parameter on mount
+onMounted(() => {
+  const urlQuery = route.query.q as string
+  if (urlQuery && urlQuery !== localQuery.value) {
+    localQuery.value = urlQuery
+    setSearchOpen(true)
+  }
+})
+
 // Debounced function to update store (500ms delay)
 const debouncedSetSearchQuery = useDebounceFn((query: string) => {
   setSearchQuery(query)
+
+  // Update URL query parameter
+  const router = useRouter()
+  if (query) {
+    router.replace({ query: { q: query } })
+  } else {
+    router.replace({ query: {} })
+  }
 
   // If searching from a non-grid page, navigate to home
   const isGridPage = 
