@@ -274,34 +274,48 @@
             </div>
           </div>
 
-          <!-- Source Selector (if multiple sources) -->
+          <!-- Source Selector with External Links -->
           <div
-            v-if="movie.sources && movie.sources.length > 1"
+            v-if="movie.sources && movie.sources.length > 0"
             class="mb-4"
           >
             <h3 class="movie-label">
               Select Source
             </h3>
             <div class="flex flex-wrap gap-2">
-              <button
+              <div
                 v-for="(source, index) in movie.sources"
                 :key="source.id"
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
-                :class="{
-                  'bg-theme-primary border-theme-primary text-white': selectedSourceIndex === index,
-                  'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection': selectedSourceIndex !== index
-                }"
-                @click="selectedSourceIndex = index"
+                class="flex items-center gap-1"
               >
-                <div class="flex items-center gap-2">
-                  <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-theme-accent' : 'i-mdi-bank'" />
-                  <span>{{ source.label || (source.type === 'youtube' ? (source.channelName || 'YouTube') : 'Archive.org') }}</span>
-                  <span
-                    v-if="source.quality"
-                    class="text-xs opacity-75"
-                  >({{ source.quality }})</span>
-                </div>
-              </button>
+                <button
+                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+                  :class="{
+                    'bg-theme-primary border-theme-primary text-white': selectedSourceIndex === index,
+                    'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection': selectedSourceIndex !== index
+                  }"
+                  @click="selectedSourceIndex = index"
+                >
+                  <div class="flex items-center gap-2">
+                    <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-theme-accent' : 'i-mdi-bank'" />
+                    <span>{{ source.label || (source.type === 'youtube' ? (source.channelName || 'YouTube') : 'Archive.org') }}</span>
+                    <span
+                      v-if="source.quality"
+                      class="text-xs opacity-75"
+                    >({{ source.quality }})</span>
+                  </div>
+                </button>
+                <a
+                  :href="source.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :title="source.type === 'youtube' ? `Watch on YouTube${source.channelName ? ' - ' + source.channelName : ''}` : 'Watch on Archive.org'"
+                  class="p-2 rounded-lg transition-colors hover:bg-theme-selection text-theme-primary"
+                  :class="{ 'text-theme-accent': selectedSourceIndex === index }"
+                >
+                  <div class="i-mdi-open-in-new text-lg" />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -339,76 +353,6 @@
                 allowfullscreen
                 title="Archive.org video player"
               />
-            </div>
-          </div>
-
-          <!-- Source Links -->
-          <div
-            v-if="movie.sources && movie.sources.length > 0"
-            class="flex flex-wrap gap-6 py-4 px-6 bg-theme-surface rounded-lg border border-theme-border/50"
-          >
-            <div
-              v-for="(source, index) in movie.sources"
-              :key="source.id"
-              class="flex items-center gap-3 text-sm"
-              :class="{ 'opacity-100': selectedSourceIndex === index, 'opacity-60': selectedSourceIndex !== index }"
-            >
-              <template v-if="source.type === 'archive.org'">
-                <span class="font-semibold text-theme-textmuted">Source {{ index + 1 }}:</span>
-                <a
-                  :href="source.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="flex items-center gap-1.5 text-theme-primary hover:underline font-medium"
-                >
-                  <div class="i-mdi-bank text-lg" />
-                  Archive.org
-                </a>
-              </template>
-              <template v-else-if="source.type === 'youtube'">
-                <span class="font-semibold text-theme-textmuted">Source {{ index + 1 }}:</span>
-                <a
-                  :href="source.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="flex items-center gap-1.5 text-theme-primary hover:underline font-medium"
-                >
-                  <div class="i-mdi-youtube text-lg text-theme-accent" />
-                  YouTube
-                </a>
-                <template v-if="source.channelName">
-                  <span class="text-theme-textmuted">on</span>
-                  <a
-                    v-if="source.channelId"
-                    :href="`https://www.youtube.com/channel/${source.channelId}`"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex items-center gap-1 text-theme-primary hover:underline font-medium"
-                  >
-                    <div class="i-mdi-television-play text-base" />
-                    {{ source.channelName }}
-                  </a>
-                  <span
-                    v-else
-                    class="text-theme-text font-medium"
-                  >
-                    {{ source.channelName }}
-                  </span>
-                </template>
-              </template>
-              <button
-                v-if="selectedSourceIndex !== index"
-                class="ml-2 text-xs text-theme-primary hover:underline"
-                @click="selectedSourceIndex = index"
-              >
-                Switch to this source
-              </button>
-              <span
-                v-else
-                class="ml-2 text-xs text-theme-accent font-bold"
-              >
-                Currently Playing
-              </span>
             </div>
           </div>
 
