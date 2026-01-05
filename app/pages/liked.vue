@@ -51,7 +51,10 @@
             </template>
 
             <template v-else>
-              <MovieGrid :movies="filteredLikedMovies" />
+              <MovieVirtualGrid 
+                :movies="filteredLikedMovies" 
+                :total-movies="filteredLikedMovies.length"
+              />
             </template>
           </div>
         </template>
