@@ -35,10 +35,6 @@
             >
               {{ collection.name }}
             </span>
-            <div
-              v-if="selectedId === collection.id"
-              class="i-mdi-check-circle text-blue-600 text-xl flex-shrink-0"
-            />
           </div>
 
           <!-- Tags Display -->
