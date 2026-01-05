@@ -1,24 +1,91 @@
 <template>
   <div class="space-y-4">
-    <div class="relative">
-      <div
-        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-theme-textmuted"
-      >
-        <div class="i-mdi-magnify text-xl" />
+    <div class="flex items-center gap-4">
+      <div class="relative flex-1">
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-theme-textmuted"
+        >
+          <div class="i-mdi-magnify text-xl" />
+        </div>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search by title, director, writer, plot or IMDb ID..."
+          class="block w-full pl-10 pr-3 py-3 border border-theme-border rounded-xl bg-theme-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+          @input="onInput"
+        >
+        <div
+          v-if="isLoading"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center"
+        >
+          <div class="i-mdi-loading animate-spin text-blue-600" />
+        </div>
       </div>
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search by title, director, writer, plot or IMDb ID..."
-        class="block w-full pl-10 pr-3 py-3 border border-theme-border rounded-xl bg-theme-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
-        @input="onInput"
+
+      <button
+        class="px-4 py-3 bg-theme-surface border border-theme-border rounded-xl text-sm font-bold hover:bg-theme-selection transition-colors flex items-center gap-2"
+        @click="showFilters = true"
       >
+        <div class="i-mdi-filter-variant" />
+        Filters
+        <span
+          v-if="activeFiltersCount > 0"
+          class="bg-blue-600 text-white px-1.5 py-0.5 rounded-full text-[10px]"
+        >
+          {{ activeFiltersCount }}
+        </span>
+      </button>
+    </div>
+
+    <!-- Active Filters Display -->
+    <div
+      v-if="hasActiveFilters"
+      class="flex flex-wrap items-center gap-2"
+    >
       <div
-        v-if="isLoading"
-        class="absolute inset-y-0 right-0 pr-3 flex items-center"
+        v-if="filters.minRating > 0"
+        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
       >
-        <div class="i-mdi-loading animate-spin text-blue-600" />
+        <div class="i-mdi-star" />
+        {{ filters.minRating }}+
       </div>
+      <div
+        v-if="filters.minYear > 0 || filters.maxYear"
+        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
+      >
+        <div class="i-mdi-calendar" />
+        {{ filters.minYear || 1910 }} - {{ filters.maxYear || 2025 }}
+      </div>
+      <div
+        v-if="filters.minVotes > 0 || filters.maxVotes"
+        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
+      >
+        <div class="i-mdi-account-group" />
+        {{ filters.minVotes.toLocaleString() }} -
+        {{ filters.maxVotes ? filters.maxVotes.toLocaleString() : 'Any' }}
+      </div>
+      <div
+        v-for="genre in filters.genres"
+        :key="genre"
+        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
+      >
+        <div class="i-mdi-movie-filter" />
+        {{ genre }}
+      </div>
+      <div
+        v-for="source in filters.sources"
+        :key="source"
+        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
+      >
+        <div class="i-mdi-source-branch" />
+        {{ source }}
+      </div>
+      <button
+        class="text-xs text-theme-primary hover:underline ml-2"
+        @click="resetFilters"
+      >
+        Clear All
+      </button>
     </div>
 
     <div
@@ -88,6 +155,11 @@
     >
       No movies found for "{{ searchQuery }}"
     </div>
+
+    <FilterMenu
+      :is-open="showFilters"
+      @close="showFilters = false"
+    />
   </div>
 </template>
 
@@ -101,11 +173,31 @@ const emit = defineEmits<{
 }>()
 
 const collectionsStore = useCollectionsStore()
+const movieStore = useMovieStore()
+const { filters, activeFiltersCount, hasActiveFilters } = storeToRefs(movieStore)
+const { resetFilters } = movieStore
 const uiStore = useUiStore()
+
 const searchQuery = ref('')
-const results = ref<any[]>([])
+const results = ref<MovieEntry[]>([])
 const isLoading = ref(false)
 const isAdding = ref('')
+const showFilters = ref(false)
+
+// Sync searchQuery with store
+watch(searchQuery, newVal => {
+  movieStore.setSearchQuery(newVal)
+})
+
+// Sync store searchQuery with local
+watch(
+  () => filters.value.searchQuery,
+  newVal => {
+    if (newVal !== searchQuery.value) {
+      searchQuery.value = newVal
+    }
+  }
+)
 
 let debounceTimeout: NodeJS.Timeout
 
@@ -122,7 +214,7 @@ const onInput = () => {
 const performSearch = async () => {
   isLoading.value = true
   try {
-    const data = await $fetch<any[]>('/api/admin/movies/search', {
+    const data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
       query: { q: searchQuery.value },
     })
     results.value = data

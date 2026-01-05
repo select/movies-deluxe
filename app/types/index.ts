@@ -6,6 +6,40 @@ import {
   extractIdentifier,
   QualityLabel,
 } from '../../shared/types/movie'
+import type {
+  MovieEntry,
+  MovieSource,
+  MovieSourceType,
+  MovieSourceBase,
+  ArchiveOrgSource,
+  YouTubeSource,
+  MovieMetadata,
+  AIMetadata,
+  DatabaseSchema,
+  MoviesDatabase,
+  OMDBSearchResult,
+  OMDBSearchResponse,
+  MatchResult,
+  MatchConfidence,
+  TemporaryId,
+} from '../../shared/types/movie'
+import type { Collection, CollectionsDatabase, SavedQuery } from '../../shared/types/collections'
+import type {
+  Genre,
+  Country,
+  YouTubeChannel,
+  GenreOption,
+  CountryOption,
+  ChannelOption,
+  GenresResponse,
+  CountriesResponse,
+  ChannelsResponse,
+  SortField,
+  SortDirection,
+  SortOption,
+  SortState,
+  FilterState,
+} from '../../shared/types/filters'
 
 /**
  * Frontend Type Definitions
@@ -60,6 +94,12 @@ export type {
   GenresResponse,
   CountriesResponse,
   ChannelsResponse,
+  SortField,
+  SortDirection,
+  SortOption,
+  SortState,
+  FilterState,
+  SavedQuery,
 }
 
 // Re-export utility functions
@@ -91,7 +131,7 @@ export type {
 export interface LightweightMovieEntry {
   imdbId: string
   title: string
-  year: number
+  year?: number
   imdbRating?: string | number
   imdbVotes?: string | number
   language?: string
@@ -160,32 +200,4 @@ export interface DisplayPreferences {
   gridColumns: number
   /** Show metadata badges */
   showMetadata: boolean
-}
-
-/**
- * Movie sorting types
- */
-
-/** Valid sort fields for movies */
-export type SortField = 'year' | 'rating' | 'title' | 'votes' | 'relevance'
-
-/** Sort direction */
-export type SortDirection = 'asc' | 'desc'
-
-/**
- * Sort option configuration
- *
- * @example
- * ```ts
- * const sortOption: SortOption = {
- *   field: 'year',
- *   direction: 'desc',
- *   label: 'Year (Newest)'
- * }
- * ```
- */
-export interface SortOption {
-  field: SortField
-  direction: SortDirection
-  label: string
 }

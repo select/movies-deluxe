@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
-import type { CollectionsDatabase, Collection } from '../../shared/types/collections'
+import type { CollectionsDatabase, Collection, SavedQuery } from '../../shared/types/collections'
 
 const DATA_DIR = join(process.cwd(), 'public/data')
 const COLLECTIONS_FILE = join(DATA_DIR, 'collections.json')
@@ -139,6 +139,65 @@ export async function removeMovieFromCollection(
       return true
     }
     return false
+  }
+  return false
+}
+
+/**
+ * Add a saved query to a collection
+ */
+export async function addQueryToCollection(
+  collectionId: string,
+  query: SavedQuery
+): Promise<boolean> {
+  const db = await loadCollectionsDatabase()
+  const collection = db[collectionId] as Collection | undefined
+
+  if (collection && !('version' in collection)) {
+    if (!collection.savedQueries) {
+      collection.savedQueries = []
+    }
+    collection.savedQueries.push(query)
+    collection.updatedAt = new Date().toISOString()
+    await saveCollectionsDatabase(db)
+    return true
+  }
+  return false
+}
+
+/**
+ * Remove a saved query from a collection
+ */
+export async function removeQueryFromCollection(
+  collectionId: string,
+  queryIndex: number
+): Promise<boolean> {
+  const db = await loadCollectionsDatabase()
+  const collection = db[collectionId] as Collection | undefined
+
+  if (collection && !('version' in collection) && collection.savedQueries) {
+    if (queryIndex >= 0 && queryIndex < collection.savedQueries.length) {
+      collection.savedQueries.splice(queryIndex, 1)
+      collection.updatedAt = new Date().toISOString()
+      await saveCollectionsDatabase(db)
+      return true
+    }
+  }
+  return false
+}
+
+/**
+ * Update collection tags
+ */
+export async function updateCollectionTags(collectionId: string, tags: string[]): Promise<boolean> {
+  const db = await loadCollectionsDatabase()
+  const collection = db[collectionId] as Collection | undefined
+
+  if (collection && !('version' in collection)) {
+    collection.tags = tags
+    collection.updatedAt = new Date().toISOString()
+    await saveCollectionsDatabase(db)
+    return true
   }
   return false
 }

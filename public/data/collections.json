@@ -1,8 +1,8 @@
 {
   "_schema": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-03T20:53:18.150Z"
+    "lastUpdated": "2026-01-05T22:04:19.103Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -60,7 +60,9 @@
       "tt0080979"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-03T20:49:25.184Z"
+    "updatedAt": "2026-01-03T20:49:25.184Z",
+    "savedQueries": [],
+    "tags": []
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -138,7 +140,9 @@
       "tt0004637"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-02T20:52:21.165Z"
+    "updatedAt": "2026-01-02T20:52:21.165Z",
+    "savedQueries": [],
+    "tags": []
   },
   "animation-shorts": {
     "id": "animation-shorts",
@@ -1300,7 +1304,9 @@
       "youtube-u92t2pNOoqM"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-02T20:52:21.165Z"
+    "updatedAt": "2026-01-02T20:52:21.165Z",
+    "savedQueries": [],
+    "tags": []
   },
   "martial-arts": {
     "id": "martial-arts",
@@ -1352,7 +1358,9 @@
       "tt0133226"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-03T04:51:44.239Z"
+    "updatedAt": "2026-01-03T04:51:44.239Z",
+    "savedQueries": [],
+    "tags": []
   },
   "canine-cinema": {
     "id": "canine-cinema",
@@ -1366,7 +1374,9 @@
       "tt0003855"
     ],
     "createdAt": "2025-12-29T16:18:00.000Z",
-    "updatedAt": "2026-01-02T22:52:59.483Z"
+    "updatedAt": "2026-01-02T22:52:59.483Z",
+    "savedQueries": [],
+    "tags": []
   },
   "buster-keaton": {
     "id": "buster-keaton",
@@ -1455,7 +1465,9 @@
       "youtube-uSrRnk1Tc1I"
     ],
     "createdAt": "2025-12-30T00:00:00.000Z",
-    "updatedAt": "2026-01-02T20:52:21.165Z"
+    "updatedAt": "2026-01-02T20:52:21.165Z",
+    "savedQueries": [],
+    "tags": []
   },
   "criterion-collection": {
     "id": "criterion-collection",
@@ -1477,7 +1489,9 @@
       "tt0025316"
     ],
     "createdAt": "2025-12-31T02:45:00.000Z",
-    "updatedAt": "2026-01-03T04:29:30.288Z"
+    "updatedAt": "2026-01-03T04:29:30.288Z",
+    "savedQueries": [],
+    "tags": []
   },
   "abbott-and-costello": {
     "id": "abbott-and-costello",
@@ -1497,7 +1511,9 @@
       "youtube-u95Au5SqU10"
     ],
     "createdAt": "2026-01-03T19:00:00.000Z",
-    "updatedAt": "2026-01-03T19:00:00.000Z"
+    "updatedAt": "2026-01-03T19:00:00.000Z",
+    "savedQueries": [],
+    "tags": []
   },
   "akira-kurosawa": {
     "id": "akira-kurosawa",
@@ -1524,6 +1540,8 @@
       "tt0055630"
     ],
     "createdAt": "2026-01-03T20:30:00.000Z",
-    "updatedAt": "2026-01-03T20:53:18.150Z"
+    "updatedAt": "2026-01-03T20:53:18.150Z",
+    "savedQueries": [],
+    "tags": []
   }
 }
