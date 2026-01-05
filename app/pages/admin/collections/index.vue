@@ -22,6 +22,7 @@
 
       <div
         v-else
+        class="flex flex-col gap-8"
       >
         <!-- Header -->
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -55,6 +56,17 @@
         >
           <!-- Left: Search & Queries -->
           <div class="space-y-8">
+	          <!-- Search Library -->
+	          <div class="space-y-6">
+	            <h2 class="text-xl font-bold flex items-center gap-2">
+	              <div class="i-mdi-magnify text-blue-600" />
+	              Search Library
+	            </h2>
+	            <AdminMovieSearch
+	              :collection-id="selectedCollectionId"
+	              @add="onMovieAdded"
+	            />
+	          </div>
             <!-- Tags Editor -->
             <div class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-6">
               <h2 class="text-xl font-bold flex items-center gap-2">
@@ -79,17 +91,7 @@
               />
             </div>
 
-            <!-- Search Library -->
-            <div class="space-y-6">
-              <h2 class="text-xl font-bold flex items-center gap-2">
-                <div class="i-mdi-magnify text-blue-600" />
-                Search Library
-              </h2>
-              <AdminMovieSearch
-                :collection-id="selectedCollectionId"
-                @add="onMovieAdded"
-              />
-            </div>
+
           </div>
 
           <!-- Right: Collection Movies -->

@@ -78,8 +78,8 @@ const debouncedSetSearchQuery = useDebounceFn((query: string) => {
     router.replace({ query: {} })
   }
 
-  // If searching from a non-home page, navigate to home
-  if (query && route.path !== '/') {
+  // If searching from a non-home page, navigate to home (but not from admin pages)
+  if (query && route.path !== '/' && !route.path.startsWith('/admin')) {
     navigateTo('/')
   }
 
