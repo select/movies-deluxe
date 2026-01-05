@@ -84,7 +84,7 @@ const debouncedSetSearchQuery = useDebounceFn((query: string) => {
   }
 
   if (query && filters.value.sort.field !== 'relevance') {
-    setSort({ field: 'relevance', direction: 'desc', label: 'Relevance' })
+    setSort({ field: 'relevance', direction: 'desc' })
   }
 }, 500)
 

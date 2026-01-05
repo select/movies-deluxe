@@ -40,6 +40,21 @@
               class="i-mdi-check-circle text-blue-600 text-xl flex-shrink-0"
             />
           </div>
+
+          <!-- Tags Display -->
+          <div
+            v-if="collection.tags?.length"
+            class="flex flex-wrap gap-1 mb-2"
+          >
+            <span
+              v-for="tag in collection.tags"
+              :key="tag"
+              class="px-1.5 py-0.5 bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 rounded text-[10px] font-medium"
+            >
+              {{ tag }}
+            </span>
+          </div>
+
           <p class="text-xs text-theme-textmuted line-clamp-1 mb-2">
             {{ collection.description || 'No description' }}
           </p>

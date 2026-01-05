@@ -102,20 +102,37 @@
               title="Year"
               icon="i-mdi-calendar"
             >
-              <div class="space-y-2">
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-theme-textmuted">From:</span>
-                  <span class="font-medium text-theme-text">{{ filters.minYear || '1910' }}+</span>
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-theme-textmuted">From:</span>
+                    <span class="font-medium text-theme-text">{{ filters.minYear || '1910' }}</span>
+                  </div>
+                  <input
+                    :value="filters.minYear"
+                    type="range"
+                    min="1910"
+                    max="2025"
+                    step="1"
+                    class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
+                    @input="(e) => setMinYear(Number((e.target as HTMLInputElement).value))"
+                  >
                 </div>
-                <input
-                  :value="filters.minYear"
-                  type="range"
-                  min="1910"
-                  max="2025"
-                  step="1"
-                  class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
-                  @input="(e) => setMinYear(Number((e.target as HTMLInputElement).value))"
-                >
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-theme-textmuted">To:</span>
+                    <span class="font-medium text-theme-text">{{ filters.maxYear || '2025' }}</span>
+                  </div>
+                  <input
+                    :value="filters.maxYear || 2025"
+                    type="range"
+                    min="1910"
+                    max="2025"
+                    step="1"
+                    class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
+                    @input="(e) => setMaxYear(Number((e.target as HTMLInputElement).value))"
+                  >
+                </div>
                 <div class="flex justify-between text-xs text-theme-textmuted">
                   <span>1910</span>
                   <span>1970</span>
@@ -129,21 +146,37 @@
               title="Votes"
               icon="i-mdi-account-group"
             >
-              <div class="space-y-2">
-                <div class="flex items-center justify-between text-sm">
-                  <span class="text-theme-textmuted">Min:</span>
-                  <span class="font-medium text-theme-text">{{ filters.minVotes.toLocaleString() }}+</span>
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-theme-textmuted">Min:</span>
+                    <span class="font-medium text-theme-text">{{ filters.minVotes.toLocaleString() }}</span>
+                  </div>
+                  <input
+                    :value="filters.minVotes"
+                    type="number"
+                    min="0"
+                    step="100"
+                    placeholder="0"
+                    class="w-full px-3 py-2 bg-theme-surface border border-theme-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-theme-text placeholder-theme-text-muted"
+                    @input="(e) => setMinVotes(Number((e.target as HTMLInputElement).value))"
+                  >
                 </div>
-                <input
-                  :value="filters.minVotes"
-                  type="number"
-                  min="0"
-                  step="100"
-                  placeholder="0"
-                  class="w-full px-3 py-2 bg-theme-surface border border-theme-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-theme-text placeholder-theme-text-muted"
-                  @input="(e) => setMinVotes(Number((e.target as HTMLInputElement).value))"
-                >
-
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-theme-textmuted">Max:</span>
+                    <span class="font-medium text-theme-text">{{ filters.maxVotes ? filters.maxVotes.toLocaleString() : 'Any' }}</span>
+                  </div>
+                  <input
+                    :value="filters.maxVotes || ''"
+                    type="number"
+                    min="0"
+                    step="100"
+                    placeholder="Any"
+                    class="w-full px-3 py-2 bg-theme-surface border border-theme-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-theme-text placeholder-theme-text-muted"
+                    @input="(e) => setMaxVotes(Number((e.target as HTMLInputElement).value))"
+                  >
+                </div>
               </div>
             </FilterSection>
           </div>
@@ -424,7 +457,7 @@ defineExpose({
 
 // Use unified movie store
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
-const { setMinRating, setMinYear, setMinVotes, toggleSource, toggleGenre, toggleCountry, setSort, resetFilters } = useMovieStore()
+const { setMinRating, setMinYear, setMaxYear, setMinVotes, setMaxVotes, toggleSource, toggleGenre, toggleCountry, setSort, resetFilters } = useMovieStore()
 
 // Dynamic filter options
 const genres = ref<GenreOption[]>([])

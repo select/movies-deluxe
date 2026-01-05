@@ -205,14 +205,21 @@ export async function generateMovieJSON() {
             label: s.label,
           }
           if (s.type === 'youtube') {
-            base.id = (s as YouTubeSource).id
-            base.channelName = (s as YouTubeSource).channelName
-            base.channelId = (s as YouTubeSource).channelId
-            base.regionRestriction = (s as YouTubeSource).regionRestriction
+            const yt = s as YouTubeSource
+            return {
+              ...base,
+              id: yt.id,
+              channelName: yt.channelName,
+              channelId: yt.channelId,
+              regionRestriction: yt.regionRestriction,
+            }
           } else {
-            base.id = (s as ArchiveOrgSource).id
+            const ao = s as ArchiveOrgSource
+            return {
+              ...base,
+              id: ao.id,
+            }
           }
-          return base
         }),
         // Only include metadata fields that are used in the UI
         metadata: movie.metadata

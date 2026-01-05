@@ -70,6 +70,21 @@
       <h3 class="text-lg font-bold text-theme-text group-hover:text-theme-accent transition-colors">
         {{ collection.name }}
       </h3>
+
+      <!-- Tags -->
+      <div
+        v-if="collection.tags?.length"
+        class="flex flex-wrap gap-1.5 mt-1 mb-2"
+      >
+        <span
+          v-for="tag in collection.tags"
+          :key="tag"
+          class="px-2 py-0.5 bg-theme-selection text-theme-textmuted rounded-full text-[10px] font-medium uppercase tracking-wider"
+        >
+          {{ tag }}
+        </span>
+      </div>
+
       <p class="text-sm text-theme-textmuted line-clamp-2 leading-relaxed">
         {{ collection.description }}
       </p>

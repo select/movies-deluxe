@@ -9,12 +9,12 @@
 
     <div
       v-else-if="movies.length > 0"
-      class="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden divide-y divide-theme-border"
+      class="overflow-hidden divide-y divide-theme-border"
     >
       <div
         v-for="movie in movies"
         :key="movie.imdbId"
-        class="p-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
+        class="py-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
       >
         <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
           <img
@@ -81,7 +81,7 @@ const props = defineProps<{
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const uiStore = useUiStore()
-const movies = ref<any[]>([])
+const movies = ref<MovieEntry[]>([])
 const isLoading = ref(false)
 const isRemoving = ref('')
 
@@ -107,8 +107,8 @@ const loadCollectionMovies = async () => {
 
     // Sort by the order in movieIds
     movies.value = movieIds
-      .map(id => data.find((m: any) => m.imdbId === id))
-      .filter(Boolean)
+      .map(id => data.find(m => m.imdbId === id))
+      .filter((m): m is MovieEntry => !!m)
   } catch (err) {
     console.error('Failed to load collection movies:', err)
     uiStore.showToast('Failed to load collection movies', 'error')
@@ -117,7 +117,7 @@ const loadCollectionMovies = async () => {
   }
 }
 
-const removeMovie = async (movie: any) => {
+const removeMovie = async (movie: MovieEntry) => {
   if (!confirm(`Remove "${movie.title}" from this collection?`)) return
 
   isRemoving.value = movie.imdbId

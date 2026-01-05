@@ -53,16 +53,43 @@
           v-if="selectedCollectionId"
           class="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
-          <!-- Left: Search Results -->
-          <div class="space-y-6">
-            <h2 class="text-xl font-bold flex items-center gap-2">
-              <div class="i-mdi-database-search text-blue-600" />
-              Search Library
-            </h2>
-            <AdminMovieSearch
-              :collection-id="selectedCollectionId"
-              @add="onMovieAdded"
-            />
+          <!-- Left: Search & Queries -->
+          <div class="space-y-8">
+            <!-- Tags Editor -->
+            <div class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-6">
+              <h2 class="text-xl font-bold flex items-center gap-2">
+                <div class="i-mdi-tag-multiple text-blue-600" />
+                Collection Metadata
+              </h2>
+              <AdminCollectionTagsEditor
+                :collection-id="selectedCollectionId"
+                :initial-tags="selectedCollection?.tags"
+              />
+            </div>
+
+            <!-- Saved Queries -->
+            <div class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-6">
+              <h2 class="text-xl font-bold flex items-center gap-2">
+                <div class="i-mdi-database-clock text-blue-600" />
+                Dynamic Queries
+              </h2>
+              <AdminSavedQueryManager
+                :collection-id="selectedCollectionId"
+                :queries="selectedCollection?.savedQueries"
+              />
+            </div>
+
+            <!-- Search Library -->
+            <div class="space-y-6">
+              <h2 class="text-xl font-bold flex items-center gap-2">
+                <div class="i-mdi-magnify text-blue-600" />
+                Search Library
+              </h2>
+              <AdminMovieSearch
+                :collection-id="selectedCollectionId"
+                @add="onMovieAdded"
+              />
+            </div>
           </div>
 
           <!-- Right: Collection Movies -->
@@ -85,9 +112,16 @@
 <script setup lang="ts">
 const isLocal = ref(false)
 const selectedCollectionId = ref('')
-const moviesList = ref<any>(null)
+const moviesList = ref<{ refresh: () => Promise<void> } | null>(null)
 
 const movieStore = useMovieStore()
+const collectionsStore = useCollectionsStore()
+const { collections } = storeToRefs(collectionsStore)
+
+const selectedCollection = computed(() => {
+  if (!selectedCollectionId.value) return null
+  return collections.value.get(selectedCollectionId.value) || null
+})
 
 onMounted(async () => {
   isLocal.value = isLocalhost()

@@ -11,7 +11,6 @@ export const useCollectionsStore = defineStore('collections', () => {
   const loadCollections = async () => {
     // Return early if already loaded
     if (isLoaded.value) {
-      console.log('[CollectionsStore] Already loaded, skipping')
       return
     }
 
@@ -93,6 +92,73 @@ export const useCollectionsStore = defineStore('collections', () => {
     return collection ? collection.movieIds.includes(movieId) : false
   }
 
+  const addQueryToCollection = async (collectionId: string, query: SavedQuery) => {
+    try {
+      const response = await $fetch<{ success: boolean }>('/api/admin/collections/add-query', {
+        method: 'POST',
+        body: { collectionId, query },
+      })
+      if (response.success) {
+        isLoaded.value = false
+        await loadCollections()
+      }
+      return response.success
+    } catch {
+      return false
+    }
+  }
+
+  const removeQueryFromCollection = async (collectionId: string, queryIndex: number) => {
+    try {
+      const response = await $fetch<{ success: boolean }>('/api/admin/collections/remove-query', {
+        method: 'POST',
+        body: { collectionId, queryIndex },
+      })
+      if (response.success) {
+        isLoaded.value = false
+        await loadCollections()
+      }
+      return response.success
+    } catch {
+      return false
+    }
+  }
+
+  const updateCollectionTags = async (collectionId: string, tags: string[]) => {
+    try {
+      const response = await $fetch<{ success: boolean }>('/api/admin/collections/update-tags', {
+        method: 'POST',
+        body: { collectionId, tags },
+      })
+      if (response.success) {
+        isLoaded.value = false
+        await loadCollections()
+      }
+      return response.success
+    } catch {
+      return false
+    }
+  }
+
+  const refreshCollectionFromQuery = async (collectionId: string) => {
+    try {
+      const response = await $fetch<{ success: boolean; movieCount: number }>(
+        '/api/admin/collections/refresh-from-query',
+        {
+          method: 'POST',
+          body: { collectionId },
+        }
+      )
+      if (response.success) {
+        isLoaded.value = false
+        await loadCollections()
+      }
+      return response
+    } catch {
+      return { success: false, movieCount: 0 }
+    }
+  }
+
   /**
    * Get all collections that contain a specific movie
    * Queries the database to find which collections include this movie
@@ -115,8 +181,7 @@ export const useCollectionsStore = defineStore('collections', () => {
       }
 
       return await db.getCollectionsForMovie(movieId)
-    } catch (error) {
-      console.error('Failed to get collections for movie:', error)
+    } catch {
       return []
     }
   }
@@ -132,6 +197,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     removeMovieFromCollection,
     isMovieInCollection,
     getCollectionsForMovie,
+    addQueryToCollection,
+    removeQueryFromCollection,
+    updateCollectionTags,
+    refreshCollectionFromQuery,
   }
 })
 

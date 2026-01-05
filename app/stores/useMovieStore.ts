@@ -9,50 +9,6 @@ import { useStorage } from '@vueuse/core'
  */
 
 /**
- * Serializable sort state (for localStorage)
- */
-export interface SortState {
-  field: SortField
-  direction: SortDirection
-}
-
-/**
- * Filter state interface
- */
-export interface FilterState {
-  // Sorting (stored as field + direction for localStorage compatibility)
-  sort: SortState
-
-  // Remember previous sort when searching
-  previousSort?: SortState
-
-  // Source filter (can be 'archive.org' or YouTube channel names)
-  sources: string[]
-
-  // Rating filter
-  minRating: number
-
-  // Year filter
-  minYear: number
-
-  // Votes filter
-  minVotes: number
-
-  // Genre filter
-  genres: string[]
-
-  // Country filter
-  countries: string[]
-
-  // Search query
-  searchQuery: string
-
-  // Pagination
-  currentPage: number
-  lastScrollY: number
-}
-
-/**
  * Frontend-specific loading state type
  */
 export interface LoadingState {
@@ -69,7 +25,9 @@ const DEFAULT_FILTERS: FilterState = {
   sources: [],
   minRating: 0,
   minYear: 0,
+  maxYear: 0,
   minVotes: 0,
+  maxVotes: 0,
   genres: [],
   countries: [],
   searchQuery: '',
@@ -404,8 +362,6 @@ export const useMovieStore = defineStore('movie', () => {
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     }
 
-    console.log('[MovieStore] Fetching details for', uncachedIds.length, 'uncached movies')
-
     try {
       const results = await db.queryByIds<Record<string, unknown>>(uncachedIds)
       const movies = results.map(mapRowToMovie)
@@ -459,7 +415,6 @@ export const useMovieStore = defineStore('movie', () => {
         return movie
       }
       // If we got invalid data, treat it as not found
-      console.warn(`[MovieStore] Invalid movie data for ${imdbId}`)
       return undefined
     } catch (err) {
       window.console.error(`[MovieStore] Failed to fetch movie details for ${imdbId}:`, err)
@@ -575,9 +530,17 @@ export const useMovieStore = defineStore('movie', () => {
         where.push('m.year >= ?')
         params.push(filters.value.minYear)
       }
+      if (filters.value.maxYear && filters.value.maxYear > 0) {
+        where.push('m.year <= ?')
+        params.push(filters.value.maxYear)
+      }
       if (filters.value.minVotes > 0) {
         where.push('m.imdbVotes >= ?')
         params.push(filters.value.minVotes)
+      }
+      if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+        where.push('m.imdbVotes <= ?')
+        params.push(filters.value.maxVotes)
       }
 
       // Genre filters
@@ -669,9 +632,17 @@ export const useMovieStore = defineStore('movie', () => {
         where.push('m.year >= ?')
         params.push(filters.value.minYear)
       }
+      if (filters.value.maxYear && filters.value.maxYear > 0) {
+        where.push('m.year <= ?')
+        params.push(filters.value.maxYear)
+      }
       if (filters.value.minVotes > 0) {
         where.push('m.imdbVotes >= ?')
         params.push(filters.value.minVotes)
+      }
+      if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+        where.push('m.imdbVotes <= ?')
+        params.push(filters.value.maxVotes)
       }
 
       // Source filters
@@ -804,22 +775,29 @@ export const useMovieStore = defineStore('movie', () => {
       })
     }
 
-    // 3. Filter by minimum year
-    if (filters.value.minYear > 0) {
+    // 3. Filter by year range
+    if (filters.value.minYear > 0 || (filters.value.maxYear && filters.value.maxYear > 0)) {
       filtered = filtered.filter(movie => {
-        return (movie.year || 0) >= filters.value.minYear
+        const year = movie.year || 0
+        if (filters.value.minYear > 0 && year < filters.value.minYear) return false
+        if (filters.value.maxYear && filters.value.maxYear > 0 && year > filters.value.maxYear)
+          return false
+        return true
       })
     }
 
-    // 4. Filter by minimum votes
-    if (filters.value.minVotes > 0) {
+    // 4. Filter by votes range
+    if (filters.value.minVotes > 0 || (filters.value.maxVotes && filters.value.maxVotes > 0)) {
       filtered = filtered.filter(movie => {
         const votesStr = movie.metadata?.imdbVotes
         const votes =
           typeof votesStr === 'number'
             ? votesStr
             : parseInt(String(votesStr || '0').replace(/,/g, ''))
-        return votes >= filters.value.minVotes
+        if (filters.value.minVotes > 0 && votes < filters.value.minVotes) return false
+        if (filters.value.maxVotes && filters.value.maxVotes > 0 && votes > filters.value.maxVotes)
+          return false
+        return true
       })
     }
 
@@ -859,8 +837,8 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Set sort option
    */
-  const setSort = (option: SortOption) => {
-    filters.value.sort = { field: option.field, direction: option.direction }
+  const setSort = (sort: SortState) => {
+    filters.value.sort = { field: sort.field, direction: sort.direction }
 
     if (filters.value.searchQuery !== '') {
       filters.value.previousSort = undefined
@@ -909,10 +887,24 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Set maximum year
+   */
+  const setMaxYear = (year: number) => {
+    filters.value.maxYear = year
+  }
+
+  /**
    * Set minimum votes
    */
   const setMinVotes = (votes: number) => {
     filters.value.minVotes = votes
+  }
+
+  /**
+   * Set maximum votes
+   */
+  const setMaxVotes = (votes: number) => {
+    filters.value.maxVotes = votes
   }
 
   /**
@@ -1219,11 +1211,8 @@ export const useMovieStore = defineStore('movie', () => {
   watch(
     () => db.isReady.value,
     ready => {
-      console.log('[MovieStore] Watch triggered - DB ready:', ready)
       const currentLength = lightweightMovies.value?.length || 0
-      console.log('[MovieStore] lightweightMovies.value.length:', currentLength)
       if (ready && currentLength === 0) {
-        console.log('[MovieStore] DB is ready, fetching lightweight movies...')
         fetchLightweightMovies()
       }
     },
@@ -1283,7 +1272,9 @@ export const useMovieStore = defineStore('movie', () => {
     toggleSource,
     setMinRating,
     setMinYear,
+    setMaxYear,
     setMinVotes,
+    setMaxVotes,
     toggleGenre,
     toggleCountry,
     resetFilters,
