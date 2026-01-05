@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
     <!-- Relevance (Search Only) -->
-    <SortButton
+    <AppSortButton
       v-if="showRelevance"
       :option="relevanceOption"
       :is-active="isActive(relevanceOption)"
@@ -9,7 +9,7 @@
     />
     
     <!-- Year Toggle Button -->
-    <SortToggleButton
+    <AppSortToggleButton
       label="Year"
       icon="i-mdi-calendar"
       :option-a="yearNewest"
@@ -19,7 +19,7 @@
     />
 
     <!-- Rating Toggle Button -->
-    <SortToggleButton
+    <AppSortToggleButton
       label="Rating"
       icon="i-mdi-star"
       :option-a="ratingHigh"
@@ -29,7 +29,7 @@
     />
 
     <!-- Title Toggle Button -->
-    <SortToggleButton
+    <AppSortToggleButton
       label="Title"
       icon="i-mdi-sort-alphabetical-ascending"
       :option-a="titleAZ"
@@ -39,7 +39,7 @@
     />
 
     <!-- Most Popular (Single Button) -->
-    <SortButton
+    <AppSortButton
       :option="mostPopular"
       :is-active="isActive(mostPopular)"
       @select="$emit('select', mostPopular)"

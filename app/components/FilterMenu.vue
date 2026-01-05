@@ -61,7 +61,7 @@
               icon="i-mdi-sort"
               :default-expanded="true"
             >
-              <SortButtonGroup
+              <AppSortButtonGroup
                 :current-sort="currentSortOption"
                 :show-relevance="!!filters.searchQuery"
                 @select="handleSortChange"
