@@ -25,20 +25,6 @@
               {{ collection.name }}
             </h1>
 
-            <!-- Tags -->
-            <div
-              v-if="collection.tags?.length"
-              class="flex flex-wrap gap-2 mb-4"
-            >
-              <span
-                v-for="tag in collection.tags"
-                :key="tag"
-                class="px-2.5 py-1 bg-theme-surface border border-theme-border/50 text-theme-textmuted rounded-full text-xs font-bold uppercase tracking-wider"
-              >
-                {{ tag }}
-              </span>
-            </div>
-
             <p class="text-lg text-theme-textmuted max-w-3xl leading-relaxed">
               {{ collection.description }}
             </p>

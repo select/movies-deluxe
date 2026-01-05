@@ -95,7 +95,8 @@ const collectionsArray = computed(() => Array.from(collections.value.values()))
 const fuse = computed(() => new Fuse(collectionsArray.value, {
   keys: [
     { name: 'name', weight: 2 },
-    { name: 'description', weight: 1 }
+    { name: 'description', weight: 1 },
+    { name: 'tags', weight: 1.5 }
   ],
   threshold: 0.3,
   ignoreLocation: true
