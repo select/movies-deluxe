@@ -36,6 +36,7 @@ export interface ArchiveOrgSource extends MovieSourceBase {
   runtime?: string // Runtime in HH:MM:SS format from Archive.org metadata
   releaseDate?: string // ISO date from Archive.org metadata - REQUIRED for OMDB year validation
   language?: string // Language code from Archive.org metadata (e.g., 'en', 'es', 'fr')
+  size?: number // File size in bytes
 }
 
 /**

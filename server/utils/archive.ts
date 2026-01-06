@@ -10,6 +10,7 @@ export interface ArchiveOrgMovie {
   collection?: string[]
   language?: string // 2-letter language code from Archive.org metadata
   runtime?: string // Duration in HH:MM:SS format
+  item_size?: number // File size in bytes
 }
 
 export interface ArchiveOrgResponse {
@@ -31,7 +32,7 @@ export async function fetchArchiveOrgMovies(
   url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
   url.searchParams.set(
     'fields',
-    'identifier,title,description,date,year,downloads,collection,language,runtime'
+    'identifier,title,description,date,year,downloads,collection,language,runtime,item_size'
   )
   url.searchParams.set('count', Math.max(100, rows).toString())
   if (cursor) {
@@ -85,6 +86,7 @@ export async function processArchiveMovie(
     runtime: movie.runtime, // Runtime in HH:MM:SS format
     releaseDate: movie.date || movie.year,
     language: movie.language, // 2-letter language code from Archive.org metadata
+    size: movie.item_size, // File size in bytes
     addedAt: new Date().toISOString(),
   }
 
