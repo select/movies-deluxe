@@ -142,7 +142,22 @@ export default defineEventHandler(async event => {
         result.processed++
         result.failed++
         result.errors.push(`Invalid title for ${oldId}`)
-        saveFailedOmdbMatch(oldId, primaryTitle || 'Unknown', 'Invalid title')
+
+        // Prepare AI status information for failure tracking
+        const aiStatus = {
+          hasAITitle: Boolean(movie.ai?.title),
+          hasAIYear: Boolean(movie.ai?.year),
+          aiTitleUsed: false, // AI title wasn't used due to invalid primary title
+        }
+
+        saveFailedOmdbMatch(
+          oldId,
+          primaryTitle || 'Unknown',
+          'Invalid title',
+          undefined,
+          undefined,
+          aiStatus
+        )
         continue
       }
 
@@ -198,7 +213,22 @@ export default defineEventHandler(async event => {
         if (matchResult.confidence === MatchConfidence.NONE) {
           result.failed++
           result.errors.push(`No match found for: ${primaryTitle}`)
-          saveFailedOmdbMatch(oldId, primaryTitle, 'No OMDB match found', attempts, yearToUse)
+
+          // Prepare AI status information for failure tracking
+          const aiStatus = {
+            hasAITitle: Boolean(movie.ai?.title),
+            hasAIYear: Boolean(movie.ai?.year),
+            aiTitleUsed: Boolean(movie.ai?.title), // AI title was used if it exists
+          }
+
+          saveFailedOmdbMatch(
+            oldId,
+            primaryTitle,
+            'No OMDB match found',
+            attempts,
+            yearToUse,
+            aiStatus
+          )
           continue
         }
 
