@@ -13,75 +13,36 @@
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
     },
-
     "c7": {
       "type": "local",
       "command": ["npx", "-y", "@upstash/context7-mcp"],
-      "enabled": true,
+      "enabled": false,
     },
   },
   "permission": {
     "doom_loop": "ask",
   },
-  // === Agent Overrides ===
-  "agent": {
-    // Build agent - full capability with slight creativity
-    "build": {
-      "temperature": 0.3,
-      "permission": {
-        "bash": {
-          "pkill -f chrome*": "deny",
-          "pkill*chrome*": "deny",
+  // === Models ===
+  "provider": {
+    "google": {
+      "models": {
+        "gemini-3-flash-preview": {
+          "limit": {
+            "context": 300000,
+            "output": 65536,
+          },
         },
       },
     },
-    // Plan agent - read-only analysis, no file writes
-    "plan": {
-      "temperature": 0.1,
-      "tools": {
-        "write": false,
-        "edit": false,
-        "patch": false,
-        "bd*": true,
-      },
-      "permission": {
-        "bash": {
-          "git status": "allow",
-          "git diff*": "allow",
-          "git log*": "allow",
-          "git show*": "allow",
-          "bd *": "allow",
-          "rg *": "allow",
-          "tree *": "allow",
-          "wc *": "allow",
-          "head *": "allow",
-          "ls *": "allow",
-          "tail *": "allow",
-          "pnpm exec tsc*": "allow",
-          "pnpm run lint*": "allow",
-          "pnpm list*": "allow",
-          "pnpm test*": "allow",
-          "find *": "allow",
-          "grep *": "allow",
-          "*": "deny",
+    "amazon-bedrock": {
+      "models": {
+        "anthropic.claude-sonnet-4-5-20250929-v1:0": {
+          "limit": {
+            "context": 120000,
+            "output": 64000,
+          },
         },
       },
     },
-
-    // Test writer agent - generates comprehensive test suites
-    // "test-writer": {
-    // 	"model": "amazon-bedrock/anthropic.claude-sonnet-4-5-20250929-v1:0",
-    // 	"temperature": 0.2, // Slight creativity for test case generation
-    // 	"permission": {
-    // 		"write": {
-    // 			"**/*.test.ts": "allow",
-    // 			"**/*.spec.ts": "allow",
-    // 			"**/*.test.tsx": "allow",
-    // 			"**/*.spec.tsx": "allow",
-    // 			"*": "deny",
-    // 		},
-    // 	},
-    // 	"description": "Test specialist - generates comprehensive unit, integration, and e2e tests. Can only write to test files.",
-    // },
   },
 }
