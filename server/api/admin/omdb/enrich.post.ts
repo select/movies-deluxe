@@ -167,9 +167,7 @@ export default defineEventHandler(async event => {
       )
       const youtubeSource = movie.sources.find((s): s is YouTubeSource => s.type === 'youtube')
 
-      const archiveYear = archiveSource?.releaseDate
-        ? new Date(archiveSource.releaseDate).getFullYear()
-        : undefined
+      const archiveYear = archiveSource?.year
 
       const youtubeYear = youtubeSource?.releaseYear
 
