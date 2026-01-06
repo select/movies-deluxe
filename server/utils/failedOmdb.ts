@@ -8,6 +8,16 @@ interface TitleAttempt {
   year?: number
 }
 
+/**
+ * AI status information for debugging OMDB matching failures
+ * Helps analyze the effectiveness of AI-enhanced movie metadata
+ */
+interface AIStatus {
+  hasAITitle: boolean // Whether movie.ai?.title exists
+  hasAIYear: boolean // Whether movie.ai?.year exists
+  aiTitleUsed: boolean // Whether AI title was attempted in matching
+}
+
 interface FailedOmdbMatch {
   identifier: string
   originalTitle: string
@@ -16,6 +26,7 @@ interface FailedOmdbMatch {
   failedAt: string
   lastAttempt: string
   reason?: string
+  ai?: AIStatus // AI field status for debugging
 }
 
 /**
@@ -41,13 +52,15 @@ export function loadFailedOmdbMatches(): Set<string> {
  * @param reason - Reason for failure
  * @param attempts - Array of title queries attempted with their years
  * @param year - Year from source metadata
+ * @param aiStatus - AI field status information for debugging
  */
 export function saveFailedOmdbMatch(
   identifier: string,
   originalTitle: string,
   reason?: string,
   attempts?: TitleAttempt[],
-  year?: number
+  year?: number,
+  aiStatus?: AIStatus
 ): void {
   try {
     const dataDir = join(process.cwd(), 'data')
@@ -70,6 +83,9 @@ export function saveFailedOmdbMatch(
       const existing = failed[existingIndex]!
       existing.lastAttempt = now
       existing.reason = reason
+      if (aiStatus) {
+        existing.ai = aiStatus
+      }
       if (attempts && attempts.length > 0) {
         // Merge attempts, avoiding duplicates
         const existingAttempts = existing.attempts || []
@@ -91,6 +107,7 @@ export function saveFailedOmdbMatch(
         failedAt: now,
         lastAttempt: now,
         reason,
+        ai: aiStatus,
       })
     }
 
