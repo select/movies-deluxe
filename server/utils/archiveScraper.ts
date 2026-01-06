@@ -24,6 +24,11 @@ export async function scrapeArchiveOrg(
   const { collections = ['feature_films'] } = options
   const ROWS_PER_PAGE = 500 // Maximum allowed by Archive.org API
 
+  // Build source ID index for fast lookups during scraping
+  console.log('[Archive] Building source ID index...')
+  buildSourceIdIndex(db)
+  console.log('[Archive] Source ID index built')
+
   const results: ScrapeResult = {
     processed: 0,
     added: 0,

@@ -1,5 +1,5 @@
 import { loadCollectionsDatabase, saveCollectionsDatabase } from '../../../utils/collections'
-import { loadMoviesDatabase, findMovieByAnySourceId } from '../../../utils/movieData'
+import { loadMoviesDatabase, getSourceIdIndex } from '../../../utils/movieData'
 import type { Collection } from '../../../../shared/types/collections'
 import type { MovieEntry } from '../../../../shared/types/movie'
 
@@ -44,6 +44,9 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
 
     const details: CleanupResult['details'] = []
 
+    // Build source ID index for fast lookups
+    const sourceIdIndex = getSourceIdIndex(moviesDb)
+
     // Process each collection
     for (const [key, value] of Object.entries(collectionsDb)) {
       // Skip schema entry
@@ -63,19 +66,22 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
           continue
         }
 
-        // Try to find by source ID using utility function
-        const found = findMovieByAnySourceId(moviesDb, movieId)
-        if (found) {
-          const [_, movieBySource] = found
-          // Movie exists but with different IMDB ID - update reference
-          newMovieIds.push(movieBySource.imdbId)
-          updatedMovies.push({ oldId: movieId, newId: movieBySource.imdbId })
-          stats.moviesUpdated++
-        } else {
-          // Movie doesn't exist - remove from collection
-          removedMovies.push(movieId)
-          stats.moviesRemoved++
+        // Try to find by source ID using index
+        const foundMovieId = sourceIdIndex.get(movieId)
+        if (foundMovieId) {
+          const movieBySource = moviesDb[foundMovieId] as MovieEntry | undefined
+          if (movieBySource) {
+            // Movie exists but with different IMDB ID - update reference
+            newMovieIds.push(movieBySource.imdbId)
+            updatedMovies.push({ oldId: movieId, newId: movieBySource.imdbId })
+            stats.moviesUpdated++
+            continue
+          }
         }
+
+        // Movie doesn't exist - remove from collection
+        removedMovies.push(movieId)
+        stats.moviesRemoved++
       }
 
       // Update collection if changes were made
