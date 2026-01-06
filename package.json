@@ -1,5 +1,6 @@
 {
   "name": "movies-deluxe",
+  "version": "0.3.0",
   "type": "module",
   "private": true,
   "scripts": {
@@ -89,6 +90,5 @@
     "typescript-eslint": "8.50.0",
     "unocss": "66.5.10",
     "youtubei.js": "16.0.1"
-  },
-  "version": "0.3.0"
+  }
 }
