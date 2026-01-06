@@ -201,12 +201,8 @@ onKeyStroke('/', (e) => {
   }
 })
 
-// Sync searchQuery with store
-watch(searchQuery, newVal => {
-  movieStore.setSearchQuery(newVal)
-})
-
-// Sync store searchQuery with local and trigger search
+// Admin search should not sync with global store to avoid URL query updates
+// Only sync when query is set from store (e.g., from saved queries)
 watch(
   () => filters.value.searchQuery,
   newVal => {
