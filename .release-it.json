@@ -17,7 +17,6 @@
     }
   },
   "hooks": {
-    "before:init": ["pnpm lint", "pnpm typecheck"],
-    "after:bump": "pnpm build:prod"
+    "before:init": ["pnpm lint", "pnpm typecheck"]
   }
 }
