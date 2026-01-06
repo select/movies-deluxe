@@ -115,6 +115,9 @@ export async function saveMoviesDatabase(db: MoviesDatabase): Promise<void> {
     db._schema.lastUpdated = new Date().toISOString()
     const content = JSON.stringify(db, null, 2)
     await writeFile(MOVIES_FILE, content, 'utf-8')
+
+    // Clear the index after saving since the database has been modified
+    clearSourceIdIndex()
   } catch (error) {
     console.error('Failed to save movies database:', error)
     throw error
@@ -132,23 +135,49 @@ function createEmptyDatabase(): MoviesDatabase {
 }
 
 /**
- * Find a movie entry by any source ID (regardless of type)
- * Returns [movieId, entry] if found, undefined otherwise
- * Useful for finding movies when you have an old ID that might be in sources
+ * Source ID to Movie ID index
+ * Maps source IDs to their parent movie IDs for fast lookups
  */
-export function findMovieByAnySourceId(
-  db: MoviesDatabase,
-  sourceId: string
-): [string, MovieEntry] | undefined {
+let sourceIdIndex: Map<string, string> | undefined
+
+/**
+ * Build an index of source IDs to movie IDs for fast lookups
+ * This index is built once and reused for subsequent lookups
+ */
+export function buildSourceIdIndex(db: MoviesDatabase): Map<string, string> {
+  const index = new Map<string, string>()
+
   for (const [key, value] of Object.entries(db)) {
     if (key.startsWith('_')) continue
     const entry = value as MovieEntry
-    const hasSource = entry.sources?.some(s => s.id === sourceId)
-    if (hasSource) {
-      return [key, entry]
+    if (entry.sources) {
+      for (const source of entry.sources) {
+        index.set(source.id, key)
+      }
     }
   }
-  return undefined
+
+  sourceIdIndex = index
+  return index
+}
+
+/**
+ * Get or create the source ID index
+ * If the index doesn't exist, it will be built automatically
+ */
+export function getSourceIdIndex(db: MoviesDatabase): Map<string, string> {
+  if (!sourceIdIndex) {
+    return buildSourceIdIndex(db)
+  }
+  return sourceIdIndex
+}
+
+/**
+ * Clear the source ID index
+ * Call this when the database is modified to force a rebuild on next access
+ */
+export function clearSourceIdIndex(): void {
+  sourceIdIndex = undefined
 }
 
 /**
@@ -169,11 +198,16 @@ export function upsertMovie(
   // If not found by movieId, check if any of the sources already exist in the database
   // This handles the case where a movie was enriched and got a new IMDb ID
   if (!existing && entry.sources && entry.sources.length > 0) {
+    const index = getSourceIdIndex(db)
     for (const source of entry.sources) {
-      const found = findMovieByAnySourceId(db, source.id)
-      if (found) {
-        ;[existingKey, existing] = found
-        break
+      const foundMovieId = index.get(source.id)
+      if (foundMovieId) {
+        const foundEntry = db[foundMovieId] as MovieEntry | undefined
+        if (foundEntry) {
+          existingKey = foundMovieId
+          existing = foundEntry
+          break
+        }
       }
     }
   }
