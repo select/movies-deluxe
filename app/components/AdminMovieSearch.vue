@@ -206,12 +206,18 @@ watch(searchQuery, newVal => {
   movieStore.setSearchQuery(newVal)
 })
 
-// Sync store searchQuery with local
+// Sync store searchQuery with local and trigger search
 watch(
   () => filters.value.searchQuery,
   newVal => {
     if (newVal !== searchQuery.value) {
       searchQuery.value = newVal
+      // Trigger search when query is set from store (e.g., from saved queries)
+      if (newVal.length >= 3) {
+        debouncedSearch()
+      } else {
+        results.value = []
+      }
     }
   }
 )

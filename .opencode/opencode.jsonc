@@ -28,6 +28,12 @@
     // Build agent - full capability with slight creativity
     "build": {
       "temperature": 0.3,
+      "permission": {
+        "bash": {
+          "pkill -f chrome*": "deny",
+          "pkill*chrome*": "deny",
+        },
+      },
     },
     // Plan agent - read-only analysis, no file writes
     "plan": {
