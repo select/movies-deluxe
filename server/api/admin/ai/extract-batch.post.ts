@@ -1,28 +1,54 @@
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 
+// Note: The following functions are auto-imported from server/utils/:
+// - loadFailedAIExtractions, saveFailedAIExtraction, clearFailedAIExtractions, removeFailedAIExtraction, hasFailedAIExtraction (from failedAI.ts)
+// - emitProgress (from progress.ts)
+// - extractMovieMetadata (from ai.ts)
+
 interface BatchOptions {
   limit?: number
   onlyUnmatched?: boolean
   forceReExtract?: boolean
+  forceRetryFailed?: boolean
 }
 
 export default defineEventHandler(async event => {
   const body = await readBody<BatchOptions>(event)
-  const { limit = 100, onlyUnmatched = true, forceReExtract = false } = body
+  const {
+    limit = 100,
+    onlyUnmatched = true,
+    forceReExtract = false,
+    forceRetryFailed = false,
+  } = body
 
   try {
     const filePath = join(process.cwd(), 'data/movies.json')
     const content = await readFile(filePath, 'utf-8')
     const db = JSON.parse(content)
 
-    // Get unmatched movies (no metadata)
+    if (forceRetryFailed) {
+      clearFailedAIExtractions()
+    }
+
+    // Load failed extractions to skip them
+    const failedExtractions = loadFailedAIExtractions()
+
+    // Get movies to process
     const movies = Object.entries(db)
       .filter(([id, movie]: [string, unknown]) => {
         if (id.startsWith('_')) return false
         const movieEntry = movie as MovieEntry
-        if (onlyUnmatched && movieEntry.metadata) return false
+
+        // Skip if already has AI data and not forcing re-extraction
         if (!forceReExtract && movieEntry.ai?.title) return false
+
+        // Skip if only processing unmatched and this has metadata
+        if (onlyUnmatched && movieEntry.metadata) return false
+
+        // Skip if this entry has failed before (unless forcing retry)
+        if (!forceRetryFailed && failedExtractions.has(id)) return false
+
         return true
       })
       .slice(0, limit)
@@ -50,6 +76,11 @@ export default defineEventHandler(async event => {
         const source = (movie as MovieEntry).sources[0]
         if (!source) {
           failedCount++
+          saveFailedAIExtraction(
+            id,
+            (movie as MovieEntry).title as string,
+            'No source available for extraction'
+          )
           continue
         }
 
@@ -72,14 +103,59 @@ export default defineEventHandler(async event => {
           ;(movie as MovieEntry).ai = extracted
           successCount++
 
+          // Remove from failed list if it was there (successful retry)
+          removeFailedAIExtraction(id)
+
           // Save immediately after each successful extraction to prevent data loss
           await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
         } else {
           failedCount++
+
+          // Track the failed extraction attempt
+          saveFailedAIExtraction(
+            id,
+            title,
+            'AI extraction returned no title',
+            {
+              title,
+              description,
+              timestamp: new Date().toISOString(),
+            },
+            {
+              type: source.type,
+              hasDescription: Boolean(description),
+              titleLength: title.length,
+              descriptionLength: description.length,
+            }
+          )
         }
       } catch (error) {
         console.error(`AI extraction failed for ${id}:`, error)
         failedCount++
+
+        // Track the failed extraction attempt with error details
+        const source = (movie as MovieEntry).sources[0]
+        const title = source?.title || (movie as MovieEntry).title
+        const description = source?.description || ''
+
+        saveFailedAIExtraction(
+          id,
+          title,
+          `Extraction error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          {
+            title,
+            description,
+            timestamp: new Date().toISOString(),
+          },
+          source
+            ? {
+                type: source.type,
+                hasDescription: Boolean(description),
+                titleLength: title.length,
+                descriptionLength: description.length,
+              }
+            : undefined
+        )
       }
     }
 
