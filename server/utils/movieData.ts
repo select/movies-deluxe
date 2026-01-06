@@ -152,11 +152,16 @@ export function findMovieByAnySourceId(
 }
 
 /**
- * Add or update a movie entry in the database
+ * Upserts a movie entry into the database
  * If the movie exists, merges sources and updates metadata
  * Also checks if any source already exists in another entry (e.g., after OMDB enrichment)
+ * @returns The existing movie entry if it existed, undefined otherwise
  */
-export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEntry): void {
+export function upsertMovie(
+  db: MoviesDatabase,
+  movieId: string,
+  entry: MovieEntry
+): MovieEntry | undefined {
   // First, check if this exact movieId exists
   let existing = db[movieId] as MovieEntry | undefined
   let existingKey = movieId
@@ -214,12 +219,14 @@ export function upsertMovie(db: MoviesDatabase, movieId: string, entry: MovieEnt
       metadata: entry.metadata || existing.metadata,
       lastUpdated: new Date().toISOString(),
     }
+    return existing
   } else {
     // New movie - add it
     db[movieId] = {
       ...entry,
       lastUpdated: new Date().toISOString(),
     }
+    return undefined
   }
 }
 

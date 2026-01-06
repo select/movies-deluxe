@@ -1,4 +1,4 @@
-import type { MoviesDatabase, MovieEntry } from '../../shared/types/movie'
+import type { MoviesDatabase } from '../../shared/types/movie'
 
 export interface ScrapeOptions {
   collections?: string[]
@@ -80,7 +80,7 @@ export async function scrapeArchiveOrg(
             continue
           }
 
-          const existing = db[entry.imdbId] as MovieEntry | undefined
+          const existing = upsertMovie(db, entry.imdbId, entry)
           const existingSource = existing?.sources?.find(
             s =>
               s.type === 'archive.org' &&
@@ -88,7 +88,6 @@ export async function scrapeArchiveOrg(
               s.id === entry.sources[0].id
           )
 
-          upsertMovie(db, entry.imdbId, entry)
           results.processed++
 
           const progressMsg = `Processing: ${movie.title}`

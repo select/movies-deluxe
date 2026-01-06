@@ -430,10 +430,21 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
     try {
-      // Fetch movie details directly from JSON file to get related movie IDs
-      const movie = await $fetch<MovieEntry>(
-        `${useRuntimeConfig().app.baseURL}movies/${movieId}.json`
-      )
+      // First try to get the movie data from cache to avoid duplicate fetching
+      let movie: MovieEntry | undefined
+
+      // Check if movie is already cached with full data
+      if (movieDetailsCache.value.has(movieId)) {
+        const cached = movieDetailsCache.value.get(movieId)
+        if (cached && cached.sources && cached.sources.length > 0) {
+          movie = cached
+        }
+      }
+
+      // If not in cache, use getMovieById which handles caching
+      if (!movie) {
+        movie = await getMovieById(movieId)
+      }
 
       if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
         return []
