@@ -72,6 +72,7 @@
     "@unocss/preset-wind4": "66.5.10",
     "@unocss/reset": "66.5.10",
     "better-sqlite3": "12.5.0",
+    "conventional-changelog-angular": "8.1.0",
     "conventional-changelog-conventionalcommits": "9.1.0",
     "eslint": "9.39.2",
     "eslint-plugin-oxlint": "1.33.0",
