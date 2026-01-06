@@ -214,7 +214,6 @@ export function upsertMovie(
     // Update entry at the new key
     db[movieId] = {
       ...existing,
-      ...entry,
       sources: mergedSources,
       metadata: entry.metadata || existing.metadata,
       lastUpdated: new Date().toISOString(),
