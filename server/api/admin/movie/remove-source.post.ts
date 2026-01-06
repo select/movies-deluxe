@@ -72,17 +72,10 @@ export default defineEventHandler(async event => {
           newEntry.year = removedSource.releaseYear
         } else if (
           removedSource.type === 'archive.org' &&
-          'releaseDate' in removedSource &&
-          removedSource.releaseDate
+          'year' in removedSource &&
+          removedSource.year
         ) {
-          try {
-            const year = new Date(removedSource.releaseDate).getFullYear()
-            if (!isNaN(year)) {
-              newEntry.year = year
-            }
-          } catch {
-            // Ignore invalid dates
-          }
+          newEntry.year = removedSource.year
         }
 
         db[removedSourceTempId] = newEntry
