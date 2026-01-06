@@ -215,6 +215,17 @@ export default defineEventHandler(async _event => {
       console.error('Failed to save stats.json', e)
     }
 
+    // Also save to public/data/stats.json for frontend initial load
+    try {
+      const publicDataDir = resolve(process.cwd(), 'public/data')
+      if (!existsSync(publicDataDir)) {
+        mkdirSync(publicDataDir, { recursive: true })
+      }
+      writeFileSync(join(publicDataDir, 'stats.json'), JSON.stringify(stats, null, 2))
+    } catch (e) {
+      console.error('Failed to save public stats.json', e)
+    }
+
     emitProgress({
       type: 'stats',
       status: 'completed',
