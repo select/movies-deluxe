@@ -70,12 +70,14 @@ onMounted(() => {
 const debouncedSetSearchQuery = useDebounceFn((query: string) => {
   setSearchQuery(query)
 
-  // Update URL query parameter
-  const router = useRouter()
-  if (query) {
-    router.replace({ query: { q: query } })
-  } else {
-    router.replace({ query: {} })
+  // Update URL query parameter (but not on admin pages)
+  if (!route.path.startsWith('/admin')) {
+    const router = useRouter()
+    if (query) {
+      router.replace({ query: { q: query } })
+    } else {
+      router.replace({ query: {} })
+    }
   }
 
   // If searching from a non-home page, navigate to home (but not from admin pages)
