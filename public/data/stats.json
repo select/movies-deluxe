@@ -1,18 +1,18 @@
 {
   "database": {
-    "total": 31477,
-    "matched": 14946,
-    "unmatched": 16531,
+    "total": 31469,
+    "matched": 14964,
+    "unmatched": 16505,
     "archiveOrgSources": 26789,
     "youtubeSources": 11202,
-    "curatedCount": 14946,
-    "qualityMarkedCount": 250,
+    "curatedCount": 14964,
+    "qualityMarkedCount": 259,
     "qualityBreakdown": {
       "blocked": 100,
-      "clip": 33,
+      "clip": 41,
       "interview": 19,
       "teaser": 6,
-      "trailer": 85,
+      "trailer": 86,
       "behind-the-scenes": 6,
       "promo": 3,
       "incorrect": 1,
@@ -117,18 +117,18 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 27438,
+      "total": 27728,
       "scraped": 26789,
-      "percent": 97.63466724979955,
+      "percent": 96.61353144835545,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
       "totalScraped": 11202,
-      "totalAvailable": 17855,
+      "totalAvailable": 17885,
       "totalFailed": 6022,
       "failureRate": 34.962842545285646,
-      "percent": 62.73872864743769,
+      "percent": 62.63349175286553,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -136,7 +136,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2321,
-          "total": 2772,
+          "total": 2779,
           "failed": 435,
           "failureRate": 15.783744557329463
         },
@@ -146,7 +146,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 327,
-          "total": 446,
+          "total": 443,
           "failed": 138,
           "failureRate": 29.677419354838708
         },
@@ -166,7 +166,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2379,
-          "total": 2602,
+          "total": 2601,
           "failed": 205,
           "failureRate": 7.93343653250774
         },
@@ -196,7 +196,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 529,
-          "total": 605,
+          "total": 608,
           "failed": 106,
           "failureRate": 16.69291338582677
         },
@@ -206,7 +206,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 1971,
-          "total": 3650,
+          "total": 3655,
           "failed": 1656,
           "failureRate": 45.6575682382134
         },
@@ -216,7 +216,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 179,
-          "total": 558,
+          "total": 561,
           "failed": 350,
           "failureRate": 66.1625708884688
         },
@@ -236,7 +236,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 234,
-          "total": 282,
+          "total": 283,
           "failed": 47,
           "failureRate": 16.72597864768683
         },
@@ -246,7 +246,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5087,
+          "total": 5102,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -264,50 +264,50 @@
     }
   },
   "curation": {
-    "total": 31477,
-    "curated": 14946,
-    "percent": 47.48228865520856
+    "total": 31469,
+    "curated": 14964,
+    "percent": 47.55155867679303
   },
   "omdb": {
-    "total": 31477,
-    "matched": 14946,
-    "unmatched": 16531,
-    "percent": 47.48228865520856,
-    "failed": 12144,
-    "failureRate": 44.82834994462902
+    "total": 31469,
+    "matched": 14964,
+    "unmatched": 16505,
+    "percent": 47.55155867679303,
+    "failed": 0,
+    "failureRate": 0
   },
   "ai": {
-    "totalUnmatched": 16531,
-    "withAiData": 4741,
-    "withoutAiData": 11790,
-    "percent": 28.67945072893352
+    "totalUnmatched": 16505,
+    "withAiData": 9063,
+    "withoutAiData": 7442,
+    "percent": 54.910633141472275
   },
   "quality": {
-    "totalMarked": 250,
+    "totalMarked": 259,
     "breakdown": {
       "blocked": 100,
-      "clip": 33,
+      "clip": 41,
       "interview": 19,
       "teaser": 6,
-      "trailer": 85,
+      "trailer": 86,
       "behind-the-scenes": 6,
       "promo": 3,
       "incorrect": 1,
       "duplicate": 1
     },
-    "percent": 0.7942307081360993
+    "percent": 0.8230321904096095
   },
   "posters": {
-    "totalMovies": 31477,
-    "withPosterUrl": 13359,
-    "downloaded": 13272,
-    "missing": 87,
+    "totalMovies": 31469,
+    "withPosterUrl": 13367,
+    "downloaded": 13345,
+    "missing": 22,
     "failed": 12,
-    "failureRate": 0.09033423667570009,
-    "percentOfMoviesWithUrl": 99.34875364922524,
-    "percentOfAllMovies": 42.16411983352925,
-    "filesInDirectory": 13357,
-    "matchedPosters": 13272
+    "failureRate": 0.08984053305382945,
+    "percentOfMoviesWithUrl": 99.83541557567143,
+    "percentOfAllMovies": 42.406813054116746,
+    "filesInDirectory": 13439,
+    "matchedPosters": 13345
   },
-  "lastUpdated": "2026-01-02T20:52:22.613Z"
+  "lastUpdated": "2026-01-06T20:28:12.026Z"
 }
