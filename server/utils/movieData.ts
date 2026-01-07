@@ -240,13 +240,8 @@ export function upsertMovie(
       }
     }
 
-    // If the key changed (e.g., from temp ID to IMDb ID), delete the old entry
-    if (existingKey !== movieId) {
-      delete db[existingKey]
-    }
-
-    // Update entry at the new key
-    db[movieId] = {
+    // Update entry at the final key
+    db[existingKey] = {
       ...existing,
       sources: mergedSources,
       metadata: entry.metadata || existing.metadata,
