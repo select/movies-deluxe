@@ -1,0 +1,562 @@
+[
+  {
+    "identifier": "archive-715RD2",
+    "originalTitle": "715 RD 2",
+    "attempts": [
+      {
+        "title": "715 RD 2",
+        "description": "715 RD 2",
+        "timestamp": "2026-01-07T01:44:01.892Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:44:01.894Z",
+    "lastAttempt": "2026-01-07T01:44:01.894Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 8,
+      "descriptionLength": 8
+    }
+  },
+  {
+    "identifier": "archive-BaharehRahnamaSverigesRadio",
+    "originalTitle": "Bahareh Rahnama Sveriges Radio",
+    "attempts": [
+      {
+        "title": "Bahareh Rahnama Sveriges Radio",
+        "description": "Bahareh Rahnama Interview Sveriges Radio",
+        "timestamp": "2026-01-07T01:44:15.405Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:44:15.407Z",
+    "lastAttempt": "2026-01-07T01:44:15.407Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 30,
+      "descriptionLength": 40
+    }
+  },
+  {
+    "identifier": "archive-BaharehRahnamaSverigesRadio02",
+    "originalTitle": "Bahareh Rahnama Sveriges Radio 02",
+    "attempts": [
+      {
+        "title": "Bahareh Rahnama Sveriges Radio 02",
+        "description": "Bahareh Rahnama Interview Radio Sweden Farsi",
+        "timestamp": "2026-01-07T01:44:19.086Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:44:19.086Z",
+    "lastAttempt": "2026-01-07T01:44:19.086Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 33,
+      "descriptionLength": 44
+    }
+  },
+  {
+    "identifier": "archive-DarCheshmeBad_persian_NoSubtitle",
+    "originalTitle": "Dar cheshme bad_persian_ no subtitle",
+    "attempts": [
+      {
+        "title": "Dar cheshme bad_persian_ no subtitle",
+        "description": "Ø¯Ø± ÚØ´Ù Ø¨Ø§Ø¯ ÙØ¬ÙÙØ¹Ù ØªÙÙÛØ²ÛÙÙÛ ØªØ§Ø±ÛØ®Û Ø­ÙØ§Ø³Û Ø§Ø³Øª Ú©Ù ÙÛÙÙØ¨Ø±Ø¯Ø§Ø±Û Ø¢Ù Ø§Ø² ÙÙØ±ÙØ§Ù Ø³Ø§Ù Û±Û³Û¸Û² Ø¯Ø± ÙÙÚ©ÛØ´ÙÛ ÙØ§ÙØ¹ Ø¯Ø± Ø´ÙØ§Ù Ú©Ø´ÙØ± Ø¢ØºØ§Ø² Ø´Ø¯Ø Ø¨Ù ÙØ¯Øª Ûµ Ø³Ø§Ù Ø¨Ù Ø·ÙÙ Ø§ÙØ¬Ø§ÙÛØ¯ Ù Ø¯Ø± ÙÙØ§ÛØª Ø¯Ø± Ø§ÙØ§Ø®Ø± Ø³Ø§Ù Û±Û³Û¸Û· Ø¨Ù Ù¾Ø§ÛØ§Ù Ø±Ø³ÛØ¯. ÙØ¬ÙÙØ¹Ù ØªÙÙÛØ²ÛÙÙÛ Â«Ø¯Ø± ÚØ´Ù Ø¨Ø§Ø¯Â» Ø¨Ù ØªÙÛÙ Ú©ÙÙØ¯Ú¯Û ÙØ³Ø¹ÙØ¯ Ø¬Ø¹ÙØ±ÛâØ¬ÙØ²Ø§ÙÛ Ù Ø¹Ø¨Ø§Ø³ Ø§Ú©Ø¨Ø±Û Ø¯Ø±ÛµÛ° ÙØ³ÙØª ÛµÛ° Ø¯ÙÛÙÙâØ§Û Ø¨Ø±Ø§Û Ù¾Ø®Ø´ Ø§Ø² Ø´Ø¨Ú©Ù Ø§ÙÙ Ø³ÛÙØ§ ØªÙÛÙ Ù ØªÙÙÛØ¯ ÙÛâØ´ÙØ¯.ÙÛÙÙÙØ§ÙÙ Ø§ÛÙ Ø³Ø±ÛØ§Ù Ú©Ù Ø¯Ø± Ø²ÙØ±Ù Ø³Ø±ÛØ§ÙâÙØ§Û Â«Ø§ÙÙÂ» Ø³ÛÙØ§ Ø¨Ù Ø´ÙØ§Ø± ÙÛâØ±ÙØ¯Ø ØªÙØ³Ø· Â«ÙØ³Ø¹ÙØ¯ Ø¬Ø¹ÙØ±Û Ø¬ÙØ²Ø§ÙÛÂ» Ø¯Ø± ÙØ¯Øª Ø¯ÙØ³Ø§Ù ÙÙØ´ØªÙ Ø´Ø¯Ù Ø§Ø³Øª. Ø³Ø±ÛØ§Ù ØªØ§Ø±ÛØ®Û Â«Ø¯Ø± ÚØ´Ù Ø¨Ø§Ø¯Â»Ø ÙÙØ§ÛØ¹ Ø³ÛØ§Ø³Û Ù Ø§Ø¬ØªÙØ§Ø¹Û Ø³Ù Ø¯ÙØ±Ù Ø§Ø² ØªØ§Ø±ÛØ® Ø¯Ø± Ø³Ø§ÙâÙØ§Û Û±Û³Û°Û°Ø Û±Û³Û²Û°Ù Û±Û³Û¶Û° Ø±Ø§ Ø¨Ø±Ø±Ø³Û ÙÛâÚ©ÙØ¯ Ú©Ù Ø¯ÙØ±Ù Ø§ÙÙ Ù¾Ø§ÛØ§Ù Ø¯ÙØ±Ù ÙØ§Ø¬Ø§Ø± Ù Ø¯ÙØ±Ù Ù¾ÙÙÙÛ Ù Ø¯ÙØ±Ù Ø¯ÙÙ Ø¬ÙÚ¯ Ø¬ÙØ§ÙÛ Ø¯ÙÙ Ù Ø¯ÙØ±Ù Ø³ÙÙ ÛÚ© Ø¯ÙØ±Ù Ø²ÙØ§ÙÛ Ø®Ø§Øµ Ø¯Ø± Ø¨Ø¹Ø¯ Ø§Ø² Ø§ÙÙÙØ§Ø¨ Ø±Ø§ Ú©Ù Ø¯ÙØ±Ù ÙØªØ­ Ø®Ø±ÙØ´ÙØ± Ø§Ø³ØªØ Ø¯Ø± Ø¨Ø± ÙÛâÚ¯ÛØ±Ø¯. Ø¯Ø± Ø§ÛÙ Ù¾Ø±ÙÚÙ Ú©Ù Â«Ø­Ø³ÛÙ Ø¹ÙÛØ²Ø§Ø¯ÙÂ» ÙÙØ³ÛÙÛ Ø¢Ù Ø±Ø§ Ø³Ø§Ø®ØªÙØ Ø¨Ø§Ø²ÛÚ¯Ø±Ø§ÙÛ ÚÙÙ Ù¾Ø§Ø±Ø³Ø§ Ù¾ÛØ±ÙØ²ÙØ±Ø Ø§Ú©Ø¨Ø± Ø¹Ø¨Ø¯ÛØ Ú©Ø§ÙØ¨ÛØ² Ø¯ÛØ±Ø¨Ø§Ø²Ø Ø³Ø¹ÛØ¯ ÙÛÚ©âÙ¾ÙØ±Ø Ø³Ø­Ø± Ø¬Ø¹ÙØ±Û Ø¬ÙØ²Ø§ÙÛØ ÙØ§ÙÙ Ø§Ø³Ú©ÙØ¯Ø±ÛØ Ø³ØªØ§Ø±Ù ØµÙØ±Ø¢ÙÙØ Ø±Ø¶Ø§ Ø´ÙÛØ¹Û Ø¬ÙØ ÙØ®Ø±Ø§ÙØ¯ÛÙ ØµØ¯ÛÙ Ø´Ø±ÛÙØ Ø¬ÙØ§ÙÚ¯ÛØ± Ø§ÙÙØ§Ø³ÛØ ÙØ­ÙÙØ¯ Ù¾Ø§Ú© ÙÛØªØ ÙØ­ÙØ¯Ø±Ø¶Ø§ ÙØ¯Ø§ÛØªÛØ ÙÙÙÙ Ø³ÛØ¯Û Ùâ¦ Ø§ÛÙØ§Û ÙÙØ´ Ú©Ø±Ø¯ÙâØ§ÙØ¯. Ø³Ø§Ø®Øª Ø§ÛÙ Ø³Ø±ÛØ§Ù ÛÚ©Û Ø§Ø² Ø³Ø®ØªâØªØ±ÛÙ Ù¾Ø±ÙÚÙâÙØ§Û Ø³Ø±ÛØ§ÙâØ³Ø§Ø²Û Ø¯Ø± ØªÙÙÛØ²ÛÙÙ Ø§Ø³Øª Ú©Ù Ø¨Ø±Ø§Û Ø³Ø§Ø®Øª Ø¢Ù ØªØ§ Ø¨Ù Ø­Ø§Ù Ø§Ø² Û´Û¸Û° ÙÙÚ©ÛØ´Ù Ø§Ø³ØªÙØ§Ø¯Ù Ø´Ø¯Ù Ù Ø¨Ù Ø¨ÛØ´ Ø§Ø² Û±Û° Ø´ÙØ±Ø³ØªØ§Ù Ù Ø§Ø³ØªØ§Ù Ø¯ÛÚ¯Ø± Ø³ÙØ± Ø´Ø¯Ù Ø§Ø³Øª. [ÙÛØ±Ø§ÛØ´]Ø®ÙØ§ØµÙ Ù Ø§Ø·ÙØ§Ø¹Ø§Øª Ø¯Ø§Ø³ØªØ§Ù Â«Ø¯Ø± ÚØ´Ù Ø¨Ø§Ø¯Â» ÙØµÙ Ø²ÙØ¯Ú¯Û Ø®Ø§ÙÙØ§Ø¯ÙâØ§Û Ø§Ø³Øª Ú©Ù Ø±ÙÛØ¯Ø§Ø¯ÙØ§ Ù ÙØ­Ø¸Ø§Øª ØªÙØ® Ù Ø´ÛØ±ÛÙ Ø²ÙØ¯Ú¯ÛâØ´Ø§Ù Ø§Ø² Ø¯ÙØ±Ù ÙÛØ§Ù ÙÛØ±Ø²Ø§ Ú©ÙÚÚ© Ø¬ÙÚ¯ÙÛ ØªØ§ ÙØªØ­ Ø®Ø±ÙØ´ÙØ± Ø¯Ø± Ø¢Ù Ø¨Ù ØªØµÙÛØ± Ú©Ø´ÛØ¯Ù ÙÛâØ´ÙØ¯Ø ÙØµÙ Ø§Ø² Ø²ÙØ§ÙÛ Ø¢ØºØ§Ø² ÙÛâØ´ÙØ¯ Ú©Ù ÙÛØ±Ø²Ø§ Ú©ÙÚÚ© Ø®Ø§Ù Ø¬ÙÚ¯ÙÛØ Ø¯Ø± Ú¯ÛÙØ§Ù Ø§Ø¹ÙØ§Ù Ø¬ÙÙÙØ±Û ÙÛâÚ©ÙØ¯ Ù Ø¨Ø§ Ø§ÛÙ Ø§ÙØ¯Ø§Ù Ø¯ÙØ±Ø§Ù Ù¾Ø± Ø­Ø§Ø¯Ø«Ù ØªØ§Ø±ÛØ® ÙØ¹Ø§ØµØ± Ø§ÛØ±Ø§Ù Ø¢ØºØ§Ø² ÙÛâØ´ÙØ¯. Ù¾Ø¯Ø± Ø®Ø§ÙÙØ§Ø¯Ù ÙØ¹Ø±ÙÙ Ø¨Ù Â«Ø§ÛØ±Ø§ÙÛÂ» Ø§Ø² ÛØ§Ø±Ø§Ù ÙÛØ±Ø²Ø§ Ú©ÙÚÚ© Ø®Ø§Ù Ø¬ÙÚ¯ÙÛ Ø§Ø³Øª. Ù¾Ø³ Ø§Ø² Ú©Ø´ØªÙ Ø´Ø¯Ù ÙÛØ±Ø²Ø§Ø Ø§ÛØ±Ø§ÙÛ ÙÙØ±Ø§Ù Ø®Ø§ÙÙØ§Ø¯ÙâØ§Ø´ Ø¨Ù ØªÙØ±Ø§Ù Ú©ÙÚ ÙÛâÚ©ÙØ¯ Ù Ø¨Ø§ Ø¯Ø§ÛØ± Ú©Ø±Ø¯Ù ÛÚ© ÚØ§Ù¾Ø®Ø§ÙÙ ÙØ¹Ø§ÙÛØªâÙØ§Û Ø³ÛØ§Ø³ÛâØ§Ø´ Ø±Ø§ Ù¾Û ÙÛâÚ¯ÛØ±Ø¯. Ø¯Ø± Ø§ÛÙ Ø³Ø±ÛØ§Ù Û±ÛµÛ° Ø¨Ø§Ø²ÛÚ¯Ø± Ø¯Ø± ÙÙØ´âÙØ§Û Ø§ØµÙÛ Ø§ÛÙØ§Û ÙÙØ´ Ú©Ø±Ø¯ÙâØ§ÙØ¯. Â«Ø³Ø¹ÛØ¯ ÙÛÚ©âÙ¾ÙØ±Â» ÙÙØ´ Â«Ø­Ø³Ù Ø§ÛØ±Ø§ÙÛÂ» Ù¾Ø¯Ø± Ø®Ø§ÙÙØ§Ø¯Ù Ø±Ø§ Ø¨Ø§Ø²Û ÙÛâÚ©ÙØ¯. Ø§Ù Ø§Ø² Ø§Ø¨ØªØ¯Ø§Û Ø³Ø±ÛØ§Ù Ø¯Ø± ÙØµÙ Ø­Ø¶ÙØ± Ø¯Ø§Ø±Ø¯ Ù Ø¯Ø± ÙØ§Ø² Ø¯ÙÙ Ø§Ø² ÙØµÙ Ø®Ø§Ø±Ø¬ ÙÛâØ´ÙØ¯. Ø§ÛØ±Ø§ÙÛ 3 Ù¾Ø³Ø± Ù ÛÚ© Ø¯Ø­ØªØ± Ø¯Ø§Ø±Ø¯ Ú©Ù ÙØ§Ù ÛÚ©Û Ø§Ø² Ù¾Ø³Ø±ÙØ§ Â«Ø¨ÛÚÙÂ» Ø§Ø³Øª Ù ÙÙØ´ Ø§Ù Ø±Ø§ Â«Ù¾Ø§Ø±Ø³Ø§ Ù¾ÛØ±ÙØ²ÙØ±Â» Ø¨Ø§Ø²Û ÙÛâÚ©ÙØ¯. Â«Ø¨ÛÚÙÂ» Ø®ÙØ¨Ø§Ù Ø§Ø³Øª Ù Ø¯Ø± Ø¬ÙÚ¯ Ø¬ÙØ§ÙÛ Ø¯ÙÙ Ø¨Ø§ ÙØªÙÙÛÙ ÙÛâØ¬ÙÚ¯Ø¯. Ø§Ù Ù¾Ø³ Ø§Ø² Ø¬ÙÚ¯ Ø¯Ø³ØªÚ¯ÛØ± Ù Ø¨Ù Ø®Ø§Ø±Ø¬ Ø§Ø² Ú©Ø´ÙØ± ØªØ¨Ø¹ÛØ¯ ÙÛâØ´ÙØ¯. Ø¨ÛÚÙ Ø²ÙØ§Ù Ø¬ÙÚ¯ ØªØ­ÙÛÙÛ Ø¨Ù Ø§ÛØ±Ø§Ù ÙÛâØ¢ÛØ¯ Ù Ø¨Ø±Ø§Û Ù¾ÛØ¯Ø§ Ú©Ø±Ø¯Ù Ù¾Ø³Ø±Ø´ ÙØ¬Ø¨ÙØ± ÙÛâØ´ÙØ¯ Ø¨Ù Ø¬Ø¨ÙÙ Ø¨Ø±ÙØ¯. ÙÙØ´ Ù¾Ø³Ø± Ø¯ÛÚ¯Ø± Ø§ÛØ±Ø§ÙÛ Ø¨Ù ÙØ§Ù Â«ÙØ§Ø¯Ø±Â» Ø±Ø§ Â«Ú©Ø§ÙØ¨ÛØ² Ø¯ÛØ±Ø¨Ø§Ø²Â» Ø¨Ø§Ø²Û ÙÛâÚ©ÙØ¯. Â«ÙØ§Ø¯Ø±Â» ØªØ§Ø¬Ø± Ø§Ø³Øª Ù ØªÙØ§ÛÙ Ø²ÛØ§Ø¯Û Ø¨Ù Ø¯Ø®Ø§ÙØª Ø¯Ø± ÙØ§Ø¬Ø±Ø§ÙØ§Û Ø³ÛØ§Ø³Û ÙØ¯Ø§Ø±Ø¯. ÙÙØ´ ÙÙÚ©Ø§Ø± Ù Ø¯ÙØ³Øª Ø§Ù Ø±Ø§ Â«Ø±Ø¶Ø§ Ø´ÙÛØ¹ÛâØ¬ÙÂ» Ø¨Ø§Ø²Û ÙÛâÚ©ÙØ¯. Ø§Ø³Ø¯ Ù¾Ø³Ø± Ú©ÙÚÚ©ØªØ± Ø®Ø§ÙÙØ§Ø¯Ù Â«ÙÙØ¯Û Ú©Ø§Ø³Ù Ø³Ø§Ø²Â» Ø¯Ø± Ø­ÙÙÙ ÙÙØ§ÛÛ ÙØªÙÙÛÙ Ø¨Ù ÙÛØ±ÙÛ Ø¯Ø±ÛØ§ÛÛ Ø¨ÙØ¯Ø± Ù¾ÙÙÙÛ Ø¨Ù ÙÙØ±Ø§Ù ÛØ¯ Ø§ÙÙÙ Ø¨Ø§ÛÙØ¯Ø± Ø´ÙÛØ¯ ÙÛ Ø´ÙØ¯. ÙØ§Ø·ÙÙ Ø¯Ø®ØªØ± Ø§ÛØ±Ø§ÙÛ Â«Ú¯ÙØ§Ø±Ù Ø¹Ø¨Ø§Ø³ÛÂ» Ø¨Ø§ ÙØ­ÙÙØ¯ Ø¯ÚÚ¯ÛØ± Â«ÙØ­ÙØ¯ Ø±Ø¶Ø§ ÙØ¯Ø§ÛØªÛÂ» Ø§Ø²Ø¯ÙØ§Ø¬ ÙÛ Ú©ÙØ¯. [ÙÛØ±Ø§ÛØ´]ØªÙÛÙ Ù ØªÙÙÛØ¯ ÙØ¬ÙÙØ¹Ù ØªÙÙÛØ²ÛÙÙÛ Â«Ø¯Ø± ÚØ´Ù Ø¨Ø§Ø¯Â» Ø¨Ù ØªÙÛÙâÚ©ÙÙØ¯Ú¯Û Â«Ø±Ø¶Ø§ Ø§ÙØµØ§Ø±ÛØ§ÙÂ» Ø¢ØºØ§Ø² Ø´Ø¯ Ù Ø¨Ø¹Ø¯ Ø§Ø² ÚÙØ¯ ÙØ§Ù Â«Ø­Ø¨ÛØ¨âØ§ÙÙÙ Ú©Ø§Ø³ÙâØ³Ø§Ø²Â» Ø¬Ø§ÛÚ¯Ø²ÛÙ ÙÛ Ø´Ø¯.Ù¾Ø³ Ø§Ø² Û² Ø³Ø§Ù ØªÙÛÙâÚ©ÙÙØ¯Ú¯Û Ø¨Ù Â«ÙØ³Ø¹ÙØ¯ Ø¬Ø¹ÙØ±ÛâØ¬ÙØ²Ø§ÙÛÂ» Ù Â«Ø¹Ø¨Ø§Ø³ Ø§Ú©Ø¨Ø±ÛÂ» ÙØ§Ú¯Ø°Ø§Ø± Ø´Ø¯. Ú©Ù Ø§ÛÙ Ø§Ø«Ø± Ø­Ø¯ÙØ¯ Û²ÛµÛ°Û° Ø¯ÙÛÙÙ Ø²ÙØ§Ù Ø¯Ø§Ø±Ø¯ Ú©Ù Ø­Ø¯ÙØ¯ ÙÛÙÛ Ø§Ø² Ø¢Ù Ø¯Ø± Ø²ÙØ§Ù ØªÙÛÙâÚ©ÙÙØ¯Ú¯Û Ø§ÙØµØ§Ø±ÛØ§Ù Ù Ú©Ø§Ø³ÙâØ³Ø§Ø² ÙÛÙÙØ¨Ø±Ø¯Ø§Ø±Û Ø´Ø¯Ù ÙÛµÛ° Ø¯Ø±ØµØ¯ Ø¨ÙÛÙ Ø²ÙØ§Ù ØªÙÛÙâÚ©ÙÙØ¯Ú¯Û Ø¬ÙØ²Ø§ÙÛ Ù Ø§Ú©Ø¨Ø±Û Ø¨Ù ØªØµÙÛØ± Ú©Ø´ÛØ¯Ù Ø´Ø¯Ù Ø§Ø³Øª. ÙÛÙÙØ¨Ø±Ø¯Ø§Ø±Û Ø³Ø±ÛØ§Ù Ø±Ø§ Â«Ø¹ÙÛØ±Ø¶Ø§ Ø²Ø±ÛÙâØ¯Ø³ØªÂ» Ø¢ØºØ§Ø² Ú©Ø±Ø¯ Ø§ÙØ§ Ø§Ù Ø§ÙØ§Ø®Ø± Ø³Ø§Ù Û¸Û² Ø§Ø² Ú¯Ø±ÙÙ Ø±ÙØª Ù Â«Ø­Ø³Ù Ù¾ÙÛØ§Â» Ø¨Ù ÙØ¯Øª ÛÚ© ÙØ§ÙØ Ø¬Ø§Û Ø§Ù Ø±Ø§ Ø¨Ù Ø¹ÙÙØ§Ù ÙØ¯ÛØ± ÙÛÙÙØ¨Ø±Ø¯Ø§Ø±Û Ú¯Ø±ÙØª Ù Ø¨Ø¹Ø¯ Ø§Ø² Ø¢Ù ÙÛÙÙØ¨Ø±Ø¯Ø§Ø±Û Ø¨Ù Â«Ø§ÙÛØ± Ú©Ø±ÛÙÛÂ» Ø³Ù¾Ø±Ø¯Ù Ø´Ø¯ Ú©Ù Ø§Ù Ú©Ø§Ø± Ø±Ø§ Ø¨Ù Ù¾Ø§ÛØ§Ù Ø±Ø³Ø§ÙØ¯. Ø¨Ø§Ø²Ø³Ø§Ø²Û Ø®ÛØ§Ø¨Ø§ÙâÙØ§Û Ø·Ø§ÙÙØ§ÙÛØ ÙØ§ÙÙâØ²Ø§Ø± Ù Ù¾Ø§ÙÙØ§Ø± Ø¨Ø±Ø§Û Ú¯Ø±ÙØªÙ Ø³Ú©Ø§ÙØ³âÙØ§Û ÙØ±Ø¨ÙØ· Ø¨Ù Ø³Ø§ÙâÙØ§Û Û¶Û° Ù Û¶Û± Ø¯Ø± ÙØ­Ù Ø®ÙØ¯ Ø®ÛØ§Ø¨Ø§ÙâÙØ§ Ø¨Ø§Ø²Ø³Ø§Ø²Û Ø´Ø¯ Ù Ø¨Ø§Ø²Ø³Ø§Ø²Û ÙØ³Ø¬Ø¯ Ø®Ø±ÙØ´ÙØ± Ø­Ø¯ÙØ¯ Û¸ ÙØ§Ù Ø·ÙÙ Ú©Ø´ÛØ¯ Ú©Ù Ø§ÛÙ Ø¨Ø§Ø²Ø³Ø§Ø²Û ÙÙ Ø¯Ø± Ø®ÙØ¯ ÙØ³Ø¬Ø¯ Ø§ØµÙÛ Ø§ÙØ¬Ø§Ù Ø´Ø¯. Ø´ÙØ±Ú© ØºØ²Ø§ÙÛ ÙÙÚ©ÛØ´Ù Ø§ØµÙÛ ÙØ§Ø² Ø¯ÙÙ Ø³Ø±ÛØ§Ù Ø¨ÙØ¯Ù Ø§Ø³Øª.",
+        "timestamp": "2026-01-07T01:48:17.269Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:48:17.270Z",
+    "lastAttempt": "2026-01-07T01:48:17.270Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 36,
+      "descriptionLength": 5062
+    }
+  },
+  {
+    "identifier": "archive-FS-JLG-2010",
+    "originalTitle": "FS-JLG-2010",
+    "attempts": [
+      {
+        "title": "FS-JLG-2010",
+        "description": "FS-JLG-2010",
+        "timestamp": "2026-01-07T01:49:00.514Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:49:00.515Z",
+    "lastAttempt": "2026-01-07T01:49:00.515Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 11,
+      "descriptionLength": 11
+    }
+  },
+  {
+    "identifier": "archive-HussainErfaniPassedAway",
+    "originalTitle": "Hussain Erfani Passed Away",
+    "attempts": [
+      {
+        "title": "Hussain Erfani Passed Away",
+        "description": "Hussain Erfani Passed Away",
+        "timestamp": "2026-01-07T01:49:45.480Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:49:45.480Z",
+    "lastAttempt": "2026-01-07T01:49:45.480Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 26,
+      "descriptionLength": 26
+    }
+  },
+  {
+    "identifier": "archive-MostafaBadkoubei",
+    "originalTitle": "Mostafa Badkoubei",
+    "attempts": [
+      {
+        "title": "Mostafa Badkoubei",
+        "description": "ÚÙØ¯Û Ø§Ø³Øª Ø¯ÙÙ ÛÚ© Ø¯ÙÙ Ø¨Ø§ ÙØªÙÙ Ú¯Ø±Ø§Ù Ø§Ø³Øª",
+        "timestamp": "2026-01-07T01:52:16.894Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:52:16.895Z",
+    "lastAttempt": "2026-01-07T01:52:16.895Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 17,
+      "descriptionLength": 52
+    }
+  },
+  {
+    "identifier": "archive-NahidPersson-PersiskaSverigesRadio",
+    "originalTitle": "Nahid Persson - Persiska Sveriges Radio",
+    "attempts": [
+      {
+        "title": "Nahid Persson - Persiska Sveriges Radio",
+        "description": "Nahid Persson - Persiska Sveriges Radio fredag 6 september kl 10:30 , Persiska",
+        "timestamp": "2026-01-07T01:52:22.836Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:52:22.837Z",
+    "lastAttempt": "2026-01-07T01:52:22.837Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 39,
+      "descriptionLength": 78
+    }
+  },
+  {
+    "identifier": "archive-NahidPerssonPersiskaSverigesRadio",
+    "originalTitle": "Nahid Persson Persiska Sveriges Radio",
+    "attempts": [
+      {
+        "title": "Nahid Persson Persiska Sveriges Radio",
+        "description": "Nahid Persson Persiska Sveriges Radio",
+        "timestamp": "2026-01-07T01:52:27.036Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:52:27.037Z",
+    "lastAttempt": "2026-01-07T01:52:27.037Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 37,
+      "descriptionLength": 37
+    }
+  },
+  {
+    "identifier": "archive-Ramesh2Ayeneh",
+    "originalTitle": "Ramesh 2 Ayeneh",
+    "attempts": [
+      {
+        "title": "Ramesh 2 Ayeneh",
+        "description": "Ramesh 2 Ayeneh poem: Nader Naderpour",
+        "timestamp": "2026-01-07T01:53:17.375Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:53:17.381Z",
+    "lastAttempt": "2026-01-07T01:53:17.381Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 15,
+      "descriptionLength": 37
+    }
+  },
+  {
+    "identifier": "archive-TheAirportFromAnOfficeInput",
+    "originalTitle": "The airport from an office input",
+    "attempts": [
+      {
+        "title": "The airport from an office input",
+        "description": "The airport of the big regional city. One of usual though also extremely dangerous situations becomes serious test for protagonists of a picture â the chief of change of Tuzhina and the chief of air field service Myagkov.",
+        "timestamp": "2026-01-07T01:53:24.169Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:53:24.170Z",
+    "lastAttempt": "2026-01-07T01:53:24.170Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 32,
+      "descriptionLength": 221
+    }
+  },
+  {
+    "identifier": "archive-deadline-2006-dv-drip-x-264-esubs-ddr",
+    "originalTitle": "Deadline 2006 Dv DRip X 264 Esubs DDR",
+    "attempts": [
+      {
+        "title": "Deadline 2006 Dv DRip X 264 Esubs DDR",
+        "description": "Deadline ",
+        "timestamp": "2026-01-07T01:54:37.147Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:54:37.148Z",
+    "lastAttempt": "2026-01-07T01:54:37.148Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 37,
+      "descriptionLength": 9
+    }
+  },
+  {
+    "identifier": "archive-debunking-sneako-youtubes-biggest-man-child",
+    "originalTitle": "Debunking Sneako: YouTube's Biggest Man-Child",
+    "attempts": [
+      {
+        "title": "Debunking Sneako: YouTube's Biggest Man-Child",
+        "description": "Compare news coverage. Spot media bias. Avoid algorithms. Be well informed. Download the free Ground News app at https://ground.news/mrbeard Subscribe to the Fellowship Covenant Podcast! https://www.youtube.com/watch?v=dnSov... My second channel: https://www.youtube.com/c/MoreMrBeard My other socials: TikTok: https://www.tiktok.com/@mrbeard?lang=en Spotify: https://open.spotify.com/artist/0lMvb... Instagram: https://www.instagram.com/officialmrb... Twitter: https://twitter.com/mrbeardofficial?l... 00:00 Intro 06:00 1. Hypocrisy  17:35 2. Hasty Generalization  25:12 3. Appeal To Tradition 27:46 4. Appeal To Nature 31:30 5. Gish Gallop 32:53 6. Ad Hominem 35:44 7. Identity Fallacy 36:55 8. Poisoning The Well 39:54 9. False Cause 42:10 10. False Dichotomy  44:54 11. Relative Privation 48:14 12. Double Standards 54:22 If Sneako Was Alex Jones",
+        "timestamp": "2026-01-07T01:55:08.389Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:55:08.391Z",
+    "lastAttempt": "2026-01-07T01:55:08.391Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 45,
+      "descriptionLength": 850
+    }
+  },
+  {
+    "identifier": "archive-dor-2006-dv-drip-x-264-esubs-ddr",
+    "originalTitle": "Dor 2006 Dv DRip X 264 Esubs DDR",
+    "attempts": [
+      {
+        "title": "Dor 2006 Dv DRip X 264 Esubs DDR",
+        "description": "Dor",
+        "timestamp": "2026-01-07T01:55:21.006Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:55:21.008Z",
+    "lastAttempt": "2026-01-07T01:55:21.008Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 32,
+      "descriptionLength": 3
+    }
+  },
+  {
+    "identifier": "archive-film-restoring-1967-2-videofred",
+    "originalTitle": "Film Restoring 1967 2 Videofred",
+    "attempts": [
+      {
+        "title": "Film Restoring 1967 2 Videofred",
+        "description": "video sample restored using Fred avs scripts https://forum.doom9.org/showthread.php?t=174298",
+        "timestamp": "2026-01-07T01:55:27.523Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:55:27.523Z",
+    "lastAttempt": "2026-01-07T01:55:27.523Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 31,
+      "descriptionLength": 92
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-106-2",
+    "originalTitle": "filmcollectief-00-106-2",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-106-2",
+        "description": "Uit het archief van de KNBRD: De katwijkse Reddings Brigade in de jaren '30",
+        "timestamp": "2026-01-07T01:56:16.399Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:56:16.400Z",
+    "lastAttempt": "2026-01-07T01:56:16.400Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 23,
+      "descriptionLength": 75
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-108",
+    "originalTitle": "filmcollectief-00-108",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-108",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:56:21.835Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:56:21.836Z",
+    "lastAttempt": "2026-01-07T01:56:21.836Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-110",
+    "originalTitle": "filmcollectief-00-110",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-110",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:56:52.636Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:56:52.642Z",
+    "lastAttempt": "2026-01-07T01:56:52.642Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-111",
+    "originalTitle": "filmcollectief-00-111",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-111",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:57:00.321Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:57:00.321Z",
+    "lastAttempt": "2026-01-07T01:57:00.321Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-112",
+    "originalTitle": "filmcollectief-00-112",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-112",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:57:08.320Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:57:08.320Z",
+    "lastAttempt": "2026-01-07T01:57:08.320Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-115",
+    "originalTitle": "filmcollectief-00-115",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-115",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:57:44.085Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:57:44.086Z",
+    "lastAttempt": "2026-01-07T01:57:44.086Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-116",
+    "originalTitle": "filmcollectief-00-116",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-116",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:57:50.017Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:57:50.018Z",
+    "lastAttempt": "2026-01-07T01:57:50.018Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-117",
+    "originalTitle": "filmcollectief-00-117",
+    "attempts": [
+      {
+        "title": "filmcollectief-00-117",
+        "description": "Uit het archief van de KNBRD",
+        "timestamp": "2026-01-07T01:57:54.378Z"
+      }
+    ],
+    "failedAt": "2026-01-07T01:57:54.378Z",
+    "lastAttempt": "2026-01-07T01:57:54.378Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 21,
+      "descriptionLength": 28
+    }
+  },
+  {
+    "identifier": "archive-jung-2000-1994-dv-drip.-x-264..-ac-3.-esubs.-5.1",
+    "originalTitle": "Jung 2000 1994 Dv DRip. X 264.. AC 3. Esubs. 5.1",
+    "attempts": [
+      {
+        "title": "Jung 2000 1994 Dv DRip. X 264.. AC 3. Esubs. 5.1",
+        "description": "Jung",
+        "timestamp": "2026-01-07T02:00:02.036Z"
+      }
+    ],
+    "failedAt": "2026-01-07T02:00:02.036Z",
+    "lastAttempt": "2026-01-07T02:00:02.036Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 48,
+      "descriptionLength": 4
+    }
+  },
+  {
+    "identifier": "archive-kein-wort-zum-germanischen-hakenkreuz-warum-fragezeichen...",
+    "originalTitle": "Kein Wort Zum Germanischen Hakenkreuz Warum, Fragezeichen...",
+    "attempts": [
+      {
+        "title": "Kein Wort Zum Germanischen Hakenkreuz Warum, Fragezeichen...",
+        "description": "Ausschnitte und Bilder wo es um Fundstücke der Germanen Mit Hakenkreuzmuster geht,aber keine Erwähnung findet, Nur n paar Beispiele ",
+        "timestamp": "2026-01-07T02:00:21.925Z"
+      }
+    ],
+    "failedAt": "2026-01-07T02:00:21.925Z",
+    "lastAttempt": "2026-01-07T02:00:21.925Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 60,
+      "descriptionLength": 132
+    }
+  },
+  {
+    "identifier": "archive-le-prisonnier-patrick-mcgoohan-la-serie-v.f.-1967",
+    "originalTitle": "Le Prisonnier ☆ Patrick McGoohan ☆ La Série V.F. ☆ 1967",
+    "attempts": [
+      {
+        "title": "Le Prisonnier ☆ Patrick McGoohan ☆ La Série V.F. ☆ 1967",
+        "description": "Le Prisonnier ( The Prisoner ) ☆ Patrick McGoohan ☆ 1967                                                (Série en 17 épisodes ) Le Prisonnier ( The Prisoner ) est une série télévisée britannique en dix-sept épisodes de 52 minutes, créée par l'écrivain et ancien agent des services secret  George Markstein et Patrick McGoohan , acteur principal, scénariste et producteur délégué de la série. Un agent secret britannique démissionne brutalement de son poste et se dirige vers son appartement londonien au volant de sa Lotus Seven. Il est suivi et, alors qu'il fait ses valises pour quitter la ville, un gaz anesthésiant est diffusé par sa serrure. À son réveil, il se trouve dans un lieu étrange, le « Village ». L’endroit est excentrique avec une architecture baroque, il est dirigé par le Numéro 2 et habité par une communauté de villageois, tous vêtus d'habits colorés similaires. Un badge numéroté sur la poitrine les identifie. L'homme est désormais le Numéro 6 . Il réfute cette dénomination et se déclare libre envers et contre tout... Présentée initialement comme un thriller, du même moule que la série précédente avec Patrick McGoohan, Destination Danger (Danger Man en Angleterre ; Secret Agent en Amérique du Nord), Le Prisonnier utilise les « ficelles » du roman d'espionnage, teintées de science-fiction, d'allégorie et de drame psychologique. La combinaison des thèmes de la contre-culture des sixties et sa mise en scène surréaliste ont fait du Prisonnier une série qui a profondément influencé la production des programmes de science-fiction, de fantastique, et la culture populaire en général. En version originale, elle a d'abord été diffusée au Canada à partir du 5 septembre 1967 sur le réseau CTV, puis au Royaume-Uni du 29 septembre 1967 au 1er février 1968 sur le réseau ITV. Au Québec, elle a été diffusée à partir du 4 septembre 1967 à la Télévision de Radio-Canada.                            N° Épisode   - Titre – Réalisateur – Scénariste(s) Ép. 01 : L'Arrivée ( Arrival ) - Don Chaffey - George Markstein et David Tomblin Ép. 02 : Le Carillon de Big Ben ( The Chimes of Big Ben ) - Don Chaffey - Vincent Tilsley Ép. 03 : A, B et C ( A, B & C ) - Pat Jackson - Anthony Skene Ép. 04 : Liberté pour Tous ( Free for All ) - Patrick McGoohan - Paddy Fitz (pseudo de Patrick McGoohan) Ép. 05 : Double Personnalité ( The Schizoid Man ) - Pat Jackson - Terence Feely Ép. 06 : Le Général ( The General ) - Peter Graham Scott - Joshua Adam (pseudo de Lewis Greifer) Ép. 07 : Le Retour ( Many Happy Returns ) - Joseph Serf (pseudo de Patrick McGoohan) - Anthony Skene Ép. 08 : Danse de Mort ( Dance of the Dead ) - Don Chaffey - Anthony Skene Ép. 09 : Échec et Mat ( Checkmate ) - Don Chaffey - Gerald Kelsey Ép. 10 : Le Marteau et l'Enclume ( Hammer Into Anvil ) - Pat Jackson - Roger Woodis Ép. 11 : L'Enterremen t ( It's Your Funeral ) - Robert Asher - Michael Cramoy Ép. 12 : J'Ai Changé d'Avis ( A Change of Mind ) - Joseph Serf (pseudo de Patrick McGoohan) - Robert Parkes Ép. 13 : L'Impossible Pardon ( Do Not Forsake Me, Oh My Darling ) - Pat Jackson - Vincent Tilsley Ép. 14 : Musique Douce ( Living in Harmony ) - David Tomblin - David Tomblin et Ian Rakoff Ép. 15 : La Mort en Marche ( The Girl Who Was Death ) - David Tomblin - Terence Feely Ép. 16 : Il Était une Fois (Part#1) ( Once Upon a Time ) - Patrick McGoohan - Archibald Schwarz (pseudo de Patrick McGoohan) Ép. 17 : Le Dénouement (Part#2) ( Fall Out ) -  Patrik McGoohan -  Patrik McGoohan 18 -   Bonus Prisonnier du Village - 32:14 19 -   Bonus Une Histoire de Numéro - 14:03 20 -   Documentaire infos du Tournage - 1967 - 3:27 21 - Interview tel.-P. Mc Goohan 1997 - 5:55 22 - Générique Serie TV - 3:00 McGoohan a déclaré que l'essence de la série se trouvait dans les 7 épisodes suivants :     L'Arrivée (Arrival, épisode 1)     Le Carillon de Big Ben (The Chimes of Big Ben, épisode 2)     Liberté pour Tous (Free for All, épisode 4)     Danse de Mort (Dance of the Dead, épisode 8)     Échec et Mat (Checkmate, épisode 9)     Il Était une Fois (Once Upon a Time, épisode 16)     Le Dénouement (Fall Out, épisode 17) Type de Série: Série Télévisée Titre Original: The Prisoner Genre: Espionnage, Dystopie Création: George Markstein et Patrick McGoohan Production: Everyman Films Incorporated: Television Company (ITC) Acteurs Principal: Patrick McGoohan Musique: Ron Grainer (générique) Wilfred Josephs, Robert Farnon, Paul Bonneau, Albert Elms. Pays d'Origine: Royaume-Uni Chaîne d'Origine: ITV Nb. de Saisons: 1 Nb. d'Épisodes: 17 Durée: 52 minutes Diff. Originale: 29 septembre 1967 - 1er février 1968 Note : Afin que vous puissiez lui exprimer votre infinie gratitude pour ses années de bénévolat, l’archiviste cinéphile  Dionysus Vorax a mis à votre disposition un lien fort pratique, pour m'offrir des pop-corns et me saluer.:  Paypal  ~  Donate  ~  Don en €, $ ou £  … Détails  : Le Prisonnier (The Prisoner) Patrick McGoohan - 1967 Épisode 1 : L'Arrivée (Arrival)   Un agent secret démissionne de ses fonctions. Chez lui, alors qu'il prépare ses valises, il est gazé et se réveille dans un étrange village... il découvre qu'il est désormais appelé numéro 6. Rapidement, il va être présenté au dirigeant du village, le numéro 2, qui occupe un siège sphérique dans une salle de contrôle.     La date de naissance que donne le Prisonnier, 19 mars 1928, est celle de Patrick McGoohan. C'est un des nombreux éléments qui font que l'on confond le personnage et son auteur/acteur.     On y fait la connaissance d'un personnage secondaire, le numéro 66, un ex-amiral, joueur d'échecs invétéré. Épisode 2 : Le Carillon de Big Ben (The Chimes of Big Ben)   Numéro 6 s'allie à sa nouvelle voisine « N° 8 » pour fuir, de nuit par la mer... leur lieu de détention est censé être en Lituanie. Après une utilisation de plusieurs moyens de transports, ils se retrouvent prétendument à Londres, en fait toujours au village...   Cet épisode révèle que c'est apparemment son propre service secret britannique d'attache qui l'a fait emprisonner au village, étant donné que ses supérieurs hiérarchiques jouent la comédie pour le faire parler sur les causes de son départ des services.     Il existe une pré-version de cet épisode en VOst dont la musique est différente ainsi que certaines scènes. Épisode 3 : A, B et C (A, B & C)   Numéro 6 est drogué par le Numéro 14 et ses rêves sont manipulés et projetés sur un écran afin de permettre au Numéro 2 de connaître les véritables raisons de sa démission. Numéro 2 pense que Numéro 6 a trahi son gouvernement et il veut savoir au profit de qui. Trois suspects sont possibles, A, B et C. À la suite d'une erreur d'envoi d'un exemplaire de travail de l'épisode à Toronto à l'époque, comportant un montage différent, on peut en savoir plus sur la symbolique du Grand-bi : en effet, dans le générique final, la petite roue se révèle être la terre et la grande le système solaire, symbolisant un rapport macrocosme-microcosme. Épisode 4 : Liberté pour Tous (Free for All)   Il faut élire un nouveau Numéro 2 et le Numéro 2 actuel incite Numéro 6 à se présenter. Pour la première fois on peut voir la salle du conseil, réapparaissant dans l'épisode 6, Le Général ainsi que dans le 12e J'ai changé d'avis. Elle est surplombée d'une pyramide en 2 dimensions, surmontée d'un Œil de la Providence. Épisode 5 : Double Personnalité (The Schizoid Man) Après avoir subi un nouveau lavage de cerveau, numéro 6 devient N° 12 et doit faire parler le N° 6... Épisode 6 : Le Général (The General)   Le Village se convertit à un nouveau mode d'enseignement : l'enseignement accéléré, dispensé par « le professeur », et encouragé par un mystérieux « Général ». Cette méthode permettrait d'assimiler en 3 minutes l'équivalent de trois ans d'enseignement classique, avec un taux de fiabilité de 100 %. Il suffit pour cela aux habitants de regarder la télé pour apprendre instantanément les cours. Il est révélé que d'importantes installations souterraines se trouvent dans le village, au service de la recherche en intelligence artificielle. Patrick McGoohan a expliqué son intention concernant cet épisode : mettre le doigt sur le lavage de cerveau que représentait la publicité télévisée. Épisode 7 : Le Retour (Many Happy Returns) Numéro 6 se réveille dans le Village totalement désert. Il prend des photos du Village et embarque sur un radeau de fortune. Périlleux voyage, rencontre de contrebandiers, la terre ferme se rapproche… Il finit par aborder la Grande-Bretagne. Regagnant son ancien domicile de Londres, il découvre qu'il y a une nouvelle locataire... et qu'elle pilote sa Lotus Seven ! Aucune parole n'est prononcée avant 8 minute 42 (5 minutes 20, sans le générique). Épisode 8 : Danse de Mort (Dance of the Dead) Un carnaval au Village, tous les habitants se déguisent. Numéro 6 reçoit une invitation pour la fête... qui finit par se transformer en son procès. Au cours de l'épisode, il y retrouve Roland Walter Dutton, une de ses connaissances des services secrets, en N°42. Épisode 9 : Échec et Mat (Checkmate) Numéro 6 participe à un jeu d'échecs où les pièces sont les habitants du Village. La reine fait part au prisonnier de sa volonté de l'aider à s'enfuir... Celui-ci essaie de son côté de recruter des partisans en essayant de distinguer les gardiens des prisonniers parmi les habitants du Village en fonction de leur degré d'autorité ou de soumission. Épisode 10 : Le Marteau et l'Enclume (Hammer Into Anvil)   Numéro 6 se fait passer pour un employé du N° 1 pour espionner le N° 2. Il arrive peu à peu à développer une subversion contre l'autorité du Village en retournant ses méthodes d'intox contre elle. Le titre est une référence à Goethe, qui écrivit Du musst Amboss oder Hammer sein (« Vous devez être une enclume ou un marteau »). Épisode 11 : L'Enterrement (It's Your Funeral) Une tentative d'assassinat contre le no 2 serait en cours selon no 50, jeune femme qui demande l'aide du numéro 6. Ces propos provenant de personnes considérées comme des « brouilleurs », soit des mythomanes, n'est pas prise au sérieux par les autorités du Village. Épisode 12 : J'Ai Changé d'Avis (A Change of Mind)   Numéro 6 doit passer devant un comité qui jugera son manque d'intégration au Village. Il s'y présente mais fait de la résistance. En retour il subit un ostracisme de la population, qui ne fait qu'empirer quand il est qualifié officiellement d'individualiste. Une petite erreur s'est glissée dans le tournage : on voit à un certain moment une berline blanche passer au loin dans une rue du village. Sans doute une rue qui n'avait pas été bloquée et qui n'était pas supposée apparaître. Épisode 13 : L'Impossible Pardon (Do Not Forsake Me, Oh My Darling)   Le professeur Jacob Saltzman a inventé un appareil de transfert d'esprit entre deux personnes. Un certain Colonel arrive au Village. Numéro 6 et le Colonel échangent leurs esprits... Une partie de l'histoire se déroule dans le village de Kandersfeld, en Autriche. Le professeur Saltzman a conservé une lettre que lui a adressée numéro 6 alors qu'il habitait en Ecosse. L'adresse comporte la rue « Portmeirion Road », qui est le nom du village où est tournée la série. Épisode 14 : Musique Douce (Living in Harmony) Situé dans un village typique du Far West nommé Harmony, numéro 6 est shérif des lieux. Il rend son insigne et quitte la ville... On l'y ramène de force... Ce nouveau village est sous le contrôle d'un juge... Mais tout ce que vit numéro 6 dans cette nouvelle situation est-il réel ? Épisode 15 : La Mort en Marche (The Girl Who Was Death) Numéro 6 enquête sur le Dr Schnipps, savant fou déguisé en Napoléon qui veut détruire Londres au moyen d'un missile avec l'aide de sa fille... On comprend à la fin de l'épisode que tous les évènements qui se sont déroulés constituent une histoire racontée aux enfants du Village par Numéro 6. (Cela explique par ailleurs pourquoi on le voit en liberté, hors du Village, tout du long de l'histoire.) Le plan de Numéro 2 était d'éventuellement découvrir les renseignements par le biais de l'histoire, ce à quoi le héros répond par une aventure d'espionnage fictive dont l'antagoniste n'est nul autre qu'un fou ressemblant étrangement à Numéro 2... Épisode 16 : Il était une Fois (1/2) (Once Upon a Time)   N° 2 décide de faire subir le « degré absolu » au numéro 6. Une guerre psychologique s'engage... Numéro 6 est conduit dans la « chambre d'embryon » pour y subir une régression psychiatrique. La méthode utilisée, fort dangereuse, est susceptible d'entraîner la mort du N°2 ou du N°6... Le texte célèbre de Shakespeare All the World's a Stage est invoqué par le n°2 tout au long de l'épisode. Épisode 17 : Le Dénouement (2/2) (Fall Out) À la suite de la demande du numéro 6, le superviseur l'emmène voir le numéro 1, accompagnés du majordome nain. Une première salle révèle un mannequin avec un masque aux traits du numéro 6, portant un costume de ville à sa taille, qu'il enfile. Suit un couloir avec juke-box passant All You Need Is Love des Beatles. Il découvre une étrange assemblée représentant tout l'éventail de l'échiquier politique démocratique sous une robe blanche et un masque bicolore noir/blanc mi-triste, mi-souriant, rappelant ceux de la commedia dell'arte. Parmi les factions idéologiques représentées, on peut citer les tenants de l'État providence (Welfare state), les pacifistes, les activistes puis des représentants de valeurs ou d'actes comme l'identification, la sécurité, les défecteurs, l'éducation, la thérapie, les réactionnaires, les nationalistes, également les jeunistes (youngsters), le divertissement, la récréation, les anarchistes, les personnes âgées. Des gardes en armes sont disposés dans la salle. Les deux personnages familiers de la salle de contrôle du superviseur en rotation chacun à l'extrémité d'une tige se retrouvent ici mais n'ont pas d'outillage apparenté à une caméra de surveillance mais bien une mitrailleuse chacun. Il semble que la force persuasive ait fait place à une force plus brute. Ils gardent également l'accès par puits au repaire du numéro 1 ainsi qu'aux cellules Orbit, où sont enfermés les numéros 2 et 48. L'assemblée juge deux personnes, le numéro 48 (apparu dans l'épisode Musique douce sous le numéro 8) et le précédent numéro 2, sous le regard du numéro 6, que l'on a assis sur un trône. L'ordinateur géant de la salle arbore un numéro 1 peint en rouge vif, il dispose d'un œil-caméra semblable à celui se trouvant dans la salle habituelle du numéro 2. Lors de son procès, le numéro 2 fixe l'œil de la caméra, ce que le règlement interdit, et lui dit « qui que vous soyez, quoi que vous soyez, (...) vous ne m'hypnotisez plus, c'est trop tard ». La machine se met alors à chauffer et le juge fait évacuer le numéro 2. À la fin du Village, étant couplé avec une fusée, il décolle vers le ciel. Le juge qui mène le procès, vêtu comme dans une cour de justice britannique, prononce l'éloge du numéro 6 et lui indique qu'il peut à son choix retrouver la liberté ou devenir leur nouveau chef, car il est le seul à avoir surmonté sans dommages toutes les épreuves. Un discours lui est demandé, mais est interrompu systématiquement à chaque prise de parole par les bravos de la salle masquée et encapuchonnée, ce qui semble pour la première fois déstabiliser réellement le héros. L'audience, d'allure peu sérieuse, entonne même la chanson Dem Bones. Le « numéro 1 », lui, est alors présenté dans une autre salle, en fait la salle de contrôle de la fusée, où se trouvent plusieurs globes terrestres. Il porte la même robe à capuche blanche et le même masque grimaçant noir/blanc que les autres mais arbore un gros « numéro 1 » cerclé sur sa robe blanche. Numéro 6 lui arrache son masque grimaçant, derrière se trouve un masque de gorille, puis le propre visage de numéro 6 apparaìt. Le numéro 1 s'enfuit alors sans un mot d'explication. L'ex-numéro 62 s'allie alors avec le numéro 2, le numéro 48 et le majordome nain : ensemble, ils assomment des gardes, prennent leur armes, attaquent la salle principale et remportent la victoire. Ils regagnent alors dans un esprit bon enfant - qui surprend un automobiliste - Londres, où se séparent leurs chemins. Le majordome reste cependant en compagnie du héros. Numéro 2 regagne le Palais de Westminster où, peut-être, il occupe une fonction politique (il est en effet salué par le garde, et entre par la porte des membres du Parlement). Le nain majordome entre finalement dans la maison du n°6 et la porte s'ouvre de la même manière que celles du « village ». De plus, on peut voir que le numéro de sa demeure est à présent le ... n°1 ! Note : Afin que vous puissiez lui exprimer votre infinie gratitude pour ses années de bénévolat, l’archiviste cinéphile  Dionysus Vorax a mis à votre disposition un lien fort pratique, pour m'offrir des pop-corns et me saluer.:  Paypal  ~  Donate  ~  Don en €, $ ou £  …",
+        "timestamp": "2026-01-07T02:05:22.841Z"
+      }
+    ],
+    "failedAt": "2026-01-07T02:05:22.841Z",
+    "lastAttempt": "2026-01-07T02:05:22.841Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 55,
+      "descriptionLength": 16864
+    }
+  },
+  {
+    "identifier": "archive-market-2003-dv-drip-x-264-aac-5.1-chapters-esub",
+    "originalTitle": "Market 2003 Dv DRip X 264 AAC 5.1 Chapters Esub",
+    "attempts": [
+      {
+        "title": "Market 2003 Dv DRip X 264 AAC 5.1 Chapters Esub",
+        "description": "Market",
+        "timestamp": "2026-01-07T02:06:01.068Z"
+      }
+    ],
+    "failedAt": "2026-01-07T02:06:01.069Z",
+    "lastAttempt": "2026-01-07T02:06:01.069Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 47,
+      "descriptionLength": 6
+    }
+  },
+  {
+    "identifier": "youtube-2cvsYbrRjlo",
+    "originalTitle": "Every year again ... (Full CHRISTMAS MOVIE in full length, Christmas movies German complete 2024)",
+    "attempts": [
+      {
+        "title": "Every year again ... (Full CHRISTMAS MOVIE in full length, Christmas movies German complete 2024)",
+        "description": "",
+        "timestamp": "2026-01-07T05:10:30.376Z"
+      }
+    ],
+    "failedAt": "2026-01-07T05:10:30.381Z",
+    "lastAttempt": "2026-01-07T05:10:30.381Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "youtube",
+      "hasDescription": false,
+      "titleLength": 97,
+      "descriptionLength": 0
+    }
+  }
+]
