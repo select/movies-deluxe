@@ -88,27 +88,27 @@ const { loadCollections } = useCollectionsStore()
 
 const searchQuery = ref('')
 
-// Convert collections Map to array for fuse.js
-const collectionsArray = computed(() => Array.from(collections.value.values()))
-
-// Configure fuse.js for fuzzy search
-const fuse = computed(() => new Fuse(collectionsArray.value, {
-  keys: [
-    { name: 'name', weight: 2 },
-    { name: 'description', weight: 1 },
-    { name: 'tags', weight: 1.5 }
-  ],
-  threshold: 0.3,
-  ignoreLocation: true
-}))
-
-// Filter collections based on search query
+// Filter collections based on search query and enabled status
 const filteredCollections = computed(() => {
+  // First filter out disabled collections
+  const enabledCollections = Array.from(collections.value.values()).filter(c => c.enabled !== false)
+  
   if (!searchQuery.value.trim()) {
-    return collectionsArray.value
+    return enabledCollections
   }
   
-  const results = fuse.value.search(searchQuery.value)
+  // Create a fuse instance with only enabled collections for search
+  const enabledFuse = new Fuse(enabledCollections, {
+    keys: [
+      { name: 'name', weight: 2 },
+      { name: 'description', weight: 1 },
+      { name: 'tags', weight: 1.5 }
+    ],
+    threshold: 0.3,
+    ignoreLocation: true
+  })
+  
+  const results = enabledFuse.search(searchQuery.value)
   return results.map(result => result.item)
 })
 
