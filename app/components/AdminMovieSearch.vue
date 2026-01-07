@@ -11,7 +11,7 @@
           ref="searchInput"
           v-model="searchQuery"
           type="text"
-          placeholder="Search by title, director, writer, plot or IMDb ID..."
+          placeholder="Search by title, director, writer, plot or IMDb ID... (or use filters below)"
           class="block w-full pl-10 pr-3 py-3 border border-theme-border rounded-xl bg-theme-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
           @input="onInput"
         >
@@ -91,13 +91,43 @@
 
     <div
       v-if="results.length > 0"
-      class="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden divide-y divide-theme-border"
+      class="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden"
     >
-      <div
-        v-for="movie in results"
-        :key="movie.imdbId"
-        class="p-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
-      >
+      <!-- Header with Add All button -->
+      <div class="p-4 border-b border-theme-border flex items-center justify-between bg-theme-bg/30">
+        <div class="text-sm text-theme-textmuted">
+          <span class="font-semibold text-theme-text">{{ results.length }}</span> results
+          <span v-if="results.length === 300" class="text-xs">(limited to 300)</span>
+        </div>
+        <button
+          class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 disabled:opacity-50"
+          :class="
+            addingAll
+              ? 'bg-theme-selection text-theme-textmuted cursor-wait'
+              : 'bg-blue-600 hover:bg-blue-500 text-white'
+          "
+          :disabled="addingAll || isAdding !== ''"
+          @click="addAllMovies"
+        >
+          <div
+            v-if="addingAll"
+            class="i-mdi-loading animate-spin"
+          />
+          <div
+            v-else
+            class="i-mdi-plus-box-multiple"
+          />
+          Add All to Collection
+        </button>
+      </div>
+
+      <!-- Movie list -->
+      <div class="divide-y divide-theme-border">
+        <div
+          v-for="movie in results"
+          :key="movie.imdbId"
+          class="p-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
+        >
         <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
           <img
             v-if="movie.imdbId?.startsWith('tt')"
@@ -148,13 +178,14 @@
           {{ isInCollection(movie.imdbId) ? 'Added' : 'Add' }}
         </button>
       </div>
+      </div>
     </div>
 
     <div
-      v-else-if="searchQuery.length >= 3 && !isLoading"
+      v-else-if="(searchQuery.length >= 3 || hasActiveFilters) && !isLoading"
       class="p-8 text-center text-theme-textmuted bg-theme-surface border border-theme-border border-dashed rounded-2xl"
     >
-      No movies found for "{{ searchQuery }}"
+      No movies found{{ searchQuery ? ` for "${searchQuery}"` : '' }}{{ hasActiveFilters ? ' with current filters' : '' }}
     </div>
 
     <FilterMenu
@@ -186,6 +217,7 @@ const searchQuery = ref('')
 const results = ref<MovieEntry[]>([])
 const isLoading = ref(false)
 const isAdding = ref('')
+const addingAll = ref(false)
 const showFilters = ref(false)
 
 // Local shortcut to focus search
@@ -209,7 +241,7 @@ watch(
     if (newVal !== searchQuery.value) {
       searchQuery.value = newVal
       // Trigger search when query is set from store (e.g., from saved queries)
-      if (newVal.length >= 3) {
+      if (newVal.length >= 3 || hasActiveFilters.value) {
         debouncedSearch()
       } else {
         results.value = []
@@ -218,8 +250,33 @@ watch(
   }
 )
 
+// Watch for filter changes and trigger search
+watch(
+  () => [
+    filters.value.minRating,
+    filters.value.minYear,
+    filters.value.maxYear,
+    filters.value.minVotes,
+    filters.value.maxVotes,
+    filters.value.genres,
+    filters.value.countries,
+    filters.value.sources,
+  ],
+  () => {
+    // Trigger search when filters change
+    if (searchQuery.value.length >= 3 || hasActiveFilters.value) {
+      debouncedSearch()
+    }
+  },
+  { deep: true }
+)
+
 const performSearch = async () => {
-  if (searchQuery.value.length < 3) {
+  // Allow search with filters even if query is empty
+  const hasQuery = searchQuery.value.length >= 3
+  const hasFilters = hasActiveFilters.value
+  
+  if (!hasQuery && !hasFilters) {
     results.value = []
     return
   }
@@ -227,9 +284,20 @@ const performSearch = async () => {
   isLoading.value = true
   try {
     const data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
-      query: { q: searchQuery.value },
+      query: { 
+        q: searchQuery.value,
+        // Pass filters to the API
+        minRating: filters.value.minRating || undefined,
+        minYear: filters.value.minYear || undefined,
+        maxYear: filters.value.maxYear || undefined,
+        minVotes: filters.value.minVotes || undefined,
+        maxVotes: filters.value.maxVotes || undefined,
+        genres: filters.value.genres.join(',') || undefined,
+        countries: filters.value.countries.join(',') || undefined,
+        sources: filters.value.sources.join(',') || undefined,
+      },
     })
-    results.value = data
+    results.value = data.slice(0, 300) // Limit to 300 results
   } catch {
     uiStore.showToast('Search failed', 'error')
   } finally {
@@ -261,6 +329,47 @@ const addMovie = async (movieId: string) => {
     uiStore.showToast('Error adding movie', 'error')
   } finally {
     isAdding.value = ''
+  }
+}
+
+const addAllMovies = async () => {
+  addingAll.value = true
+  let addedCount = 0
+  let failedCount = 0
+  
+  try {
+    // Filter out movies that are already in the collection
+    const moviesToAdd = results.value.filter(movie => !isInCollection(movie.imdbId))
+    
+    if (moviesToAdd.length === 0) {
+      uiStore.showToast('All movies are already in the collection', 'info')
+      return
+    }
+    
+    // Add movies sequentially to avoid overwhelming the API
+    for (const movie of moviesToAdd) {
+      try {
+        const success = await collectionsStore.addMovieToCollection(props.collectionId, movie.imdbId)
+        if (success) {
+          addedCount++
+        } else {
+          failedCount++
+        }
+      } catch {
+        failedCount++
+      }
+    }
+    
+    if (addedCount > 0) {
+      uiStore.showToast(`Added ${addedCount} movie${addedCount > 1 ? 's' : ''} to collection`)
+      emit('add')
+    }
+    
+    if (failedCount > 0) {
+      uiStore.showToast(`Failed to add ${failedCount} movie${failedCount > 1 ? 's' : ''}`, 'error')
+    }
+  } finally {
+    addingAll.value = false
   }
 }
 </script>

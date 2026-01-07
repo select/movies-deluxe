@@ -83,6 +83,7 @@
             <AdminSavedQueryManager
               :collection-id="selectedCollectionId"
               :queries="selectedCollection?.savedQueries"
+              @filters-applied="onFiltersApplied"
             />
           </div>
             <h2 class="text-xl font-bold flex items-center gap-2">
@@ -126,5 +127,10 @@ const onMovieAdded = () => {
   if (moviesList.value) {
     moviesList.value.refresh()
   }
+}
+
+const onFiltersApplied = () => {
+  // Filters were applied from saved query - the AdminMovieSearch component
+  // will automatically show results due to the filter watchers
 }
 </script>
