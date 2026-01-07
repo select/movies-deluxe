@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-07T00:56:50.155Z"
+    "lastUpdated": "2026-01-07T01:11:07.323Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1591,9 +1591,106 @@
     "id": "sci-fi",
     "name": "Science Fiction",
     "description": "Explore the future, space, and beyond with classic and contemporary science fiction films.",
-    "movieIds": [],
+    "movieIds": [
+      "tt0087803",
+      "tt0062622",
+      "tt12385804",
+      "tt3460068",
+      "tt0437086",
+      "tt0120591",
+      "tt0015214",
+      "tt0092610",
+      "tt0143127",
+      "tt0068270",
+      "tt0085267",
+      "tt4759544",
+      "tt6264824",
+      "tt0458339",
+      "tt1843866",
+      "tt0252973",
+      "tt11378708",
+      "tt0184342",
+      "tt6613878",
+      "tt6724510",
+      "tt32559869",
+      "tt26584495",
+      "tt0046876",
+      "tt4191640",
+      "tt0011130",
+      "tt0022835",
+      "tt4722678",
+      "tt0120907",
+      "tt0070544",
+      "tt0099582",
+      "tt0049223",
+      "tt0021884",
+      "tt0061683",
+      "tt14378330",
+      "tt31778008",
+      "tt0068713",
+      "tt12687502",
+      "tt5056352",
+      "tt0049366",
+      "tt0024188",
+      "tt0045920",
+      "tt0041514",
+      "tt0070233",
+      "tt5442430",
+      "tt0026663",
+      "tt0079501",
+      "tt0017136",
+      "tt0054099",
+      "tt0044916",
+      "tt0093791",
+      "tt0053137",
+      "tt35667868",
+      "tt0050873",
+      "tt0062168",
+      "tt0433035",
+      "tt37984759",
+      "tt30290719",
+      "tt0081455",
+      "tt2433494",
+      "tt0031951",
+      "tt0070723",
+      "tt0079944",
+      "tt0472566",
+      "tt0086429",
+      "tt0045546",
+      "tt0087004",
+      "tt0054790",
+      "tt0043456",
+      "tt0027521",
+      "tt0010600",
+      "tt17887614",
+      "tt0128813",
+      "tt3986820",
+      "tt0133751",
+      "tt0051622",
+      "tt0050539",
+      "tt0024184",
+      "tt0058700",
+      "tt0044876",
+      "tt0031614",
+      "tt0032753",
+      "tt13009174",
+      "tt0049646",
+      "tt0050894",
+      "tt0044121",
+      "tt0139809",
+      "tt0054387",
+      "tt0053363",
+      "tt0047573",
+      "tt0028358",
+      "tt0015431",
+      "tt0098546",
+      "tt0122111",
+      "tt0407304",
+      "tt0348366",
+      "tt0044207"
+    ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:09:17.029Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1616,9 +1713,148 @@
     "id": "horror",
     "name": "Horror",
     "description": "Spine-chilling horror films from classic monster movies to modern psychological thrillers.",
-    "movieIds": [],
+    "movieIds": [
+      "tt0492868",
+      "tt3153706",
+      "tt1763178",
+      "tt8055402",
+      "tt20216470",
+      "tt29524718",
+      "tt2355473",
+      "tt35045506",
+      "tt16492800",
+      "tt3464938",
+      "tt0017048",
+      "tt33036093",
+      "tt27051672",
+      "tt0057603",
+      "tt0054067",
+      "tt0058567",
+      "tt7148242",
+      "tt20425418",
+      "tt3409172",
+      "tt0055830",
+      "tt6724510",
+      "tt4228240",
+      "tt0037635",
+      "tt0073582",
+      "tt0010767",
+      "tt4191640",
+      "tt0022835",
+      "tt15839650",
+      "tt0021814",
+      "tt0074486",
+      "tt0053459",
+      "tt0194865",
+      "tt0016847",
+      "tt0021884",
+      "tt0022913",
+      "tt3122618",
+      "tt5819530",
+      "tt5824672",
+      "tt15010318",
+      "tt0037761",
+      "tt0013257",
+      "tt0014972",
+      "tt33089795",
+      "tt28015403",
+      "tt0076162",
+      "tt0045888",
+      "tt19896522",
+      "tt0049366",
+      "tt0024188",
+      "tt0010307",
+      "tt0024216",
+      "tt0058279",
+      "tt0035753",
+      "tt0454107",
+      "tt0026663",
+      "tt1794866",
+      "tt16429984",
+      "tt21099718",
+      "tt0124012",
+      "tt0054116",
+      "tt15401974",
+      "tt0063350",
+      "tt5040012",
+      "tt0013442",
+      "tt0058430",
+      "tt26952415",
+      "tt0054215",
+      "tt0062168",
+      "tt0059646",
+      "tt0063522",
+      "tt10237576",
+      "tt0387564",
+      "tt0055505",
+      "tt0031951",
+      "tt0003424",
+      "tt0076786",
+      "tt0084747",
+      "tt30325958",
+      "tt0066740",
+      "tt0065143",
+      "tt0037549",
+      "tt4675332",
+      "tt5283930",
+      "tt1259521",
+      "tt0010323",
+      "tt0028696",
+      "tt0031143",
+      "tt0017739",
+      "tt14373844",
+      "tt0027521",
+      "tt0018770",
+      "tt0051622",
+      "tt0011237",
+      "tt0015202",
+      "tt0057129",
+      "tt0070628",
+      "tt0150980",
+      "tt0014142",
+      "tt0050539",
+      "tt0074691",
+      "tt1051906",
+      "tt0024184",
+      "tt0131461",
+      "tt0074806",
+      "tt0037024",
+      "tt0019130",
+      "tt0023238",
+      "tt0067490",
+      "tt0069002",
+      "tt0011607",
+      "tt0037168",
+      "tt0011565",
+      "tt0012364",
+      "tt0016220",
+      "tt0055304",
+      "tt11167046",
+      "tt0037248",
+      "tt0063171",
+      "tt0037303",
+      "tt0038975",
+      "tt0072271",
+      "tt0044121",
+      "tt0037415",
+      "tt0018528",
+      "tt0070917",
+      "tt0034398",
+      "tt11775114",
+      "tt5225296",
+      "tt0047573",
+      "tt0025062",
+      "tt0020530",
+      "tt0023649",
+      "tt0062453",
+      "tt26761732",
+      "tt0019563",
+      "tt26659378",
+      "tt19720316",
+      "tt11591360"
+    ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:11:07.323Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1643,7 +1879,7 @@
     "description": "Dark, stylish crime dramas from the golden age of noir cinema.",
     "movieIds": [],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:10:10.953Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1660,7 +1896,8 @@
         }
       }
     ],
-    "tags": ["noir", "crime", "mystery", "black-and-white", "detective"]
+    "tags": ["noir", "crime", "mystery", "black-and-white", "detective"],
+    "enabled": false
   },
   "romance": {
     "id": "romance",
@@ -1668,7 +1905,7 @@
     "description": "Timeless love stories that capture the heart and soul of cinema.",
     "movieIds": [],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:10:05.531Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1685,7 +1922,8 @@
         }
       }
     ],
-    "tags": ["romance", "love", "drama", "relationships", "heartwarming"]
+    "tags": ["romance", "love", "drama", "relationships", "heartwarming"],
+    "enabled": false
   },
   "adventure": {
     "id": "adventure",
@@ -1693,7 +1931,7 @@
     "description": "Epic adventures and thrilling journeys across land, sea, and time.",
     "movieIds": [],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:09:59.941Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1710,7 +1948,8 @@
         }
       }
     ],
-    "tags": ["adventure", "action", "exploration", "journey", "epic"]
+    "tags": ["adventure", "action", "exploration", "journey", "epic"],
+    "enabled": false
   },
   "mystery": {
     "id": "mystery",
@@ -1718,7 +1957,7 @@
     "description": "Intriguing mysteries and detective stories that keep you guessing until the end.",
     "movieIds": [],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:10:08.988Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1735,7 +1974,8 @@
         }
       }
     ],
-    "tags": ["mystery", "detective", "whodunit", "suspense", "investigation"]
+    "tags": ["mystery", "detective", "whodunit", "suspense", "investigation"],
+    "enabled": false
   },
   "thriller": {
     "id": "thriller",
@@ -1743,7 +1983,7 @@
     "description": "Edge-of-your-seat thrillers that keep tension high from start to finish.",
     "movieIds": [],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:10:16.238Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1760,7 +2000,8 @@
         }
       }
     ],
-    "tags": ["thriller", "suspense", "tension", "psychological", "crime"]
+    "tags": ["thriller", "suspense", "tension", "psychological", "crime"],
+    "enabled": false
   },
   "war": {
     "id": "war",
@@ -1768,7 +2009,7 @@
     "description": "Powerful war films depicting the courage, sacrifice, and human cost of conflict.",
     "movieIds": [],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:10:13.605Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1785,7 +2026,8 @@
         }
       }
     ],
-    "tags": ["war", "military", "combat", "historical", "drama"]
+    "tags": ["war", "military", "combat", "historical", "drama"],
+    "enabled": false
   },
   "western": {
     "id": "western",
@@ -1981,7 +2223,7 @@
       "tt0053457"
     ],
     "createdAt": "2026-01-06T00:17:06.799Z",
-    "updatedAt": "2026-01-07T00:56:50.155Z",
+    "updatedAt": "2026-01-07T01:10:35.706Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1997,6 +2239,293 @@
           "genres": ["Western"]
         }
       }
-    ]
+    ],
+    "enabled": true
+  },
+  "1920s": {
+    "id": "1920s",
+    "name": "1920s Cinema",
+    "description": "Silent film masterpieces and early talkies from the roaring twenties.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1920,
+          "maxYear": 1929
+        }
+      }
+    ],
+    "tags": ["1920s", "silent-film", "early-cinema", "classics", "vintage"]
+  },
+  "1930s": {
+    "id": "1930s",
+    "name": "1930s Cinema",
+    "description": "Golden age Hollywood classics from the Great Depression era.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1930,
+          "maxYear": 1939
+        }
+      }
+    ],
+    "tags": ["1930s", "golden-age", "pre-code", "classics", "hollywood"]
+  },
+  "1940s": {
+    "id": "1940s",
+    "name": "1940s Cinema",
+    "description": "Film noir, wartime dramas, and post-war classics from the 1940s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1940,
+          "maxYear": 1949
+        }
+      }
+    ],
+    "tags": ["1940s", "film-noir", "war-films", "classics", "golden-age"]
+  },
+  "1950s": {
+    "id": "1950s",
+    "name": "1950s Cinema",
+    "description": "Epic spectacles, method acting, and the birth of modern cinema in the 1950s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1950,
+          "maxYear": 1959
+        }
+      }
+    ],
+    "tags": ["1950s", "cinemascope", "method-acting", "classics", "technicolor"]
+  },
+  "1960s": {
+    "id": "1960s",
+    "name": "1960s Cinema",
+    "description": "New wave movements, counterculture films, and cinematic revolution of the 1960s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1960,
+          "maxYear": 1969
+        }
+      }
+    ],
+    "tags": ["1960s", "new-wave", "counterculture", "classics", "revolution"]
+  },
+  "1970s": {
+    "id": "1970s",
+    "name": "1970s Cinema",
+    "description": "New Hollywood era with groundbreaking auteur films from the 1970s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1970,
+          "maxYear": 1979
+        }
+      }
+    ],
+    "tags": ["1970s", "new-hollywood", "auteur", "classics", "gritty"]
+  },
+  "1980s": {
+    "id": "1980s",
+    "name": "1980s Cinema",
+    "description": "Blockbusters, action heroes, and iconic films from the 1980s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1980,
+          "maxYear": 1989
+        }
+      }
+    ],
+    "tags": ["1980s", "blockbusters", "action", "classics", "nostalgia"]
+  },
+  "1990s": {
+    "id": "1990s",
+    "name": "1990s Cinema",
+    "description": "Independent cinema boom and diverse storytelling from the 1990s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 1990,
+          "maxYear": 1999
+        }
+      }
+    ],
+    "tags": ["1990s", "indie", "diverse", "modern", "classics"]
+  },
+  "2000s": {
+    "id": "2000s",
+    "name": "2000s Cinema",
+    "description": "Digital revolution and modern classics from the 2000s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 2000,
+          "maxYear": 2009
+        }
+      }
+    ],
+    "tags": ["2000s", "digital", "modern", "contemporary", "millennium"]
+  },
+  "2010s": {
+    "id": "2010s",
+    "name": "2010s Cinema",
+    "description": "Streaming era and contemporary cinema from the 2010s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 2010,
+          "maxYear": 2019
+        }
+      }
+    ],
+    "tags": ["2010s", "streaming", "contemporary", "modern", "recent"]
+  },
+  "2020s": {
+    "id": "2020s",
+    "name": "2020s Cinema",
+    "description": "Latest releases and contemporary films from the 2020s.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minYear": 2020,
+          "maxYear": 2029
+        }
+      }
+    ],
+    "tags": ["2020s", "contemporary", "new-releases", "modern", "current"]
   }
 }
