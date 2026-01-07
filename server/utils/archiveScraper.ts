@@ -86,12 +86,6 @@ export async function scrapeArchiveOrg(
           }
 
           const existing = upsertMovie(db, entry.imdbId, entry)
-          const existingSource = existing?.sources?.find(
-            s =>
-              s.type === 'archive.org' &&
-              entry.sources?.[0]?.type === 'archive.org' &&
-              s.id === entry.sources[0].id
-          )
 
           results.processed++
 
@@ -105,11 +99,9 @@ export async function scrapeArchiveOrg(
           if (!existing) {
             results.added++
             results.debug.push(`✅ Added NEW movie: ${movie.title} (${entry.imdbId})`)
-          } else if (!existingSource) {
-            results.updated++
-            results.debug.push(`🔄 Updated movie with new source: ${movie.title} (${entry.imdbId})`)
           } else {
-            results.debug.push(`⏭️  Skipped existing: ${movie.title} (${entry.imdbId})`)
+            results.updated++
+            results.debug.push(`🔄 Updated movie: ${movie.title} (${entry.imdbId})`)
           }
         } catch (e: unknown) {
           const errorMsg = `Failed to process ${movie.title}: ${e instanceof Error ? e.message : String(e)}`
