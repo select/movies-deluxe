@@ -139,6 +139,10 @@ const props = defineProps<{
   queries?: SavedQuery[]
 }>()
 
+const emit = defineEmits<{
+  filtersApplied: []
+}>()
+
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
@@ -237,6 +241,9 @@ const applyQuery = (query: SavedQuery) => {
   query.filterState.genres?.forEach(g => movieStore.toggleGenre(g))
   query.filterState.countries?.forEach(c => movieStore.toggleCountry(c))
   query.filterState.sources?.forEach(s => movieStore.toggleSource(s))
+  
+  // Emit event to notify parent that filters were applied
+  emit('filtersApplied')
 }
 
 const refreshCollection = async () => {
