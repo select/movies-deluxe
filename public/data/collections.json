@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-07T01:11:07.323Z"
+    "lastUpdated": "2026-01-07T01:25:15.247Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -2248,7 +2248,7 @@
     "description": "Silent film masterpieces and early talkies from the roaring twenties.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:25:15.247Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2264,9 +2264,26 @@
           "minYear": 1920,
           "maxYear": 1929
         }
+      },
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 7,
+          "minYear": 1920,
+          "maxYear": 1929,
+          "minVotes": 8000
+        }
       }
     ],
-    "tags": ["1920s", "silent-film", "early-cinema", "classics", "vintage"]
+    "tags": ["1920s", "silent-film", "early-cinema", "classics", "vintage"],
+    "enabled": false
   },
   "1930s": {
     "id": "1930s",
@@ -2274,7 +2291,7 @@
     "description": "Golden age Hollywood classics from the Great Depression era.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:23:26.824Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2292,15 +2309,207 @@
         }
       }
     ],
-    "tags": ["1930s", "golden-age", "pre-code", "classics", "hollywood"]
+    "tags": ["1930s", "golden-age", "pre-code", "classics", "hollywood"],
+    "enabled": false
   },
   "1940s": {
     "id": "1940s",
     "name": "1940s Cinema",
     "description": "Film noir, wartime dramas, and post-war classics from the 1940s.",
-    "movieIds": [],
+    "movieIds": [
+      "tt0191755",
+      "tt0149809",
+      "tt12305226",
+      "tt12304756",
+      "tt0041587",
+      "tt0038733",
+      "tt0148592",
+      "tt0038190",
+      "tt0184188",
+      "tt0204796",
+      "tt0191772",
+      "tt0198296",
+      "tt0178236",
+      "tt0036613",
+      "tt0812201",
+      "tt1966357",
+      "tt2241043",
+      "tt0039204",
+      "tt0038376",
+      "tt0037558",
+      "tt0039224",
+      "tt0181335",
+      "tt0178294",
+      "tt22994092",
+      "tt0193814",
+      "tt0199416",
+      "tt0201541",
+      "tt0038436",
+      "tt0194782",
+      "tt0198395",
+      "tt0031524",
+      "tt0036506",
+      "tt0037635",
+      "tt0188556",
+      "tt0150475",
+      "tt0034859",
+      "tt0032982",
+      "tt0158932",
+      "tt2046081",
+      "tt0240548",
+      "tt0036903",
+      "tt0036775",
+      "tt0194839",
+      "tt0240883",
+      "tt0036511",
+      "tt0189237",
+      "tt0181995",
+      "tt0201633",
+      "tt0192115",
+      "tt0143291",
+      "tt0408098",
+      "tt0181847",
+      "tt1810592",
+      "tt0186989",
+      "tt0317423",
+      "tt0233669",
+      "tt0248006",
+      "tt0150568",
+      "tt0181538",
+      "tt12606824",
+      "tt0204330",
+      "tt0036855",
+      "tt0038559",
+      "tt0038574",
+      "tt0033701",
+      "tt0033712",
+      "tt0240578",
+      "tt1604114",
+      "tt0032599",
+      "tt0033721",
+      "tt0194944",
+      "tt0148310",
+      "tt31824373",
+      "tt0033729",
+      "tt0264698",
+      "tt13364232",
+      "tt2015402",
+      "tt0037824",
+      "tt1669636",
+      "tt6045006",
+      "tt0041546",
+      "tt0148382",
+      "tt0294287",
+      "tt0181348",
+      "tt0181620",
+      "tt0194116",
+      "tt0188923",
+      "tt0192502",
+      "tt0202029",
+      "tt10816824",
+      "tt0037008",
+      "tt0178695",
+      "tt0035753",
+      "tt0037865",
+      "tt0040536",
+      "tt0032712",
+      "tt0191185",
+      "tt0159590",
+      "tt0198721",
+      "tt0040576",
+      "tt0033891",
+      "tt0037059",
+      "tt0032775",
+      "tt0032777",
+      "tt0037063",
+      "tt0194153",
+      "tt0035073",
+      "tt0038762",
+      "tt0039661",
+      "tt0192376",
+      "tt0039677",
+      "tt0033972",
+      "tt0040662",
+      "tt12816892",
+      "tt0189035",
+      "tt2152805",
+      "tt0148586",
+      "tt0032910",
+      "tt0148627",
+      "tt0148634",
+      "tt8835616",
+      "tt16899218",
+      "tt0234640",
+      "tt0032976",
+      "tt0182383",
+      "tt0040724",
+      "tt1155631",
+      "tt0201896",
+      "tt0036323",
+      "tt0038057",
+      "tt0131004",
+      "tt0247693",
+      "tt0036342",
+      "tt34381727",
+      "tt0181815",
+      "tt0152446",
+      "tt0037280",
+      "tt0201933",
+      "tt0035350",
+      "tt0130269",
+      "tt1418816",
+      "tt0034219",
+      "tt0038109",
+      "tt0122730",
+      "tt1315413",
+      "tt0041699",
+      "tt1248947",
+      "tt1523561",
+      "tt0036868",
+      "tt0040160",
+      "tt0150235",
+      "tt0033532",
+      "tt0148099",
+      "tt0040338",
+      "tt0159453",
+      "tt0032551",
+      "tt0038669",
+      "tt0040525",
+      "tt0037884",
+      "tt0033870",
+      "tt0036172",
+      "tt0040636",
+      "tt0148531",
+      "tt0036244",
+      "tt0035169",
+      "tt0040725",
+      "tt0040806",
+      "tt0036377",
+      "tt0041959",
+      "tt0153638",
+      "tt0037469",
+      "tt0041958",
+      "tt0248557",
+      "tt0041996",
+      "tt0194010",
+      "tt0181727",
+      "tt0040919",
+      "tt0159814",
+      "tt2080409",
+      "tt0201295",
+      "tt0033217",
+      "tt0130357",
+      "tt0159827",
+      "tt0040954",
+      "tt0130360",
+      "tt15527684",
+      "tt0364699",
+      "tt0033258",
+      "tt27914463",
+      "tt0419282"
+    ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:23:08.073Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2326,7 +2535,7 @@
     "description": "Epic spectacles, method acting, and the birth of modern cinema in the 1950s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:17:48.447Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2344,7 +2553,8 @@
         }
       }
     ],
-    "tags": ["1950s", "cinemascope", "method-acting", "classics", "technicolor"]
+    "tags": ["1950s", "cinemascope", "method-acting", "classics", "technicolor"],
+    "enabled": false
   },
   "1960s": {
     "id": "1960s",
@@ -2352,7 +2562,7 @@
     "description": "New wave movements, counterculture films, and cinematic revolution of the 1960s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:23:18.579Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2370,7 +2580,8 @@
         }
       }
     ],
-    "tags": ["1960s", "new-wave", "counterculture", "classics", "revolution"]
+    "tags": ["1960s", "new-wave", "counterculture", "classics", "revolution"],
+    "enabled": false
   },
   "1970s": {
     "id": "1970s",
@@ -2378,7 +2589,7 @@
     "description": "New Hollywood era with groundbreaking auteur films from the 1970s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:23:40.828Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2396,7 +2607,8 @@
         }
       }
     ],
-    "tags": ["1970s", "new-hollywood", "auteur", "classics", "gritty"]
+    "tags": ["1970s", "new-hollywood", "auteur", "classics", "gritty"],
+    "enabled": false
   },
   "1980s": {
     "id": "1980s",
@@ -2404,7 +2616,7 @@
     "description": "Blockbusters, action heroes, and iconic films from the 1980s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:17:49.984Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2422,7 +2634,8 @@
         }
       }
     ],
-    "tags": ["1980s", "blockbusters", "action", "classics", "nostalgia"]
+    "tags": ["1980s", "blockbusters", "action", "classics", "nostalgia"],
+    "enabled": false
   },
   "1990s": {
     "id": "1990s",
@@ -2430,7 +2643,7 @@
     "description": "Independent cinema boom and diverse storytelling from the 1990s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:20:55.059Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2448,7 +2661,8 @@
         }
       }
     ],
-    "tags": ["1990s", "indie", "diverse", "modern", "classics"]
+    "tags": ["1990s", "indie", "diverse", "modern", "classics"],
+    "enabled": false
   },
   "2000s": {
     "id": "2000s",
@@ -2456,7 +2670,7 @@
     "description": "Digital revolution and modern classics from the 2000s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:23:34.246Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2474,7 +2688,8 @@
         }
       }
     ],
-    "tags": ["2000s", "digital", "modern", "contemporary", "millennium"]
+    "tags": ["2000s", "digital", "modern", "contemporary", "millennium"],
+    "enabled": false
   },
   "2010s": {
     "id": "2010s",
@@ -2482,7 +2697,7 @@
     "description": "Streaming era and contemporary cinema from the 2010s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:17:52.435Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2500,7 +2715,8 @@
         }
       }
     ],
-    "tags": ["2010s", "streaming", "contemporary", "modern", "recent"]
+    "tags": ["2010s", "streaming", "contemporary", "modern", "recent"],
+    "enabled": false
   },
   "2020s": {
     "id": "2020s",
@@ -2508,7 +2724,7 @@
     "description": "Latest releases and contemporary films from the 2020s.",
     "movieIds": [],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T02:00:00.000Z",
+    "updatedAt": "2026-01-07T01:20:59.443Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2526,6 +2742,7 @@
         }
       }
     ],
-    "tags": ["2020s", "contemporary", "new-releases", "modern", "current"]
+    "tags": ["2020s", "contemporary", "new-releases", "modern", "current"],
+    "enabled": false
   }
 }
