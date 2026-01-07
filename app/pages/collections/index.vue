@@ -90,13 +90,13 @@ const searchQuery = ref('')
 
 // Filter collections based on search query and enabled status
 const filteredCollections = computed(() => {
-  const allCollections = Array.from(collections.value.values())
-  
+  const allCollections = Array.from(collections.value.values()).filter(c => c.enabled !== false)
+
   if (!searchQuery.value.trim()) {
     // No search query - just filter out disabled collections
     return allCollections.filter(c => c.enabled !== false)
   }
-  
+
   // Create a fuse instance with all collections for search
   const fuse = new Fuse(allCollections, {
     keys: [
@@ -107,10 +107,10 @@ const filteredCollections = computed(() => {
     threshold: 0.3,
     ignoreLocation: true
   })
-  
+
   // Search all collections, then filter out disabled ones from results
   const results = fuse.search(searchQuery.value)
-  return results.map(result => result.item).filter(c => c.enabled !== false)
+  return results.map(result => result.item)
 })
 
 onMounted(() => {
