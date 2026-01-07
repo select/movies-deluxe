@@ -100,7 +100,5 @@ export async function processArchiveMovie(
     lastUpdated: new Date().toISOString(),
   }
 
-  console.log(`[Archive] Created movie entry: "${entry.title}"`)
-
   return entry
 }
