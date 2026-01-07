@@ -32,6 +32,7 @@ export interface Collection {
   movieIds: string[]
   savedQueries?: SavedQuery[]
   tags?: string[]
+  enabled?: boolean // Whether the collection is visible in /collections
   createdAt: string
   updatedAt: string
 }

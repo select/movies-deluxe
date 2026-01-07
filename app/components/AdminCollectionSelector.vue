@@ -25,16 +25,25 @@
             selectedId === collection.id
               ? 'bg-blue-600/10 border-blue-600 ring-2 ring-blue-600/20'
               : 'bg-theme-surface border-theme-border hover:border-theme-textmuted',
+            collection.enabled === false ? 'opacity-60' : ''
           ]"
           @click="select(collection.id)"
         >
           <div class="flex items-center justify-between mb-2 pr-12">
-            <span
-              class="font-bold text-lg truncate"
-              :class="selectedId === collection.id ? 'text-blue-600 dark:text-blue-400' : ''"
-            >
-              {{ collection.name }}
-            </span>
+            <div class="flex items-center gap-2">
+              <span
+                class="font-bold text-lg truncate"
+                :class="selectedId === collection.id ? 'text-blue-600 dark:text-blue-400' : ''"
+              >
+                {{ collection.name }}
+              </span>
+              <span
+                v-if="collection.enabled === false"
+                class="px-2 py-0.5 bg-yellow-600/10 text-yellow-600 dark:text-yellow-400 border border-yellow-600/20 rounded text-[10px] font-bold uppercase"
+              >
+                Hidden
+              </span>
+            </div>
           </div>
 
           <!-- Tags Display -->
@@ -65,6 +74,19 @@
           class="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
           :class="{ 'opacity-100': selectedId === collection.id }"
         >
+          <button
+            class="p-1.5 rounded-lg transition-colors"
+            :class="collection.enabled === false 
+              ? 'hover:bg-green-50 dark:hover:bg-green-900/20 text-green-600' 
+              : 'hover:bg-yellow-50 dark:hover:bg-yellow-900/20 text-yellow-600'"
+            :title="collection.enabled === false ? 'Enable Collection' : 'Disable Collection'"
+            @click.stop="toggleEnabled(collection)"
+          >
+            <div 
+              class="text-lg"
+              :class="collection.enabled === false ? 'i-mdi-eye-off' : 'i-mdi-eye'"
+            />
+          </button>
           <button
             class="p-1.5 hover:bg-theme-selection rounded-lg text-blue-500 transition-colors"
             title="Edit Collection"
@@ -383,6 +405,30 @@ const confirmDelete = async (collection: Collection) => {
         selectedId.value = ''
         emit('select', '')
       }
+      await collectionsStore.loadCollections()
+    }
+  } catch {
+    // Error handled by store
+  }
+}
+
+const toggleEnabled = async (collection: Collection) => {
+  const newEnabledState = collection.enabled === false
+  try {
+    const response = await $fetch<{ success: boolean; collection: Collection }>(
+      '/api/admin/collections/update-collection',
+      {
+        method: 'POST',
+        body: {
+          collectionId: collection.id,
+          updates: {
+            enabled: newEnabledState,
+          },
+        },
+      }
+    )
+
+    if (response.success) {
       await collectionsStore.loadCollections()
     }
   } catch {

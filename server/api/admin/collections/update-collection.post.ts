@@ -7,6 +7,7 @@ interface UpdatePayload {
   updates: {
     name?: string
     description?: string
+    enabled?: boolean
     tags?: { action: 'set' | 'add' | 'remove'; values: string[] }
     queries?: { action: 'add' | 'remove' | 'update'; index?: number; query?: SavedQuery }
     movies?: { action: 'add' | 'remove'; movieIds: string[] }
@@ -38,6 +39,7 @@ export default defineEventHandler(async event => {
     // 1. Metadata updates
     if (updates.name !== undefined) collection.name = updates.name
     if (updates.description !== undefined) collection.description = updates.description
+    if (updates.enabled !== undefined) collection.enabled = updates.enabled
 
     // 2. Tag updates
     if (updates.tags) {
