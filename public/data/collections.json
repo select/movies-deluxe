@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-06T01:00:28.954Z"
+    "lastUpdated": "2026-01-07T00:33:26.576Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1399,9 +1399,10 @@
       "tt0133226"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-03T04:51:44.239Z",
+    "updatedAt": "2026-01-07T00:32:07.557Z",
     "savedQueries": [],
-    "tags": ["action", "kung-fu", "martial-arts", "asian-cinema", "fight-scenes"]
+    "tags": ["action", "kung-fu", "martial-arts", "asian-cinema", "fight-scenes"],
+    "enabled": true
   },
   "canine-cinema": {
     "id": "canine-cinema",
@@ -1415,9 +1416,10 @@
       "tt0003855"
     ],
     "createdAt": "2025-12-29T16:18:00.000Z",
-    "updatedAt": "2026-01-02T22:52:59.483Z",
+    "updatedAt": "2026-01-07T00:31:27.845Z",
     "savedQueries": [],
-    "tags": ["family", "animals", "dogs", "heartwarming", "adventure"]
+    "tags": ["family", "animals", "dogs", "heartwarming", "adventure"],
+    "enabled": false
   },
   "buster-keaton": {
     "id": "buster-keaton",
@@ -1591,6 +1593,22 @@
     "description": "",
     "movieIds": [],
     "createdAt": "2026-01-06T00:17:06.799Z",
-    "updatedAt": "2026-01-06T00:17:06.801Z"
+    "updatedAt": "2026-01-07T00:33:26.576Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Western"]
+        }
+      }
+    ]
   }
 }
