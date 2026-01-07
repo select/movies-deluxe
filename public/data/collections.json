@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-07T00:33:26.576Z"
+    "lastUpdated": "2026-01-07T00:56:50.155Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1587,13 +1587,401 @@
     "savedQueries": [],
     "tags": ["japanese-cinema", "samurai", "drama", "masterpieces", "auteur"]
   },
+  "sci-fi": {
+    "id": "sci-fi",
+    "name": "Science Fiction",
+    "description": "Explore the future, space, and beyond with classic and contemporary science fiction films.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Sci-Fi"]
+        }
+      }
+    ],
+    "tags": ["sci-fi", "space", "future", "technology", "aliens"]
+  },
+  "horror": {
+    "id": "horror",
+    "name": "Horror",
+    "description": "Spine-chilling horror films from classic monster movies to modern psychological thrillers.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Horror"]
+        }
+      }
+    ],
+    "tags": ["horror", "thriller", "suspense", "monsters", "supernatural"]
+  },
+  "film-noir": {
+    "id": "film-noir",
+    "name": "Film Noir",
+    "description": "Dark, stylish crime dramas from the golden age of noir cinema.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Film-Noir"]
+        }
+      }
+    ],
+    "tags": ["noir", "crime", "mystery", "black-and-white", "detective"]
+  },
+  "romance": {
+    "id": "romance",
+    "name": "Romance",
+    "description": "Timeless love stories that capture the heart and soul of cinema.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Romance"]
+        }
+      }
+    ],
+    "tags": ["romance", "love", "drama", "relationships", "heartwarming"]
+  },
+  "adventure": {
+    "id": "adventure",
+    "name": "Adventure",
+    "description": "Epic adventures and thrilling journeys across land, sea, and time.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Adventure"]
+        }
+      }
+    ],
+    "tags": ["adventure", "action", "exploration", "journey", "epic"]
+  },
+  "mystery": {
+    "id": "mystery",
+    "name": "Mystery",
+    "description": "Intriguing mysteries and detective stories that keep you guessing until the end.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Mystery"]
+        }
+      }
+    ],
+    "tags": ["mystery", "detective", "whodunit", "suspense", "investigation"]
+  },
+  "thriller": {
+    "id": "thriller",
+    "name": "Thriller",
+    "description": "Edge-of-your-seat thrillers that keep tension high from start to finish.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["Thriller"]
+        }
+      }
+    ],
+    "tags": ["thriller", "suspense", "tension", "psychological", "crime"]
+  },
+  "war": {
+    "id": "war",
+    "name": "War",
+    "description": "Powerful war films depicting the courage, sacrifice, and human cost of conflict.",
+    "movieIds": [],
+    "createdAt": "2026-01-07T01:00:00.000Z",
+    "updatedAt": "2026-01-07T01:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "rating",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "genres": ["War"]
+        }
+      }
+    ],
+    "tags": ["war", "military", "combat", "historical", "drama"]
+  },
   "western": {
     "id": "western",
     "name": "Western",
-    "description": "",
-    "movieIds": [],
+    "description": "Classic westerns featuring cowboys, outlaws, and the untamed frontier.",
+    "movieIds": [
+      "tt0038277",
+      "tt0017463",
+      "tt0061429",
+      "tt0359108",
+      "tt0066049",
+      "tt0008309",
+      "tt0001387",
+      "tt0037508",
+      "tt0043276",
+      "tt0039152",
+      "tt0172155",
+      "tt0042232",
+      "tt7148242",
+      "tt0042286",
+      "tt0046808",
+      "tt0066907",
+      "tt0061709",
+      "tt0052724",
+      "tt4943998",
+      "tt0064208",
+      "tt0060315",
+      "tt0060355",
+      "tt0038499",
+      "tt0319438",
+      "tt0186500",
+      "tt0200321",
+      "tt0027588",
+      "tt0061636",
+      "tt0030137",
+      "tt0031318",
+      "tt2510028",
+      "tt0032497",
+      "tt0031346",
+      "tt0040380",
+      "tt0015863",
+      "tt0028940",
+      "tt0015881",
+      "tt0032563",
+      "tt0039988",
+      "tt0019976",
+      "tt0006780",
+      "tt0031419",
+      "tt0061770",
+      "tt0061787",
+      "tt0021997",
+      "tt0881262",
+      "tt0281941",
+      "tt0011358",
+      "tt0052993",
+      "tt0031557",
+      "tt0030366",
+      "tt0032707",
+      "tt0043747",
+      "tt0065988",
+      "tt0023164",
+      "tt0037030",
+      "tt0041610",
+      "tt0051899",
+      "tt0048339",
+      "tt0057298",
+      "tt0038762",
+      "tt0023257",
+      "tt0060748",
+      "tt0040644",
+      "tt0265416",
+      "tt0040653",
+      "tt0054127",
+      "tt0055257",
+      "tt0043885",
+      "tt0035165",
+      "tt0026843",
+      "tt0037969",
+      "tt0005871",
+      "tt0039737",
+      "tt0079020",
+      "tt0043959",
+      "tt0040724",
+      "tt0020320",
+      "tt0009550",
+      "tt0035252",
+      "tt0053220",
+      "tt0035254",
+      "tt0035255",
+      "tt0053221",
+      "tt0062825",
+      "tt0042912",
+      "tt0035280",
+      "tt0050923",
+      "tt0037245",
+      "tt0054292",
+      "tt0021358",
+      "tt0031925",
+      "tt0027015",
+      "tt0044052",
+      "tt0045184",
+      "tt0031971",
+      "tt0028306",
+      "tt0048666",
+      "tt0040851",
+      "tt0065051",
+      "tt0066759",
+      "tt0051411",
+      "tt0063501",
+      "tt0051433",
+      "tt3610118",
+      "tt2162808",
+      "tt0014770",
+      "tt0132900",
+      "tt0037600",
+      "tt0054757",
+      "tt0023912",
+      "tt0041280",
+      "tt0022883",
+      "tt0132951",
+      "tt0013158",
+      "tt0047011",
+      "tt0041405",
+      "tt3610098",
+      "tt0042506",
+      "tt0006736",
+      "tt0063032",
+      "tt0042531",
+      "tt0059250",
+      "tt0015038",
+      "tt0049434",
+      "tt0024267",
+      "tt0026673",
+      "tt1072650",
+      "tt0011439",
+      "tt0063293",
+      "tt0026720",
+      "tt0055184",
+      "tt0036244",
+      "tt0012543",
+      "tt0040679",
+      "tt0019268",
+      "tt0028101",
+      "tt0014358",
+      "tt0052097",
+      "tt0030636",
+      "tt0114235",
+      "tt0025706",
+      "tt0124857",
+      "tt0063557",
+      "tt0023428",
+      "tt0044015",
+      "tt0008571",
+      "tt0183803",
+      "tt0038107",
+      "tt0010726",
+      "tt0065032",
+      "tt0046384",
+      "tt0048691",
+      "tt0034270",
+      "tt0051087",
+      "tt0212132",
+      "tt0054428",
+      "tt0048789",
+      "tt0020556",
+      "tt0042033",
+      "tt0062472",
+      "tt0016526",
+      "tt0067355",
+      "tt0033160",
+      "tt0027128",
+      "tt0228960",
+      "tt0024690",
+      "tt0068154",
+      "tt0016461",
+      "tt0043079",
+      "tt0055558",
+      "tt0830690",
+      "tt0047647",
+      "tt0010853",
+      "tt0032111",
+      "tt0027202",
+      "tt0018571",
+      "tt0016534",
+      "tt2113113",
+      "tt0029778",
+      "tt0027218",
+      "tt0043137",
+      "tt3610606",
+      "tt0153862",
+      "tt0002585",
+      "tt0040978",
+      "tt0053457"
+    ],
     "createdAt": "2026-01-06T00:17:06.799Z",
-    "updatedAt": "2026-01-07T00:33:26.576Z",
+    "updatedAt": "2026-01-07T00:56:50.155Z",
     "savedQueries": [
       {
         "searchQuery": "",
