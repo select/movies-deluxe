@@ -64,12 +64,6 @@
 
         <!-- Movies Grid -->
         <template v-else-if="filteredLikedMovies.length > 0">
-          <MovieStats
-            v-if="!isLoadingLiked"
-            :total-movies="likedCount"
-            :filtered-movies="filteredLikedMovies.length"
-          />
-
           <div class="relative">
             <template v-if="isLoadingLiked">
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
