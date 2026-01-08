@@ -348,6 +348,19 @@ export const useMovieStore = defineStore('movie', () => {
   const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
     if (!imdbIds || imdbIds.length === 0) return []
 
+    // Ensure cache is initialized
+    if (!movieDetailsCache.value) {
+      movieDetailsCache.value = new Map()
+    }
+
+    // Filter out IDs that are already cached
+    const uncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
+
+    if (uncachedIds.length === 0) {
+      // All movies are cached, return from cache
+      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+    }
+
     // Wait for database to be ready if it's still initializing
     if (!db.isReady.value) {
       // If not even started loading, start it
@@ -367,19 +380,6 @@ export const useMovieStore = defineStore('movie', () => {
         window.console.error('[MovieStore] Database not ready after waiting')
         return []
       }
-    }
-
-    // Ensure cache is initialized
-    if (!movieDetailsCache.value) {
-      movieDetailsCache.value = new Map()
-    }
-
-    // Filter out IDs that are already cached
-    const uncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
-
-    if (uncachedIds.length === 0) {
-      // All movies are cached, return from cache
-      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     }
 
     try {
