@@ -3,14 +3,15 @@ import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 
 let db: SQLiteDatabase | null = null
 let sqlite3: SQLite3 | null = null
+let initializationPromise: Promise<void> | null = null
 
 async function initDatabase() {
   if (sqlite3) return sqlite3
 
   try {
     sqlite3 = await sqlite3InitModule({
-      print: console.log,
-      printErr: console.error,
+      print: (...args: any[]) => console.log(...args),
+      printErr: (...args: any[]) => console.error(...args),
       locateFile: (file: string) => {
         // Point to the WASM file in the public directory
         if (file.endsWith('.wasm')) {
@@ -42,8 +43,6 @@ async function loadRemoteDatabase(url: string) {
     }
 
     const arrayBuffer = await response.arrayBuffer()
-
-    // Create a new Uint8Array from the buffer
     const uint8Array = new Uint8Array(arrayBuffer)
 
     // Close existing database if any
@@ -55,8 +54,6 @@ async function loadRemoteDatabase(url: string) {
     // Create a new in-memory database
     db = new sqlite.oo1.DB(':memory:')
 
-    // Log database pointer info
-
     // Check if sqlite3_deserialize is available
     if (typeof sqlite.capi.sqlite3_deserialize !== 'function') {
       console.error('sqlite3_deserialize is not available!')
@@ -64,7 +61,6 @@ async function loadRemoteDatabase(url: string) {
     }
 
     // Allocate memory using sqlite3_malloc (required for deserialize)
-    // Use the regular malloc, not malloc64, to avoid BigInt issues
     const pMem = sqlite.capi.sqlite3_malloc(uint8Array.byteLength)
     if (!pMem) {
       throw new Error('Failed to allocate memory for database')
@@ -78,7 +74,6 @@ async function loadRemoteDatabase(url: string) {
       throw err
     }
 
-    // Log flags
     const flags =
       sqlite.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite.capi.SQLITE_DESERIALIZE_READONLY
 
@@ -97,15 +92,7 @@ async function loadRemoteDatabase(url: string) {
 
     if (rc !== sqlite.capi.SQLITE_OK) {
       const errMsg = sqlite.capi.sqlite3_errmsg(db.pointer)
-      const errCode = sqlite.capi.sqlite3_extended_errcode(db.pointer)
-      console.error('Deserialize failed:', {
-        returnCode: rc,
-        errorMessage: errMsg,
-        extendedErrorCode: errCode,
-      })
-      throw new Error(
-        `Failed to deserialize database: ${errMsg} (code: ${rc}, extended: ${errCode})`
-      )
+      throw new Error(`Failed to deserialize database: ${errMsg}`)
     }
 
     // Verify the database loaded correctly
@@ -124,17 +111,53 @@ async function loadRemoteDatabase(url: string) {
   }
 }
 
-self.onmessage = async e => {
+// Message queue to ensure sequential processing
+const messageQueue: any[] = []
+let isProcessing = false
+
+async function processQueue() {
+  if (isProcessing) return
+  isProcessing = true
+
+  while (messageQueue.length > 0) {
+    const e = messageQueue.shift()
+    await handleMessage(e)
+  }
+
+  isProcessing = false
+}
+
+self.onmessage = e => {
+  messageQueue.push(e)
+  processQueue()
+}
+
+async function handleMessage(e: MessageEvent) {
   const { type, sql, params, id, url } = e.data
 
   try {
     if (type === 'init') {
-      await initDatabase()
-      if (url) {
-        await loadRemoteDatabase(url)
+      if (initializationPromise) {
+        await initializationPromise
+        self.postMessage({ id, type: 'init-success', success: true })
+        return
       }
-      self.postMessage({ id, success: true })
+
+      initializationPromise = (async () => {
+        await initDatabase()
+        if (url) {
+          await loadRemoteDatabase(url)
+        }
+      })()
+
+      await initializationPromise
+      self.postMessage({ id, type: 'init-success', success: true })
       return
+    }
+
+    // Wait for initialization if it's in progress
+    if (initializationPromise) {
+      await initializationPromise
     }
 
     // All other operations require initialized database
@@ -238,7 +261,7 @@ self.onmessage = async e => {
         return
       }
 
-      const placeholders = imdbIds.map(() => '?').join(',')
+      const placeholders = (imdbIds as string[]).map(() => '?').join(',')
       const sql = `
         SELECT m.*
         FROM movies m

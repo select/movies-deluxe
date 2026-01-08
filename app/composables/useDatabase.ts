@@ -12,33 +12,49 @@ function createDatabase() {
     { resolve: (value: WorkerResponse<unknown>) => void; reject: (reason?: Error) => void }
   >()
 
+  const initPromise = ref<Promise<unknown> | null>(null)
+
   const init = async (url?: string) => {
-    if (worker.value) return
+    if (initPromise.value) return initPromise.value
 
-    const DatabaseWorker = await import('~/workers/database.worker?worker')
-    worker.value = new DatabaseWorker.default()
+    initPromise.value = (async () => {
+      const DatabaseWorker = await import('~/workers/database.worker?worker')
+      worker.value = new DatabaseWorker.default()
 
-    worker.value!.onmessage = e => {
-      const { id, error } = e.data
-      const pending = pendingQueries.get(id)
+      worker.value!.onmessage = e => {
+        const { id, error, type: responseType } = e.data
 
-      if (pending) {
-        if (error) {
-          pending.reject(new Error(error))
-        } else {
-          pending.resolve(e.data)
+        // Handle initialization success message
+        if (responseType === 'init-success') {
+          isReady.value = true
+          const pending = pendingQueries.get(id)
+          if (pending) {
+            pending.resolve(e.data)
+            pendingQueries.delete(id)
+          }
+          return
         }
-        pendingQueries.delete(id)
-      }
-    }
 
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, { resolve, reject })
-      worker.value!.postMessage({ type: 'init', id, url })
-    }).then(() => {
-      isReady.value = true
-    })
+        const pending = pendingQueries.get(id)
+
+        if (pending) {
+          if (error) {
+            pending.reject(new Error(error))
+          } else {
+            pending.resolve(e.data)
+          }
+          pendingQueries.delete(id)
+        }
+      }
+
+      const id = Math.random().toString(36).substring(7)
+      return new Promise((resolve, reject) => {
+        pendingQueries.set(id, { resolve, reject })
+        worker.value!.postMessage({ type: 'init', id, url })
+      })
+    })()
+
+    return initPromise.value
   }
 
   const query = async <T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> => {
