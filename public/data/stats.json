@@ -32,10 +32,10 @@
     },
     "youtube": {
       "totalScraped": 11202,
-      "totalAvailable": 17895,
+      "totalAvailable": 17897,
       "totalFailed": 6022,
       "failureRate": 34.962842545285646,
-      "percent": 62.59849119865885,
+      "percent": 62.59149578141589,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -43,7 +43,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2321,
-          "total": 2776,
+          "total": 2777,
           "failed": 435,
           "failureRate": 15.783744557329463
         },
@@ -103,7 +103,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 529,
-          "total": 607,
+          "total": 608,
           "failed": 106,
           "failureRate": 16.69291338582677
         },
@@ -216,5 +216,5 @@
     "filesInDirectory": 13439,
     "matchedPosters": 13344
   },
-  "lastUpdated": "2026-01-08T15:05:32.337Z"
+  "lastUpdated": "2026-01-08T20:40:53.842Z"
 }
