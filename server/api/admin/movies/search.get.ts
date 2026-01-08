@@ -63,10 +63,12 @@ export default defineEventHandler(async event => {
       if (!matches) continue
     }
 
-    // Apply rating filter
+    // Apply rating filter - exclude movies without ratings when rating criteria is specified
     if (minRating > 0) {
-      const rating = parseFloat(entry.metadata?.imdbRating || '0')
-      if (rating < minRating) continue
+      const ratingStr = entry.metadata?.imdbRating
+      if (!ratingStr || ratingStr === 'N/A') continue
+      const rating = parseFloat(ratingStr)
+      if (isNaN(rating) || rating < minRating) continue
     }
 
     // Apply year filter
@@ -77,14 +79,18 @@ export default defineEventHandler(async event => {
       if (!entry.year || entry.year > maxYear) continue
     }
 
-    // Apply votes filter
+    // Apply votes filter - exclude movies without votes when vote criteria is specified
     if (minVotes > 0) {
-      const votes = parseInt(String(entry.metadata?.imdbVotes || '0').replace(/,/g, ''))
-      if (votes < minVotes) continue
+      const votesStr = entry.metadata?.imdbVotes
+      if (!votesStr || votesStr === 'N/A') continue
+      const votes = parseInt(String(votesStr).replace(/,/g, ''))
+      if (isNaN(votes) || votes < minVotes) continue
     }
     if (maxVotes > 0) {
-      const votes = parseInt(String(entry.metadata?.imdbVotes || '0').replace(/,/g, ''))
-      if (votes > maxVotes) continue
+      const votesStr = entry.metadata?.imdbVotes
+      if (!votesStr || votesStr === 'N/A') continue
+      const votes = parseInt(String(votesStr).replace(/,/g, ''))
+      if (isNaN(votes) || votes > maxVotes) continue
     }
 
     // Apply genre filter
