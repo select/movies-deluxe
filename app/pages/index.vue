@@ -3,9 +3,6 @@
     <div class="px-4 lg:px-[6%] py-12 space-y-12">
       <!-- Welcome Header -->
       <header class="space-y-4">
-        <h1 class="text-4xl md:text-5xl font-black text-theme-text tracking-tight">
-          Welcome to <span class="text-theme-accent">Movies Deluxe</span>
-        </h1>
         <p class="text-xl text-theme-textmuted max-w-2xl leading-relaxed">
           Discover thousands of free public domain movies from Archive.org and YouTube.
           Classic films, documentaries, and more - all legally available to watch online.

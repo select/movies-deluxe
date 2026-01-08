@@ -18,19 +18,19 @@
       <!-- Left Scroll Button -->
       <button
         v-if="canScrollLeft"
-        class="absolute left-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/90 border border-theme-border/50 text-theme-text shadow-lg hover:bg-theme-accent hover:text-black transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100"
+        class="absolute left-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-1.5 rounded-full bg-theme-surface/80 border border-theme-border/30 text-theme-text/70 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100"
         @click="scroll('left')"
       >
-        <div class="i-mdi-chevron-left text-2xl" />
+        <div class="i-mdi-chevron-left text-xl" />
       </button>
 
       <!-- Right Scroll Button -->
       <button
         v-if="canScrollRight"
-        class="absolute right-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/90 border border-theme-border/50 text-theme-text shadow-lg hover:bg-theme-accent hover:text-black transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100"
+        class="absolute right-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-1.5 rounded-full bg-theme-surface/80 border border-theme-border/30 text-theme-text/70 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100"
         @click="scroll('right')"
       >
-        <div class="i-mdi-chevron-right text-2xl" />
+        <div class="i-mdi-chevron-right text-xl" />
       </button>
 
       <div
