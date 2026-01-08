@@ -91,24 +91,18 @@
         <div v-else-if="likedCount > 0 && filteredLikedMovies.length === 0" class="text-center py-12">
           <div class="i-mdi-filter-remove text-4xl text-theme-border mb-4" />
           <h2 class="text-xl font-semibold mb-2 text-theme-text">
-            {{ searchQuery ? 'No movies found' : 'No movies match your filters' }}
+            {{ searchQuery ? 'No movies found' : 'No movies in your liked collection' }}
           </h2>
           <p class="text-theme-textmuted mb-6">
-            {{ searchQuery ? 'Try a different search term or clear your search' : 'Try adjusting your search or filter criteria' }}
+            {{ searchQuery ? 'Try a different search term or clear your search' : 'Try a different search term' }}
           </p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <div class="flex justify-center">
             <button
               v-if="searchQuery"
               class="btn-secondary"
               @click="searchQuery = ''"
             >
               Clear Search
-            </button>
-            <button
-              class="btn-primary"
-              @click="resetFilters"
-            >
-              Clear Filters
             </button>
           </div>
         </div>
@@ -136,7 +130,7 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const { loadFromFile, fetchMoviesByIds, resetFilters, applyFilters } = movieStore
+const { loadFromFile, fetchMoviesByIds } = movieStore
 
 // Get likedMovieIds directly from store (VueUse storage)
 const { likedMovieIds, likedCount } = storeToRefs(movieStore)
@@ -166,12 +160,12 @@ onMounted(async () => {
   }
 })
 
-// Filtered liked movies - apply current filters and search
+// Filtered liked movies - only apply search, no global filters
 const filteredLikedMovies = computed(() => {
-  // First apply the existing filters (genre, year, etc.)
-  let filtered = applyFilters(likedMoviesData.value)
+  // Start with all liked movies (no global filters applied)
+  let filtered = likedMoviesData.value
   
-  // Then apply local search if there's a search query
+  // Apply local search if there's a search query
   if (searchQuery.value.trim()) {
     const fuse = new Fuse(filtered, {
       keys: [
