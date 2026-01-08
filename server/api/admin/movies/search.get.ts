@@ -131,6 +131,8 @@ export default defineEventHandler(async event => {
         Director: entry.metadata?.Director,
         Writer: entry.metadata?.Writer,
         Plot: entry.metadata?.Plot,
+        imdbRating: entry.metadata?.imdbRating,
+        imdbVotes: entry.metadata?.imdbVotes,
       },
     })
   }
