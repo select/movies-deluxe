@@ -65,6 +65,7 @@ export async function generateHomePages(onProgress?: (progress: GenerationProgre
   const collections = allCollectionIds
     .map(id => collectionsData[id])
     .filter((c): c is Collection => c !== undefined && typeof c === 'object' && 'movieIds' in c)
+    .filter(c => c.enabled !== false) // Only include collections that are not explicitly disabled
 
   const validCollections = collections
     .map(c => ({
