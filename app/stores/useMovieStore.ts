@@ -296,50 +296,14 @@ export const useMovieStore = defineStore('movie', () => {
       isInitialLoading.value = false
     } catch (err) {
       window.console.error('Failed to initialize SQLite:', err)
-      // Fallback to JSON API if SQLite fails
-      await loadFromApi()
-    } finally {
-      isLoading.value.movies = false
-      isInitialLoading.value = false
-    }
-  }
 
-  /**
-   * Load movies from JSON API (fallback or admin interface)
-   */
-  const loadFromApi = async () => {
-    isLoading.value.movies = true
-    try {
-      const response = await $fetch<MoviesDatabase>('/api/movies')
-
-      if (response.error) {
-        window.console.error('Failed to load movies from JSON:', response.message)
-        return
-      }
-
-      const movieEntries: MovieEntry[] = Object.entries(response)
-        .filter(([key]) => !key.startsWith('_'))
-        .filter(([, value]) => {
-          if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
-            return false
-          }
-          const movie = value as MovieEntry
-          if (typeof movie.imdbId !== 'string') return false
-          if (typeof movie.title === 'string') return true
-          if (Array.isArray(movie.title)) {
-            return (movie.title as string[]).every((t: string) => typeof t === 'string')
-          }
-          return false
-        })
-        .map(([, value]) => value as MovieEntry)
-
-      // Convert array to Map
-      allMovies.value.clear()
-      movieEntries.forEach(movie => {
-        allMovies.value.set(movie.imdbId, movie)
-      })
-    } catch (err) {
-      window.console.error('Failed to load movies from JSON fallback:', err)
+      // Show toast notification for database initialization failure
+      const { showToast } = useUiStore()
+      showToast(
+        'Failed to load movie database. Please refresh the page to try again.',
+        'error',
+        5000
+      )
     } finally {
       isLoading.value.movies = false
       isInitialLoading.value = false
@@ -1352,7 +1316,6 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Data Loading
     // ============================================
     loadFromFile,
-    loadFromApi,
     fetchMovies,
     fetchMoviesByIds,
     getMovieById,
