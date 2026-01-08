@@ -1,0 +1,132 @@
+{
+  "day": 7,
+  "collections": [
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt0032599",
+        "tt0150235",
+        "tt0159827",
+        "tt0037469",
+        "tt12304756",
+        "tt0040338",
+        "tt0038057",
+        "tt0181538",
+        "tt0148627",
+        "tt0240548"
+      ]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt0035753",
+        "tt0034398",
+        "tt5225296",
+        "tt0063522",
+        "tt0038975",
+        "tt0014972",
+        "tt19896522",
+        "tt0454107",
+        "tt0057603",
+        "tt4228240"
+      ]
+    },
+    {
+      "id": "buster-keaton",
+      "name": "Buster Keaton",
+      "movieIds": [
+        "tt0009899",
+        "tt0023322",
+        "tt0017925",
+        "tt0019421",
+        "tt0020902",
+        "tt0015324",
+        "tt0007761",
+        "tt0009466",
+        "tt0020442",
+        "tt0013025"
+      ]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0041699",
+        "tt0036947",
+        "tt0057565",
+        "tt0039090",
+        "tt0056443",
+        "tt0100998",
+        "tt0036400",
+        "tt0071411",
+        "tt0042958",
+        "tt0038268"
+      ]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt37984759",
+        "tt0079501",
+        "tt0081455",
+        "tt0031951",
+        "tt0252973",
+        "tt0062622",
+        "tt0053363",
+        "tt35667868",
+        "tt0053137",
+        "tt0010600"
+      ]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0009018",
+        "tt0012349",
+        "tt0014358",
+        "tt0004936",
+        "tt1283535",
+        "tt0004277",
+        "tt0192120",
+        "tt0004637",
+        "tt0003758",
+        "tt0012304"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0003855", "tt0009018", "tt0463721", "tt0043895"]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0031381",
+        "tt0061512",
+        "tt0063522",
+        "tt0055630",
+        "tt0087843",
+        "tt0056172",
+        "tt0042192",
+        "tt0051808",
+        "tt0032976",
+        "tt0064115"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0042179", "tt0047795", "tt0043255", "tt0047794", "tt0041085", "tt0040068"]
+    },
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0025316", "tt0015634", "tt0103905", "tt0470941", "tt0076085"]
+    }
+  ]
+}

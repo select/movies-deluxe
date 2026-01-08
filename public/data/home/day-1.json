@@ -1,0 +1,132 @@
+{
+  "day": 1,
+  "collections": [
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0058888",
+        "tt0080979",
+        "tt0050613",
+        "tt0041699",
+        "tt0055630",
+        "tt0050330",
+        "tt0036400",
+        "tt0057565",
+        "tt0056443",
+        "tt0071411"
+      ]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt0033532",
+        "tt0181620",
+        "tt0194782",
+        "tt1669636",
+        "tt0150235",
+        "tt0152446",
+        "tt0036377",
+        "tt31824373",
+        "tt1315413",
+        "tt0037884"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0003855", "tt0009018", "tt0043895", "tt0463721"]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0087803",
+        "tt0062622",
+        "tt0053363",
+        "tt0032753",
+        "tt0085267",
+        "tt0139809",
+        "tt0098546",
+        "tt0053137",
+        "tt0054387",
+        "tt0407304"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0057115",
+        "tt0032551",
+        "tt0074958",
+        "tt0031381",
+        "tt0054215",
+        "tt0064115",
+        "tt0051201",
+        "tt0050083",
+        "tt0063522",
+        "tt0017136"
+      ]
+    },
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0025316", "tt0103905", "tt0470941", "tt0076085", "tt0015634"]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt0133226",
+        "tt0913968",
+        "tt2644714",
+        "tt0103950",
+        "tt0079891",
+        "tt0328113",
+        "tt1686784",
+        "tt0095937",
+        "tt0342258",
+        "tt0085127"
+      ]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0012349",
+        "tt0003760",
+        "tt0004282",
+        "tt1283535",
+        "tt0029430",
+        "tt0013486",
+        "tt0004100",
+        "tt0486919",
+        "tt0004707",
+        "tt0004518"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0047794", "tt0047795", "tt0041085", "tt0042179", "tt0043255", "tt0040068"]
+    },
+    {
+      "id": "buster-keaton",
+      "name": "Buster Keaton",
+      "movieIds": [
+        "tt0008377",
+        "tt0015863",
+        "tt0010221",
+        "tt0012255",
+        "tt0007819",
+        "tt0010155",
+        "tt0020442",
+        "tt0013858",
+        "tt0008523",
+        "tt0014341"
+      ]
+    }
+  ]
+}

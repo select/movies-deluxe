@@ -1,0 +1,143 @@
+{
+  "day": 22,
+  "collections": [
+    {
+      "id": "buster-keaton",
+      "name": "Buster Keaton",
+      "movieIds": [
+        "tt0011071",
+        "tt0014218",
+        "tt0012253",
+        "tt0011541",
+        "tt0009123",
+        "tt0010155",
+        "tt0007819",
+        "tt0011508",
+        "tt0020838",
+        "tt0020442"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0041085", "tt0047795", "tt0047794", "tt0043255", "tt0040068", "tt0042179"]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0042958",
+        "tt0039871",
+        "tt0038268",
+        "tt0055630",
+        "tt0100998",
+        "tt0058888",
+        "tt0071411",
+        "tt0043614",
+        "tt0036400",
+        "tt0050613"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0009018", "tt0043895", "tt0003855", "tt0463721"]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt27051672",
+        "tt0017739",
+        "tt0031143",
+        "tt0013442",
+        "tt0073582",
+        "tt0492868",
+        "tt19720316",
+        "tt0037635",
+        "tt0074806",
+        "tt0063171"
+      ]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0004282",
+        "tt0003760",
+        "tt0009611",
+        "tt0012304",
+        "tt0007145",
+        "tt0004277",
+        "tt0004091",
+        "tt0003758",
+        "tt0029430",
+        "tt0004210"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt3610118",
+        "tt0005871",
+        "tt0065988",
+        "tt0043747",
+        "tt0037508",
+        "tt0025706",
+        "tt3610098",
+        "tt0061787",
+        "tt0132951",
+        "tt0043276"
+      ]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt0085127",
+        "tt0913968",
+        "tt0079509",
+        "tt0328113",
+        "tt0133226",
+        "tt0095403",
+        "tt0398913",
+        "tt0103285",
+        "tt6083388",
+        "tt0079891"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0048920",
+        "tt0018150",
+        "tt0148494",
+        "tt0032214",
+        "tt0161719",
+        "tt0150822",
+        "tt0149797",
+        "tt0021722",
+        "tt0149810",
+        "tt0016585"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0108052",
+        "tt0051201",
+        "tt0071411",
+        "tt0100998",
+        "tt0043014",
+        "tt0053291",
+        "tt0012349",
+        "tt0032551",
+        "tt0080979",
+        "tt0082096"
+      ]
+    }
+  ]
+}

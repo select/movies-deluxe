@@ -1,0 +1,132 @@
+{
+  "day": 8,
+  "collections": [
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0004282",
+        "tt0004210",
+        "tt0004518",
+        "tt0009611",
+        "tt0004707",
+        "tt9459600",
+        "tt0013486",
+        "tt0015841",
+        "tt0004277",
+        "tt0003758"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt4943998",
+        "tt0016461",
+        "tt0027588",
+        "tt0023257",
+        "tt0061770",
+        "tt0037508",
+        "tt0028940",
+        "tt0114235",
+        "tt0040679",
+        "tt0124857"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0003855", "tt0043895", "tt0009018", "tt0463721"]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt0940808",
+        "tt0103285",
+        "tt18757236",
+        "tt0133226",
+        "tt0342258",
+        "tt6083388",
+        "tt0085127",
+        "tt1442571",
+        "tt0099812",
+        "tt2644714"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0025316",
+        "tt0012349",
+        "tt0047296",
+        "tt0036775",
+        "tt0056172",
+        "tt0057115",
+        "tt0079944",
+        "tt0087843",
+        "tt0073486",
+        "tt0072431"
+      ]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt12687502",
+        "tt37984759",
+        "tt0054387",
+        "tt6724510",
+        "tt0437086",
+        "tt0184342",
+        "tt5056352",
+        "tt0026663",
+        "tt0086429",
+        "tt3460068"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0043255", "tt0041085", "tt0047795", "tt0040068", "tt0047794", "tt0042179"]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0043614",
+        "tt0036400",
+        "tt0050613",
+        "tt0051808",
+        "tt0080979",
+        "tt0041699",
+        "tt0071411",
+        "tt0055630",
+        "tt0050330",
+        "tt0100998"
+      ]
+    },
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0470941", "tt0103905", "tt0025316", "tt0015634", "tt0076085"]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt8835616",
+        "tt0040725",
+        "tt0234640",
+        "tt0032910",
+        "tt0039204",
+        "tt0158932",
+        "tt0194010",
+        "tt0038109",
+        "tt0037884",
+        "tt0202029"
+      ]
+    }
+  ]
+}

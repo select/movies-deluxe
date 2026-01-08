@@ -3,7 +3,16 @@ import { EventEmitter } from 'events'
 export const progressEmitter = new EventEmitter()
 
 export interface ProgressUpdate {
-  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai' | 'posterArchive' | 'stats'
+  type:
+    | 'archive'
+    | 'youtube'
+    | 'omdb'
+    | 'posters'
+    | 'sqlite'
+    | 'ai'
+    | 'posterArchive'
+    | 'stats'
+    | 'home'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number

@@ -1,0 +1,143 @@
+{
+  "day": 12,
+  "collections": [
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0103905", "tt0015634", "tt0025316", "tt0470941", "tt0076085"]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0005871",
+        "tt2113113",
+        "tt0039737",
+        "tt0031925",
+        "tt0124857",
+        "tt0057298",
+        "tt0028101",
+        "tt0051899",
+        "tt0016526",
+        "tt0047647"
+      ]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0036947",
+        "tt0058888",
+        "tt0080979",
+        "tt0057565",
+        "tt0050613",
+        "tt0050330",
+        "tt0036400",
+        "tt0039090",
+        "tt0055630",
+        "tt0071411"
+      ]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0054387",
+        "tt0027521",
+        "tt0081455",
+        "tt1843866",
+        "tt0087004",
+        "tt6613878",
+        "tt13009174",
+        "tt0017136",
+        "tt0070544",
+        "tt0120591"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0051201",
+        "tt0057012",
+        "tt0017136",
+        "tt0080979",
+        "tt0050825",
+        "tt0056172",
+        "tt0064115",
+        "tt0079944",
+        "tt0071315",
+        "tt0062622"
+      ]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt0492868",
+        "tt28015403",
+        "tt5283930",
+        "tt5819530",
+        "tt0074806",
+        "tt0028696",
+        "tt0031143",
+        "tt0062453",
+        "tt26952415",
+        "tt0059646"
+      ]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt6083388",
+        "tt0099812",
+        "tt0342258",
+        "tt0108624",
+        "tt0079891",
+        "tt0095937",
+        "tt0056058",
+        "tt0913968",
+        "tt1442571",
+        "tt0103285"
+      ]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0013486",
+        "tt0004936",
+        "tt0004637",
+        "tt0470941",
+        "tt0004100",
+        "tt0004707",
+        "tt0009018",
+        "tt0012304",
+        "tt0029430",
+        "tt0004284"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0028119",
+        "tt0151964",
+        "tt0031080",
+        "tt0161580",
+        "tt0167901",
+        "tt0151443",
+        "tt0031376",
+        "tt0031694",
+        "tt0023514",
+        "tt0150140"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0463721", "tt0003855", "tt0043895", "tt0009018"]
+    }
+  ]
+}

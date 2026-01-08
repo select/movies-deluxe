@@ -1,0 +1,143 @@
+{
+  "day": 20,
+  "collections": [
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0147958",
+        "tt0150950",
+        "tt0151581",
+        "tt0141010",
+        "tt0021824",
+        "tt0020699",
+        "tt0022667",
+        "tt0147313",
+        "tt0149793",
+        "tt0152317"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0060827",
+        "tt0091251",
+        "tt0071411",
+        "tt0079944",
+        "tt0057115",
+        "tt0051201",
+        "tt0043014",
+        "tt0025316",
+        "tt0053291",
+        "tt0048424"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0038107",
+        "tt0061636",
+        "tt0021997",
+        "tt0014770",
+        "tt0009550",
+        "tt0066049",
+        "tt0051411",
+        "tt0027128",
+        "tt0063501",
+        "tt0037030"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0043255", "tt0041085", "tt0040068", "tt0047795", "tt0042179", "tt0047794"]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt5040012",
+        "tt3153706",
+        "tt0047573",
+        "tt28015403",
+        "tt0018770",
+        "tt26952415",
+        "tt33036093",
+        "tt0025062",
+        "tt4191640",
+        "tt0045888"
+      ]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0039871",
+        "tt0041699",
+        "tt0051808",
+        "tt0050613",
+        "tt0050330",
+        "tt0038268",
+        "tt0080979",
+        "tt0058888",
+        "tt0042958",
+        "tt0071411"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0003855", "tt0043895", "tt0009018", "tt0463721"]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0192120",
+        "tt0009611",
+        "tt0004100",
+        "tt0007145",
+        "tt1283535",
+        "tt0012304",
+        "tt0004637",
+        "tt0004284",
+        "tt0004277",
+        "tt0470941"
+      ]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt27914463",
+        "tt0039224",
+        "tt0038057",
+        "tt0194010",
+        "tt0150235",
+        "tt0035753",
+        "tt0130269",
+        "tt0036172",
+        "tt1523561",
+        "tt0199416"
+      ]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt1442571",
+        "tt0940808",
+        "tt0085127",
+        "tt0328113",
+        "tt18757236",
+        "tt0103950",
+        "tt0913968",
+        "tt0099818",
+        "tt0089374",
+        "tt0342258"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "day": 21,
+  "collections": [
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0407304",
+        "tt0021884",
+        "tt0120907",
+        "tt12687502",
+        "tt4191640",
+        "tt17887614",
+        "tt0044207",
+        "tt0062168",
+        "tt0051622",
+        "tt0086429"
+      ]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0013486",
+        "tt0004284",
+        "tt0004518",
+        "tt0486919",
+        "tt0003760",
+        "tt0012304",
+        "tt9459600",
+        "tt0015841",
+        "tt0470941",
+        "tt0004936"
+      ]
+    },
+    {
+      "id": "buster-keaton",
+      "name": "Buster Keaton",
+      "movieIds": [
+        "tt0023322",
+        "tt0012255",
+        "tt8020616",
+        "tt0009899",
+        "tt0007819",
+        "tt0017925",
+        "tt0009466",
+        "tt0015324",
+        "tt0012224",
+        "tt0022254"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0041959",
+        "tt0050976",
+        "tt0071315",
+        "tt0051808",
+        "tt0057565",
+        "tt0064115",
+        "tt0073486",
+        "tt0042192",
+        "tt0071853",
+        "tt0079944"
+      ]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0036947",
+        "tt0042958",
+        "tt0039090",
+        "tt0043614",
+        "tt0050613",
+        "tt0071411",
+        "tt0051808",
+        "tt0057565",
+        "tt0038268",
+        "tt0055630"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0014770",
+        "tt0008571",
+        "tt0065988",
+        "tt0035254",
+        "tt0044015",
+        "tt0063293",
+        "tt0009550",
+        "tt0040653",
+        "tt0319438",
+        "tt0001387"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0042179", "tt0043255", "tt0040068", "tt0047795", "tt0041085", "tt0047794"]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt3464938",
+        "tt0065143",
+        "tt0025062",
+        "tt0055304",
+        "tt0062168",
+        "tt0016220",
+        "tt0150980",
+        "tt19896522",
+        "tt0066740",
+        "tt10237576"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0003855", "tt0043895", "tt0009018", "tt0463721"]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0150644",
+        "tt0148181",
+        "tt0153890",
+        "tt0150069",
+        "tt0150154",
+        "tt0026109",
+        "tt0148143",
+        "tt0027453",
+        "tt0149251",
+        "tt0153004"
+      ]
+    }
+  ]
+}
