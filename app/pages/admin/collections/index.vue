@@ -46,7 +46,10 @@
 
         <!-- Movie Editor -->
         <section class="bg-theme-surface border border-theme-border rounded-2xl p-6">
-          <AdminCollectionSelector @select="selectedCollectionId = $event" />
+          <AdminCollectionSelector
+            ref="collectionSelector"
+            @select="selectedCollectionId = $event"
+          />
         </section>
 
         <!-- Collection Editor -->
@@ -56,7 +59,81 @@
         >
           <!-- Left: Search & Queries -->
           <div class="space-y-8">
-	          <!-- Search Library -->
+            <!-- Detailed Collection Card -->
+            <div
+              v-if="selectedCollection"
+              class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-4"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold">
+                      {{ selectedCollection.name }}
+                    </h2>
+                    <span
+                      v-if="selectedCollection.enabled === false"
+                      class="px-2 py-0.5 bg-yellow-600/10 text-yellow-600 dark:text-yellow-400 border border-yellow-600/20 rounded text-xs font-bold uppercase"
+                    >
+                      Hidden
+                    </span>
+                  </div>
+
+                  <!-- Tags -->
+                  <div
+                    v-if="selectedCollection.tags?.length"
+                    class="flex flex-wrap gap-2"
+                  >
+                    <span
+                      v-for="tag in selectedCollection.tags"
+                      :key="tag"
+                      class="px-2 py-1 bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 rounded-lg text-xs font-medium"
+                    >
+                      {{ tag }}
+                    </span>
+                  </div>
+
+                  <p class="text-theme-textmuted max-w-3xl">
+                    {{ selectedCollection.description || 'No description provided.' }}
+                  </p>
+
+                  <div class="flex items-center gap-2 text-sm font-mono text-theme-textmuted">
+                    <div class="i-mdi-movie" />
+                    {{ selectedCollection.movieIds.length }} movies in collection
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                  <button
+                    class="p-2 rounded-xl border border-theme-border hover:bg-theme-background transition-colors"
+                    :class="selectedCollection.enabled === false ? 'text-green-600' : 'text-yellow-600'"
+                    title="Toggle Visibility"
+                    @click="collectionSelector?.toggleEnabled(selectedCollection)"
+                  >
+                    <div
+                      :class="selectedCollection.enabled === false ? 'i-mdi-eye' : 'i-mdi-eye-off'"
+                      class="text-xl"
+                    />
+                  </button>
+                  <button
+                    class="p-2 rounded-xl border border-theme-border hover:bg-theme-background text-blue-600 transition-colors"
+                    title="Edit Collection"
+                    @click="collectionSelector?.editCollection(selectedCollection)"
+                  >
+                    <div class="i-mdi-pencil text-xl" />
+                  </button>
+                  <button
+                    class="p-2 rounded-xl border border-theme-border hover:bg-theme-background text-red-600 transition-colors"
+                    title="Delete Collection"
+                    @click="collectionSelector?.confirmDelete(selectedCollection)"
+                  >
+                    <div class="i-mdi-delete text-xl" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Search Library -->
 	          <div class="space-y-6">
 	            <h2 class="text-xl font-bold flex items-center gap-2">
 	              <div class="i-mdi-magnify text-blue-600" />
@@ -102,8 +179,16 @@
 </template>
 
 <script setup lang="ts">
+import type { Collection } from '~/types'
+
 const isLocal = ref(false)
 const selectedCollectionId = ref('')
+const collectionSelector = ref<{
+  editCollection: (collection: Collection) => void
+  toggleEnabled: (collection: Collection) => void
+  confirmDelete: (collection: Collection) => void
+  openCreateModal: () => void
+} | null>(null)
 const moviesList = ref<{ refresh: () => Promise<void> } | null>(null)
 
 const movieStore = useMovieStore()
