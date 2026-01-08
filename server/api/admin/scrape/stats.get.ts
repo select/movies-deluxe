@@ -33,7 +33,7 @@ export default defineEventHandler(async _event => {
     const db = await loadMoviesDatabase()
 
     emitStepProgress('Calculating database statistics...')
-    const dbStats = await getDatabaseStats(db)
+    const { stats: dbStats, youtubeChannels } = await getDatabaseStatsWithChannels(db)
 
     // Get YouTube API key from environment
     const youtubeApiKey = process.env.YOUTUBE_API_KEY
@@ -50,7 +50,7 @@ export default defineEventHandler(async _event => {
     const failedPosters = getFailedPosterDownloads()
 
     // Calculate YouTube totals
-    const youtubeTotalScraped = dbStats.youtubeChannels.reduce((sum, c) => sum + c.scraped, 0)
+    const youtubeTotalScraped = youtubeChannels.reduce((sum, c) => sum + c.scraped, 0)
     const youtubeTotalFailed = failedVideos.length
 
     emitStepProgress('Fetching Archive.org totals...')
@@ -66,12 +66,10 @@ export default defineEventHandler(async _event => {
       console.error('Failed to fetch Archive.org total', e)
     }
 
-    emitStepProgress(
-      `Fetching YouTube channel totals (${dbStats.youtubeChannels.length} channels)...`
-    )
+    emitStepProgress(`Fetching YouTube channel totals (${youtubeChannels.length} channels)...`)
     // Fetch YouTube totals for each channel
     const youtubeChannelStats = await Promise.all(
-      dbStats.youtubeChannels.map(async channelStat => {
+      youtubeChannels.map(async channelStat => {
         let total = 0
         try {
           total = await getChannelVideoCount(youtubeApiKey, channelStat.id)
