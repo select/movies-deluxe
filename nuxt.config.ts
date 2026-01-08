@@ -68,28 +68,79 @@ export default defineNuxtConfig({
               display: flex;
               align-items: center;
               justify-content: center;
-              background: inherit; /* Inherit from html inline style */
+              background: #f8fafc; /* Light neutral background */
               transition: opacity 0.3s ease-out;
+            }
+            .dark #app-splash {
+              background: #171717; /* Dark neutral background */
             }
             #app-splash.hidden {
               opacity: 0;
               pointer-events: none;
             }
-            /* Spinner animation */
-            .splash-spinner {
-              width: 48px;
-              height: 48px;
-              border: 4px solid rgba(0, 0, 0, 0.1);
-              border-top-color: #525252;
-              border-radius: 50%;
-              animation: spin 0.8s linear infinite;
+
+            /* Splash content container */
+            .splash-content {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
             }
-            .dark .splash-spinner {
-              border-color: rgba(255, 255, 255, 0.1);
-              border-top-color: #00DC82;
+
+            /* Logo styling and animations */
+            .splash-logo {
+              width: 240px;
+              height: auto;
+              opacity: 0;
+              animation: logoFadeIn 0.8s ease-out 0.2s forwards;
             }
-            @keyframes spin {
-              to { transform: rotate(360deg); }
+            .splash-logo svg {
+              width: 100%;
+              height: auto;
+              fill: #475569; /* Neutral slate color for light mode */
+              animation: logoPulse 2s ease-in-out infinite, logoShimmer 3s ease-in-out infinite;
+            }
+            .dark .splash-logo svg {
+              fill: #abb2bf; /* Light neutral for dark mode */
+            }
+
+            /* Logo animations */
+            @keyframes logoFadeIn {
+              from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+              }
+            }
+            @keyframes logoPulse {
+              0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+              }
+              50% {
+                opacity: 0.7;
+                transform: scale(1.05);
+              }
+            }
+            @keyframes logoShimmer {
+              0% {
+                filter: brightness(1);
+              }
+              25% {
+                filter: brightness(1.2);
+              }
+              50% {
+                filter: brightness(0.8);
+              }
+              75% {
+                filter: brightness(1.1);
+              }
+              100% {
+                filter: brightness(1);
+              }
             }
           `,
         },
