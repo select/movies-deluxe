@@ -346,8 +346,28 @@ export const useMovieStore = defineStore('movie', () => {
    * Returns essential fields for grid display
    */
   const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
-    if (!db.isReady.value) return []
     if (!imdbIds || imdbIds.length === 0) return []
+
+    // Wait for database to be ready if it's still initializing
+    if (!db.isReady.value) {
+      // If not even started loading, start it
+      if (isInitialLoading.value && !isLoading.value.movies) {
+        loadFromFile()
+      }
+
+      // Wait for it to be ready
+      let attempts = 0
+      while (!db.isReady.value && attempts < 50) {
+        // Max 5 seconds
+        await new Promise(resolve => setTimeout(resolve, 100))
+        attempts++
+      }
+
+      if (!db.isReady.value) {
+        window.console.error('[MovieStore] Database not ready after waiting')
+        return []
+      }
+    }
 
     // Ensure cache is initialized
     if (!movieDetailsCache.value) {

@@ -27,8 +27,10 @@
             <div
               v-for="j in 6"
               :key="j"
-              class="w-[200px] aspect-[2/3] bg-theme-selection animate-pulse rounded-xl flex-shrink-0"
-            />
+              class="w-[200px] flex-shrink-0"
+            >
+              <MovieCardSkeleton />
+            </div>
           </div>
         </div>
       </div>

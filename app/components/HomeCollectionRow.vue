@@ -14,22 +14,55 @@
       </NuxtLink>
     </div>
 
-    <div
-      class="flex overflow-x-auto gap-4 px-4 pb-4 scroll-smooth hide-scrollbar snap-x snap-mandatory"
-    >
-      <div
-        v-for="movie in displayMovies"
-        :key="movie.imdbId"
-        class="w-[200px] flex-shrink-0 snap-start"
+    <div class="relative group">
+      <!-- Left Scroll Button -->
+      <button
+        v-if="canScrollLeft"
+        class="absolute left-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/90 border border-theme-border/50 text-theme-text shadow-lg hover:bg-theme-accent hover:text-black transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100"
+        @click="scroll('left')"
       >
-        <MovieCard :movie="movie" />
-      </div>
+        <div class="i-mdi-chevron-left text-2xl" />
+      </button>
 
-      <div class="w-[200px] flex-shrink-0 snap-start">
-        <HomeExploreMoreCard
-          :collection-id="collection.id"
-          :collection-name="collection.name"
-        />
+      <!-- Right Scroll Button -->
+      <button
+        v-if="canScrollRight"
+        class="absolute right-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/90 border border-theme-border/50 text-theme-text shadow-lg hover:bg-theme-accent hover:text-black transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100"
+        @click="scroll('right')"
+      >
+        <div class="i-mdi-chevron-right text-2xl" />
+      </button>
+
+      <div
+        ref="scrollContainer"
+        class="flex overflow-x-auto gap-4 px-4 pb-4 scroll-smooth hide-scrollbar snap-x snap-mandatory"
+        @scroll="updateScrollState"
+      >
+        <template v-if="isLoading">
+          <div
+            v-for="i in 6"
+            :key="i"
+            class="w-[200px] flex-shrink-0 snap-start"
+          >
+            <MovieCardSkeleton />
+          </div>
+        </template>
+        <template v-else>
+          <div
+            v-for="movie in displayMovies"
+            :key="movie.imdbId"
+            class="w-[200px] flex-shrink-0 snap-start"
+          >
+            <MovieCard :movie="movie" />
+          </div>
+
+          <div class="w-[200px] flex-shrink-0 snap-start">
+            <HomeExploreMoreCard
+              :collection-id="collection.id"
+              :collection-name="collection.name"
+            />
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -51,15 +84,53 @@ interface Props {
 const props = defineProps<Props>()
 const { fetchMoviesByIds } = useMovieStore()
 
+const isLoading = ref(true)
 const displayMovies = ref<MovieEntry[]>([])
+const scrollContainer = ref<HTMLElement | null>(null)
+
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+
+const updateScrollState = () => {
+  if (!scrollContainer.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.value
+  canScrollLeft.value = scrollLeft > 10
+  canScrollRight.value = scrollLeft + clientWidth < scrollWidth - 10
+}
+
+const scroll = (direction: 'left' | 'right') => {
+  if (!scrollContainer.value) return
+  const scrollAmount = scrollContainer.value.clientWidth * 0.8
+  scrollContainer.value.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth'
+  })
+}
 
 onMounted(async () => {
   if (props.collection.movieIds.length > 0) {
+    isLoading.value = true
     // We only show up to 9 movies, then the explore more card
     const movieIds = props.collection.movieIds.slice(0, 9)
     displayMovies.value = await fetchMoviesByIds(movieIds)
+    isLoading.value = false
+    
+    // Ensure scroll position is at the left after loading
+    nextTick(() => {
+      if (scrollContainer.value) {
+        scrollContainer.value.scrollLeft = 0
+        updateScrollState()
+      }
+    })
+  } else {
+    isLoading.value = false
   }
 })
+
+// Update scroll state on window resize
+if (typeof window !== 'undefined') {
+  useEventListener('resize', updateScrollState)
+}
 </script>
 
 <style scoped>
