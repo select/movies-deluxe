@@ -1,9 +1,14 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center justify-between">
-      <label class="block text-sm font-bold text-theme-textmuted uppercase tracking-wider">
-        Select Collection
-      </label>
+      <div class="flex items-center gap-3">
+        <label class="block text-sm font-bold text-theme-textmuted uppercase tracking-wider">
+          Select Collection
+        </label>
+        <span class="px-2 py-0.5 bg-theme-background border border-theme-border rounded text-[10px] font-mono text-theme-textmuted">
+          {{ visibleCollectionsCount }}/{{ collectionsList.length }}
+        </span>
+      </div>
       <button
         class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-2"
         @click="showCreateModal = true"
@@ -172,6 +177,7 @@ const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
 
 const collectionsList = computed(() => Array.from(collections.value.values()))
+const visibleCollectionsCount = computed(() => collectionsList.value.filter(c => c.enabled !== false).length)
 const selectedId = ref('')
 
 const emit = defineEmits<{
