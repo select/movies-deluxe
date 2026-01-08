@@ -55,6 +55,17 @@
         <div class="i-mdi:movie-roll text-xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
       </NuxtLink>
 
+      <!-- Admin (localhost only) -->
+      <NuxtLink
+        v-if="isDev"
+        to="/admin"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        title="Admin"
+        :class="{ 'bg-theme-accent/20': route.path.startsWith('/admin') }"
+      >
+        <div class="i-mdi-shield-crown text-xl" :class="{ 'text-theme-accent': route.path.startsWith('/admin') }" />
+      </NuxtLink>
+
       <!-- Dark Mode Toggle -->
       <button
         class="p-2 hover:bg-theme-selection rounded-full transition-colors"
@@ -182,6 +193,17 @@
         <div class="i-mdi:movie-roll text-2xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
       </NuxtLink>
 
+      <!-- Admin (localhost only) -->
+      <NuxtLink
+        v-if="isDev"
+        to="/admin"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group flex-shrink-0"
+        aria-label="Admin"
+        :class="{ 'bg-theme-accent/20': route.path.startsWith('/admin') }"
+      >
+        <div class="i-mdi-shield-crown text-2xl" :class="{ 'text-theme-accent': route.path.startsWith('/admin') }" />
+      </NuxtLink>
+
       <!-- Dark Mode Toggle -->
       <button
         class="p-2 hover:bg-theme-selection rounded-full transition-colors flex-shrink-0"
@@ -265,6 +287,8 @@ const { isDark } = storeToRefs(uiStore)
 
 const route = useRoute()
 
+const isDev = ref(false)
+
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
@@ -277,6 +301,7 @@ const updateScrollState = () => {
 }
 
 onMounted(() => {
+  isDev.value = isLocalhost()
   updateScrollState()
   window.addEventListener('resize', updateScrollState)
 })
