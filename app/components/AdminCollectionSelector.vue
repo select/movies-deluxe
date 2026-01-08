@@ -5,7 +5,7 @@
         <label class="block text-sm font-bold text-theme-textmuted uppercase tracking-wider">
           Select Collection
         </label>
-        <span class="px-2 py-0.5 bg-theme-background border border-theme-border rounded text-[10px] font-mono text-theme-textmuted">
+        <span class="px-2 py-0.5  text-sm font-mono text-theme-text">
           {{ visibleCollectionsCount }}/{{ collectionsList.length }}
         </span>
       </div>
@@ -32,7 +32,7 @@
         @click="select(collection.id)"
       >
         {{ collection.name }}
-        <div 
+        <div
           v-if="collection.enabled === false"
           class="i-mdi-eye-off text-xs opacity-70"
         />

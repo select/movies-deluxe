@@ -97,8 +97,8 @@
                   </p>
 
                   <div class="flex items-center gap-2 text-sm font-mono text-theme-textmuted">
-                    <div class="i-mdi-movie" />
-                    {{ selectedCollection.movieIds.length }} movies in collection
+                    <div class="i-mdi-movie text-theme-text" />
+                    <span class="text-theme-text">{{ selectedCollection.movieIds.length }}</span> movies in collection
                   </div>
                 </div>
 
