@@ -89,6 +89,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.50.0",
     "unocss": "66.5.10",
+    "vue-tsc": "3.2.2",
     "youtubei.js": "16.0.1"
   }
 }
