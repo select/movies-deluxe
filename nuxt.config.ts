@@ -10,9 +10,10 @@ export default defineNuxtConfig({
 
   // TypeScript configuration
   typescript: {
-    typeCheck: true,
+    typeCheck: false, // Disable during dev for performance, use pnpm typecheck manually
     tsConfig: {
       compilerOptions: {
+        strict: true,
         useUnknownInCatchVariables: true,
       },
     },
