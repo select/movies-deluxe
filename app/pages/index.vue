@@ -1,6 +1,6 @@
 <template>
   <main class="md:ml-16">
-    <div class="px-4 lg:px-[6%] py-12 space-y-12">
+    <div class="px-4 lg:px-[6%] pb-12 space-y-12">
       <!-- Welcome Header -->
       <header class="space-y-4">
         <p class="text-xl text-theme-textmuted max-w-2xl leading-relaxed">
