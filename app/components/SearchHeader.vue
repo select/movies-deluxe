@@ -104,11 +104,11 @@ watch(() => filters.value.searchQuery, (newVal) => {
 
 // Track if we should show search based on route and state
 const shouldShowSearch = computed(() => {
-  // Only show search on home page and search page
-  if (route.path !== '/' && route.path !== '/search') {
+  // Only show search on search page
+  if (route.path !== '/search') {
     return false
   }
-  
+
   // Show if search is open OR if there's an active query
   return isSearchOpen.value || localQuery.value !== ''
 })

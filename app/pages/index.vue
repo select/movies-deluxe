@@ -4,7 +4,7 @@
       <!-- Welcome Header -->
       <header class="space-y-4">
         <p class="text-xl text-theme-textmuted max-w-2xl leading-relaxed">
-          Discover thousands of free public domain movies from Archive.org and YouTube.
+          Discover thousands of free movies from Archive.org and YouTube.
           Classic films, documentaries, and more - all legally available to watch online.
         </p>
       </header>

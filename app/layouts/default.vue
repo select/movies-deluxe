@@ -79,15 +79,27 @@ const { setSearchOpen } = useUiStore()
 // 'S' key or '/' key opens search
 onKeyStroke(['s', 'S', '/'], (e) => {
   const activeElement = window.document.activeElement
-  const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-  
+  const isTyping =
+    activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+
   if (!isTyping) {
     // Only 'S' without modifiers or just '/'
-    if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    if (
+      (e.key === 's' || e.key === 'S') &&
+      !e.ctrlKey &&
+      !e.metaKey &&
+      !e.altKey
+    ) {
       e.preventDefault()
+      if (useRoute().path !== '/search') {
+        navigateTo('/search')
+      }
       setSearchOpen(true)
     } else if (e.key === '/') {
       e.preventDefault()
+      if (useRoute().path !== '/search') {
+        navigateTo('/search')
+      }
       setSearchOpen(true)
     }
   }
