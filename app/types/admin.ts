@@ -7,13 +7,6 @@ export interface ScrapeStats {
     youtubeSources: number
     curatedCount: number
     collections: Record<string, number>
-    youtubeChannels: Array<{
-      id: string
-      name: string
-      language?: string
-      enabled: boolean
-      scraped: number
-    }>
     qualityMarkedCount: number
     qualityBreakdown: Record<string, number>
   }

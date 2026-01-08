@@ -276,13 +276,23 @@ export interface DatabaseStats {
   qualityMarkedCount: number
   qualityBreakdown: Record<string, number>
   collections: Record<string, number>
-  youtubeChannels: ChannelStats[]
 }
 
 /**
  * Get statistics about the database
  */
 export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStats> {
+  const { stats } = await getDatabaseStatsWithChannels(db)
+  return stats
+}
+
+/**
+ * Get statistics about the database including channel stats
+ */
+export async function getDatabaseStatsWithChannels(db: MoviesDatabase): Promise<{
+  stats: DatabaseStats
+  youtubeChannels: ChannelStats[]
+}> {
   const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
   const matched = entries.filter(([key]) => key.startsWith('tt')).length
   const unmatched = entries.length - matched
@@ -297,7 +307,6 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
     qualityMarkedCount: 0,
     qualityBreakdown: {} as Record<string, number>,
     collections: {} as Record<string, number>,
-    youtubeChannels: [],
   }
 
   // Load channel configs
@@ -357,9 +366,9 @@ export async function getDatabaseStats(db: MoviesDatabase): Promise<DatabaseStat
     }
   })
 
-  stats.youtubeChannels = Array.from(channelStatsMap.values())
+  const youtubeChannels = Array.from(channelStatsMap.values())
 
-  return stats
+  return { stats, youtubeChannels }
 }
 
 /**
