@@ -35,8 +35,8 @@ export default defineEventHandler(async event => {
     const failedExtractions = loadFailedAIExtractions()
 
     // Get movies to process
-    const movies = Object.entries(db)
-      .filter(([id, movie]: [string, unknown]) => {
+    const movies = Object.entries(db as MoviesDatabase)
+      .filter(([id, movie]: [string, MovieEntry | unknown]) => {
         if (id.startsWith('_')) return false
         const movieEntry = movie as MovieEntry
 

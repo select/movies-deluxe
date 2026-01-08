@@ -45,7 +45,7 @@
         </p>
         <button
           class="px-6 py-2 bg-theme-accent text-black font-bold rounded-full hover:bg-theme-accent/80 transition-colors"
-          @click="refresh"
+          @click="() => refresh()"
         >
           Try Again
         </button>

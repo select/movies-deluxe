@@ -17,7 +17,7 @@ export interface WorkerMessage {
 /**
  * Worker response structure
  */
-export interface WorkerResponse<T = unknown> {
+export interface WorkerResponse<T = LightweightMovie[] | Collection[] | FilterOptionsResponse> {
   id: string
   error?: string
   result?: T

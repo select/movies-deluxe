@@ -9,15 +9,15 @@ function createDatabase() {
   const isReady = ref(false)
   const pendingQueries = new Map<
     string,
-    { resolve: (value: WorkerResponse<unknown>) => void; reject: (reason?: Error) => void }
+    { resolve: (value: WorkerResponse) => void; reject: (reason?: Error) => void }
   >()
 
-  const initPromise = ref<Promise<unknown> | null>(null)
+  const initPromise = ref<Promise<void> | null>(null)
 
   const init = async (url?: string) => {
     if (initPromise.value) return initPromise.value
 
-    initPromise.value = (async () => {
+    initPromise.value = (async (): Promise<void> => {
       const DatabaseWorker = await import('~/workers/database.worker?worker')
       worker.value = new DatabaseWorker.default()
 
@@ -48,8 +48,11 @@ function createDatabase() {
       }
 
       const id = Math.random().toString(36).substring(7)
-      return new Promise((resolve, reject) => {
-        pendingQueries.set(id, { resolve, reject })
+      return new Promise<void>((resolve, reject) => {
+        pendingQueries.set(id, {
+          resolve: (_data: WorkerResponse) => resolve(),
+          reject,
+        })
         worker.value!.postMessage({ type: 'init', id, url })
       })
     })()
@@ -57,7 +60,10 @@ function createDatabase() {
     return initPromise.value
   }
 
-  const query = async <T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> => {
+  const query = async <T = Record<string, string | number>>(
+    sql: string,
+    params: (string | number)[] = []
+  ): Promise<T[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -65,18 +71,18 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
+        resolve: (data: WorkerResponse) => resolve((data.result as T[]) ?? []),
         reject,
       })
       worker.value!.postMessage({ type: 'exec', id, sql, params: toRaw(params) })
     })
   }
 
-  const extendedQuery = async <T = unknown>(options: {
+  const extendedQuery = async <T = Record<string, string | number>>(options: {
     select?: string
     from: string
     where?: string
-    params?: unknown[]
+    params?: (string | number)[]
     groupBy?: string
     orderBy?: string
     limit?: number
@@ -90,7 +96,7 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse<unknown>) =>
+        resolve: (data: WorkerResponse) =>
           resolve({ result: (data.result as T[]) ?? [], totalCount: data.totalCount }),
         reject,
       })
@@ -107,7 +113,7 @@ function createDatabase() {
 
   const lightweightQuery = async (options: {
     where?: string
-    params?: unknown[]
+    params?: (string | number)[]
     orderBy?: string
     limit?: number
     offset?: number
@@ -123,7 +129,7 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse<unknown>) =>
+        resolve: (data: WorkerResponse) =>
           resolve({
             result: (data.result as LightweightMovie[]) ?? [],
             totalCount: data.totalCount,
@@ -149,7 +155,7 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
+        resolve: (data: WorkerResponse) => resolve((data.result as T[]) ?? []),
         reject,
       })
       // Use toRaw to ensure we don't pass Proxy objects to the worker
@@ -168,7 +174,7 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as T[]) ?? []),
+        resolve: (data: WorkerResponse) => resolve((data.result as T[]) ?? []),
         reject,
       })
       worker.value!.postMessage({ type: 'query-related', id, imdbId, limit })
@@ -183,7 +189,7 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse<unknown>) => resolve((data.result as Collection[]) ?? []),
+        resolve: (data: WorkerResponse) => resolve((data.result as Collection[]) ?? []),
         reject,
       })
       worker.value!.postMessage({ type: 'query-collections-for-movie', id, movieId })

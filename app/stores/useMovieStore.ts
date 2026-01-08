@@ -1,4 +1,12 @@
-import type { MovieEntry, MovieSource, LightweightMovieEntry, QualityLabel } from '~/types'
+import type {
+  MovieEntry,
+  MovieSource,
+  MovieSourceType,
+  YouTubeSource,
+  ArchiveOrgSource,
+  LightweightMovieEntry,
+  QualityLabel,
+} from '~/types'
 import type { LightweightMovie } from '~/types/database'
 import { useStorage } from '@vueuse/core'
 
@@ -15,6 +23,24 @@ export interface LoadingState {
   movies: boolean
   movieDetails: boolean
   imdbFetch: boolean
+}
+
+/**
+ * Database row interface for movies table
+ */
+interface MovieDatabaseRow {
+  imdbId: string
+  title: string
+  year?: number
+  lastUpdated: string
+  imdbRating?: number
+  imdbVotes?: number
+  genre?: string
+  language?: string
+  country?: string
+  primarySourceType?: MovieSourceType
+  primaryChannelName?: string
+  verified?: boolean
 }
 
 /**
@@ -209,22 +235,46 @@ export const useMovieStore = defineStore('movie', () => {
    * Map SQL row to MovieEntry (lightweight version)
    * Sources are now loaded separately from JSON files
    */
-  const mapRowToMovie = (row: Record<string, unknown>): MovieEntry => {
+  const mapRowToMovie = (row: MovieDatabaseRow): MovieEntry => {
+    // Create a minimal source object from database fields for UI display
+    const sources: MovieSource[] = []
+    if (row.primarySourceType) {
+      const sourceType = row.primarySourceType
+      if (sourceType === 'youtube' && row.primaryChannelName) {
+        sources.push({
+          type: 'youtube',
+          id: '', // Not available in database, but not needed for icon display
+          url: '', // Not available in database, but not needed for icon display
+          title: row.title,
+          channelName: row.primaryChannelName,
+          addedAt: row.lastUpdated,
+        } as YouTubeSource)
+      } else if (sourceType === 'archive.org') {
+        sources.push({
+          type: 'archive.org',
+          id: '', // Not available in database, but not needed for icon display
+          url: '', // Not available in database, but not needed for icon display
+          title: row.title,
+          addedAt: row.lastUpdated,
+        } as ArchiveOrgSource)
+      }
+    }
+
     return {
-      imdbId: row.imdbId as string,
-      title: row.title as string,
-      year: row.year as number,
-      lastUpdated: row.lastUpdated as string,
-      sources: [], // Sources will be loaded from JSON files when needed
+      imdbId: row.imdbId,
+      title: row.title,
+      year: row.year,
+      lastUpdated: row.lastUpdated,
+      sources,
       metadata: {
-        imdbRating: (row.imdbRating as number | undefined)?.toString(),
-        imdbVotes: (row.imdbVotes as number | undefined)?.toLocaleString(),
-        imdbID: row.imdbId as string,
-        Genre: row.genre as string | undefined,
-        Language: row.language as string | undefined,
-        Country: row.country as string | undefined,
+        imdbRating: row.imdbRating?.toString(),
+        imdbVotes: row.imdbVotes?.toLocaleString(),
+        imdbID: row.imdbId,
+        Genre: row.genre,
+        Language: row.language,
+        Country: row.country,
       },
-      verified: row.verified as boolean | undefined,
+      verified: row.verified,
     }
   }
 
@@ -260,7 +310,7 @@ export const useMovieStore = defineStore('movie', () => {
   const loadFromApi = async () => {
     isLoading.value.movies = true
     try {
-      const response = await $fetch<Record<string, unknown>>('/api/movies')
+      const response = await $fetch<MoviesDatabase>('/api/movies')
 
       if (response.error) {
         window.console.error('Failed to load movies from JSON:', response.message)
@@ -273,11 +323,11 @@ export const useMovieStore = defineStore('movie', () => {
           if (!value || typeof value !== 'object' || !('imdbId' in value) || !('title' in value)) {
             return false
           }
-          const movie = value as Record<string, unknown>
+          const movie = value as MovieEntry
           if (typeof movie.imdbId !== 'string') return false
           if (typeof movie.title === 'string') return true
           if (Array.isArray(movie.title)) {
-            return movie.title.every((t: unknown) => typeof t === 'string')
+            return (movie.title as string[]).every((t: string) => typeof t === 'string')
           }
           return false
         })
@@ -301,7 +351,7 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const fetchMovies = async (options: {
     where?: string
-    params?: unknown[]
+    params?: (string | number)[]
     orderBy?: string
     limit?: number
     offset?: number
@@ -389,7 +439,7 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     try {
-      const results = await db.queryByIds<Record<string, unknown>>(stillUncachedIds)
+      const results = await db.queryByIds<MovieDatabaseRow>(stillUncachedIds)
       const movies = results.map(mapRowToMovie)
 
       // Cache the results and merge with allMovies
@@ -521,7 +571,7 @@ export const useMovieStore = defineStore('movie', () => {
 
     try {
       const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-      const results = await db.query<Record<string, unknown>>(
+      const results = await db.query<{ imdbId: string }>(
         `
         SELECT m.imdbId
         FROM fts_movies f
@@ -555,7 +605,7 @@ export const useMovieStore = defineStore('movie', () => {
 
     isFiltering.value = true
     try {
-      const params: unknown[] = []
+      const params: (string | number)[] = []
       const where: string[] = []
 
       // Apply filters
@@ -657,7 +707,7 @@ export const useMovieStore = defineStore('movie', () => {
       isFiltering.value = true
     }
     try {
-      const params: unknown[] = []
+      const params: (string | number)[] = []
       const where: string[] = []
 
       // Filters
