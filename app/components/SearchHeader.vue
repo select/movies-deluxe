@@ -80,9 +80,9 @@ const debouncedSetSearchQuery = useDebounceFn((query: string) => {
     }
   }
 
-  // If searching from a non-home page, navigate to home (but not from admin pages)
-  if (query && route.path !== '/' && !route.path.startsWith('/admin')) {
-    navigateTo('/')
+  // If searching from a non-search page, navigate to search (but not from admin pages)
+  if (query && route.path !== '/search' && !route.path.startsWith('/admin')) {
+    navigateTo('/search')
   }
 
   if (query && filters.value.sort.field !== 'relevance') {
@@ -104,8 +104,8 @@ watch(() => filters.value.searchQuery, (newVal) => {
 
 // Track if we should show search based on route and state
 const shouldShowSearch = computed(() => {
-  // Only show search on home page
-  if (route.path !== '/') {
+  // Only show search on home page and search page
+  if (route.path !== '/' && route.path !== '/search') {
     return false
   }
   
@@ -122,9 +122,9 @@ watch(isSearchOpen, (isOpen) => {
   }
 })
 
-// Restore search visibility when returning to home page with active query
+// Restore search visibility when returning to home or search page with active query
 watch(() => route.path, (newPath) => {
-  if (newPath === '/' && localQuery.value) {
+  if ((newPath === '/' || newPath === '/search') && localQuery.value) {
     setSearchOpen(true)
   }
 })

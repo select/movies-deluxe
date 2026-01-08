@@ -1,0 +1,143 @@
+{
+  "day": 24,
+  "collections": [
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0009018", "tt0043895", "tt0463721", "tt0003855"]
+    },
+    {
+      "id": "buster-keaton",
+      "name": "Buster Keaton",
+      "movieIds": [
+        "tt0007761",
+        "tt0013025",
+        "tt0013422",
+        "tt0009123",
+        "tt0016332",
+        "tt0013055",
+        "tt0020902",
+        "tt0011656",
+        "tt0010221",
+        "tt0019421"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0050083",
+        "tt0012349",
+        "tt0054215",
+        "tt0050986",
+        "tt0071411",
+        "tt0061722",
+        "tt0062622",
+        "tt0047296",
+        "tt0031381",
+        "tt0043014"
+      ]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0139809",
+        "tt0079944",
+        "tt0054099",
+        "tt6264824",
+        "tt0062168",
+        "tt5442430",
+        "tt0028358",
+        "tt0051622",
+        "tt0010600",
+        "tt14378330"
+      ]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0013486",
+        "tt0004284",
+        "tt0012304",
+        "tt9459600",
+        "tt0004936",
+        "tt0470941",
+        "tt0029430",
+        "tt0486919",
+        "tt0004091",
+        "tt1283535"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0150850",
+        "tt0148198",
+        "tt0161903",
+        "tt0020784",
+        "tt0430088",
+        "tt0148673",
+        "tt0153890",
+        "tt0035323",
+        "tt0151788",
+        "tt0152134"
+      ]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt4687848",
+        "tt0133226",
+        "tt0079891",
+        "tt0342258",
+        "tt0398913",
+        "tt0085127",
+        "tt0056058",
+        "tt0099818",
+        "tt1686784",
+        "tt6083388"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0027128",
+        "tt0265416",
+        "tt0005871",
+        "tt0061709",
+        "tt0048691",
+        "tt0200321",
+        "tt0057298",
+        "tt3610606",
+        "tt2510028",
+        "tt0043959"
+      ]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0058888",
+        "tt0042958",
+        "tt0057565",
+        "tt0050330",
+        "tt0056443",
+        "tt0050613",
+        "tt0100998",
+        "tt0039090",
+        "tt0041699",
+        "tt0043614"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0042179", "tt0040068", "tt0043255", "tt0041085", "tt0047795", "tt0047794"]
+    }
+  ]
+}

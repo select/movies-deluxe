@@ -1,0 +1,143 @@
+{
+  "day": 16,
+  "collections": [
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0050825",
+        "tt0054215",
+        "tt0074958",
+        "tt0082096",
+        "tt0050083",
+        "tt0050976",
+        "tt0477348",
+        "tt0062622",
+        "tt0080979",
+        "tt0036775"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0043895", "tt0463721", "tt0009018", "tt0003855"]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0012349",
+        "tt0007145",
+        "tt0004282",
+        "tt0486919",
+        "tt0004707",
+        "tt9459600",
+        "tt0004936",
+        "tt0004100",
+        "tt0029430",
+        "tt0009611"
+      ]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0087803",
+        "tt0184342",
+        "tt0010600",
+        "tt0028358",
+        "tt37984759",
+        "tt0031951",
+        "tt6724510",
+        "tt0015214",
+        "tt0027521",
+        "tt0022835"
+      ]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt0103285",
+        "tt18757236",
+        "tt4687848",
+        "tt0079891",
+        "tt0091655",
+        "tt0103950",
+        "tt0133226",
+        "tt0940808",
+        "tt0079509",
+        "tt0099812"
+      ]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt0201933",
+        "tt0032551",
+        "tt0040338",
+        "tt0264698",
+        "tt0036323",
+        "tt0178695",
+        "tt0191755",
+        "tt0294287",
+        "tt0036342",
+        "tt0033217"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0151003",
+        "tt0028294",
+        "tt0033767",
+        "tt0150761",
+        "tt0153977",
+        "tt0019014",
+        "tt0151694",
+        "tt0035146",
+        "tt0036334",
+        "tt0030014"
+      ]
+    },
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0025316", "tt0015634", "tt0103905", "tt0076085", "tt0470941"]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt0014142",
+        "tt0011607",
+        "tt0074806",
+        "tt0066740",
+        "tt0003424",
+        "tt0063522",
+        "tt0025062",
+        "tt0024216",
+        "tt0053459",
+        "tt0067490"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0019268",
+        "tt0051899",
+        "tt0050923",
+        "tt0041405",
+        "tt0023257",
+        "tt0039737",
+        "tt0037600",
+        "tt0041280",
+        "tt0027588",
+        "tt3610098"
+      ]
+    }
+  ]
+}

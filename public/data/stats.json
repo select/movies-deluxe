@@ -125,10 +125,10 @@
     },
     "youtube": {
       "totalScraped": 11202,
-      "totalAvailable": 17891,
+      "totalAvailable": 17895,
       "totalFailed": 6022,
       "failureRate": 34.962842545285646,
-      "percent": 62.61248672516908,
+      "percent": 62.59849119865885,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -136,7 +136,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2321,
-          "total": 2779,
+          "total": 2776,
           "failed": 435,
           "failureRate": 15.783744557329463
         },
@@ -166,7 +166,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2379,
-          "total": 2602,
+          "total": 2603,
           "failed": 205,
           "failureRate": 7.93343653250774
         },
@@ -206,7 +206,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 1971,
-          "total": 3656,
+          "total": 3658,
           "failed": 1656,
           "failureRate": 45.6575682382134
         },
@@ -216,7 +216,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 179,
-          "total": 561,
+          "total": 564,
           "failed": 350,
           "failureRate": 66.1625708884688
         },
@@ -246,7 +246,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2042,
-          "total": 5104,
+          "total": 5105,
           "failed": 2499,
           "failureRate": 55.03193129266681
         },
@@ -278,9 +278,9 @@
   },
   "ai": {
     "totalUnmatched": 15600,
-    "withAiData": 8221,
-    "withoutAiData": 7379,
-    "percent": 52.69871794871794
+    "withAiData": 9465,
+    "withoutAiData": 6135,
+    "percent": 60.67307692307692
   },
   "quality": {
     "totalMarked": 215,
@@ -309,5 +309,5 @@
     "filesInDirectory": 13439,
     "matchedPosters": 13344
   },
-  "lastUpdated": "2026-01-07T19:33:46.922Z"
+  "lastUpdated": "2026-01-08T15:05:32.337Z"
 }

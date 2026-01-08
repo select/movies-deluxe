@@ -1,0 +1,132 @@
+{
+  "day": 11,
+  "collections": [
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0039871",
+        "tt0071411",
+        "tt0057565",
+        "tt0042958",
+        "tt0051808",
+        "tt0055630",
+        "tt0041699",
+        "tt0058888",
+        "tt0050330",
+        "tt0043614"
+      ]
+    },
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0470941", "tt0076085", "tt0025316", "tt0103905", "tt0015634"]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0047795", "tt0043255", "tt0040068", "tt0042179", "tt0041085", "tt0047794"]
+    },
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0047573",
+        "tt0458339",
+        "tt0046876",
+        "tt0099582",
+        "tt0043456",
+        "tt5442430",
+        "tt3460068",
+        "tt0092610",
+        "tt0133751",
+        "tt0041514"
+      ]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt0178294",
+        "tt0181815",
+        "tt0148531",
+        "tt2015402",
+        "tt0032777",
+        "tt0037280",
+        "tt1523561",
+        "tt0234640",
+        "tt0038109",
+        "tt34381727"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0212132",
+        "tt0010726",
+        "tt0067355",
+        "tt0016526",
+        "tt0052993",
+        "tt0027015",
+        "tt0040653",
+        "tt0881262",
+        "tt0053457",
+        "tt0065988"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0033909",
+        "tt0023044",
+        "tt0148091",
+        "tt0148132",
+        "tt0151696",
+        "tt0146780",
+        "tt0141034",
+        "tt0142977",
+        "tt0141992",
+        "tt0148144"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0003855", "tt0463721", "tt0043895", "tt0009018"]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt0913968",
+        "tt0095403",
+        "tt2644714",
+        "tt0103285",
+        "tt0940808",
+        "tt6083388",
+        "tt0085127",
+        "tt0089374",
+        "tt0103950",
+        "tt0056058"
+      ]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt0053459",
+        "tt4191640",
+        "tt0011607",
+        "tt0051622",
+        "tt0023238",
+        "tt0058279",
+        "tt0492868",
+        "tt0037549",
+        "tt1763178",
+        "tt14373844"
+      ]
+    }
+  ]
+}

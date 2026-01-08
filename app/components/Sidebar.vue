@@ -9,10 +9,20 @@
       <NuxtLink
         to="/"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
-        title="All Movies"
+        title="Home"
         :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
         <div class="i-mdi-home text-xl" />
+      </NuxtLink>
+
+      <!-- Browse All -->
+      <NuxtLink
+        to="/search"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
+        title="Browse All Movies"
+        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
+      >
+        <div class="i-mdi-movie-filter text-xl" :class="{ 'text-theme-primary': route.path === '/search' }" />
       </NuxtLink>
 
       <!-- Search -->
@@ -139,10 +149,20 @@
       <NuxtLink
         to="/"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
-        aria-label="All Movies"
+        aria-label="Home"
         :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
         <div class="i-mdi-home text-2xl" />
+      </NuxtLink>
+
+      <!-- Browse All -->
+      <NuxtLink
+        to="/search"
+        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
+        aria-label="Browse All Movies"
+        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
+      >
+        <div class="i-mdi-movie-filter text-2xl" :class="{ 'text-theme-primary': route.path === '/search' }" />
       </NuxtLink>
 
       <!-- Liked Movies -->
@@ -281,6 +301,9 @@ watch(activeFiltersCount, () => {
 })
 
 const openFilters = () => {
+  if (route.path !== '/search') {
+    navigateTo('/search')
+  }
   emit('openFilters')
 }
 
@@ -302,9 +325,9 @@ const scroll = (direction: 'left' | 'right') => {
 }
 
 const handleSearchClick = async () => {
-  // Navigate to home page if not already there
-  if (route.path !== '/') {
-    await navigateTo('/')
+  // Navigate to search page if not already there
+  if (route.path !== '/search') {
+    await navigateTo('/search')
   }
   // Open search header
   setSearchOpen(true)

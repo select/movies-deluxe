@@ -1,0 +1,132 @@
+{
+  "day": 19,
+  "collections": [
+    {
+      "id": "sci-fi",
+      "name": "Science Fiction",
+      "movieIds": [
+        "tt0437086",
+        "tt0017136",
+        "tt0433035",
+        "tt0061683",
+        "tt12687502",
+        "tt0139809",
+        "tt14378330",
+        "tt0143127",
+        "tt0070233",
+        "tt26584495"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0001387",
+        "tt0066907",
+        "tt0061709",
+        "tt0051899",
+        "tt0039988",
+        "tt0051411",
+        "tt7148242",
+        "tt0009550",
+        "tt0011439",
+        "tt2510028"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0154346",
+        "tt0152717",
+        "tt0152317",
+        "tt0034737",
+        "tt0027397",
+        "tt0149616",
+        "tt0150752",
+        "tt0012467",
+        "tt0026569",
+        "tt0035288"
+      ]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt3153706",
+        "tt0074486",
+        "tt20425418",
+        "tt0020530",
+        "tt0063171",
+        "tt0084747",
+        "tt0038975",
+        "tt2355473",
+        "tt16429984",
+        "tt0069002"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0064115",
+        "tt0074958",
+        "tt0032551",
+        "tt0047296",
+        "tt0025316",
+        "tt0054215",
+        "tt0012349",
+        "tt0071853",
+        "tt0017925",
+        "tt0072431"
+      ]
+    },
+    {
+      "id": "akira-kurosawa",
+      "name": "Akira Kurosawa",
+      "movieIds": [
+        "tt0051808",
+        "tt0058888",
+        "tt0080979",
+        "tt0036400",
+        "tt0038268",
+        "tt0039871",
+        "tt0057565",
+        "tt0055630",
+        "tt0100998",
+        "tt0056443"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0047794", "tt0043255", "tt0047795", "tt0041085", "tt0042179", "tt0040068"]
+    },
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0470941", "tt0076085", "tt0103905", "tt0015634", "tt0025316"]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt12606824",
+        "tt0188923",
+        "tt0191772",
+        "tt0317423",
+        "tt0194010",
+        "tt0191755",
+        "tt0038436",
+        "tt0032982",
+        "tt0033729",
+        "tt0041699"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0009018", "tt0043895", "tt0003855", "tt0463721"]
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import type {
 } from '~/types/admin'
 
 export interface ProgressUpdate {
-  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai' | 'stats'
+  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai' | 'stats' | 'home'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number
@@ -27,6 +27,7 @@ export const useAdminStore = defineStore('admin', () => {
   const loading = ref(false)
   const scraping = ref(false)
   const generatingSqlite = ref(false)
+  const generatingHomePages = ref(false)
   const deduplicating = ref(false)
   const cleaningCollections = ref(false)
   const stats = ref<ScrapeStats | null>(null)
@@ -213,6 +214,19 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  const generateHomePages = async () => {
+    generatingHomePages.value = true
+    try {
+      await $fetch('/api/admin/home/generate', {
+        method: 'POST',
+      })
+    } catch (e) {
+      window.console.error('Home page generation failed', e)
+    } finally {
+      generatingHomePages.value = false
+    }
+  }
+
   // Computed properties
   const totalExternalVideos = computed(() => {
     if (!stats.value) return 0
@@ -318,6 +332,7 @@ export const useAdminStore = defineStore('admin', () => {
     loading,
     scraping,
     generatingSqlite,
+    generatingHomePages,
     deduplicating,
     cleaningCollections,
     stats,
@@ -342,6 +357,7 @@ export const useAdminStore = defineStore('admin', () => {
     startOMDBEnrichment,
     startAIExtraction,
     generateSqlite,
+    generateHomePages,
     deduplicateDescriptions,
     cleanupCollections,
     totalExternalVideos,

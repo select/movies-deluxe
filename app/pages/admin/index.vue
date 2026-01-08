@@ -87,6 +87,17 @@
             </button>
             <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              :disabled="loading || generatingHomePages"
+              @click="adminStore.generateHomePages"
+            >
+              <div
+                class="i-mdi-home-plus"
+                :class="{ 'animate-spin': generatingHomePages }"
+              />
+              Generate Home Pages
+            </button>
+            <button
+              class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
             >
@@ -110,6 +121,22 @@
               <div
                 class="h-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${(progress.sqlite.current / progress.sqlite.total) * 100}%` }"
+              />
+            </div>
+          </div>
+          <!-- Home Page Generation Progress -->
+          <div
+            v-if="progress.home && progress.home.status === 'in_progress'"
+            class="w-full max-w-md space-y-2"
+          >
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-theme-textmuted truncate mr-2">{{ progress.home.message }}</span>
+              <span class="font-mono text-nowrap">{{ progress.home.current }} / {{ progress.home.total }}</span>
+            </div>
+            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
+              <div
+                class="h-full bg-blue-500 transition-all duration-300"
+                :style="{ width: `${(progress.home.current / progress.home.total) * 100}%` }"
               />
             </div>
           </div>
@@ -363,6 +390,7 @@ const { connect: connectProgress, isConnected, isReconnecting } = useProgress()
 const {
   loading,
   generatingSqlite,
+  generatingHomePages,
   stats,
   archiveOptions,
   scraping,

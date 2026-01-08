@@ -1,0 +1,132 @@
+{
+  "day": 18,
+  "collections": [
+    {
+      "id": "criterion-collection",
+      "name": "The Criterion Collection",
+      "movieIds": ["tt0103905", "tt0470941", "tt0076085", "tt0015634", "tt0025316"]
+    },
+    {
+      "id": "1940s",
+      "name": "1940s Cinema",
+      "movieIds": [
+        "tt0201896",
+        "tt0035073",
+        "tt0204330",
+        "tt0148592",
+        "tt0032599",
+        "tt0181348",
+        "tt0122730",
+        "tt0040636",
+        "tt0148310",
+        "tt0181847"
+      ]
+    },
+    {
+      "id": "abbott-and-costello",
+      "name": "Abbott and Costello",
+      "movieIds": ["tt0041085", "tt0043255", "tt0047795", "tt0040068", "tt0047794", "tt0042179"]
+    },
+    {
+      "id": "charlie-chaplin",
+      "name": "Charlie Chaplin",
+      "movieIds": [
+        "tt0470941",
+        "tt1283535",
+        "tt0004936",
+        "tt0014358",
+        "tt0004100",
+        "tt0004518",
+        "tt0012349",
+        "tt0004284",
+        "tt9459600",
+        "tt0015841"
+      ]
+    },
+    {
+      "id": "canine-cinema",
+      "name": "Canine Cinema",
+      "movieIds": ["tt0009018", "tt0463721", "tt0043895", "tt0003855"]
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "movieIds": [
+        "tt0085127",
+        "tt18757236",
+        "tt0328113",
+        "tt0095403",
+        "tt0108624",
+        "tt0103285",
+        "tt0099812",
+        "tt0079509",
+        "tt0133226",
+        "tt0099818"
+      ]
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "movieIds": [
+        "tt0153862",
+        "tt0017463",
+        "tt0061770",
+        "tt0055558",
+        "tt0114235",
+        "tt0038762",
+        "tt0186500",
+        "tt0053220",
+        "tt0051087",
+        "tt0044052"
+      ]
+    },
+    {
+      "id": "top-movies",
+      "name": "Top Movies",
+      "movieIds": [
+        "tt0071853",
+        "tt0060827",
+        "tt0051201",
+        "tt0050083",
+        "tt0087843",
+        "tt0017136",
+        "tt0064115",
+        "tt0108052",
+        "tt0050825",
+        "tt0056592"
+      ]
+    },
+    {
+      "id": "animation-shorts",
+      "name": "Animation Shorts",
+      "movieIds": [
+        "tt0021689",
+        "tt0034016",
+        "tt0146563",
+        "tt0033643",
+        "tt0150243",
+        "tt0147804",
+        "tt0024461",
+        "tt0149684",
+        "tt0027031",
+        "tt0024162"
+      ]
+    },
+    {
+      "id": "horror",
+      "name": "Horror",
+      "movieIds": [
+        "tt1259521",
+        "tt0057129",
+        "tt0014972",
+        "tt3409172",
+        "tt0070628",
+        "tt1763178",
+        "tt0012364",
+        "tt0069002",
+        "tt0037303",
+        "tt0074806"
+      ]
+    }
+  ]
+}
