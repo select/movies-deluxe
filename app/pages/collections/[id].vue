@@ -44,24 +44,11 @@
             </div>
 
             <!-- Search Bar -->
-            <div v-if="movies.length > 0" class="relative w-full md:w-64 md:flex-shrink-0">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <div class="i-mdi-magnify text-lg text-theme-textmuted" />
-              </div>
-              <input
-                v-model="searchQuery"
-                type="text"
-                class="block w-full pl-10 pr-10 py-2 bg-theme-surface/50 border border-theme-border/50 focus:border-theme-primary rounded-full text-sm text-theme-text placeholder-theme-textmuted focus:outline-none transition-all focus:bg-theme-surface"
-                placeholder="Search in collection..."
-              >
-              <button
-                v-if="searchQuery"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center"
-                @click="searchQuery = ''"
-              >
-                <div class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors" />
-              </button>
-            </div>
+            <AppSearchInput
+              v-if="movies.length > 0"
+              v-model="searchQuery"
+              placeholder="Search in collection..."
+            />
           </div>
         </div>
       </div>
