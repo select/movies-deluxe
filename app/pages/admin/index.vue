@@ -59,7 +59,7 @@
           </p>
         </div>
         <div class="flex flex-col items-end gap-3">
-          <div class="flex items-center gap-3">
+          <div class="flex items-center flex-wrap gap-3">
             <NuxtLink
               to="/"
               class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
