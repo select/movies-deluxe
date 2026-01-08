@@ -427,18 +427,18 @@ export const useMovieStore = defineStore('movie', () => {
    * Get a single movie by ID (from cache or API)
    */
   const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
-    // Check cache first - but only if it has sources loaded
+    // Check cache first - but only if it has sources loaded with valid IDs
     if (movieDetailsCache.value.has(imdbId)) {
       const cached = movieDetailsCache.value.get(imdbId)
-      if (cached && cached.sources && cached.sources.length > 0) {
+      if (cached && cached.sources && cached.sources.length > 0 && cached.sources[0]?.id) {
         return cached
       }
     }
 
-    // Check allMovies - if it has sources, it's a full entry
+    // Check allMovies - if it has sources with valid IDs, it's a full entry
     if (allMovies.value.has(imdbId)) {
       const movie = allMovies.value.get(imdbId)
-      if (movie && movie.sources && movie.sources.length > 0) {
+      if (movie && movie.sources && movie.sources.length > 0 && movie.sources[0]?.id) {
         return movie
       }
     }
