@@ -17,7 +17,7 @@
         />
       </NuxtLink>
       <p
-        v-if="isHeroPage"
+        v-if="isHeroPage && route.path !== '/'"
         class="text-base md:text-lg text-theme-textmuted mt-2 max-w-2xl transition-opacity duration-300"
       >
         Free legal movie streams from Archive.org and YouTube
@@ -29,6 +29,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const isHeroPage = computed(() => {
-  return route.path === '/' || route.path === '/collections' || route.path === '/collections/'
+  return route.path === '/' || route.path.startsWith('/collections') || route.path.startsWith('/liked') || route.path.startsWith('/search')
 })
 </script>
