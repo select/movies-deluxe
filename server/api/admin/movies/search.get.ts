@@ -1,5 +1,6 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { loadMoviesDatabase } from '../../../utils/movieData'
+import type { MovieEntry, MovieSource } from '../../../../shared/types/movie'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
@@ -31,7 +32,17 @@ export default defineEventHandler(async event => {
   }
 
   const db = await loadMoviesDatabase()
-  const results: any[] = []
+  const results: Array<{
+    imdbId: string
+    title: string
+    year?: number
+    metadata?: {
+      Poster?: string
+      Director?: string
+      Writer?: string
+      Plot?: string
+    }
+  }> = []
 
   for (const [key, value] of Object.entries(db)) {
     if (key.startsWith('_')) continue
@@ -78,21 +89,21 @@ export default defineEventHandler(async event => {
 
     // Apply genre filter
     if (genres.length > 0) {
-      const movieGenres = entry.metadata?.Genre?.split(', ').map(g => g.trim()) || []
+      const movieGenres = entry.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
       const hasGenre = genres.some(selectedGenre => movieGenres.includes(selectedGenre))
       if (!hasGenre) continue
     }
 
     // Apply country filter
     if (countries.length > 0) {
-      const movieCountries = entry.metadata?.Country?.split(', ').map(c => c.trim()) || []
+      const movieCountries = entry.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
       const hasCountry = countries.some(selectedCountry => movieCountries.includes(selectedCountry))
       if (!hasCountry) continue
     }
 
     // Apply source filter
     if (sources.length > 0) {
-      const hasSources = entry.sources?.some((source: any) => {
+      const hasSources = entry.sources?.some((source: MovieSource) => {
         if (source.type === 'archive.org') {
           return sources.includes('archive.org')
         }

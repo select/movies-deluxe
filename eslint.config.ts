@@ -14,7 +14,7 @@ export default withNuxt(
           varsIgnorePattern: '^_',
         },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-dynamic-delete': 'off', // Allow delete with dynamic keys
       '@typescript-eslint/consistent-type-imports': [
         'error',

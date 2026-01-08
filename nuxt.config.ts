@@ -8,6 +8,16 @@ export default defineNuxtConfig({
     port: 3003,
   },
 
+  // TypeScript configuration
+  typescript: {
+    typeCheck: true,
+    tsConfig: {
+      compilerOptions: {
+        useUnknownInCatchVariables: true,
+      },
+    },
+  },
+
   // Modules
   modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint'],
 

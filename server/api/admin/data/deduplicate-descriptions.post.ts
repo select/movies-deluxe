@@ -1,6 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import type { MovieEntry } from '../../../../shared/types/movie'
 
 interface DeduplicationResult {
   totalSources: number
@@ -63,7 +62,7 @@ const BOILERPLATE_PATTERNS = [
   },
 ]
 
-function normalizeDescription(desc: unknown): string {
+function normalizeDescription(desc: string | string[]): string {
   if (typeof desc === 'string') {
     return desc.trim()
   } else if (Array.isArray(desc)) {
@@ -104,9 +103,10 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
     const data = JSON.parse(rawData)
 
     // Extract movies (filter out _schema)
-    const movies = Object.values(data).filter(
-      (item: unknown) => (item as MovieEntry).imdbId
-    ) as MovieEntry[]
+    const movies = Object.values(data as MoviesDatabase).filter(
+      (item: unknown): item is MovieEntry =>
+        typeof item === 'object' && item !== null && 'imdbId' in item
+    )
 
     let totalSources = 0
     let sourcesWithDescriptions = 0

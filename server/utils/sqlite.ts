@@ -11,7 +11,10 @@ export function getSqliteDatabase() {
   return db
 }
 
-export function querySqlite<T = unknown>(sql: string, params: unknown[] = []): T[] {
+export function querySqlite<T = Record<string, string | number>>(
+  sql: string,
+  params: (string | number)[] = []
+): T[] {
   const database = getSqliteDatabase()
   return database.prepare(sql).all(...params) as T[]
 }

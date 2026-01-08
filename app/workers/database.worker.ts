@@ -1,6 +1,9 @@
 import sqlite3InitModule from '@sqlite.org/sqlite-wasm'
 import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 
+// SqlValue type from sqlite-wasm
+type SqlValue = string | number | null | bigint | Uint8Array | Int8Array | ArrayBuffer
+
 let db: SQLiteDatabase | null = null
 let sqlite3: SQLite3 | null = null
 let initializationPromise: Promise<void> | null = null
@@ -10,8 +13,8 @@ async function initDatabase() {
 
   try {
     sqlite3 = await sqlite3InitModule({
-      print: (...args: any[]) => console.log(...args),
-      printErr: (...args: any[]) => console.error(...args),
+      print: (...args: string[]) => console.log(...args),
+      printErr: (...args: string[]) => console.error(...args),
       locateFile: (file: string) => {
         // Point to the WASM file in the public directory
         if (file.endsWith('.wasm')) {
@@ -112,7 +115,27 @@ async function loadRemoteDatabase(url: string) {
 }
 
 // Message queue to ensure sequential processing
-const messageQueue: any[] = []
+interface QueuedMessage {
+  type: string
+  id: string
+  sql?: string
+  params?: (string | number)[]
+  url?: string
+  imdbId?: string
+  imdbIds?: string[]
+  movieId?: string
+  limit?: number
+  offset?: number
+  includeCount?: boolean
+  select?: string
+  from?: string
+  where?: string
+  groupBy?: string
+  orderBy?: string
+  options?: Record<string, string | number | boolean>
+}
+
+const messageQueue: QueuedMessage[] = []
 let isProcessing = false
 
 async function processQueue() {
@@ -121,19 +144,21 @@ async function processQueue() {
 
   while (messageQueue.length > 0) {
     const e = messageQueue.shift()
-    await handleMessage(e)
+    if (e) {
+      await handleMessage(e)
+    }
   }
 
   isProcessing = false
 }
 
-self.onmessage = e => {
-  messageQueue.push(e)
+self.onmessage = (e: MessageEvent) => {
+  messageQueue.push(e.data as QueuedMessage)
   processQueue()
 }
 
-async function handleMessage(e: MessageEvent) {
-  const { type, sql, params, id, url } = e.data
+async function handleMessage(e: QueuedMessage) {
+  const { type, sql, params, id, url } = e
 
   try {
     if (type === 'init') {
@@ -166,9 +191,14 @@ async function handleMessage(e: MessageEvent) {
     }
 
     if (type === 'exec') {
+      if (!sql) {
+        self.postMessage({ id, error: 'SQL query is required' })
+        return
+      }
+
       const result = db.exec({
         sql,
-        bind: params,
+        bind: params || [],
         returnValue: 'resultRows',
         rowMode: 'object',
       })
@@ -184,7 +214,7 @@ async function handleMessage(e: MessageEvent) {
         limit,
         offset,
         includeCount = false,
-      } = e.data
+      } = e
 
       let sql = `SELECT ${select} FROM ${from}`
       if (where) sql += ` WHERE ${where}`
@@ -220,7 +250,7 @@ async function handleMessage(e: MessageEvent) {
       self.postMessage({ id, result, totalCount })
     } else if (type === 'query-lightweight') {
       // Lightweight query for grid display (minimal data, no joins)
-      const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e.data
+      const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e
 
       // Select essential fields for grid display and filtering
       let sql = `SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, m.primarySourceType as sourceType, m.primaryChannelName as channelName, m.verified FROM movies m`
@@ -254,7 +284,7 @@ async function handleMessage(e: MessageEvent) {
       self.postMessage({ id, result, totalCount })
     } else if (type === 'query-by-ids') {
       // Query lightweight movie details for specific IDs (sources now in JSON files)
-      const { imdbIds } = e.data
+      const { imdbIds } = e
 
       if (!imdbIds || imdbIds.length === 0) {
         self.postMessage({ id, result: [] })
@@ -276,7 +306,7 @@ async function handleMessage(e: MessageEvent) {
       })
 
       // Transform verified from integer (0/1) to boolean
-      const transformedResult = result.map((row: any) => ({
+      const transformedResult = result.map((row: { [columnName: string]: SqlValue }) => ({
         ...row,
         verified: row.verified === 1,
       }))
@@ -287,7 +317,7 @@ async function handleMessage(e: MessageEvent) {
       self.postMessage({ id, result: [] })
     } else if (type === 'query-collections-for-movie') {
       // Query collections for a specific movie
-      const { movieId } = e.data
+      const { movieId } = e
 
       const sql = `
         SELECT c.id, c.name, c.description, c.createdAt, c.updatedAt

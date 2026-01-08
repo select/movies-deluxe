@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { CollectionsDatabase } from '../../shared/types/collections'
+import type { CollectionsDatabase, Collection } from '../../shared/types/collections'
 
 const COLLECTIONS_PATH = path.join(process.cwd(), 'public/data/collections.json')
 const OUTPUT_DIR = path.join(process.cwd(), 'public/data/home')
@@ -29,7 +29,10 @@ class SeededRandom {
     const result = [...array]
     for (let i = result.length - 1; i > 0; i--) {
       const j = Math.floor(this.next() * (i + 1))
-      ;[result[i], result[j]] = [result[j], result[i]]
+      // Use array destructuring with explicit type assertion
+      const [a, b] = [result[i], result[j]] as [T, T]
+      result[i] = b
+      result[j] = a
     }
     return result
   }
@@ -59,12 +62,14 @@ export async function generateHomePages(onProgress?: (progress: GenerationProgre
   )
 
   const allCollectionIds = Object.keys(collectionsData).filter(key => key !== '_schema')
-  const collections = allCollectionIds.map(id => collectionsData[id])
+  const collections = allCollectionIds
+    .map(id => collectionsData[id])
+    .filter((c): c is Collection => c !== undefined && typeof c === 'object' && 'movieIds' in c)
 
   const validCollections = collections
     .map(c => ({
       ...c,
-      movieIds: c.movieIds.filter(id => id.startsWith('tt')),
+      movieIds: c.movieIds.filter((id: string) => id.startsWith('tt')),
     }))
     .filter(c => c.movieIds.length > 0)
 

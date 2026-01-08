@@ -8,7 +8,7 @@ export async function executeSavedQuery(
   searchQuery: string,
   filterState: SavedQueryFilterState
 ): Promise<string[]> {
-  const params: unknown[] = []
+  const params: (string | number)[] = []
   const where: string[] = []
 
   // 1. Search Query (FTS5)
