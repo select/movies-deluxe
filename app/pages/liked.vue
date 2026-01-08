@@ -11,36 +11,38 @@
             </h1>
             <p class="text-theme-textmuted">
               Your personal collection of favorite movies
-              <span v-if="likedCount > 0" class="ml-2">
-                ({{ likedCount }} {{ likedCount === 1 ? 'movie' : 'movies' }})
-              </span>
             </p>
-            <div v-if="searchQuery && filteredLikedMovies.length === 0 && likedCount > 0" class="mt-3 text-sm text-theme-textmuted">
-              No movies found matching "{{ searchQuery }}"
-            </div>
-            <div v-else-if="searchQuery && likedCount > 0" class="mt-3 text-sm text-theme-textmuted">
-              Found {{ filteredLikedMovies.length }} movie{{ filteredLikedMovies.length === 1 ? '' : 's' }}
-            </div>
           </div>
 
           <!-- Search Bar -->
-          <div v-if="likedCount > 0" class="relative w-full md:w-64 md:flex-shrink-0">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <div class="i-mdi-magnify text-lg text-theme-textmuted" />
+          <div v-if="likedCount > 0" class="flex flex-col items-start md:items-end gap-4 w-full md:w-auto">
+            <div class="flex flex-col items-start md:items-end gap-1">
+              <div class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm">
+                {{ likedCount }} movies
+              </div>
+              <div v-if="searchQuery && likedCount > 0" class="text-xs text-theme-accent font-bold px-1">
+                {{ filteredLikedMovies.length === 0 ? 'No movies found' : `Found ${filteredLikedMovies.length} movie${filteredLikedMovies.length === 1 ? '' : 's'}` }}
+              </div>
             </div>
-            <input
-              v-model="searchQuery"
-              type="text"
-              class="block w-full pl-10 pr-10 py-2 bg-theme-surface/50 border border-theme-border/50 focus:border-theme-primary rounded-full text-sm text-theme-text placeholder-theme-textmuted focus:outline-none transition-all focus:bg-theme-surface"
-              placeholder="Search liked movies..."
-            >
-            <button
-              v-if="searchQuery"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center"
-              @click="searchQuery = ''"
-            >
-              <div class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors" />
-            </button>
+
+            <div class="relative w-full md:w-64 md:flex-shrink-0">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div class="i-mdi-magnify text-lg text-theme-textmuted" />
+              </div>
+              <input
+                v-model="searchQuery"
+                type="text"
+                class="block w-full pl-10 pr-10 py-2 bg-theme-surface/50 border border-theme-border/50 focus:border-theme-primary rounded-full text-sm text-theme-text placeholder-theme-textmuted focus:outline-none transition-all focus:bg-theme-surface"
+                placeholder="Search liked movies..."
+              >
+              <button
+                v-if="searchQuery"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                @click="searchQuery = ''"
+              >
+                <div class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors" />
+              </button>
+            </div>
           </div>
         </div>
 
