@@ -14,6 +14,10 @@ Filter, Sort, and Theme
 
 I dreamt about his project for while, but it flet too big to start. Finally this Christmas break 2025 I took the curage and started. I heavily relied on agentic development (as an additional learning goal) and created the project in under 2 weeks (check the git history) using [OpenCode](https://opencode.ai/) (with [Sonnet 4.5](https://aws.amazon.com/bedrock/anthropic/) and [Gemini 3 Flash](https://deepmind.google/models/gemini/flash/) and the [beads tracker](https://github.com/steveyegge/beads)). With this huge [amount of data](./public/data/stats.json) (31,477 movies) the curation and linking to the correct metadata is not easy and there are many wrong matches and "bad" entries like trailers and clips. Over time I will implement more data curation strategies, so please be patient.
 
+## Change Log
+
+For detailed information about recent updates and feature additions, please see the [CHANGELOG.md](./CHANGELOG.md).
+
 ## Tech Stack
 
 This project is built with
