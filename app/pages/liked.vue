@@ -2,18 +2,46 @@
   <!-- Main Content -->
   <main class="md:ml-16">
       <div class="px-4 lg:px-[6%] py-8">
-        <!-- Page Header -->
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold mb-2 flex items-center gap-3 text-theme-text">
-            <div class="i-mdi-heart text-theme-accent" />
-            Liked Movies
-          </h1>
-          <p class="text-theme-textmuted">
-            Your personal collection of favorite movies
-            <span v-if="likedCount > 0" class="ml-2">
-              ({{ likedCount }} {{ likedCount === 1 ? 'movie' : 'movies' }})
-            </span>
-          </p>
+        <!-- Header with Search -->
+        <div class="mb-10 flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6">
+          <div class="flex-1">
+            <h1 class="text-3xl font-bold mb-2 flex items-center gap-3 text-theme-text">
+              <div class="i-mdi-heart text-theme-accent" />
+              Liked Movies
+            </h1>
+            <p class="text-theme-textmuted">
+              Your personal collection of favorite movies
+              <span v-if="likedCount > 0" class="ml-2">
+                ({{ likedCount }} {{ likedCount === 1 ? 'movie' : 'movies' }})
+              </span>
+            </p>
+            <div v-if="searchQuery && filteredLikedMovies.length === 0 && likedCount > 0" class="mt-3 text-sm text-theme-textmuted">
+              No movies found matching "{{ searchQuery }}"
+            </div>
+            <div v-else-if="searchQuery && likedCount > 0" class="mt-3 text-sm text-theme-textmuted">
+              Found {{ filteredLikedMovies.length }} movie{{ filteredLikedMovies.length === 1 ? '' : 's' }}
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div v-if="likedCount > 0" class="relative w-full md:w-64 md:flex-shrink-0">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div class="i-mdi-magnify text-lg text-theme-textmuted" />
+            </div>
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="block w-full pl-10 pr-10 py-2 bg-theme-surface/50 border border-theme-border/50 focus:border-theme-primary rounded-full text-sm text-theme-text placeholder-theme-textmuted focus:outline-none transition-all focus:bg-theme-surface"
+              placeholder="Search liked movies..."
+            >
+            <button
+              v-if="searchQuery"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              @click="searchQuery = ''"
+            >
+              <div class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors" />
+            </button>
+          </div>
         </div>
 
         <!-- Empty State -->
@@ -59,25 +87,38 @@
           </div>
         </template>
 
-        <!-- No Results After Filtering -->
+        <!-- No Results After Filtering/Searching -->
         <div v-else-if="likedCount > 0 && filteredLikedMovies.length === 0" class="text-center py-12">
           <div class="i-mdi-filter-remove text-4xl text-theme-border mb-4" />
-          <h2 class="text-xl font-semibold mb-2 text-theme-text">No movies match your filters</h2>
+          <h2 class="text-xl font-semibold mb-2 text-theme-text">
+            {{ searchQuery ? 'No movies found' : 'No movies match your filters' }}
+          </h2>
           <p class="text-theme-textmuted mb-6">
-            Try adjusting your search or filter criteria
+            {{ searchQuery ? 'Try a different search term or clear your search' : 'Try adjusting your search or filter criteria' }}
           </p>
-          <button
-            class="btn-primary"
-            @click="resetFilters"
-          >
-            Clear Filters
-          </button>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              v-if="searchQuery"
+              class="btn-secondary"
+              @click="searchQuery = ''"
+            >
+              Clear Search
+            </button>
+            <button
+              class="btn-primary"
+              @click="resetFilters"
+            >
+              Clear Filters
+            </button>
+          </div>
         </div>
       </div>
     </main>
 </template>
 
 <script setup lang="ts">
+import Fuse from 'fuse.js'
+
 // Set page title and meta
 useHead({
   title: 'Liked Movies - Movies Deluxe',
@@ -104,6 +145,9 @@ const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 const likedMoviesData = ref<MovieEntry[]>([])
 const isLoadingLiked = ref(true)
 
+// Search functionality
+const searchQuery = ref('')
+
 // Initialize database and load liked movies
 onMounted(async () => {
   try {
@@ -122,9 +166,29 @@ onMounted(async () => {
   }
 })
 
-
-// Filtered liked movies - apply current filters to liked movies
+// Filtered liked movies - apply current filters and search
 const filteredLikedMovies = computed(() => {
-  return applyFilters(likedMoviesData.value)
+  // First apply the existing filters (genre, year, etc.)
+  let filtered = applyFilters(likedMoviesData.value)
+  
+  // Then apply local search if there's a search query
+  if (searchQuery.value.trim()) {
+    const fuse = new Fuse(filtered, {
+      keys: [
+        { name: 'title', weight: 2 },
+        { name: 'metadata.Genre', weight: 1 },
+        { name: 'metadata.Director', weight: 1.5 },
+        { name: 'metadata.Actors', weight: 1 },
+        { name: 'metadata.Plot', weight: 0.5 }
+      ],
+      threshold: 0.3,
+      ignoreLocation: true
+    })
+    
+    const results = fuse.search(searchQuery.value)
+    filtered = results.map(result => result.item)
+  }
+  
+  return filtered
 })
 </script>

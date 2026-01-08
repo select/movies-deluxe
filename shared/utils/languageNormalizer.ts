@@ -38,11 +38,22 @@ const languageMap: Record<string, string> = {
  * @param language - Language name, code, or comma-separated list
  * @returns Lowercase 2-letter ISO 639-1 code or null for invalid/missing values
  */
-export function normalizeLanguageCode(language: string | undefined | null): string | null {
+export function normalizeLanguageCode(
+  language: string | string[] | undefined | null
+): string | null {
   if (!language) return null
 
+  // Handle array of languages - take the first one
+  let langStr: string
+  if (Array.isArray(language)) {
+    if (language.length === 0) return null
+    langStr = language[0]
+  } else {
+    langStr = typeof language === 'string' ? language : String(language)
+  }
+
   // Extract first language if comma-separated
-  const firstLang = language.split(',')[0]?.trim().toLowerCase()
+  const firstLang = langStr.split(',')[0]?.trim().toLowerCase()
   if (!firstLang) return null
 
   // Handle special values

@@ -34,7 +34,7 @@ export interface ArchiveOrgSource extends MovieSourceBase {
   thumbnail?: string
   duration?: number // Duration in seconds
   year?: number // Extracted year from Archive.org metadata - REQUIRED for OMDB year validation
-  language?: string // Language code from Archive.org metadata (e.g., 'en', 'es', 'fr')
+  language?: string | string[] // Language code from Archive.org metadata (e.g., 'en', 'es', 'fr') - can be array
   size?: number // File size in bytes
 }
 
