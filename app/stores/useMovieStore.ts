@@ -370,8 +370,8 @@ export const useMovieStore = defineStore('movie', () => {
 
       // Wait for it to be ready
       let attempts = 0
-      while (!db.isReady.value && attempts < 50) {
-        // Max 5 seconds
+      while (!db.isReady.value && attempts < 100) {
+        // Max 10 seconds
         await new Promise(resolve => setTimeout(resolve, 100))
         attempts++
       }
@@ -382,8 +382,14 @@ export const useMovieStore = defineStore('movie', () => {
       }
     }
 
+    // Double check cache after waiting (another request might have filled it)
+    const stillUncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
+    if (stillUncachedIds.length === 0) {
+      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+    }
+
     try {
-      const results = await db.queryByIds<Record<string, unknown>>(uncachedIds)
+      const results = await db.queryByIds<Record<string, unknown>>(stillUncachedIds)
       const movies = results.map(mapRowToMovie)
 
       // Cache the results and merge with allMovies
