@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-07T01:25:15.247Z"
+    "lastUpdated": "2026-01-08T21:43:45.856Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1703,6 +1703,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Sci-Fi"]
         }
       }
@@ -1867,6 +1868,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Horror"]
         }
       }
@@ -1892,6 +1894,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Film-Noir"]
         }
       }
@@ -1918,6 +1921,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Romance"]
         }
       }
@@ -1944,6 +1948,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Adventure"]
         }
       }
@@ -1970,6 +1975,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Mystery"]
         }
       }
@@ -1996,6 +2002,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Thriller"]
         }
       }
@@ -2022,6 +2029,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["War"]
         }
       }
@@ -2236,6 +2244,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "genres": ["Western"]
         }
       }
@@ -2261,6 +2270,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1920,
           "maxYear": 1929
         }
@@ -2278,7 +2288,7 @@
           "minRating": 7,
           "minYear": 1920,
           "maxYear": 1929,
-          "minVotes": 8000
+          "minVotes": 3000
         }
       }
     ],
@@ -2304,6 +2314,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1930,
           "maxYear": 1939
         }
@@ -2395,7 +2406,6 @@
       "tt13364232",
       "tt2015402",
       "tt0037824",
-      "tt1669636",
       "tt6045006",
       "tt0041546",
       "tt0148382",
@@ -2509,7 +2519,7 @@
       "tt0419282"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-07T01:23:08.073Z",
+    "updatedAt": "2026-01-08T21:43:45.856Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2522,6 +2532,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1940,
           "maxYear": 1949
         }
@@ -2548,6 +2559,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1950,
           "maxYear": 1959
         }
@@ -2575,6 +2587,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1960,
           "maxYear": 1969
         }
@@ -2602,6 +2615,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1970,
           "maxYear": 1979
         }
@@ -2629,6 +2643,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1980,
           "maxYear": 1989
         }
@@ -2656,6 +2671,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 1990,
           "maxYear": 1999
         }
@@ -2683,6 +2699,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 2000,
           "maxYear": 2009
         }
@@ -2710,6 +2727,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 2010,
           "maxYear": 2019
         }
@@ -2737,6 +2755,7 @@
             "direction": "desc"
           },
           "minRating": 6.5,
+          "minVotes": 3000,
           "minYear": 2020,
           "maxYear": 2029
         }
