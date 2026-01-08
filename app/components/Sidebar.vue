@@ -15,24 +15,19 @@
         <div class="i-mdi-home text-xl" />
       </NuxtLink>
 
-      <!-- Browse All -->
+      <!-- Search -->
       <NuxtLink
         to="/search"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
-        title="Browse All Movies"
-        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
-      >
-        <div class="i-mdi-movie-filter text-xl" :class="{ 'text-theme-primary': route.path === '/search' }" />
-      </NuxtLink>
-
-      <!-- Search -->
-      <button
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
         title="Search (Shift+S)"
+        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
         @click="handleSearchClick"
       >
-        <div class="i-mdi-magnify text-xl" />
-      </button>
+        <div
+          class="i-mdi-magnify text-xl"
+          :class="{ 'text-theme-primary': route.path === '/search' }"
+        />
+      </NuxtLink>
 
       <!-- Liked Movies -->
       <NuxtLink
@@ -137,13 +132,18 @@
       @scroll="updateScrollState"
     >
       <!-- Search -->
-      <button
+      <NuxtLink
+        to="/search"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
         aria-label="Search"
+        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
         @click="handleSearchClick"
       >
-        <div class="i-mdi-magnify text-2xl" />
-      </button>
+        <div
+          class="i-mdi-magnify text-2xl"
+          :class="{ 'text-theme-primary': route.path === '/search' }"
+        />
+      </NuxtLink>
 
       <!-- Home -->
       <NuxtLink
@@ -153,16 +153,6 @@
         :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
         <div class="i-mdi-home text-2xl" />
-      </NuxtLink>
-
-      <!-- Browse All -->
-      <NuxtLink
-        to="/search"
-        class="p-2 hover:bg-theme-selection rounded-full transition-colors relative flex-shrink-0"
-        aria-label="Browse All Movies"
-        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
-      >
-        <div class="i-mdi-movie-filter text-2xl" :class="{ 'text-theme-primary': route.path === '/search' }" />
       </NuxtLink>
 
       <!-- Liked Movies -->

@@ -1229,6 +1229,9 @@ export const useMovieStore = defineStore('movie', () => {
       return JSON.stringify({ ...rest, searchQuery: throttledSearchQuery.value })
     },
     () => {
+      // Only apply filters on the search page
+      if (useRoute().path !== '/search') return
+
       filters.value.currentPage = 1
       fetchLightweightMovies()
     }
@@ -1238,6 +1241,9 @@ export const useMovieStore = defineStore('movie', () => {
   watch(
     () => filters.value.currentPage,
     (newPage, oldPage) => {
+      // Only apply pagination on the search page
+      if (useRoute().path !== '/search') return
+
       if (newPage > oldPage) {
         fetchFilteredMovies(true)
       }
@@ -1248,6 +1254,9 @@ export const useMovieStore = defineStore('movie', () => {
   watch(
     () => db.isReady.value,
     ready => {
+      // Only perform initial fetch on the search page
+      if (useRoute().path !== '/search') return
+
       const currentLength = lightweightMovies.value?.length || 0
       if (ready && currentLength === 0) {
         fetchLightweightMovies()
