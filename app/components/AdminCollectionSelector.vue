@@ -13,96 +13,25 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
+    <div class="flex flex-wrap gap-2">
+      <button
         v-for="collection in collectionsList"
         :key="collection.id"
-        class="relative group"
+        class="px-4 py-2 rounded-xl border transition-all text-sm font-bold flex items-center gap-2"
+        :class="[
+          selectedId === collection.id
+            ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/20'
+            : 'bg-theme-surface border-theme-border hover:border-theme-textmuted text-theme-text',
+          collection.enabled === false ? 'opacity-60' : ''
+        ]"
+        @click="select(collection.id)"
       >
-        <button
-          class="w-full text-left p-4 rounded-xl border transition-all h-full"
-          :class="[
-            selectedId === collection.id
-              ? 'bg-blue-600/10 border-blue-600 ring-2 ring-blue-600/20'
-              : 'bg-theme-surface border-theme-border hover:border-theme-textmuted',
-            collection.enabled === false ? 'opacity-60' : ''
-          ]"
-          @click="select(collection.id)"
-        >
-          <div class="flex items-center justify-between mb-2 pr-12">
-            <div class="flex items-center gap-2">
-              <span
-                class="font-bold text-lg truncate"
-                :class="selectedId === collection.id ? 'text-blue-600 dark:text-blue-400' : ''"
-              >
-                {{ collection.name }}
-              </span>
-              <span
-                v-if="collection.enabled === false"
-                class="px-2 py-0.5 bg-yellow-600/10 text-yellow-600 dark:text-yellow-400 border border-yellow-600/20 rounded text-[10px] font-bold uppercase"
-              >
-                Hidden
-              </span>
-            </div>
-          </div>
-
-          <!-- Tags Display -->
-          <div
-            v-if="collection.tags?.length"
-            class="flex flex-wrap gap-1 mb-2"
-          >
-            <span
-              v-for="tag in collection.tags"
-              :key="tag"
-              class="px-1.5 py-0.5 bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 rounded text-[10px] font-medium"
-            >
-              {{ tag }}
-            </span>
-          </div>
-
-          <p class="text-xs text-theme-textmuted line-clamp-1 mb-2">
-            {{ collection.description || 'No description' }}
-          </p>
-          <div class="flex items-center gap-2 text-xs font-mono bg-theme-bg/50 px-2 py-1 rounded w-fit">
-            <div class="i-mdi-movie" />
-            {{ collection.movieIds.length }} movies
-          </div>
-        </button>
-
-        <!-- Management Actions (Visible on hover or if selected) -->
-        <div
-          class="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-          :class="{ 'opacity-100': selectedId === collection.id }"
-        >
-          <button
-            class="p-1.5 rounded-lg transition-colors"
-            :class="collection.enabled === false 
-              ? 'hover:bg-green-50 dark:hover:bg-green-900/20 text-green-600' 
-              : 'hover:bg-yellow-50 dark:hover:bg-yellow-900/20 text-yellow-600'"
-            :title="collection.enabled === false ? 'Enable Collection' : 'Disable Collection'"
-            @click.stop="toggleEnabled(collection)"
-          >
-            <div 
-              class="text-lg"
-              :class="collection.enabled === false ? 'i-mdi-eye-off' : 'i-mdi-eye'"
-            />
-          </button>
-          <button
-            class="p-1.5 hover:bg-theme-selection rounded-lg text-blue-500 transition-colors"
-            title="Edit Collection"
-            @click.stop="editCollection(collection)"
-          >
-            <div class="i-mdi-pencil text-lg" />
-          </button>
-          <button
-            class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-red-500 transition-colors"
-            title="Delete Collection"
-            @click.stop="confirmDelete(collection)"
-          >
-            <div class="i-mdi-delete text-lg" />
-          </button>
-        </div>
-      </div>
+        {{ collection.name }}
+        <div 
+          v-if="collection.enabled === false"
+          class="i-mdi-eye-off text-xs opacity-70"
+        />
+      </button>
     </div>
 
     <!-- Create/Edit Modal -->
@@ -440,5 +369,11 @@ onMounted(async () => {
   if (!collectionsStore.isLoaded) {
     await collectionsStore.loadCollections()
   }
+})
+defineExpose({
+  editCollection,
+  toggleEnabled,
+  confirmDelete,
+  openCreateModal: () => showCreateModal.value = true
 })
 </script>
