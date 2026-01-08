@@ -19,7 +19,7 @@
         v-if="collection"
         class="mb-10"
       >
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div class="flex-1">
             <h1 class="text-4xl font-black text-theme-text mb-3 tracking-tight">
               {{ collection.name }}
@@ -29,18 +29,38 @@
               {{ collection.description }}
             </p>
           </div>
-          <div class="flex flex-col items-start md:items-end gap-2">
+
+          <div class="flex flex-col items-start md:items-end gap-4 w-full md:w-auto">
             <div
               v-if="collection?.movieIds"
-              class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm"
+              class="flex flex-col items-start md:items-end gap-1"
             >
-              {{ collection.movieIds.length }} movies
+              <div class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm">
+                {{ collection.movieIds.length }} movies
+              </div>
+              <div v-if="searchQuery && movies.length > 0" class="text-xs text-theme-accent font-bold px-1">
+                {{ filteredMovies.length === 0 ? 'No movies found' : `Found ${filteredMovies.length} movie${filteredMovies.length === 1 ? '' : 's'}` }}
+              </div>
             </div>
-            <div
-              v-if="hasActiveFilters"
-              class="text-xs text-theme-accent font-bold"
-            >
-              {{ filteredMovies.length }} matching filters
+
+            <!-- Search Bar -->
+            <div v-if="movies.length > 0" class="relative w-full md:w-64 md:flex-shrink-0">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div class="i-mdi-magnify text-lg text-theme-textmuted" />
+              </div>
+              <input
+                v-model="searchQuery"
+                type="text"
+                class="block w-full pl-10 pr-10 py-2 bg-theme-surface/50 border border-theme-border/50 focus:border-theme-primary rounded-full text-sm text-theme-text placeholder-theme-textmuted focus:outline-none transition-all focus:bg-theme-surface"
+                placeholder="Search in collection..."
+              >
+              <button
+                v-if="searchQuery"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                @click="searchQuery = ''"
+              >
+                <div class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors" />
+              </button>
             </div>
           </div>
         </div>
@@ -61,7 +81,7 @@
       <template v-else-if="filteredMovies && filteredMovies.length > 0">
         <MovieVirtualGrid
           :movies="filteredMovies"
-          :total-movies="collection?.movieIds?.length || 0"
+          :total-movies="filteredMovies.length"
         />
       </template>
 
@@ -72,17 +92,17 @@
       >
         <div class="i-mdi-movie-open-outline text-6xl text-theme-textmuted mb-4 opacity-20" />
         <h3 class="text-xl font-bold text-theme-text mb-2">
-          {{ hasActiveFilters ? 'No movies match your filters' : 'No movies in this collection' }}
+          {{ searchQuery ? 'No movies found' : 'No movies in this collection' }}
         </h3>
         <p class="text-theme-textmuted mb-8">
-          {{ hasActiveFilters ? 'Try adjusting your search or filter criteria.' : 'This collection is currently empty.' }}
+          {{ searchQuery ? 'Try a different search term or clear your search.' : 'This collection is currently empty.' }}
         </p>
         <button
-          v-if="hasActiveFilters"
+          v-if="searchQuery"
           class="px-6 py-2.5 rounded-xl bg-theme-accent text-black font-bold hover:scale-105 transition-transform"
-          @click="resetFilters"
+          @click="searchQuery = ''"
         >
-          Clear Filters
+          Clear Search
         </button>
         <NuxtLink
           v-else
@@ -99,25 +119,45 @@
 <script setup lang="ts">
 import { onBeforeRouteLeave } from 'vue-router'
 import { useWindowScroll, useStorage } from '@vueuse/core'
+import Fuse from 'fuse.js'
 
 const route = useRoute()
 const movieStore = useMovieStore()
 const collectionsStore = useCollectionsStore()
 
-const { applyFilters, resetFilters, fetchMoviesByIds, loadFromFile } = movieStore
-const { hasActiveFilters } = storeToRefs(movieStore)
+const { fetchMoviesByIds, loadFromFile } = movieStore
 const { getCollectionById } = collectionsStore
 
 const collection = ref<Collection | null>(null)
 const movies = ref<MovieEntry[]>([])
 const isLoading = ref(true)
+const searchQuery = ref('')
 
 // Track window scroll position
 const { y: windowScrollY } = useWindowScroll()
 const scrollPositions = useStorage<Record<string, number>>('movies-deluxe-collection-scroll', {})
 
 const filteredMovies = computed(() => {
-  return applyFilters(movies.value)
+  let filtered = movies.value
+
+  if (searchQuery.value.trim()) {
+    const fuse = new Fuse(filtered, {
+      keys: [
+        { name: 'title', weight: 2 },
+        { name: 'metadata.Genre', weight: 1 },
+        { name: 'metadata.Director', weight: 1.5 },
+        { name: 'metadata.Actors', weight: 1 },
+        { name: 'metadata.Plot', weight: 0.5 }
+      ],
+      threshold: 0.3,
+      ignoreLocation: true
+    })
+
+    const results = fuse.search(searchQuery.value)
+    filtered = results.map(result => result.item)
+  }
+
+  return filtered
 })
 
 onMounted(async () => {
