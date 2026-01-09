@@ -35,7 +35,7 @@
 
       <div
         ref="scrollContainer"
-        class="flex overflow-x-auto gap-4 px-4 pb-4 scroll-smooth hide-scrollbar snap-x snap-mandatory"
+        class="flex overflow-x-auto gap-4 px-4 pb-4 pt-2 scroll-smooth hide-scrollbar snap-x snap-mandatory"
         @scroll="updateScrollState"
       >
         <template v-if="isLoading">
@@ -115,7 +115,7 @@ onMounted(async () => {
     const movieIds = props.collection.movieIds.slice(0, 9)
     displayMovies.value = await fetchMoviesByIds(movieIds)
     isLoading.value = false
-    
+
     // Ensure scroll position is at the left after loading
     nextTick(() => {
       if (scrollContainer.value) {
