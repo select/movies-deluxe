@@ -1,5 +1,54 @@
 # Changelog
 
+# [0.4.0](https://github.com/select/movies-deluxe/compare/v0.3.0...v0.4.0) (2026-01-09)
+
+### Bug Fixes
+
+- **admin:** filter out movies without votes/ratings when criteria specified ([cdfea2a](https://github.com/select/movies-deluxe/commit/cdfea2af72965a31697d5d68ac112e60c2d27e0e))
+- **admin:** include rating and votes in search API results ([5fabe47](https://github.com/select/movies-deluxe/commit/5fabe470c55bf945ff26dc58bc40ed6a79ac21dd))
+- **admin:** persist stats updates to public directory ([9416463](https://github.com/select/movies-deluxe/commit/9416463602aa0eb2940b1dbd23c23741d532197a))
+- **admin:** prevent url query updates in collection admin search ([e312cb9](https://github.com/select/movies-deluxe/commit/e312cb9d3a4798424458e624949480c5543d9e56))
+- **admin:** wrapp buttons for mobile view ([6d19dcf](https://github.com/select/movies-deluxe/commit/6d19dcfda979a8b7144351ca0ba2e0ef3fb80390))
+- **collections:** add missing API endpoints for add/remove movie ([8797b93](https://github.com/select/movies-deluxe/commit/8797b93c8d57d8e05169b1a29983669dbc2a1dd6))
+- **db:** serialize worker messages and handle concurrent initialization ([d30b1d5](https://github.com/select/movies-deluxe/commit/d30b1d5f7d203732aff23bff08f90282d51834cc))
+- **home:** exclude disabled collections from home page generation ([8867c00](https://github.com/select/movies-deluxe/commit/8867c00e2ad21419079b019f174d2277f03dedc0))
+- improve loggin ([965b7c3](https://github.com/select/movies-deluxe/commit/965b7c361d5fce9426de4b7f6c9dbebedbe2ea6b))
+- **liked:** remove global filters from liked movies page ([d5e44f6](https://github.com/select/movies-deluxe/commit/d5e44f64a28d911c912f114ce02e7e42a38e51a2))
+- resolve TypeScript errors and improve type safety ([28e52f9](https://github.com/select/movies-deluxe/commit/28e52f93083b72f94523fdaa1df67264210c8381))
+- **scrape:** do not overwrite existing entry ([60654ed](https://github.com/select/movies-deluxe/commit/60654edd3e5faf345ff4c87d2916b7757405c314))
+- **scrape:** use exising key when updating ([bf299dd](https://github.com/select/movies-deluxe/commit/bf299dd558c1da35567694d12bc084b1162db1fe))
+- **store:** ensure database is ready before querying in fetchMoviesByIds ([46c84ee](https://github.com/select/movies-deluxe/commit/46c84ee4caf78ca17f0cea0b7dfad897ebfee85b))
+- **store:** ensure full movie JSON loads on navigation ([76efc6b](https://github.com/select/movies-deluxe/commit/76efc6b45877272341ba4a5c2bcbb3255838ee1a))
+- **types:** resolve all typescript errors from typecheck ([720bce7](https://github.com/select/movies-deluxe/commit/720bce75de415e7a1f6dadb27a8ea93be689773c))
+- **ui:** correct header subtitle display logic for all pages ([f8438ab](https://github.com/select/movies-deluxe/commit/f8438ab3a1407aa8cfd741d5327c8fa0416d10b7))
+
+### Features
+
+- **admin:** improve collection editor with condensed selection and detailed card view ([5ab00e4](https://github.com/select/movies-deluxe/commit/5ab00e45ae248881723cb5f9c2dc7d3cb2f2e193))
+- **admin:** show rating and votes in collection admin movie lists ([f9f6ac1](https://github.com/select/movies-deluxe/commit/f9f6ac1489c357732f4784f60bddce9044a29c47))
+- **admin:** show search results when setting filters in admin dashboard ([7b96e89](https://github.com/select/movies-deluxe/commit/7b96e891c4ae5ac923df3ca9f4f8e2626e4c6cf9))
+- **admin:** show visible/total collection count in selector ([2316216](https://github.com/select/movies-deluxe/commit/2316216eec6518133cfb9cf849457611d49ad825))
+- **collections:** add decade-based collections (1920s-2020s) ([a4ed99e](https://github.com/select/movies-deluxe/commit/a4ed99e2051307fdba32622e842c0e54b73f933e))
+- **collections:** add enable/disable toggle in admin, hide disabled in /collections ([a023141](https://github.com/select/movies-deluxe/commit/a023141a7a6bdeeb8b7236e6ff34bc23bbd7e5eb))
+- **collections:** add genre-based collections with saved queries ([d1db7b9](https://github.com/select/movies-deluxe/commit/d1db7b910cad36292631c809fd44edf4f1ded11d))
+- **collections:** add local search and unify header design ([283c36b](https://github.com/select/movies-deluxe/commit/283c36bf3f45cc6c05524d33080b98469f259fe1))
+- **home:** implement home page collections showcase ([3622097](https://github.com/select/movies-deluxe/commit/3622097c5f656966ca74a1badf71adafeb2fc78b))
+- **home:** implement skeleton loaders and scroll buttons for collections ([283f67e](https://github.com/select/movies-deluxe/commit/283f67e31207b45b1c9ecf1d0827cc2e39194551))
+- **liked:** add search functionality to liked movies page ([d586ae8](https://github.com/select/movies-deluxe/commit/d586ae842cbddc6aabbcbda48386635814644adc))
+- nicer splash screen ([5ba0491](https://github.com/select/movies-deluxe/commit/5ba0491d577cff0dfda5edd3ebee556d2c9e1c30))
+- **scraper:** add runtime field to archive.org scraping ([250934b](https://github.com/select/movies-deluxe/commit/250934b40b9f2dd8d010b6fe9e73e571b5827f15))
+- **scraper:** add size field from archive.org to export and types ([acf36b6](https://github.com/select/movies-deluxe/commit/acf36b63ef17ef34325fd97314a38ad4cc50a515))
+- **store:** restrict filter and search application to the search page ([ee2df9b](https://github.com/select/movies-deluxe/commit/ee2df9b0d23bc7301e6bc6256a39f28c0f8e3f56))
+- **ui:** enhance toast notification system with stacking, transitions, and queue management ([726d831](https://github.com/select/movies-deluxe/commit/726d831b9dbbd1406741de256c9f470af6acdbe8))
+
+### Performance Improvements
+
+- **movie-data:** add source ID index for O(1) lookups ([269db58](https://github.com/select/movies-deluxe/commit/269db58b9da142c63492056fd07e8a12ca5b0b9c))
+
+### Reverts
+
+- Revert "chore(data): update achive org data" ([b152454](https://github.com/select/movies-deluxe/commit/b1524548b96e5a78522a79e40d76f8d3ffb1673f))
+
 # 0.3.0 (2026-01-06)
 
 ### Bug Fixes
