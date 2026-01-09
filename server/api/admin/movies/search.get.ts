@@ -41,6 +41,8 @@ export default defineEventHandler(async event => {
       Director?: string
       Writer?: string
       Plot?: string
+      imdbRating?: string
+      imdbVotes?: string
     }
   }> = []
 

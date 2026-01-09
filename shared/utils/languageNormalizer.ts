@@ -47,7 +47,9 @@ export function normalizeLanguageCode(
   let langStr: string
   if (Array.isArray(language)) {
     if (language.length === 0) return null
-    langStr = language[0]
+    const firstLang = language[0]
+    if (!firstLang) return null
+    langStr = firstLang
   } else {
     langStr = typeof language === 'string' ? language : String(language)
   }
