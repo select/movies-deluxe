@@ -231,8 +231,12 @@ const languageCode = computed(() => {
 
   // Fallback to source language (also normalized)
   const sourceLang = firstSource.value?.language
-  if (sourceLang && sourceLang.length === 2) {
-    return sourceLang.toUpperCase()
+  if (sourceLang) {
+    // Handle array of languages - take the first one
+    const langStr = Array.isArray(sourceLang) ? sourceLang[0] : sourceLang
+    if (langStr && langStr.length === 2) {
+      return langStr.toUpperCase()
+    }
   }
 
   return ''

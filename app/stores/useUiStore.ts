@@ -14,7 +14,7 @@ export interface Toast {
   message: string
   type: ToastType
   duration: number
-  timerId?: number
+  timerId?: ReturnType<typeof setTimeout>
 }
 
 /**
@@ -134,7 +134,7 @@ export const useUiStore = defineStore('ui', () => {
       const toast = toasts.value[toastIndex]
 
       // Clear the timer if it exists
-      if (toast.timerId) {
+      if (toast?.timerId) {
         clearTimeout(toast.timerId)
       }
 
@@ -151,7 +151,7 @@ export const useUiStore = defineStore('ui', () => {
       const toast = toastQueue.value[queueIndex]
 
       // Clear the timer if it exists
-      if (toast.timerId) {
+      if (toast?.timerId) {
         clearTimeout(toast.timerId)
       }
 

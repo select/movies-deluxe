@@ -8,6 +8,17 @@ const DATA_DIR = join(process.cwd(), 'data')
 const MOVIES_FILE = join(DATA_DIR, 'movies.json')
 
 /**
+ * Normalize language field to handle string | string[] types
+ */
+function normalizeLanguage(language: string | string[] | undefined): string | undefined {
+  if (!language) return undefined
+  if (Array.isArray(language)) {
+    return language.length > 0 ? language[0] : undefined
+  }
+  return language
+}
+
+/**
  * Fast extraction of all keys from movies.json using ripgrep
  * This is 3-8x faster than regex and 3x faster than JSON.parse + Object.keys
  *
@@ -227,16 +238,27 @@ export function upsertMovie(
       const existingSource = mergedSources[existingIndex]
       if (existingSource) {
         // Update existing source with new data (preferring non-empty values)
-        mergedSources[existingIndex] = {
+        const updatedSource = {
           ...existingSource,
           ...newSource,
           label: newSource.label || existingSource.label,
           quality: newSource.quality || existingSource.quality,
           description: newSource.description || existingSource.description,
         }
+
+        // Normalize language field for type compatibility
+        if ('language' in updatedSource && updatedSource.language) {
+          updatedSource.language = normalizeLanguage(updatedSource.language)
+        }
+
+        mergedSources[existingIndex] = updatedSource as MovieSource
       } else {
-        // Add new source
-        mergedSources.push(newSource)
+        // Add new source with normalized language
+        const normalizedSource = { ...newSource }
+        if ('language' in normalizedSource && normalizedSource.language) {
+          normalizedSource.language = normalizeLanguage(normalizedSource.language)
+        }
+        mergedSources.push(normalizedSource as MovieSource)
       }
     }
 
@@ -512,16 +534,27 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
     const existingSource = mergedSources[existingIndex]
     if (existingIndex !== -1 && existingSource) {
       // Update existing source with new data
-      mergedSources[existingIndex] = {
+      const updatedSource = {
         ...existingSource,
         ...secondarySource,
         label: secondarySource.label || existingSource.label,
         quality: secondarySource.quality || existingSource.quality,
         description: secondarySource.description || existingSource.description,
       }
+
+      // Normalize language field for type compatibility
+      if ('language' in updatedSource && updatedSource.language) {
+        updatedSource.language = normalizeLanguage(updatedSource.language)
+      }
+
+      mergedSources[existingIndex] = updatedSource as MovieSource
     } else {
-      // Add new source
-      mergedSources.push(secondarySource)
+      // Add new source with normalized language
+      const normalizedSource = { ...secondarySource }
+      if ('language' in normalizedSource && normalizedSource.language) {
+        normalizedSource.language = normalizeLanguage(normalizedSource.language)
+      }
+      mergedSources.push(normalizedSource as MovieSource)
     }
   }
 
