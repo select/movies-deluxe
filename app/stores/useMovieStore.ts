@@ -212,7 +212,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Sources are now loaded separately from JSON files
    */
   const mapLightweightToMovie = (movie: LightweightMovie): MovieEntry => {
-    console.log('[mapLightweightToMovie] Mapping movie:', movie.imdbId, movie.title)
+    // console.log('[mapLightweightToMovie] Mapping movie:', movie.imdbId, movie.title)
     return {
       imdbId: movie.imdbId,
       title: movie.title,
@@ -939,17 +939,17 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       const itemsPerPage = 50
-      const limit = filters.value.currentPage * itemsPerPage
       const offset = append ? (filters.value.currentPage - 1) * itemsPerPage : 0
+      const limit = itemsPerPage
 
       const { result, totalCount } = await fetchMovies({
         searchQuery: filters.value.searchQuery,
         where: where.join(' AND '),
         params,
         orderBy,
-        limit: append ? itemsPerPage : limit,
+        limit,
         offset,
-        includeCount: true,
+        includeCount: !append, // Only count on initial fetch
       })
 
       if (append) {
@@ -1348,11 +1348,17 @@ export const useMovieStore = defineStore('movie', () => {
       // Only apply filters on the search page
       if (useRoute().path !== '/search') return
 
+      // Reset to page 1 only if not already there
+      const wasPageOne = filters.value.currentPage === 1
       filters.value.currentPage = 1
+
       // Fetch count first for immediate feedback
       fetchMovieCount()
-      // Then fetch first page of movies
-      fetchLightweightMovies({ limit: 50 })
+      // Then fetch first page of movies only if we were already on page 1
+      // (otherwise the page watcher will trigger the fetch)
+      if (wasPageOne) {
+        fetchLightweightMovies({ limit: 50 })
+      }
     }
   )
 
@@ -1363,9 +1369,23 @@ export const useMovieStore = defineStore('movie', () => {
       // Only apply pagination on the search page
       if (useRoute().path !== '/search') return
 
+      // Only fetch more if page increased
       if (newPage > oldPage) {
         const itemsPerPage = 50
         const offset = (newPage - 1) * itemsPerPage
+
+        // Check if we already have all available movies
+        if (totalFiltered.value > 0 && lightweightMovies.value.length >= totalFiltered.value) {
+          console.log('[watch:currentPage] Already have all movies loaded, skipping fetch')
+          return
+        }
+
+        // Check if we already have enough movies loaded for this page
+        const expectedMovies = newPage * itemsPerPage
+        if (lightweightMovies.value.length >= expectedMovies) {
+          console.log('[watch:currentPage] Already have enough movies loaded, skipping fetch')
+          return
+        }
 
         // If we have source filters or search query, use fetchFilteredMovies
         if (
@@ -1380,6 +1400,10 @@ export const useMovieStore = defineStore('movie', () => {
             offset,
           })
         }
+      } else if (newPage === 1 && oldPage !== 1) {
+        // Reset case - fetch first page
+        const itemsPerPage = 50
+        fetchLightweightMovies({ limit: itemsPerPage })
       }
     }
   )
