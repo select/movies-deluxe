@@ -209,6 +209,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Sources are now loaded separately from JSON files
    */
   const mapLightweightToMovie = (movie: LightweightMovie): MovieEntry => {
+    console.log('[mapLightweightToMovie] Mapping movie:', movie.imdbId, movie.title)
     return {
       imdbId: movie.imdbId,
       title: movie.title,
@@ -235,6 +236,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Sources are now loaded separately from JSON files
    */
   const mapRowToMovie = (row: MovieDatabaseRow): MovieEntry => {
+    console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
     // Create a minimal source object from database fields for UI display
     const sources: MovieSource[] = []
     if (row.primarySourceType) {
@@ -286,15 +288,17 @@ export const useMovieStore = defineStore('movie', () => {
    * Called once on app initialization
    */
   const loadFromFile = async () => {
+    console.log('[loadFromFile] Starting database initialization')
     isLoading.value.movies = true
 
     try {
       // Initialize database from remote file
       await db.init(`${useRuntimeConfig().app.baseURL}data/movies.db`)
+      console.log('[loadFromFile] Database initialized successfully')
 
       isInitialLoading.value = false
     } catch (err) {
-      window.console.error('Failed to initialize SQLite:', err)
+      console.error('[loadFromFile] Failed to initialize SQLite:', err)
 
       // Show toast notification for database initialization failure
       const { showToast } = useUiStore()
@@ -304,6 +308,7 @@ export const useMovieStore = defineStore('movie', () => {
         5000
       )
     } finally {
+      console.log('[loadFromFile] Finished database initialization')
       isLoading.value.movies = false
       isInitialLoading.value = false
     }
@@ -313,6 +318,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch total count of movies matching filters
    */
   const fetchMovieCount = async (): Promise<number> => {
+    console.log('[fetchMovieCount] Starting movie count fetch')
     // Wait for database to be ready if it's still initializing
     if (!db.isReady.value) {
       if (isInitialLoading.value && !isLoading.value.movies) {
@@ -326,7 +332,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       if (!db.isReady.value) {
-        window.console.error('[MovieStore] Database not ready for count')
+        console.error('[fetchMovieCount] Database not ready for count')
         return 0
       }
     }
@@ -378,10 +384,11 @@ export const useMovieStore = defineStore('movie', () => {
         params,
       })
 
+      console.log('[fetchMovieCount] Count result:', count)
       totalFiltered.value = count
       return count
     } catch (err) {
-      window.console.error('[MovieStore] Failed to fetch movie count:', err)
+      console.error('[fetchMovieCount] Failed to fetch movie count:', err)
       return 0
     }
   }
@@ -398,6 +405,10 @@ export const useMovieStore = defineStore('movie', () => {
     includeCount?: boolean
     searchQuery?: string
   }) => {
+    console.log('[fetchMovies] Starting fetch with options:', {
+      ...options,
+      params: options.params?.length,
+    })
     if (!db.isReady.value) return { result: [], totalCount: 0 }
 
     const { searchQuery, where, params = [], orderBy, limit, offset, includeCount } = options
@@ -425,6 +436,7 @@ export const useMovieStore = defineStore('movie', () => {
       includeCount,
     })
 
+    console.log('[fetchMovies] Fetched', result.length, 'movies, total count:', totalCount)
     return {
       result: result.map(mapLightweightToMovie),
       totalCount: totalCount || 0,
@@ -436,6 +448,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Returns essential fields for grid display
    */
   const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
+    console.log('[fetchMoviesByIds] Fetching', imdbIds.length, 'movies by IDs')
     if (!imdbIds || imdbIds.length === 0) return []
 
     // Ensure cache is initialized
@@ -447,9 +460,12 @@ export const useMovieStore = defineStore('movie', () => {
     const uncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
 
     if (uncachedIds.length === 0) {
+      console.log('[fetchMoviesByIds] All movies cached, returning from cache')
       // All movies are cached, return from cache
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     }
+
+    console.log('[fetchMoviesByIds] Need to fetch', uncachedIds.length, 'uncached movies')
 
     // Wait for database to be ready if it's still initializing
     if (!db.isReady.value) {
@@ -467,7 +483,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       if (!db.isReady.value) {
-        window.console.error('[MovieStore] Database not ready after waiting')
+        console.error('[fetchMoviesByIds] Database not ready after waiting')
         return []
       }
     }
@@ -481,6 +497,7 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       const results = await db.queryByIds<MovieDatabaseRow>(stillUncachedIds)
       const movies = results.map(mapRowToMovie)
+      console.log('[fetchMoviesByIds] Fetched', movies.length, 'movies from database')
 
       // Cache the results and merge with allMovies
       movies.forEach(movie => {
@@ -494,7 +511,7 @@ export const useMovieStore = defineStore('movie', () => {
       // Return all requested movies (cached + newly fetched)
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     } catch (err) {
-      window.console.error('[MovieStore] Failed to fetch movies by IDs:', err)
+      console.error('[fetchMoviesByIds] Failed to fetch movies by IDs:', err)
       return []
     }
   }
@@ -503,10 +520,12 @@ export const useMovieStore = defineStore('movie', () => {
    * Get a single movie by ID (from cache or API)
    */
   const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
+    console.log('[getMovieById] Getting movie:', imdbId)
     // Check cache first - but only if it has sources loaded with valid IDs
     if (movieDetailsCache.value.has(imdbId)) {
       const cached = movieDetailsCache.value.get(imdbId)
       if (cached && cached.sources && cached.sources.length > 0 && cached.sources[0]?.id) {
+        console.log('[getMovieById] Found in cache with full sources')
         return cached
       }
     }
@@ -515,11 +534,13 @@ export const useMovieStore = defineStore('movie', () => {
     if (allMovies.value.has(imdbId)) {
       const movie = allMovies.value.get(imdbId)
       if (movie && movie.sources && movie.sources.length > 0 && movie.sources[0]?.id) {
+        console.log('[getMovieById] Found in allMovies with full sources')
         return movie
       }
     }
 
     // Fetch full details from JSON file (static deployment)
+    console.log('[getMovieById] Fetching from JSON file')
     isLoading.value.movieDetails = true
     try {
       const movie = await $fetch<MovieEntry>(
@@ -527,13 +548,15 @@ export const useMovieStore = defineStore('movie', () => {
       )
       // Validate that we got a proper movie object (not HTML or malformed data)
       if (movie && typeof movie === 'object' && movie.imdbId && movie.title) {
+        console.log('[getMovieById] Successfully fetched movie from JSON')
         movieDetailsCache.value.set(imdbId, movie)
         return movie
       }
       // If we got invalid data, treat it as not found
+      console.warn('[getMovieById] Invalid movie data received')
       return undefined
     } catch (err) {
-      window.console.error(`[MovieStore] Failed to fetch movie details for ${imdbId}:`, err)
+      console.error(`[getMovieById] Failed to fetch movie details for ${imdbId}:`, err)
       return undefined
     } finally {
       isLoading.value.movieDetails = false
@@ -545,6 +568,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetches full lightweight data from database for proper display
    */
   const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
+    console.log('[getRelatedMovies] Getting related movies for:', movieId)
     try {
       // First try to get the movie data from cache to avoid duplicate fetching
       let movie: MovieEntry | undefined
@@ -563,9 +587,11 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
+        console.log('[getRelatedMovies] No related movies found')
         return []
       }
 
+      console.log('[getRelatedMovies] Found', movie.relatedMovies.length, 'related movies')
       // If database is not ready, start loading it in background but don't wait for it
       // unless we really need it for better related movies display
       if (!db.isReady.value && !isLoading.value.movies && isInitialLoading.value) {
@@ -574,11 +600,13 @@ export const useMovieStore = defineStore('movie', () => {
 
       // If database is ready, fetch full lightweight data for related movies
       if (db.isReady.value) {
+        console.log('[getRelatedMovies] Fetching full data from database')
         const relatedIds = movie.relatedMovies.map(rm => rm.imdbId)
         const fullMovies = await fetchMoviesByIds(relatedIds)
         return fullMovies
       }
 
+      console.log('[getRelatedMovies] Using lightweight data from JSON (DB not ready)')
       // Fallback: use the lightweight data from JSON if database is not ready
       return movie.relatedMovies.map(rm => ({
         imdbId: rm.imdbId,
@@ -593,7 +621,7 @@ export const useMovieStore = defineStore('movie', () => {
         },
       }))
     } catch (err) {
-      window.console.error('[MovieStore] Failed to fetch related movies:', err)
+      console.error('[getRelatedMovies] Failed to fetch related movies:', err)
       return []
     }
   }
@@ -602,11 +630,13 @@ export const useMovieStore = defineStore('movie', () => {
    * Search movies using FTS5 full-text search
    */
   const searchMovies = async (searchQuery: string): Promise<MovieEntry[]> => {
+    console.log('[searchMovies] Searching for:', searchQuery)
     if (!searchQuery || !searchQuery.trim()) {
       return Array.from(allMovies.value.values())
     }
 
     if (!db.isReady.value) {
+      console.log('[searchMovies] DB not ready, using JS fallback search')
       // Fallback to simple JS search if DB is not ready
       const lowerQuery = searchQuery.toLowerCase()
       return Array.from(allMovies.value.values()).filter((movie: MovieEntry) => {
@@ -629,9 +659,10 @@ export const useMovieStore = defineStore('movie', () => {
       )
 
       const matchedIds = new Set(results.map(r => r.imdbId as string))
+      console.log('[searchMovies] Found', matchedIds.size, 'matches')
       return Array.from(allMovies.value.values()).filter(m => matchedIds.has(m.imdbId))
     } catch (err) {
-      window.console.error('[MovieStore] Search failed:', err)
+      console.error('[searchMovies] Search failed:', err)
       return []
     }
   }
@@ -644,8 +675,9 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch lightweight movie list (IDs and titles only) for virtual scrolling
    */
   const fetchLightweightMovies = async (options: { limit?: number; offset?: number } = {}) => {
+    console.log('[fetchLightweightMovies] Starting with options:', options)
     if (!db.isReady.value) {
-      window.console.log('DB not ready, cannot fetch lightweight movies')
+      console.log('[fetchLightweightMovies] DB not ready, cannot fetch lightweight movies')
       return
     }
 
@@ -700,6 +732,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       // Source filters require joins, so use full query
       if (filters.value.sources.length > 0) {
+        console.log('[fetchLightweightMovies] Using full query for source filters')
         await fetchFilteredMovies(offset !== undefined && offset > 0)
         return
       }
@@ -710,6 +743,7 @@ export const useMovieStore = defineStore('movie', () => {
       const sortDir = filters.value.sort.direction.toUpperCase()
 
       if (sortField === 'relevance' && filters.value.searchQuery) {
+        console.log('[fetchLightweightMovies] Using full query for search relevance')
         // For search, we need to use FTS which requires full query
         await fetchFilteredMovies(offset !== undefined && offset > 0)
         return
@@ -737,12 +771,24 @@ export const useMovieStore = defineStore('movie', () => {
         if (totalCount !== undefined) {
           totalFiltered.value = totalCount
         }
+        console.log(
+          '[fetchLightweightMovies] Initial load:',
+          result?.length,
+          'movies, total:',
+          totalCount
+        )
       } else {
         // Append results for now, until we implement full range tracking
         lightweightMovies.value = [...lightweightMovies.value, ...(result || [])]
+        console.log(
+          '[fetchLightweightMovies] Appended',
+          result?.length,
+          'movies, total now:',
+          lightweightMovies.value.length
+        )
       }
     } catch (err: unknown) {
-      window.window.console.error('[MovieStore] Lightweight query failed:', err)
+      console.error('[fetchLightweightMovies] Lightweight query failed:', err)
       if (isInitial) {
         lightweightMovies.value = []
       }
@@ -757,9 +803,10 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch movies from SQLite based on current filters
    */
   const fetchFilteredMovies = async (append = false) => {
+    console.log('[fetchFilteredMovies] Starting with append:', append)
     if (!db.isReady.value) {
       // Fallback to JS filtering if DB not ready
-      window.window.console.error('DB not ready, using JS filtering')
+      console.error('[fetchFilteredMovies] DB not ready, using JS filtering')
       const allMoviesArray = await searchMovies(filters.value.searchQuery)
       filteredAndSortedMovies.value = applyFilters(allMoviesArray)
       totalFiltered.value = filteredAndSortedMovies.value.length
@@ -885,8 +932,14 @@ export const useMovieStore = defineStore('movie', () => {
       if (totalCount !== undefined) {
         totalFiltered.value = totalCount
       }
+      console.log(
+        '[fetchFilteredMovies] Result:',
+        filteredAndSortedMovies.value.length,
+        'movies, total:',
+        totalCount
+      )
     } catch (err: unknown) {
-      window.window.console.error('[MovieStore] SQL filtering failed:', err)
+      console.error('[fetchFilteredMovies] SQL filtering failed:', err)
       filteredAndSortedMovies.value = []
     } finally {
       isFiltering.value = false
@@ -897,6 +950,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Apply all filters to a list of movies (for JS fallback or liked.vue)
    */
   const applyFilters = (movies: MovieEntry[]): MovieEntry[] => {
+    console.log('[applyFilters] Applying filters to', movies.length, 'movies')
     let filtered = [...movies]
 
     // 1. Filter by source
@@ -978,6 +1032,7 @@ export const useMovieStore = defineStore('movie', () => {
       filtered = sortMovies(filtered, sortOption)
     }
 
+    console.log('[applyFilters] Filtered result:', filtered.length, 'movies')
     return filtered
   }
 
@@ -985,6 +1040,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set sort option
    */
   const setSort = (sort: SortState) => {
+    console.log('[setSort] Setting sort:', sort)
     filters.value.sort = { field: sort.field, direction: sort.direction }
 
     if (filters.value.searchQuery !== '') {
@@ -996,6 +1052,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set search query
    */
   const setSearchQuery = (query: string) => {
+    console.log('[setSearchQuery] Setting search query:', query)
     const wasEmpty = filters.value.searchQuery === ''
     const isNowEmpty = query === ''
 
@@ -1014,6 +1071,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Toggle source filter
    */
   const toggleSource = (source: string) => {
+    console.log('[toggleSource] Toggling source:', source)
     filters.value.sources = filters.value.sources.includes(source)
       ? filters.value.sources.filter(s => s !== source)
       : [...filters.value.sources, source]
@@ -1023,6 +1081,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set minimum rating
    */
   const setMinRating = (rating: number) => {
+    console.log('[setMinRating] Setting min rating:', rating)
     filters.value.minRating = rating
   }
 
@@ -1030,6 +1089,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set minimum year
    */
   const setMinYear = (year: number) => {
+    console.log('[setMinYear] Setting min year:', year)
     filters.value.minYear = year
   }
 
@@ -1037,6 +1097,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set maximum year
    */
   const setMaxYear = (year: number) => {
+    console.log('[setMaxYear] Setting max year:', year)
     filters.value.maxYear = year
   }
 
@@ -1044,6 +1105,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set minimum votes
    */
   const setMinVotes = (votes: number) => {
+    console.log('[setMinVotes] Setting min votes:', votes)
     filters.value.minVotes = votes
   }
 
@@ -1051,6 +1113,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set maximum votes
    */
   const setMaxVotes = (votes: number) => {
+    console.log('[setMaxVotes] Setting max votes:', votes)
     filters.value.maxVotes = votes
   }
 
@@ -1058,6 +1121,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Toggle genre filter
    */
   const toggleGenre = (genre: string) => {
+    console.log('[toggleGenre] Toggling genre:', genre)
     filters.value.genres = filters.value.genres.includes(genre)
       ? filters.value.genres.filter(g => g !== genre)
       : [...filters.value.genres, genre]
@@ -1067,6 +1131,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Toggle country filter
    */
   const toggleCountry = (country: string) => {
+    console.log('[toggleCountry] Toggling country:', country)
     filters.value.countries = filters.value.countries.includes(country)
       ? filters.value.countries.filter(c => c !== country)
       : [...filters.value.countries, country]
@@ -1076,6 +1141,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Reset all filters to defaults
    */
   const resetFilters = () => {
+    console.log('[resetFilters] Resetting all filters to defaults')
     filters.value = { ...DEFAULT_FILTERS }
   }
 
@@ -1087,6 +1153,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set current page for pagination
    */
   const setCurrentPage = (page: number) => {
+    console.log('[setCurrentPage] Setting page:', page)
     filters.value.currentPage = page
   }
 
@@ -1094,6 +1161,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Set last scroll position
    */
   const setScrollY = (y: number) => {
+    console.log('[setScrollY] Setting scroll position:', y)
     filters.value.lastScrollY = y
   }
 
@@ -1105,12 +1173,15 @@ export const useMovieStore = defineStore('movie', () => {
    * Toggle like status for a movie
    */
   const toggleLike = (movieId: string) => {
+    console.log('[toggleLike] Toggling like for:', movieId)
     const index = likedMovieIds.value.indexOf(movieId)
     if (index > -1) {
       // Remove from likes
+      console.log('[toggleLike] Removing from likes')
       likedMovieIds.value.splice(index, 1)
     } else {
       // Add to likes
+      console.log('[toggleLike] Adding to likes')
       likedMovieIds.value.push(movieId)
     }
   }
@@ -1119,16 +1190,10 @@ export const useMovieStore = defineStore('movie', () => {
    * Add a movie to likes
    */
   const like = (movieId: string) => {
+    console.log('[like] Adding movie to likes:', movieId)
     if (!likedMovieIds.value.includes(movieId)) {
       likedMovieIds.value.push(movieId)
     }
-  }
-
-  /**
-   * Check if a movie is liked
-   */
-  const isLiked = (movieId: string): boolean => {
-    return likedMovieIds.value.includes(movieId)
   }
 
   // ============================================
@@ -1139,6 +1204,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Get the primary source for a movie
    */
   const getPrimarySource = (movie: MovieEntry): MovieSource | undefined => {
+    console.log('[getPrimarySource] Getting primary source for:', movie.imdbId)
     if (movie.sources.length === 0) return undefined
 
     const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
@@ -1158,18 +1224,22 @@ export const useMovieStore = defineStore('movie', () => {
    * Check if a local poster exists
    */
   const posterExists = async (imdbId: string): Promise<boolean> => {
+    console.log('[posterExists] Checking poster for:', imdbId)
     if (!imdbId) return false
 
     if (posterCache.value.has(imdbId)) {
+      console.log('[posterExists] Found in cache:', posterCache.value.get(imdbId))
       return posterCache.value.get(imdbId)!
     }
 
     try {
       const response = await fetch(getPosterPath(imdbId), { method: 'HEAD' })
       const exists = response.ok
+      console.log('[posterExists] Poster exists:', exists)
       posterCache.value.set(imdbId, exists)
       return exists
     } catch {
+      console.log('[posterExists] Poster check failed')
       posterCache.value.set(imdbId, false)
       return false
     }
@@ -1179,6 +1249,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Get the best available poster URL
    */
   const getPosterUrl = async (movie: MovieEntry): Promise<string> => {
+    console.log('[getPosterUrl] Getting poster URL for:', movie.imdbId)
     const placeholder = '/images/poster-placeholder.jpg'
 
     if (!movie.imdbId) return placeholder
@@ -1200,6 +1271,12 @@ export const useMovieStore = defineStore('movie', () => {
    * Get poster URL synchronously
    */
   const getPosterUrlSync = (movie: MovieEntry, preferLocal: boolean = true): string => {
+    console.log(
+      '[getPosterUrlSync] Getting poster URL sync for:',
+      movie.imdbId,
+      'preferLocal:',
+      preferLocal
+    )
     const placeholder = '/images/poster-placeholder.jpg'
 
     if (!movie.imdbId) return placeholder
@@ -1357,7 +1434,6 @@ export const useMovieStore = defineStore('movie', () => {
     // ============================================
     toggleLike,
     like,
-    isLiked,
 
     // ============================================
     // UTILITY FUNCTIONS

@@ -147,13 +147,13 @@ interface Props {
 const props = defineProps<Props>()
 
 const movieStore = useMovieStore()
-const { isLiked: isLikedFn, movieDetailsCache } = movieStore
+const { likedMovieIds, movieDetailsCache } = storeToRefs(movieStore)
 const { getCollectionsForMovie } = useCollectionsStore()
 
 // Use full movie data from cache if available, otherwise use the provided movie object
 const movieData = computed(() => {
-  if (props.movie.imdbId && movieDetailsCache.has(props.movie.imdbId)) {
-    return movieDetailsCache.get(props.movie.imdbId)!
+  if (props.movie.imdbId && movieDetailsCache.value.has(props.movie.imdbId)) {
+    return movieDetailsCache.value.get(props.movie.imdbId)!
   }
   return props.movie
 })
@@ -166,7 +166,7 @@ const hasImdbId = computed(() => movieData.value.imdbId?.startsWith('tt') ?? fal
 
 // Check if movie is liked
 const isMovieLiked = computed(() =>
-  movieData.value.imdbId ? isLikedFn(movieData.value.imdbId) : false
+  movieData.value.imdbId ? likedMovieIds.value.includes(movieData.value.imdbId) : false
 )
 
 // Check if movie is verified

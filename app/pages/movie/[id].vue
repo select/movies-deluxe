@@ -456,14 +456,9 @@
 import type { MovieEntry, LightweightMovieEntry } from '~/types'
 
 // Stores - get reactive state and methods once
-const { currentMovieList } = storeToRefs(useMovieStore())
-const {
-  isLiked: isLikedFn,
-  getMovieById,
-  getRelatedMovies,
-  loadFromFile,
-  toggleLike,
-} = useMovieStore()
+const movieStore = useMovieStore()
+const { currentMovieList, likedMovieIds } = storeToRefs(movieStore)
+const { getMovieById, getRelatedMovies, loadFromFile, toggleLike } = movieStore
 const { showToast } = useUiStore()
 const route = useRoute()
 
@@ -491,7 +486,7 @@ const currentSource = computed(() => {
 
 // Liked computed
 const isLiked = computed(() => {
-  return movie.value ? isLikedFn(movie.value.imdbId) : false
+  return movie.value ? likedMovieIds.value.includes(movie.value.imdbId) : false
 })
 
 // Load related movies
