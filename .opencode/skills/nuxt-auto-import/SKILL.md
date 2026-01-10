@@ -3,7 +3,11 @@ name: nuxt-auto-import
 description: Guide for checking and fixing Nuxt 4 auto-import usage. Use this when reviewing impors in Vue components, composables, or TypeScript files in a Nuxt 4 project.
 ---
 
-# Nuxt 4 Auto-Import Rules
+**Auto-imported** = No `import` statement needed. Use directly.
+
+**Fix type errors**: Run `nuxt prepare` to rebuild auto-import list.
+
+**Import path**: Use `~` prefix in `/app` (e.g., `~/types/index`)
 
 ## ✅ Auto-Imported (No import needed)
 
@@ -15,10 +19,10 @@ description: Guide for checking and fixing Nuxt 4 auto-import usage. Use this wh
 - `shared/utils/*.ts` - Server + App
 - `server/utils/` - Server only
 
-Look for bad or unnecessary imports and fix them
-
 ## ❌ NOT Auto-Imported (Require import)
 
 - `app/types/` - Use `import type { ... } from '~/types'`
 - `app/utils/nested/` - Nested utils need imports
 - `app/layouts/`, `pages/`, `plugins/`, `workers/` - All need imports
+
+**Action**: Remove unnecessary imports for auto-imported modules.

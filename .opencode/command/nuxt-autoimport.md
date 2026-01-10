@@ -2,46 +2,25 @@
 description: Check for correct usage of Nuxt 4 auto-import
 ---
 
-Auto-imported means that if the modules export something there is not need for an `import` statement to use the exported functions or variables.
+**Auto-imported** = No `import` statement needed. Use directly.
 
-If there are type errors because of the auto imports first try to run `nuxt prepare` to rebuild the auto-import list.
+**Fix type errors**: Run `nuxt prepare` to rebuild auto-import list.
 
-Modules in /app import anything in app with `~`
+**Import path**: Use `~` prefix in `/app` (e.g., `~/types/index`)
 
-```
-app/
-├── components/
-│ └── MovieCard.vue # ✅ Auto-imported
-├── composables/
-│ └── useDatabase.ts # ✅ Auto-imported
-├── utils/
-│ ├── formatCount.ts # ✅ Auto-imported (root level only)
-│ └── nested/
-│  └── helper.ts # ❌ NOT auto-imported
-├── stores/
-│ └── useMovieStore.ts # ✅ Auto-imported
-├── types/
-│ └── index.ts # ❌ NOT auto-imported
-├── constants/
-│ └── config.ts # ❌ NOT auto-imported
-├── layouts/
-│ └── default.vue # ❌ NOT auto-imported
-├── pages/
-│ └── index.vue # ❌ NOT auto-imported
-├── plugins/
-│ └── dark-mode.client.ts # ❌ NOT auto-imported
-└── workers/
-  └── database.worker.ts # ❌ NOT auto-imported
-shared/
-├── types/
-│ └── collections.ts # ✅ Auto-imported in both server and app
-└── utils/
-  └── languageNormalizer.ts # ✅ Auto-imported in both server and app
-server/
-├── api/
-│ └── movies.get.ts # ❌ NOT auto-imported
-└── utils/
-└── movieData.ts # ❌ NOT auto-imported
-```
+## ✅ Auto-Imported (No import needed)
 
-Look for bad or unnecessary imports and fix them
+- `app/components/*.vue` - All components
+- `app/composables/*.ts` - All composables
+- `app/stores/*.ts` - All stores
+- `app/utils/*.ts` - Root level only (nested files need imports)
+- `shared/types/*.ts` - Server + App
+- `shared/utils/*.ts` - Server + App
+
+## ❌ NOT Auto-Imported (Require import)
+
+- `app/types/` - Use `import type { ... } from '~/types'`
+- `app/utils/nested/` - Nested utils need imports
+- `app/layouts/`, `pages/`, `plugins/`, `workers/` - All need imports
+
+**Action**: Remove unnecessary imports for auto-imported modules.
