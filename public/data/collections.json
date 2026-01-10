@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-10T17:18:00.000Z"
+    "lastUpdated": "2026-01-10T16:39:55.543Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -57,10 +57,98 @@
       "tt0071411",
       "tt0057565",
       "tt0100998",
-      "tt0080979"
+      "tt0080979",
+      "tt0038733",
+      "tt0095468",
+      "tt0076085",
+      "tt0046851",
+      "tt0038190",
+      "tt0000417",
+      "tt0072417",
+      "tt0043338",
+      "tt0071141",
+      "tt0020629",
+      "tt0056444",
+      "tt0052561",
+      "tt0060107",
+      "tt0077711",
+      "tt0052600",
+      "tt0037558",
+      "tt0100234",
+      "tt0036506",
+      "tt0015175",
+      "tt0043313",
+      "tt0016847",
+      "tt0068519",
+      "tt0015881",
+      "tt3390572",
+      "tt0056058",
+      "tt0071604",
+      "tt0023042",
+      "tt0058604",
+      "tt0053946",
+      "tt0070233",
+      "tt0056111",
+      "tt0055031",
+      "tt0060584",
+      "tt0041546",
+      "tt4169250",
+      "tt0019760",
+      "tt0076391",
+      "tt0079579",
+      "tt0093603",
+      "tt0408664",
+      "tt0076727",
+      "tt0011541",
+      "tt0058888",
+      "tt0053221",
+      "tt0014429",
+      "tt0770802",
+      "tt0061847",
+      "tt0056443",
+      "tt0047445",
+      "tt6725014",
+      "tt0015324",
+      "tt0018455",
+      "tt0084747",
+      "tt0051036",
+      "tt0075404",
+      "tt0036868",
+      "tt0043362",
+      "tt0049012",
+      "tt0010323",
+      "tt0018742",
+      "tt0379225",
+      "tt0050634",
+      "tt0018806",
+      "tt0062759",
+      "tt0063845",
+      "tt0053114",
+      "tt0015064",
+      "tt0045112",
+      "tt0056241",
+      "tt0056049",
+      "tt0036244",
+      "tt0012364",
+      "tt0040725",
+      "tt0059527",
+      "tt0053976",
+      "tt0046268",
+      "tt0019585",
+      "tt0050613",
+      "tt0046438",
+      "tt0051093",
+      "tt0047281",
+      "tt0046478",
+      "tt0055601",
+      "tt1185616",
+      "tt0054144",
+      "tt0057358",
+      "tt1166827",
+      "tt1332128"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-06T01:00:28.954Z",
+    "updatedAt": "2026-01-10T16:30:00.616Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1606,6 +1694,72 @@
       "wordplay"
     ]
   },
+  "alfred-hitchcock": {
+    "id": "alfred-hitchcock",
+    "name": "Alfred Hitchcock",
+    "description": "Suspenseful masterpieces from the Master of Suspense, Alfred Hitchcock, featuring psychological thrillers, mysteries, and iconic cinematic moments.",
+    "movieIds": [
+      "tt0019702",
+      "tt0058329",
+      "tt0054215",
+      "tt0032976",
+      "tt0028212",
+      "tt0036342",
+      "tt0038109",
+      "tt0026029",
+      "tt0030341",
+      "tt0017075",
+      "tt0025452",
+      "tt0049470",
+      "tt0039694",
+      "tt0029811",
+      "tt0018756",
+      "tt0056923",
+      "tt0017843",
+      "tt0031505",
+      "tt0028231",
+      "tt0024747",
+      "tt0020142",
+      "tt0016230",
+      "archive-i-confess-1950",
+      "archive-1940rebecaalfredhitchcock",
+      "archive-1946-notorious-encadenados-alfred-hitchcock-vose",
+      "youtube-mOcG8ZEfvCE",
+      "youtube-RmSdum4BMqI",
+      "youtube-gDt2qK_ZNQk",
+      "youtube-9aJ5j8HH46w",
+      "archive-secretagentfullmoviealfredhitchcockthriller1936englishsubtitle",
+      "archive-the-39-steps-colorized-movie-720p-hd",
+      "youtube-tEsehhPMO68",
+      "archive-the-lady-vanishes-colorized-movie-720p-hd_202403",
+      "youtube-jQ9ICZjQaLM",
+      "archive-the-man-who-knew-too-much-colorized-movie-720p-hd",
+      "youtube-cFU5esmgOds"
+    ],
+    "createdAt": "2026-01-10T17:18:00.000Z",
+    "updatedAt": "2026-01-10T16:39:55.543Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Alfred Hitchcock",
+        "filterState": {
+          "searchQuery": "Alfred Hitchcock",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "thriller",
+      "suspense",
+      "mystery",
+      "classic-hollywood",
+      "auteur"
+    ]
+  },
   "akira-kurosawa": {
     "id": "akira-kurosawa",
     "name": "Akira Kurosawa",
@@ -1638,6 +1792,35 @@
       "samurai",
       "drama",
       "masterpieces",
+      "auteur"
+    ]
+  },
+  "billy-wilder": {
+    "id": "billy-wilder",
+    "name": "Billy Wilder",
+    "description": "Brilliant films from Billy Wilder, master filmmaker known for his sharp wit, cynical humor, and genre-defying classics that blend drama, comedy, and film noir.",
+    "movieIds": [],
+    "createdAt": "2026-01-10T18:30:00.000Z",
+    "updatedAt": "2026-01-10T18:30:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Billy Wilder",
+        "filterState": {
+          "searchQuery": "Billy Wilder",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "drama",
+      "comedy",
+      "film-noir",
+      "classic-hollywood",
       "auteur"
     ]
   },
@@ -4622,36 +4805,6 @@
       "current"
     ],
     "enabled": true
-  },
-  "alfred-hitchcock": {
-    "id": "alfred-hitchcock",
-    "name": "Alfred Hitchcock",
-    "description": "Suspenseful masterpieces from the Master of Suspense, Alfred Hitchcock, featuring psychological thrillers, mysteries, and iconic cinematic moments.",
-    "movieIds": [],
-    "createdAt": "2026-01-10T17:18:00.000Z",
-    "updatedAt": "2026-01-10T17:18:00.000Z",
-    "savedQueries": [
-      {
-        "searchQuery": "Alfred Hitchcock",
-        "filterState": {
-          "searchQuery": "Alfred Hitchcock",
-          "currentPage": 1,
-          "lastScrollY": 0,
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          },
-          "minRating": 6.5,
-          "minVotes": 1000
-        }
-      }
-    ],
-    "tags": [
-      "thriller",
-      "suspense",
-      "mystery",
-      "classic-hollywood",
-      "auteur"
-    ]
   }
+
 }
