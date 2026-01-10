@@ -95,7 +95,7 @@ export interface MovieMetadata {
   }>
   Metascore?: string
   imdbRating?: string
-  imdbVotes?: string
+  imdbVotes?: number
   imdbID?: string
   Type?: string
   DVD?: string
@@ -161,7 +161,7 @@ export interface MovieEntry {
     title: string
     year?: number
     imdbRating?: string | number
-    imdbVotes?: string | number
+    imdbVotes?: number
     language?: string
     sourceType?: MovieSourceType
     channelName?: string

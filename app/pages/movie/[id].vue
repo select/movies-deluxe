@@ -715,7 +715,7 @@ const updateMetaTags = (movie: MovieEntry) => {
               '@type': 'AggregateRating',
               ratingValue: movie.metadata.imdbRating,
               ...(movie.metadata.imdbVotes && {
-                ratingCount: String(movie.metadata.imdbVotes).replace(/,/g, ''),
+                ratingCount: String(movie.metadata.imdbVotes),
               }),
             },
           }),

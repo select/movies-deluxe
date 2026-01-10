@@ -179,7 +179,11 @@ export async function generateSQLite(
         const m = movie.metadata || {}
         const imdbRating = m.imdbRating && m.imdbRating !== 'N/A' ? parseFloat(m.imdbRating) : null
         const imdbVotes =
-          m.imdbVotes && m.imdbVotes !== 'N/A' ? parseInt(m.imdbVotes.replace(/,/g, ''), 10) : null
+          typeof m.imdbVotes === 'number'
+            ? m.imdbVotes
+            : m.imdbVotes && m.imdbVotes !== 'N/A'
+              ? parseInt(m.imdbVotes.replace(/,/g, ''), 10)
+              : null
 
         // Determine language priority: Archive.org language > YouTube language > OMDB language
         let language: string | null = null
