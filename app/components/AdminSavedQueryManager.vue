@@ -117,17 +117,6 @@
         </div>
       </div>
     </div>
-
-    <div class="flex justify-end pt-2">
-      <button
-        class="px-4 py-2 bg-theme-primary text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 disabled:opacity-50"
-        :disabled="isRefreshing || !queries?.length"
-        @click="refreshCollection"
-      >
-        <div :class="[isRefreshing ? 'i-mdi-loading animate-spin' : 'i-mdi-refresh']" />
-        Refresh Collection from Queries
-      </button>
-    </div>
   </div>
 </template>
 
@@ -146,8 +135,6 @@ const emit = defineEmits<{
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-
-const isRefreshing = ref(false)
 
 const saveCurrentQuery = async () => {
   // Default values to compare against
@@ -244,17 +231,5 @@ const applyQuery = (query: SavedQuery) => {
   
   // Emit event to notify parent that filters were applied
   emit('filtersApplied')
-}
-
-const refreshCollection = async () => {
-  isRefreshing.value = true
-  try {
-    const result = await collectionsStore.refreshCollectionFromQuery(props.collectionId)
-    if (result.success) {
-      alert(`Collection refreshed! Now contains ${result.movieCount} movies.`)
-    }
-  } finally {
-    isRefreshing.value = false
-  }
 }
 </script>
