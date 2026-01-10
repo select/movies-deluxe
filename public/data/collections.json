@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-08T22:54:45.111Z"
+    "lastUpdated": "2026-01-10T17:18:00.000Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -77,7 +77,13 @@
         }
       }
     ],
-    "tags": ["classics", "highly-rated", "must-watch", "cinema-history", "masterpieces"]
+    "tags": [
+      "classics",
+      "highly-rated",
+      "must-watch",
+      "cinema-history",
+      "masterpieces"
+    ]
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -170,7 +176,13 @@
         }
       }
     ],
-    "tags": ["comedy", "silent-film", "slapstick", "classic-hollywood", "shorts"]
+    "tags": [
+      "comedy",
+      "silent-film",
+      "slapstick",
+      "classic-hollywood",
+      "shorts"
+    ]
   },
   "animation-shorts": {
     "id": "animation-shorts",
@@ -1347,7 +1359,13 @@
         }
       }
     ],
-    "tags": ["animation", "shorts", "golden-age", "cartoons", "family"]
+    "tags": [
+      "animation",
+      "shorts",
+      "golden-age",
+      "cartoons",
+      "family"
+    ]
   },
   "martial-arts": {
     "id": "martial-arts",
@@ -1401,7 +1419,13 @@
     "createdAt": "2025-12-29T16:08:00.000Z",
     "updatedAt": "2026-01-07T00:32:07.557Z",
     "savedQueries": [],
-    "tags": ["action", "kung-fu", "martial-arts", "asian-cinema", "fight-scenes"],
+    "tags": [
+      "action",
+      "kung-fu",
+      "martial-arts",
+      "asian-cinema",
+      "fight-scenes"
+    ],
     "enabled": true
   },
   "canine-cinema": {
@@ -1418,7 +1442,13 @@
     "createdAt": "2025-12-29T16:18:00.000Z",
     "updatedAt": "2026-01-07T00:31:27.845Z",
     "savedQueries": [],
-    "tags": ["family", "animals", "dogs", "heartwarming", "adventure"],
+    "tags": [
+      "family",
+      "animals",
+      "dogs",
+      "heartwarming",
+      "adventure"
+    ],
     "enabled": false
   },
   "buster-keaton": {
@@ -1510,7 +1540,13 @@
     "createdAt": "2025-12-30T00:00:00.000Z",
     "updatedAt": "2026-01-02T20:52:21.165Z",
     "savedQueries": [],
-    "tags": ["comedy", "silent-film", "slapstick", "physical-comedy", "classic-hollywood"]
+    "tags": [
+      "comedy",
+      "silent-film",
+      "slapstick",
+      "physical-comedy",
+      "classic-hollywood"
+    ]
   },
   "criterion-collection": {
     "id": "criterion-collection",
@@ -1534,7 +1570,13 @@
     "createdAt": "2025-12-31T02:45:00.000Z",
     "updatedAt": "2026-01-03T04:29:30.288Z",
     "savedQueries": [],
-    "tags": ["classics", "art-house", "prestigious", "restored", "cinema-history"]
+    "tags": [
+      "classics",
+      "art-house",
+      "prestigious",
+      "restored",
+      "cinema-history"
+    ]
   },
   "abbott-and-costello": {
     "id": "abbott-and-costello",
@@ -1556,7 +1598,13 @@
     "createdAt": "2026-01-03T19:00:00.000Z",
     "updatedAt": "2026-01-03T19:00:00.000Z",
     "savedQueries": [],
-    "tags": ["comedy", "classic-hollywood", "duo", "slapstick", "wordplay"]
+    "tags": [
+      "comedy",
+      "classic-hollywood",
+      "duo",
+      "slapstick",
+      "wordplay"
+    ]
   },
   "akira-kurosawa": {
     "id": "akira-kurosawa",
@@ -1585,7 +1633,13 @@
     "createdAt": "2026-01-03T20:30:00.000Z",
     "updatedAt": "2026-01-03T20:53:18.150Z",
     "savedQueries": [],
-    "tags": ["japanese-cinema", "samurai", "drama", "masterpieces", "auteur"]
+    "tags": [
+      "japanese-cinema",
+      "samurai",
+      "drama",
+      "masterpieces",
+      "auteur"
+    ]
   },
   "sci-fi": {
     "id": "sci-fi",
@@ -1596,7 +1650,6 @@
       "tt0062622",
       "tt12385804",
       "tt3460068",
-      "tt0437086",
       "tt0120591",
       "tt0015214",
       "tt0092610",
@@ -1678,7 +1731,7 @@
       "tt0044207"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-08T22:10:34.929Z",
+    "updatedAt": "2026-01-09T00:49:04.369Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1692,11 +1745,19 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["Sci-Fi"]
+          "genres": [
+            "Sci-Fi"
+          ]
         }
       }
     ],
-    "tags": ["sci-fi", "space", "future", "technology", "aliens"]
+    "tags": [
+      "sci-fi",
+      "space",
+      "future",
+      "technology",
+      "aliens"
+    ]
   },
   "horror": {
     "id": "horror",
@@ -1808,11 +1869,19 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["Horror"]
+          "genres": [
+            "Horror"
+          ]
         }
       }
     ],
-    "tags": ["horror", "thriller", "suspense", "monsters", "supernatural"]
+    "tags": [
+      "horror",
+      "thriller",
+      "suspense",
+      "monsters",
+      "supernatural"
+    ]
   },
   "film-noir": {
     "id": "film-noir",
@@ -1971,11 +2040,19 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["Film-Noir"]
+          "genres": [
+            "Film-Noir"
+          ]
         }
       }
     ],
-    "tags": ["noir", "crime", "mystery", "black-and-white", "detective"],
+    "tags": [
+      "noir",
+      "crime",
+      "mystery",
+      "black-and-white",
+      "detective"
+    ],
     "enabled": true
   },
   "romance": {
@@ -2165,11 +2242,19 @@
           },
           "minRating": 7,
           "minVotes": 3000,
-          "genres": ["Romance"]
+          "genres": [
+            "Romance"
+          ]
         }
       }
     ],
-    "tags": ["romance", "love", "drama", "relationships", "heartwarming"],
+    "tags": [
+      "romance",
+      "love",
+      "drama",
+      "relationships",
+      "heartwarming"
+    ],
     "enabled": true
   },
   "adventure": {
@@ -2306,11 +2391,19 @@
           },
           "minRating": 7,
           "minVotes": 3000,
-          "genres": ["Adventure"]
+          "genres": [
+            "Adventure"
+          ]
         }
       }
     ],
-    "tags": ["adventure", "action", "exploration", "journey", "epic"],
+    "tags": [
+      "adventure",
+      "action",
+      "exploration",
+      "journey",
+      "epic"
+    ],
     "enabled": true
   },
   "mystery": {
@@ -2471,11 +2564,19 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["Mystery"]
+          "genres": [
+            "Mystery"
+          ]
         }
       }
     ],
-    "tags": ["mystery", "detective", "whodunit", "suspense", "investigation"],
+    "tags": [
+      "mystery",
+      "detective",
+      "whodunit",
+      "suspense",
+      "investigation"
+    ],
     "enabled": true
   },
   "thriller": {
@@ -2639,11 +2740,19 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["Thriller"]
+          "genres": [
+            "Thriller"
+          ]
         }
       }
     ],
-    "tags": ["thriller", "suspense", "tension", "psychological", "crime"],
+    "tags": [
+      "thriller",
+      "suspense",
+      "tension",
+      "psychological",
+      "crime"
+    ],
     "enabled": true
   },
   "war": {
@@ -2760,11 +2869,19 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["War"]
+          "genres": [
+            "War"
+          ]
         }
       }
     ],
-    "tags": ["war", "military", "combat", "historical", "drama"],
+    "tags": [
+      "war",
+      "military",
+      "combat",
+      "historical",
+      "drama"
+    ],
     "enabled": true
   },
   "western": {
@@ -2964,7 +3081,9 @@
           },
           "minRating": 6.5,
           "minVotes": 3000,
-          "genres": ["Western"]
+          "genres": [
+            "Western"
+          ]
         }
       }
     ],
@@ -3101,7 +3220,13 @@
         }
       }
     ],
-    "tags": ["1920s", "silent-film", "early-cinema", "classics", "vintage"],
+    "tags": [
+      "1920s",
+      "silent-film",
+      "early-cinema",
+      "classics",
+      "vintage"
+    ],
     "enabled": true
   },
   "1930s": {
@@ -3240,7 +3365,13 @@
         }
       }
     ],
-    "tags": ["1930s", "golden-age", "pre-code", "classics", "hollywood"],
+    "tags": [
+      "1930s",
+      "golden-age",
+      "pre-code",
+      "classics",
+      "hollywood"
+    ],
     "enabled": true
   },
   "1940s": {
@@ -3458,7 +3589,13 @@
         }
       }
     ],
-    "tags": ["1940s", "film-noir", "war-films", "classics", "golden-age"]
+    "tags": [
+      "1940s",
+      "film-noir",
+      "war-films",
+      "classics",
+      "golden-age"
+    ]
   },
   "1950s": {
     "id": "1950s",
@@ -3653,7 +3790,13 @@
         }
       }
     ],
-    "tags": ["1950s", "cinemascope", "method-acting", "classics", "technicolor"],
+    "tags": [
+      "1950s",
+      "cinemascope",
+      "method-acting",
+      "classics",
+      "technicolor"
+    ],
     "enabled": true
   },
   "1960s": {
@@ -3825,7 +3968,13 @@
         }
       }
     ],
-    "tags": ["1960s", "new-wave", "counterculture", "classics", "revolution"],
+    "tags": [
+      "1960s",
+      "new-wave",
+      "counterculture",
+      "classics",
+      "revolution"
+    ],
     "enabled": true
   },
   "1970s": {
@@ -3952,7 +4101,13 @@
         }
       }
     ],
-    "tags": ["1970s", "new-hollywood", "auteur", "classics", "gritty"],
+    "tags": [
+      "1970s",
+      "new-hollywood",
+      "auteur",
+      "classics",
+      "gritty"
+    ],
     "enabled": true
   },
   "1980s": {
@@ -4013,7 +4168,13 @@
         }
       }
     ],
-    "tags": ["1980s", "blockbusters", "action", "classics", "nostalgia"],
+    "tags": [
+      "1980s",
+      "blockbusters",
+      "action",
+      "classics",
+      "nostalgia"
+    ],
     "enabled": true
   },
   "1990s": {
@@ -4093,7 +4254,13 @@
         }
       }
     ],
-    "tags": ["1990s", "indie", "diverse", "modern", "classics"],
+    "tags": [
+      "1990s",
+      "indie",
+      "diverse",
+      "modern",
+      "classics"
+    ],
     "enabled": true
   },
   "2000s": {
@@ -4229,7 +4396,13 @@
         }
       }
     ],
-    "tags": ["2000s", "digital", "modern", "contemporary", "millennium"],
+    "tags": [
+      "2000s",
+      "digital",
+      "modern",
+      "contemporary",
+      "millennium"
+    ],
     "enabled": true
   },
   "2010s": {
@@ -4385,7 +4558,13 @@
         }
       }
     ],
-    "tags": ["2010s", "streaming", "contemporary", "modern", "recent"],
+    "tags": [
+      "2010s",
+      "streaming",
+      "contemporary",
+      "modern",
+      "recent"
+    ],
     "enabled": true
   },
   "2020s": {
@@ -4435,7 +4614,44 @@
         }
       }
     ],
-    "tags": ["2020s", "contemporary", "new-releases", "modern", "current"],
+    "tags": [
+      "2020s",
+      "contemporary",
+      "new-releases",
+      "modern",
+      "current"
+    ],
     "enabled": true
+  },
+  "alfred-hitchcock": {
+    "id": "alfred-hitchcock",
+    "name": "Alfred Hitchcock",
+    "description": "Suspenseful masterpieces from the Master of Suspense, Alfred Hitchcock, featuring psychological thrillers, mysteries, and iconic cinematic moments.",
+    "movieIds": [],
+    "createdAt": "2026-01-10T17:18:00.000Z",
+    "updatedAt": "2026-01-10T17:18:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Alfred Hitchcock",
+        "filterState": {
+          "searchQuery": "Alfred Hitchcock",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          },
+          "minRating": 6.5,
+          "minVotes": 1000
+        }
+      }
+    ],
+    "tags": [
+      "thriller",
+      "suspense",
+      "mystery",
+      "classic-hollywood",
+      "auteur"
+    ]
   }
 }
