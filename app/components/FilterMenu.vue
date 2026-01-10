@@ -250,7 +250,7 @@
               </CollapsibleFilterItems>
             </FilterSection>
 
-          <!-- Row 3: Source and Developer Tools -->
+          <!-- Row 3: Source -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Source Filter -->
             <FilterSection
@@ -294,108 +294,7 @@
               </div>
             </FilterSection>
           </div>
-          <!-- Theme Section -->
-          <FilterSection
-            id="theme-selection-section"
-            title="Theme"
-            icon="i-mdi-palette"
-            :default-expanded="true"
-            :highlight="highlightThemeSection"
-          >
-            <div class="space-y-6">
-              <!-- Dark Themes -->
-              <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
-                  <div class="i-mdi-weather-night text-xs" />
-                  Dark Themes
-                </h4>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  <button
-                    v-for="theme in darkThemes"
-                    :key="theme.metadata.id"
-                    class="flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left"
-                    :class="{
-                      'border-theme-primary bg-theme-primary/10': currentThemeId === theme.metadata.id,
-                      'border-theme-border/50 hover:border-theme-border bg-theme-surface/50': currentThemeId !== theme.metadata.id
-                    }"
-                    @click="setTheme(theme.metadata.id)"
-                    @mouseenter="previewTheme(theme.metadata.id)"
-                    @mouseleave="previewTheme(null)"
-                  >
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs font-semibold truncate">{{ theme.metadata.name }}</span>
-                      <div
-                        v-if="currentThemeId === theme.metadata.id"
-                        class="i-mdi-check-circle text-theme-primary text-xs"
-                      />
-                    </div>
 
-                    <!-- Color Swatches -->
-                    <div class="flex gap-1">
-                      <div
-                        class="w-3 h-3 rounded-full border border-black/10"
-                        :style="{ backgroundColor: theme.colors.background }"
-                      />
-                      <div
-                        class="w-3 h-3 rounded-full border border-black/10"
-                        :style="{ backgroundColor: theme.colors.primary }"
-                      />
-                      <div
-                        class="w-3 h-3 rounded-full border border-black/10"
-                        :style="{ backgroundColor: theme.colors.accent }"
-                      />
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Light Themes -->
-              <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
-                  <div class="i-mdi-weather-sunny text-xs" />
-                  Light Themes
-                </h4>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  <button
-                    v-for="theme in lightThemes"
-                    :key="theme.metadata.id"
-                    class="flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left"
-                    :class="{
-                      'border-theme-primary bg-theme-primary/10': currentThemeId === theme.metadata.id,
-                      'border-theme-border/50 hover:border-theme-border bg-theme-surface/50': currentThemeId !== theme.metadata.id
-                    }"
-                    @click="setTheme(theme.metadata.id)"
-                    @mouseenter="previewTheme(theme.metadata.id)"
-                    @mouseleave="previewTheme(null)"
-                  >
-                    <div class="flex items-center justify-between">
-                      <span class="text-xs font-semibold truncate">{{ theme.metadata.name }}</span>
-                      <div
-                        v-if="currentThemeId === theme.metadata.id"
-                        class="i-mdi-check-circle text-theme-primary text-xs"
-                      />
-                    </div>
-
-                    <!-- Color Swatches -->
-                    <div class="flex gap-1">
-                      <div
-                        class="w-3 h-3 rounded-full border border-black/10"
-                        :style="{ backgroundColor: theme.colors.background }"
-                      />
-                      <div
-                        class="w-3 h-3 rounded-full border border-black/10"
-                        :style="{ backgroundColor: theme.colors.primary }"
-                      />
-                      <div
-                        class="w-3 h-3 rounded-full border border-black/10"
-                        :style="{ backgroundColor: theme.colors.accent }"
-                      />
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </FilterSection>
           <!-- Error state -->
           <div v-if="filterLoadError" class="text-sm text-red-500 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
             {{ filterLoadError }}
@@ -422,38 +321,6 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   close: []
 }>()
-
-// Theme support
-const uiStore = useUiStore()
-const { currentThemeId } = storeToRefs(uiStore)
-const { setTheme, previewTheme } = uiStore
-const themes = getAllThemes()
-const darkThemes = computed(() => themes.filter(t => t.metadata.variant === 'dark'))
-const lightThemes = computed(() => themes.filter(t => t.metadata.variant === 'light'))
-
-// Highlight state for theme section
-const highlightThemeSection = ref(false)
-
-/**
- * Scroll to theme section and trigger highlight effect
- */
-const scrollToThemeSection = () => {
-  const element = document.getElementById('theme-selection-section')
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-
-    // Trigger highlight effect
-    highlightThemeSection.value = true
-    setTimeout(() => {
-      highlightThemeSection.value = false
-    }, 2000)
-  }
-}
-
-// Expose method to parent
-defineExpose({
-  scrollToThemeSection
-})
 
 // Use unified movie store
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())

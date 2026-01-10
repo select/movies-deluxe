@@ -6,14 +6,19 @@
     <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
     <Sidebar
       @open-filters="isFilterMenuOpen = true"
-      @open-theme-selection="openThemeSelection"
+      @open-theme-selection="isThemeMenuOpen = true"
     />
 
     <!-- Filter Menu -->
     <FilterMenu
-      ref="filterMenuRef"
       :is-open="isFilterMenuOpen"
       @close="isFilterMenuOpen = false"
+    />
+
+    <!-- Theme Menu -->
+    <ThemeMenu
+      :is-open="isThemeMenuOpen"
+      @close="isThemeMenuOpen = false"
     />
 
     <!-- Page Content -->
@@ -27,33 +32,21 @@
 <script setup lang="ts">
 import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 
-// Filter menu state (shared across all pages)
+// Menu state (shared across all pages)
 const isFilterMenuOpen = ref(false)
-const filterMenuRef = ref()
-
-/**
- * Open filter menu and scroll to theme section
- */
-const openThemeSelection = () => {
-  isFilterMenuOpen.value = true
-  
-  // Wait for menu to open and then scroll
-  nextTick(() => {
-    setTimeout(() => {
-      filterMenuRef.value?.scrollToThemeSection()
-    }, 300) // Match menu transition duration
-  })
-}
+const isThemeMenuOpen = ref(false)
 
 // Keyboard shortcuts
 const keys = useMagicKeys()
 const { Escape } = keys
 
-// Escape key closes filter menu
+// Escape key closes menus
 if (Escape) {
   whenever(Escape, () => {
     if (isFilterMenuOpen.value) {
       isFilterMenuOpen.value = false
+    } else if (isThemeMenuOpen.value) {
+      isThemeMenuOpen.value = false
     }
   })
 }
