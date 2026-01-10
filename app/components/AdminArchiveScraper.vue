@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-      <div class="i-mdi-archive text-amber-500" />
+      <div class="i-mdi-archive text-amber-500"></div>
       Archive.org Scraper
     </h2>
 
@@ -16,8 +16,8 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div v-if="loading" class="i-mdi-loading animate-spin" />
-        <div v-else class="i-mdi-play" />
+        <div v-if="loading" class="i-mdi-loading animate-spin"></div>
+        <div v-else class="i-mdi-play"></div>
         {{ loading ? 'Scraping in progress...' : 'Start Archive.org Scrape' }}
       </button>
 
@@ -36,7 +36,7 @@
           <div
             class="h-full bg-amber-500 transition-all duration-300"
             :style="{ width: `${(progress.archive.current / progress.archive.total) * 100}%` }"
-          />
+          ></div>
         </div>
       </div>
     </div>

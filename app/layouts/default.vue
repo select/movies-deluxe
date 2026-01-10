@@ -16,7 +16,7 @@
     <ThemeMenu :is-open="isThemeMenuOpen" @close="isThemeMenuOpen = false" />
 
     <!-- Page Content -->
-    <slot />
+    <slot></slot>
 
     <!-- Toast Container -->
     <AppToastContainer />

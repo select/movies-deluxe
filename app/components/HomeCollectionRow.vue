@@ -2,7 +2,7 @@
   <div class="space-y-4 group/row">
     <div class="flex items-center justify-between px-4">
       <h2 class="text-xl font-bold text-theme-text flex items-center gap-2">
-        <div class="i-mdi-movie-open text-theme-accent" />
+        <div class="i-mdi-movie-open text-theme-accent"></div>
         {{ collection.name }}
       </h2>
       <NuxtLink
@@ -10,7 +10,7 @@
         class="text-sm text-theme-accent hover:underline flex items-center gap-1 font-medium"
       >
         View all
-        <div class="i-mdi-chevron-right" />
+        <div class="i-mdi-chevron-right"></div>
       </NuxtLink>
     </div>
 
@@ -21,7 +21,7 @@
         class="absolute left-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 group-hover/row:animate-pulse"
         @click="scroll('left')"
       >
-        <div class="i-mdi-chevron-left text-2xl" />
+        <div class="i-mdi-chevron-left text-2xl"></div>
       </button>
 
       <!-- Right Scroll Button -->
@@ -30,7 +30,7 @@
         class="absolute right-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 group-hover/row:animate-pulse"
         @click="scroll('right')"
       >
-        <div class="i-mdi-chevron-right text-2xl" />
+        <div class="i-mdi-chevron-right text-2xl"></div>
       </button>
 
       <div

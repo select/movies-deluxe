@@ -13,8 +13,8 @@
       :aria-checked="checked"
       :aria-disabled="disabled"
     >
-      <div v-if="checked" class="i-mdi-checkbox-marked text-xl" />
-      <div v-else class="i-mdi-checkbox-blank-outline text-xl" />
+      <div v-if="checked" class="i-mdi-checkbox-marked text-xl"></div>
+      <div v-else class="i-mdi-checkbox-blank-outline text-xl"></div>
     </div>
     <input
       :checked="checked"
@@ -27,7 +27,7 @@
     <span v-if="label" class="text-sm select-none" :class="{ 'text-theme-textmuted': disabled }">
       {{ label }}
     </span>
-    <slot />
+    <slot></slot>
   </label>
 </template>
 

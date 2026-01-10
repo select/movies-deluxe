@@ -3,7 +3,7 @@
     <div class="mb-4">
       <div>
         <h3 class="text-lg font-semibold flex items-center gap-2">
-          <div class="i-mdi-broom text-orange-500" />
+          <div class="i-mdi-broom text-orange-500"></div>
           Smart Description Cleanup
         </h3>
         <p class="text-sm text-theme-textmuted mt-1">
@@ -15,7 +15,7 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div class="i-mdi-broom" :class="{ 'animate-pulse': loading }" />
+        <div class="i-mdi-broom" :class="{ 'animate-pulse': loading }"></div>
         {{ loading ? 'Processing...' : 'Clean Descriptions' }}
       </button>
     </div>
@@ -92,7 +92,7 @@
         class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
       >
         <div class="flex items-center gap-2">
-          <div class="i-mdi-check-circle text-green-500" />
+          <div class="i-mdi-check-circle text-green-500"></div>
           <div class="text-green-800 dark:text-green-200">
             Successfully removed {{ results.boilerplateRemoved.toLocaleString() }} boilerplate
             descriptions using {{ results.patterns.length }} detection patterns.
@@ -106,7 +106,7 @@
         class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
       >
         <div class="flex items-center gap-2">
-          <div class="i-mdi-information text-blue-500" />
+          <div class="i-mdi-information text-blue-500"></div>
           <div class="text-blue-800 dark:text-blue-200">
             No boilerplate descriptions detected for removal.
           </div>

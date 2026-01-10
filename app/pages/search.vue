@@ -7,7 +7,7 @@
       <div class="max-w-4xl mx-auto flex items-center gap-4">
         <div class="relative flex-1">
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-2xl text-theme-textmuted" />
+            <div class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
           </div>
           <input
             ref="searchInput"
@@ -22,7 +22,7 @@
             class="absolute inset-y-0 right-0 pr-4 flex items-center"
             @click="clearSearch"
           >
-            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text" />
+            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
           </button>
         </div>
       </div>

@@ -16,7 +16,7 @@
           loading="lazy"
         />
         <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
-          <div class="i-mdi-movie text-3xl" />
+          <div class="i-mdi-movie text-3xl"></div>
         </div>
       </div>
 
@@ -31,7 +31,7 @@
           loading="lazy"
         />
         <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
-          <div class="i-mdi-movie text-3xl" />
+          <div class="i-mdi-movie text-3xl"></div>
         </div>
       </div>
 
@@ -46,7 +46,7 @@
           loading="lazy"
         />
         <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
-          <div class="i-mdi-movie text-4xl" />
+          <div class="i-mdi-movie text-4xl"></div>
         </div>
       </div>
 

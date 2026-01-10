@@ -16,7 +16,7 @@
         'text-white': isActive,
         'text-theme-textmuted': !isActive,
       }"
-    />
+    ></div>
 
     <!-- Label -->
     <span>{{ option.label }}</span>

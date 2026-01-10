@@ -11,7 +11,7 @@
         v-if="hasImdbId"
         class="absolute inset-0 shimmer z-10 transition-opacity duration-500"
         :class="{ 'opacity-0 pointer-events-none': imageLoaded, 'opacity-100': !imageLoaded }"
-      />
+      ></div>
 
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
@@ -29,7 +29,7 @@
         v-else
         class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
       >
-        <div class="i-mdi-movie text-6xl" />
+        <div class="i-mdi-movie text-6xl"></div>
       </div>
 
       <!-- Badges -->
@@ -62,7 +62,7 @@
         v-if="isMovieLiked"
         class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center z-10"
       >
-        <div class="i-mdi-heart text-red-500 text-lg" />
+        <div class="i-mdi-heart text-red-500 text-lg"></div>
       </div>
 
       <!-- Collection Indicator -->
@@ -72,7 +72,7 @@
         :class="{ 'ml-8': isMovieLiked }"
         :title="movieCollections.map((c: Collection) => c.name).join(', ')"
       >
-        <div class="i-mdi:movie-roll text-theme-accent text-lg" />
+        <div class="i-mdi:movie-roll text-theme-accent text-lg"></div>
         <span
           v-if="movieCollections.length > 1"
           class="absolute -bottom-1 -right-1 bg-theme-accent text-black text-[9px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-theme-surface"
@@ -93,7 +93,7 @@
         }"
         title="Verified Source"
       >
-        <div class="i-mdi-check-decagram text-green-600 text-2xl" />
+        <div class="i-mdi-check-decagram text-green-600 text-2xl"></div>
       </div>
     </div>
 
@@ -107,7 +107,7 @@
         <span v-if="movie.year">{{ movie.year }}</span>
         <span v-if="movie.year && metadata?.imdbRating" class="opacity-50">•</span>
         <span v-if="metadata?.imdbRating" class="flex items-center gap-1">
-          <div class="i-mdi-star text-theme-accent text-xs" />
+          <div class="i-mdi-star text-theme-accent text-xs"></div>
           <span class="font-bold text-theme-text">{{ metadata.imdbRating }}</span>
           <span v-if="metadata?.imdbVotes" class="text-[10px] opacity-70">
             ({{ formatVotes(metadata.imdbVotes) }})
@@ -125,7 +125,7 @@
   >
     <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
       <div class="w-full h-full flex items-center justify-center text-red-400">
-        <div class="i-mdi-alert-circle text-6xl" />
+        <div class="i-mdi-alert-circle text-6xl"></div>
       </div>
     </div>
     <div class="p-3 flex-shrink-0">

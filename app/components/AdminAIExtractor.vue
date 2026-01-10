@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-      <div class="i-mdi-robot text-purple-600" />
+      <div class="i-mdi-robot text-purple-600"></div>
       AI Metadata Extraction
     </h2>
 
@@ -26,8 +26,8 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div v-if="loading" class="i-mdi-loading animate-spin" />
-        <div v-else class="i-mdi-robot" />
+        <div v-if="loading" class="i-mdi-loading animate-spin"></div>
+        <div v-else class="i-mdi-robot"></div>
         {{ loading ? 'Extracting...' : 'Extract with AI' }}
       </button>
 
@@ -52,23 +52,23 @@
             class="h-full bg-purple-500 transition-all duration-300"
             :style="{ width: `${((progress.ai.successCurrent || 0) / progress.ai.total) * 100}%` }"
             title="Success"
-          />
+          ></div>
           <div
             v-if="progress.ai.total"
             class="h-full bg-orange-500 transition-all duration-300"
             :style="{ width: `${((progress.ai.failedCurrent || 0) / progress.ai.total) * 100}%` }"
             title="Failed"
-          />
+          ></div>
         </div>
 
         <!-- Stats Breakdown -->
         <div class="grid grid-cols-2 gap-2 text-[10px] font-medium">
           <div class="flex items-center gap-1 text-purple-600 dark:text-purple-400">
-            <div class="i-mdi-check-circle" />
+            <div class="i-mdi-check-circle"></div>
             Success: {{ progress.ai.successCurrent || 0 }}
           </div>
           <div class="flex items-center gap-1 text-orange-600 dark:text-orange-400">
-            <div class="i-mdi-alert-circle" />
+            <div class="i-mdi-alert-circle"></div>
             Failed: {{ progress.ai.failedCurrent || 0 }}
           </div>
         </div>

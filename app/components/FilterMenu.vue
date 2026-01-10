@@ -5,7 +5,7 @@
       v-if="isOpen"
       class="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
       @click="emit('close')"
-    />
+    ></div>
 
     <!-- Filter Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
@@ -22,12 +22,12 @@
         aria-label="Close filters"
         @click="emit('close')"
       >
-        <div class="i-mdi-close text-2xl" />
+        <div class="i-mdi-close text-2xl"></div>
       </button>
       <!-- Header -->
       <div class="flex items-center justify-between p-4">
         <h2 class="text-lg font-semibold flex items-center gap-2 text-theme-text">
-          <div class="i-mdi-filter-variant text-xl" />
+          <div class="i-mdi-filter-variant text-xl"></div>
           Filters
         </h2>
         <div class="flex items-center gap-2">
@@ -43,7 +43,7 @@
             aria-label="Close filters"
             @click="emit('close')"
           >
-            <div class="i-mdi-close text-xl" />
+            <div class="i-mdi-close text-xl"></div>
           </button>
         </div>
       </div>

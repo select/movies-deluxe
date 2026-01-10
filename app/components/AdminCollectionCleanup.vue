@@ -3,7 +3,7 @@
     <div class="mb-4">
       <div>
         <h3 class="text-lg font-semibold flex items-center gap-2">
-          <div class="i-mdi-folder-sync text-purple-500" />
+          <div class="i-mdi-folder-sync text-purple-500"></div>
           Collection Cleanup
         </h3>
         <p class="text-sm text-theme-textmuted mt-1">
@@ -15,7 +15,7 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div class="i-mdi-folder-sync" :class="{ 'animate-pulse': loading }" />
+        <div class="i-mdi-folder-sync" :class="{ 'animate-pulse': loading }"></div>
         {{ loading ? 'Cleaning...' : 'Clean Collections' }}
       </button>
     </div>
@@ -84,7 +84,7 @@
         class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
       >
         <div class="flex items-center gap-2">
-          <div class="i-mdi-check-circle text-green-500" />
+          <div class="i-mdi-check-circle text-green-500"></div>
           <div class="text-green-800 dark:text-green-200">
             Successfully cleaned {{ results.stats.collectionsModified }} collection(s). Removed
             {{ results.stats.moviesRemoved }} non-existent movie(s) and updated
@@ -99,7 +99,7 @@
         class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
       >
         <div class="flex items-center gap-2">
-          <div class="i-mdi-information text-blue-500" />
+          <div class="i-mdi-information text-blue-500"></div>
           <div class="text-blue-800 dark:text-blue-200">
             All collections are clean. No changes needed.
           </div>
@@ -112,7 +112,7 @@
         class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
       >
         <div class="flex items-center gap-2">
-          <div class="i-mdi-alert-circle text-red-500" />
+          <div class="i-mdi-alert-circle text-red-500"></div>
           <div class="text-red-800 dark:text-red-200">
             Collection cleanup failed. Please check the console for details.
           </div>

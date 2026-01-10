@@ -13,7 +13,7 @@
         class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-2"
         @click="showCreateModal = true"
       >
-        <div class="i-mdi-plus" />
+        <div class="i-mdi-plus"></div>
         Create New
       </button>
     </div>
@@ -32,7 +32,7 @@
         @click="select(collection.id)"
       >
         {{ collection.name }}
-        <div v-if="collection.enabled === false" class="i-mdi-eye-off text-xs opacity-70" />
+        <div v-if="collection.enabled === false" class="i-mdi-eye-off text-xs opacity-70"></div>
       </button>
     </div>
 
@@ -52,7 +52,7 @@
             class="p-2 hover:bg-theme-selection rounded-full transition-colors"
             @click="closeModal"
           >
-            <div class="i-mdi-close text-xl" />
+            <div class="i-mdi-close text-xl"></div>
           </button>
         </div>
 
@@ -85,7 +85,7 @@
               rows="3"
               placeholder="Describe this collection..."
               class="w-full px-4 py-2 rounded-lg border border-theme-border bg-theme-surface text-sm"
-            />
+            ></textarea>
           </div>
 
           <!-- Tags Editor -->
@@ -105,7 +105,7 @@
                   class="p-0.5 hover:bg-blue-600/20 rounded-full transition-colors"
                   @click="removeTag(tag)"
                 >
-                  <div class="i-mdi-close text-xs" />
+                  <div class="i-mdi-close text-xs"></div>
                 </button>
               </div>
 
@@ -153,7 +153,7 @@
               class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-500 transition-colors disabled:opacity-50"
               :disabled="isSaving"
             >
-              <div v-if="isSaving" class="i-mdi-loading animate-spin mx-auto" />
+              <div v-if="isSaving" class="i-mdi-loading animate-spin mx-auto"></div>
               <span v-else>{{ editingCollection ? 'Update' : 'Create' }}</span>
             </button>
           </div>

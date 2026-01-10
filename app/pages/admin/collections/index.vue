@@ -4,7 +4,7 @@
   >
     <main class="max-w-7xl mx-auto space-y-8">
       <div v-if="!isLocal" class="flex flex-col items-center justify-center h-[60vh] text-center">
-        <div class="i-mdi-lock text-64px text-gray-300 dark:text-gray-700 mb-4" />
+        <div class="i-mdi-lock text-64px text-gray-300 dark:text-gray-700 mb-4"></div>
         <h1 class="text-2xl font-bold mb-2">Access Denied</h1>
         <p class="text-theme-textmuted">The admin interface is only available on localhost.</p>
         <NuxtLink
@@ -20,7 +20,7 @@
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 class="text-3xl font-bold flex items-center gap-3">
-              <div class="i-mdi-movie-edit text-blue-600" />
+              <div class="i-mdi-movie-edit text-blue-600"></div>
               Collection Editor
             </h1>
             <p class="text-theme-textmuted mt-1">Add and remove movies from collections</p>
@@ -29,7 +29,7 @@
             to="/admin"
             class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
           >
-            <div class="i-mdi-arrow-left" />
+            <div class="i-mdi-arrow-left"></div>
             Back to Dashboard
           </NuxtLink>
         </header>
@@ -81,7 +81,7 @@
                   </p>
 
                   <div class="flex items-center gap-2 text-sm font-mono text-theme-textmuted">
-                    <div class="i-mdi-movie text-theme-text" />
+                    <div class="i-mdi-movie text-theme-text"></div>
                     <span class="text-theme-text">{{ selectedCollection.movieIds.length }}</span>
                     movies in collection
                   </div>
@@ -100,21 +100,21 @@
                     <div
                       :class="selectedCollection.enabled === false ? 'i-mdi-eye' : 'i-mdi-eye-off'"
                       class="text-xl"
-                    />
+                    ></div>
                   </button>
                   <button
                     class="p-2 rounded-xl border border-theme-border hover:bg-theme-background text-blue-600 transition-colors"
                     title="Edit Collection"
                     @click="collectionSelector?.editCollection(selectedCollection)"
                   >
-                    <div class="i-mdi-pencil text-xl" />
+                    <div class="i-mdi-pencil text-xl"></div>
                   </button>
                   <button
                     class="p-2 rounded-xl border border-theme-border hover:bg-theme-background text-red-600 transition-colors"
                     title="Delete Collection"
                     @click="collectionSelector?.confirmDelete(selectedCollection)"
                   >
-                    <div class="i-mdi-delete text-xl" />
+                    <div class="i-mdi-delete text-xl"></div>
                   </button>
                 </div>
               </div>
@@ -123,7 +123,7 @@
             <!-- Search Library -->
             <div class="space-y-6">
               <h2 class="text-xl font-bold flex items-center gap-2">
-                <div class="i-mdi-magnify text-blue-600" />
+                <div class="i-mdi-magnify text-blue-600"></div>
                 Search Library
               </h2>
               <AdminMovieSearch :collection-id="selectedCollectionId" @add="onMovieAdded" />
@@ -135,7 +135,7 @@
             <!-- Saved Queries -->
             <div class="bg-theme-surface border border-theme-border rounded-2xl p-6 space-y-6">
               <h2 class="text-xl font-bold flex items-center gap-2">
-                <div class="i-mdi-database-clock text-blue-600" />
+                <div class="i-mdi-database-clock text-blue-600"></div>
                 Dynamic Queries
               </h2>
               <AdminSavedQueryManager
@@ -145,7 +145,7 @@
               />
             </div>
             <h2 class="text-xl font-bold flex items-center gap-2">
-              <div class="i-mdi-playlist-play text-blue-600" />
+              <div class="i-mdi-playlist-play text-blue-600"></div>
               Collection Movies
             </h2>
             <AdminCollectionMoviesList ref="moviesList" :collection-id="selectedCollectionId" />

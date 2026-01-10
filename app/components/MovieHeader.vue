@@ -14,7 +14,7 @@
             ' max-w-md h-16': isHeroPage,
             'max-w-xs h-12': !isHeroPage,
           }"
-        />
+        ></div>
       </NuxtLink>
       <p
         v-if="isHeroPage && route.path !== '/'"

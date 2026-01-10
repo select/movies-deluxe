@@ -3,7 +3,7 @@
     class="min-h-screen bg-theme-background text-theme-text p-4 md:ml-16 transition-colors duration-300"
   >
     <div v-if="!isDev" class="flex flex-col items-center justify-center h-[60vh] text-center">
-      <div class="i-mdi-lock text-64px text-gray-300 dark:text-gray-700 mb-4" />
+      <div class="i-mdi-lock text-64px text-gray-300 dark:text-gray-700 mb-4"></div>
       <h1 class="text-2xl font-bold mb-2">Access Denied</h1>
       <p class="text-theme-textmuted">The admin interface is only available on localhost.</p>
       <NuxtLink
@@ -19,7 +19,7 @@
       <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 class="text-3xl font-bold flex items-center gap-3">
-            <div class="i-mdi-shield-crown text-blue-600" />
+            <div class="i-mdi-shield-crown text-blue-600"></div>
             Admin Dashboard
           </h1>
           <p class="text-theme-textmuted mt-1 flex items-center gap-2">
@@ -29,7 +29,7 @@
               class="flex items-center gap-1 text-xs text-green-600 dark:text-green-400"
               title="EventSource connected"
             >
-              <div class="i-mdi-circle text-8px animate-pulse" />
+              <div class="i-mdi-circle text-8px animate-pulse"></div>
               Live
             </span>
             <span
@@ -37,7 +37,7 @@
               class="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
               title="Reconnecting..."
             >
-              <div class="i-mdi-circle text-8px animate-pulse" />
+              <div class="i-mdi-circle text-8px animate-pulse"></div>
               Reconnecting
             </span>
             <span
@@ -45,7 +45,7 @@
               class="flex items-center gap-1 text-xs text-red-600 dark:text-red-400"
               title="EventSource disconnected"
             >
-              <div class="i-mdi-circle text-8px" />
+              <div class="i-mdi-circle text-8px"></div>
               Offline
             </span>
           </p>
@@ -56,14 +56,14 @@
               to="/"
               class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
             >
-              <div class="i-mdi-home" />
+              <div class="i-mdi-home"></div>
               View Site
             </NuxtLink>
             <NuxtLink
               to="/admin/collections"
               class="px-4 py-2 text-sm bg-theme-surface border border-theme-border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
             >
-              <div class="i-mdi-movie-edit" />
+              <div class="i-mdi-movie-edit"></div>
               Collection Editor
             </NuxtLink>
             <button
@@ -71,7 +71,10 @@
               :disabled="loading || generatingSqlite"
               @click="adminStore.generateSqlite"
             >
-              <div class="i-mdi-database-export" :class="{ 'animate-spin': generatingSqlite }" />
+              <div
+                class="i-mdi-database-export"
+                :class="{ 'animate-spin': generatingSqlite }"
+              ></div>
               Generate SQLite
             </button>
             <button
@@ -79,7 +82,7 @@
               :disabled="loading || generatingHomePages"
               @click="adminStore.generateHomePages"
             >
-              <div class="i-mdi-home-plus" :class="{ 'animate-spin': generatingHomePages }" />
+              <div class="i-mdi-home-plus" :class="{ 'animate-spin': generatingHomePages }"></div>
               Generate Home Pages
             </button>
             <button
@@ -87,7 +90,7 @@
               :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
             >
-              <div class="i-mdi-refresh" :class="{ 'animate-spin': refreshingStats }" />
+              <div class="i-mdi-refresh" :class="{ 'animate-spin': refreshingStats }"></div>
               Refresh Stats
             </button>
           </div>
@@ -106,7 +109,7 @@
               <div
                 class="h-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${(progress.sqlite.current / progress.sqlite.total) * 100}%` }"
-              />
+              ></div>
             </div>
           </div>
           <!-- Home Page Generation Progress -->
@@ -124,7 +127,7 @@
               <div
                 class="h-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${(progress.home.current / progress.home.total) * 100}%` }"
-              />
+              ></div>
             </div>
           </div>
           <!-- Stats Refresh Progress -->
@@ -142,7 +145,7 @@
               <div
                 class="h-full bg-green-500 transition-all duration-300"
                 :style="{ width: `${(progress.stats.current / progress.stats.total) * 100}%` }"
-              />
+              ></div>
             </div>
           </div>
         </div>
@@ -255,7 +258,7 @@
         class="bg-theme-surface p-6 rounded-xl border border-theme-border shadow-sm"
       >
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-theme-text">
-          <div class="i-mdi-quality-low text-orange-600" />
+          <div class="i-mdi-quality-low text-orange-600"></div>
           Quality Label Breakdown
         </h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -277,7 +280,7 @@
         <!-- Data Collection Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <div class="i-mdi-database-import text-amber-600" />
+            <div class="i-mdi-database-import text-amber-600"></div>
             Data Collection
           </h2>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -299,7 +302,7 @@
         <!-- Data Enrichment Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <div class="i-mdi-database-sync text-green-600" />
+            <div class="i-mdi-database-sync text-green-600"></div>
             Data Enrichment
           </h2>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -325,7 +328,7 @@
             <!-- Data Cleanup Section -->
             <div>
               <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                <div class="i-mdi-broom text-orange-600" />
+                <div class="i-mdi-broom text-orange-600"></div>
                 Data Cleanup
               </h3>
               <div class="space-y-4">

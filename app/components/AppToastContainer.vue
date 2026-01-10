@@ -7,13 +7,13 @@
         class="pointer-events-auto p-3 rounded-lg shadow-lg text-white text-sm flex items-center gap-2 min-w-[300px] max-w-md transform-gpu"
         :class="toastClasses(toast.type)"
       >
-        <div :class="toastIcon(toast.type)" />
+        <div :class="toastIcon(toast.type)"></div>
         <span class="flex-1">{{ toast.message }}</span>
         <button
           class="p-1 hover:bg-white/20 rounded transition-colors"
           @click="removeToast(toast.id)"
         >
-          <div class="i-mdi-close text-lg" />
+          <div class="i-mdi-close text-lg"></div>
         </button>
       </div>
     </TransitionGroup>
