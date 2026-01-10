@@ -1,6 +1,7 @@
 <template>
+  <MovieCardSkeleton v-if="isSkeleton" />
   <NuxtLink
-    v-if="movieData.imdbId"
+    v-else-if="movieData.imdbId"
     :to="`/movie/${movieData.imdbId}`"
     class="flex flex-col border border-theme-border/50 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-theme-surface text-theme-text"
   >
@@ -8,14 +9,14 @@
     <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
       <!-- Shimmer loading state -->
       <div
-        v-if="hasImdbId"
+        v-if="hasPoster"
         class="absolute inset-0 shimmer z-10 transition-opacity duration-500"
         :class="{ 'opacity-0 pointer-events-none': imageLoaded, 'opacity-100': !imageLoaded }"
       ></div>
 
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
-        v-if="hasImdbId"
+        v-if="hasPoster"
         :src="getPosterPath(movieData.imdbId!)"
         :alt="movieData.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
@@ -158,11 +159,13 @@ const movieData = computed(() => {
   return props.movie
 })
 
+const isSkeleton = computed(() => !movieData.value.title)
+
 const imageLoaded = ref(false)
 const movieCollections = ref<Collection[]>([])
 
-// Check if movie has a valid IMDB ID (starts with 'tt')
-const hasImdbId = computed(() => movieData.value.imdbId?.startsWith('tt') ?? false)
+// Check if movie has a valid IMDB ID (starts with 'tt') for poster loading
+const hasPoster = computed(() => movieData.value.imdbId?.startsWith('tt') ?? false)
 
 // Check if movie is liked
 const isMovieLiked = computed(() =>

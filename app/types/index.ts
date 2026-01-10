@@ -132,7 +132,7 @@ export type {
  */
 export interface LightweightMovieEntry {
   imdbId: string
-  title: string
+  title?: string
   year?: number
   imdbRating?: string | number
   imdbVotes?: number

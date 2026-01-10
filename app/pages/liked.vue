@@ -34,7 +34,6 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const { fetchMoviesByIds } = movieStore
 
 // Get likedMovieIds directly from store (VueUse storage)
 const { likedMovieIds, likedCount } = storeToRefs(movieStore)
@@ -46,10 +45,13 @@ const isLoadingLiked = ref(true)
 // Initialize database and load liked movies
 onMounted(async () => {
   try {
-    // Fetch full movie details for liked IDs from VueUse storage
+    // Set lightweight movies with just IDs to allow virtual grid to fetch visible ones
     if (likedMovieIds.value.length > 0) {
-      // Convert readonly array to mutable array for fetchMoviesByIds
-      likedMoviesData.value = await fetchMoviesByIds([...likedMovieIds.value])
+      likedMoviesData.value = likedMovieIds.value.map(id => ({ imdbId: id }) as MovieEntry)
+
+      // Pre-fetch first batch for instant display
+      const firstBatch = likedMovieIds.value.slice(0, 40)
+      movieStore.fetchMoviesByIds([...firstBatch])
     }
   } catch {
     // Failed to load liked movies, continue with empty state
