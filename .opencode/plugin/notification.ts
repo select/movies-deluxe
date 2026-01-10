@@ -61,7 +61,10 @@ function getIdleSummary(text: string | null): string | undefined {
 
   const idleMatch = text.match(/[_*]Summary:[_*]? (.*)[_*]?$/m)
   if (idleMatch && idleMatch[1]) {
-    return idleMatch[1].trim()
+    let summary = idleMatch[1].trim()
+    // Filter out leading exclamations like "Perfect!", "Excellent!", etc.
+    summary = summary.replace(/^(Perfect|Excellent|Great|Amazing|Wonderful|Fantastic)!?\s*/i, '')
+    return summary
   }
 
   if (text.length > 80) {

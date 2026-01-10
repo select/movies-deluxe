@@ -16,6 +16,7 @@
 [ ] 4. git commit -m "..."     (commit code changes)
 ```
 
+Use the commit-message skill to craft a good commit message
 **Note:** This is an ephemeral branch (no upstream). Code is merged to main locally, not pushed.
 
 ## Core Rules
@@ -203,7 +204,6 @@ pnpm tsx scripts/<name>.ts            # Run scripts
   - Use `curl -s http://localhost:3003/api/readyz` to check server status
   - If returns JSON with `"status": "ready"`, server is running
 - **Ask user to start Dev server**: if it's not already running
-- **Ask user for restart if new files were created**:
 - **NEVER stop at end**: Do NOT kill the server when you're done working
   - Leave it running for continuous frontend verification
 
