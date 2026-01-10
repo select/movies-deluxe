@@ -103,10 +103,10 @@ const loadCollectionMovies = async () => {
 
     // Sort by the order in movieIds
     movies.value = movieIds
-      .map(id => data.find(m => m.imdbId === id))
+      .map((id: string) => data.find((m: MovieEntry) => m.imdbId === id))
       .filter((m): m is MovieEntry => !!m)
   } catch (err) {
-    console.error('Failed to load collection movies:', err)
+    window.console.error('Failed to load collection movies:', err)
     uiStore.showToast('Failed to load collection movies', 'error')
   } finally {
     isLoading.value = false

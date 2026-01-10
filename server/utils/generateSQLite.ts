@@ -35,15 +35,13 @@ export async function generateSQLite(
     (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
   )
 
-  // Filter out movies with quality labels (blocked, trailer, clip, etc.)
-  const movies = allMovies.filter(movie => !movie.qualityLabels || movie.qualityLabels.length === 0)
+  // Use all movies for the database
+  const movies = allMovies
 
   // Create a Set of valid movie IDs for quick lookup
   const validMovieIds = new Set(movies.map(m => m.imdbId))
 
-  const excludedCount = allMovies.length - movies.length
   logger.info(`Loaded ${allMovies.length} total movies`)
-  logger.info(`Excluded ${excludedCount} movies with quality labels`)
   logger.info(`Processing ${movies.length} movies for database`)
 
   const collections = Object.values(collectionsDb).filter(

@@ -249,8 +249,6 @@ export async function generateMovieJSON() {
         // Admin fields (localhost only)
         is_curated: !!movie.metadata,
         verified: !!movie.verified,
-        qualityLabels: movie.qualityLabels || [],
-        qualityNotes: movie.qualityNotes,
         lastUpdated: movie.lastUpdated,
       }
 
