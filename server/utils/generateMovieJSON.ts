@@ -202,6 +202,7 @@ export async function generateMovieJSON() {
             title: s.title,
             description: s.description,
             quality: s.quality,
+            qualityMarks: s.qualityMarks,
             label: s.label,
             fileSize:
               s.fileSize || (s.type === 'archive.org' ? (s as ArchiveOrgSource).size : undefined),
