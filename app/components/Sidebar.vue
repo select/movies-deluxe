@@ -212,11 +212,11 @@
       >
         <div
           v-if="isDark"
-          class="i-material-symbols-light-wb-sunny text-2xl text-theme-accent"
+          class="i-material-symbols-light-wb-sunny text-2xl"
         />
         <div
           v-else
-          class="i-material-symbols-light-dark-mode text-2xl text-theme-primary"
+          class="i-material-symbols-light-dark-mode text-2xl"
         />
       </button>
 
