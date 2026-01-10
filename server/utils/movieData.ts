@@ -349,14 +349,6 @@ export async function getDatabaseStatsWithChannels(db: MoviesDatabase): Promise<
   entries.forEach(([_, entry]) => {
     const movieEntry = entry as MovieEntry
 
-    // Quality stats
-    if (movieEntry.qualityLabels && movieEntry.qualityLabels.length > 0) {
-      stats.qualityMarkedCount++
-      movieEntry.qualityLabels.forEach(label => {
-        stats.qualityBreakdown[label] = (stats.qualityBreakdown[label] || 0) + 1
-      })
-    }
-
     movieEntry.sources?.forEach((source: MovieSource) => {
       if (source.type === 'archive.org') {
         stats.archiveOrgSources++

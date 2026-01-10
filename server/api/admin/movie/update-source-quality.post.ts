@@ -42,9 +42,16 @@ export default defineEventHandler(async event => {
       })
     }
 
+    const source = movieEntry.sources[sourceIndex]
+    if (!source) {
+      throw createError({
+        statusCode: 404,
+        message: 'Source not found',
+      })
+    }
+
     // Update the source quality marks
-    movieEntry.sources[sourceIndex].qualityMarks =
-      qualityMarks && qualityMarks.length > 0 ? qualityMarks : undefined
+    source.qualityMarks = qualityMarks && qualityMarks.length > 0 ? qualityMarks : undefined
     movieEntry.lastUpdated = new Date().toISOString()
 
     // Write back to database
