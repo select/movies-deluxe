@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  prettier: 3.3.3
+
 importers:
 
   .:
@@ -4753,11 +4756,6 @@ packages:
 
   prettier-plugin-vue@1.1.6:
     resolution: {integrity: sha512-trQ/oY+6hSsGe2zPIFThXMIM0TbxMEbk2VOrKjwHWuSz7OEo0rnumbz9a47OxVPCaAnGY9vZG8qDTiTmk9bq0A==}
-
-  prettier@2.8.8:
-    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
-    engines: {node: '>=10.13.0'}
-    hasBin: true
 
   prettier@3.3.3:
     resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
@@ -10959,9 +10957,7 @@ snapshots:
 
   prettier-plugin-vue@1.1.6:
     dependencies:
-      prettier: 2.8.8
-
-  prettier@2.8.8: {}
+      prettier: 3.3.3
 
   prettier@3.3.3: {}
 

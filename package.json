@@ -92,5 +92,10 @@
     "unocss": "66.5.10",
     "vue-tsc": "3.2.2",
     "youtubei.js": "16.0.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "prettier": "3.3.3"
+    }
   }
 }
