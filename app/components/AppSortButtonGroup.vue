@@ -7,7 +7,7 @@
       :is-active="isActive(relevanceOption)"
       @select="$emit('select', relevanceOption)"
     />
-    
+
     <!-- Year Toggle Button -->
     <AppSortToggleButton
       label="Year"
@@ -56,7 +56,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showRelevance: false
+  showRelevance: false,
 })
 
 const _emit = defineEmits<{
@@ -74,6 +74,8 @@ const titleZA: SortOption = { field: 'title', direction: 'desc', label: 'Z-A' }
 const mostPopular: SortOption = { field: 'votes', direction: 'desc', label: 'Most Popular' }
 
 const isActive = (option: SortOption): boolean => {
-  return props.currentSort.field === option.field && props.currentSort.direction === option.direction
+  return (
+    props.currentSort.field === option.field && props.currentSort.direction === option.direction
+  )
 }
 </script>

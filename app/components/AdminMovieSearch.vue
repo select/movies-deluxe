@@ -14,11 +14,8 @@
           placeholder="Search by title, director, writer, plot or IMDb ID... (or use filters below)"
           class="block w-full pl-10 pr-3 py-3 border border-theme-border rounded-xl bg-theme-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
           @input="onInput"
-        >
-        <div
-          v-if="isLoading"
-          class="absolute inset-y-0 right-0 pr-3 flex items-center"
-        >
+        />
+        <div v-if="isLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
           <div class="i-mdi-loading animate-spin text-blue-600" />
         </div>
       </div>
@@ -39,10 +36,7 @@
     </div>
 
     <!-- Active Filters Display -->
-    <div
-      v-if="hasActiveFilters"
-      class="flex flex-wrap items-center gap-2"
-    >
+    <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-2">
       <div
         v-if="filters.minRating > 0"
         class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
@@ -81,10 +75,7 @@
         <div class="i-mdi-source-branch" />
         {{ source }}
       </div>
-      <button
-        class="text-xs text-theme-primary hover:underline ml-2"
-        @click="resetFilters"
-      >
+      <button class="text-xs text-theme-primary hover:underline ml-2" @click="resetFilters">
         Clear All
       </button>
     </div>
@@ -94,7 +85,9 @@
       class="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden"
     >
       <!-- Header with Add All button -->
-      <div class="p-4 border-b border-theme-border flex items-center justify-between bg-theme-bg/30">
+      <div
+        class="p-4 border-b border-theme-border flex items-center justify-between bg-theme-bg/30"
+      >
         <div class="text-sm text-theme-textmuted">
           <span class="font-semibold text-theme-text">{{ results.length }}</span> results
           <span v-if="results.length === 300" class="text-xs">(limited to 300)</span>
@@ -109,14 +102,8 @@
           :disabled="addingAll || isAdding !== ''"
           @click="addAllMovies"
         >
-          <div
-            v-if="addingAll"
-            class="i-mdi-loading animate-spin"
-          />
-          <div
-            v-else
-            class="i-mdi-plus-box-multiple"
-          />
+          <div v-if="addingAll" class="i-mdi-loading animate-spin" />
+          <div v-else class="i-mdi-plus-box-multiple" />
           Add All to Collection
         </button>
       </div>
@@ -128,70 +115,58 @@
           :key="movie.imdbId"
           class="p-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
         >
-        <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
-          <img
-            v-if="movie.imdbId?.startsWith('tt')"
-            :src="getPosterPath(movie.imdbId)"
-            :alt="movie.title"
-            class="w-full h-full object-cover"
-            @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
-          >
-          <div
-            v-else
-            class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
-          >
-            <div class="i-mdi-movie text-2xl" />
-          </div>
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2">
-            <h4 class="font-bold truncate">
-              {{ movie.title }}
-            </h4>
-            <span class="text-xs text-theme-textmuted font-mono">{{ movie.year }}</span>
-          </div>
-          <p class="text-xs text-theme-textmuted truncate">
-            {{ movie.metadata?.Director || 'Unknown Director' }}
-          </p>
-          <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
-            <span class="font-mono">{{ movie.imdbId }}</span>
-            <span
-              v-if="movie.metadata?.imdbRating"
-              class="flex items-center gap-1"
+          <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
+            <img
+              v-if="movie.imdbId?.startsWith('tt')"
+              :src="getPosterPath(movie.imdbId)"
+              :alt="movie.title"
+              class="w-full h-full object-cover"
+              @error="e => ((e.target as HTMLImageElement).style.display = 'none')"
+            />
+            <div
+              v-else
+              class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
             >
-              <span class="opacity-50">•</span>
-              <div class="i-mdi-star text-theme-accent text-xs" />
-              <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
-              <span
-                v-if="movie.metadata?.imdbVotes"
-                class="opacity-70"
-              >
-                ({{ formatVotes(movie.metadata.imdbVotes) }})
-              </span>
-            </span>
+              <div class="i-mdi-movie text-2xl" />
+            </div>
           </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h4 class="font-bold truncate">
+                {{ movie.title }}
+              </h4>
+              <span class="text-xs text-theme-textmuted font-mono">{{ movie.year }}</span>
+            </div>
+            <p class="text-xs text-theme-textmuted truncate">
+              {{ movie.metadata?.Director || 'Unknown Director' }}
+            </p>
+            <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
+              <span class="font-mono">{{ movie.imdbId }}</span>
+              <span v-if="movie.metadata?.imdbRating" class="flex items-center gap-1">
+                <span class="opacity-50">•</span>
+                <div class="i-mdi-star text-theme-accent text-xs" />
+                <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
+                <span v-if="movie.metadata?.imdbVotes" class="opacity-70">
+                  ({{ formatVotes(movie.metadata.imdbVotes) }})
+                </span>
+              </span>
+            </div>
+          </div>
+          <button
+            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 disabled:opacity-50"
+            :class="
+              isInCollection(movie.imdbId)
+                ? 'bg-theme-selection text-theme-textmuted cursor-default'
+                : 'bg-blue-600 hover:bg-blue-500 text-white'
+            "
+            :disabled="isInCollection(movie.imdbId) || isAdding === movie.imdbId"
+            @click="addMovie(movie.imdbId)"
+          >
+            <div v-if="isAdding === movie.imdbId" class="i-mdi-loading animate-spin" />
+            <div v-else :class="isInCollection(movie.imdbId) ? 'i-mdi-check' : 'i-mdi-plus'" />
+            {{ isInCollection(movie.imdbId) ? 'Added' : 'Add' }}
+          </button>
         </div>
-        <button
-          class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 disabled:opacity-50"
-          :class="
-            isInCollection(movie.imdbId)
-              ? 'bg-theme-selection text-theme-textmuted cursor-default'
-              : 'bg-blue-600 hover:bg-blue-500 text-white'
-          "
-          :disabled="isInCollection(movie.imdbId) || isAdding === movie.imdbId"
-          @click="addMovie(movie.imdbId)"
-        >
-          <div
-            v-if="isAdding === movie.imdbId"
-            class="i-mdi-loading animate-spin"
-          />
-          <div
-            v-else
-            :class="isInCollection(movie.imdbId) ? 'i-mdi-check' : 'i-mdi-plus'"
-          />
-          {{ isInCollection(movie.imdbId) ? 'Added' : 'Add' }}
-        </button>
-      </div>
       </div>
     </div>
 
@@ -199,13 +174,11 @@
       v-else-if="(searchQuery.length >= 3 || hasActiveFilters) && !isLoading"
       class="p-8 text-center text-theme-textmuted bg-theme-surface border border-theme-border border-dashed rounded-2xl"
     >
-      No movies found{{ searchQuery ? ` for "${searchQuery}"` : '' }}{{ hasActiveFilters ? ' with current filters' : '' }}
+      No movies found{{ searchQuery ? ` for "${searchQuery}"` : ''
+      }}{{ hasActiveFilters ? ' with current filters' : '' }}
     </div>
 
-    <FilterMenu
-      :is-open="showFilters"
-      @close="showFilters = false"
-    />
+    <FilterMenu :is-open="showFilters" @close="showFilters = false" />
   </div>
 </template>
 
@@ -235,13 +208,13 @@ const addingAll = ref(false)
 const showFilters = ref(false)
 
 // Local shortcut to focus search
-onKeyStroke('/', (e) => {
+onKeyStroke('/', e => {
   const activeElement = window.document.activeElement
   const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-  
+
   // Always prevent default to avoid triggering global search
   e.preventDefault()
-  
+
   if (!isTyping) {
     searchInput.value?.focus()
   }
@@ -289,7 +262,7 @@ const performSearch = async () => {
   // Allow search with filters even if query is empty
   const hasQuery = searchQuery.value.length >= 3
   const hasFilters = hasActiveFilters.value
-  
+
   if (!hasQuery && !hasFilters) {
     results.value = []
     return
@@ -298,7 +271,7 @@ const performSearch = async () => {
   isLoading.value = true
   try {
     const data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
-      query: { 
+      query: {
         q: searchQuery.value,
         // Pass filters to the API
         minRating: filters.value.minRating || undefined,
@@ -350,20 +323,23 @@ const addAllMovies = async () => {
   addingAll.value = true
   let addedCount = 0
   let failedCount = 0
-  
+
   try {
     // Filter out movies that are already in the collection
     const moviesToAdd = results.value.filter(movie => !isInCollection(movie.imdbId))
-    
+
     if (moviesToAdd.length === 0) {
       uiStore.showToast('All movies are already in the collection', 'info')
       return
     }
-    
+
     // Add movies sequentially to avoid overwhelming the API
     for (const movie of moviesToAdd) {
       try {
-        const success = await collectionsStore.addMovieToCollection(props.collectionId, movie.imdbId)
+        const success = await collectionsStore.addMovieToCollection(
+          props.collectionId,
+          movie.imdbId
+        )
         if (success) {
           addedCount++
         } else {
@@ -373,12 +349,12 @@ const addAllMovies = async () => {
         failedCount++
       }
     }
-    
+
     if (addedCount > 0) {
       uiStore.showToast(`Added ${addedCount} movie${addedCount > 1 ? 's' : ''} to collection`)
       emit('add')
     }
-    
+
     if (failedCount > 0) {
       uiStore.showToast(`Failed to add ${failedCount} movie${failedCount > 1 ? 's' : ''}`, 'error')
     }

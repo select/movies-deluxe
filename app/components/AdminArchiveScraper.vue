@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface"
-  >
+  <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
       <div class="i-mdi-archive text-amber-500" />
       Archive.org Scraper
@@ -9,8 +7,8 @@
 
     <div class="space-y-6">
       <p class="text-theme-textmuted text-sm">
-        Scrapes all available movies from Archive.org's "Feature Films" collection.
-        Always fetches 500 rows per page to minimize API calls and scrapes all pages until completion.
+        Scrapes all available movies from Archive.org's "Feature Films" collection. Always fetches
+        500 rows per page to minimize API calls and scrapes all pages until completion.
       </p>
 
       <button
@@ -18,14 +16,8 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div
-          v-if="loading"
-          class="i-mdi-loading animate-spin"
-        />
-        <div
-          v-else
-          class="i-mdi-play"
-        />
+        <div v-if="loading" class="i-mdi-loading animate-spin" />
+        <div v-else class="i-mdi-play" />
         {{ loading ? 'Scraping in progress...' : 'Start Archive.org Scrape' }}
       </button>
 
@@ -36,7 +28,9 @@
       >
         <div class="flex items-center justify-between text-xs">
           <span class="text-theme-textmuted truncate mr-2">{{ progress.archive.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.archive.current }} / {{ progress.archive.total }}</span>
+          <span class="font-mono text-nowrap"
+            >{{ progress.archive.current }} / {{ progress.archive.total }}</span
+          >
         </div>
         <div class="h-2 bg-theme-border rounded-full overflow-hidden">
           <div

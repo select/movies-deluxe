@@ -23,7 +23,7 @@
         loading="lazy"
         @load="imageLoaded = true"
         @error="handlePosterError"
-      >
+      />
       <!-- Icon fallback for movies without local posters -->
       <div
         v-else
@@ -33,10 +33,7 @@
       </div>
 
       <!-- Badges -->
-      <div
-        v-if="hasFullData"
-        class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end"
-      >
+      <div v-if="hasFullData" class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
         <!-- Source Badge -->
         <span
           v-if="firstSource?.type === 'archive.org'"
@@ -87,14 +84,16 @@
       <!-- Verified Badge -->
       <div
         v-if="isVerified"
-        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full  flex items-center justify-center z-10"
+        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full flex items-center justify-center z-10"
         :class="{
-          'ml-8': (isMovieLiked && movieCollections.length === 0) || (!isMovieLiked && movieCollections.length > 0),
-          'ml-16': isMovieLiked && movieCollections.length > 0
+          'ml-8':
+            (isMovieLiked && movieCollections.length === 0) ||
+            (!isMovieLiked && movieCollections.length > 0),
+          'ml-16': isMovieLiked && movieCollections.length > 0,
         }"
         title="Verified Source"
       >
-      <div class="i-mdi-check-decagram text-green-600 text-2xl" />
+        <div class="i-mdi-check-decagram text-green-600 text-2xl" />
       </div>
     </div>
 
@@ -106,20 +105,11 @@
 
       <div class="flex items-center gap-1.5 text-[11px] text-theme-textmuted font-medium">
         <span v-if="movie.year">{{ movie.year }}</span>
-        <span
-          v-if="movie.year && metadata?.imdbRating"
-          class="opacity-50"
-        >•</span>
-        <span
-          v-if="metadata?.imdbRating"
-          class="flex items-center gap-1"
-        >
+        <span v-if="movie.year && metadata?.imdbRating" class="opacity-50">•</span>
+        <span v-if="metadata?.imdbRating" class="flex items-center gap-1">
           <div class="i-mdi-star text-theme-accent text-xs" />
           <span class="font-bold text-theme-text">{{ metadata.imdbRating }}</span>
-          <span
-            v-if="metadata?.imdbVotes"
-            class="text-[10px] opacity-70"
-          >
+          <span v-if="metadata?.imdbVotes" class="text-[10px] opacity-70">
             ({{ formatVotes(metadata.imdbVotes) }})
           </span>
         </span>
@@ -142,9 +132,7 @@
       <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem] text-red-400">
         {{ movie.title || 'Unknown Movie' }}
       </h3>
-      <div class="text-[11px] text-red-400 font-medium">
-        Missing ID
-      </div>
+      <div class="text-[11px] text-red-400 font-medium">Missing ID</div>
     </div>
   </div>
 </template>
@@ -168,7 +156,7 @@ const movieCollections = ref<Collection[]>([])
 const hasImdbId = computed(() => props.movie.imdbId?.startsWith('tt') ?? false)
 
 // Check if movie is liked
-const isMovieLiked = computed(() => props.movie.imdbId ? isLikedFn(props.movie.imdbId) : false)
+const isMovieLiked = computed(() => (props.movie.imdbId ? isLikedFn(props.movie.imdbId) : false))
 
 // Check if movie is verified
 const isVerified = computed(() => {

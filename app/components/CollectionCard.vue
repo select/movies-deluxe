@@ -14,11 +14,8 @@
           :src="posters[2]"
           class="w-full h-full object-cover"
           loading="lazy"
-        >
-        <div
-          v-else
-          class="w-full h-full flex items-center justify-center text-theme-textmuted"
-        >
+        />
+        <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
           <div class="i-mdi-movie text-3xl" />
         </div>
       </div>
@@ -32,11 +29,8 @@
           :src="posters[1]"
           class="w-full h-full object-cover"
           loading="lazy"
-        >
-        <div
-          v-else
-          class="w-full h-full flex items-center justify-center text-theme-textmuted"
-        >
+        />
+        <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
           <div class="i-mdi-movie text-3xl" />
         </div>
       </div>
@@ -50,11 +44,8 @@
           :src="posters[0]"
           class="w-full h-full object-cover"
           loading="lazy"
-        >
-        <div
-          v-else
-          class="w-full h-full flex items-center justify-center text-theme-textmuted"
-        >
+        />
+        <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
           <div class="i-mdi-movie text-4xl" />
         </div>
       </div>
@@ -95,12 +86,13 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled
 }
 
-
 // Get posters for preview movies (up to 3, with blanks if fewer)
 const posters = computed(() => {
   // Filter for IMDb IDs only (they have posters)
   // Shuffle and take up to 3 (may be less if collection has fewer IMDb movies)
-  const previewMovieIds=shuffleArray(props.collection.movieIds.filter(id => id.startsWith('tt'))).slice(0, 3)
+  const previewMovieIds = shuffleArray(
+    props.collection.movieIds.filter(id => id.startsWith('tt'))
+  ).slice(0, 3)
   const posterUrls: (string | null)[] = []
 
   for (let i = 0; i < 3; i++) {

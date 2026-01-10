@@ -4,7 +4,9 @@
       Collection Tags
     </label>
 
-    <div class="flex flex-wrap gap-2 p-3 bg-theme-surface border border-theme-border rounded-xl min-h-[50px]">
+    <div
+      class="flex flex-wrap gap-2 p-3 bg-theme-surface border border-theme-border rounded-xl min-h-[50px]"
+    >
       <div
         v-for="tag in tags"
         :key="tag"
@@ -29,7 +31,7 @@
           @keydown.backspace="handleBackspace"
           @focus="showSuggestions = true"
           @blur="handleBlur"
-        >
+        />
 
         <!-- Suggestions Dropdown -->
         <div
@@ -54,14 +56,8 @@
         :disabled="!hasChanges || isSaving"
         @click="saveTags"
       >
-        <div
-          v-if="isSaving"
-          class="i-mdi-loading animate-spin"
-        />
-        <div
-          v-else
-          class="i-mdi-content-save"
-        />
+        <div v-if="isSaving" class="i-mdi-loading animate-spin" />
+        <div v-else class="i-mdi-content-save" />
         Save Tags
       </button>
     </div>
@@ -101,8 +97,8 @@ const allExistingTags = computed(() => {
 
 const filteredSuggestions = computed(() => {
   const query = newTag.value.toLowerCase().trim()
-  return allExistingTags.value.filter(t =>
-    t.toLowerCase().includes(query) && !tags.value.includes(t)
+  return allExistingTags.value.filter(
+    t => t.toLowerCase().includes(query) && !tags.value.includes(t)
   )
 })
 

@@ -6,7 +6,7 @@
       parentPath: '/collections',
       parentIcon: 'i-mdi:movie-roll',
       parentLabel: 'Collections',
-      currentLabel: collection?.name || 'Loading...'
+      currentLabel: collection?.name || 'Loading...',
     }"
     :movies="movies"
     :movie-count="collection?.movieIds?.length || 0"

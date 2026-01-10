@@ -3,18 +3,15 @@
     v-if="modelValue"
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
   >
-    <div class="bg-theme-surface rounded-2xl w-full max-w-lg shadow-2xl border border-theme-border overflow-hidden">
+    <div
+      class="bg-theme-surface rounded-2xl w-full max-w-lg shadow-2xl border border-theme-border overflow-hidden"
+    >
       <div class="p-6 border-b border-theme-border flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="i-mdi-alert-decagram text-yellow-600 text-2xl" />
-          <h3 class="text-xl font-bold">
-            Mark Movie Quality
-          </h3>
+          <h3 class="text-xl font-bold">Mark Movie Quality</h3>
         </div>
-        <button
-          class="p-2 hover:bg-theme-selection rounded-full transition-colors"
-          @click="close"
-        >
+        <button class="p-2 hover:bg-theme-selection rounded-full transition-colors" @click="close">
           <div class="i-mdi-close text-xl" />
         </button>
       </div>
@@ -29,14 +26,17 @@
               v-for="label in qualityLabelOptions"
               :key="label"
               class="flex items-center gap-2 p-2 rounded-lg border border-theme-border hover:bg-theme-selection cursor-pointer transition-colors"
-              :class="{ 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-900/50': selectedLabels.includes(label) }"
+              :class="{
+                'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-900/50':
+                  selectedLabels.includes(label),
+              }"
             >
               <input
                 v-model="selectedLabels"
                 type="checkbox"
                 :value="label"
                 class="rounded text-yellow-600 focus:ring-yellow-500"
-              >
+              />
               <span class="text-sm capitalize">{{ label.replace(/-/g, ' ') }}</span>
             </label>
           </div>
@@ -66,14 +66,11 @@
             :disabled="isSaving"
             @click="save"
           >
-            <div
-              v-if="isSaving"
-              class="i-mdi-loading animate-spin"
-            />
+            <div v-if="isSaving" class="i-mdi-loading animate-spin" />
             <span>{{ isSaving ? 'Saving...' : 'Save Quality' }}</span>
           </button>
         </div>
-        
+
         <button
           v-if="movie.qualityLabels?.length"
           class="w-full mt-2 text-xs text-red-500 hover:text-red-600 underline font-medium"
@@ -96,7 +93,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  'saved': []
+  saved: []
 }>()
 
 const movieStore = useMovieStore()
@@ -105,12 +102,15 @@ const selectedLabels = ref<QualityLabel[]>([])
 const notes = ref('')
 
 // Initialize from movie data
-watch(() => props.modelValue, (show) => {
-  if (show) {
-    selectedLabels.value = [...(props.movie.qualityLabels || [])]
-    notes.value = props.movie.qualityNotes || ''
+watch(
+  () => props.modelValue,
+  show => {
+    if (show) {
+      selectedLabels.value = [...(props.movie.qualityLabels || [])]
+      notes.value = props.movie.qualityNotes || ''
+    }
   }
-})
+)
 
 const qualityLabelOptions = Object.values(QualityLabel)
 
@@ -137,7 +137,7 @@ const save = async () => {
 
 const clear = async () => {
   if (!confirm('Clear all quality markings for this movie?')) return
-  
+
   isSaving.value = true
   try {
     const success = await movieStore.clearMovieQuality(props.movie.imdbId)

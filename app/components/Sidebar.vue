@@ -4,7 +4,6 @@
     class="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-40 glass shadow-2xl rounded-full w-12 border-theme-border/30"
   >
     <div class="flex flex-col items-center gap-2 py-2">
-
       <!-- Home -->
       <NuxtLink
         to="/"
@@ -36,7 +35,10 @@
         title="Liked Movies"
         :class="{ 'bg-theme-accent/20': route.path === '/liked' }"
       >
-        <div class="i-mdi-heart text-xl" :class="{ 'text-theme-accent': route.path === '/liked' }" />
+        <div
+          class="i-mdi-heart text-xl"
+          :class="{ 'text-theme-accent': route.path === '/liked' }"
+        />
         <span
           v-if="likedCount > 0"
           class="absolute top-0 -right-1 bg-theme-accent text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
@@ -52,7 +54,10 @@
         title="Collections"
         :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
       >
-        <div class="i-mdi:movie-roll text-xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
+        <div
+          class="i-mdi:movie-roll text-xl"
+          :class="{ 'text-theme-primary': route.path.startsWith('/collections') }"
+        />
       </NuxtLink>
 
       <!-- Admin (localhost only) -->
@@ -63,7 +68,10 @@
         title="Admin"
         :class="{ 'bg-theme-accent/20': route.path.startsWith('/admin') }"
       >
-        <div class="i-mdi-shield-crown text-xl" :class="{ 'text-theme-accent': route.path.startsWith('/admin') }" />
+        <div
+          class="i-mdi-shield-crown text-xl"
+          :class="{ 'text-theme-accent': route.path.startsWith('/admin') }"
+        />
       </NuxtLink>
 
       <!-- Dark Mode Toggle -->
@@ -72,14 +80,8 @@
         title="Theme Selection"
         @click="openThemeSelection"
       >
-        <div
-          v-if="isDark"
-          class="i-material-symbols-light-wb-sunny text-xl "
-        />
-        <div
-          v-else
-          class="i-material-symbols-light-dark-mode text-xl "
-        />
+        <div v-if="isDark" class="i-material-symbols-light-wb-sunny text-xl" />
+        <div v-else class="i-material-symbols-light-dark-mode text-xl" />
       </button>
 
       <!-- Filters -->
@@ -90,7 +92,10 @@
           :class="{ 'bg-theme-primary/20': activeFiltersCount > 0 }"
           @click="openFilters"
         >
-          <div class="i-mdi-filter-variant text-xl" :class="{ 'text-theme-primary': activeFiltersCount > 0 }" />
+          <div
+            class="i-mdi-filter-variant text-xl"
+            :class="{ 'text-theme-primary': activeFiltersCount > 0 }"
+          />
           <span
             v-if="activeFiltersCount > 0"
             class="absolute top-0 -right-1 bg-theme-primary text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
@@ -174,7 +179,10 @@
         aria-label="Liked Movies"
         :class="{ 'bg-theme-accent/20': route.path === '/liked' }"
       >
-        <div class="i-mdi-heart text-2xl" :class="{ 'text-theme-accent': route.path === '/liked' }" />
+        <div
+          class="i-mdi-heart text-2xl"
+          :class="{ 'text-theme-accent': route.path === '/liked' }"
+        />
         <span
           v-if="likedCount > 0"
           class="absolute -top-1 -right-1 bg-theme-accent text-white text-xs rounded-full size-5 flex items-center justify-center font-medium"
@@ -190,7 +198,10 @@
         aria-label="Collections"
         :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
       >
-        <div class="i-mdi:movie-roll text-2xl" :class="{ 'text-theme-primary': route.path.startsWith('/collections') }" />
+        <div
+          class="i-mdi:movie-roll text-2xl"
+          :class="{ 'text-theme-primary': route.path.startsWith('/collections') }"
+        />
       </NuxtLink>
 
       <!-- Admin (localhost only) -->
@@ -201,7 +212,10 @@
         aria-label="Admin"
         :class="{ 'bg-theme-accent/20': route.path.startsWith('/admin') }"
       >
-        <div class="i-mdi-shield-crown text-2xl" :class="{ 'text-theme-accent': route.path.startsWith('/admin') }" />
+        <div
+          class="i-mdi-shield-crown text-2xl"
+          :class="{ 'text-theme-accent': route.path.startsWith('/admin') }"
+        />
       </NuxtLink>
 
       <!-- Dark Mode Toggle -->
@@ -210,14 +224,8 @@
         aria-label="Theme Selection"
         @click="openThemeSelection"
       >
-        <div
-          v-if="isDark"
-          class="i-material-symbols-light-wb-sunny text-2xl"
-        />
-        <div
-          v-else
-          class="i-material-symbols-light-dark-mode text-2xl"
-        />
+        <div v-if="isDark" class="i-material-symbols-light-wb-sunny text-2xl" />
+        <div v-else class="i-material-symbols-light-dark-mode text-2xl" />
       </button>
 
       <!-- Filters -->
@@ -228,7 +236,10 @@
           :class="{ 'bg-theme-primary/20': activeFiltersCount > 0 }"
           @click="openFilters"
         >
-          <div class="i-mdi-filter-variant text-2xl" :class="{ 'text-theme-primary': activeFiltersCount > 0 }" />
+          <div
+            class="i-mdi-filter-variant text-2xl"
+            :class="{ 'text-theme-primary': activeFiltersCount > 0 }"
+          />
           <span
             v-if="activeFiltersCount > 0"
             class="absolute -top-1 -right-1 bg-theme-primary text-white text-xs rounded-full size-5 flex items-center justify-center font-medium"

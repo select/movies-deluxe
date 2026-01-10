@@ -8,13 +8,15 @@
       type="text"
       class="block w-full pl-10 pr-10 py-2 bg-theme-surface/50 border border-theme-border/50 focus:border-theme-primary rounded-full text-sm text-theme-text placeholder-theme-textmuted focus:outline-none transition-all focus:bg-theme-surface"
       :placeholder="placeholder"
-    >
+    />
     <button
       v-if="model"
       class="absolute inset-y-0 right-0 pr-3 flex items-center"
       @click="model = ''"
     >
-      <div class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors" />
+      <div
+        class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors"
+      />
     </button>
   </div>
 </template>

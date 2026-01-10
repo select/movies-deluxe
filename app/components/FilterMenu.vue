@@ -13,7 +13,7 @@
       class="fixed z-50 transition-all duration-300 ease-in-out glass shadow-2xl overflow-hidden flex flex-col bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh] md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:max-h-full"
       :class="{
         'translate-y-0 md:translate-x-0': isOpen,
-        'translate-y-full md:translate-y-0 md:-translate-x-full': !isOpen
+        'translate-y-full md:translate-y-0 md:-translate-x-full': !isOpen,
       }"
     >
       <!-- Mobile Close Button (fixed position, same as menu button) -->
@@ -49,36 +49,29 @@
       </div>
 
       <!-- seperator -->
-      <hr class="mx-4 my-0 border-theme-border/50" >
+      <hr class="mx-4 my-0 border-theme-border/50" />
       <!-- Filter Content -->
       <div class="overflow-y-auto scrollbar-thin flex-1 md:h-[calc(100vh-4rem)] p-4">
         <div class="max-w-7xl mx-auto space-y-4 flex flex-col gap-4">
-
-
           <!-- Sort Section (Top) -->
-            <FilterSection
-              title="Sort By"
-              icon="i-mdi-sort"
-              :default-expanded="true"
-            >
-              <AppSortButtonGroup
-                :current-sort="currentSortOption"
-                :show-relevance="!!filters.searchQuery"
-                @select="handleSortChange"
-              />
-            </FilterSection>
+          <FilterSection title="Sort By" icon="i-mdi-sort" :default-expanded="true">
+            <AppSortButtonGroup
+              :current-sort="currentSortOption"
+              :show-relevance="!!filters.searchQuery"
+              @select="handleSortChange"
+            />
+          </FilterSection>
 
           <!-- Row 1: Rating, Year, Votes -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Rating Filter -->
-            <FilterSection
-              title="Rating"
-              icon="i-mdi-star"
-            >
+            <FilterSection title="Rating" icon="i-mdi-star">
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="text-theme-textmuted">Min:</span>
-                  <span class="font-medium text-theme-text">{{ filters.minRating.toFixed(1) }}+</span>
+                  <span class="font-medium text-theme-text"
+                    >{{ filters.minRating.toFixed(1) }}+</span
+                  >
                 </div>
                 <input
                   :value="filters.minRating"
@@ -87,8 +80,8 @@
                   max="10"
                   step="0.5"
                   class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
-                  @input="(e) => setMinRating(Number((e.target as HTMLInputElement).value))"
-                >
+                  @input="e => setMinRating(Number((e.target as HTMLInputElement).value))"
+                />
                 <div class="flex justify-between text-xs text-theme-textmuted">
                   <span>0</span>
                   <span>5</span>
@@ -98,10 +91,7 @@
             </FilterSection>
 
             <!-- Year Filter -->
-            <FilterSection
-              title="Year"
-              icon="i-mdi-calendar"
-            >
+            <FilterSection title="Year" icon="i-mdi-calendar">
               <div class="space-y-4">
                 <div class="space-y-2">
                   <div class="flex items-center justify-between text-sm">
@@ -115,8 +105,8 @@
                     max="2025"
                     step="1"
                     class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
-                    @input="(e) => setMinYear(Number((e.target as HTMLInputElement).value))"
-                  >
+                    @input="e => setMinYear(Number((e.target as HTMLInputElement).value))"
+                  />
                 </div>
                 <div class="space-y-2">
                   <div class="flex items-center justify-between text-sm">
@@ -130,8 +120,8 @@
                     max="2025"
                     step="1"
                     class="w-full h-2 bg-theme-selection rounded-lg appearance-none cursor-pointer accent-theme-primary"
-                    @input="(e) => setMaxYear(Number((e.target as HTMLInputElement).value))"
-                  >
+                    @input="e => setMaxYear(Number((e.target as HTMLInputElement).value))"
+                  />
                 </div>
                 <div class="flex justify-between text-xs text-theme-textmuted">
                   <span>1910</span>
@@ -142,15 +132,14 @@
             </FilterSection>
 
             <!-- Votes Filter -->
-            <FilterSection
-              title="Votes"
-              icon="i-mdi-account-group"
-            >
+            <FilterSection title="Votes" icon="i-mdi-account-group">
               <div class="space-y-4">
                 <div class="space-y-2">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-theme-textmuted">Min:</span>
-                    <span class="font-medium text-theme-text">{{ filters.minVotes.toLocaleString() }}</span>
+                    <span class="font-medium text-theme-text">{{
+                      filters.minVotes.toLocaleString()
+                    }}</span>
                   </div>
                   <input
                     :value="filters.minVotes"
@@ -159,13 +148,15 @@
                     step="100"
                     placeholder="0"
                     class="w-full px-3 py-2 bg-theme-surface border border-theme-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-theme-text placeholder-theme-text-muted"
-                    @input="(e) => setMinVotes(Number((e.target as HTMLInputElement).value))"
-                  >
+                    @input="e => setMinVotes(Number((e.target as HTMLInputElement).value))"
+                  />
                 </div>
                 <div class="space-y-2">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-theme-textmuted">Max:</span>
-                    <span class="font-medium text-theme-text">{{ filters.maxVotes ? filters.maxVotes.toLocaleString() : 'Any' }}</span>
+                    <span class="font-medium text-theme-text">{{
+                      filters.maxVotes ? filters.maxVotes.toLocaleString() : 'Any'
+                    }}</span>
                   </div>
                   <input
                     :value="filters.maxVotes || ''"
@@ -174,89 +165,82 @@
                     step="100"
                     placeholder="Any"
                     class="w-full px-3 py-2 bg-theme-surface border border-theme-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-theme-text placeholder-theme-text-muted"
-                    @input="(e) => setMaxVotes(Number((e.target as HTMLInputElement).value))"
-                  >
+                    @input="e => setMaxVotes(Number((e.target as HTMLInputElement).value))"
+                  />
                 </div>
               </div>
             </FilterSection>
           </div>
 
           <!-- Row 2: Genres and Countries (Full Width, Before Sources) -->
-            <!-- Genre Filter -->
-            <FilterSection
-              title="Genres"
-              icon="i-mdi-movie-filter"
-            >
-              <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
-                Loading genres...
-              </div>
-              <CollapsibleFilterItems v-else ref="genresCollapsible" :max-lines="2">
-                <button
-                  v-for="genre in genres"
-                  :key="genre.name"
-                  class="px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5"
+          <!-- Genre Filter -->
+          <FilterSection title="Genres" icon="i-mdi-movie-filter">
+            <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
+              Loading genres...
+            </div>
+            <CollapsibleFilterItems v-else ref="genresCollapsible" :max-lines="2">
+              <button
+                v-for="genre in genres"
+                :key="genre.name"
+                class="px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5"
+                :class="{
+                  'bg-theme-primary text-white': filters.genres.includes(genre.name),
+                  'bg-theme-selection text-theme-text hover:bg-theme-border/50':
+                    !filters.genres.includes(genre.name),
+                }"
+                :title="`${formatCountExact(genre.count)} movies`"
+                @click="toggleGenre(genre.name)"
+              >
+                <span>{{ genre.name }}</span>
+                <span
+                  class="text-xs font-normal"
                   :class="{
-                    'bg-theme-primary text-white': filters.genres.includes(genre.name),
-                    'bg-theme-selection text-theme-text hover:bg-theme-border/50': !filters.genres.includes(genre.name)
+                    'text-white/80': filters.genres.includes(genre.name),
+                    'text-theme-textmuted': !filters.genres.includes(genre.name),
                   }"
-                  :title="`${formatCountExact(genre.count)} movies`"
-                  @click="toggleGenre(genre.name)"
                 >
-                  <span>{{ genre.name }}</span>
-                  <span
-                    class="text-xs font-normal"
-                    :class="{
-                      'text-white/80': filters.genres.includes(genre.name),
-                      'text-theme-textmuted': !filters.genres.includes(genre.name)
-                    }"
-                  >
-                    {{ formatCount(genre.count) }}
-                  </span>
-                </button>
-              </CollapsibleFilterItems>
-            </FilterSection>
+                  {{ formatCount(genre.count) }}
+                </span>
+              </button>
+            </CollapsibleFilterItems>
+          </FilterSection>
 
-            <!-- Country Filter -->
-            <FilterSection
-              title="Countries"
-              icon="i-mdi-earth"
-            >
-              <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
-                Loading countries...
-              </div>
-              <CollapsibleFilterItems v-else ref="countriesCollapsible" :max-lines="2">
-                <button
-                  v-for="country in countries"
-                  :key="country.name"
-                  class="px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5"
+          <!-- Country Filter -->
+          <FilterSection title="Countries" icon="i-mdi-earth">
+            <div v-if="isLoadingFilters" class="text-sm text-theme-textmuted">
+              Loading countries...
+            </div>
+            <CollapsibleFilterItems v-else ref="countriesCollapsible" :max-lines="2">
+              <button
+                v-for="country in countries"
+                :key="country.name"
+                class="px-3 py-1.5 text-sm rounded-full transition-colors inline-flex items-center gap-1.5"
+                :class="{
+                  'bg-theme-primary text-white': filters.countries.includes(country.name),
+                  'bg-theme-selection text-theme-text hover:bg-theme-border/50':
+                    !filters.countries.includes(country.name),
+                }"
+                :title="`${formatCountExact(country.count)} movies`"
+                @click="toggleCountry(country.name)"
+              >
+                <span>{{ country.name }}</span>
+                <span
+                  class="text-xs font-normal"
                   :class="{
-                    'bg-theme-primary text-white': filters.countries.includes(country.name),
-                    'bg-theme-selection text-theme-text hover:bg-theme-border/50': !filters.countries.includes(country.name)
+                    'text-white/80': filters.countries.includes(country.name),
+                    'text-theme-textmuted': !filters.countries.includes(country.name),
                   }"
-                  :title="`${formatCountExact(country.count)} movies`"
-                  @click="toggleCountry(country.name)"
                 >
-                  <span>{{ country.name }}</span>
-                  <span
-                    class="text-xs font-normal"
-                    :class="{
-                      'text-white/80': filters.countries.includes(country.name),
-                      'text-theme-textmuted': !filters.countries.includes(country.name)
-                    }"
-                  >
-                    {{ formatCount(country.count) }}
-                  </span>
-                </button>
-              </CollapsibleFilterItems>
-            </FilterSection>
+                  {{ formatCount(country.count) }}
+                </span>
+              </button>
+            </CollapsibleFilterItems>
+          </FilterSection>
 
           <!-- Row 3: Source -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Source Filter -->
-            <FilterSection
-              title="Source"
-              icon="i-mdi-source-branch"
-            >
+            <FilterSection title="Source" icon="i-mdi-source-branch">
               <div class="space-y-3">
                 <!-- Archive.org -->
                 <AppInputCheckbox
@@ -296,11 +280,13 @@
           </div>
 
           <!-- Error state -->
-          <div v-if="filterLoadError" class="text-sm text-red-500 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+          <div
+            v-if="filterLoadError"
+            class="text-sm text-red-500 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg"
+          >
             {{ filterLoadError }}
             <button class="underline ml-2 font-medium" @click="fetchFilterOptions">Retry</button>
           </div>
-
         </div>
       </div>
     </div>
@@ -324,7 +310,18 @@ const emit = defineEmits<{
 
 // Use unified movie store
 const { filters, currentSortOption, hasActiveFilters } = storeToRefs(useMovieStore())
-const { setMinRating, setMinYear, setMaxYear, setMinVotes, setMaxVotes, toggleSource, toggleGenre, toggleCountry, setSort, resetFilters } = useMovieStore()
+const {
+  setMinRating,
+  setMinYear,
+  setMaxYear,
+  setMinVotes,
+  setMaxVotes,
+  toggleSource,
+  toggleGenre,
+  toggleCountry,
+  setSort,
+  resetFilters,
+} = useMovieStore()
 
 // Dynamic filter options
 const genres = ref<GenreOption[]>([])
@@ -364,11 +361,14 @@ const fetchFilterOptions = async () => {
 
 // Watch for DB ready to refresh filters from SQLite
 const db = useDatabase()
-watch(() => db.isReady.value, (ready) => {
-  if (ready) {
-    fetchFilterOptions()
+watch(
+  () => db.isReady.value,
+  ready => {
+    if (ready) {
+      fetchFilterOptions()
+    }
   }
-})
+)
 
 // Developer mode detection (localhost only)
 const isDev = ref(false)
@@ -407,17 +407,20 @@ const { activate, deactivate } = useFocusTrap(filterMenuRef, {
 })
 
 // Watch for menu open/close to manage focus trap and scroll lock
-watch(() => props.isOpen, (isOpen) => {
-  isLocked.value = isOpen
-  if (isOpen) {
-    // Small delay to ensure DOM is ready and animation has started
-    if (typeof window !== 'undefined') {
-      window.setTimeout(() => {
-        activate()
-      }, 50)
+watch(
+  () => props.isOpen,
+  isOpen => {
+    isLocked.value = isOpen
+    if (isOpen) {
+      // Small delay to ensure DOM is ready and animation has started
+      if (typeof window !== 'undefined') {
+        window.setTimeout(() => {
+          activate()
+        }, 50)
+      }
+    } else {
+      deactivate()
     }
-  } else {
-    deactivate()
   }
-})
+)
 </script>

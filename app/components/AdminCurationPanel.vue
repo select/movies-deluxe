@@ -5,9 +5,7 @@
   >
     <div class="flex items-center gap-2 mb-4 text-theme-text">
       <div class="i-mdi-shield-edit text-2xl" />
-      <h2 class="text-xl font-bold">
-        Admin Curation
-      </h2>
+      <h2 class="text-xl font-bold">Admin Curation</h2>
       <div
         v-if="movie.verified"
         class="flex items-center gap-1 text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded"
@@ -34,7 +32,11 @@
           >
             <div class="flex items-center gap-2 mb-1">
               <div
-                :class="source.type === 'youtube' ? 'i-mdi-youtube text-red-600' : 'i-mdi-bank text-blue-600'"
+                :class="
+                  source.type === 'youtube'
+                    ? 'i-mdi-youtube text-red-600'
+                    : 'i-mdi-bank text-blue-600'
+                "
                 class="text-lg"
               />
               <span class="font-medium text-theme-text">{{ source.type }}</span>
@@ -55,10 +57,7 @@
             </div>
 
             <!-- Source Quality Marks -->
-            <div
-              v-if="source.qualityMarks?.length"
-              class="mb-2 flex flex-wrap gap-1"
-            >
+            <div v-if="source.qualityMarks?.length" class="mb-2 flex flex-wrap gap-1">
               <span
                 v-for="mark in source.qualityMarks"
                 :key="mark"
@@ -75,46 +74,46 @@
             >
               <div class="flex items-center gap-1.5 mb-1">
                 <div class="i-mdi-earth-off text-yellow-600 dark:text-yellow-400" />
-                <span class="font-semibold text-yellow-700 dark:text-yellow-300">Region Restrictions</span>
+                <span class="font-semibold text-yellow-700 dark:text-yellow-300"
+                  >Region Restrictions</span
+                >
               </div>
-              <div
-                v-if="source.regionRestriction.blocked"
-                class="flex items-start gap-1.5"
-              >
+              <div v-if="source.regionRestriction.blocked" class="flex items-start gap-1.5">
                 <div class="i-mdi-close-circle text-red-600 dark:text-red-400 mt-0.5" />
                 <div>
                   <span class="font-medium text-red-700 dark:text-red-300">Blocked in:</span>
-                  <span class="text-theme-textmuted ml-1">{{ source.regionRestriction.blocked.join(', ') }}</span>
-                  <span class="text-theme-textmuted ml-1">({{ source.regionRestriction.blocked.length }} regions)</span>
+                  <span class="text-theme-textmuted ml-1">{{
+                    source.regionRestriction.blocked.join(', ')
+                  }}</span>
+                  <span class="text-theme-textmuted ml-1"
+                    >({{ source.regionRestriction.blocked.length }} regions)</span
+                  >
                 </div>
               </div>
-              <div
-                v-if="source.regionRestriction.allowed"
-                class="flex items-start gap-1.5"
-              >
+              <div v-if="source.regionRestriction.allowed" class="flex items-start gap-1.5">
                 <div class="i-mdi-check-circle text-green-600 dark:text-green-400 mt-0.5" />
                 <div>
-                  <span class="font-medium text-green-700 dark:text-green-300">Only allowed in:</span>
-                  <span class="text-theme-textmuted ml-1">{{ source.regionRestriction.allowed.join(', ') }}</span>
-                  <span class="text-theme-textmuted ml-1">({{ source.regionRestriction.allowed.length }} regions)</span>
+                  <span class="font-medium text-green-700 dark:text-green-300"
+                    >Only allowed in:</span
+                  >
+                  <span class="text-theme-textmuted ml-1">{{
+                    source.regionRestriction.allowed.join(', ')
+                  }}</span>
+                  <span class="text-theme-textmuted ml-1"
+                    >({{ source.regionRestriction.allowed.length }} regions)</span
+                  >
                 </div>
               </div>
             </div>
 
             <!-- Original title from source -->
-            <div
-              v-if="source.title"
-              class="mb-2 p-2 bg-theme-background/50 rounded text-xs"
-            >
+            <div v-if="source.title" class="mb-2 p-2 bg-theme-background/50 rounded text-xs">
               <span class="font-medium text-theme-text">Original title:</span>
               <span class="text-theme-textmuted ml-1">{{ source.title }}</span>
             </div>
 
             <!-- File size -->
-            <div
-              v-if="source.fileSize"
-              class="mb-2 p-2 bg-theme-background/50 rounded text-xs"
-            >
+            <div v-if="source.fileSize" class="mb-2 p-2 bg-theme-background/50 rounded text-xs">
               <span class="font-medium text-theme-text">File size:</span>
               <span class="text-theme-textmuted ml-1">{{ formatFileSize(source.fileSize) }}</span>
             </div>
@@ -123,12 +122,13 @@
               v-if="source.description"
               class="text-xs text-theme-textmuted line-clamp-4 whitespace-pre-wrap"
             >
-              {{ source.description.length > 1000 ? source.description.substring(0, 1000) + '...' : source.description }}
+              {{
+                source.description.length > 1000
+                  ? source.description.substring(0, 1000) + '...'
+                  : source.description
+              }}
             </p>
-            <p
-              v-else
-              class="text-xs italic text-theme-textmuted"
-            >
+            <p v-else class="text-xs italic text-theme-textmuted">
               No description available in database
             </p>
 
@@ -140,7 +140,7 @@
                   class="flex-1 px-2 py-1 text-[10px] rounded border border-theme-border bg-theme-surface text-theme-text"
                   placeholder="Search query..."
                   @keyup.enter="handleGoogleSearch(sourceSearchTitles[source.id] || '')"
-                >
+                />
                 <button
                   class="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded transition-colors"
                   @click="handleGoogleSearch(sourceSearchTitles[source.id] || '')"
@@ -179,23 +179,20 @@
               placeholder="Movie Title"
               class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
               @keyup.enter="handleSearch"
-            >
+            />
             <input
               v-model.trim="searchYear"
               type="text"
               placeholder="Year"
               class="w-20 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
               @keyup.enter="handleSearch"
-            >
+            />
             <button
               class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded font-bold transition-colors disabled:opacity-50"
               :disabled="isSearching"
               @click="handleSearch"
             >
-              <div
-                v-if="isSearching"
-                class="i-mdi-loading animate-spin"
-              />
+              <div v-if="isSearching" class="i-mdi-loading animate-spin" />
               <span v-else>Search</span>
             </button>
           </div>
@@ -213,7 +210,7 @@
                 placeholder="tt1234567"
                 class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm font-mono"
                 @keyup.enter="handleDirectImdbFetch"
-              >
+              />
               <button
                 class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold transition-colors disabled:opacity-50"
                 :disabled="isSearching || !imdbIdInput"
@@ -224,10 +221,7 @@
             </div>
           </div>
 
-          <div
-            v-if="searchError"
-            class="text-red-500 text-sm"
-          >
+          <div v-if="searchError" class="text-red-500 text-sm">
             {{ searchError }}
           </div>
         </div>
@@ -287,17 +281,8 @@
               v-model="selectedCollectionId"
               class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
             >
-              <option
-                value=""
-                disabled
-              >
-                Add to collection...
-              </option>
-              <option
-                v-for="c in availableCollections"
-                :key="c.id"
-                :value="c.id"
-              >
+              <option value="" disabled>Add to collection...</option>
+              <option v-for="c in availableCollections" :key="c.id" :value="c.id">
                 {{ c.name }}
               </option>
             </select>
@@ -306,10 +291,7 @@
               :disabled="!selectedCollectionId || isUpdatingCollection"
               @click="addToCollection"
             >
-              <div
-                v-if="isUpdatingCollection"
-                class="i-mdi-loading animate-spin"
-              />
+              <div v-if="isUpdatingCollection" class="i-mdi-loading animate-spin" />
               <span v-else>Add</span>
             </button>
           </div>
@@ -334,7 +316,7 @@
               :src="result.Poster !== 'N/A' ? result.Poster : '/favicon.ico'"
               class="w-12 h-18 object-cover rounded"
               alt="Poster"
-            >
+            />
             <div class="flex-1 min-w-0">
               <h4 class="font-bold text-sm truncate text-theme-text">
                 {{ result.Title }}
@@ -360,9 +342,7 @@
           class="h-[200px] flex flex-col items-center justify-center text-theme-textmuted border-2 border-dashed border-theme-border rounded-lg"
         >
           <div class="i-mdi-magnify text-4xl mb-2" />
-          <p class="text-sm">
-            Search results will appear here
-          </p>
+          <p class="text-sm">Search results will appear here</p>
         </div>
 
         <!-- Google Results -->
@@ -420,7 +400,14 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, MovieSource, OMDBSearchResult, OMDBSearchResponse, MovieMetadata, Collection } from '~/types'
+import type {
+  MovieEntry,
+  MovieSource,
+  OMDBSearchResult,
+  OMDBSearchResponse,
+  MovieMetadata,
+  Collection,
+} from '~/types'
 
 interface UpdateResponse {
   success: boolean
@@ -458,7 +445,8 @@ const initSourceSearchTitles = () => {
 // Collections state
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
-const { getCollectionsForMovie, loadCollections, addMovieToCollection, removeMovieFromCollection } = collectionsStore
+const { getCollectionsForMovie, loadCollections, addMovieToCollection, removeMovieFromCollection } =
+  collectionsStore
 const selectedCollectionId = ref('')
 const isUpdatingCollection = ref(false)
 
@@ -470,7 +458,8 @@ const availableCollections = computed(() => {
 })
 
 onMounted(async () => {
-  isLocalhost.value = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  isLocalhost.value =
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   searchTitle.value = props.movie.title
   searchYear.value = props.movie.year?.toString() || ''
   initSourceSearchTitles()
@@ -485,21 +474,21 @@ onMounted(async () => {
 })
 
 // Watch for movie changes and reload collections
-watch(() => props.movie.imdbId, async (newId) => {
-  if (newId) {
-    movieCollections.value = await getCollectionsForMovie(newId)
+watch(
+  () => props.movie.imdbId,
+  async newId => {
+    if (newId) {
+      movieCollections.value = await getCollectionsForMovie(newId)
+    }
   }
-})
+)
 
 const addToCollection = async () => {
   if (!selectedCollectionId.value) return
 
   isUpdatingCollection.value = true
   try {
-    const success = await addMovieToCollection(
-      selectedCollectionId.value,
-      props.movie.imdbId
-    )
+    const success = await addMovieToCollection(selectedCollectionId.value, props.movie.imdbId)
     if (success) {
       selectedCollectionId.value = ''
       // Reload collections for this movie from database
@@ -524,14 +513,17 @@ const removeFromCollection = async (collectionId: string) => {
 }
 
 // Watch for movie changes to update search fields
-watch(() => props.movie.imdbId, () => {
-  searchTitle.value = props.movie.title
-  searchYear.value = props.movie.year?.toString() || ''
-  imdbIdInput.value = ''
-  searchResults.value = []
-  searchError.value = ''
-  initSourceSearchTitles()
-})
+watch(
+  () => props.movie.imdbId,
+  () => {
+    searchTitle.value = props.movie.title
+    searchYear.value = props.movie.year?.toString() || ''
+    imdbIdInput.value = ''
+    searchResults.value = []
+    searchError.value = ''
+    initSourceSearchTitles()
+  }
+)
 
 const handleSearch = async () => {
   const title = searchTitle.value.trim()
@@ -544,12 +536,11 @@ const handleSearch = async () => {
   searchResults.value = []
 
   try {
-
     const data = await $fetch<OMDBSearchResponse>('/api/admin/omdb/search', {
       query: {
         s: title,
-        y: year
-      }
+        y: year,
+      },
     })
 
     if (data.Response === 'True') {
@@ -573,7 +564,7 @@ const handleGoogleSearch = async (query: string) => {
 
   try {
     const data = await $fetch<OMDBSearchResponse>('/api/admin/google/search', {
-      query: { q: `${query} site:imdb.com` }
+      query: { q: `${query} site:imdb.com` },
     })
 
     if (data.Response === 'True') {
@@ -607,17 +598,25 @@ const searchBoth = (source: MovieSource) => {
 }
 
 const removeSource = async (sourceId: string) => {
-  if (!confirm('Are you sure you want to remove this source? If this is the last source, the movie entry will be deleted.')) return
+  if (
+    !confirm(
+      'Are you sure you want to remove this source? If this is the last source, the movie entry will be deleted.'
+    )
+  )
+    return
 
   try {
     isSearching.value = true
-    const res = await $fetch<{ success: boolean, movieId: string | null, deleted: boolean }>('/api/admin/movie/remove-source', {
-      method: 'POST',
-      body: {
-        movieId: props.movie.imdbId,
-        sourceId
+    const res = await $fetch<{ success: boolean; movieId: string | null; deleted: boolean }>(
+      '/api/admin/movie/remove-source',
+      {
+        method: 'POST',
+        body: {
+          movieId: props.movie.imdbId,
+          sourceId,
+        },
       }
-    })
+    )
 
     if (res.success) {
       if (res.deleted) {
@@ -656,18 +655,20 @@ const selectMovie = async (imdbId: string) => {
     isSearching.value = true
     // Get full details first
 
-    const details = await $fetch<MovieMetadata & { Response: string, Error?: string }>('/api/admin/omdb/details', {
-      query: { i: imdbId }
-    })
+    const details = await $fetch<MovieMetadata & { Response: string; Error?: string }>(
+      '/api/admin/omdb/details',
+      {
+        query: { i: imdbId },
+      }
+    )
 
     if (details.Response === 'True') {
-
       const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
         method: 'POST',
         body: {
           movieId: props.movie.imdbId,
-          metadata: details
-        }
+          metadata: details,
+        },
       })
 
       if (res.success) {
@@ -686,8 +687,12 @@ const selectMovie = async (imdbId: string) => {
 }
 
 const removeMetadata = async () => {
-
-  if (!confirm('Are you sure you want to remove metadata? This will reset the movie to an unmatched state.')) return
+  if (
+    !confirm(
+      'Are you sure you want to remove metadata? This will reset the movie to an unmatched state.'
+    )
+  )
+    return
 
   try {
     isSearching.value = true
@@ -696,8 +701,8 @@ const removeMetadata = async () => {
       method: 'POST',
       body: {
         movieId: props.movie.imdbId,
-        removeMetadata: true
-      }
+        removeMetadata: true,
+      },
     })
 
     if (res.success) {
@@ -719,8 +724,8 @@ const verifyMovie = async () => {
       method: 'POST',
       body: {
         movieId: props.movie.imdbId,
-        verified: true
-      }
+        verified: true,
+      },
     })
 
     if (res.success) {

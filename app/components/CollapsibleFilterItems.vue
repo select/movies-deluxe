@@ -6,7 +6,7 @@
       class="flex flex-wrap gap-2 transition-all duration-300 ease-in-out md:overflow-hidden"
       :class="{
         'md:max-h-[5.5rem]': !isExpanded && isDesktop,
-        'md:max-h-none': isExpanded || !isDesktop
+        'md:max-h-none': isExpanded || !isDesktop,
       }"
     >
       <slot />
@@ -17,8 +17,9 @@
       v-if="shouldShowToggle && isDesktop"
       class="cursor-pointer w-full flex items-end justify-center gap-1.5 text-xs font-medium transition-colors text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 h-11 flex"
       :class="{
-        'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-gray-900 dark:via-gray-900/90 dark:to-transparent': !isExpanded,
-        'mt-2 bg-transparent': isExpanded
+        'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-gray-900 dark:via-gray-900/90 dark:to-transparent':
+          !isExpanded,
+        'mt-2 bg-transparent': isExpanded,
       }"
       @click="toggleExpanded"
     >
@@ -26,7 +27,7 @@
       <div
         class="i-mdi-chevron-down text-sm transition-transform duration-200"
         :class="{
-          'rotate-180': isExpanded
+          'rotate-180': isExpanded,
         }"
       />
     </button>
@@ -43,7 +44,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  maxLines: 2
+  maxLines: 2,
 })
 
 const isDesktop = useMediaQuery('(min-width: 768px)')
@@ -86,7 +87,7 @@ onMounted(() => {
 })
 
 // Watch for desktop/mobile changes
-watch(isDesktop, (desktop) => {
+watch(isDesktop, desktop => {
   if (!desktop) {
     isExpanded.value = false
     shouldShowToggle.value = false
@@ -97,6 +98,6 @@ watch(isDesktop, (desktop) => {
 
 // Expose method for parent to trigger overflow check
 defineExpose({
-  checkOverflow
+  checkOverflow,
 })
 </script>

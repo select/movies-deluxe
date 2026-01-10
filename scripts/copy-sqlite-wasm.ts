@@ -7,10 +7,7 @@ import { copyFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 
-const SOURCE_DIR = join(
-  process.cwd(),
-  'node_modules/@sqlite.org/sqlite-wasm/sqlite-wasm/jswasm'
-)
+const SOURCE_DIR = join(process.cwd(), 'node_modules/@sqlite.org/sqlite-wasm/sqlite-wasm/jswasm')
 const TARGET_DIR = join(process.cwd(), 'public/sqlite-wasm')
 
 const FILES = ['sqlite3.wasm', 'sqlite3.js']

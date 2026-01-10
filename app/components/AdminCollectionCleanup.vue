@@ -15,19 +15,13 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div
-          class="i-mdi-folder-sync"
-          :class="{ 'animate-pulse': loading }"
-        />
+        <div class="i-mdi-folder-sync" :class="{ 'animate-pulse': loading }" />
         {{ loading ? 'Cleaning...' : 'Clean Collections' }}
       </button>
     </div>
 
     <!-- Results -->
-    <div
-      v-if="results"
-      class="space-y-4"
-    >
+    <div v-if="results" class="space-y-4">
       <!-- Summary Stats -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-theme-background rounded-lg p-3">
@@ -36,26 +30,27 @@
         </div>
         <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
           <div class="text-sm text-purple-600 dark:text-purple-400">Collections Modified</div>
-          <div class="text-xl font-semibold text-purple-700 dark:text-purple-300">{{ results.stats.collectionsModified }}</div>
+          <div class="text-xl font-semibold text-purple-700 dark:text-purple-300">
+            {{ results.stats.collectionsModified }}
+          </div>
         </div>
         <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
           <div class="text-sm text-red-600 dark:text-red-400">Movies Removed</div>
-          <div class="text-xl font-semibold text-red-700 dark:text-red-300">{{ results.stats.moviesRemoved }}</div>
+          <div class="text-xl font-semibold text-red-700 dark:text-red-300">
+            {{ results.stats.moviesRemoved }}
+          </div>
         </div>
         <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
           <div class="text-sm text-blue-600 dark:text-blue-400">IDs Updated</div>
-          <div class="text-xl font-semibold text-blue-700 dark:text-blue-300">{{ results.stats.moviesUpdated }}</div>
+          <div class="text-xl font-semibold text-blue-700 dark:text-blue-300">
+            {{ results.stats.moviesUpdated }}
+          </div>
         </div>
       </div>
 
       <!-- Details -->
-      <div
-        v-if="results.details.length > 0"
-        class="space-y-2"
-      >
-        <h4 class="font-medium text-theme-text">
-          Modified Collections
-        </h4>
+      <div v-if="results.details.length > 0" class="space-y-2">
+        <h4 class="font-medium text-theme-text">Modified Collections</h4>
         <div class="space-y-2 max-h-96 overflow-y-auto">
           <div
             v-for="(detail, index) in results.details"
@@ -69,7 +64,9 @@
               v-if="detail.removedMovies.length > 0"
               class="text-sm text-red-600 dark:text-red-400 mb-1"
             >
-              Removed {{ detail.removedMovies.length }} movie(s): {{ detail.removedMovies.slice(0, 3).join(', ') }}{{ detail.removedMovies.length > 3 ? '...' : '' }}
+              Removed {{ detail.removedMovies.length }} movie(s):
+              {{ detail.removedMovies.slice(0, 3).join(', ')
+              }}{{ detail.removedMovies.length > 3 ? '...' : '' }}
             </div>
             <div
               v-if="detail.updatedMovies.length > 0"
@@ -89,7 +86,9 @@
         <div class="flex items-center gap-2">
           <div class="i-mdi-check-circle text-green-500" />
           <div class="text-green-800 dark:text-green-200">
-            Successfully cleaned {{ results.stats.collectionsModified }} collection(s). Removed {{ results.stats.moviesRemoved }} non-existent movie(s) and updated {{ results.stats.moviesUpdated }} ID(s).
+            Successfully cleaned {{ results.stats.collectionsModified }} collection(s). Removed
+            {{ results.stats.moviesRemoved }} non-existent movie(s) and updated
+            {{ results.stats.moviesUpdated }} ID(s).
           </div>
         </div>
       </div>

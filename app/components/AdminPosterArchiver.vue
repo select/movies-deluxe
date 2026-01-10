@@ -7,7 +7,8 @@
 
     <div class="space-y-4">
       <p class="text-sm text-theme-textmuted">
-        Create tar.gz archives of all posters. Archives are split into &lt;50MB chunks and saved to the
+        Create tar.gz archives of all posters. Archives are split into &lt;50MB chunks and saved to
+        the
         <code class="px-1 py-0.5 bg-theme-background rounded text-xs">/data</code> directory.
       </p>
 
@@ -17,13 +18,19 @@
         class="space-y-2"
       >
         <div class="flex items-center justify-between text-xs">
-          <span class="text-theme-textmuted truncate mr-2">{{ progress.posterArchive.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.posterArchive.current }} / {{ progress.posterArchive.total }}</span>
+          <span class="text-theme-textmuted truncate mr-2">{{
+            progress.posterArchive.message
+          }}</span>
+          <span class="font-mono text-nowrap"
+            >{{ progress.posterArchive.current }} / {{ progress.posterArchive.total }}</span
+          >
         </div>
         <div class="h-2 bg-theme-border rounded-full overflow-hidden">
           <div
             class="h-full bg-purple-500 transition-all duration-300"
-            :style="{ width: `${(progress.posterArchive.current / progress.posterArchive.total) * 100}%` }"
+            :style="{
+              width: `${(progress.posterArchive.current / progress.posterArchive.total) * 100}%`,
+            }"
           />
         </div>
       </div>
@@ -32,30 +39,32 @@
       <div
         v-if="results"
         class="p-4 rounded-lg border"
-        :class="results.success ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'"
+        :class="
+          results.success
+            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+            : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+        "
       >
-        <div
-          v-if="results.success"
-          class="space-y-3"
-        >
+        <div v-if="results.success" class="space-y-3">
           <div class="flex items-start gap-2">
-            <div class="i-mdi-check-circle text-green-600 dark:text-green-400 text-xl flex-shrink-0 mt-0.5" />
+            <div
+              class="i-mdi-check-circle text-green-600 dark:text-green-400 text-xl flex-shrink-0 mt-0.5"
+            />
             <div class="flex-1">
               <p class="font-semibold text-green-800 dark:text-green-200">
                 Archives Created Successfully
               </p>
               <p class="text-sm text-green-700 dark:text-green-300 mt-1">
-                Created {{ results.archivesCreated }} archive{{ results.archivesCreated !== 1 ? 's' : '' }}
+                Created {{ results.archivesCreated }} archive{{
+                  results.archivesCreated !== 1 ? 's' : ''
+                }}
                 containing {{ results.totalPosters }} posters ({{ results.totalSize }})
               </p>
             </div>
           </div>
 
           <!-- Archive Details -->
-          <div
-            v-if="results.archives.length > 0"
-            class="mt-3 space-y-2"
-          >
+          <div v-if="results.archives.length > 0" class="mt-3 space-y-2">
             <p class="text-xs font-semibold text-green-800 dark:text-green-200 uppercase">
               Archives:
             </p>
@@ -65,7 +74,9 @@
                 :key="archive.filename"
                 class="flex items-center justify-between text-xs bg-white dark:bg-gray-800 p-2 rounded border border-green-200 dark:border-green-700"
               >
-                <span class="font-mono text-green-700 dark:text-green-300">{{ archive.filename }}</span>
+                <span class="font-mono text-green-700 dark:text-green-300">{{
+                  archive.filename
+                }}</span>
                 <span class="text-green-600 dark:text-green-400">
                   {{ archive.posterCount }} posters • {{ archive.size }}
                 </span>
@@ -74,15 +85,12 @@
           </div>
         </div>
 
-        <div
-          v-else
-          class="flex items-start gap-2"
-        >
-          <div class="i-mdi-alert-circle text-red-600 dark:text-red-400 text-xl flex-shrink-0 mt-0.5" />
+        <div v-else class="flex items-start gap-2">
+          <div
+            class="i-mdi-alert-circle text-red-600 dark:text-red-400 text-xl flex-shrink-0 mt-0.5"
+          />
           <div>
-            <p class="font-semibold text-red-800 dark:text-red-200">
-              Archive Creation Failed
-            </p>
+            <p class="font-semibold text-red-800 dark:text-red-200">Archive Creation Failed</p>
             <p class="text-sm text-red-700 dark:text-red-300 mt-1">
               {{ results.error }}
             </p>
@@ -96,10 +104,7 @@
         :disabled="loading"
         @click="createArchives"
       >
-        <div
-          class="i-mdi-archive"
-          :class="{ 'animate-spin': loading }"
-        />
+        <div class="i-mdi-archive" :class="{ 'animate-spin': loading }" />
         {{ loading ? 'Creating Archives...' : 'Create Poster Archives' }}
       </button>
     </div>

@@ -130,8 +130,8 @@ importers:
         specifier: 1.33.0
         version: 1.33.0
       prettier:
-        specifier: 3.7.4
-        version: 3.7.4
+        specifier: 3.3.3
+        version: 3.3.3
       prettier-plugin-vue:
         specifier: 1.1.6
         version: 1.1.6
@@ -4759,8 +4759,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.7.4:
-    resolution: {integrity: sha512-v6UNi1+3hSlVvv8fSaoUbggEM5VErKmmpGA7Pl3HF8V6uKY7rvClBOJlH6yNwQtfTueNkGVpOv/mtWL9L4bgRA==}
+  prettier@3.3.3:
+    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -10963,7 +10963,7 @@ snapshots:
 
   prettier@2.8.8: {}
 
-  prettier@3.7.4: {}
+  prettier@3.3.3: {}
 
   pretty-bytes@7.1.0: {}
 

@@ -18,7 +18,9 @@
       <div class="mb-10">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div class="flex-1">
-            <h1 class="text-4xl font-black text-theme-text mb-3 tracking-tight flex items-center gap-3">
+            <h1
+              class="text-4xl font-black text-theme-text mb-3 tracking-tight flex items-center gap-3"
+            >
               <div v-if="titleIcon" :class="titleIcon" />
               {{ title }}
             </h1>
@@ -29,15 +31,21 @@
           </div>
 
           <div class="flex flex-col items-start md:items-end gap-4 w-full md:w-auto">
-            <div
-              v-if="movieCount > 0"
-              class="flex flex-col items-start md:items-end gap-1"
-            >
-              <div class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm">
+            <div v-if="movieCount > 0" class="flex flex-col items-start md:items-end gap-1">
+              <div
+                class="px-4 py-2 rounded-xl bg-theme-surface border border-theme-border/50 text-sm font-bold shadow-sm"
+              >
                 {{ movieCount }} movies
               </div>
-              <div v-if="searchQuery && movieCount > 0" class="text-xs text-theme-accent font-bold px-1">
-                {{ filteredMovies.length === 0 ? 'No movies found' : `Found ${filteredMovies.length} movie${filteredMovies.length === 1 ? '' : 's'}` }}
+              <div
+                v-if="searchQuery && movieCount > 0"
+                class="text-xs text-theme-accent font-bold px-1"
+              >
+                {{
+                  filteredMovies.length === 0
+                    ? 'No movies found'
+                    : `Found ${filteredMovies.length} movie${filteredMovies.length === 1 ? '' : 's'}`
+                }}
               </div>
             </div>
 
@@ -56,25 +64,16 @@
         v-if="isLoading"
         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
       >
-        <MovieCardSkeleton
-          v-for="i in 12"
-          :key="i"
-        />
+        <MovieCardSkeleton v-for="i in 12" :key="i" />
       </div>
 
       <!-- Movies Grid -->
       <template v-else-if="filteredMovies && filteredMovies.length > 0">
-        <MovieVirtualGrid
-          :movies="filteredMovies"
-          :total-movies="filteredMovies.length"
-        />
+        <MovieVirtualGrid :movies="filteredMovies" :total-movies="filteredMovies.length" />
       </template>
 
       <!-- Empty State / No Results -->
-      <div
-        v-else
-        class="flex flex-col items-center justify-center py-20 text-center"
-      >
+      <div v-else class="flex flex-col items-center justify-center py-20 text-center">
         <div :class="emptyStateIcon" class="text-6xl text-theme-textmuted mb-4 opacity-20" />
         <h3 class="text-xl font-bold text-theme-text mb-2">
           {{ emptyStateTitle }}
@@ -118,15 +117,15 @@ interface Props {
   description: string
   titleIcon?: string
   breadcrumbs?: Breadcrumbs
-  
+
   // Movies data
   movies: MovieEntry[]
   movieCount: number
   isLoading: boolean
-  
+
   // Search
   searchPlaceholder?: string
-  
+
   // Empty state
   emptyStateIcon: string
   emptyStateTitle: string
@@ -139,7 +138,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   searchPlaceholder: 'Search movies...',
-  showClearSearch: true
+  showClearSearch: true,
 })
 
 // Search functionality
@@ -156,10 +155,10 @@ const filteredMovies = computed(() => {
         { name: 'metadata.Genre', weight: 1 },
         { name: 'metadata.Director', weight: 1.5 },
         { name: 'metadata.Actors', weight: 1 },
-        { name: 'metadata.Plot', weight: 0.5 }
+        { name: 'metadata.Plot', weight: 0.5 },
       ],
       threshold: 0.3,
-      ignoreLocation: true
+      ignoreLocation: true,
     })
 
     const results = fuse.search(searchQuery.value)
@@ -181,6 +180,8 @@ const emptyStateDescription = computed(() => {
   if (props.movieCount === 0) {
     return props.emptyStateDescription
   }
-  return searchQuery.value ? 'Try a different search term or clear your search.' : 'This collection is currently empty.'
+  return searchQuery.value
+    ? 'Try a different search term or clear your search.'
+    : 'This collection is currently empty.'
 })
 </script>

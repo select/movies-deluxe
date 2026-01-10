@@ -1,16 +1,10 @@
 <template>
   <div class="space-y-4">
-    <div
-      v-if="isLoading"
-      class="p-12 flex justify-center"
-    >
+    <div v-if="isLoading" class="p-12 flex justify-center">
       <div class="i-mdi-loading animate-spin text-4xl text-blue-600" />
     </div>
 
-    <div
-      v-else-if="movies.length > 0"
-      class="overflow-hidden divide-y divide-theme-border"
-    >
+    <div v-else-if="movies.length > 0" class="overflow-hidden divide-y divide-theme-border">
       <div
         v-for="movie in movies"
         :key="movie.imdbId"
@@ -22,8 +16,8 @@
             :src="getPosterPath(movie.imdbId)"
             :alt="movie.title"
             class="w-full h-full object-cover"
-            @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
-          >
+            @error="e => ((e.target as HTMLImageElement).style.display = 'none')"
+          />
           <div
             v-else
             class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
@@ -43,17 +37,11 @@
           </p>
           <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
             <span class="font-mono">{{ movie.imdbId }}</span>
-            <span
-              v-if="movie.metadata?.imdbRating"
-              class="flex items-center gap-1"
-            >
+            <span v-if="movie.metadata?.imdbRating" class="flex items-center gap-1">
               <span class="opacity-50">•</span>
               <div class="i-mdi-star text-theme-accent text-xs" />
               <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
-              <span
-                v-if="movie.metadata?.imdbVotes"
-                class="opacity-70"
-              >
+              <span v-if="movie.metadata?.imdbVotes" class="opacity-70">
                 ({{ formatVotes(movie.metadata.imdbVotes) }})
               </span>
             </span>
@@ -65,14 +53,8 @@
           :disabled="isRemoving === movie.imdbId"
           @click="removeMovie(movie)"
         >
-          <div
-            v-if="isRemoving === movie.imdbId"
-            class="i-mdi-loading animate-spin text-xl"
-          />
-          <div
-            v-else
-            class="i-mdi-trash-can-outline text-xl"
-          />
+          <div v-if="isRemoving === movie.imdbId" class="i-mdi-loading animate-spin text-xl" />
+          <div v-else class="i-mdi-trash-can-outline text-xl" />
         </button>
       </div>
     </div>
@@ -136,7 +118,10 @@ const removeMovie = async (movie: MovieEntry) => {
 
   isRemoving.value = movie.imdbId
   try {
-    const success = await collectionsStore.removeMovieFromCollection(props.collectionId, movie.imdbId)
+    const success = await collectionsStore.removeMovieFromCollection(
+      props.collectionId,
+      movie.imdbId
+    )
     if (success) {
       uiStore.showToast('Movie removed from collection')
       await loadCollectionMovies()

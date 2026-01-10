@@ -1,16 +1,11 @@
 <template>
-  <div class="min-h-screen bg-theme-background text-theme-text p-4 md:ml-16 transition-colors duration-300">
-    <div
-      v-if="!isDev"
-      class="flex flex-col items-center justify-center h-[60vh] text-center"
-    >
+  <div
+    class="min-h-screen bg-theme-background text-theme-text p-4 md:ml-16 transition-colors duration-300"
+  >
+    <div v-if="!isDev" class="flex flex-col items-center justify-center h-[60vh] text-center">
       <div class="i-mdi-lock text-64px text-gray-300 dark:text-gray-700 mb-4" />
-      <h1 class="text-2xl font-bold mb-2">
-        Access Denied
-      </h1>
-      <p class="text-theme-textmuted">
-        The admin interface is only available on localhost.
-      </p>
+      <h1 class="text-2xl font-bold mb-2">Access Denied</h1>
+      <p class="text-theme-textmuted">The admin interface is only available on localhost.</p>
       <NuxtLink
         to="/"
         class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
@@ -19,10 +14,7 @@
       </NuxtLink>
     </div>
 
-    <div
-      v-else
-      class="max-w-7xl mx-auto space-y-8"
-    >
+    <div v-else class="max-w-7xl mx-auto space-y-8">
       <!-- Header -->
       <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -79,10 +71,7 @@
               :disabled="loading || generatingSqlite"
               @click="adminStore.generateSqlite"
             >
-              <div
-                class="i-mdi-database-export"
-                :class="{ 'animate-spin': generatingSqlite }"
-              />
+              <div class="i-mdi-database-export" :class="{ 'animate-spin': generatingSqlite }" />
               Generate SQLite
             </button>
             <button
@@ -90,10 +79,7 @@
               :disabled="loading || generatingHomePages"
               @click="adminStore.generateHomePages"
             >
-              <div
-                class="i-mdi-home-plus"
-                :class="{ 'animate-spin': generatingHomePages }"
-              />
+              <div class="i-mdi-home-plus" :class="{ 'animate-spin': generatingHomePages }" />
               Generate Home Pages
             </button>
             <button
@@ -101,10 +87,7 @@
               :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
             >
-              <div
-                class="i-mdi-refresh"
-                :class="{ 'animate-spin': refreshingStats }"
-              />
+              <div class="i-mdi-refresh" :class="{ 'animate-spin': refreshingStats }" />
               Refresh Stats
             </button>
           </div>
@@ -115,7 +98,9 @@
           >
             <div class="flex items-center justify-between text-xs">
               <span class="text-theme-textmuted truncate mr-2">{{ progress.sqlite.message }}</span>
-              <span class="font-mono text-nowrap">{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span>
+              <span class="font-mono text-nowrap"
+                >{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span
+              >
             </div>
             <div class="h-2 bg-theme-border rounded-full overflow-hidden">
               <div
@@ -131,7 +116,9 @@
           >
             <div class="flex items-center justify-between text-xs">
               <span class="text-theme-textmuted truncate mr-2">{{ progress.home.message }}</span>
-              <span class="font-mono text-nowrap">{{ progress.home.current }} / {{ progress.home.total }}</span>
+              <span class="font-mono text-nowrap"
+                >{{ progress.home.current }} / {{ progress.home.total }}</span
+              >
             </div>
             <div class="h-2 bg-theme-border rounded-full overflow-hidden">
               <div
@@ -147,7 +134,9 @@
           >
             <div class="flex items-center justify-between text-xs">
               <span class="text-theme-textmuted truncate mr-2">{{ progress.stats.message }}</span>
-              <span class="font-mono text-nowrap">{{ progress.stats.current }} / {{ progress.stats.total }}</span>
+              <span class="font-mono text-nowrap"
+                >{{ progress.stats.current }} / {{ progress.stats.total }}</span
+              >
             </div>
             <div class="h-2 bg-theme-border rounded-full overflow-hidden">
               <div
@@ -160,10 +149,7 @@
       </header>
 
       <!-- Stats Overview -->
-      <section
-        v-if="stats"
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
-      >
+      <section v-if="stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         <AdminStatsCard
           title="Total Movies"
           :value="stats.database.total"
@@ -257,10 +243,10 @@
 
       <!-- YouTube Channel Stats -->
       <section>
-      <AdminYouTubeChannelStats
-        v-if="stats?.external.youtube.channels.length"
-        :channels="stats.external.youtube.channels"
-      />
+        <AdminYouTubeChannelStats
+          v-if="stats?.external.youtube.channels.length"
+          :channels="stats.external.youtube.channels"
+        />
       </section>
 
       <!-- Quality Breakdown -->
@@ -278,7 +264,9 @@
             :key="label"
             class="flex flex-col p-3 rounded-lg bg-theme-background border border-gray-100 dark:border-gray-700"
           >
-            <span class="text-[10px] text-theme-textmuted uppercase font-bold truncate">{{ label }}</span>
+            <span class="text-[10px] text-theme-textmuted uppercase font-bold truncate">{{
+              label
+            }}</span>
             <span class="text-2xl font-black text-theme-text">{{ count }}</span>
           </div>
         </div>
@@ -308,10 +296,8 @@
           </div>
         </section>
 
-
-
         <!-- Data Enrichment Section -->
-        <section >
+        <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             <div class="i-mdi-database-sync text-green-600" />
             Data Enrichment
@@ -336,27 +322,26 @@
             />
 
             <AdminPosterArchiver />
-	          <!-- Data Cleanup Section -->
-	          <div>
-	            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-	              <div class="i-mdi-broom text-orange-600" />
-	              Data Cleanup
-	            </h3>
-	            <div class="space-y-4">
-	              <AdminDataDeduplication
-	                :loading="deduplicating"
-	                :results="deduplicationResults"
-	                @start="adminStore.deduplicateDescriptions"
-	              />
-	              <AdminCollectionCleanup
-	                :loading="cleaningCollections"
-	                :results="collectionCleanupResults"
-	                @start="adminStore.cleanupCollections"
-	              />
-	            </div>
-	          </div>
+            <!-- Data Cleanup Section -->
+            <div>
+              <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <div class="i-mdi-broom text-orange-600" />
+                Data Cleanup
+              </h3>
+              <div class="space-y-4">
+                <AdminDataDeduplication
+                  :loading="deduplicating"
+                  :results="deduplicationResults"
+                  @start="adminStore.deduplicateDescriptions"
+                />
+                <AdminCollectionCleanup
+                  :loading="cleaningCollections"
+                  :results="collectionCleanupResults"
+                  @start="adminStore.cleanupCollections"
+                />
+              </div>
+            </div>
           </div>
-
         </section>
       </div>
 
@@ -377,9 +362,7 @@ import type { ScrapeStats } from '~/types/admin'
 // Set page title
 useHead({
   title: 'Admin Dashboard - Movies Deluxe',
-  meta: [
-    { name: 'robots', content: 'noindex, nofollow' },
-  ],
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
 })
 
 const isDev = ref(false)
@@ -413,7 +396,7 @@ const {
   youtubePercent,
   youtubeTotalAvailable,
   omdbFailedPercent,
-  postersFailedPercent
+  postersFailedPercent,
 } = storeToRefs(adminStore)
 
 // Computed property to check if stats are being refreshed

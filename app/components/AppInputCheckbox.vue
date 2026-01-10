@@ -7,20 +7,14 @@
       class="flex items-center justify-center w-5 h-5 transition-colors"
       :class="{
         'text-theme-primary': checked,
-        'text-theme-textmuted group-hover:text-theme-text': !checked
+        'text-theme-textmuted group-hover:text-theme-text': !checked,
       }"
       role="checkbox"
       :aria-checked="checked"
       :aria-disabled="disabled"
     >
-      <div
-        v-if="checked"
-        class="i-mdi-checkbox-marked text-xl"
-      />
-      <div
-        v-else
-        class="i-mdi-checkbox-blank-outline text-xl"
-      />
+      <div v-if="checked" class="i-mdi-checkbox-marked text-xl" />
+      <div v-else class="i-mdi-checkbox-blank-outline text-xl" />
     </div>
     <input
       :checked="checked"
@@ -29,12 +23,8 @@
       :disabled="disabled"
       class="sr-only"
       @change="handleChange"
-    >
-    <span
-      v-if="label"
-      class="text-sm select-none"
-      :class="{ 'text-theme-textmuted': disabled }"
-    >
+    />
+    <span v-if="label" class="text-sm select-none" :class="{ 'text-theme-textmuted': disabled }">
       {{ label }}
     </span>
     <slot />
@@ -42,7 +32,6 @@
 </template>
 
 <script setup lang="ts">
- 
 interface Props {
   checked: boolean
   value?: string | number | boolean

@@ -1,9 +1,6 @@
 <template>
   <div class="space-y-2">
-    <label
-      v-if="label"
-      class="text-sm font-medium text-theme-textmuted"
-    >
+    <label v-if="label" class="text-sm font-medium text-theme-textmuted">
       {{ label }}
     </label>
     <input
@@ -17,12 +14,11 @@
       class="w-full px-4 py-2 bg-theme-surface border border-theme-border rounded-xl focus:ring-2 focus:ring-theme-primary outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       :class="{ 'opacity-50 cursor-not-allowed': disabled }"
       @input="handleInput"
-    >
+    />
   </div>
 </template>
 
 <script setup lang="ts">
- 
 withDefaults(
   defineProps<{
     modelValue: number

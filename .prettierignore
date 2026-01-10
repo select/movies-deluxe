@@ -30,6 +30,3 @@ public/posters
 
 # Large data files (do not auto-format)
 data/
-app/components/AdminSourceQualityDialog.vue
-app/components/AdminCurationPanel.vue
-app/pages/movie/\[id\].vue
