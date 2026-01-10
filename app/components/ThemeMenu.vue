@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Overlay (visible when menu is open) -->
-    <div v-if="isOpen" class="fixed inset-0 z-50 transition-opacity" @click="emit('close')" />
+    <div v-if="isOpen" class="fixed inset-0 z-50 transition-opacity" @click="emit('close')"></div>
 
     <!-- Theme Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
@@ -18,13 +18,13 @@
         aria-label="Close theme menu"
         @click="emit('close')"
       >
-        <div class="i-mdi-close text-2xl" />
+        <div class="i-mdi-close text-2xl"></div>
       </button>
 
       <!-- Header -->
       <div class="flex items-center justify-between p-4">
         <h2 class="text-lg font-semibold flex items-center gap-2 text-theme-text">
-          <div class="i-mdi-palette text-xl" />
+          <div class="i-mdi-palette text-xl"></div>
           Theme Selection
         </h2>
         <button
@@ -32,7 +32,7 @@
           aria-label="Close theme menu"
           @click="emit('close')"
         >
-          <div class="i-mdi-close text-xl" />
+          <div class="i-mdi-close text-xl"></div>
         </button>
       </div>
 
@@ -47,7 +47,7 @@
             <h4
               class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2"
             >
-              <div class="i-material-symbols-light-dark-mode text-xs" />
+              <div class="i-material-symbols-light-dark-mode text-xs"></div>
               Dark Themes
             </h4>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -69,7 +69,7 @@
                   <div
                     v-if="currentThemeId === theme.metadata.id"
                     class="i-mdi-check-circle text-theme-primary text-xs"
-                  />
+                  ></div>
                 </div>
 
                 <!-- Color Swatches -->
@@ -77,15 +77,15 @@
                   <div
                     class="w-3 h-3 rounded-full border border-black/10"
                     :style="{ backgroundColor: theme.colors.background }"
-                  />
+                  ></div>
                   <div
                     class="w-3 h-3 rounded-full border border-black/10"
                     :style="{ backgroundColor: theme.colors.primary }"
-                  />
+                  ></div>
                   <div
                     class="w-3 h-3 rounded-full border border-black/10"
                     :style="{ backgroundColor: theme.colors.accent }"
-                  />
+                  ></div>
                 </div>
               </button>
             </div>
@@ -96,7 +96,7 @@
             <h4
               class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2"
             >
-              <div class="i-material-symbols-light-wb-sunny text-xs" />
+              <div class="i-material-symbols-light-wb-sunny text-xs"></div>
               Light Themes
             </h4>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -118,7 +118,7 @@
                   <div
                     v-if="currentThemeId === theme.metadata.id"
                     class="i-mdi-check-circle text-theme-primary text-xs"
-                  />
+                  ></div>
                 </div>
 
                 <!-- Color Swatches -->
@@ -126,15 +126,15 @@
                   <div
                     class="w-3 h-3 rounded-full border border-black/10"
                     :style="{ backgroundColor: theme.colors.background }"
-                  />
+                  ></div>
                   <div
                     class="w-3 h-3 rounded-full border border-black/10"
                     :style="{ backgroundColor: theme.colors.primary }"
-                  />
+                  ></div>
                   <div
                     class="w-3 h-3 rounded-full border border-black/10"
                     :style="{ backgroundColor: theme.colors.accent }"
-                  />
+                  ></div>
                 </div>
               </button>
             </div>

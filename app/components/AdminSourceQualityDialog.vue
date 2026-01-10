@@ -8,11 +8,11 @@
     >
       <div class="p-6 border-b border-theme-border flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="i-mdi-alert-decagram text-yellow-600 text-2xl" />
+          <div class="i-mdi-alert-decagram text-yellow-600 text-2xl"></div>
           <h3 class="text-xl font-bold">Mark Source Quality</h3>
         </div>
         <button class="p-2 hover:bg-theme-selection rounded-full transition-colors" @click="close">
-          <div class="i-mdi-close text-xl" />
+          <div class="i-mdi-close text-xl"></div>
         </button>
       </div>
 
@@ -26,7 +26,7 @@
                   : 'i-mdi-bank text-blue-600'
               "
               class="text-lg"
-            />
+            ></div>
             <span class="font-medium text-theme-text">{{ source.type }}</span>
           </div>
           <p class="text-xs text-theme-textmuted line-clamp-2">
@@ -71,7 +71,7 @@
             :disabled="isSaving"
             @click="save"
           >
-            <div v-if="isSaving" class="i-mdi-loading animate-spin" />
+            <div v-if="isSaving" class="i-mdi-loading animate-spin"></div>
             <span>{{ isSaving ? 'Saving...' : 'Save Quality' }}</span>
           </button>
         </div>

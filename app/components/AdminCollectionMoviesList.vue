@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <div v-if="isLoading" class="p-12 flex justify-center">
-      <div class="i-mdi-loading animate-spin text-4xl text-blue-600" />
+      <div class="i-mdi-loading animate-spin text-4xl text-blue-600"></div>
     </div>
 
     <div v-else-if="movies.length > 0" class="overflow-hidden divide-y divide-theme-border">
@@ -22,7 +22,7 @@
             v-else
             class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
           >
-            <div class="i-mdi-movie text-2xl" />
+            <div class="i-mdi-movie text-2xl"></div>
           </div>
         </div>
         <div class="flex-1 min-w-0">
@@ -39,7 +39,7 @@
             <span class="font-mono">{{ movie.imdbId }}</span>
             <span v-if="movie.metadata?.imdbRating" class="flex items-center gap-1">
               <span class="opacity-50">•</span>
-              <div class="i-mdi-star text-theme-accent text-xs" />
+              <div class="i-mdi-star text-theme-accent text-xs"></div>
               <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
               <span v-if="movie.metadata?.imdbVotes" class="opacity-70">
                 ({{ formatVotes(movie.metadata.imdbVotes) }})
@@ -53,8 +53,8 @@
           :disabled="isRemoving === movie.imdbId"
           @click="removeMovie(movie)"
         >
-          <div v-if="isRemoving === movie.imdbId" class="i-mdi-loading animate-spin text-xl" />
-          <div v-else class="i-mdi-trash-can-outline text-xl" />
+          <div v-if="isRemoving === movie.imdbId" class="i-mdi-loading animate-spin text-xl"></div>
+          <div v-else class="i-mdi-trash-can-outline text-xl"></div>
         </button>
       </div>
     </div>
@@ -63,7 +63,7 @@
       v-else
       class="p-12 text-center text-theme-textmuted bg-theme-surface border border-theme-border border-dashed rounded-2xl"
     >
-      <div class="i-mdi-movie-off-outline text-4xl mx-auto mb-2 opacity-20" />
+      <div class="i-mdi-movie-off-outline text-4xl mx-auto mb-2 opacity-20"></div>
       <p>No movies in this collection yet.</p>
     </div>
   </div>

@@ -4,7 +4,7 @@
       <span class="text-xs font-medium text-theme-textmuted uppercase tracking-wider">{{
         title
       }}</span>
-      <div class="text-xl" :class="[icon, iconColor]" />
+      <div class="text-xl" :class="[icon, iconColor]"></div>
     </div>
     <div class="text-2xl font-bold flex items-baseline gap-2">
       {{ value.toLocaleString() }}
@@ -22,12 +22,12 @@
           class="h-full transition-all duration-1000"
           :class="progressColor"
           :style="{ width: `${percent}%` }"
-        />
+        ></div>
         <div
           v-if="failed && failed > 0 && failedPercent !== undefined"
           class="h-full bg-orange-400 transition-all duration-1000"
           :style="{ width: `${failedPercent}%` }"
-        />
+        ></div>
       </div>
       <span class="text-[10px] font-medium">{{ percent?.toFixed(percentPrecision) }}%</span>
     </div>

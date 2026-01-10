@@ -1,7 +1,7 @@
 <template>
   <div class="bg-theme-surface p-6 rounded-xl border border-theme-border shadow-sm">
     <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-      <div class="i-mdi-archive text-purple-600" />
+      <div class="i-mdi-archive text-purple-600"></div>
       Poster Archiver
     </h3>
 
@@ -31,7 +31,7 @@
             :style="{
               width: `${(progress.posterArchive.current / progress.posterArchive.total) * 100}%`,
             }"
-          />
+          ></div>
         </div>
       </div>
 
@@ -49,7 +49,7 @@
           <div class="flex items-start gap-2">
             <div
               class="i-mdi-check-circle text-green-600 dark:text-green-400 text-xl flex-shrink-0 mt-0.5"
-            />
+            ></div>
             <div class="flex-1">
               <p class="font-semibold text-green-800 dark:text-green-200">
                 Archives Created Successfully
@@ -88,7 +88,7 @@
         <div v-else class="flex items-start gap-2">
           <div
             class="i-mdi-alert-circle text-red-600 dark:text-red-400 text-xl flex-shrink-0 mt-0.5"
-          />
+          ></div>
           <div>
             <p class="font-semibold text-red-800 dark:text-red-200">Archive Creation Failed</p>
             <p class="text-sm text-red-700 dark:text-red-300 mt-1">
@@ -104,7 +104,7 @@
         :disabled="loading"
         @click="createArchives"
       >
-        <div class="i-mdi-archive" :class="{ 'animate-spin': loading }" />
+        <div class="i-mdi-archive" :class="{ 'animate-spin': loading }"></div>
         {{ loading ? 'Creating Archives...' : 'Create Poster Archives' }}
       </button>
     </div>

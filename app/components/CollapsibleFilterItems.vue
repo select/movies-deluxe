@@ -9,7 +9,7 @@
         'md:max-h-none': isExpanded || !isDesktop,
       }"
     >
-      <slot />
+      <slot></slot>
     </div>
 
     <!-- Show More/Less button with gradient background (desktop only) -->
@@ -29,7 +29,7 @@
         :class="{
           'rotate-180': isExpanded,
         }"
-      />
+      ></div>
     </button>
   </div>
 </template>

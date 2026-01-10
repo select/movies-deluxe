@@ -8,7 +8,7 @@
         class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-2"
         @click="saveCurrentQuery"
       >
-        <div class="i-mdi-plus" />
+        <div class="i-mdi-plus"></div>
         Save Current Search
       </button>
     </div>
@@ -29,7 +29,7 @@
         <div class="flex items-start justify-between gap-4">
           <div class="flex-1 space-y-2">
             <div class="flex items-center gap-2">
-              <div class="i-mdi-magnify text-theme-textmuted" />
+              <div class="i-mdi-magnify text-theme-textmuted"></div>
               <span class="font-bold text-sm">
                 {{ query.searchQuery || 'All Movies' }}
               </span>
@@ -41,7 +41,7 @@
                 v-if="query.filterState.sort"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
-                <div class="i-mdi-sort" />
+                <div class="i-mdi-sort"></div>
                 {{ query.filterState.sort.field }} ({{ query.filterState.sort.direction }})
               </div>
 
@@ -53,7 +53,7 @@
                 "
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
-                <div class="i-mdi-calendar" />
+                <div class="i-mdi-calendar"></div>
                 {{ query.filterState.minYear || 1910 }} - {{ query.filterState.maxYear || 2025 }}
               </div>
 
@@ -62,7 +62,7 @@
                 v-if="query.filterState.minRating && query.filterState.minRating > 0"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
-                <div class="i-mdi-star" />
+                <div class="i-mdi-star"></div>
                 {{ query.filterState.minRating }}+
               </div>
 
@@ -74,7 +74,7 @@
                 "
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
-                <div class="i-mdi-account-group" />
+                <div class="i-mdi-account-group"></div>
                 {{ (query.filterState.minVotes || 0).toLocaleString() }} -
                 {{
                   query.filterState.maxVotes ? query.filterState.maxVotes.toLocaleString() : 'Any'
@@ -86,7 +86,7 @@
                 v-if="query.filterState.genres?.length"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
-                <div class="i-mdi-movie-filter" />
+                <div class="i-mdi-movie-filter"></div>
                 {{ query.filterState.genres.join(', ') }}
               </div>
 
@@ -95,7 +95,7 @@
                 v-if="query.filterState.sources?.length"
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
-                <div class="i-mdi-source-branch" />
+                <div class="i-mdi-source-branch"></div>
                 {{ query.filterState.sources.join(', ') }}
               </div>
             </div>
@@ -107,14 +107,14 @@
               title="Apply Filters"
               @click="applyQuery(query)"
             >
-              <div class="i-mdi-filter-variant" />
+              <div class="i-mdi-filter-variant"></div>
             </button>
             <button
               class="p-2 hover:bg-red-600/10 text-red-600 rounded-lg transition-colors"
               title="Remove Query"
               @click="removeQuery(index)"
             >
-              <div class="i-mdi-delete" />
+              <div class="i-mdi-delete"></div>
             </button>
           </div>
         </div>

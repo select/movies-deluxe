@@ -1,7 +1,7 @@
 <template>
   <section class="space-y-4">
     <h2 class="text-xl font-bold flex items-center gap-2">
-      <div class="i-mdi-youtube text-red-500" />
+      <div class="i-mdi-youtube text-red-500"></div>
       YouTube Channel Statistics
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -16,7 +16,7 @@
             class="w-2 h-2 rounded-full"
             :class="channel.enabled ? 'bg-green-500' : 'bg-gray-300'"
             :title="channel.enabled ? 'Enabled' : 'Disabled'"
-          />
+          ></div>
         </div>
         <div class="text-xl font-bold flex items-baseline gap-2">
           {{ channel.scraped }}
@@ -35,14 +35,14 @@
               :style="{
                 width: `${channel.total > 0 ? (channel.scraped / channel.total) * 100 : 0}%`,
               }"
-            />
+            ></div>
             <div
               v-if="channel.failed"
               class="h-full bg-orange-400 transition-all duration-1000"
               :style="{
                 width: `${channel.total > 0 ? (channel.failed / channel.total) * 100 : 0}%`,
               }"
-            />
+            ></div>
           </div>
           <span class="text-[10px] font-medium"
             >{{

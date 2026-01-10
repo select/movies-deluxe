@@ -11,7 +11,7 @@
         title="Home"
         :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
-        <div class="i-mdi-home text-xl" />
+        <div class="i-mdi-home text-xl"></div>
       </NuxtLink>
 
       <!-- Search -->
@@ -25,7 +25,7 @@
         <div
           class="i-mdi-magnify text-xl"
           :class="{ 'text-theme-primary': route.path === '/search' }"
-        />
+        ></div>
       </NuxtLink>
 
       <!-- Liked Movies -->
@@ -38,7 +38,7 @@
         <div
           class="i-mdi-heart text-xl"
           :class="{ 'text-theme-accent': route.path === '/liked' }"
-        />
+        ></div>
         <span
           v-if="likedCount > 0"
           class="absolute top-0 -right-1 bg-theme-accent text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
@@ -57,7 +57,7 @@
         <div
           class="i-mdi:movie-roll text-xl"
           :class="{ 'text-theme-primary': route.path.startsWith('/collections') }"
-        />
+        ></div>
       </NuxtLink>
 
       <!-- Admin (localhost only) -->
@@ -71,7 +71,7 @@
         <div
           class="i-mdi-shield-crown text-xl"
           :class="{ 'text-theme-accent': route.path.startsWith('/admin') }"
-        />
+        ></div>
       </NuxtLink>
 
       <!-- Dark Mode Toggle -->
@@ -80,8 +80,8 @@
         title="Theme Selection"
         @click="openThemeSelection"
       >
-        <div v-if="isDark" class="i-material-symbols-light-wb-sunny text-xl" />
-        <div v-else class="i-material-symbols-light-dark-mode text-xl" />
+        <div v-if="isDark" class="i-material-symbols-light-wb-sunny text-xl"></div>
+        <div v-else class="i-material-symbols-light-dark-mode text-xl"></div>
       </button>
 
       <!-- Filters -->
@@ -95,7 +95,7 @@
           <div
             class="i-mdi-filter-variant text-xl"
             :class="{ 'text-theme-primary': activeFiltersCount > 0 }"
-          />
+          ></div>
           <span
             v-if="activeFiltersCount > 0"
             class="absolute top-0 -right-1 bg-theme-primary text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
@@ -111,7 +111,7 @@
           title="Clear all filters"
           @click.stop="clearFilters"
         >
-          <div class="i-mdi-close text-xs text-theme-textmuted hover:text-theme-accent" />
+          <div class="i-mdi-close text-xs text-theme-textmuted hover:text-theme-accent"></div>
         </button>
       </div>
 
@@ -123,7 +123,7 @@
         class="p-2 hover:bg-theme-selection rounded-full transition-colors"
         title="View on GitHub"
       >
-        <div class="i-mdi-github text-xl" />
+        <div class="i-mdi-github text-xl"></div>
       </a>
     </div>
   </aside>
@@ -139,7 +139,7 @@
       aria-label="Scroll left"
       @click="scroll('left')"
     >
-      <div class="i-mdi-chevron-left text-lg" />
+      <div class="i-mdi-chevron-left text-lg"></div>
     </button>
 
     <div
@@ -158,7 +158,7 @@
         <div
           class="i-mdi-magnify text-2xl"
           :class="{ 'text-theme-primary': route.path === '/search' }"
-        />
+        ></div>
       </NuxtLink>
 
       <!-- Home -->
@@ -168,7 +168,7 @@
         aria-label="Home"
         :class="{ 'bg-theme-primary/20': route.path === '/' }"
       >
-        <div class="i-mdi-home text-2xl" />
+        <div class="i-mdi-home text-2xl"></div>
       </NuxtLink>
 
       <!-- Liked Movies -->
@@ -182,7 +182,7 @@
         <div
           class="i-mdi-heart text-2xl"
           :class="{ 'text-theme-accent': route.path === '/liked' }"
-        />
+        ></div>
         <span
           v-if="likedCount > 0"
           class="absolute -top-1 -right-1 bg-theme-accent text-white text-xs rounded-full size-5 flex items-center justify-center font-medium"
@@ -201,7 +201,7 @@
         <div
           class="i-mdi:movie-roll text-2xl"
           :class="{ 'text-theme-primary': route.path.startsWith('/collections') }"
-        />
+        ></div>
       </NuxtLink>
 
       <!-- Admin (localhost only) -->
@@ -215,7 +215,7 @@
         <div
           class="i-mdi-shield-crown text-2xl"
           :class="{ 'text-theme-accent': route.path.startsWith('/admin') }"
-        />
+        ></div>
       </NuxtLink>
 
       <!-- Dark Mode Toggle -->
@@ -224,8 +224,8 @@
         aria-label="Theme Selection"
         @click="openThemeSelection"
       >
-        <div v-if="isDark" class="i-material-symbols-light-wb-sunny text-2xl" />
-        <div v-else class="i-material-symbols-light-dark-mode text-2xl" />
+        <div v-if="isDark" class="i-material-symbols-light-wb-sunny text-2xl"></div>
+        <div v-else class="i-material-symbols-light-dark-mode text-2xl"></div>
       </button>
 
       <!-- Filters -->
@@ -239,7 +239,7 @@
           <div
             class="i-mdi-filter-variant text-2xl"
             :class="{ 'text-theme-primary': activeFiltersCount > 0 }"
-          />
+          ></div>
           <span
             v-if="activeFiltersCount > 0"
             class="absolute -top-1 -right-1 bg-theme-primary text-white text-xs rounded-full size-5 flex items-center justify-center font-medium"
@@ -255,7 +255,7 @@
           aria-label="Clear all filters"
           @click.stop="clearFilters"
         >
-          <div class="i-mdi-close text-sm text-theme-textmuted hover:text-theme-accent" />
+          <div class="i-mdi-close text-sm text-theme-textmuted hover:text-theme-accent"></div>
         </button>
       </div>
 
@@ -267,7 +267,7 @@
         class="p-2 hover:bg-theme-selection rounded-full transition-colors flex-shrink-0"
         aria-label="View on GitHub"
       >
-        <div class="i-mdi-github text-2xl" />
+        <div class="i-mdi-github text-2xl"></div>
       </a>
     </div>
 
@@ -278,7 +278,7 @@
       aria-label="Scroll right"
       @click="scroll('right')"
     >
-      <div class="i-mdi-chevron-right text-lg" />
+      <div class="i-mdi-chevron-right text-lg"></div>
     </button>
   </aside>
 </template>

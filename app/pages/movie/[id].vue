@@ -8,61 +8,61 @@
         <div class="flex flex-col md:flex-row gap-8">
           <!-- Poster Skeleton -->
           <div class="flex-shrink-0">
-            <div class="w-full md:w-80 aspect-[2/3] skeleton rounded-lg" />
+            <div class="w-full md:w-80 aspect-[2/3] skeleton rounded-lg"></div>
           </div>
 
           <!-- Movie Info Skeleton -->
           <div class="flex-1 space-y-6">
             <!-- Title -->
-            <div class="h-10 skeleton rounded-lg w-3/4" />
+            <div class="h-10 skeleton rounded-lg w-3/4"></div>
 
             <!-- Metadata Row -->
             <div class="flex gap-4">
-              <div class="h-8 w-20 skeleton rounded-full" />
-              <div class="h-8 w-16 skeleton rounded-full" />
-              <div class="h-8 w-24 skeleton rounded-full" />
+              <div class="h-8 w-20 skeleton rounded-full"></div>
+              <div class="h-8 w-16 skeleton rounded-full"></div>
+              <div class="h-8 w-24 skeleton rounded-full"></div>
             </div>
 
             <!-- Rating -->
             <div class="flex items-center gap-2">
-              <div class="h-8 w-8 skeleton rounded-full" />
-              <div class="h-8 w-16 skeleton rounded-md" />
+              <div class="h-8 w-8 skeleton rounded-full"></div>
+              <div class="h-8 w-16 skeleton rounded-md"></div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex gap-3">
-              <div class="h-10 w-40 skeleton rounded-full" />
-              <div class="h-10 w-28 skeleton rounded-full" />
+              <div class="h-10 w-40 skeleton rounded-full"></div>
+              <div class="h-10 w-28 skeleton rounded-full"></div>
             </div>
 
             <!-- Genre -->
             <div class="space-y-2">
-              <div class="h-4 w-16 skeleton rounded-md" />
+              <div class="h-4 w-16 skeleton rounded-md"></div>
               <div class="flex gap-2">
-                <div class="h-8 w-20 skeleton rounded-full" />
-                <div class="h-8 w-24 skeleton rounded-full" />
+                <div class="h-8 w-20 skeleton rounded-full"></div>
+                <div class="h-8 w-24 skeleton rounded-full"></div>
               </div>
             </div>
 
             <!-- Plot -->
             <div class="space-y-2">
-              <div class="h-4 w-12 skeleton rounded-md" />
+              <div class="h-4 w-12 skeleton rounded-md"></div>
               <div class="space-y-2">
-                <div class="h-4 skeleton rounded-md" />
-                <div class="h-4 skeleton rounded-md" />
-                <div class="h-4 skeleton rounded-md w-3/4" />
+                <div class="h-4 skeleton rounded-md"></div>
+                <div class="h-4 skeleton rounded-md"></div>
+                <div class="h-4 skeleton rounded-md w-3/4"></div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Video Player Skeleton -->
-        <div class="aspect-video skeleton rounded-lg" />
+        <div class="aspect-video skeleton rounded-lg"></div>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="text-center py-12">
-        <div class="i-mdi-alert-circle text-6xl text-red-500 mb-4" />
+        <div class="i-mdi-alert-circle text-6xl text-red-500 mb-4"></div>
         <h2 class="text-2xl font-bold mb-2">Movie Not Found</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
           {{ error }}
@@ -95,7 +95,7 @@
                 v-else
                 class="w-full h-full flex items-center justify-center text-theme-textmuted"
               >
-                <div class="i-mdi-movie text-8xl" />
+                <div class="i-mdi-movie text-8xl"></div>
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@
 
             <!-- Rating -->
             <div v-if="movie.metadata?.imdbRating" class="flex items-center gap-2 mb-6">
-              <div class="i-mdi-star text-theme-accent text-2xl" />
+              <div class="i-mdi-star text-theme-accent text-2xl"></div>
               <span class="text-2xl font-bold">{{ movie.metadata.imdbRating }}</span>
               <span class="text-theme-textmuted">/ 10</span>
               <span v-if="movie.metadata?.imdbVotes" class="text-sm text-theme-textmuted">
@@ -147,13 +147,13 @@
                   :class="{
                     'text-theme-accent': isLiked,
                   }"
-                />
+                ></div>
                 {{ isLiked ? 'Liked' : 'Like' }}
               </button>
 
               <!-- Share Button -->
               <button class="btn flex items-center gap-2" @click="shareMovie">
-                <div class="i-mdi-share-variant text-lg" />
+                <div class="i-mdi-share-variant text-lg"></div>
                 Share
               </button>
             </div>
@@ -182,7 +182,7 @@
                   :to="`/collections/${collection.id}`"
                   class="px-3 py-1 rounded-full bg-theme-primary/10 border border-theme-primary/20 text-theme-primary text-sm hover:bg-theme-primary/20 transition-colors flex items-center gap-1.5"
                 >
-                  <div class="i-mdi:movie-roll text-base" />
+                  <div class="i-mdi:movie-roll text-base"></div>
                   {{ collection.name }}
                 </NuxtLink>
               </div>
@@ -207,7 +207,7 @@
                   <div
                     class="transition-transform duration-300"
                     :class="isPlotExpanded ? 'i-mdi-chevron-up' : 'i-mdi-chevron-down'"
-                  />
+                  ></div>
                 </button>
               </div>
             </div>
@@ -254,7 +254,7 @@
                       :class="
                         source.type === 'youtube' ? 'i-mdi-youtube text-theme-accent' : 'i-mdi-bank'
                       "
-                    />
+                    ></div>
                     <span>{{
                       source.label ||
                       (source.type === 'youtube' ? source.channelName || 'YouTube' : 'Archive.org')
@@ -286,7 +286,7 @@
                 class="p-2 rounded-lg transition-colors hover:bg-theme-selection text-theme-primary"
                 :class="{ 'text-theme-accent': selectedSourceIndex === index }"
               >
-                <div class="i-mdi-open-in-new text-lg" />
+                <div class="i-mdi-open-in-new text-lg"></div>
               </a>
             </div>
           </div>
@@ -303,7 +303,7 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen
               title="YouTube video player"
-            />
+            ></iframe>
           </div>
 
           <!-- Archive.org Player -->
@@ -316,7 +316,7 @@
               mozallowfullscreen="true"
               allowfullscreen
               title="Archive.org video player"
-            />
+            ></iframe>
           </div>
         </div>
 
@@ -405,7 +405,7 @@
             class="p-2 hover:bg-theme-selection rounded-full text-theme-text"
             @click="showKeyboardHelp = false"
           >
-            <div class="i-mdi-close text-xl" />
+            <div class="i-mdi-close text-xl"></div>
           </button>
         </div>
 

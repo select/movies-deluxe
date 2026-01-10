@@ -5,7 +5,7 @@
         <div
           class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-theme-textmuted"
         >
-          <div class="i-mdi-magnify text-xl" />
+          <div class="i-mdi-magnify text-xl"></div>
         </div>
         <input
           ref="searchInput"
@@ -16,7 +16,7 @@
           @input="onInput"
         />
         <div v-if="isLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-          <div class="i-mdi-loading animate-spin text-blue-600" />
+          <div class="i-mdi-loading animate-spin text-blue-600"></div>
         </div>
       </div>
 
@@ -24,7 +24,7 @@
         class="px-4 py-3 bg-theme-surface border border-theme-border rounded-xl text-sm font-bold hover:bg-theme-selection transition-colors flex items-center gap-2"
         @click="showFilters = true"
       >
-        <div class="i-mdi-filter-variant" />
+        <div class="i-mdi-filter-variant"></div>
         Filters
         <span
           v-if="activeFiltersCount > 0"
@@ -41,21 +41,21 @@
         v-if="filters.minRating > 0"
         class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
       >
-        <div class="i-mdi-star" />
+        <div class="i-mdi-star"></div>
         {{ filters.minRating }}+
       </div>
       <div
         v-if="filters.minYear > 0 || filters.maxYear"
         class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
       >
-        <div class="i-mdi-calendar" />
+        <div class="i-mdi-calendar"></div>
         {{ filters.minYear || 1910 }} - {{ filters.maxYear || 2025 }}
       </div>
       <div
         v-if="filters.minVotes > 0 || filters.maxVotes"
         class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
       >
-        <div class="i-mdi-account-group" />
+        <div class="i-mdi-account-group"></div>
         {{ filters.minVotes.toLocaleString() }} -
         {{ filters.maxVotes ? filters.maxVotes.toLocaleString() : 'Any' }}
       </div>
@@ -64,7 +64,7 @@
         :key="genre"
         class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
       >
-        <div class="i-mdi-movie-filter" />
+        <div class="i-mdi-movie-filter"></div>
         {{ genre }}
       </div>
       <div
@@ -72,7 +72,7 @@
         :key="source"
         class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
       >
-        <div class="i-mdi-source-branch" />
+        <div class="i-mdi-source-branch"></div>
         {{ source }}
       </div>
       <button class="text-xs text-theme-primary hover:underline ml-2" @click="resetFilters">
@@ -102,8 +102,8 @@
           :disabled="addingAll || isAdding !== ''"
           @click="addAllMovies"
         >
-          <div v-if="addingAll" class="i-mdi-loading animate-spin" />
-          <div v-else class="i-mdi-plus-box-multiple" />
+          <div v-if="addingAll" class="i-mdi-loading animate-spin"></div>
+          <div v-else class="i-mdi-plus-box-multiple"></div>
           Add All to Collection
         </button>
       </div>
@@ -127,7 +127,7 @@
               v-else
               class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
             >
-              <div class="i-mdi-movie text-2xl" />
+              <div class="i-mdi-movie text-2xl"></div>
             </div>
           </div>
           <div class="flex-1 min-w-0">
@@ -144,7 +144,7 @@
               <span class="font-mono">{{ movie.imdbId }}</span>
               <span v-if="movie.metadata?.imdbRating" class="flex items-center gap-1">
                 <span class="opacity-50">•</span>
-                <div class="i-mdi-star text-theme-accent text-xs" />
+                <div class="i-mdi-star text-theme-accent text-xs"></div>
                 <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
                 <span v-if="movie.metadata?.imdbVotes" class="opacity-70">
                   ({{ formatVotes(movie.metadata.imdbVotes) }})
@@ -162,8 +162,8 @@
             :disabled="isInCollection(movie.imdbId) || isAdding === movie.imdbId"
             @click="addMovie(movie.imdbId)"
           >
-            <div v-if="isAdding === movie.imdbId" class="i-mdi-loading animate-spin" />
-            <div v-else :class="isInCollection(movie.imdbId) ? 'i-mdi-check' : 'i-mdi-plus'" />
+            <div v-if="isAdding === movie.imdbId" class="i-mdi-loading animate-spin"></div>
+            <div v-else :class="isInCollection(movie.imdbId) ? 'i-mdi-check' : 'i-mdi-plus'"></div>
             {{ isInCollection(movie.imdbId) ? 'Added' : 'Add' }}
           </button>
         </div>

@@ -24,7 +24,7 @@
         <!-- Search Bar -->
         <div v-if="collections.size > 0" class="relative w-full md:w-64 md:flex-shrink-0">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-lg text-theme-textmuted" />
+            <div class="i-mdi-magnify text-lg text-theme-textmuted"></div>
           </div>
           <input
             v-model="searchQuery"
@@ -39,7 +39,7 @@
           >
             <div
               class="i-mdi-close text-base text-theme-textmuted hover:text-theme-text transition-colors"
-            />
+            ></div>
           </button>
         </div>
       </div>
@@ -53,7 +53,7 @@
           v-for="i in 4"
           :key="i"
           class="h-64 rounded-2xl bg-theme-surface border border-theme-border/50 animate-pulse"
-        />
+        ></div>
       </div>
 
       <!-- Empty State -->
@@ -61,7 +61,7 @@
         v-else-if="collections.size === 0"
         class="flex flex-col items-center justify-center py-20 text-center"
       >
-        <div class="i-mdi:movie-roll text-6xl text-theme-textmuted mb-4 opacity-20" />
+        <div class="i-mdi:movie-roll text-6xl text-theme-textmuted mb-4 opacity-20"></div>
         <h3 class="text-xl font-bold text-theme-text mb-2">No collections found</h3>
         <p class="text-theme-textmuted">Check back later for curated movie collections.</p>
       </div>

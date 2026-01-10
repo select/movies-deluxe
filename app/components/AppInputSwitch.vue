@@ -13,7 +13,7 @@
       />
       <div
         class="w-10 h-6 bg-theme-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-theme-primary"
-      />
+      ></div>
     </div>
     <span
       v-if="label"
@@ -22,7 +22,7 @@
     >
       {{ label }}
     </span>
-    <slot />
+    <slot></slot>
   </label>
 </template>
 

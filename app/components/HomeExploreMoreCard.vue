@@ -9,7 +9,7 @@
     >
       <div
         class="i-mdi-chevron-right-circle text-6xl text-theme-accent/50 group-hover:text-theme-accent transition-colors duration-300 mb-4"
-      />
+      ></div>
       <div class="text-lg font-bold leading-tight">
         Explore more
         <div class="text-theme-accent mt-1">

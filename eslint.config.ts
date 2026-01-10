@@ -28,6 +28,18 @@ export default withNuxt(
       // Vue rules
       'vue/multi-word-component-names': 'off',
       'vue/no-v-html': 'warn',
+      'vue/html-self-closing': [
+        'error',
+        {
+          html: {
+            void: 'always', // <img /> - self-closing for void elements
+            normal: 'never', // <div></div> - never self-close normal elements
+            component: 'always', // <MyComponent /> - self-closing for components
+          },
+          svg: 'always',
+          math: 'always',
+        },
+      ],
 
       // General rules
       'no-console': 'warn',

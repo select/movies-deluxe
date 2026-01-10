@@ -12,7 +12,7 @@
       @click="toggleSection"
     >
       <div class="flex items-center gap-2">
-        <div v-if="icon" class="text-base text-theme-textmuted" :class="icon" />
+        <div v-if="icon" class="text-base text-theme-textmuted" :class="icon"></div>
         <h3 class="font-bold text-[10px] uppercase tracking-wider text-theme-textmuted">
           {{ title }}
         </h3>
@@ -22,7 +22,7 @@
       <div
         class="i-mdi-chevron-down text-lg text-gray-400 transition-transform duration-300 md:hidden"
         :class="{ 'rotate-180': isExpanded }"
-      />
+      ></div>
     </button>
 
     <!-- Filter Content (collapsible on mobile) -->
@@ -34,7 +34,7 @@
       }"
     >
       <div class="space-y-2">
-        <slot />
+        <slot></slot>
       </div>
     </div>
   </div>

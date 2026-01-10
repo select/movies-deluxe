@@ -7,7 +7,7 @@
           :to="breadcrumbs.parentPath"
           class="hover:text-theme-accent transition-colors flex items-center gap-1"
         >
-          <div :class="breadcrumbs.parentIcon" />
+          <div :class="breadcrumbs.parentIcon"></div>
           {{ breadcrumbs.parentLabel }}
         </NuxtLink>
         <span class="mx-2 opacity-50">/</span>
@@ -21,7 +21,7 @@
             <h1
               class="text-4xl font-black text-theme-text mb-3 tracking-tight flex items-center gap-3"
             >
-              <div v-if="titleIcon" :class="titleIcon" />
+              <div v-if="titleIcon" :class="titleIcon"></div>
               {{ title }}
             </h1>
 
@@ -74,7 +74,7 @@
 
       <!-- Empty State / No Results -->
       <div v-else class="flex flex-col items-center justify-center py-20 text-center">
-        <div :class="emptyStateIcon" class="text-6xl text-theme-textmuted mb-4 opacity-20" />
+        <div :class="emptyStateIcon" class="text-6xl text-theme-textmuted mb-4 opacity-20"></div>
         <h3 class="text-xl font-bold text-theme-text mb-2">
           {{ emptyStateTitle }}
         </h3>
@@ -93,7 +93,7 @@
           :to="emptyStateButtonTo"
           class="px-6 py-2.5 rounded-xl bg-theme-accent text-black font-bold hover:scale-105 transition-transform inline-flex items-center gap-2"
         >
-          <div v-if="emptyStateButtonIcon" :class="emptyStateButtonIcon" />
+          <div v-if="emptyStateButtonIcon" :class="emptyStateButtonIcon"></div>
           {{ emptyStateButtonText }}
         </NuxtLink>
       </div>

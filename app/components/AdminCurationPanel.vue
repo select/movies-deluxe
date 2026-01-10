@@ -4,13 +4,13 @@
     class="mt-8 p-6 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-text"
   >
     <div class="flex items-center gap-2 mb-4 text-theme-text">
-      <div class="i-mdi-shield-edit text-2xl" />
+      <div class="i-mdi-shield-edit text-2xl"></div>
       <h2 class="text-xl font-bold">Admin Curation</h2>
       <div
         v-if="movie.verified"
         class="flex items-center gap-1 text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded"
       >
-        <div class="i-mdi-check-decagram" />
+        <div class="i-mdi-check-decagram"></div>
         Verified
       </div>
       <span class="ml-auto text-xs font-mono bg-theme-selection px-2 py-1 rounded">
@@ -38,21 +38,21 @@
                     : 'i-mdi-bank text-blue-600'
                 "
                 class="text-lg"
-              />
+              ></div>
               <span class="font-medium text-theme-text">{{ source.type }}</span>
               <button
                 class="ml-auto p-1 text-theme-textmuted hover:text-yellow-500 transition-colors"
                 title="Mark source quality"
                 @click="openSourceQualityDialog(source)"
               >
-                <div class="i-mdi-alert-decagram" />
+                <div class="i-mdi-alert-decagram"></div>
               </button>
               <button
                 class="p-1 text-theme-textmuted hover:text-red-500 transition-colors"
                 title="Remove source"
                 @click="removeSource(source.id)"
               >
-                <div class="i-mdi-close" />
+                <div class="i-mdi-close"></div>
               </button>
             </div>
 
@@ -73,13 +73,13 @@
               class="mb-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs"
             >
               <div class="flex items-center gap-1.5 mb-1">
-                <div class="i-mdi-earth-off text-yellow-600 dark:text-yellow-400" />
+                <div class="i-mdi-earth-off text-yellow-600 dark:text-yellow-400"></div>
                 <span class="font-semibold text-yellow-700 dark:text-yellow-300"
                   >Region Restrictions</span
                 >
               </div>
               <div v-if="source.regionRestriction.blocked" class="flex items-start gap-1.5">
-                <div class="i-mdi-close-circle text-red-600 dark:text-red-400 mt-0.5" />
+                <div class="i-mdi-close-circle text-red-600 dark:text-red-400 mt-0.5"></div>
                 <div>
                   <span class="font-medium text-red-700 dark:text-red-300">Blocked in:</span>
                   <span class="text-theme-textmuted ml-1">{{
@@ -91,7 +91,7 @@
                 </div>
               </div>
               <div v-if="source.regionRestriction.allowed" class="flex items-start gap-1.5">
-                <div class="i-mdi-check-circle text-green-600 dark:text-green-400 mt-0.5" />
+                <div class="i-mdi-check-circle text-green-600 dark:text-green-400 mt-0.5"></div>
                 <div>
                   <span class="font-medium text-green-700 dark:text-green-300"
                     >Only allowed in:</span
@@ -192,7 +192,7 @@
               :disabled="isSearching"
               @click="handleSearch"
             >
-              <div v-if="isSearching" class="i-mdi-loading animate-spin" />
+              <div v-if="isSearching" class="i-mdi-loading animate-spin"></div>
               <span v-else>Search</span>
             </button>
           </div>
@@ -233,7 +233,7 @@
             :disabled="isSearching"
             @click="verifyMovie"
           >
-            <div class="i-mdi-check-decagram text-lg" />
+            <div class="i-mdi-check-decagram text-lg"></div>
             Mark as Verified
           </button>
 
@@ -242,7 +242,7 @@
             :disabled="isSearching"
             @click="removeMetadata"
           >
-            <div class="i-mdi-delete-sweep text-lg" />
+            <div class="i-mdi-delete-sweep text-lg"></div>
             Remove All Metadata
           </button>
         </div>
@@ -258,14 +258,14 @@
               :key="collection.id"
               class="flex items-center gap-2 px-3 py-1.5 bg-theme-primary/10 border border-theme-primary/30 rounded-lg text-sm"
             >
-              <div class="i-mdi:movie-roll text-theme-primary" />
+              <div class="i-mdi:movie-roll text-theme-primary"></div>
               <span class="font-medium">{{ collection.name }}</span>
               <button
                 class="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-red-500 transition-colors"
                 title="Remove from collection"
                 @click="removeFromCollection(collection.id)"
               >
-                <div class="i-mdi-close text-xs" />
+                <div class="i-mdi-close text-xs"></div>
               </button>
             </div>
             <div
@@ -291,7 +291,7 @@
               :disabled="!selectedCollectionId || isUpdatingCollection"
               @click="addToCollection"
             >
-              <div v-if="isUpdatingCollection" class="i-mdi-loading animate-spin" />
+              <div v-if="isUpdatingCollection" class="i-mdi-loading animate-spin"></div>
               <span v-else>Add</span>
             </button>
           </div>
@@ -341,7 +341,7 @@
           v-else-if="!isSearching"
           class="h-[200px] flex flex-col items-center justify-center text-theme-textmuted border-2 border-dashed border-theme-border rounded-lg"
         >
-          <div class="i-mdi-magnify text-4xl mb-2" />
+          <div class="i-mdi-magnify text-4xl mb-2"></div>
           <p class="text-sm">Search results will appear here</p>
         </div>
 
@@ -352,7 +352,7 @@
           class="mt-8 pt-6 border-t border-theme-border"
         >
           <div class="flex items-center gap-2 mb-3">
-            <div class="i-mdi-google text-blue-600" />
+            <div class="i-mdi-google text-blue-600"></div>
             <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted">
               Google Results (IMDb)
             </h3>
@@ -364,7 +364,7 @@
               class="flex gap-3 p-2 bg-theme-surface/50 rounded border border-theme-border hover:border-blue-400 dark:hover:border-gray-500 transition-colors group"
             >
               <div class="w-12 h-18 bg-theme-selection flex items-center justify-center rounded">
-                <div class="i-mdi-movie-open text-2xl text-theme-textmuted" />
+                <div class="i-mdi-movie-open text-2xl text-theme-textmuted"></div>
               </div>
               <div class="flex-1 min-w-0">
                 <h4 class="font-bold text-sm truncate text-theme-text">

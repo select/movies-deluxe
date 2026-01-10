@@ -17,7 +17,7 @@
           class="p-0.5 hover:bg-blue-600/20 rounded-full transition-colors"
           @click="removeTag(tag)"
         >
-          <div class="i-mdi-close text-xs" />
+          <div class="i-mdi-close text-xs"></div>
         </button>
       </div>
 
@@ -56,8 +56,8 @@
         :disabled="!hasChanges || isSaving"
         @click="saveTags"
       >
-        <div v-if="isSaving" class="i-mdi-loading animate-spin" />
-        <div v-else class="i-mdi-content-save" />
+        <div v-if="isSaving" class="i-mdi-loading animate-spin"></div>
+        <div v-else class="i-mdi-content-save"></div>
         Save Tags
       </button>
     </div>

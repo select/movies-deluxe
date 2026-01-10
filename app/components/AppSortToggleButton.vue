@@ -18,7 +18,7 @@
             'text-theme-textmuted': !isOptionAActive,
           },
         ]"
-      />
+      ></div>
       <span>{{ optionA.label }}</span>
     </button>
     <button

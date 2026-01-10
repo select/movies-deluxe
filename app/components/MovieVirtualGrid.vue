@@ -4,7 +4,7 @@
     <div
       v-if="visibleRows.length > 0 && visibleRows[0] && visibleRows[0].index > 0"
       :style="{ height: `${visibleRows[0].top}px` }"
-    />
+    ></div>
 
     <!-- Visible rows -->
     <div
@@ -23,7 +23,7 @@
       :style="{
         height: `${totalHeight - (visibleRows[visibleRows.length - 1]!.top + rowHeight)}px`,
       }"
-    />
+    ></div>
   </div>
 </template>
 
