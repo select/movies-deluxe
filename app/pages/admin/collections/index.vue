@@ -181,6 +181,14 @@
 <script setup lang="ts">
 import type { Collection } from '~/types'
 
+// Set page title
+useHead({
+  title: 'Collection Editor - Movies Deluxe Admin',
+  meta: [
+    { name: 'robots', content: 'noindex, nofollow' },
+  ],
+})
+
 const isLocal = ref(false)
 const selectedCollectionId = ref('')
 const collectionSelector = ref<{
