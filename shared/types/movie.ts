@@ -94,7 +94,7 @@ export interface MovieMetadata {
     Value: string
   }>
   Metascore?: string
-  imdbRating?: string
+  imdbRating?: number
   imdbVotes?: number
   imdbID?: string
   Type?: string

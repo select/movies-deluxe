@@ -1,3 +1,18 @@
+/**
+ * Transform OMDB API response to MovieMetadata with proper types
+ */
+function transformOMDBResponse(data: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...data,
+    imdbRating:
+      data.imdbRating && data.imdbRating !== 'N/A' ? parseFloat(data.imdbRating) : undefined,
+    imdbVotes:
+      data.imdbVotes && data.imdbVotes !== 'N/A'
+        ? parseInt(data.imdbVotes.replace(/,/g, ''), 10)
+        : undefined,
+  }
+}
+
 export default defineEventHandler(async event => {
   const query = getQuery(event)
   const id = query.i as string
@@ -26,7 +41,8 @@ export default defineEventHandler(async event => {
       },
     })
 
-    return response
+    // Transform the response to convert string ratings/votes to numbers
+    return transformOMDBResponse(response)
   } catch (error) {
     throw createError({
       statusCode: 500,

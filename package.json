@@ -31,12 +31,11 @@
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
-      "oxlint --fix",
-      "eslint --fix",
-      "prettier --write"
+      "oxlint",
+      "eslint"
     ],
     "*.{json,md,yml,yaml}": [
-      "prettier --write --ignore-path .prettierignore"
+      "prettier --check --ignore-path .prettierignore"
     ]
   },
   "dependencies": {

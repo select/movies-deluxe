@@ -73,6 +73,21 @@ export async function searchOMDB(
 }
 
 /**
+ * Transform OMDB API response to MovieMetadata with proper types
+ */
+function transformOMDBResponse(data: Record<string, unknown>): MovieMetadata {
+  return {
+    ...data,
+    imdbRating:
+      data.imdbRating && data.imdbRating !== 'N/A' ? parseFloat(data.imdbRating) : undefined,
+    imdbVotes:
+      data.imdbVotes && data.imdbVotes !== 'N/A'
+        ? parseInt(data.imdbVotes.replace(/,/g, ''), 10)
+        : undefined,
+  }
+}
+
+/**
  * Get detailed movie information by IMDB ID
  */
 export async function getMovieByImdbId(
@@ -87,13 +102,13 @@ export async function getMovieByImdbId(
 
   try {
     const response = await rateLimitedFetch(url)
-    const data = (await response.json()) as MovieMetadata
+    const data = await response.json()
 
     if (data.Response === 'False') {
       return null
     }
 
-    return data
+    return transformOMDBResponse(data)
   } catch (error) {
     console.error(`Failed to fetch movie ${imdbId}:`, error)
     throw error
