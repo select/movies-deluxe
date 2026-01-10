@@ -139,6 +139,7 @@ export interface LightweightMovieEntry {
   language?: string
   sourceType?: MovieSourceType
   channelName?: string
+  verified?: boolean
 }
 
 /**

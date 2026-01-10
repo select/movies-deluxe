@@ -26,6 +26,7 @@ import { useWindowScroll, useStorage } from '@vueuse/core'
 
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
+const movieStore = useMovieStore()
 
 const { getCollectionById } = collectionsStore
 

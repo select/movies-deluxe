@@ -131,8 +131,9 @@ const loadMovies = async () => {
 }
 
 // Lazy load when visible
-useIntersectionObserver(rowElement, ([{ isIntersecting }]) => {
-  if (isIntersecting) {
+useIntersectionObserver(rowElement, entries => {
+  const entry = entries[0]
+  if (entry?.isIntersecting) {
     loadMovies()
   }
 })
