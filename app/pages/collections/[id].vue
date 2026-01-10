@@ -25,10 +25,8 @@ import { onBeforeRouteLeave } from 'vue-router'
 import { useWindowScroll, useStorage } from '@vueuse/core'
 
 const route = useRoute()
-const movieStore = useMovieStore()
 const collectionsStore = useCollectionsStore()
 
-const { fetchMoviesByIds } = movieStore
 const { getCollectionById } = collectionsStore
 
 const collection = ref<Collection | null>(null)
@@ -48,9 +46,13 @@ onMounted(async () => {
     // Get collection from cache (loads if not loaded yet)
     collection.value = await getCollectionById(id)
 
-    // Fetch movies using movie store (which uses embedded collection data)
+    // Set lightweight movies with just IDs to allow virtual grid to fetch visible ones
     if (collection.value?.movieIds && collection.value.movieIds.length > 0) {
-      movies.value = await fetchMoviesByIds(collection.value.movieIds)
+      movies.value = collection.value.movieIds.map(id => ({ imdbId: id }) as MovieEntry)
+
+      // Pre-fetch first batch (e.g., first 40 movies) for instant display
+      const firstBatch = collection.value.movieIds.slice(0, 40)
+      movieStore.fetchMoviesByIds(firstBatch)
     }
 
     // Restore scroll position

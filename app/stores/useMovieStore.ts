@@ -107,6 +107,9 @@ export const useMovieStore = defineStore('movie', () => {
   // Cached poster existence checks
   const posterCache = ref<Map<string, boolean>>(new Map())
 
+  // Track IDs currently being fetched to avoid duplicate requests
+  const pendingIds = new Set<string>()
+
   // ============================================
   // COMPUTED PROPERTIES - Data Views
   // ============================================
@@ -238,7 +241,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Sources are now loaded separately from JSON files
    */
   const mapRowToMovie = (row: MovieDatabaseRow): MovieEntry => {
-    console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
+    // console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
     // Create a minimal source object from database fields for UI display
     const sources: MovieSource[] = []
     if (row.primarySourceType) {
@@ -458,16 +461,20 @@ export const useMovieStore = defineStore('movie', () => {
       movieDetailsCache.value = new Map()
     }
 
-    // Filter out IDs that are already cached
-    const uncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
+    // Filter out IDs that are already cached or pending
+    const uncachedIds = imdbIds.filter(
+      id => !movieDetailsCache.value.has(id) && !pendingIds.has(id)
+    )
 
     if (uncachedIds.length === 0) {
-      console.log('[fetchMoviesByIds] All movies cached, returning from cache')
-      // All movies are cached, return from cache
+      // All movies are either cached or already being fetched
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     }
 
     console.log('[fetchMoviesByIds] Need to fetch', uncachedIds.length, 'uncached movies')
+
+    // Mark as pending
+    uncachedIds.forEach(id => pendingIds.add(id))
 
     // Wait for database to be ready if it's still initializing
     if (!db.isReady.value) {
@@ -486,13 +493,15 @@ export const useMovieStore = defineStore('movie', () => {
 
       if (!db.isReady.value) {
         console.error('[fetchMoviesByIds] Database not ready after waiting')
+        uncachedIds.forEach(id => pendingIds.delete(id))
         return []
       }
     }
 
     // Double check cache after waiting (another request might have filled it)
-    const stillUncachedIds = imdbIds.filter(id => !movieDetailsCache.value.has(id))
+    const stillUncachedIds = uncachedIds.filter(id => !movieDetailsCache.value.has(id))
     if (stillUncachedIds.length === 0) {
+      uncachedIds.forEach(id => pendingIds.delete(id))
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     }
 
@@ -510,11 +519,45 @@ export const useMovieStore = defineStore('movie', () => {
         }
       })
 
+      // Handle IDs that were not found in the database (e.g., temporary IDs or missing entries)
+      const foundIds = new Set(movies.map(m => m.imdbId))
+      const missingIds = stillUncachedIds.filter(id => !foundIds.has(id))
+
+      if (missingIds.length > 0) {
+        console.warn(
+          '[fetchMoviesByIds]',
+          missingIds.length,
+          'movies not found in database:',
+          missingIds
+        )
+        // Create minimal entries for movies not found in database
+        // This prevents infinite loading states
+        missingIds.forEach(id => {
+          const minimalEntry: MovieEntry = {
+            imdbId: id,
+            title: id, // Fallback to ID as title
+            sources: [],
+            lastUpdated: new Date().toISOString(),
+          }
+          movieDetailsCache.value.set(id, minimalEntry)
+          if (!allMovies.value.has(id)) {
+            allMovies.value.set(id, minimalEntry)
+          }
+        })
+      }
+
+      // Trigger reactivity by replacing the Map instances
+      movieDetailsCache.value = new Map(movieDetailsCache.value)
+      allMovies.value = new Map(allMovies.value)
+
       // Return all requested movies (cached + newly fetched)
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     } catch (err) {
       console.error('[fetchMoviesByIds] Failed to fetch movies by IDs:', err)
       return []
+    } finally {
+      // Remove from pending
+      uncachedIds.forEach(id => pendingIds.delete(id))
     }
   }
 
