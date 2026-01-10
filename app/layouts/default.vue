@@ -1,8 +1,5 @@
 <template>
   <div class="min-h-screen bg-theme-background text-theme-text transition-colors duration-300">
-    <!-- Sliding Search Header -->
-    <SearchHeader />
-
     <!-- Header -->
     <MovieHeader />
 
@@ -74,9 +71,7 @@ onKeyStroke('k', (e) => {
   }
 })
 
-const { setSearchOpen } = useUiStore()
-
-// 'S' key or '/' key opens search
+// 'S' key or '/' key opens search (navigates to search page)
 onKeyStroke(['s', 'S', '/'], (e) => {
   const activeElement = window.document.activeElement
   const isTyping =
@@ -91,16 +86,10 @@ onKeyStroke(['s', 'S', '/'], (e) => {
       !e.altKey
     ) {
       e.preventDefault()
-      if (useRoute().path !== '/search') {
-        navigateTo('/search')
-      }
-      setSearchOpen(true)
+      navigateTo('/search')
     } else if (e.key === '/') {
       e.preventDefault()
-      if (useRoute().path !== '/search') {
-        navigateTo('/search')
-      }
-      setSearchOpen(true)
+      navigateTo('/search')
     }
   }
 })
