@@ -135,7 +135,7 @@ export interface LightweightMovieEntry {
   title: string
   year?: number
   imdbRating?: string | number
-  imdbVotes?: string | number
+  imdbVotes?: number
   language?: string
   sourceType?: MovieSourceType
   channelName?: string

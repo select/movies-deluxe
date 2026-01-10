@@ -223,8 +223,10 @@ export const useMovieStore = defineStore('movie', () => {
             : movie.imdbRating?.toString(),
         imdbVotes:
           typeof movie.imdbVotes === 'number'
-            ? movie.imdbVotes.toLocaleString()
-            : movie.imdbVotes?.toString(),
+            ? movie.imdbVotes
+            : movie.imdbVotes
+              ? parseInt(String(movie.imdbVotes).replace(/,/g, ''), 10)
+              : undefined,
         imdbID: movie.imdbId,
         Language: movie.language,
       },
@@ -269,7 +271,7 @@ export const useMovieStore = defineStore('movie', () => {
       sources,
       metadata: {
         imdbRating: row.imdbRating?.toString(),
-        imdbVotes: row.imdbVotes?.toLocaleString(),
+        imdbVotes: row.imdbVotes,
         imdbID: row.imdbId,
         Genre: row.genre,
         Language: row.language,
@@ -990,11 +992,7 @@ export const useMovieStore = defineStore('movie', () => {
     // 4. Filter by votes range
     if (filters.value.minVotes > 0 || (filters.value.maxVotes && filters.value.maxVotes > 0)) {
       filtered = filtered.filter(movie => {
-        const votesStr = movie.metadata?.imdbVotes
-        const votes =
-          typeof votesStr === 'number'
-            ? votesStr
-            : parseInt(String(votesStr || '0').replace(/,/g, ''))
+        const votes = movie.metadata?.imdbVotes || 0
         if (filters.value.minVotes > 0 && votes < filters.value.minVotes) return false
         if (filters.value.maxVotes && filters.value.maxVotes > 0 && votes > filters.value.maxVotes)
           return false
