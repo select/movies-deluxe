@@ -6,25 +6,18 @@
     <div
       class="bg-theme-surface rounded-2xl w-full max-w-lg shadow-2xl border border-theme-border overflow-hidden"
     >
-      <div
-        class="p-6 border-b border-theme-border flex items-center justify-between"
-      >
+      <div class="p-6 border-b border-theme-border flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="i-mdi-alert-decagram text-yellow-600 text-2xl" />
           <h3 class="text-xl font-bold">Mark Source Quality</h3>
         </div>
-        <button
-          class="p-2 hover:bg-theme-selection rounded-full transition-colors"
-          @click="close"
-        >
+        <button class="p-2 hover:bg-theme-selection rounded-full transition-colors" @click="close">
           <div class="i-mdi-close text-xl" />
         </button>
       </div>
 
       <div class="p-6 space-y-6">
-        <div
-          class="p-3 bg-theme-background/50 rounded-lg border border-theme-border"
-        >
+        <div class="p-3 bg-theme-background/50 rounded-lg border border-theme-border">
           <div class="flex items-center gap-2 mb-1">
             <div
               :class="
@@ -42,9 +35,7 @@
         </div>
 
         <div>
-          <h4
-            class="text-sm font-bold text-theme-text mb-3 uppercase tracking-wider"
-          >
+          <h4 class="text-sm font-bold text-theme-text mb-3 uppercase tracking-wider">
             Quality Marks
           </h4>
           <div class="grid grid-cols-2 gap-3">
@@ -62,10 +53,8 @@
                 type="checkbox"
                 :value="mark"
                 class="rounded text-yellow-600 focus:ring-yellow-500"
-              >
-              <span class="text-sm capitalize">{{
-                mark.replace(/-/g, ' ')
-              }}</span>
+              />
+              <span class="text-sm capitalize">{{ mark.replace(/-/g, ' ') }}</span>
             </label>
           </div>
         </div>
@@ -119,11 +108,11 @@ const selectedMarks = ref<string[]>([])
 // Initialize from source data
 watch(
   () => props.modelValue,
-  (show) => {
+  show => {
     if (show && props.source) {
       selectedMarks.value = [...(props.source.qualityMarks || [])]
     }
-  },
+  }
 )
 
 const qualityMarkOptions = Object.values(SourceQualityMark)
@@ -137,17 +126,14 @@ const save = async () => {
 
   isSaving.value = true
   try {
-    const res = await $fetch<{ success: boolean }>(
-      '/api/admin/movie/update-source-quality',
-      {
-        method: 'POST',
-        body: {
-          movieId: props.movie.imdbId,
-          sourceId: props.source.id,
-          qualityMarks: selectedMarks.value,
-        },
+    const res = await $fetch<{ success: boolean }>('/api/admin/movie/update-source-quality', {
+      method: 'POST',
+      body: {
+        movieId: props.movie.imdbId,
+        sourceId: props.source.id,
+        qualityMarks: selectedMarks.value,
       },
-    )
+    })
 
     if (res.success) {
       emit('saved')

@@ -10,16 +10,10 @@
     />
 
     <!-- Filter Menu -->
-    <FilterMenu
-      :is-open="isFilterMenuOpen"
-      @close="isFilterMenuOpen = false"
-    />
+    <FilterMenu :is-open="isFilterMenuOpen" @close="isFilterMenuOpen = false" />
 
     <!-- Theme Menu -->
-    <ThemeMenu
-      :is-open="isThemeMenuOpen"
-      @close="isThemeMenuOpen = false"
-    />
+    <ThemeMenu :is-open="isThemeMenuOpen" @close="isThemeMenuOpen = false" />
 
     <!-- Page Content -->
     <slot />
@@ -52,11 +46,11 @@ if (Escape) {
 }
 
 // 'K' key toggles filter menu (with Ctrl/Cmd modifier)
-onKeyStroke('k', (e) => {
+onKeyStroke('k', e => {
   if (e.ctrlKey || e.metaKey) {
     const activeElement = window.document.activeElement
     const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
-    
+
     if (!isTyping) {
       e.preventDefault()
       isFilterMenuOpen.value = !isFilterMenuOpen.value
@@ -65,19 +59,13 @@ onKeyStroke('k', (e) => {
 })
 
 // 'S' key or '/' key opens search (navigates to search page)
-onKeyStroke(['s', 'S', '/'], (e) => {
+onKeyStroke(['s', 'S', '/'], e => {
   const activeElement = window.document.activeElement
-  const isTyping =
-    activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
+  const isTyping = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA'
 
   if (!isTyping) {
     // Only 'S' without modifiers or just '/'
-    if (
-      (e.key === 's' || e.key === 'S') &&
-      !e.ctrlKey &&
-      !e.metaKey &&
-      !e.altKey
-    ) {
+    if ((e.key === 's' || e.key === 'S') && !e.ctrlKey && !e.metaKey && !e.altKey) {
       e.preventDefault()
       navigateTo('/search')
     } else if (e.key === '/') {

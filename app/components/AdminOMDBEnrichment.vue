@@ -6,10 +6,7 @@
     </h2>
 
     <div class="space-y-6">
-      <AppInputNumber
-        v-model="options.limit"
-        label="Enrichment limit"
-      />
+      <AppInputNumber v-model="options.limit" label="Enrichment limit" />
 
       <div class="flex flex-col gap-3">
         <AppInputSwitch
@@ -29,25 +26,24 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div
-          v-if="loading"
-          class="i-mdi-loading animate-spin"
-        />
-        <div
-          v-else
-          class="i-mdi-database-sync"
-        />
+        <div v-if="loading" class="i-mdi-loading animate-spin" />
+        <div v-else class="i-mdi-database-sync" />
         {{ loading ? 'Enriching...' : 'Enrich with OMDB' }}
       </button>
 
       <!-- Progress -->
       <div
-        v-if="progress.omdb && (progress.omdb.status === 'in_progress' || progress.omdb.status === 'starting')"
+        v-if="
+          progress.omdb &&
+          (progress.omdb.status === 'in_progress' || progress.omdb.status === 'starting')
+        "
         class="mt-4 space-y-3"
       >
         <div class="flex items-center justify-between text-xs">
           <span class="text-theme-textmuted truncate mr-2">{{ progress.omdb.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.omdb.current }} / {{ progress.omdb.total || '?' }}</span>
+          <span class="font-mono text-nowrap"
+            >{{ progress.omdb.current }} / {{ progress.omdb.total || '?' }}</span
+          >
         </div>
 
         <!-- Dual Progress Bar -->
@@ -55,19 +51,25 @@
           <div
             v-if="progress.omdb.total"
             class="h-full bg-green-500 transition-all duration-300"
-            :style="{ width: `${((progress.omdb.successCurrent || 0) / progress.omdb.total) * 100}%` }"
+            :style="{
+              width: `${((progress.omdb.successCurrent || 0) / progress.omdb.total) * 100}%`,
+            }"
             title="Success"
           />
           <div
             v-if="progress.omdb.total"
             class="h-full bg-orange-500 transition-all duration-300"
-            :style="{ width: `${((progress.omdb.failedCurrent || 0) / progress.omdb.total) * 100}%` }"
+            :style="{
+              width: `${((progress.omdb.failedCurrent || 0) / progress.omdb.total) * 100}%`,
+            }"
             title="Failed"
           />
           <div
             v-if="progress.omdb.total"
             class="h-full bg-red-600/20 transition-all duration-300"
-            :style="{ width: `${((Math.max(0, progress.omdb.current - (progress.omdb.successCurrent || 0) - (progress.omdb.failedCurrent || 0))) / progress.omdb.total) * 100}%` }"
+            :style="{
+              width: `${(Math.max(0, progress.omdb.current - (progress.omdb.successCurrent || 0) - (progress.omdb.failedCurrent || 0)) / progress.omdb.total) * 100}%`,
+            }"
           />
         </div>
 

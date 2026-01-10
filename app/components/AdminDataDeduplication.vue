@@ -15,19 +15,13 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div
-          class="i-mdi-broom"
-          :class="{ 'animate-pulse': loading }"
-        />
+        <div class="i-mdi-broom" :class="{ 'animate-pulse': loading }" />
         {{ loading ? 'Processing...' : 'Clean Descriptions' }}
       </button>
     </div>
 
     <!-- Results -->
-    <div
-      v-if="results"
-      class="space-y-4"
-    >
+    <div v-if="results" class="space-y-4">
       <!-- Summary Stats -->
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div class="bg-theme-background rounded-lg p-3">
@@ -36,19 +30,27 @@
         </div>
         <div class="bg-theme-background rounded-lg p-3">
           <div class="text-sm text-theme-textmuted">With Descriptions</div>
-          <div class="text-xl font-semibold">{{ results.sourcesWithDescriptions.toLocaleString() }}</div>
+          <div class="text-xl font-semibold">
+            {{ results.sourcesWithDescriptions.toLocaleString() }}
+          </div>
         </div>
         <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
           <div class="text-sm text-orange-600 dark:text-orange-400">Patterns Found</div>
-          <div class="text-xl font-semibold text-orange-700 dark:text-orange-300">{{ results.patterns.length }}</div>
+          <div class="text-xl font-semibold text-orange-700 dark:text-orange-300">
+            {{ results.patterns.length }}
+          </div>
         </div>
         <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
           <div class="text-sm text-green-600 dark:text-green-400">Sources Processed</div>
-          <div class="text-xl font-semibold text-green-700 dark:text-green-300">{{ results.sourcesProcessed.toLocaleString() }}</div>
+          <div class="text-xl font-semibold text-green-700 dark:text-green-300">
+            {{ results.sourcesProcessed.toLocaleString() }}
+          </div>
         </div>
         <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
           <div class="text-sm text-blue-600 dark:text-blue-400">Boilerplate Removed</div>
-          <div class="text-xl font-semibold text-blue-700 dark:text-blue-300">{{ results.boilerplateRemoved.toLocaleString() }}</div>
+          <div class="text-xl font-semibold text-blue-700 dark:text-blue-300">
+            {{ results.boilerplateRemoved.toLocaleString() }}
+          </div>
         </div>
         <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
           <div class="text-sm text-purple-600 dark:text-purple-400">Cleanup Rate</div>
@@ -59,13 +61,8 @@
       </div>
 
       <!-- Detected Patterns -->
-      <div
-        v-if="results.patterns.length > 0"
-        class="space-y-2"
-      >
-        <h4 class="font-medium text-theme-text">
-          Boilerplate Patterns Detected & Removed
-        </h4>
+      <div v-if="results.patterns.length > 0" class="space-y-2">
+        <h4 class="font-medium text-theme-text">Boilerplate Patterns Detected & Removed</h4>
         <div class="space-y-2 max-h-64 overflow-y-auto">
           <div
             v-for="(pattern, index) in results.patterns"
@@ -76,7 +73,9 @@
               <span class="text-sm font-medium text-theme-text">
                 {{ pattern.count.toLocaleString() }} instances removed
               </span>
-              <span class="text-xs text-theme-textmuted font-mono bg-theme-surface px-2 py-1 rounded">
+              <span
+                class="text-xs text-theme-textmuted font-mono bg-theme-surface px-2 py-1 rounded"
+              >
                 {{ pattern.pattern }}
               </span>
             </div>
@@ -95,7 +94,8 @@
         <div class="flex items-center gap-2">
           <div class="i-mdi-check-circle text-green-500" />
           <div class="text-green-800 dark:text-green-200">
-            Successfully removed {{ results.boilerplateRemoved.toLocaleString() }} boilerplate descriptions using {{ results.patterns.length }} detection patterns.
+            Successfully removed {{ results.boilerplateRemoved.toLocaleString() }} boilerplate
+            descriptions using {{ results.patterns.length }} detection patterns.
           </div>
         </div>
       </div>

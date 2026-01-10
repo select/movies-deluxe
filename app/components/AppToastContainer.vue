@@ -1,11 +1,6 @@
 <template>
   <div class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
-    <TransitionGroup
-      name="toast"
-      tag="div"
-      class="flex flex-col gap-2"
-      appear
-    >
+    <TransitionGroup name="toast" tag="div" class="flex flex-col gap-2" appear>
       <div
         v-for="toast in toasts"
         :key="toast.id"
@@ -22,7 +17,7 @@
         </button>
       </div>
     </TransitionGroup>
-    
+
     <!-- Queue indicator (optional visual feedback) -->
     <div
       v-if="toastQueue.length > 0"

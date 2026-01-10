@@ -5,7 +5,7 @@
         <label class="block text-sm font-bold text-theme-textmuted uppercase tracking-wider">
           Select Collection
         </label>
-        <span class="px-2 py-0.5  text-sm font-mono text-theme-text">
+        <span class="px-2 py-0.5 text-sm font-mono text-theme-text">
           {{ visibleCollectionsCount }}/{{ collectionsList.length }}
         </span>
       </div>
@@ -27,15 +27,12 @@
           selectedId === collection.id
             ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/20'
             : 'bg-theme-surface border-theme-border hover:border-theme-textmuted text-theme-text',
-          collection.enabled === false ? 'opacity-60' : ''
+          collection.enabled === false ? 'opacity-60' : '',
         ]"
         @click="select(collection.id)"
       >
         {{ collection.name }}
-        <div
-          v-if="collection.enabled === false"
-          class="i-mdi-eye-off text-xs opacity-70"
-        />
+        <div v-if="collection.enabled === false" class="i-mdi-eye-off text-xs opacity-70" />
       </button>
     </div>
 
@@ -59,10 +56,7 @@
           </button>
         </div>
 
-        <form
-          class="p-6 space-y-4"
-          @submit.prevent="saveCollection"
-        >
+        <form class="p-6 space-y-4" @submit.prevent="saveCollection">
           <div>
             <label class="block text-sm font-bold mb-1">ID (URL Slug)</label>
             <input
@@ -72,7 +66,7 @@
               class="w-full px-4 py-2 rounded-lg border border-theme-border bg-theme-surface text-sm font-mono"
               :disabled="!!editingCollection"
               required
-            >
+            />
           </div>
           <div>
             <label class="block text-sm font-bold mb-1">Name</label>
@@ -82,7 +76,7 @@
               placeholder="e.g. Charlie Chaplin"
               class="w-full px-4 py-2 rounded-lg border border-theme-border bg-theme-surface text-sm"
               required
-            >
+            />
           </div>
           <div>
             <label class="block text-sm font-bold mb-1">Description</label>
@@ -97,7 +91,9 @@
           <!-- Tags Editor -->
           <div>
             <label class="block text-sm font-bold mb-1">Tags</label>
-            <div class="flex flex-wrap gap-2 p-3 bg-theme-background border border-theme-border rounded-lg min-h-[50px]">
+            <div
+              class="flex flex-wrap gap-2 p-3 bg-theme-background border border-theme-border rounded-lg min-h-[50px]"
+            >
               <div
                 v-for="tag in form.tags"
                 :key="tag"
@@ -123,7 +119,7 @@
                   @keydown.backspace="handleBackspace"
                   @focus="showTagSuggestions = true"
                   @blur="handleTagBlur"
-                >
+                />
 
                 <!-- Suggestions Dropdown -->
                 <div
@@ -157,10 +153,7 @@
               class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-500 transition-colors disabled:opacity-50"
               :disabled="isSaving"
             >
-              <div
-                v-if="isSaving"
-                class="i-mdi-loading animate-spin mx-auto"
-              />
+              <div v-if="isSaving" class="i-mdi-loading animate-spin mx-auto" />
               <span v-else>{{ editingCollection ? 'Update' : 'Create' }}</span>
             </button>
           </div>
@@ -177,7 +170,9 @@ const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
 
 const collectionsList = computed(() => Array.from(collections.value.values()))
-const visibleCollectionsCount = computed(() => collectionsList.value.filter(c => c.enabled !== false).length)
+const visibleCollectionsCount = computed(
+  () => collectionsList.value.filter(c => c.enabled !== false).length
+)
 const selectedId = ref('')
 
 const emit = defineEmits<{
@@ -217,8 +212,8 @@ const allExistingTags = computed(() => {
 
 const filteredTagSuggestions = computed(() => {
   const query = newTag.value.toLowerCase().trim()
-  return allExistingTags.value.filter(t =>
-    t.toLowerCase().includes(query) && !form.tags.includes(t)
+  return allExistingTags.value.filter(
+    t => t.toLowerCase().includes(query) && !form.tags.includes(t)
   )
 })
 
@@ -380,6 +375,6 @@ defineExpose({
   editCollection,
   toggleEnabled,
   confirmDelete,
-  openCreateModal: () => showCreateModal.value = true
+  openCreateModal: () => (showCreateModal.value = true),
 })
 </script>

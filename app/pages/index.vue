@@ -4,28 +4,17 @@
       <!-- Welcome Header -->
       <header class="space-y-4">
         <p class="text-xl text-theme-textmuted max-w-2xl leading-relaxed">
-          Discover thousands of free movies from Archive.org and YouTube.
-          Classic films, documentaries, and more - all legally available to watch online.
+          Discover thousands of free movies from Archive.org and YouTube. Classic films,
+          documentaries, and more - all legally available to watch online.
         </p>
       </header>
 
       <!-- Collections Showcase -->
-      <div
-        v-if="pending"
-        class="space-y-12"
-      >
-        <div
-          v-for="i in 3"
-          :key="i"
-          class="space-y-4 px-4"
-        >
+      <div v-if="pending" class="space-y-12">
+        <div v-for="i in 3" :key="i" class="space-y-4 px-4">
           <div class="h-8 w-48 bg-theme-selection animate-pulse rounded-lg" />
           <div class="flex gap-4 overflow-hidden">
-            <div
-              v-for="j in 6"
-              :key="j"
-              class="w-[200px] flex-shrink-0"
-            >
+            <div v-for="j in 6" :key="j" class="w-[200px] flex-shrink-0">
               <MovieCardSkeleton />
             </div>
           </div>
@@ -37,12 +26,8 @@
         class="text-center py-12 bg-theme-surface rounded-2xl border border-theme-border/50"
       >
         <div class="i-mdi-alert-circle text-4xl text-red-500 mb-4" />
-        <h2 class="text-xl font-bold mb-2">
-          Failed to load home page
-        </h2>
-        <p class="text-theme-textmuted mb-6">
-          There was an error loading today's collections.
-        </p>
+        <h2 class="text-xl font-bold mb-2">Failed to load home page</h2>
+        <p class="text-theme-textmuted mb-6">There was an error loading today's collections.</p>
         <button
           class="px-6 py-2 bg-theme-accent text-black font-bold rounded-full hover:bg-theme-accent/80 transition-colors"
           @click="() => refresh()"
@@ -51,10 +36,7 @@
         </button>
       </div>
 
-      <div
-        v-else-if="homeData"
-        class="space-y-12"
-      >
+      <div v-else-if="homeData" class="space-y-12">
         <HomeCollectionRow
           v-for="collection in homeData.collections"
           :key="collection.id"

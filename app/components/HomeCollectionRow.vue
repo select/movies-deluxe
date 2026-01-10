@@ -39,11 +39,7 @@
         @scroll="updateScrollState"
       >
         <template v-if="isLoading">
-          <div
-            v-for="i in 6"
-            :key="i"
-            class="w-[200px] flex-shrink-0 snap-start"
-          >
+          <div v-for="i in 6" :key="i" class="w-[200px] flex-shrink-0 snap-start">
             <MovieCardSkeleton />
           </div>
         </template>
@@ -104,7 +100,7 @@ const scroll = (direction: 'left' | 'right') => {
   const scrollAmount = scrollContainer.value.clientWidth * 0.8
   scrollContainer.value.scrollBy({
     left: direction === 'left' ? -scrollAmount : scrollAmount,
-    behavior: 'smooth'
+    behavior: 'smooth',
   })
 }
 

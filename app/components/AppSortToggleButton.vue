@@ -5,7 +5,7 @@
       class="flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs font-medium transition-colors border-r border-theme-border/50 flex-1"
       :class="{
         'bg-theme-primary text-white': isOptionAActive,
-        'bg-theme-surface text-theme-textmuted hover:bg-theme-selection': !isOptionAActive
+        'bg-theme-surface text-theme-textmuted hover:bg-theme-selection': !isOptionAActive,
       }"
       @click="$emit('select', optionA)"
     >
@@ -15,8 +15,8 @@
           icon,
           {
             'text-white': isOptionAActive,
-            'text-theme-textmuted': !isOptionAActive
-          }
+            'text-theme-textmuted': !isOptionAActive,
+          },
         ]"
       />
       <span>{{ optionA.label }}</span>
@@ -25,7 +25,7 @@
       class="flex items-center justify-center px-2 py-1.5 text-xs font-medium transition-colors flex-1"
       :class="{
         'bg-theme-primary text-white': isOptionBActive,
-        'bg-theme-surface text-theme-textmuted hover:bg-theme-selection': !isOptionBActive
+        'bg-theme-surface text-theme-textmuted hover:bg-theme-selection': !isOptionBActive,
       }"
       @click="$emit('select', optionB)"
     >
@@ -52,10 +52,16 @@ defineEmits<{
 }>()
 
 const isOptionAActive = computed(() => {
-  return props.currentSort.field === props.optionA.field && props.currentSort.direction === props.optionA.direction
+  return (
+    props.currentSort.field === props.optionA.field &&
+    props.currentSort.direction === props.optionA.direction
+  )
 })
 
 const isOptionBActive = computed(() => {
-  return props.currentSort.field === props.optionB.field && props.currentSort.direction === props.optionB.direction
+  return (
+    props.currentSort.field === props.optionB.field &&
+    props.currentSort.direction === props.optionB.direction
+  )
 })
 </script>

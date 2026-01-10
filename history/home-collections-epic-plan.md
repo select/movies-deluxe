@@ -80,6 +80,7 @@ app/components/
 **Goal**: Create API endpoint and script to generate daily home page JSON files
 
 1. **Create generation script** (`scripts/generate-home-pages.ts`)
+
    - Load all collections from `collections.json`
    - Filter collections with sufficient movies (>= 10 movies with IMDB IDs)
    - For each day (1-31):
@@ -89,6 +90,7 @@ app/components/
    - Add validation to ensure movies exist in database
 
 2. **Create admin API endpoint** (`server/api/admin/home/generate.post.ts`)
+
    - Endpoint: `POST /api/admin/home/generate`
    - Calls the generation script
    - Returns success/failure status
@@ -104,17 +106,20 @@ app/components/
 **Goal**: Build Netflix-style collections showcase
 
 4. **Create HomeCollectionCard component**
+
    - Similar to MovieCard but optimized for horizontal scrolling
    - Smaller size, essential info only
    - Poster, title, year
    - Click navigates to `/movie/{imdbId}`
 
 5. **Create HomeExploreMoreCard component**
+
    - Same size as HomeCollectionCard
    - Shows collection icon and "Explore more [Collection Name]"
    - Click navigates to `/collections/{collectionId}`
 
 6. **Create HomeCollectionRow component**
+
    - Horizontal scrolling container with snap points
    - Collection title and description header
    - 10 items: 9 movies + 1 explore more card
@@ -132,11 +137,13 @@ app/components/
 **Goal**: Move search functionality to dedicated route
 
 8. **Create search page** (`app/pages/search.vue`)
+
    - Copy current `index.vue` content (MovieVirtualGrid, filters, etc.)
    - Keep all existing search/filter functionality
    - Update page title/meta to "Search Movies"
 
 9. **Update SearchHeader component**
+
    - Modify search behavior to navigate to `/search` route
    - Update visibility logic to show on `/search` page
    - Keep keyboard shortcuts working
@@ -150,6 +157,7 @@ app/components/
 **Goal**: Generate initial data and verify functionality
 
 11. **Generate initial home page data**
+
     - Run generation script via admin interface
     - Verify all 31 JSON files created
     - Check file sizes and data quality

@@ -7,9 +7,13 @@ license: MIT
 Use these patterns when createing a vue components
 
 ```vue
-<template> ... </template>
-<script setup lang="ts">...</script>
-<style scoped>...</style>
+<template>...</template>
+<script setup lang="ts">
+...
+</script>
+<style scoped>
+...
+</style>
 ```
 
 Only use style for custom animations, use unocss for all styling

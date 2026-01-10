@@ -1,11 +1,7 @@
 <template>
   <div>
     <!-- Overlay (visible when menu is open) -->
-    <div
-      v-if="isOpen"
-      class="fixed inset-0 z-50 transition-opacity"
-      @click="emit('close')"
-    />
+    <div v-if="isOpen" class="fixed inset-0 z-50 transition-opacity" @click="emit('close')" />
 
     <!-- Theme Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
@@ -13,7 +9,7 @@
       class="fixed z-50 transition-all duration-300 ease-in-out glass shadow-2xl overflow-hidden flex flex-col bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh] md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xs md:rounded-none md:border-0 md:max-h-full"
       :class="{
         'translate-y-0 md:translate-x-0': isOpen,
-        'translate-y-full md:translate-y-0 md:-translate-x-full': !isOpen
+        'translate-y-full md:translate-y-0 md:-translate-x-full': !isOpen,
       }"
     >
       <!-- Mobile Close Button (fixed position, same as menu button) -->
@@ -41,14 +37,16 @@
       </div>
 
       <!-- Separator -->
-      <hr class="mx-4 my-0 border-theme-border/50">
+      <hr class="mx-4 my-0 border-theme-border/50" />
 
       <!-- Theme Content -->
       <div class="overflow-y-auto scrollbar-thin flex-1 md:h-[calc(100vh-4rem)] p-4">
         <div class="max-w-7xl mx-auto space-y-6">
           <!-- Dark Themes -->
           <div>
-            <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
+            <h4
+              class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2"
+            >
               <div class="i-material-symbols-light-dark-mode text-xs" />
               Dark Themes
             </h4>
@@ -59,7 +57,8 @@
                 class="flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left"
                 :class="{
                   'border-theme-primary bg-theme-primary/10': currentThemeId === theme.metadata.id,
-                  'border-theme-border/50 hover:border-theme-border bg-theme-surface/50': currentThemeId !== theme.metadata.id
+                  'border-theme-border/50 hover:border-theme-border bg-theme-surface/50':
+                    currentThemeId !== theme.metadata.id,
                 }"
                 @click="setTheme(theme.metadata.id)"
                 @mouseenter="previewTheme(theme.metadata.id)"
@@ -94,7 +93,9 @@
 
           <!-- Light Themes -->
           <div>
-            <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
+            <h4
+              class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2"
+            >
               <div class="i-material-symbols-light-wb-sunny text-xs" />
               Light Themes
             </h4>
@@ -105,7 +106,8 @@
                 class="flex flex-col gap-2 p-2 rounded-xl border-2 transition-all text-left"
                 :class="{
                   'border-theme-primary bg-theme-primary/10': currentThemeId === theme.metadata.id,
-                  'border-theme-border/50 hover:border-theme-border bg-theme-surface/50': currentThemeId !== theme.metadata.id
+                  'border-theme-border/50 hover:border-theme-border bg-theme-surface/50':
+                    currentThemeId !== theme.metadata.id,
                 }"
                 @click="setTheme(theme.metadata.id)"
                 @mouseenter="previewTheme(theme.metadata.id)"
@@ -189,17 +191,20 @@ const { activate, deactivate } = useFocusTrap(themeMenuRef, {
 })
 
 // Watch for menu open/close to manage focus trap and scroll lock
-watch(() => props.isOpen, (isOpen) => {
-  isLocked.value = isOpen
-  if (isOpen) {
-    // Small delay to ensure DOM is ready and animation has started
-    if (typeof window !== 'undefined') {
-      window.setTimeout(() => {
-        activate()
-      }, 50)
+watch(
+  () => props.isOpen,
+  isOpen => {
+    isLocked.value = isOpen
+    if (isOpen) {
+      // Small delay to ensure DOM is ready and animation has started
+      if (typeof window !== 'undefined') {
+        window.setTimeout(() => {
+          activate()
+        }, 50)
+      }
+    } else {
+      deactivate()
     }
-  } else {
-    deactivate()
   }
-})
+)
 </script>

@@ -1,17 +1,12 @@
 <template>
-  <div
-    class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface"
-  >
+  <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
     <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
       <div class="i-mdi-image-multiple text-purple-500" />
       Poster Downloader
     </h2>
 
     <div class="space-y-6">
-      <AppInputNumber
-        v-model="options.limit"
-        label="Download limit"
-      />
+      <AppInputNumber v-model="options.limit" label="Download limit" />
 
       <div class="flex flex-col gap-3">
         <AppInputSwitch
@@ -26,14 +21,8 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div
-          v-if="loading"
-          class="i-mdi-loading animate-spin"
-        />
-        <div
-          v-else
-          class="i-mdi-download"
-        />
+        <div v-if="loading" class="i-mdi-loading animate-spin" />
+        <div v-else class="i-mdi-download" />
         {{ loading ? 'Downloading...' : 'Download Posters' }}
       </button>
 
@@ -44,7 +33,9 @@
       >
         <div class="flex items-center justify-between text-xs">
           <span class="text-theme-textmuted truncate mr-2">{{ progress.posters.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.posters.current }} / {{ progress.posters.total }}</span>
+          <span class="font-mono text-nowrap"
+            >{{ progress.posters.current }} / {{ progress.posters.total }}</span
+          >
         </div>
         <div class="h-2 bg-theme-border rounded-full overflow-hidden">
           <div

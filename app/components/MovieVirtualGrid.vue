@@ -1,39 +1,40 @@
 <template>
-  <div
-    ref="gridRef"
-    class="w-full"
-  >
+  <div ref="gridRef" class="w-full">
     <!-- Spacer for rows before visible range -->
     <div
       v-if="visibleRows.length > 0 && visibleRows[0] && visibleRows[0].index > 0"
       :style="{ height: `${visibleRows[0].top}px` }"
     />
 
-      <!-- Visible rows -->
-      <div
-        v-for="row in visibleRows"
-        :key="row.index"
-        :ref="row.index === 0 ? (el) => firstRowRef = el as HTMLElement : undefined"
-        class="grid gap-4 mb-4"
-        :class="gridClass"
-      >
-        <MovieCard
-          v-for="movie in row.movies"
-          :key="movie.imdbId"
-          :movie="movie"
-        />
-      </div>
+    <!-- Visible rows -->
+    <div
+      v-for="row in visibleRows"
+      :key="row.index"
+      :ref="row.index === 0 ? el => (firstRowRef = el as HTMLElement) : undefined"
+      class="grid gap-4 mb-4"
+      :class="gridClass"
+    >
+      <MovieCard v-for="movie in row.movies" :key="movie.imdbId" :movie="movie" />
+    </div>
 
     <!-- Spacer for rows after visible range -->
     <div
       v-if="visibleRows.length > 0 && visibleRows[visibleRows.length - 1]"
-      :style="{ height: `${totalHeight - (visibleRows[visibleRows.length - 1]!.top + rowHeight)}px` }"
+      :style="{
+        height: `${totalHeight - (visibleRows[visibleRows.length - 1]!.top + rowHeight)}px`,
+      }"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, breakpointsTailwind, useWindowScroll, useWindowSize, useElementSize } from '@vueuse/core'
+import {
+  useBreakpoints,
+  breakpointsTailwind,
+  useWindowScroll,
+  useWindowSize,
+  useElementSize,
+} from '@vueuse/core'
 import type { LightweightMovieEntry } from '~/types'
 
 const props = defineProps<{
@@ -122,7 +123,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateOffset)
 })
 
-
 const visibleRows = computed(() => {
   if (!props.movies || props.movies.length === 0) {
     return []
@@ -145,7 +145,7 @@ const visibleRows = computed(() => {
       rows.push({
         index: i,
         top: i * rowHeight.value,
-        movies: rowMovies
+        movies: rowMovies,
       })
     }
   }
@@ -153,16 +153,26 @@ const visibleRows = computed(() => {
 })
 
 // Load more when approaching end of currently loaded content
-watch(visibleRows, () => {
+watch(
+  visibleRows,
+  () => {
+    // Calculate rows based on currently loaded movies, not total
+    const loadedRows = Math.ceil(props.movies.length / cols.value)
 
-  // Calculate rows based on currently loaded movies, not total
-  const loadedRows = Math.ceil(props.movies.length / cols.value)
-
-  // Check if we're rendering the last few rows of loaded content
-  const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
-  if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
-    window.console.log('[VirtualGrid] Load more triggered - lastVisibleRow:', lastVisibleRow.index, 'loadedRows:', loadedRows, 'buffer:', buffer)
-    emit('load-more')
-  }
-}, { deep: true })
+    // Check if we're rendering the last few rows of loaded content
+    const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
+    if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
+      window.console.log(
+        '[VirtualGrid] Load more triggered - lastVisibleRow:',
+        lastVisibleRow.index,
+        'loadedRows:',
+        loadedRows,
+        'buffer:',
+        buffer
+      )
+      emit('load-more')
+    }
+  },
+  { deep: true }
+)
 </script>

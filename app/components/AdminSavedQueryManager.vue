@@ -20,10 +20,7 @@
       No saved queries for this collection.
     </div>
 
-    <div
-      v-else
-      class="space-y-3"
-    >
+    <div v-else class="space-y-3">
       <div
         v-for="(query, index) in queries"
         :key="index"
@@ -50,7 +47,10 @@
 
               <!-- Year Range -->
               <div
-                v-if="(query.filterState.minYear && query.filterState.minYear > 0) || query.filterState.maxYear"
+                v-if="
+                  (query.filterState.minYear && query.filterState.minYear > 0) ||
+                  query.filterState.maxYear
+                "
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
                 <div class="i-mdi-calendar" />
@@ -68,7 +68,10 @@
 
               <!-- Votes -->
               <div
-                v-if="(query.filterState.minVotes && query.filterState.minVotes > 0) || query.filterState.maxVotes"
+                v-if="
+                  (query.filterState.minVotes && query.filterState.minVotes > 0) ||
+                  query.filterState.maxVotes
+                "
                 class="px-2 py-0.5 bg-theme-bg border border-theme-border rounded text-[10px] font-mono flex items-center gap-1"
               >
                 <div class="i-mdi-account-group" />
@@ -139,11 +142,12 @@ const { filters } = storeToRefs(movieStore)
 const saveCurrentQuery = async () => {
   // Default values to compare against
   const DEFAULT_SORT = { field: 'year', direction: 'desc' }
-  
+
   // Only include sort if it's not the default
-  const isDefaultSort = filters.value.sort.field === DEFAULT_SORT.field 
-    && filters.value.sort.direction === DEFAULT_SORT.direction
-  
+  const isDefaultSort =
+    filters.value.sort.field === DEFAULT_SORT.field &&
+    filters.value.sort.direction === DEFAULT_SORT.direction
+
   // Create a clean FilterState, only including non-default values
   const filterState: SavedQueryFilterState = {
     searchQuery: filters.value.searchQuery,
@@ -196,17 +200,17 @@ const removeQuery = async (index: number) => {
 
 const applyQuery = (query: SavedQuery) => {
   movieStore.resetFilters()
-  
+
   // Restore search query from the saved query
   if (query.searchQuery) {
     movieStore.setSearchQuery(query.searchQuery)
   }
-  
+
   // Apply sort if it was saved (otherwise use default from resetFilters)
   if (query.filterState.sort) {
     movieStore.setSort(query.filterState.sort)
   }
-  
+
   // Apply filters only if they were saved
   if (query.filterState.minRating) {
     movieStore.setMinRating(query.filterState.minRating)
@@ -228,7 +232,7 @@ const applyQuery = (query: SavedQuery) => {
   query.filterState.genres?.forEach(g => movieStore.toggleGenre(g))
   query.filterState.countries?.forEach(c => movieStore.toggleCountry(c))
   query.filterState.sources?.forEach(s => movieStore.toggleSource(s))
-  
+
   // Emit event to notify parent that filters were applied
   emit('filtersApplied')
 }

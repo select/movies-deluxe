@@ -6,10 +6,7 @@
     </h2>
 
     <div class="space-y-6">
-      <AppInputNumber
-        v-model="options.limit"
-        label="Extraction limit"
-      />
+      <AppInputNumber v-model="options.limit" label="Extraction limit" />
 
       <div class="flex flex-col gap-3">
         <AppInputSwitch
@@ -29,25 +26,23 @@
         :disabled="loading"
         @click="$emit('start')"
       >
-        <div
-          v-if="loading"
-          class="i-mdi-loading animate-spin"
-        />
-        <div
-          v-else
-          class="i-mdi-robot"
-        />
+        <div v-if="loading" class="i-mdi-loading animate-spin" />
+        <div v-else class="i-mdi-robot" />
         {{ loading ? 'Extracting...' : 'Extract with AI' }}
       </button>
 
       <!-- Progress -->
       <div
-        v-if="progress.ai && (progress.ai.status === 'in_progress' || progress.ai.status === 'starting')"
+        v-if="
+          progress.ai && (progress.ai.status === 'in_progress' || progress.ai.status === 'starting')
+        "
         class="mt-4 space-y-3"
       >
         <div class="flex items-center justify-between text-xs">
           <span class="text-theme-textmuted truncate mr-2">{{ progress.ai.message }}</span>
-          <span class="font-mono text-nowrap">{{ progress.ai.current }} / {{ progress.ai.total || '?' }}</span>
+          <span class="font-mono text-nowrap"
+            >{{ progress.ai.current }} / {{ progress.ai.total || '?' }}</span
+          >
         </div>
 
         <!-- Dual Progress Bar -->

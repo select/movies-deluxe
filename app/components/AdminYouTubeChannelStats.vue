@@ -32,15 +32,23 @@
           <div class="flex-1 h-1 bg-theme-border rounded-full overflow-hidden flex">
             <div
               class="h-full bg-red-500 transition-all duration-1000"
-              :style="{ width: `${channel.total > 0 ? (channel.scraped / channel.total) * 100 : 0}%` }"
+              :style="{
+                width: `${channel.total > 0 ? (channel.scraped / channel.total) * 100 : 0}%`,
+              }"
             />
             <div
               v-if="channel.failed"
               class="h-full bg-orange-400 transition-all duration-1000"
-              :style="{ width: `${channel.total > 0 ? (channel.failed / channel.total) * 100 : 0}%` }"
+              :style="{
+                width: `${channel.total > 0 ? (channel.failed / channel.total) * 100 : 0}%`,
+              }"
             />
           </div>
-          <span class="text-[10px] font-medium">{{ channel.total > 0 ? ((channel.scraped / channel.total) * 100).toFixed(0) : 0 }}%</span>
+          <span class="text-[10px] font-medium"
+            >{{
+              channel.total > 0 ? ((channel.scraped / channel.total) * 100).toFixed(0) : 0
+            }}%</span
+          >
         </div>
         <div class="flex items-center justify-between text-[10px] text-theme-textmuted mt-1">
           <span>{{ channel.scraped }} / {{ channel.total || '?' }} videos</span>
