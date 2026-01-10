@@ -4,14 +4,39 @@ description: Rules for vue component setup. Use this when writing a new vue comp
 license: MIT
 ---
 
-Use these patterns when needed
+Use these patterns when createing a vue components
+
+```vue
+<template> ... </template>
+<script setup lang="ts">...</script>
+<style scoped>...</style>
+```
+
+Only use style for custom animations, use unocss for all styling
+
+Script setup
 GOOD
 
-````ts
+```ts
 const props = defineProps<{collection: { id: string name: string }}>()
 const emit = defineEmits<{ updated: [newId: string] }>()
 const model = defineModel({ required: true }) // making the v-model required
 const model = defineModel({ default: 0 }) // providing a default value
+```
+
+Use VueUse composables that are installed in this project, vueuse needs to be imported
+GOOD
+
+```ts
+import { onClickOutside } from '@vueuse/core'
+onClickOutside(themeMenuRef, () => { ... }
+```
+
+When using refs and functions from pinia stores
+GOOD
+
+````ts
+// do not import useSomeStore they are always auto-imported
 const { progress } = storeToRefs(useAdminStore()) // use a reactive ref from store
 const { setProgress } = useAdminStore() // use a store action
 const archiveProgress = computed(() => progress.value.archive)
