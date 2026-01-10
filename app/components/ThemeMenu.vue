@@ -3,14 +3,14 @@
     <!-- Overlay (visible when menu is open) -->
     <div
       v-if="isOpen"
-      class="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
+      class="fixed inset-0 z-50 transition-opacity"
       @click="emit('close')"
     />
 
     <!-- Theme Menu Panel (mobile: bottom sheet, desktop: left sidebar) -->
     <div
       ref="themeMenuRef"
-      class="fixed z-50 transition-all duration-300 ease-in-out glass shadow-2xl overflow-hidden flex flex-col bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh] md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xl md:rounded-none md:border-0 md:max-h-full"
+      class="fixed z-50 transition-all duration-300 ease-in-out glass shadow-2xl overflow-hidden flex flex-col bottom-0 left-0 right-0 rounded-t-2xl border-t border-theme-border/50 max-h-[90vh] md:top-0 md:left-0 md:bottom-0 md:right-auto md:h-full md:w-full md:max-w-xs md:rounded-none md:border-0 md:max-h-full"
       :class="{
         'translate-y-0 md:translate-x-0': isOpen,
         'translate-y-full md:translate-y-0 md:-translate-x-full': !isOpen
@@ -32,7 +32,7 @@
           Theme Selection
         </h2>
         <button
-          class="p-2 hover:bg-theme-selection rounded-full transition-colors text-theme-text"
+          class="p-2 hidden md:block hover:bg-theme-selection rounded-full transition-colors text-theme-text"
           aria-label="Close theme menu"
           @click="emit('close')"
         >
@@ -49,7 +49,7 @@
           <!-- Dark Themes -->
           <div>
             <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
-              <div class="i-mdi-weather-night text-xs" />
+              <div class="i-material-symbols-light-dark-mode text-xs" />
               Dark Themes
             </h4>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -95,7 +95,7 @@
           <!-- Light Themes -->
           <div>
             <h4 class="text-[10px] font-bold uppercase tracking-widest text-theme-textmuted mb-3 flex items-center gap-2">
-              <div class="i-mdi-weather-sunny text-xs" />
+              <div class="i-material-symbols-light-wb-sunny text-xs" />
               Light Themes
             </h4>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
