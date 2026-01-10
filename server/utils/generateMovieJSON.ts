@@ -203,6 +203,8 @@ export async function generateMovieJSON() {
             description: s.description,
             quality: s.quality,
             label: s.label,
+            fileSize:
+              s.fileSize || (s.type === 'archive.org' ? (s as ArchiveOrgSource).size : undefined),
           }
           if (s.type === 'youtube') {
             const yt = s as YouTubeSource
