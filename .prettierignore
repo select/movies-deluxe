@@ -16,17 +16,17 @@ dist
 # Third-party libraries
 public/sqlite-wasm
 
+
 # Beads
 .beads/*.jsonl
 
 # Git
 .git
 
-# Vue files (prettier-plugin-vue has parsing issues)
-*.vue
-# Movie assets
+# Movie JSON assets
+public/data
 public/movies
 public/posters
 
 # Large data files (do not auto-format)
-data/movies.json
+data/
