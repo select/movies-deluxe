@@ -14,7 +14,11 @@
       class="grid gap-4 mb-4"
       :class="gridClass"
     >
-      <MovieCard v-for="movie in row.movies" :key="movie.imdbId" :movie="movie" />
+      <MovieCard
+        v-for="movie in row.movies"
+        :key="movie.imdbId"
+        :movie="getMovieWithDetails(movie)"
+      />
     </div>
 
     <!-- Spacer for rows after visible range -->
@@ -163,6 +167,30 @@ const { movieDetailsCache } = storeToRefs(movieStore)
 
 // Track last fetched IDs to avoid redundant fetches
 const lastFetchedIds = ref<Set<string>>(new Set())
+
+/**
+ * Get movie with full details from cache, or return lightweight entry
+ * This ensures MovieCard receives the full movie data once it's fetched
+ */
+const getMovieWithDetails = (lightweightMovie: LightweightMovieEntry): LightweightMovieEntry => {
+  const cached = movieDetailsCache.value.get(lightweightMovie.imdbId)
+  if (cached && cached.title) {
+    // Return a merged object with all fields from cached movie
+    return {
+      imdbId: cached.imdbId,
+      title: cached.title,
+      year: cached.year,
+      imdbRating: cached.metadata?.imdbRating,
+      imdbVotes: cached.metadata?.imdbVotes,
+      language: cached.metadata?.Language,
+      sourceType: cached.sources?.[0]?.type,
+      channelName: cached.sources?.[0]?.type === 'youtube' ? cached.sources[0].channelName : undefined,
+      verified: cached.verified,
+    }
+  }
+  // Return the lightweight entry as-is if not cached yet
+  return lightweightMovie
+}
 
 // Debounced fetch function to prevent excessive calls during scroll
 const debouncedFetch = useDebounceFn((ids: string[]) => {
