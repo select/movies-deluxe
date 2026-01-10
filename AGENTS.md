@@ -63,6 +63,10 @@ Use the commit-message skill to craft a good commit message
 
 ## Common Workflows
 
+**Working on an issue:**
+When working on a list of issues use a subagent.
+Finish the sub issue and return to main threat to look for the next sub issue.
+
 **Starting work:**
 
 ```bash
@@ -70,10 +74,6 @@ bd ready           # Find available work
 bd show <id>       # Review issue details
 bd update <id> --status=in_progress  # Claim it
 ```
-
-**Working on an issue:**
-When working on a list of issues use a subagent.
-Finish the sub issue and return to main threat to look for the next sub issue.
 
 **Completing work:**
 
@@ -101,12 +101,8 @@ pnpm dev                    # Dev server (port 3003)
 pnpm tsx scripts/<name>.ts  # Run scripts
 
 # Code Quality
-pnpm lint                   # Run oxlint + eslint
 pnpm lint:fix               # Auto-fix issues
-pnpm typecheck              # TypeScript checking
-
-# Database
-pnpm db:generate            # Generate SQLite from movies.json
+pnpm typecheck              # TypeScript checking (slow, may timeout)
 ```
 
 **Testing**: ❌ No test framework configured. Do NOT run tests.
@@ -119,7 +115,7 @@ pnpm db:generate            # Generate SQLite from movies.json
 
 **Auto-Sync**: Exports to JSONL after changes (5s debounce), imports on `git pull`. Always commit `.beads/issues.jsonl` with code changes.
 
-**AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean.
+**AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean. When adding a planing doc for a epic reference it in the epic description.
 
 ## Code Style
 
