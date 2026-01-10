@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
-    v-if="movie.imdbId"
-    :to="`/movie/${movie.imdbId}`"
+    v-if="movieData.imdbId"
+    :to="`/movie/${movieData.imdbId}`"
     class="flex flex-col border border-theme-border/50 rounded-xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-theme-surface text-theme-text"
   >
     <!-- Poster -->
@@ -16,8 +16,8 @@
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
         v-if="hasImdbId"
-        :src="getPosterPath(movie.imdbId!)"
-        :alt="movie.title"
+        :src="getPosterPath(movieData.imdbId!)"
+        :alt="movieData.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
         :class="{ 'opacity-0': !imageLoaded, 'opacity-100': imageLoaded }"
         loading="lazy"
@@ -100,12 +100,12 @@
     <!-- Movie Info -->
     <div class="p-3 flex-shrink-0">
       <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem]">
-        {{ movie.title }}
+        {{ movieData.title }}
       </h3>
 
       <div class="flex items-center gap-1.5 text-[11px] text-theme-textmuted font-medium">
-        <span v-if="movie.year">{{ movie.year }}</span>
-        <span v-if="movie.year && metadata?.imdbRating" class="opacity-50">•</span>
+        <span v-if="movieData.year">{{ movieData.year }}</span>
+        <span v-if="movieData.year && metadata?.imdbRating" class="opacity-50">•</span>
         <span v-if="metadata?.imdbRating" class="flex items-center gap-1">
           <div class="i-mdi-star text-theme-accent text-xs"></div>
           <span class="font-bold text-theme-text">{{ metadata.imdbRating }}</span>
@@ -130,7 +130,7 @@
     </div>
     <div class="p-3 flex-shrink-0">
       <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem] text-red-400">
-        {{ movie.title || 'Unknown Movie' }}
+        {{ movieData.title || 'Unknown Movie' }}
       </h3>
       <div class="text-[11px] text-red-400 font-medium">Missing ID</div>
     </div>
@@ -146,41 +146,52 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { isLiked: isLikedFn } = useMovieStore()
+const movieStore = useMovieStore()
+const { isLiked: isLikedFn, movieDetailsCache } = movieStore
 const { getCollectionsForMovie } = useCollectionsStore()
+
+// Use full movie data from cache if available, otherwise use the provided movie object
+const movieData = computed(() => {
+  if (props.movie.imdbId && movieDetailsCache.has(props.movie.imdbId)) {
+    return movieDetailsCache.get(props.movie.imdbId)!
+  }
+  return props.movie
+})
 
 const imageLoaded = ref(false)
 const movieCollections = ref<Collection[]>([])
 
 // Check if movie has a valid IMDB ID (starts with 'tt')
-const hasImdbId = computed(() => props.movie.imdbId?.startsWith('tt') ?? false)
+const hasImdbId = computed(() => movieData.value.imdbId?.startsWith('tt') ?? false)
 
 // Check if movie is liked
-const isMovieLiked = computed(() => (props.movie.imdbId ? isLikedFn(props.movie.imdbId) : false))
+const isMovieLiked = computed(() =>
+  movieData.value.imdbId ? isLikedFn(movieData.value.imdbId) : false
+)
 
 // Check if movie is verified
 const isVerified = computed(() => {
-  if ('verified' in props.movie) return props.movie.verified
+  if ('verified' in movieData.value) return movieData.value.verified
   return false
 })
 
 // Fetch collections for this movie from database
 onMounted(async () => {
-  if (props.movie.imdbId) {
-    movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+  if (movieData.value.imdbId) {
+    movieCollections.value = await getCollectionsForMovie(movieData.value.imdbId)
   }
 })
 
 // Helper to check if we have full movie data
 const hasFullData = computed(() => {
-  if ('sources' in props.movie && props.movie.sources.length > 0) return true
-  return 'sourceType' in props.movie && !!(props.movie as LightweightMovieEntry).sourceType
+  if ('sources' in movieData.value && movieData.value.sources.length > 0) return true
+  return 'sourceType' in movieData.value && !!(movieData.value as LightweightMovieEntry).sourceType
 })
 
 // Safe access to metadata
 const metadata = computed(() => {
-  if ('metadata' in props.movie) return props.movie.metadata
-  const m = props.movie as LightweightMovieEntry
+  if ('metadata' in movieData.value) return movieData.value.metadata
+  const m = movieData.value as LightweightMovieEntry
   return {
     imdbRating: m.imdbRating as string | undefined,
     imdbVotes: m.imdbVotes as string | undefined,
@@ -190,8 +201,8 @@ const metadata = computed(() => {
 
 // Safe access to sources
 const firstSource = computed(() => {
-  if ('sources' in props.movie) return props.movie.sources[0]
-  const m = props.movie as LightweightMovieEntry
+  if ('sources' in movieData.value) return movieData.value.sources[0]
+  const m = movieData.value as LightweightMovieEntry
   if (m.sourceType) {
     return {
       type: m.sourceType,

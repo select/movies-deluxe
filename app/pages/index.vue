@@ -7,6 +7,13 @@
           Discover thousands of free movies from Archive.org and YouTube. Classic films,
           documentaries, and more - all legally available to watch online.
         </p>
+        <div
+          v-if="!isInitialLoading && totalMoviesCount > 0"
+          class="flex items-center gap-2 text-sm text-theme-textmuted animate-in fade-in duration-700"
+        >
+          <div class="i-mdi-movie-open text-theme-accent"></div>
+          <span>Over {{ totalMoviesCount.toLocaleString() }} movies available</span>
+        </div>
       </header>
 
       <!-- Collections Showcase -->
@@ -88,11 +95,29 @@ const {
   refresh,
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`)
 
-const { loadFromFile } = useMovieStore()
+const movieStore = useMovieStore()
+const { loadFromFile } = movieStore
+const { isInitialLoading } = storeToRefs(movieStore)
+
+const totalMoviesCount = ref(0)
 
 onMounted(async () => {
-  // Still load the database in background as it's needed for components
-  await loadFromFile()
+  // Start loading database in background
+  loadFromFile()
+
+  // Wait for it and fetch count
+  const unwatch = watch(
+    () => movieStore.isInitialLoading,
+    async loading => {
+      if (!loading) {
+        // Fetch true total count without filters
+        const db = useDatabase()
+        totalMoviesCount.value = await db.getMovieCount()
+        unwatch()
+      }
+    },
+    { immediate: !movieStore.isInitialLoading }
+  )
 })
 </script>
 

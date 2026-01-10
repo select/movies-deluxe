@@ -71,6 +71,10 @@ bd show <id>       # Review issue details
 bd update <id> --status=in_progress  # Claim it
 ```
 
+**Working on an issue:**
+When working on a list of issues use a subagent.
+Finish the sub issue and return to main threat to look for the next sub issue.
+
 **Completing work:**
 
 ```bash

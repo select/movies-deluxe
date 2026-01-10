@@ -310,6 +310,67 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Fetch total count of movies matching filters
+   */
+  const fetchMovieCount = async (): Promise<number> => {
+    if (!db.isReady.value) return 0
+
+    try {
+      const params: (string | number)[] = []
+      const where: string[] = []
+
+      // Apply filters (same logic as fetchLightweightMovies)
+      if (filters.value.minRating > 0) {
+        where.push('m.imdbRating >= ?')
+        params.push(filters.value.minRating)
+      }
+      if (filters.value.minYear > 0) {
+        where.push('m.year >= ?')
+        params.push(filters.value.minYear)
+      }
+      if (filters.value.maxYear && filters.value.maxYear > 0) {
+        where.push('m.year <= ?')
+        params.push(filters.value.maxYear)
+      }
+      if (filters.value.minVotes > 0) {
+        where.push('m.imdbVotes >= ?')
+        params.push(filters.value.minVotes)
+      }
+      if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+        where.push('m.imdbVotes <= ?')
+        params.push(filters.value.maxVotes)
+      }
+
+      // Genre filters
+      if (filters.value.genres.length > 0) {
+        filters.value.genres.forEach(genre => {
+          where.push('m.genre LIKE ?')
+          params.push(`%${genre}%`)
+        })
+      }
+
+      // Country filters
+      if (filters.value.countries.length > 0) {
+        filters.value.countries.forEach(country => {
+          where.push('m.country LIKE ?')
+          params.push(`%${country}%`)
+        })
+      }
+
+      const count = await db.getMovieCount({
+        where: where.join(' AND '),
+        params,
+      })
+
+      totalFiltered.value = count
+      return count
+    } catch (err) {
+      window.console.error('[MovieStore] Failed to fetch movie count:', err)
+      return 0
+    }
+  }
+
+  /**
    * Fetch movies from database (lightweight version)
    */
   const fetchMovies = async (options: {
@@ -489,6 +550,12 @@ export const useMovieStore = defineStore('movie', () => {
         return []
       }
 
+      // If database is not ready, start loading it in background but don't wait for it
+      // unless we really need it for better related movies display
+      if (!db.isReady.value && !isLoading.value.movies && isInitialLoading.value) {
+        loadFromFile()
+      }
+
       // If database is ready, fetch full lightweight data for related movies
       if (db.isReady.value) {
         const relatedIds = movie.relatedMovies.map(rm => rm.imdbId)
@@ -560,13 +627,19 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Fetch lightweight movie list (IDs and titles only) for virtual scrolling
    */
-  const fetchLightweightMovies = async () => {
+  const fetchLightweightMovies = async (options: { limit?: number; offset?: number } = {}) => {
     if (!db.isReady.value) {
       window.console.log('DB not ready, cannot fetch lightweight movies')
       return
     }
 
-    isFiltering.value = true
+    const { limit, offset } = options
+    const isInitial = offset === undefined || offset === 0
+
+    if (isInitial) {
+      isFiltering.value = true
+    }
+
     try {
       const params: (string | number)[] = []
       const where: string[] = []
@@ -611,7 +684,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       // Source filters require joins, so use full query
       if (filters.value.sources.length > 0) {
-        await fetchFilteredMovies()
+        await fetchFilteredMovies(offset !== undefined && offset > 0)
         return
       }
 
@@ -622,7 +695,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       if (sortField === 'relevance' && filters.value.searchQuery) {
         // For search, we need to use FTS which requires full query
-        await fetchFilteredMovies()
+        await fetchFilteredMovies(offset !== undefined && offset > 0)
         return
       } else if (sortField === 'rating') {
         orderBy = `m.imdbRating ${sortDir}`
@@ -638,18 +711,29 @@ export const useMovieStore = defineStore('movie', () => {
         where: where.join(' AND '),
         params,
         orderBy,
-        includeCount: true,
+        limit,
+        offset,
+        includeCount: isInitial,
       })
 
-      lightweightMovies.value = result || []
-      if (totalCount !== undefined) {
-        totalFiltered.value = totalCount
+      if (isInitial) {
+        lightweightMovies.value = result || []
+        if (totalCount !== undefined) {
+          totalFiltered.value = totalCount
+        }
+      } else {
+        // Append results for now, until we implement full range tracking
+        lightweightMovies.value = [...lightweightMovies.value, ...(result || [])]
       }
     } catch (err: unknown) {
       window.window.console.error('[MovieStore] Lightweight query failed:', err)
-      lightweightMovies.value = []
+      if (isInitial) {
+        lightweightMovies.value = []
+      }
     } finally {
-      isFiltering.value = false
+      if (isInitial) {
+        isFiltering.value = false
+      }
     }
   }
 
@@ -1132,7 +1216,10 @@ export const useMovieStore = defineStore('movie', () => {
       if (useRoute().path !== '/search') return
 
       filters.value.currentPage = 1
-      fetchLightweightMovies()
+      // Fetch count first for immediate feedback
+      fetchMovieCount()
+      // Then fetch first page of movies
+      fetchLightweightMovies({ limit: 50 })
     }
   )
 
@@ -1144,7 +1231,22 @@ export const useMovieStore = defineStore('movie', () => {
       if (useRoute().path !== '/search') return
 
       if (newPage > oldPage) {
-        fetchFilteredMovies(true)
+        const itemsPerPage = 50
+        const offset = (newPage - 1) * itemsPerPage
+
+        // If we have source filters or search query, use fetchFilteredMovies
+        if (
+          filters.value.sources.length > 0 ||
+          (filters.value.sort.field === 'relevance' && filters.value.searchQuery)
+        ) {
+          fetchFilteredMovies(true)
+        } else {
+          // Otherwise use fetchLightweightMovies with pagination
+          fetchLightweightMovies({
+            limit: itemsPerPage,
+            offset,
+          })
+        }
       }
     }
   )
@@ -1158,7 +1260,8 @@ export const useMovieStore = defineStore('movie', () => {
 
       const currentLength = lightweightMovies.value?.length || 0
       if (ready && currentLength === 0) {
-        fetchLightweightMovies()
+        fetchMovieCount()
+        fetchLightweightMovies({ limit: 50 })
       }
     },
     { immediate: true }
@@ -1201,6 +1304,7 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Data Loading
     // ============================================
     loadFromFile,
+    fetchMovieCount,
     fetchMovies,
     fetchMoviesByIds,
     getMovieById,

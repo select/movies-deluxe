@@ -216,6 +216,32 @@ function createDatabase() {
     })
   }
 
+  const getMovieCount = async (
+    options: {
+      where?: string
+      params?: (string | number)[]
+    } = {}
+  ): Promise<number> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: WorkerResponse) => resolve(data.count ?? 0),
+        reject,
+      })
+
+      const rawOptions = { ...options }
+      if (rawOptions.params) {
+        rawOptions.params = toRaw(rawOptions.params)
+      }
+
+      worker.value!.postMessage({ type: 'get-movie-count', id, ...rawOptions })
+    })
+  }
+
   return {
     init,
     query,
@@ -225,6 +251,7 @@ function createDatabase() {
     getRelatedMovies,
     getCollectionsForMovie,
     getFilterOptions,
+    getMovieCount,
     isReady,
   }
 }
