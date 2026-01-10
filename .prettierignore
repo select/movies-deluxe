@@ -30,3 +30,4 @@ public/posters
 
 # Large data files (do not auto-format)
 data/
+app/components/AdminSourceQualityDialog.vue
