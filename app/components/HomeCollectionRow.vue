@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4 group/row">
+  <div ref="rowElement" class="space-y-4 group/row">
     <div class="flex items-center justify-between px-4">
       <h2 class="text-xl font-bold text-theme-text flex items-center gap-2">
         <div class="i-mdi-movie-open text-theme-accent"></div>
@@ -65,6 +65,7 @@
 </template>
 
 <script setup lang="ts">
+import { useIntersectionObserver } from '@vueuse/core'
 import type { MovieEntry } from '~/types'
 
 interface CollectionData {
@@ -83,6 +84,8 @@ const { fetchMoviesByIds } = useMovieStore()
 const isLoading = ref(true)
 const displayMovies = ref<MovieEntry[]>([])
 const scrollContainer = ref<HTMLElement | null>(null)
+const rowElement = ref<HTMLElement | null>(null)
+const hasLoaded = ref(false)
 
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
@@ -104,13 +107,15 @@ const scroll = (direction: 'left' | 'right') => {
   })
 }
 
-onMounted(async () => {
+const loadMovies = async () => {
+  if (hasLoaded.value) return
   if (props.collection.movieIds.length > 0) {
     isLoading.value = true
     // We only show up to 9 movies, then the explore more card
     const movieIds = props.collection.movieIds.slice(0, 9)
     displayMovies.value = await fetchMoviesByIds(movieIds)
     isLoading.value = false
+    hasLoaded.value = true
 
     // Ensure scroll position is at the left after loading
     nextTick(() => {
@@ -121,7 +126,20 @@ onMounted(async () => {
     })
   } else {
     isLoading.value = false
+    hasLoaded.value = true
   }
+}
+
+// Lazy load when visible
+useIntersectionObserver(rowElement, ([{ isIntersecting }]) => {
+  if (isIntersecting) {
+    loadMovies()
+  }
+})
+
+onMounted(() => {
+  // Initial scroll state update
+  updateScrollState()
 })
 
 // Update scroll state on window resize

@@ -2,11 +2,14 @@ import sqlite3InitModule from '@sqlite.org/sqlite-wasm'
 import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 
 // SqlValue type from sqlite-wasm
-type SqlValue = string | number | null | bigint | Uint8Array | Int8Array | ArrayBuffer
+type _SqlValue = string | number | null | bigint | Uint8Array | Int8Array | ArrayBuffer
 
 let db: SQLiteDatabase | null = null
 let sqlite3: SQLite3 | null = null
 let initializationPromise: Promise<void> | null = null
+
+// Cache for movie data to avoid re-fetching
+const movieCache = new Map<string, Record<string, unknown>>()
 
 async function initDatabase() {
   if (sqlite3) return sqlite3
@@ -219,7 +222,11 @@ async function handleMessage(e: QueuedMessage) {
       let sql = `SELECT ${select} FROM ${from}`
       if (where) sql += ` WHERE ${where}`
       if (groupBy) sql += ` GROUP BY ${groupBy}`
-      if (orderBy) sql += ` ORDER BY ${orderBy}`
+
+      const finalOrderBy =
+        orderBy || (from === 'movies m' || from === 'movies' ? 'm.year DESC, m.imdbId ASC' : '')
+      if (finalOrderBy) sql += ` ORDER BY ${finalOrderBy}`
+
       if (limit !== undefined) sql += ` LIMIT ${limit}`
       if (offset !== undefined) sql += ` OFFSET ${offset}`
 
@@ -255,7 +262,10 @@ async function handleMessage(e: QueuedMessage) {
       // Select essential fields for grid display and filtering
       let sql = `SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, m.primarySourceType as sourceType, m.primaryChannelName as channelName, m.verified FROM movies m`
       if (where) sql += ` WHERE ${where}`
-      if (orderBy) sql += ` ORDER BY ${orderBy}`
+
+      const finalOrderBy = orderBy || 'm.year DESC, m.imdbId ASC'
+      sql += ` ORDER BY ${finalOrderBy}`
+
       if (limit !== undefined) sql += ` LIMIT ${limit}`
       if (offset !== undefined) sql += ` OFFSET ${offset}`
 
@@ -291,27 +301,50 @@ async function handleMessage(e: QueuedMessage) {
         return
       }
 
-      const placeholders = (imdbIds as string[]).map(() => '?').join(',')
-      const sql = `
-        SELECT m.*
-        FROM movies m
-        WHERE m.imdbId IN (${placeholders})
-      `
+      const results: Record<string, unknown>[] = []
+      const idsToFetch: string[] = []
 
-      const result = db.exec({
-        sql,
-        bind: imdbIds,
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      })
+      // Check cache first
+      for (const imdbId of imdbIds as string[]) {
+        if (movieCache.has(imdbId)) {
+          results.push(movieCache.get(imdbId))
+        } else {
+          idsToFetch.push(imdbId)
+        }
+      }
 
-      // Transform verified from integer (0/1) to boolean
-      const transformedResult = result.map((row: { [columnName: string]: SqlValue }) => ({
-        ...row,
-        verified: row.verified === 1,
-      }))
+      if (idsToFetch.length > 0) {
+        const placeholders = idsToFetch.map(() => '?').join(',')
+        const sql = `
+          SELECT m.*
+          FROM movies m
+          WHERE m.imdbId IN (${placeholders})
+        `
 
-      self.postMessage({ id, result: transformedResult })
+        const dbResults = db.exec({
+          sql,
+          bind: idsToFetch,
+          returnValue: 'resultRows',
+          rowMode: 'object',
+        })
+
+        // Transform and cache new results
+        for (const row of dbResults) {
+          const transformed = {
+            ...row,
+            verified: row.verified === 1,
+          }
+          movieCache.set(row.imdbId as string, transformed)
+          results.push(transformed)
+        }
+      }
+
+      // Sort results to match the order of requested IDs
+      const sortedResults = (imdbIds as string[])
+        .map(imdbId => results.find(r => r.imdbId === imdbId))
+        .filter(Boolean)
+
+      self.postMessage({ id, result: sortedResults })
     } else if (type === 'query-related') {
       // Related movies are now stored in individual JSON files
       self.postMessage({ id, result: [] })
@@ -361,6 +394,21 @@ async function handleMessage(e: QueuedMessage) {
       })
 
       self.postMessage({ id, genres, countries, channels })
+    } else if (type === 'get-movie-count') {
+      const { where = '', params = [] } = e
+
+      let sql = `SELECT COUNT(*) as count FROM movies m`
+      if (where) sql += ` WHERE ${where}`
+
+      const result = db.exec({
+        sql,
+        bind: params,
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      const firstRow = result[0] as { count: number } | undefined
+      self.postMessage({ id, count: firstRow?.count || 0 })
     }
   } catch (err: unknown) {
     console.error('Worker error:', err)

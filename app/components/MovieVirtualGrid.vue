@@ -152,6 +152,8 @@ const visibleRows = computed(() => {
   return rows
 })
 
+const { fetchMoviesByIds } = useMovieStore()
+
 // Load more when approaching end of currently loaded content
 watch(
   visibleRows,
@@ -162,17 +164,17 @@ watch(
     // Check if we're rendering the last few rows of loaded content
     const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
     if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
-      window.console.log(
-        '[VirtualGrid] Load more triggered - lastVisibleRow:',
-        lastVisibleRow.index,
-        'loadedRows:',
-        loadedRows,
-        'buffer:',
-        buffer
-      )
       emit('load-more')
     }
+
+    // Fetch full data for visible rows
+    const visibleIds = visibleRows.value
+      .flatMap(row => row.movies.map(m => m.imdbId))
+      .filter(Boolean)
+    if (visibleIds.length > 0) {
+      fetchMoviesByIds(visibleIds)
+    }
   },
-  { deep: true }
+  { deep: true, immediate: true }
 )
 </script>

@@ -456,7 +456,7 @@
 import type { MovieEntry, LightweightMovieEntry } from '~/types'
 
 // Stores - get reactive state and methods once
-const { totalMovies, currentMovieList } = storeToRefs(useMovieStore())
+const { currentMovieList } = storeToRefs(useMovieStore())
 const {
   isLiked: isLikedFn,
   getMovieById,
@@ -514,9 +514,6 @@ const loadMovieData = async (movieId: string) => {
   isPlotExpanded.value = false
 
   try {
-    // Ensure movies are loaded in store
-    if (totalMovies.value === 0) await loadFromFile()
-
     const foundMovie = await getMovieById(movieId)
 
     if (!foundMovie) {
