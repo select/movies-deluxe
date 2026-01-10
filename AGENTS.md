@@ -127,8 +127,7 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 - `console.log` warning in frontend, allowed in `scripts/`, `server/`
 - Prefer `const` over `let`
 
-**Auto-imports**: Components, composables, utils, Vue/Nuxt built-ins (no import needed)
-**Manual imports**: Types (`import type { ... }`), external packages
+**Auto-imports**: use the nuxt-auto-import skill if needed
 
 **Naming**:
 
