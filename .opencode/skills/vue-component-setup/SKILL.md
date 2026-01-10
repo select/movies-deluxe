@@ -35,16 +35,21 @@ onClickOutside(themeMenuRef, () => { ... }
 When using refs and functions from pinia stores
 GOOD
 
-````ts
+```ts
 // do not import useSomeStore they are always auto-imported
 const { progress } = storeToRefs(useAdminStore()) // use a reactive ref from store
 const { setProgress } = useAdminStore() // use a store action
 const archiveProgress = computed(() => progress.value.archive)
-function onUpdate(event: string) { setProgress(event) }
-``
+function onUpdate(event: string) {
+  setProgress(event)
+}
+```
 
 Never use the following patterns
 BAD
+
 ```ts
-import { utilFkt } from '../utils/utilName' // bad, utils/ are alway auto-imported
-````
+// utils/ and shared/types/ are alway auto-imported
+import { utilFkt } from '../utils/utilName'
+import { MovieMetadata } from '../shared/types/movie' alway
+```
