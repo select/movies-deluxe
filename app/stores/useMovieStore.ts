@@ -313,7 +313,23 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch total count of movies matching filters
    */
   const fetchMovieCount = async (): Promise<number> => {
-    if (!db.isReady.value) return 0
+    // Wait for database to be ready if it's still initializing
+    if (!db.isReady.value) {
+      if (isInitialLoading.value && !isLoading.value.movies) {
+        loadFromFile()
+      }
+
+      let attempts = 0
+      while (!db.isReady.value && attempts < 100) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+        attempts++
+      }
+
+      if (!db.isReady.value) {
+        window.console.error('[MovieStore] Database not ready for count')
+        return 0
+      }
+    }
 
     try {
       const params: (string | number)[] = []

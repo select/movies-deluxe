@@ -96,28 +96,13 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`)
 
 const movieStore = useMovieStore()
-const { loadFromFile } = movieStore
 const { isInitialLoading } = storeToRefs(movieStore)
 
 const totalMoviesCount = ref(0)
 
 onMounted(async () => {
-  // Start loading database in background
-  loadFromFile()
-
-  // Wait for it and fetch count
-  const unwatch = watch(
-    () => movieStore.isInitialLoading,
-    async loading => {
-      if (!loading) {
-        // Fetch true total count without filters
-        const db = useDatabase()
-        totalMoviesCount.value = await db.getMovieCount()
-        unwatch()
-      }
-    },
-    { immediate: !movieStore.isInitialLoading }
-  )
+  // Fetch total count (this will initialize DB if needed and wait for it)
+  totalMoviesCount.value = await movieStore.fetchMovieCount()
 })
 </script>
 
