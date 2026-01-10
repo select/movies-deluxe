@@ -453,7 +453,6 @@ export const useMovieStore = defineStore('movie', () => {
    * Returns essential fields for grid display
    */
   const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
-    console.log('[fetchMoviesByIds] Fetching', imdbIds.length, 'movies by IDs')
     if (!imdbIds || imdbIds.length === 0) return []
 
     // Ensure cache is initialized
@@ -471,7 +470,7 @@ export const useMovieStore = defineStore('movie', () => {
       return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
     }
 
-    console.log('[fetchMoviesByIds] Need to fetch', uncachedIds.length, 'uncached movies')
+    console.log('[fetchMoviesByIds] Fetching', uncachedIds.length, 'uncached movies from database')
 
     // Mark as pending
     uncachedIds.forEach(id => pendingIds.add(id))

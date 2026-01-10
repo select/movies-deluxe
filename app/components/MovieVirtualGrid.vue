@@ -34,6 +34,7 @@ import {
   useWindowScroll,
   useWindowSize,
   useElementSize,
+  useDebounceFn,
 } from '@vueuse/core'
 import type { LightweightMovieEntry } from '~/types'
 
@@ -123,7 +124,8 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateOffset)
 })
 
-const visibleRows = computed(() => {
+// Calculate visible rows based on scroll position
+const calculateVisibleRows = () => {
   if (!props.movies || props.movies.length === 0) {
     return []
   }
@@ -150,31 +152,65 @@ const visibleRows = computed(() => {
     }
   }
   return rows
+}
+
+// Use ref instead of computed for debounced updates
+const visibleRows = ref(calculateVisibleRows())
+
+const movieStore = useMovieStore()
+const { fetchMoviesByIds } = movieStore
+const { movieDetailsCache } = storeToRefs(movieStore)
+
+// Track last fetched IDs to avoid redundant fetches
+const lastFetchedIds = ref<Set<string>>(new Set())
+
+// Debounced fetch function to prevent excessive calls during scroll
+const debouncedFetch = useDebounceFn((ids: string[]) => {
+  // Filter out IDs that are already cached or were just fetched
+  const uncachedIds = ids.filter(
+    id => !movieDetailsCache.value.has(id) && !lastFetchedIds.value.has(id)
+  )
+
+  if (uncachedIds.length > 0) {
+    console.log('[MovieVirtualGrid] Fetching', uncachedIds.length, 'uncached movies')
+    // Add to last fetched set
+    uncachedIds.forEach(id => lastFetchedIds.value.add(id))
+    fetchMoviesByIds(uncachedIds)
+  }
+}, 150) // 150ms debounce
+
+// Debounced update of visible rows for smooth scrolling
+const updateVisibleRows = useDebounceFn(() => {
+  visibleRows.value = calculateVisibleRows()
+
+  // Calculate rows based on currently loaded movies, not total
+  const loadedRows = Math.ceil(props.movies.length / cols.value)
+
+  // Check if we're rendering the last few rows of loaded content
+  const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
+  if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
+    emit('load-more')
+  }
+
+  // Fetch full data for visible rows (debounced)
+  const visibleIds = visibleRows.value.flatMap(row => row.movies.map(m => m.imdbId)).filter(Boolean)
+  if (visibleIds.length > 0) {
+    debouncedFetch(visibleIds)
+  }
+}, 50) // 50ms debounce for smooth scrolling
+
+// Watch scroll position and trigger debounced update
+watch([windowScrollY, windowHeight, rowHeight, cols, () => props.movies.length], () => {
+  updateVisibleRows()
 })
 
-const { fetchMoviesByIds } = useMovieStore()
-
-// Load more when approaching end of currently loaded content
-watch(
-  visibleRows,
-  () => {
-    // Calculate rows based on currently loaded movies, not total
-    const loadedRows = Math.ceil(props.movies.length / cols.value)
-
-    // Check if we're rendering the last few rows of loaded content
-    const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
-    if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
-      emit('load-more')
-    }
-
-    // Fetch full data for visible rows
-    const visibleIds = visibleRows.value
-      .flatMap(row => row.movies.map(m => m.imdbId))
-      .filter(Boolean)
-    if (visibleIds.length > 0) {
-      fetchMoviesByIds(visibleIds)
-    }
-  },
-  { deep: true, immediate: true }
-)
+// Initial render
+onMounted(() => {
+  visibleRows.value = calculateVisibleRows()
+  // Trigger initial fetch
+  const visibleIds = visibleRows.value.flatMap(row => row.movies.map(m => m.imdbId)).filter(Boolean)
+  if (visibleIds.length > 0) {
+    debouncedFetch(visibleIds)
+  }
+})
 </script>
