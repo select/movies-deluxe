@@ -116,35 +116,6 @@ pnpm db:generate            # Generate SQLite from movies.json
 
 **AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean.
 
-## Commit Message Format (Conventional Commits)
-
-**Format**: `<type>(<scope>): <subject>` (max 120 chars, lowercase subject, no period)
-
-**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
-
-**Common Scopes**: `scraper`, `validation`, `enrichment`, `store`, `types`, `utils`, `config`, `deps`
-
-**Rules**:
-
-- ✅ Present tense, imperative mood: "add feature" not "added feature"
-- ✅ Be specific, reference issues in footer: `Closes #123`
-- body's lines must not be longer than 120 characters
-- ❌ No past tense, vague descriptions, capitalized subject, or trailing period
-
-**Examples**:
-
-```bash
-feat(scraper): add youtube channel scraping
-fix(validation): handle missing imdb ids correctly
-feat(enrichment): add omdb api integration
-
-Integrate OMDB API to enrich movie metadata.
-
-Closes movies-deluxe-uq0.12
-```
-
-**Breaking Changes**: Add `BREAKING CHANGE:` in footer
-
 ## Code Style
 
 **Formatting**: No semicolons, single quotes, 2 spaces, 100 char width, LF line endings
