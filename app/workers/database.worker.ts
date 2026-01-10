@@ -306,8 +306,9 @@ async function handleMessage(e: QueuedMessage) {
 
       // Check cache first
       for (const imdbId of imdbIds as string[]) {
-        if (movieCache.has(imdbId)) {
-          results.push(movieCache.get(imdbId))
+        const cached = movieCache.get(imdbId)
+        if (cached) {
+          results.push(cached)
         } else {
           idsToFetch.push(imdbId)
         }

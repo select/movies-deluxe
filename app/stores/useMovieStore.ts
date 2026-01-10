@@ -660,7 +660,7 @@ export const useMovieStore = defineStore('movie', () => {
         lastUpdated: new Date().toISOString(),
         metadata: {
           imdbRating: rm.imdbRating?.toString(),
-          imdbVotes: rm.imdbVotes?.toString(),
+          imdbVotes: typeof rm.imdbVotes === 'number' ? rm.imdbVotes : undefined,
           Language: rm.language,
         },
       }))

@@ -42,7 +42,7 @@ export default defineEventHandler(async event => {
       Writer?: string
       Plot?: string
       imdbRating?: string
-      imdbVotes?: string
+      imdbVotes?: number
     }
   }> = []
 
@@ -83,16 +83,12 @@ export default defineEventHandler(async event => {
 
     // Apply votes filter - exclude movies without votes when vote criteria is specified
     if (minVotes > 0) {
-      const votesStr = entry.metadata?.imdbVotes
-      if (!votesStr || votesStr === 'N/A') continue
-      const votes = parseInt(String(votesStr).replace(/,/g, ''))
-      if (isNaN(votes) || votes < minVotes) continue
+      const votes = entry.metadata?.imdbVotes
+      if (!votes || votes < minVotes) continue
     }
     if (maxVotes > 0) {
-      const votesStr = entry.metadata?.imdbVotes
-      if (!votesStr || votesStr === 'N/A') continue
-      const votes = parseInt(String(votesStr).replace(/,/g, ''))
-      if (isNaN(votes) || votes > maxVotes) continue
+      const votes = entry.metadata?.imdbVotes
+      if (!votes || votes > maxVotes) continue
     }
 
     // Apply genre filter
