@@ -164,25 +164,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
-  const refreshCollectionFromQuery = async (collectionId: string) => {
-    try {
-      const response = await $fetch<{ success: boolean; movieCount: number }>(
-        '/api/admin/collections/refresh-from-query',
-        {
-          method: 'POST',
-          body: { collectionId },
-        }
-      )
-      if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
-      }
-      return response
-    } catch {
-      return { success: false, movieCount: 0 }
-    }
-  }
-
   /**
    * Get all collections that contain a specific movie
    * Queries the database to find which collections include this movie
@@ -224,7 +205,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     addQueryToCollection,
     removeQueryFromCollection,
     updateCollectionTags,
-    refreshCollectionFromQuery,
   }
 })
 
