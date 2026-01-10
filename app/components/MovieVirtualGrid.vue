@@ -184,7 +184,8 @@ const getMovieWithDetails = (lightweightMovie: LightweightMovieEntry): Lightweig
       imdbVotes: cached.metadata?.imdbVotes,
       language: cached.metadata?.Language,
       sourceType: cached.sources?.[0]?.type,
-      channelName: cached.sources?.[0]?.type === 'youtube' ? cached.sources[0].channelName : undefined,
+      channelName:
+        cached.sources?.[0]?.type === 'youtube' ? cached.sources[0].channelName : undefined,
       verified: cached.verified,
     }
   }
@@ -205,7 +206,7 @@ const debouncedFetch = useDebounceFn((ids: string[]) => {
     uncachedIds.forEach(id => lastFetchedIds.value.add(id))
     fetchMoviesByIds(uncachedIds)
   }
-}, 150) // 150ms debounce
+}, 500) // 500 ms debounce
 
 // Debounced update of visible rows for smooth scrolling
 const updateVisibleRows = useDebounceFn(() => {
@@ -225,7 +226,7 @@ const updateVisibleRows = useDebounceFn(() => {
   if (visibleIds.length > 0) {
     debouncedFetch(visibleIds)
   }
-}, 50) // 50ms debounce for smooth scrolling
+}, 100) // 50ms debounce for smooth scrolling
 
 // Watch scroll position and trigger debounced update
 watch([windowScrollY, windowHeight, rowHeight, cols, () => props.movies.length], () => {
