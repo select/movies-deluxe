@@ -102,6 +102,16 @@
               <span class="font-medium text-theme-text">Original title:</span>
               <span class="text-theme-textmuted ml-1">{{ source.title }}</span>
             </div>
+
+            <!-- File size -->
+            <div
+              v-if="source.fileSize"
+              class="mb-2 p-2 bg-theme-background/50 rounded text-xs"
+            >
+              <span class="font-medium text-theme-text">File size:</span>
+              <span class="text-theme-textmuted ml-1">{{ formatFileSize(source.fileSize) }}</span>
+            </div>
+
             <p
               v-if="source.description"
               class="text-xs text-theme-textmuted line-clamp-4 whitespace-pre-wrap"

@@ -20,6 +20,7 @@ export interface MovieSourceBase {
   description?: string // Original source description (e.g., YouTube description)
   label?: string // Custom label for this source (e.g. "Director's Cut")
   quality?: string // Quality info (e.g. "1080p", "SD")
+  fileSize?: number // File size in bytes
   addedAt: string // ISO 8601 timestamp
 }
 
