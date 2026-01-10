@@ -279,23 +279,37 @@
                 :key="source.id"
                 class="flex items-center gap-1"
               >
-                <button
-                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
-                  :class="{
-                    'bg-theme-primary border-theme-primary text-white': selectedSourceIndex === index,
-                    'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection': selectedSourceIndex !== index
-                  }"
-                  @click="selectedSourceIndex = index"
-                >
-                  <div class="flex items-center gap-2">
-                    <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-theme-accent' : 'i-mdi-bank'" />
-                    <span>{{ source.label || (source.type === 'youtube' ? (source.channelName || 'YouTube') : 'Archive.org') }}</span>
+                <div class="flex flex-col gap-1">
+                  <button
+                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+                    :class="{
+                      'bg-theme-primary border-theme-primary text-white': selectedSourceIndex === index,
+                      'bg-theme-surface border-theme-border/50 text-theme-text hover:bg-theme-selection': selectedSourceIndex !== index
+                    }"
+                    @click="selectedSourceIndex = index"
+                  >
+                    <div class="flex items-center gap-2">
+                      <div :class="source.type === 'youtube' ? 'i-mdi-youtube text-theme-accent' : 'i-mdi-bank'" />
+                      <span>{{ source.label || (source.type === 'youtube' ? (source.channelName || 'YouTube') : 'Archive.org') }}</span>
+                      <span
+                        v-if="source.quality"
+                        class="text-xs opacity-75"
+                      >({{ source.quality }})</span>
+                    </div>
+                  </button>
+                  <div
+                    v-if="source.qualityMarks?.length"
+                    class="flex flex-wrap gap-1"
+                  >
                     <span
-                      v-if="source.quality"
-                      class="text-xs opacity-75"
-                    >({{ source.quality }})</span>
+                      v-for="mark in source.qualityMarks"
+                      :key="mark"
+                      class="text-[10px] font-bold text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/30 px-1.5 py-0.5 rounded border border-yellow-200 dark:border-yellow-800 uppercase tracking-tighter"
+                    >
+                      {{ mark }}
+                    </span>
                   </div>
-                </button>
+                </div>
                 <a
                   :href="source.url"
                   target="_blank"
