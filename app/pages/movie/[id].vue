@@ -149,7 +149,7 @@
                   v-if="movie.metadata?.imdbVotes"
                   class="text-sm text-theme-textmuted"
                 >
-                  ({{ formatVotes(movie.metadata.imdbVotes) }} votes)
+                  ({{ formatVotes(movie.metadata.imdbVotes) }})
                 </span>
               </div>
 

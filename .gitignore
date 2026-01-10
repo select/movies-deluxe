@@ -26,6 +26,7 @@ logs
 # Large generated data files
 public/data/movies.db
 data/stats.json
+data/criterion-cache.json
 
 # Poster images (keep directory structure)
 public/posters/*.jpg

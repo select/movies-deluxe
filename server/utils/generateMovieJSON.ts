@@ -227,7 +227,10 @@ export async function generateMovieJSON() {
               Rated: movie.metadata.Rated,
               Runtime: movie.metadata.Runtime,
               imdbRating: movie.metadata.imdbRating,
-              imdbVotes: movie.metadata.imdbVotes,
+              imdbVotes:
+                movie.metadata.imdbVotes && movie.metadata.imdbVotes !== 'N/A'
+                  ? parseInt(movie.metadata.imdbVotes.replace(/,/g, ''), 10)
+                  : null,
               Genre: movie.metadata.Genre,
               Plot: movie.metadata.Plot,
               Director: movie.metadata.Director,
