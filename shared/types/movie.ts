@@ -20,6 +20,7 @@ export interface MovieSourceBase {
   description?: string // Original source description (e.g., YouTube description)
   label?: string // Custom label for this source (e.g. "Director's Cut")
   quality?: string // Quality info (e.g. "1080p", "SD")
+  qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")
   fileSize?: number // File size in bytes
   addedAt: string // ISO 8601 timestamp
 }
@@ -131,6 +132,19 @@ export enum QualityLabel {
 }
 
 /**
+ * Quality marks for individual sources
+ */
+export enum SourceQualityMark {
+  LOW_QUALITY = 'low-quality',
+  CAM_RIP = 'cam-rip',
+  HARDCODED_SUBS = 'hardcoded-subs',
+  AUDIO_ISSUES = 'audio-issues',
+  VIDEO_ISSUES = 'video-issues',
+  INCOMPLETE = 'incomplete',
+  WRONG_ASPECT_RATIO = 'wrong-aspect-ratio',
+}
+
+/**
  * Main movie entry structure
  */
 export interface MovieEntry {
@@ -141,10 +155,6 @@ export interface MovieEntry {
   metadata?: MovieMetadata
   verified?: boolean // Whether this entry has been manually verified by a human
   ai?: AIMetadata // AI-extracted metadata from Ollama (for unmatched movies with promotional titles)
-  qualityLabels?: QualityLabel[] // Quality issues marked by admins
-  qualityMarkedAt?: string // ISO 8601 timestamp when quality was marked
-  qualityMarkedBy?: string // Admin username who marked the quality
-  qualityNotes?: string // Additional notes about quality issues
   lastUpdated: string // ISO 8601 timestamp
   relatedMovies?: Array<{
     imdbId: string

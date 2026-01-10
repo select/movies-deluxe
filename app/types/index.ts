@@ -5,6 +5,7 @@ import {
   generateYouTubeId,
   extractIdentifier,
   QualityLabel,
+  SourceQualityMark,
 } from '../../shared/types/movie'
 import type {
   MovieEntry,
@@ -110,6 +111,7 @@ export {
   generateYouTubeId,
   extractIdentifier,
   QualityLabel,
+  SourceQualityMark,
 }
 
 export type {
