@@ -2,6 +2,9 @@
 description: Commit changed and new files with conventional commit message
 ---
 
+Look for files that have changed or that are new
+Create one or several commits, bundle changes when it makes sense.
+
 Create a git commit following Conventional Commits format: `<type>(<scope>): <subject>`
 
 1. Run `git status`, `git diff`, and `git log --oneline -5`
