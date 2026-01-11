@@ -17,6 +17,6 @@
     }
   },
   "hooks": {
-    "before:init": ["pnpm lint", "pnpm typecheck"]
+    "before:init": ["pnpm lint", "pnpm typecheck", "prettier --check --ignore-path .prettierignore"]
   }
 }

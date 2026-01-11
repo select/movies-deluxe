@@ -32,7 +32,8 @@
   "lint-staged": {
     "*.{js,ts,vue}": [
       "oxlint",
-      "eslint"
+      "eslint",
+      "prettier --check --ignore-path .prettierignore"
     ],
     "*.{json,md,yml,yaml}": [
       "prettier --check --ignore-path .prettierignore"
