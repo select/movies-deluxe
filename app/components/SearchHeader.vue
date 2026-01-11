@@ -58,7 +58,7 @@
           category="Year"
           icon="i-mdi-calendar"
           :active-value="yearLabel"
-          :is-active="filters.minYear > 0 || filters.maxYear > 0"
+          :is-active="filters.minYear > 0 || (filters.maxYear ?? 0) > 0"
           @click="openPopup('year', $event)"
           @clear="clearYears"
         />
@@ -68,7 +68,7 @@
           category="Votes"
           icon="i-mdi-account-group"
           :active-value="votesLabel"
-          :is-active="filters.minVotes > 0 || (filters.maxVotes > 0 && filters.maxVotes < 1000000)"
+          :is-active="filters.minVotes > 0 || ((filters.maxVotes ?? 0) > 0 && (filters.maxVotes ?? 0) < 1000000)"
           @click="openPopup('votes', $event)"
           @clear="clearVotes"
         />
