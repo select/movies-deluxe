@@ -4,16 +4,28 @@
       <!-- Welcome Header -->
       <header class="space-y-4">
         <p class="text-xl text-theme-textmuted max-w-2xl leading-relaxed">
-          Discover thousands of free movies from Archive.org and YouTube. Classic films,
-          documentaries, and more - all legally available to watch online.
+          Discover
+          <span class="h-6 relative inline-block w-32 text-center">
+            <span
+              :class="[
+                'inline-block transition-opacity duration-1000 ease-in-out absolute inset-0',
+                isShowingNumber ? 'opacity-100' : 'opacity-0',
+              ]"
+            >
+              {{ totalMoviesCount.toLocaleString() }}
+            </span>
+            <span
+              :class="[
+                'inline-block transition-opacity duration-1000 ease-in-out absolute inset-0',
+                isShowingNumber ? 'opacity-0' : 'opacity-100',
+              ]"
+            >
+              thousands of
+            </span>
+          </span>
+          free movies from Archive.org and YouTube. Classic films, documentaries, and more - all
+          legally available to watch online.
         </p>
-        <div
-          v-if="!isInitialLoading && totalMoviesCount > 0"
-          class="flex items-center gap-2 text-sm text-theme-textmuted animate-in fade-in duration-700"
-        >
-          <div class="i-mdi-movie-open text-theme-accent"></div>
-          <span>Over {{ totalMoviesCount.toLocaleString() }} movies available</span>
-        </div>
       </header>
 
       <!-- Collections Showcase -->
@@ -96,13 +108,20 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`)
 
 const movieStore = useMovieStore()
-const { isInitialLoading } = storeToRefs(movieStore)
+const { isInitialLoading: _isInitialLoading } = storeToRefs(movieStore)
 
 const totalMoviesCount = ref(0)
+const _displayText = ref('thousands of')
+const isShowingNumber = ref(false)
 
 onMounted(async () => {
   // Fetch total count (this will initialize DB if needed and wait for it)
   totalMoviesCount.value = await movieStore.fetchMovieCount()
+
+  // Start animation loop
+  setInterval(() => {
+    isShowingNumber.value = !isShowingNumber.value
+  }, 6000)
 })
 </script>
 
