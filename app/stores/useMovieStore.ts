@@ -1408,22 +1408,6 @@ export const useMovieStore = defineStore('movie', () => {
     }
   )
 
-  // Initial fetch when DB is ready
-  watch(
-    () => db.isReady.value,
-    ready => {
-      // Only perform initial fetch on the search page
-      if (useRoute().path !== '/search') return
-
-      const currentLength = lightweightMovies.value?.length || 0
-      if (ready && currentLength === 0) {
-        fetchMovieCount()
-        fetchLightweightMovies({ limit: 50 })
-      }
-    },
-    { immediate: true }
-  )
-
   // ============================================
   // RETURN STORE API
   // ============================================
