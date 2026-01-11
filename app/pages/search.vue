@@ -4,7 +4,7 @@
     <SearchHeader />
 
     <!-- Main Content -->
-    <main class="md:ml-16 pt-32 md:pt-40">
+    <main class="md:ml-16">
       <div class="px-4 lg:px-[6%] py-8">
         <MovieStats
           v-if="!isInitialLoading && safeTotalMovies > 0"
@@ -56,8 +56,14 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const { isInitialLoading, isFiltering, currentMovieList, totalFiltered, filters } =
-  storeToRefs(movieStore)
+const {
+  isInitialLoading,
+  isFiltering,
+  currentMovieList,
+  totalFiltered,
+  filters,
+  lightweightMovies,
+} = storeToRefs(movieStore)
 const { loadFromFile, setCurrentPage, setScrollY } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
