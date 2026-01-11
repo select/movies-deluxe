@@ -35,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import type { SortOption } from '~/types'
+import type { SortOption, SortState } from '~/types'
 
 interface Props {
   label: string
   icon: string
   optionA: SortOption
   optionB: SortOption
-  currentSort: SortOption
+  currentSort: SortState
 }
 
 const props = defineProps<Props>()

@@ -48,10 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import type { SortOption } from '~/types'
+import type { SortOption, SortState } from '~/types'
 
 interface Props {
-  currentSort: SortOption
+  currentSort: SortState
   showRelevance?: boolean
 }
 
