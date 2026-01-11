@@ -373,28 +373,52 @@
         <!-- Related Movies -->
         <div
           ref="relatedMoviesContainer"
-          class="pt-8 border-t border-theme-border/50 min-h-[300px]"
+          class="pt-8 border-t border-theme-border/50 min-h-[300px] group/related"
         >
-          <div v-if="relatedMovies.length > 0">
+          <div v-if="relatedMovies.length > 0 || isRelatedLoading">
             <h2 class="text-2xl font-bold mb-6">Related Movies</h2>
 
             <!-- Horizontal scrollable grid -->
             <div class="relative">
-              <div
-                class="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory scrollbar-thin"
+              <!-- Left Scroll Button -->
+              <button
+                v-if="canScrollLeft"
+                class="absolute left-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover/related:opacity-100 group-hover/related:animate-pulse"
+                @click="scrollRelated('left')"
               >
-                <div
-                  v-for="relatedMovie in relatedMovies"
-                  :key="relatedMovie.imdbId"
-                  class="flex-shrink-0 w-48 snap-start"
-                >
-                  <MovieCard :movie="relatedMovie" />
-                </div>
+                <div class="i-mdi-chevron-left text-2xl"></div>
+              </button>
+
+              <!-- Right Scroll Button -->
+              <button
+                v-if="canScrollRight"
+                class="absolute right-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover/related:opacity-100 group-hover/related:animate-pulse"
+                @click="scrollRelated('right')"
+              >
+                <div class="i-mdi-chevron-right text-2xl"></div>
+              </button>
+
+              <div
+                ref="relatedScrollContainer"
+                class="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory hide-scrollbar scroll-smooth"
+                @scroll="updateRelatedScrollState"
+              >
+                <template v-if="relatedMovies.length > 0">
+                  <div
+                    v-for="relatedMovie in relatedMovies"
+                    :key="relatedMovie.imdbId"
+                    class="flex-shrink-0 w-48 snap-start"
+                  >
+                    <MovieCard :movie="relatedMovie" />
+                  </div>
+                </template>
+                <template v-else-if="isRelatedLoading">
+                  <div v-for="i in 6" :key="i" class="flex-shrink-0 w-48 snap-start">
+                    <MovieCardSkeleton />
+                  </div>
+                </template>
               </div>
             </div>
-          </div>
-          <div v-else-if="isRelatedLoading" class="flex justify-center py-12">
-            <div class="i-mdi-loading animate-spin text-4xl text-theme-primary"></div>
           </div>
         </div>
 
@@ -500,7 +524,27 @@ const isPlotExpanded = ref(false)
 
 // Related movies lazy loading
 const relatedMoviesContainer = ref<HTMLElement | null>(null)
+const relatedScrollContainer = ref<HTMLElement | null>(null)
 const hasLoadedRelated = ref(false)
+
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+
+const updateRelatedScrollState = () => {
+  if (!relatedScrollContainer.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = relatedScrollContainer.value
+  canScrollLeft.value = scrollLeft > 20
+  canScrollRight.value = scrollLeft + clientWidth < scrollWidth - 20
+}
+
+const scrollRelated = (direction: 'left' | 'right') => {
+  if (!relatedScrollContainer.value) return
+  const scrollAmount = relatedScrollContainer.value.clientWidth * 0.8
+  relatedScrollContainer.value.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth',
+  })
+}
 
 useIntersectionObserver(relatedMoviesContainer, entries => {
   const entry = entries[0]
@@ -560,6 +604,10 @@ const loadRelatedMovies = async () => {
   try {
     relatedMovies.value = await fetchMoviesByIds(movie.value.relatedMovies)
     hasLoadedRelated.value = true
+    // Ensure scroll state is updated after loading
+    nextTick(() => {
+      updateRelatedScrollState()
+    })
   } catch {
     // Failed to load related movies, silently continue
     relatedMovies.value = []
@@ -840,4 +888,19 @@ const handlePosterError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.style.display = 'none'
 }
+
+// Update scroll state on window resize
+if (typeof window !== 'undefined') {
+  useEventListener('resize', updateRelatedScrollState)
+}
 </script>
+
+<style scoped>
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
