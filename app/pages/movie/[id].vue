@@ -380,7 +380,9 @@
 
             <!-- Horizontal scrollable grid -->
             <div class="relative">
-              <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
+              <div
+                class="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory scrollbar-thin"
+              >
                 <div
                   v-for="relatedMovie in relatedMovies"
                   :key="relatedMovie.imdbId"
