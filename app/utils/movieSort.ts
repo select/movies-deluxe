@@ -48,8 +48,8 @@ export function sortByYear(movies: MovieEntry[], direction: SortDirection): Movi
  */
 export function sortByRating(movies: MovieEntry[], direction: SortDirection): MovieEntry[] {
   return [...movies].sort((a, b) => {
-    const ratingA = parseFloat(a.metadata?.imdbRating || '0')
-    const ratingB = parseFloat(b.metadata?.imdbRating || '0')
+    const ratingA = typeof a.metadata?.imdbRating === 'number' ? a.metadata.imdbRating : 0
+    const ratingB = typeof b.metadata?.imdbRating === 'number' ? b.metadata.imdbRating : 0
 
     // Movies without rating go to the end
     if (ratingA === 0 && ratingB === 0) return 0

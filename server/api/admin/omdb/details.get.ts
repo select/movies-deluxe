@@ -5,9 +5,11 @@ function transformOMDBResponse(data: Record<string, unknown>): Record<string, un
   return {
     ...data,
     imdbRating:
-      data.imdbRating && data.imdbRating !== 'N/A' ? parseFloat(data.imdbRating) : undefined,
+      data.imdbRating && typeof data.imdbRating === 'string' && data.imdbRating !== 'N/A'
+        ? parseFloat(data.imdbRating)
+        : undefined,
     imdbVotes:
-      data.imdbVotes && data.imdbVotes !== 'N/A'
+      data.imdbVotes && typeof data.imdbVotes === 'string' && data.imdbVotes !== 'N/A'
         ? parseInt(data.imdbVotes.replace(/,/g, ''), 10)
         : undefined,
   }
@@ -42,7 +44,7 @@ export default defineEventHandler(async event => {
     })
 
     // Transform the response to convert string ratings/votes to numbers
-    return transformOMDBResponse(response)
+    return transformOMDBResponse(response as Record<string, unknown>)
   } catch (error) {
     throw createError({
       statusCode: 500,

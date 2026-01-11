@@ -33,6 +33,7 @@ curl -s http://localhost:3003/api/readyz
 
 - If the server is NOT running, ask the user to start it with `pnpm dev`
 - If the server IS running, proceed directly to verification
+- **NEVER stop the server** when you're done working - leave it running for continuous verification
 
 ## Verification Steps
 

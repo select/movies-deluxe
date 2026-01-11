@@ -222,8 +222,10 @@ export const useMovieStore = defineStore('movie', () => {
       metadata: {
         imdbRating:
           typeof movie.imdbRating === 'number'
-            ? movie.imdbRating.toString()
-            : movie.imdbRating?.toString(),
+            ? movie.imdbRating
+            : movie.imdbRating
+              ? parseFloat(String(movie.imdbRating))
+              : undefined,
         imdbVotes:
           typeof movie.imdbVotes === 'number'
             ? movie.imdbVotes
@@ -273,7 +275,7 @@ export const useMovieStore = defineStore('movie', () => {
       lastUpdated: row.lastUpdated,
       sources,
       metadata: {
-        imdbRating: row.imdbRating?.toString(),
+        imdbRating: row.imdbRating,
         imdbVotes: row.imdbVotes,
         imdbID: row.imdbId,
         Genre: row.genre,
@@ -659,7 +661,7 @@ export const useMovieStore = defineStore('movie', () => {
         sources: [],
         lastUpdated: new Date().toISOString(),
         metadata: {
-          imdbRating: rm.imdbRating?.toString(),
+          imdbRating: typeof rm.imdbRating === 'number' ? rm.imdbRating : undefined,
           imdbVotes: typeof rm.imdbVotes === 'number' ? rm.imdbVotes : undefined,
           Language: rm.language,
         },
@@ -1015,7 +1017,8 @@ export const useMovieStore = defineStore('movie', () => {
     // 2. Filter by minimum rating
     if (filters.value.minRating > 0) {
       filtered = filtered.filter(movie => {
-        const rating = parseFloat(movie.metadata?.imdbRating || '0')
+        const rating =
+          typeof movie.metadata?.imdbRating === 'number' ? movie.metadata.imdbRating : 0
         return rating >= filters.value.minRating
       })
     }
