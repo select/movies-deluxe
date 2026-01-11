@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-11T01:08:53.147Z"
+    "lastUpdated": "2026-01-11T01:09:26.024Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1777,7 +1777,6 @@
       "tt0050083",
       "tt0050330",
       "tt0050393",
-      "tt0050539",
       "tt0050613",
       "tt0050634",
       "tt0050782",
@@ -1938,7 +1937,7 @@
       "tt6777170"
     ],
     "createdAt": "2025-12-31T02:45:00.000Z",
-    "updatedAt": "2026-01-11T01:08:53.147Z",
+    "updatedAt": "2026-01-11T01:09:26.024Z",
     "savedQueries": [],
     "tags": [
       "classics",
