@@ -240,7 +240,7 @@
             >
               <div class="flex flex-col gap-1">
                 <button
-                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border relative overflow-hidden"
+                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border relative"
                   :class="{
                     'bg-theme-primary border-theme-primary text-white':
                       selectedSourceIndex === index,
@@ -266,10 +266,17 @@
                   <!-- File size indicator bar for Archive.org -->
                   <div
                     v-if="source.type === 'archive.org' && (source.fileSize || source.size)"
-                    class="absolute bottom-0 left-0 h-[2px] transition-all duration-500"
+                    class="group/size absolute bottom-0 left-0 h-[2px] transition-all duration-500 rounded-b-lg"
                     :class="selectedSourceIndex === index ? 'bg-white/40' : 'bg-theme-primary/40'"
                     :style="{ width: getFileSizeBarWidth(source.fileSize || source.size) }"
-                  ></div>
+                  >
+                    <!-- Tooltip -->
+                    <div
+                      class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap opacity-0 group-hover/size:opacity-100 transition-opacity pointer-events-none glass z-10"
+                    >
+                      {{ formatFileSize(source.fileSize || source.size) }}
+                    </div>
+                  </div>
                 </button>
                 <div v-if="source.qualityMarks?.length" class="flex flex-wrap gap-1">
                   <span
