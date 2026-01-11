@@ -215,7 +215,7 @@ const onFiltersApplied = () => {
 }
 
 const onCleanupCollection = async () => {
-  if (!selectedCollectionId.value) return
+  if (!selectedCollectionId.value || !selectedCollection.value) return
   if (
     !confirm(
       'This will remove all movies from this collection that are no longer in the database. Continue?'
@@ -223,14 +223,43 @@ const onCleanupCollection = async () => {
   )
     return
 
-  const success = await collectionsStore.cleanupCollection(selectedCollectionId.value)
-  if (success) {
-    useUiStore().showToast('Collection cleaned up successfully')
-    if (moviesList.value) {
-      moviesList.value.refresh()
+  try {
+    // 1. Get all movie IDs in the collection
+    const movieIds = toRaw(selectedCollection.value.movieIds)
+    if (!movieIds.length) {
+      useUiStore().showToast('Collection is already empty')
+      return
     }
-  } else {
-    useUiStore().showToast('Failed to cleanup collection', 'error')
+
+    // 2. Check which ones exist in the database
+    const existingMovies = await movieStore.fetchMoviesByIds(movieIds)
+    const existingIds = new Set(existingMovies.map(m => m.imdbId))
+
+    // 3. Identify missing IDs
+    const missingIds = movieIds.filter(id => !existingIds.has(id))
+
+    if (missingIds.length === 0) {
+      useUiStore().showToast('No missing movies found in this collection')
+      return
+    }
+
+    // 4. Remove missing movies in bulk
+    const success = await collectionsStore.removeMoviesFromCollection(
+      selectedCollectionId.value,
+      missingIds
+    )
+
+    if (success) {
+      useUiStore().showToast(`Removed ${missingIds.length} missing movies from collection`)
+      if (moviesList.value) {
+        moviesList.value.refresh()
+      }
+    } else {
+      useUiStore().showToast('Failed to remove missing movies', 'error')
+    }
+  } catch (err) {
+    console.error('Cleanup failed:', err)
+    useUiStore().showToast('Error during cleanup', 'error')
   }
 }
 </script>
