@@ -32,9 +32,7 @@
       </div>
 
       <!-- Filter Buttons Row -->
-      <div
-        class="flex items-center gap-2 overflow-x-auto scrollbar-hidden pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap"
-      >
+      <div class="flex flex-wrap items-center gap-2 pb-1">
         <!-- Sort -->
         <FilterButton
           category="Sort"
