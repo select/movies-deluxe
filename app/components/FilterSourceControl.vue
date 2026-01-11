@@ -49,7 +49,10 @@
         v-if="filters.sources.length > 0"
         class="flex justify-end pt-2 border-t border-theme-border/30"
       >
-        <button class="text-xs text-theme-primary hover:underline font-medium" @click="clearSources">
+        <button
+          class="text-xs text-theme-primary hover:underline font-medium"
+          @click="clearSources"
+        >
           Clear ({{ filters.sources.length }})
         </button>
       </div>

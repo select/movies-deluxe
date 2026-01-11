@@ -21,14 +21,14 @@
             @keydown.esc="handleEscape"
             @keydown.enter="handleEnter"
           />
-        <button
-          v-if="localQuery"
-          class="absolute inset-y-0 right-0 pr-4 flex items-center"
-          @click="clearSearch"
-        >
-          <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
-        </button>
-      </div>
+          <button
+            v-if="localQuery"
+            class="absolute inset-y-0 right-0 pr-4 flex items-center"
+            @click="clearSearch"
+          >
+            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
+          </button>
+        </div>
       </div>
 
       <!-- Filter Buttons Row -->
@@ -68,7 +68,10 @@
           category="Votes"
           icon="i-mdi-account-group"
           :active-value="votesLabel"
-          :is-active="filters.minVotes > 0 || ((filters.maxVotes ?? 0) > 0 && (filters.maxVotes ?? 0) < 1000000)"
+          :is-active="
+            filters.minVotes > 0 ||
+            ((filters.maxVotes ?? 0) > 0 && (filters.maxVotes ?? 0) < 1000000)
+          "
           @click="openPopup('votes', $event)"
           @clear="clearVotes"
         />
