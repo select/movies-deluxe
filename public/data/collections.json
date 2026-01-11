@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-11T22:46:16.224Z"
+    "lastUpdated": "2026-01-11T22:56:15.809Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -3894,7 +3894,6 @@
       "tt0038669",
       "tt0040525",
       "tt0037884",
-      "tt0033870",
       "tt0036172",
       "tt0040636",
       "tt0036244",
@@ -3909,7 +3908,7 @@
       "tt0040919"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-11T22:17:33.906Z",
+    "updatedAt": "2026-01-11T22:56:15.809Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4033,7 +4032,6 @@
       "tt0045124",
       "tt0045125",
       "tt0053270",
-      "tt0053285",
       "tt0053291",
       "tt0046359",
       "tt0048933",
@@ -4068,7 +4066,6 @@
       "tt0052902",
       "tt0053114",
       "tt0043614",
-      "tt0050539",
       "tt0051776",
       "tt0049406",
       "tt0048281",
@@ -4109,7 +4106,7 @@
       "tt0043142"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-11T01:00:18.863Z",
+    "updatedAt": "2026-01-11T22:56:11.875Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4142,11 +4139,9 @@
     "name": "1960s Cinema",
     "description": "New wave movements, counterculture films, and cinematic revolution of the 1960s.",
     "movieIds": [
-      "tt0062622",
       "tt0061429",
       "tt0056444",
       "tt0060107",
-      "tt0055796",
       "tt0055798",
       "tt0060758",
       "tt0057603",
@@ -4180,7 +4175,6 @@
       "tt0062994",
       "tt0054936",
       "tt0060472",
-      "tt0056058",
       "tt0063056",
       "tt0057565",
       "tt0061770",
@@ -4198,7 +4192,6 @@
       "tt0063186",
       "tt0058279",
       "tt0053579",
-      "tt0056172",
       "tt0053106",
       "tt0057251",
       "tt0056215",
@@ -4212,7 +4205,6 @@
       "tt0058430",
       "tt0060827",
       "tt0054195",
-      "tt0054215",
       "tt0062168",
       "tt0058888",
       "tt0059646",
@@ -4240,7 +4232,6 @@
       "tt0057643",
       "tt0059183",
       "tt0063845",
-      "tt0061722",
       "tt0057115",
       "tt0063032",
       "tt0054953",
@@ -4272,7 +4263,6 @@
       "tt0054387",
       "tt0059825",
       "tt0053976",
-      "tt0056592",
       "tt0062376",
       "tt0061101",
       "tt0054749",
@@ -4287,7 +4277,7 @@
       "tt0055630"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-08T22:30:15.566Z",
+    "updatedAt": "2026-01-11T22:56:06.768Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4335,7 +4325,6 @@
       "tt0072231",
       "tt0077711",
       "tt0066907",
-      "tt0071315",
       "tt0074312",
       "tt0077362",
       "tt0065593",
@@ -4372,11 +4361,9 @@
       "tt0070374",
       "tt0077928",
       "tt0076391",
-      "tt0071853",
       "tt0071877",
       "tt0074958",
       "tt0076727",
-      "tt0073486",
       "tt0079672",
       "tt0076666",
       "tt6725014",
@@ -4408,7 +4395,6 @@
       "tt0067595",
       "tt0069113",
       "tt0073756",
-      "tt0072271",
       "tt0070917",
       "tt0067355",
       "tt0073488",
@@ -4420,7 +4406,7 @@
       "tt0072431"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-08T22:31:47.467Z",
+    "updatedAt": "2026-01-11T22:56:01.706Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4458,10 +4444,8 @@
       "tt0084873",
       "tt0095468",
       "tt0088683",
-      "tt0086879",
       "tt0094683",
       "tt0092610",
-      "tt0090728",
       "tt0094747",
       "tt0080310",
       "tt0094888",
@@ -4487,7 +4471,7 @@
       "tt0084412"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-08T22:49:09.269Z",
+    "updatedAt": "2026-01-11T22:55:45.172Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4520,11 +4504,9 @@
     "name": "1990s Cinema",
     "description": "Independent cinema boom and diverse storytelling from the 1990s.",
     "movieIds": [
-      "tt0087843",
       "tt0160513",
       "tt0114887",
       "tt0185125",
-      "tt0120591",
       "tt0143127",
       "tt0109279",
       "tt0101465",
@@ -4549,16 +4531,12 @@
       "tt0103905",
       "tt0103285",
       "tt0114095",
-      "tt0108052",
       "tt0108101",
-      "tt0108160",
       "tt0108211",
-      "tt0120915",
       "tt0150992",
       "tt0120274",
       "tt0118826",
       "tt0109446",
-      "tt0109506",
       "tt0112757",
       "tt0133751",
       "tt0116736",
@@ -4568,12 +4546,11 @@
       "tt0102510",
       "tt0105159",
       "tt0139809",
-      "tt0108358",
       "tt0161023",
       "tt0111800"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-08T22:50:58.934Z",
+    "updatedAt": "2026-01-11T22:55:35.072Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4642,8 +4619,6 @@
       "tt1216496",
       "tt0408664",
       "tt0844457",
-      "tt0795439",
-      "tt0190590",
       "tt0839938",
       "tt0425326",
       "tt0482088",
@@ -4674,7 +4649,6 @@
       "tt0814130",
       "tt1060255",
       "tt1323925",
-      "tt0366627",
       "tt0410297",
       "tt0827503",
       "tt1187044",
@@ -4685,7 +4659,6 @@
       "tt1063669",
       "tt0312841",
       "tt0460989",
-      "tt0425601",
       "tt0988047",
       "tt0800241",
       "tt0342258",
@@ -4697,7 +4670,7 @@
       "tt1332128"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-11T22:46:16.224Z",
+    "updatedAt": "2026-01-11T22:55:06.548Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4991,6 +4964,48 @@
       "classic",
       "crime",
       "british"
+    ]
+  },
+  "surrealist-cinema": {
+    "id": "surrealist-cinema",
+    "name": "Surrealist Cinema",
+    "description": "Mind-bending surrealist masterpieces from Luis Buñuel, Jean Cocteau, David Lynch, and other visionary directors who challenged conventional narrative and explored the subconscious through dreamlike imagery.",
+    "movieIds": [
+      "tt0020530",
+      "tt0055601",
+      "archive-viridiana-1961",
+      "archive-los-olvidados",
+      "archive-the-discreet-charm-of-the-bourgeoisie-1972",
+      "archive-that-obscure-object-of-desire-1977",
+      "archive-the-phantom-of-liberty-1974",
+      "archive-le-sang-dun-poete-jean-cocteau-1930",
+      "archive-le-sang-dun-poete-aka-the-blood-of-a-poet_1930",
+      "archive-le-testament-dorphee-jean-cocteau-1960",
+      "tt0074486",
+      "archive-last-year-at-marienbad-1961"
+    ],
+    "createdAt": "2026-01-12T00:00:00.000Z",
+    "updatedAt": "2026-01-12T00:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Luis Buñuel",
+        "filterState": {
+          "searchQuery": "Luis Buñuel",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "surrealism",
+      "art-house",
+      "experimental",
+      "avant-garde",
+      "dreamlike"
     ]
   }
 }
