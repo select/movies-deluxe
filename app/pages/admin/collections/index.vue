@@ -144,10 +144,21 @@
                 @filters-applied="onFiltersApplied"
               />
             </div>
-            <h2 class="text-xl font-bold flex items-center gap-2">
-              <div class="i-mdi-playlist-play text-blue-600"></div>
-              Collection Movies
-            </h2>
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-xl font-bold flex items-center gap-2">
+                <div class="i-mdi-playlist-play text-blue-600"></div>
+                Collection Movies
+              </h2>
+              <button
+                v-if="selectedCollectionId"
+                class="px-3 py-1 text-xs bg-theme-surface border border-theme-border rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors flex items-center gap-2"
+                title="Remove movies that are no longer in the database"
+                @click="onCleanupCollection"
+              >
+                <div class="i-mdi-broom"></div>
+                Cleanup
+              </button>
+            </div>
             <AdminCollectionMoviesList ref="moviesList" :collection-id="selectedCollectionId" />
           </div>
         </section>
@@ -201,5 +212,25 @@ const onMovieAdded = () => {
 const onFiltersApplied = () => {
   // Filters were applied from saved query - the AdminMovieSearch component
   // will automatically show results due to the filter watchers
+}
+
+const onCleanupCollection = async () => {
+  if (!selectedCollectionId.value) return
+  if (
+    !confirm(
+      'This will remove all movies from this collection that are no longer in the database. Continue?'
+    )
+  )
+    return
+
+  const success = await collectionsStore.cleanupCollection(selectedCollectionId.value)
+  if (success) {
+    useUiStore().showToast('Collection cleaned up successfully')
+    if (moviesList.value) {
+      moviesList.value.refresh()
+    }
+  } else {
+    useUiStore().showToast('Failed to cleanup collection', 'error')
+  }
 }
 </script>

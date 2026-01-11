@@ -19,8 +19,11 @@ interface CleanupResult {
   }>
 }
 
-export default defineEventHandler(async (): Promise<CleanupResult> => {
+export default defineEventHandler(async (event): Promise<CleanupResult> => {
   try {
+    const body = await readBody<{ collectionId?: string }>(event).catch(() => ({}))
+    const { collectionId } = body
+
     // Load databases
     const collectionsDb = await loadCollectionsDatabase()
     const moviesDb = await loadMoviesDatabase()
@@ -53,6 +56,10 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
       if (key.startsWith('_')) continue
 
       const collection = value as Collection
+
+      // If collectionId is provided, skip other collections
+      if (collectionId && collection.id !== collectionId) continue
+
       stats.collectionsProcessed++
 
       const removedMovies: string[] = []
