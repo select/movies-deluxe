@@ -232,8 +232,13 @@ const onCleanupCollection = async () => {
     }
 
     // 2. Check which ones exist in the database
-    const existingMovies = await movieStore.fetchMoviesByIds(movieIds)
-    const existingIds = new Set(existingMovies.map(m => m.imdbId))
+    // We use a direct query to ensure we only get movies that are actually in the DB
+    const results = await movieStore.fetchMovies({
+      where: `m.imdbId IN (${movieIds.map(() => '?').join(',')})`,
+      params: movieIds,
+      limit: movieIds.length,
+    })
+    const existingIds = new Set(results.result.map(m => m.imdbId))
 
     // 3. Identify missing IDs
     const missingIds = movieIds.filter(id => !existingIds.has(id))
