@@ -190,8 +190,8 @@ const { stop } = useIntersectionObserver(
       // Card is visible, start the timer
       startDetailsTimer()
     } else {
-      // Card is not visible, hide details immediately and cancel timer
-      showFullDetails.value = false
+      // Card is not visible, just cancel the timer
+      // Don't hide details since the component will be unloaded anyway
       stopDetailsTimer()
     }
   },
