@@ -96,10 +96,6 @@ bd dep add beads-yyy beads-xxx  # Tests depend on Feature (Feature blocks tests)
 ## Commands
 
 ```bash
-# Development
-pnpm dev                    # Dev server (port 3003)
-pnpm tsx scripts/<name>.ts  # Run scripts
-
 # Code Quality
 pnpm lint:fix               # Auto-fix issues
 pnpm typecheck              # TypeScript checking (slow, may timeout)
