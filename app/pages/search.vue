@@ -4,7 +4,7 @@
     <SearchHeader />
 
     <!-- Main Content -->
-    <main class="md:ml-16">
+    <main class="md:ml-16 md:pt-16">
       <div class="px-4 lg:px-[6%] py-8">
         <MovieStats
           v-if="!isInitialLoading && safeTotalMovies > 0"

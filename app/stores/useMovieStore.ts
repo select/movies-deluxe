@@ -892,12 +892,12 @@ export const useMovieStore = defineStore('movie', () => {
       if (filters.value.sources.length > 0) {
         const sourceConditions: string[] = []
         if (filters.value.sources.includes('archive.org')) {
-          sourceConditions.push("s.type = 'archive.org'")
+          sourceConditions.push("m.primarySourceType = 'archive.org'")
         }
         const youtubeChannels = filters.value.sources.filter(s => s !== 'archive.org')
         if (youtubeChannels.length > 0) {
           sourceConditions.push(
-            `(s.type = 'youtube' AND c.name IN (${youtubeChannels.map(() => '?').join(',')}))`
+            `(m.primarySourceType = 'youtube' AND m.primaryChannelName IN (${youtubeChannels.map(() => '?').join(',')}))`
           )
           params.push(...youtubeChannels)
         }
