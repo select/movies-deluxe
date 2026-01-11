@@ -17,7 +17,7 @@
 
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
-        v-if="props.showFullDetails && movie.imdbId?.startsWith('tt')"
+        v-if="showFullDetails && movie.imdbId?.startsWith('tt')"
         :src="getPosterPath(movie.imdbId)"
         :alt="movie.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
@@ -35,7 +35,10 @@
       </div>
 
       <!-- Badges -->
-      <div v-if="showFullDetails && movie.sourceType" class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
+      <div
+        v-if="showFullDetails && movie.sourceType"
+        class="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end"
+      >
         <!-- Source Badge -->
         <span
           v-if="movie.sourceType === 'archive.org'"
@@ -86,49 +89,6 @@
       <!-- Verified Badge -->
       <div
         v-if="showFullDetails && movie.verified"
-        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full flex items-center justify-center z-10"
-        :class="{
-          'ml-8':
-            (movie.imdbId &&
-              likedMovieIds.includes(movie.imdbId) &&
-              movieCollections.length === 0) ||
-            ((!movie.imdbId || !likedMovieIds.includes(movie.imdbId)) &&
-              movieCollections.length > 0),
-          'ml-16':
-            movie.imdbId && likedMovieIds.includes(movie.imdbId) && movieCollections.length > 0,
-        }"
-        title="Verified Source"
-      >
-        <div class="i-mdi-check-decagram text-green-600 text-2xl"></div>
-      </div>
-
-      <!-- Like Indicator -->
-      <div
-        v-if="props.showFullDetails && movie.imdbId && likedMovieIds.includes(movie.imdbId)"
-        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center z-10"
-      >
-        <div class="i-mdi-heart text-red-500 text-lg"></div>
-      </div>
-
-      <!-- Collection Indicator -->
-      <div
-        v-if="props.showFullDetails && movieCollections.length > 0"
-        class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full glass flex items-center justify-center z-10"
-        :class="{ 'ml-8': movie.imdbId && likedMovieIds.includes(movie.imdbId) }"
-        :title="movieCollections.map((c: Collection) => c.name).join(', ')"
-      >
-        <div class="i-mdi:movie-roll text-theme-accent text-lg"></div>
-        <span
-          v-if="movieCollections.length > 1"
-          class="absolute -bottom-1 -right-1 bg-theme-accent text-black text-[9px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-theme-surface"
-        >
-          {{ movieCollections.length }}
-        </span>
-      </div>
-
-      <!-- Verified Badge -->
-      <div
-        v-if="props.showFullDetails && movie.verified"
         class="absolute top-1.5 left-1.5 w-7 h-7 rounded-full flex items-center justify-center z-10"
         :class="{
           'ml-8':
@@ -207,15 +167,26 @@ const showFullDetails = ref(false)
 const cardRef = ref<HTMLElement | null>(null)
 
 // Use useTimeoutFn for better control over the timeout
-const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(() => {
-  showFullDetails.value = true
-}, 200, { immediate: false })
+const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(
+  async () => {
+    showFullDetails.value = true
+    // Fetch collections when showing full details
+    if (props.movie.imdbId && movieCollections.value.length === 0) {
+      movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+    }
+  },
+  200,
+  { immediate: false }
+)
 
 // Use intersection observer to detect when card becomes visible
 const { stop } = useIntersectionObserver(
   cardRef,
-  ([{ isIntersecting }]) => {
-    if (isIntersecting) {
+  (entries) => {
+    const entry = entries[0]
+    if (!entry) return
+    
+    if (entry.isIntersecting) {
       // Card is visible, start the timer
       startDetailsTimer()
     } else {
@@ -229,27 +200,10 @@ const { stop } = useIntersectionObserver(
   }
 )
 
-// Fetch collections for this movie from database only when showing full details
-watch(showFullDetails, async (newValue) => {
-  if (newValue && props.movie.imdbId && movieCollections.value.length === 0) {
-    movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
-  }
-})
-
 // Clean up intersection observer on unmount
 onUnmounted(() => {
   stop()
 })
-
-// Watch for changes in showFullDetails to fetch collections when needed
-watch(
-  () => props.showFullDetails,
-  async newValue => {
-    if (newValue && props.movie.imdbId && movieCollections.value.length === 0) {
-      movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
-    }
-  }
-)
 
 // Handle poster loading errors
 const handlePosterError = (event: Event) => {
