@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-11T22:56:15.809Z"
+    "lastUpdated": "2026-01-11T23:19:04.832Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -4973,24 +4973,34 @@
     "movieIds": [
       "tt0020530",
       "tt0055601",
-      "archive-viridiana-1961",
-      "archive-los-olvidados",
-      "archive-the-discreet-charm-of-the-bourgeoisie-1972",
-      "archive-that-obscure-object-of-desire-1977",
-      "archive-the-phantom-of-liberty-1974",
-      "archive-le-sang-dun-poete-jean-cocteau-1930",
-      "archive-le-sang-dun-poete-aka-the-blood-of-a-poet_1930",
-      "archive-le-testament-dorphee-jean-cocteau-1960",
       "tt0074486",
-      "archive-last-year-at-marienbad-1961"
+      "tt0042804",
+      "tt0018770",
+      "tt0068361",
+      "tt0048037",
+      "tt0075824",
+      "tt0021331",
+      "tt0054377"
     ],
     "createdAt": "2026-01-12T00:00:00.000Z",
-    "updatedAt": "2026-01-12T00:00:00.000Z",
+    "updatedAt": "2026-01-11T23:19:04.832Z",
     "savedQueries": [
       {
         "searchQuery": "Luis Buñuel",
         "filterState": {
           "searchQuery": "Luis Buñuel",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Jean Cocteau",
+        "filterState": {
+          "searchQuery": "Jean Cocteau",
           "currentPage": 1,
           "lastScrollY": 0,
           "sort": {
