@@ -184,13 +184,6 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 
 When you see import errors please read @.opencode/command/nuxt-autoimport.md
 
-### Development Commands
-
-```bash
-pnpm dev                              # Start dev server (port 3003)
-pnpm tsx scripts/<name>.ts            # Run scripts
-```
-
 ## Frontend Verification
 
 **IMPORTANT**: Always verify frontend changes using the **frontend-verification** skill.
