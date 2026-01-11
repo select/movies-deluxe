@@ -1,6 +1,6 @@
 <template>
   <!-- Compact Toggle Button Group -->
-  <div class="flex w-full rounded-full border border-theme-border/50 overflow-hidden">
+  <div class="flex flex-1 min-w-[140px] rounded-full border border-theme-border/50 overflow-hidden">
     <button
       class="flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs font-medium transition-colors border-r border-theme-border/50 flex-1 whitespace-nowrap"
       :class="{
