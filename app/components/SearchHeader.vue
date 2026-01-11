@@ -21,22 +21,14 @@
             @keydown.esc="handleEscape"
             @keydown.enter="handleEnter"
           />
-          <button
-            v-if="localQuery"
-            class="absolute inset-y-0 right-0 pr-4 flex items-center"
-            @click="clearSearch"
-          >
-            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
-          </button>
-        </div>
         <button
-          v-if="!localQuery"
-          class="p-2 md:p-3 rounded-xl hover:bg-theme-background text-theme-textmuted hover:text-theme-text transition-colors"
-          title="Close search"
-          @click="closeSearch"
+          v-if="localQuery"
+          class="absolute inset-y-0 right-0 pr-4 flex items-center"
+          @click="clearSearch"
         >
-          <div class="i-mdi-close text-2xl md:text-3xl"></div>
+          <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
         </button>
+      </div>
       </div>
 
       <!-- Filter Buttons Row -->
@@ -335,36 +327,44 @@ watch(
 
 // Track if we should show search based on route and state
 const shouldShowSearch = computed(() => {
-  // Only show search on search page
-  if (route.path !== '/search') {
-    return false
+  // Always show search on search page
+  if (route.path === '/search') {
+    return true
   }
 
   // Show if search is open OR if there's an active query
   return isSearchOpen.value || localQuery.value !== ''
 })
 
-// Auto-focus input when opened
-watch(isSearchOpen, isOpen => {
-  if (isOpen) {
-    nextTick(() => {
-      searchInput.value?.focus()
-    })
-  }
-})
+// Auto-focus input when opened or on search page
+watch(
+  [isSearchOpen, () => route.path],
+  ([isOpen, path]) => {
+    if (isOpen || path === '/search') {
+      nextTick(() => {
+        searchInput.value?.focus()
+      })
+    }
+  },
+  { immediate: true }
+)
 
 // Restore search visibility when returning to home or search page with active query
 watch(
   () => route.path,
   newPath => {
-    if ((newPath === '/' || newPath === '/search') && localQuery.value) {
+    if (newPath === '/search') {
+      setSearchOpen(true)
+    } else if (newPath === '/' && localQuery.value) {
       setSearchOpen(true)
     }
   }
 )
 
-// Click outside to close (only when query is empty and no popup open)
+// Click outside to close (only when query is empty, no popup open, and NOT on search page)
 onClickOutside(searchContainer, () => {
+  if (route.path === '/search') return
+
   if (!localQuery.value && !activePopup.value) {
     closeSearch()
   }
@@ -377,25 +377,26 @@ const clearSearch = () => {
 
 // Close search overlay
 const closeSearch = () => {
+  if (route.path === '/search') return
   setSearchOpen(false)
 }
 
-// Handle ESC key: first press closes popup, second clears query, third closes
+// Handle ESC key: first press closes popup, second clears query, third closes (if not on search page)
 const handleEscape = () => {
   if (activePopup.value) {
     closePopup()
   } else if (localQuery.value) {
     // First ESC: clear the query
     clearSearch()
-  } else {
-    // Second ESC: close the search (only if query is empty)
+  } else if (route.path !== '/search') {
+    // Second ESC: close the search (only if query is empty and not on search page)
     closeSearch()
   }
 }
 
 // Handle Enter key
 const handleEnter = () => {
-  if (!activePopup.value) {
+  if (!activePopup.value && route.path !== '/search') {
     closeSearch()
   }
 }

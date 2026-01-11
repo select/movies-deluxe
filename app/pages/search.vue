@@ -69,6 +69,11 @@ const { y: windowScrollY } = useWindowScroll()
 onMounted(async () => {
   await loadFromFile()
 
+  // If no movies are loaded yet, trigger initial fetch
+  if (lightweightMovies.value.length === 0) {
+    movieStore.fetchLightweightMovies({ limit: 50 })
+  }
+
   // Restore scroll position after content loads
   await nextTick()
   await nextTick()
