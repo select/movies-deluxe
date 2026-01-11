@@ -4,7 +4,7 @@
  * Type definitions for communication between the main thread and database worker.
  */
 
-import type { GenreOption, CountryOption, ChannelOption, MovieSourceType } from '~/types'
+import type { GenreOption, CountryOption, ChannelOption, LightweightMovie } from '~/types'
 
 /**
  * Base message structure for worker communication
@@ -26,20 +26,6 @@ export interface WorkerResponse<T = LightweightMovie[] | Collection[] | FilterOp
   genres?: GenreOption[]
   countries?: CountryOption[]
   channels?: ChannelOption[]
-}
-
-/**
- * Lightweight movie result for list views
- */
-export interface LightweightMovie {
-  imdbId: string
-  title: string
-  year: number
-  imdbRating?: string | number
-  imdbVotes?: number
-  language?: string
-  sourceType?: MovieSourceType
-  channelName?: string
 }
 
 /**

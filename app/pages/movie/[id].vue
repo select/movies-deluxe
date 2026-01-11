@@ -371,20 +371,28 @@
         </div>
 
         <!-- Related Movies -->
-        <div v-if="relatedMovies.length > 0" class="pt-8 border-t border-theme-border/50">
-          <h2 class="text-2xl font-bold mb-6">Related Movies</h2>
+        <div
+          ref="relatedMoviesContainer"
+          class="pt-8 border-t border-theme-border/50 min-h-[300px]"
+        >
+          <div v-if="relatedMovies.length > 0">
+            <h2 class="text-2xl font-bold mb-6">Related Movies</h2>
 
-          <!-- Horizontal scrollable grid -->
-          <div class="relative">
-            <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
-              <div
-                v-for="relatedMovie in relatedMovies"
-                :key="relatedMovie.imdbId"
-                class="flex-shrink-0 w-48 snap-start"
-              >
-                <MovieCard :movie="relatedMovie" />
+            <!-- Horizontal scrollable grid -->
+            <div class="relative">
+              <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
+                <div
+                  v-for="relatedMovie in relatedMovies"
+                  :key="relatedMovie.imdbId"
+                  class="flex-shrink-0 w-48 snap-start"
+                >
+                  <MovieCard :movie="relatedMovie" />
+                </div>
               </div>
             </div>
+          </div>
+          <div v-else-if="isRelatedLoading" class="flex justify-center py-12">
+            <div class="i-mdi-loading animate-spin text-4xl text-theme-primary"></div>
           </div>
         </div>
 
@@ -467,7 +475,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MovieEntry, LightweightMovieEntry } from '~/types'
+import type { MovieEntry, LightweightMovie } from '~/types'
 
 // Stores - get reactive state and methods once
 const movieStore = useMovieStore()
@@ -481,11 +489,23 @@ const { y: scrollY } = useWindowScroll()
 
 // Component state
 const movie = ref<MovieEntry | null>(null)
-const relatedMovies = ref<MovieEntry[]>([])
+const relatedMovies = ref<LightweightMovie[]>([])
 const isLoading = ref(true)
+const isRelatedLoading = ref(false)
 const error = ref<string | null>(null)
 const selectedSourceIndex = ref(0)
 const isPlotExpanded = ref(false)
+
+// Related movies lazy loading
+const relatedMoviesContainer = ref<HTMLElement | null>(null)
+const hasLoadedRelated = ref(false)
+
+useIntersectionObserver(relatedMoviesContainer, entries => {
+  const entry = entries[0]
+  if (entry?.isIntersecting && !hasLoadedRelated.value && movie.value) {
+    loadRelatedMovies(movie.value.imdbId)
+  }
+})
 
 // Collections
 const movieCollections = computed(() => {
@@ -513,12 +533,16 @@ const isLiked = computed(() => {
 
 // Load related movies
 const loadRelatedMovies = async (movieId: string) => {
-  relatedMovies.value = []
+  if (hasLoadedRelated.value) return
+  isRelatedLoading.value = true
   try {
     relatedMovies.value = await getRelatedMovies(movieId, 8)
+    hasLoadedRelated.value = true
   } catch {
     // Failed to load related movies, silently continue
     relatedMovies.value = []
+  } finally {
+    isRelatedLoading.value = false
   }
 }
 
@@ -528,6 +552,7 @@ const loadMovieData = async (movieId: string) => {
   error.value = null
   selectedSourceIndex.value = 0
   relatedMovies.value = []
+  hasLoadedRelated.value = false
   isPlotExpanded.value = false
 
   try {
@@ -541,9 +566,6 @@ const loadMovieData = async (movieId: string) => {
 
     movie.value = foundMovie
     updateMetaTags(foundMovie)
-
-    // Load related movies
-    loadRelatedMovies(movieId)
 
     isLoading.value = false
   } catch (err) {
@@ -635,7 +657,7 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   if (!currentId) return
 
   const movies = currentMovieList.value
-  const currentIndex = movies.findIndex((m: LightweightMovieEntry) => m.imdbId === currentId)
+  const currentIndex = movies.findIndex((m: LightweightMovie) => m.imdbId === currentId)
 
   if (currentIndex === -1) return
 

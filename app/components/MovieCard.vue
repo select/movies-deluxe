@@ -148,10 +148,10 @@
 
 <script setup lang="ts">
 import { useIntersectionObserver, useTimeoutFn } from '@vueuse/core'
-import type { LightweightMovieEntry, Collection } from '~/types'
+import type { LightweightMovie, Collection } from '~/types'
 
 interface Props {
-  movie: LightweightMovieEntry
+  movie: LightweightMovie
 }
 
 const props = defineProps<Props>()

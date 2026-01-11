@@ -138,16 +138,16 @@
               <span class="text-xs text-theme-textmuted font-mono">{{ movie.year }}</span>
             </div>
             <p class="text-xs text-theme-textmuted truncate">
-              {{ movie.metadata?.Director || 'Unknown Director' }}
+              {{ movie.genre || 'Unknown Genre' }}
             </p>
             <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
               <span class="font-mono">{{ movie.imdbId }}</span>
-              <span v-if="movie.metadata?.imdbRating" class="flex items-center gap-1">
+              <span v-if="movie.imdbRating" class="flex items-center gap-1">
                 <span class="opacity-50">•</span>
                 <div class="i-mdi-star text-theme-accent text-xs"></div>
-                <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
-                <span v-if="movie.metadata?.imdbVotes" class="opacity-70">
-                  ({{ formatVotes(movie.metadata.imdbVotes) }})
+                <span class="font-bold text-theme-text">{{ movie.imdbRating }}</span>
+                <span v-if="movie.imdbVotes" class="opacity-70">
+                  ({{ formatVotes(movie.imdbVotes) }})
                 </span>
               </span>
             </div>
@@ -201,7 +201,7 @@ const uiStore = useUiStore()
 
 const searchInput = ref<HTMLInputElement | null>(null)
 const searchQuery = ref('')
-const results = ref<MovieEntry[]>([])
+const results = ref<LightweightMovie[]>([])
 const isLoading = ref(false)
 const isAdding = ref('')
 const addingAll = ref(false)
@@ -284,7 +284,7 @@ const performSearch = async () => {
         sources: filters.value.sources.join(',') || undefined,
       },
     })
-    results.value = data.slice(0, 300) // Limit to 300 results
+    results.value = data.slice(0, 300).map(movieStore.mapMovieToLightweight)
   } catch {
     uiStore.showToast('Search failed', 'error')
   } finally {

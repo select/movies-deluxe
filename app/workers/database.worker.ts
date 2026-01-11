@@ -317,7 +317,9 @@ async function handleMessage(e: QueuedMessage) {
       if (idsToFetch.length > 0) {
         const placeholders = idsToFetch.map(() => '?').join(',')
         const sql = `
-          SELECT m.*
+          SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, 
+                 m.primarySourceType as sourceType, m.primaryChannelName as channelName, 
+                 m.verified, m.lastUpdated, m.genre, m.country
           FROM movies m
           WHERE m.imdbId IN (${placeholders})
         `

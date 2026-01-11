@@ -141,6 +141,25 @@ export enum SourceQualityMark {
 }
 
 /**
+ * Lightweight movie entry with only essential data for virtual scrolling
+ * Used for initial load to minimize memory usage and for grid display
+ */
+export interface LightweightMovie {
+  imdbId: string
+  title: string
+  year?: number
+  imdbRating?: number
+  imdbVotes?: number
+  language?: string
+  sourceType?: MovieSourceType
+  channelName?: string
+  verified?: boolean
+  lastUpdated?: string
+  genre?: string
+  country?: string
+}
+
+/**
  * Main movie entry structure
  */
 export interface MovieEntry {
@@ -152,16 +171,7 @@ export interface MovieEntry {
   verified?: boolean // Whether this entry has been manually verified by a human
   ai?: AIMetadata // AI-extracted metadata from Ollama (for unmatched movies with promotional titles)
   lastUpdated: string // ISO 8601 timestamp
-  relatedMovies?: Array<{
-    imdbId: string
-    title: string
-    year?: number
-    imdbRating?: string | number
-    imdbVotes?: number
-    language?: string
-    sourceType?: MovieSourceType
-    channelName?: string
-  }>
+  relatedMovies?: string[]
   collections?: Array<{
     id: string
     name: string

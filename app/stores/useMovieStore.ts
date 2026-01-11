@@ -1,5 +1,4 @@
-import type { MovieEntry, MovieSource, MovieSourceType, LightweightMovieEntry } from '~/types'
-import type { LightweightMovie } from '~/types/database'
+import type { MovieEntry, MovieSource, MovieSourceType, LightweightMovie } from '~/types'
 import { useStorage } from '@vueuse/core'
 
 /**
@@ -15,24 +14,6 @@ export interface LoadingState {
   movies: boolean
   movieDetails: boolean
   imdbFetch: boolean
-}
-
-/**
- * Database row interface for movies table
- */
-interface MovieDatabaseRow {
-  imdbId: string
-  title: string
-  year?: number
-  lastUpdated: string
-  imdbRating?: number
-  imdbVotes?: number
-  genre?: string
-  language?: string
-  country?: string
-  primarySourceType?: MovieSourceType
-  primaryChannelName?: string
-  verified?: boolean
 }
 
 /**
@@ -111,7 +92,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Lightweight movies for virtual scrolling
    * Only includes essential fields (imdbId, title, year)
    */
-  const lightweightMovies = ref<LightweightMovieEntry[]>([])
+  const lightweightMovies = ref<LightweightMovie[]>([])
 
   /**
    * Filtered and sorted movies for display
@@ -123,7 +104,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Returns the list of movie IDs in the same order as displayed on the index page
    * Falls back to all movies sorted by year if no filtering has been applied yet
    */
-  const currentMovieList = computed((): LightweightMovieEntry[] => {
+  const currentMovieList = computed((): LightweightMovie[] => {
     if (lightweightMovies.value.length > 0) {
       return lightweightMovies.value
     }
@@ -232,22 +213,61 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Map MovieEntry to LightweightMovie
+   */
+  const mapMovieToLightweight = (movie: {
+    readonly imdbId: string
+    readonly title: string
+    readonly year?: number
+    readonly metadata?: {
+      readonly imdbRating?: number
+      readonly imdbVotes?: number
+      readonly Language?: string
+      readonly Genre?: string
+      readonly Country?: string
+    }
+    readonly sources?: readonly {
+      readonly type: MovieSourceType
+      readonly language?: string | readonly string[]
+      readonly channelName?: string
+    }[]
+    readonly verified?: boolean
+  }): LightweightMovie => {
+    return {
+      imdbId: movie.imdbId,
+      title: movie.title,
+      year: movie.year,
+      imdbRating: movie.metadata?.imdbRating,
+      imdbVotes: movie.metadata?.imdbVotes,
+      language:
+        movie.metadata?.Language ||
+        (Array.isArray(movie.sources?.[0]?.language)
+          ? movie.sources?.[0]?.language[0]
+          : (movie.sources?.[0]?.language as string)),
+      sourceType: movie.sources?.[0]?.type,
+      channelName: movie.sources?.[0]?.channelName,
+      verified: movie.verified,
+      genre: movie.metadata?.Genre,
+      country: movie.metadata?.Country,
+    }
+  }
+
+  /**
    * Map SQL row to MovieEntry (lightweight version)
    * Sources are now loaded separately from JSON files
    */
-  const mapRowToMovie = (row: MovieDatabaseRow): MovieEntry => {
+  const mapRowToMovie = (row: LightweightMovie): MovieEntry => {
     // console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
     // Create a minimal source object from database fields for UI display
     const sources: MovieSource[] = []
-    if (row.primarySourceType) {
+    if (row.sourceType) {
       sources.push({
-        type: row.primarySourceType,
+        type: row.sourceType,
         id: '', // Not available in database, but not needed for icon display
         url: '', // Not available in database, but not needed for icon display
         title: row.title,
-        channelName:
-          row.primarySourceType === 'youtube' ? row.primaryChannelName || undefined : undefined,
-        addedAt: row.lastUpdated,
+        channelName: row.sourceType === 'youtube' ? row.channelName || undefined : undefined,
+        addedAt: row.lastUpdated || new Date().toISOString(),
       })
     }
 
@@ -255,7 +275,7 @@ export const useMovieStore = defineStore('movie', () => {
       imdbId: row.imdbId,
       title: row.title,
       year: row.year,
-      lastUpdated: row.lastUpdated,
+      lastUpdated: row.lastUpdated || new Date().toISOString(),
       sources,
       metadata: {
         imdbRating: row.imdbRating,
@@ -437,7 +457,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch lightweight movie details for specific IDs (with caching)
    * Returns essential fields for grid display
    */
-  const fetchMoviesByIds = async (imdbIds: string[]): Promise<MovieEntry[]> => {
+  const fetchMoviesByIds = async (imdbIds: string[]): Promise<LightweightMovie[]> => {
     if (!imdbIds || imdbIds.length === 0) return []
 
     // Ensure cache is initialized
@@ -452,7 +472,12 @@ export const useMovieStore = defineStore('movie', () => {
 
     if (uncachedIds.length === 0) {
       // All movies are either cached or already being fetched
-      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+      return imdbIds
+        .map(id => {
+          const movie = movieDetailsCache.value.get(id)
+          return movie ? mapMovieToLightweight(movie) : undefined
+        })
+        .filter((m): m is LightweightMovie => !!m)
     }
 
     console.log('[fetchMoviesByIds] Fetching', uncachedIds.length, 'uncached movies from database')
@@ -486,11 +511,16 @@ export const useMovieStore = defineStore('movie', () => {
     const stillUncachedIds = uncachedIds.filter(id => !movieDetailsCache.value.has(id))
     if (stillUncachedIds.length === 0) {
       uncachedIds.forEach(id => pendingIds.delete(id))
-      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+      return imdbIds
+        .map(id => {
+          const movie = movieDetailsCache.value.get(id)
+          return movie ? mapMovieToLightweight(movie) : undefined
+        })
+        .filter((m): m is LightweightMovie => !!m)
     }
 
     try {
-      const results = await db.queryByIds<MovieDatabaseRow>(stillUncachedIds)
+      const results = await db.queryByIds<LightweightMovie>(stillUncachedIds)
       const movies = results.map(mapRowToMovie)
       console.log('[fetchMoviesByIds] Fetched', movies.length, 'movies from database')
 
@@ -534,8 +564,13 @@ export const useMovieStore = defineStore('movie', () => {
       movieDetailsCache.value = new Map(movieDetailsCache.value)
       allMovies.value = new Map(allMovies.value)
 
-      // Return all requested movies (cached + newly fetched)
-      return imdbIds.map(id => movieDetailsCache.value.get(id)!).filter(Boolean)
+      // Return all requested movies (cached + newly fetched) as lightweight entries
+      return imdbIds
+        .map(id => {
+          const movie = movieDetailsCache.value.get(id)
+          return movie ? mapMovieToLightweight(movie) : undefined
+        })
+        .filter((m): m is LightweightMovie => !!m)
     } catch (err) {
       console.error('[fetchMoviesByIds] Failed to fetch movies by IDs:', err)
       return []
@@ -596,7 +631,10 @@ export const useMovieStore = defineStore('movie', () => {
    * Get related movies for a given movie ID
    * Fetches full lightweight data from database for proper display
    */
-  const getRelatedMovies = async (movieId: string, _limit: number = 8): Promise<MovieEntry[]> => {
+  const getRelatedMovies = async (
+    movieId: string,
+    _limit: number = 8
+  ): Promise<LightweightMovie[]> => {
     console.log('[getRelatedMovies] Getting related movies for:', movieId)
     try {
       // First try to get the movie data from cache to avoid duplicate fetching
@@ -627,28 +665,11 @@ export const useMovieStore = defineStore('movie', () => {
         loadFromFile()
       }
 
-      // If database is ready, fetch full lightweight data for related movies
-      if (db.isReady.value) {
-        console.log('[getRelatedMovies] Fetching full data from database')
-        const relatedIds = movie.relatedMovies.map(rm => rm.imdbId)
-        const fullMovies = await fetchMoviesByIds(relatedIds)
-        return fullMovies
-      }
-
-      console.log('[getRelatedMovies] Using lightweight data from JSON (DB not ready)')
-      // Fallback: use the lightweight data from JSON if database is not ready
-      return movie.relatedMovies.map(rm => ({
-        imdbId: rm.imdbId,
-        title: rm.title,
-        year: rm.year,
-        sources: [],
-        lastUpdated: new Date().toISOString(),
-        metadata: {
-          imdbRating: typeof rm.imdbRating === 'number' ? rm.imdbRating : undefined,
-          imdbVotes: typeof rm.imdbVotes === 'number' ? rm.imdbVotes : undefined,
-          Language: rm.language,
-        },
-      }))
+      // Fetch full lightweight data for related movies
+      // relatedMovies is now a list of IDs (string[])
+      const relatedIds = movie.relatedMovies as string[]
+      const fullMovies = await fetchMoviesByIds(relatedIds)
+      return fullMovies
     } catch (err) {
       console.error('[getRelatedMovies] Failed to fetch related movies:', err)
       return []
@@ -990,7 +1011,7 @@ export const useMovieStore = defineStore('movie', () => {
             return filters.value.sources.includes('archive.org')
           }
           if (source.type === 'youtube') {
-            return filters.value.sources.includes(source.channelName)
+            return source.channelName ? filters.value.sources.includes(source.channelName) : false
           }
           return false
         })
@@ -1462,6 +1483,7 @@ export const useMovieStore = defineStore('movie', () => {
     getRelatedMovies,
     searchMovies,
     mapRowToMovie,
+    mapMovieToLightweight,
 
     // ============================================
     // ACTIONS - Filtering & Sorting

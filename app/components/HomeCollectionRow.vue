@@ -66,7 +66,7 @@
 
 <script setup lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
-import type { MovieEntry } from '~/types'
+import type { LightweightMovie } from '~/types'
 
 interface CollectionData {
   id: string
@@ -82,7 +82,7 @@ const props = defineProps<Props>()
 const { fetchMoviesByIds } = useMovieStore()
 
 const isLoading = ref(true)
-const displayMovies = ref<MovieEntry[]>([])
+const displayMovies = ref<LightweightMovie[]>([])
 const scrollContainer = ref<HTMLElement | null>(null)
 const rowElement = ref<HTMLElement | null>(null)
 const hasLoaded = ref(false)

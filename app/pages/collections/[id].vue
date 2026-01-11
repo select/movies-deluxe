@@ -31,7 +31,7 @@ const movieStore = useMovieStore()
 const { getCollectionById } = collectionsStore
 
 const collection = ref<Collection | null>(null)
-const movies = ref<MovieEntry[]>([])
+const movies = ref<LightweightMovie[]>([])
 const isLoading = ref(true)
 
 // Track window scroll position
@@ -49,7 +49,9 @@ onMounted(async () => {
 
     // Set lightweight movies with just IDs to allow virtual grid to fetch visible ones
     if (collection.value?.movieIds && collection.value.movieIds.length > 0) {
-      movies.value = collection.value.movieIds.map(id => ({ imdbId: id }) as MovieEntry)
+      movies.value = collection.value.movieIds.map(
+        id => ({ imdbId: id, title: '' }) as LightweightMovie
+      )
 
       // Pre-fetch first batch (e.g., first 40 movies) for instant display
       const firstBatch = collection.value.movieIds.slice(0, 30)

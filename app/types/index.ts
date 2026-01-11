@@ -9,6 +9,7 @@ import {
 } from '../../shared/types/movie'
 import type {
   MovieEntry,
+  LightweightMovie,
   MovieSource,
   MovieSourceType,
   ArchiveOrgSource,
@@ -59,6 +60,7 @@ import type {
 export type {
   // Core movie types
   MovieEntry,
+  LightweightMovie,
   MovieSource,
   MovieSourceType,
   ArchiveOrgSource,
@@ -127,18 +129,9 @@ export type {
 /**
  * Lightweight movie entry with only essential data for virtual scrolling
  * Used for initial load to minimize memory usage
+ * @deprecated Use LightweightMovie instead
  */
-export interface LightweightMovieEntry {
-  imdbId: string
-  title?: string
-  year?: number
-  imdbRating?: string | number
-  imdbVotes?: number
-  language?: string
-  sourceType?: MovieSourceType
-  channelName?: string
-  verified?: boolean
-}
+export type LightweightMovieEntry = LightweightMovie
 
 /**
  * Loading state for async operations in stores

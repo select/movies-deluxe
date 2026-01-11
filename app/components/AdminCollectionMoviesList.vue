@@ -33,16 +33,16 @@
             <span class="text-xs text-theme-textmuted font-mono">{{ movie.year }}</span>
           </div>
           <p class="text-xs text-theme-textmuted truncate">
-            {{ movie.metadata?.Director || 'Unknown Director' }}
+            {{ movie.genre || 'Unknown Genre' }}
           </p>
           <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
             <span class="font-mono">{{ movie.imdbId }}</span>
-            <span v-if="movie.metadata?.imdbRating" class="flex items-center gap-1">
+            <span v-if="movie.imdbRating" class="flex items-center gap-1">
               <span class="opacity-50">•</span>
               <div class="i-mdi-star text-theme-accent text-xs"></div>
-              <span class="font-bold text-theme-text">{{ movie.metadata.imdbRating }}</span>
-              <span v-if="movie.metadata?.imdbVotes" class="opacity-70">
-                ({{ formatVotes(movie.metadata.imdbVotes) }})
+              <span class="font-bold text-theme-text">{{ movie.imdbRating }}</span>
+              <span v-if="movie.imdbVotes" class="opacity-70">
+                ({{ formatVotes(movie.imdbVotes) }})
               </span>
             </span>
           </div>
@@ -77,7 +77,7 @@ const props = defineProps<{
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const uiStore = useUiStore()
-const movies = ref<MovieEntry[]>([])
+const movies = ref<LightweightMovie[]>([])
 const isLoading = ref(false)
 const isRemoving = ref('')
 
@@ -103,8 +103,8 @@ const loadCollectionMovies = async () => {
 
     // Sort by the order in movieIds
     movies.value = movieIds
-      .map((id: string) => data.find((m: MovieEntry) => m.imdbId === id))
-      .filter((m): m is MovieEntry => !!m)
+      .map((id: string) => data.find((m: LightweightMovie) => m.imdbId === id))
+      .filter((m): m is LightweightMovie => !!m)
   } catch (err) {
     window.console.error('Failed to load collection movies:', err)
     uiStore.showToast('Failed to load collection movies', 'error')
@@ -113,7 +113,7 @@ const loadCollectionMovies = async () => {
   }
 }
 
-const removeMovie = async (movie: MovieEntry) => {
+const removeMovie = async (movie: LightweightMovie) => {
   if (!confirm(`Remove "${movie.title}" from this collection?`)) return
 
   isRemoving.value = movie.imdbId

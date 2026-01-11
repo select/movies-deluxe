@@ -1,5 +1,5 @@
-import type { WorkerResponse, FilterOptionsResponse, LightweightMovie } from '~/types/database'
-import type { Collection } from '~/types'
+import type { WorkerResponse, FilterOptionsResponse } from '~/types/database'
+import type { Collection, LightweightMovie } from '~/types'
 
 // Singleton instance
 let dbInstance: ReturnType<typeof createDatabase> | null = null
