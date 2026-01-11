@@ -182,10 +182,10 @@ const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(
 // Use intersection observer to detect when card becomes visible
 const { stop } = useIntersectionObserver(
   cardRef,
-  (entries) => {
+  entries => {
     const entry = entries[0]
     if (!entry) return
-    
+
     if (entry.isIntersecting) {
       // Card is visible, start the timer
       startDetailsTimer()
@@ -196,7 +196,6 @@ const { stop } = useIntersectionObserver(
     }
   },
   {
-    threshold: 0.1, // Trigger when 10% of the card is visible
     rootMargin: '200px', // Start loading 200px before the card enters viewport
   }
 )
