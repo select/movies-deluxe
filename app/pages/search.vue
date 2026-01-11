@@ -1,35 +1,10 @@
 <template>
-  <div>
-    <!-- Sticky Search Header -->
-    <div
-      class="sticky top-0 z-50 bg-theme-surface border-b border-theme-border shadow-xl px-4 py-4 md:py-6"
-    >
-      <div class="max-w-4xl mx-auto flex items-center gap-4">
-        <div class="relative flex-1">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
-          </div>
-          <input
-            ref="searchInput"
-            v-model="localQuery"
-            type="text"
-            class="block w-full pl-12 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
-            placeholder="Search movies, actors, directors..."
-            @keydown.enter="searchInput?.blur()"
-          />
-          <button
-            v-if="localQuery"
-            class="absolute inset-y-0 right-0 pr-4 flex items-center"
-            @click="clearSearch"
-          >
-            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
-          </button>
-        </div>
-      </div>
-    </div>
+  <div class="min-h-screen bg-theme-background">
+    <!-- Refactored Search Header -->
+    <SearchHeader />
 
     <!-- Main Content -->
-    <main class="md:ml-16">
+    <main class="md:ml-16 pt-32 md:pt-40">
       <div class="px-4 lg:px-[6%] py-8">
         <MovieStats
           v-if="!isInitialLoading && safeTotalMovies > 0"
@@ -64,7 +39,7 @@
 
 <script setup lang="ts">
 import { onBeforeRouteLeave } from 'vue-router'
-import { useWindowScroll, useDebounceFn } from '@vueuse/core'
+import { useWindowScroll } from '@vueuse/core'
 
 // Set page title and meta
 useHead({
@@ -83,74 +58,16 @@ useHead({
 const movieStore = useMovieStore()
 const { isInitialLoading, isFiltering, currentMovieList, totalFiltered, filters } =
   storeToRefs(movieStore)
-const { loadFromFile, setCurrentPage, setScrollY, setSearchQuery, setSort } = movieStore
+const { loadFromFile, setCurrentPage, setScrollY } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
 // Track window scroll position
 const { y: windowScrollY } = useWindowScroll()
 
-// Search functionality
-const searchInput = ref<HTMLInputElement | null>(null)
-const route = useRoute()
-const router = useRouter()
-
-// Local query for immediate UI updates
-const localQuery = ref(filters.value.searchQuery)
-
-// Initialize search from URL query parameter on mount
-const initializeSearch = () => {
-  const urlQuery = route.query.q as string
-  if (urlQuery && urlQuery !== localQuery.value) {
-    localQuery.value = urlQuery
-  }
-}
-
-// Debounced function to update store (500ms delay)
-const debouncedSetSearchQuery = useDebounceFn((query: string) => {
-  setSearchQuery(query)
-
-  // Update URL query parameter
-  if (query) {
-    router.replace({ query: { q: query } })
-  } else {
-    router.replace({ query: {} })
-  }
-
-  if (query && filters.value.sort.field !== 'relevance') {
-    setSort({ field: 'relevance', direction: 'desc' })
-  }
-}, 500)
-
-// Watch local query and debounce updates to store
-watch(localQuery, newVal => {
-  debouncedSetSearchQuery(newVal)
-})
-
-// Sync local query when store changes externally (e.g., clear filters)
-watch(
-  () => filters.value.searchQuery,
-  newVal => {
-    if (newVal !== localQuery.value) {
-      localQuery.value = newVal
-    }
-  }
-)
-
-// Clear search query
-const clearSearch = () => {
-  localQuery.value = ''
-}
-
 // Load movies on mount
 onMounted(async () => {
-  initializeSearch()
   await loadFromFile()
-
-  // Auto-focus search input
-  nextTick(() => {
-    searchInput.value?.focus()
-  })
 
   // Restore scroll position after content loads
   await nextTick()

@@ -1121,6 +1121,14 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Set sources
+   */
+  const setSources = (sources: string[]) => {
+    console.log('[setSources] Setting sources:', sources)
+    filters.value.sources = sources
+  }
+
+  /**
    * Set minimum rating
    */
   const setMinRating = (rating: number) => {
@@ -1171,6 +1179,14 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Set genres
+   */
+  const setGenres = (genres: string[]) => {
+    console.log('[setGenres] Setting genres:', genres)
+    filters.value.genres = genres
+  }
+
+  /**
    * Toggle country filter
    */
   const toggleCountry = (country: string) => {
@@ -1178,6 +1194,14 @@ export const useMovieStore = defineStore('movie', () => {
     filters.value.countries = filters.value.countries.includes(country)
       ? filters.value.countries.filter(c => c !== country)
       : [...filters.value.countries, country]
+  }
+
+  /**
+   * Set countries
+   */
+  const setCountries = (countries: string[]) => {
+    console.log('[setCountries] Setting countries:', countries)
+    filters.value.countries = countries
   }
 
   /**
@@ -1462,13 +1486,16 @@ export const useMovieStore = defineStore('movie', () => {
     setSort,
     setSearchQuery,
     toggleSource,
+    setSources,
     setMinRating,
     setMinYear,
     setMaxYear,
     setMinVotes,
     setMaxVotes,
     toggleGenre,
+    setGenres,
     toggleCountry,
+    setCountries,
     resetFilters,
     applyFilters,
     fetchFilteredMovies,
