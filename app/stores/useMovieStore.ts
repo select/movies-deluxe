@@ -628,55 +628,6 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Get related movies for a given movie ID
-   * Fetches full lightweight data from database for proper display
-   */
-  const getRelatedMovies = async (
-    movieId: string,
-    _limit: number = 8
-  ): Promise<LightweightMovie[]> => {
-    console.log('[getRelatedMovies] Getting related movies for:', movieId)
-    try {
-      // First try to get the movie data from cache to avoid duplicate fetching
-      let movie: MovieEntry | undefined
-
-      // Check if movie is already cached with full data
-      if (movieDetailsCache.value.has(movieId)) {
-        const cached = movieDetailsCache.value.get(movieId)
-        if (cached && cached.sources && cached.sources.length > 0) {
-          movie = cached
-        }
-      }
-
-      // If not in cache, use getMovieById which handles caching
-      if (!movie) {
-        movie = await getMovieById(movieId)
-      }
-
-      if (!movie || !movie.relatedMovies || movie.relatedMovies.length === 0) {
-        console.log('[getRelatedMovies] No related movies found')
-        return []
-      }
-
-      console.log('[getRelatedMovies] Found', movie.relatedMovies.length, 'related movies')
-      // If database is not ready, start loading it in background but don't wait for it
-      // unless we really need it for better related movies display
-      if (!db.isReady.value && !isLoading.value.movies && isInitialLoading.value) {
-        loadFromFile()
-      }
-
-      // Fetch full lightweight data for related movies
-      // relatedMovies is now a list of IDs (string[])
-      const relatedIds = movie.relatedMovies as string[]
-      const fullMovies = await fetchMoviesByIds(relatedIds)
-      return fullMovies
-    } catch (err) {
-      console.error('[getRelatedMovies] Failed to fetch related movies:', err)
-      return []
-    }
-  }
-
-  /**
    * Search movies using FTS5 full-text search
    */
   const searchMovies = async (searchQuery: string): Promise<MovieEntry[]> => {
@@ -1480,7 +1431,6 @@ export const useMovieStore = defineStore('movie', () => {
     fetchMovies,
     fetchMoviesByIds,
     getMovieById,
-    getRelatedMovies,
     searchMovies,
     mapRowToMovie,
     mapMovieToLightweight,

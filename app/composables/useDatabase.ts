@@ -163,24 +163,6 @@ function createDatabase() {
     })
   }
 
-  const getRelatedMovies = async <T = MovieEntry>(
-    imdbId: string,
-    limit: number = 8
-  ): Promise<T[]> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
-    }
-
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) => resolve((data.result as T[]) ?? []),
-        reject,
-      })
-      worker.value!.postMessage({ type: 'query-related', id, imdbId, limit })
-    })
-  }
-
   const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
@@ -248,7 +230,6 @@ function createDatabase() {
     extendedQuery,
     lightweightQuery,
     queryByIds,
-    getRelatedMovies,
     getCollectionsForMovie,
     getFilterOptions,
     getMovieCount,
