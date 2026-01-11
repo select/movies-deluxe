@@ -206,7 +206,7 @@ const debouncedFetch = useDebounceFn((ids: string[]) => {
     uncachedIds.forEach(id => lastFetchedIds.value.add(id))
     fetchMoviesByIds(uncachedIds)
   }
-}, 500) // 500 ms debounce
+}, 300) // 300ms debounce
 
 // Debounced update of visible rows for smooth scrolling
 const updateVisibleRows = useDebounceFn(() => {
@@ -226,7 +226,7 @@ const updateVisibleRows = useDebounceFn(() => {
   if (visibleIds.length > 0) {
     debouncedFetch(visibleIds)
   }
-}, 100) // 50ms debounce for smooth scrolling
+}, 80) // 80ms debounce for smooth scrolling
 
 // Watch scroll position and trigger debounced update
 watch([windowScrollY, windowHeight, rowHeight, cols, () => props.movies.length], () => {
