@@ -177,7 +177,7 @@ export async function generateSQLite(
       for (const movie of movies) {
         // Map metadata fields
         const m = movie.metadata || {}
-        const imdbRating = m.imdbRating && m.imdbRating !== 'N/A' ? parseFloat(m.imdbRating) : null
+        const imdbRating = typeof m.imdbRating === 'number' ? m.imdbRating : null
         const imdbVotes = m.imdbVotes ?? null
 
         // Determine language priority: Archive.org language > YouTube language > OMDB language

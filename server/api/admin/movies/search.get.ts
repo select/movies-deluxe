@@ -67,10 +67,8 @@ export default defineEventHandler(async event => {
 
     // Apply rating filter - exclude movies without ratings when rating criteria is specified
     if (minRating > 0) {
-      const ratingStr = entry.metadata?.imdbRating
-      if (!ratingStr || ratingStr === 'N/A') continue
-      const rating = parseFloat(ratingStr)
-      if (isNaN(rating) || rating < minRating) continue
+      const rating = entry.metadata?.imdbRating
+      if (typeof rating !== 'number' || isNaN(rating) || rating < minRating) continue
     }
 
     // Apply year filter
@@ -129,7 +127,10 @@ export default defineEventHandler(async event => {
         Director: entry.metadata?.Director,
         Writer: entry.metadata?.Writer,
         Plot: entry.metadata?.Plot,
-        imdbRating: entry.metadata?.imdbRating,
+        imdbRating:
+          typeof entry.metadata?.imdbRating === 'number'
+            ? entry.metadata.imdbRating.toString()
+            : undefined,
         imdbVotes: entry.metadata?.imdbVotes,
       },
     })
