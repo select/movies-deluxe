@@ -52,7 +52,7 @@ onMounted(async () => {
       movies.value = collection.value.movieIds.map(id => ({ imdbId: id }) as MovieEntry)
 
       // Pre-fetch first batch (e.g., first 40 movies) for instant display
-      const firstBatch = collection.value.movieIds.slice(0, 40)
+      const firstBatch = collection.value.movieIds.slice(0, 30)
       movieStore.fetchMoviesByIds(firstBatch)
     }
 

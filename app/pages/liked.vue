@@ -50,7 +50,7 @@ onMounted(async () => {
       likedMoviesData.value = likedMovieIds.value.map(id => ({ imdbId: id }) as MovieEntry)
 
       // Pre-fetch first batch for instant display
-      const firstBatch = likedMovieIds.value.slice(0, 40)
+      const firstBatch = likedMovieIds.value.slice(0, 30)
       movieStore.fetchMoviesByIds([...firstBatch])
     }
   } catch {
