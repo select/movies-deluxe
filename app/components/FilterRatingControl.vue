@@ -31,7 +31,10 @@
 
     <!-- Actions -->
     <div v-if="localRating > 0" class="flex justify-end pt-2 border-t border-theme-border/30">
-      <button class="text-xs text-theme-primary hover:underline font-medium" @click="localRating = 0">
+      <button
+        class="text-xs text-theme-primary hover:underline font-medium"
+        @click="localRating = 0"
+      >
         Clear Filter
       </button>
     </div>
