@@ -102,9 +102,16 @@ const loadCollectionMovies = async () => {
     const data = await movieStore.fetchMoviesByIds(movieIds)
 
     // Sort by the order in movieIds
-    movies.value = movieIds
-      .map((id: string) => data.find((m: LightweightMovie) => m.imdbId === id))
-      .filter((m): m is LightweightMovie => !!m)
+    movies.value = movieIds.map((id: string) => {
+      const found = data.find((m: LightweightMovie) => m.imdbId === id)
+      if (found) return found
+      // Return a placeholder for missing movies so they can be removed
+      return {
+        imdbId: id,
+        title: `Missing: ${id}`,
+        year: 0,
+      } as LightweightMovie
+    })
   } catch (err) {
     window.console.error('Failed to load collection movies:', err)
     uiStore.showToast('Failed to load collection movies', 'error')
