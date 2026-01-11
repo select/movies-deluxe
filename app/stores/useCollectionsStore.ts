@@ -180,6 +180,30 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
+  const removeMoviesFromCollection = async (collectionId: string, movieIds: string[]) => {
+    try {
+      const response = await $fetch<{ success: boolean }>(
+        '/api/admin/collections/update-collection',
+        {
+          method: 'POST',
+          body: {
+            collectionId,
+            updates: {
+              movies: { action: 'remove', movieIds },
+            },
+          },
+        }
+      )
+      if (response.success) {
+        isLoaded.value = false
+        await loadCollections()
+      }
+      return response.success
+    } catch {
+      return false
+    }
+  }
+
   /**
    * Get all collections that contain a specific movie
    * Queries the database to find which collections include this movie
@@ -222,6 +246,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     removeQueryFromCollection,
     updateCollectionTags,
     cleanupCollection,
+    removeMoviesFromCollection,
   }
 })
 
