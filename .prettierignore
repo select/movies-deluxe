@@ -23,6 +23,10 @@ public/sqlite-wasm
 # Git
 .git
 
+# Auto Generated
+CHANGELOG.md
+
+
 # Movie JSON assets
 public/data
 public/movies
