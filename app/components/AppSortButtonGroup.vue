@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+  <div class="flex flex-wrap gap-2">
     <!-- Relevance (Search Only) -->
     <AppSortButton
       v-if="showRelevance"

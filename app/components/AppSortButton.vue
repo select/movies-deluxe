@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-full text-xs font-medium transition-colors w-full border border-theme-border/50 whitespace-nowrap"
+    class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-1 min-w-[100px] border border-theme-border/50 whitespace-nowrap"
     :class="{
       'bg-theme-primary text-white border-theme-primary': isActive,
       'bg-theme-surface text-theme-textmuted hover:bg-theme-selection hover:border-theme-border':
