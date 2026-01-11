@@ -230,11 +230,11 @@
         </div>
 
         <!-- Source Selector with External Links -->
-        <div v-if="movie.sources && movie.sources.length > 0" class="mb-4">
+        <div v-if="sortedSources.length > 0" class="mb-4">
           <h3 class="movie-label">Select Source</h3>
           <div class="flex flex-wrap gap-2">
             <div
-              v-for="(source, index) in movie.sources"
+              v-for="(source, index) in sortedSources"
               :key="source.id"
               class="flex items-center gap-1"
             >
@@ -512,10 +512,30 @@ const movieCollections = computed(() => {
   return movie.value?.collections || []
 })
 
+// Sorted sources: YouTube first, then Archive.org by file size
+const sortedSources = computed(() => {
+  if (!movie.value || !movie.value.sources) return []
+
+  return [...movie.value.sources].sort((a, b) => {
+    // 1. YouTube first
+    if (a.type === 'youtube' && b.type !== 'youtube') return -1
+    if (a.type !== 'youtube' && b.type === 'youtube') return 1
+
+    // 2. If both are Archive.org, sort by file size (descending)
+    if (a.type === 'archive.org' && b.type === 'archive.org') {
+      const sizeA = a.fileSize || a.size || 0
+      const sizeB = b.fileSize || b.size || 0
+      return sizeB - sizeA
+    }
+
+    return 0
+  })
+})
+
 // Current selected source
 const currentSource = computed(() => {
-  if (!movie.value || !movie.value.sources) return null
-  return movie.value.sources[selectedSourceIndex.value] || movie.value.sources[0] || null
+  if (sortedSources.value.length === 0) return null
+  return sortedSources.value[selectedSourceIndex.value] || sortedSources.value[0] || null
 })
 
 // Calculate file size bar width (0-4GB range)
