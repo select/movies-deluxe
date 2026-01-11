@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-11T02:45:09.402Z"
+    "lastUpdated": "2026-01-11T21:21:11.558Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -2274,7 +2274,6 @@
       "tt0062168",
       "tt0059646",
       "tt0063522",
-      "tt0387564",
       "tt0055505",
       "tt0031951",
       "tt0003424",
@@ -2332,7 +2331,7 @@
       "tt0019563"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-08T22:19:18.831Z",
+    "updatedAt": "2026-01-11T21:21:09.744Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2950,7 +2949,6 @@
       "tt0062168",
       "tt0032976",
       "tt0039768",
-      "tt0387564",
       "tt0988045",
       "tt0036348",
       "tt0036349",
@@ -3027,7 +3025,7 @@
       "tt0029811"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-08T22:41:20.983Z",
+    "updatedAt": "2026-01-11T21:21:07.824Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -3134,7 +3132,6 @@
       "tt0028212",
       "tt0014429",
       "tt0056443",
-      "tt0387564",
       "tt0081455",
       "tt0055505",
       "tt0058576",
@@ -3203,7 +3200,7 @@
       "tt0055630"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-08T22:43:32.469Z",
+    "updatedAt": "2026-01-11T21:21:04.984Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4668,7 +4665,6 @@
       "tt0425637",
       "tt1259574",
       "tt0404390",
-      "tt0387564",
       "tt0286112",
       "tt0942384",
       "tt0988045",
@@ -4721,7 +4717,7 @@
       "tt1332128"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-08T22:52:07.253Z",
+    "updatedAt": "2026-01-11T21:21:11.558Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -4966,5 +4962,91 @@
       "current"
     ],
     "enabled": true
+  },
+  "sherlock-holmes": {
+    "id": "sherlock-holmes",
+    "name": "Sherlock Holmes",
+    "description": "Classic detective films featuring the legendary Sherlock Holmes and Dr. Watson solving mysteries.",
+    "movieIds": [
+      "archive-1937-sherlock-holmes-die-graue-dame-trude-marlens-hermann-speelmanns",
+      "tt0024625",
+      "youtube--DXjS0WlH-Q",
+      "youtube-6kjTmfmk9h0",
+      "tt0038494",
+      "youtube-Z06G2jmMn0I",
+      "youtube-hBOgY_AyRnM",
+      "tt0099732",
+      "tt0029565",
+      "archive-murder-at-the-baskervilles-1937-sherlock-holmes-crime-mystery-",
+      "youtube-oSHUhqa-b6I",
+      "youtube-5OWmwh5pDQE",
+      "tt0161929",
+      "youtube-1A-n3iOHjcg",
+      "tt0988045",
+      "tt0007338",
+      "tt0013597",
+      "youtube-QGlxXpiRw0E",
+      "youtube-CTCFtZYFyrc",
+      "archive-SherlockHolmes-TheManWhoDisappearedfailedPilot",
+      "youtube-kBpqVDtQyuc",
+      "youtube-psU0YDidS6o",
+      "youtube-f46uuHG6SYw",
+      "youtube-inDZjZTLL1c",
+      "youtube-hdGNbzud_Xk",
+      "youtube-6q_9V-_pB-Q",
+      "archive-Sherlock_Holmes_1954",
+      "tt0035317",
+      "tt0035318",
+      "tt0291476",
+      "youtube-0qILka1Lz2U",
+      "tt0036348",
+      "archive-svtplay-KQ7Y4dV",
+      "tt0036349",
+      "archive-sherlock-holmes-movies-colorized",
+      "archive-svtplay-jpz1EWG",
+      "archive-svtplay-8YwYpvJ",
+      "archive-sherlock-holmes-och-kvinnan-i-gront",
+      "youtube-Ae5KnCP6QbI",
+      "archive-SherlockHolmes-TheWomanInGreenVost-fr",
+      "youtube-UsoGpbn3GKM",
+      "tt34381727",
+      "tt0022373",
+      "archive-sherlock-holmes-fatal-hour-with-arthur-wontner-1931-1080p-hd-film",
+      "tt1144469",
+      "tt0011907",
+      "tt0031022",
+      "tt0037794",
+      "tt0037168",
+      "tt0037248",
+      "tt0023469",
+      "tt0037303",
+      "tt0027136",
+      "youtube-KasPpKBtmi8",
+      "youtube-toZblGsqNt0",
+      "tt0406934"
+    ],
+    "createdAt": "2026-01-11T19:30:00.000Z",
+    "updatedAt": "2026-01-11T21:13:56.872Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Sherlock Holmes",
+        "filterState": {
+          "searchQuery": "Sherlock Holmes",
+          "currentPage": 1,
+          "lastScrollY": 0,
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "mystery",
+      "detective",
+      "classic",
+      "crime",
+      "british"
+    ]
   }
 }
