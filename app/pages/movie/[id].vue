@@ -240,7 +240,7 @@
             >
               <div class="flex flex-col gap-1">
                 <button
-                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+                  class="px-4 py-2 rounded-lg text-sm font-medium transition-colors border relative overflow-hidden"
                   :class="{
                     'bg-theme-primary border-theme-primary text-white':
                       selectedSourceIndex === index,
@@ -263,6 +263,13 @@
                       >({{ source.quality }})</span
                     >
                   </div>
+                  <!-- File size indicator bar for Archive.org -->
+                  <div
+                    v-if="source.type === 'archive.org' && (source.fileSize || source.size)"
+                    class="absolute bottom-0 left-0 h-[2px] transition-all duration-500"
+                    :class="selectedSourceIndex === index ? 'bg-white/40' : 'bg-theme-primary/40'"
+                    :style="{ width: getFileSizeBarWidth(source.fileSize || source.size) }"
+                  ></div>
                 </button>
                 <div v-if="source.qualityMarks?.length" class="flex flex-wrap gap-1">
                   <span
@@ -483,6 +490,14 @@ const currentSource = computed(() => {
   if (!movie.value || !movie.value.sources) return null
   return movie.value.sources[selectedSourceIndex.value] || movie.value.sources[0] || null
 })
+
+// Calculate file size bar width (0-4GB range)
+const getFileSizeBarWidth = (bytes?: number) => {
+  if (!bytes) return '0%'
+  const maxBytes = 4 * 1024 * 1024 * 1024 // 4GB
+  const percentage = Math.min((bytes / maxBytes) * 100, 100)
+  return `${percentage}%`
+}
 
 // Liked computed
 const isLiked = computed(() => {
