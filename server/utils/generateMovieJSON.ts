@@ -39,9 +39,16 @@ export async function generateMovieJSON() {
 
   // 3. Load JSON data
   const db = await loadMoviesDatabase()
-  const movies = Object.values(db).filter(
-    (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
-  )
+  const movies = Object.values(db)
+    .filter(
+      (entry): entry is MovieEntry =>
+        typeof entry === 'object' && entry !== null && 'imdbId' in entry
+    )
+    .map(movie => ({
+      ...movie,
+      sources: movie.sources.filter(s => !s.qualityMarks || s.qualityMarks.length === 0),
+    }))
+    .filter(movie => movie.sources.length > 0)
 
   logger.info(`Processing ${movies.length} movies`)
 
