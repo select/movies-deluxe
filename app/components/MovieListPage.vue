@@ -103,6 +103,7 @@
 
 <script setup lang="ts">
 import Fuse from 'fuse.js'
+import type { LightweightMovie } from '~/types'
 
 interface Breadcrumbs {
   parentPath: string
@@ -119,7 +120,7 @@ interface Props {
   breadcrumbs?: Breadcrumbs
 
   // Movies data
-  movies: MovieEntry[]
+  movies: LightweightMovie[]
   movieCount: number
   isLoading: boolean
 
@@ -152,10 +153,8 @@ const filteredMovies = computed(() => {
     const fuse = new Fuse(filtered, {
       keys: [
         { name: 'title', weight: 2 },
-        { name: 'metadata.Genre', weight: 1 },
-        { name: 'metadata.Director', weight: 1.5 },
-        { name: 'metadata.Actors', weight: 1 },
-        { name: 'metadata.Plot', weight: 0.5 },
+        { name: 'genre', weight: 1 },
+        { name: 'country', weight: 1 },
       ],
       threshold: 0.3,
       ignoreLocation: true,

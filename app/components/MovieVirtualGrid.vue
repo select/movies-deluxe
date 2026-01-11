@@ -37,25 +37,28 @@ import {
   breakpointsTailwind,
   useWindowScroll,
   useWindowSize,
-  useElementSize,
   useDebounceFn,
 } from '@vueuse/core'
-import type { LightweightMovieEntry } from '~/types'
+import type { LightweightMovie } from '~/types'
 
-const props = defineProps<{
-  movies: LightweightMovieEntry[]
-  totalMovies: number
-}>()
+interface Props {
+  movies: LightweightMovie[]
+  columnCount?: number
+}
 
-const emit = defineEmits<{
-  (e: 'load-more'): void
-}>()
+const props = defineProps<Props>()
+const emit = defineEmits(['load-more'])
 
+const gridRef = ref<HTMLElement | null>(null)
+const firstRowRef = ref<HTMLElement | null>(null)
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
 const { y: windowScrollY } = useWindowScroll()
 const { height: windowHeight, width: windowWidth } = useWindowSize()
-const breakpoints = useBreakpoints(breakpointsTailwind)
 
+// Grid configuration
 const cols = computed(() => {
+  if (props.columnCount) return props.columnCount
   if (breakpoints.xl.value) return 6
   if (breakpoints.lg.value) return 5
   if (breakpoints.md.value) return 4
@@ -64,22 +67,16 @@ const cols = computed(() => {
 })
 
 const gridClass = computed(() => {
-  if (breakpoints.xl.value) return 'grid-cols-6'
-  if (breakpoints.lg.value) return 'grid-cols-5'
-  if (breakpoints.md.value) return 'grid-cols-4'
-  if (breakpoints.sm.value) return 'grid-cols-3'
-  return 'grid-cols-2'
+  if (props.columnCount) return `grid-cols-${props.columnCount}`
+  return 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
 })
 
-// Reference to first rendered row for measurement
-const firstRowRef = ref<HTMLElement | null>(null)
-const { height: firstRowHeight } = useElementSize(firstRowRef)
-
-// Calculate row height dynamically - use measured height if available, otherwise estimate
+// Dynamic row height calculation
 const rowHeight = computed(() => {
-  // Use measured height from first row if available (includes mb-4)
-  if (firstRowHeight.value > 0) {
-    return firstRowHeight.value + 16 // Add mb-4 (16px) margin
+  // If we have a rendered row, use its height
+  if (firstRowRef.value) {
+    const rect = firstRowRef.value.getBoundingClientRect()
+    return rect.height + 16 // height + mb-4
   }
 
   // Fallback estimation based on screen width
@@ -110,7 +107,6 @@ const totalHeight = computed(() => totalRows.value * rowHeight.value)
 
 // We need to account for the offset of the grid from the top of the page
 const gridOffsetTop = ref(0)
-const gridRef = ref<HTMLElement | null>(null)
 
 const updateOffset = () => {
   if (gridRef.value) {
@@ -162,7 +158,7 @@ const calculateVisibleRows = () => {
 const visibleRows = ref(calculateVisibleRows())
 
 const movieStore = useMovieStore()
-const { fetchMoviesByIds } = movieStore
+const { fetchMoviesByIds, mapMovieToLightweight } = movieStore
 const { movieDetailsCache } = storeToRefs(movieStore)
 
 // Track last fetched IDs to avoid redundant fetches
@@ -172,22 +168,10 @@ const lastFetchedIds = ref<Set<string>>(new Set())
  * Get movie with full details from cache, or return lightweight entry
  * This ensures MovieCard receives the full movie data once it's fetched
  */
-const getMovieWithDetails = (lightweightMovie: LightweightMovieEntry): LightweightMovieEntry => {
+const getMovieWithDetails = (lightweightMovie: LightweightMovie): LightweightMovie => {
   const cached = movieDetailsCache.value.get(lightweightMovie.imdbId)
   if (cached && cached.title) {
-    // Return a merged object with all fields from cached movie
-    return {
-      imdbId: cached.imdbId,
-      title: cached.title,
-      year: cached.year,
-      imdbRating: cached.metadata?.imdbRating,
-      imdbVotes: cached.metadata?.imdbVotes,
-      language: cached.metadata?.Language,
-      sourceType: cached.sources?.[0]?.type,
-      channelName:
-        cached.sources?.[0]?.type === 'youtube' ? cached.sources[0].channelName : undefined,
-      verified: cached.verified,
-    }
+    return mapMovieToLightweight(cached)
   }
   // Return the lightweight entry as-is if not cached yet
   return lightweightMovie

@@ -112,19 +112,7 @@ export async function generateMovieJSON() {
   }
 
   const movieMap = new Map(processedMovies.map(m => [m.imdbId, m]))
-  const relatedMap = new Map<
-    string,
-    Array<{
-      imdbId: string
-      title: string
-      year?: number
-      imdbRating?: string | number
-      imdbVotes?: string | number
-      language?: string
-      sourceType?: 'archive.org' | 'youtube'
-      channelName?: string
-    }>
-  >()
+  const relatedMap = new Map<string, string[]>()
 
   for (let i = 0; i < processedMovies.length; i++) {
     const m1 = processedMovies[i]!
@@ -164,19 +152,7 @@ export async function generateMovieJSON() {
     }
 
     finalScores.sort((a, b) => b.score - a.score)
-    const topRelated = finalScores.slice(0, 12).map(r => {
-      const rm = movieMap.get(r.id)!
-      return {
-        imdbId: rm.imdbId,
-        title: rm.title,
-        year: rm.year,
-        imdbRating: rm.imdbRating,
-        imdbVotes: rm.imdbVotes,
-        language: rm.language,
-        sourceType: rm.sourceType,
-        channelName: rm.channelName,
-      }
-    })
+    const topRelated = finalScores.slice(0, 12).map(r => r.id)
     relatedMap.set(m1.imdbId, topRelated)
 
     if ((i + 1) % 5000 === 0) {

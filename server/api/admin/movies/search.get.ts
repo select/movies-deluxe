@@ -110,7 +110,7 @@ export default defineEventHandler(async event => {
           return sources.includes('archive.org')
         }
         if (source.type === 'youtube') {
-          return sources.includes(source.channelName)
+          return source.channelName ? sources.includes(source.channelName) : false
         }
         return false
       })

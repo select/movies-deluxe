@@ -39,7 +39,7 @@ const movieStore = useMovieStore()
 const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 
 // Local state for liked movies (since store uses lazy loading)
-const likedMoviesData = ref<MovieEntry[]>([])
+const likedMoviesData = ref<LightweightMovie[]>([])
 const isLoadingLiked = ref(true)
 
 // Initialize database and load liked movies
@@ -47,7 +47,9 @@ onMounted(async () => {
   try {
     // Set lightweight movies with just IDs to allow virtual grid to fetch visible ones
     if (likedMovieIds.value.length > 0) {
-      likedMoviesData.value = likedMovieIds.value.map(id => ({ imdbId: id }) as MovieEntry)
+      likedMoviesData.value = likedMovieIds.value.map(
+        id => ({ imdbId: id, title: '' }) as LightweightMovie
+      )
 
       // Pre-fetch first batch for instant display
       const firstBatch = likedMovieIds.value.slice(0, 30)
