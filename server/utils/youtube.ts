@@ -276,7 +276,8 @@ export async function processYouTubeVideo(
     channelName: video.channelName,
     channelId: video.channelId,
     description: video.description,
-    releaseYear: parsedYear,
+    year: parsedYear,
+    releaseYear: parsedYear, // Legacy field
     language: channelConfig?.language,
     publishedAt: video.publishedAt,
     duration: video.duration,

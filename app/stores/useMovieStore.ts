@@ -1,11 +1,4 @@
-import type {
-  MovieEntry,
-  MovieSource,
-  MovieSourceType,
-  YouTubeSource,
-  ArchiveOrgSource,
-  LightweightMovieEntry,
-} from '~/types'
+import type { MovieEntry, MovieSource, MovieSourceType, LightweightMovieEntry } from '~/types'
 import type { LightweightMovie } from '~/types/database'
 import { useStorage } from '@vueuse/core'
 
@@ -247,25 +240,15 @@ export const useMovieStore = defineStore('movie', () => {
     // Create a minimal source object from database fields for UI display
     const sources: MovieSource[] = []
     if (row.primarySourceType) {
-      const sourceType = row.primarySourceType
-      if (sourceType === 'youtube' && row.primaryChannelName) {
-        sources.push({
-          type: 'youtube',
-          id: '', // Not available in database, but not needed for icon display
-          url: '', // Not available in database, but not needed for icon display
-          title: row.title,
-          channelName: row.primaryChannelName,
-          addedAt: row.lastUpdated,
-        } as YouTubeSource)
-      } else if (sourceType === 'archive.org') {
-        sources.push({
-          type: 'archive.org',
-          id: '', // Not available in database, but not needed for icon display
-          url: '', // Not available in database, but not needed for icon display
-          title: row.title,
-          addedAt: row.lastUpdated,
-        } as ArchiveOrgSource)
-      }
+      sources.push({
+        type: row.primarySourceType,
+        id: '', // Not available in database, but not needed for icon display
+        url: '', // Not available in database, but not needed for icon display
+        title: row.title,
+        channelName:
+          row.primarySourceType === 'youtube' ? row.primaryChannelName || undefined : undefined,
+        addedAt: row.lastUpdated,
+      })
     }
 
     return {
@@ -1274,11 +1257,11 @@ export const useMovieStore = defineStore('movie', () => {
     console.log('[getPrimarySource] Getting primary source for:', movie.imdbId)
     if (movie.sources.length === 0) return undefined
 
-    const archiveSources = movie.sources.filter((s: MovieSource) => s.type === 'archive.org')
+    const archiveSources = movie.sources.filter(s => s.type === 'archive.org')
     if (archiveSources.length > 0) {
-      const sorted = [...archiveSources].sort((a: MovieSource, b: MovieSource) => {
-        const aDownloads = 'downloads' in a ? a.downloads || 0 : 0
-        const bDownloads = 'downloads' in b ? b.downloads || 0 : 0
+      const sorted = [...archiveSources].sort((a, b) => {
+        const aDownloads = a.downloads || 0
+        const bDownloads = b.downloads || 0
         return bDownloads - aDownloads
       })
       return sorted[0]

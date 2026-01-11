@@ -13,7 +13,7 @@ import { loadCollectionsDatabase } from './collections'
 import { createLogger } from './logger'
 import { normalizeLanguageCode } from '../../shared/utils/languageNormalizer'
 import { generateMovieJSON } from './generateMovieJSON'
-import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../../shared/types/movie'
+import type { MovieEntry } from '../../shared/types/movie'
 import type { Collection } from '../../shared/types/collections'
 
 const logger = createLogger('SQLiteGen')
@@ -183,12 +183,9 @@ export async function generateSQLite(
         // Determine language priority: Archive.org language > YouTube language > OMDB language
         let language: string | null = null
         for (const source of movie.sources) {
-          if (source.type === 'archive.org' && (source as ArchiveOrgSource).language) {
-            language = normalizeLanguageCode((source as ArchiveOrgSource).language!)
-            break // Archive.org language has highest priority
-          } else if (source.type === 'youtube' && (source as YouTubeSource).language) {
-            language = normalizeLanguageCode((source as YouTubeSource).language!)
-            // Don't break - keep looking for Archive.org language
+          if (source.language) {
+            language = normalizeLanguageCode(source.language)
+            if (source.type === 'archive.org') break // Archive.org language has highest priority
           }
         }
         // Fallback to OMDB metadata language if no source language found
@@ -201,7 +198,7 @@ export async function generateSQLite(
         const primarySourceType = primarySource?.type || null
         let primaryChannelName = null
         if (primarySource?.type === 'youtube') {
-          primaryChannelName = (primarySource as YouTubeSource).channelName || null
+          primaryChannelName = primarySource.channelName || null
         }
 
         insertMovie.run(

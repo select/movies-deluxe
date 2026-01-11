@@ -162,16 +162,8 @@ export default defineEventHandler(async event => {
       }
 
       // Extract year from sources
-      const archiveSource = movie.sources.find(
-        (s): s is ArchiveOrgSource => s.type === 'archive.org'
-      )
-      const youtubeSource = movie.sources.find((s): s is YouTubeSource => s.type === 'youtube')
-
-      const archiveYear = archiveSource?.year
-
-      const youtubeYear = youtubeSource?.releaseYear
-
-      const sourceYear = archiveYear || youtubeYear
+      const sourceWithYear = movie.sources.find(s => s.year || s.releaseYear)
+      const sourceYear = sourceWithYear?.year || sourceWithYear?.releaseYear
 
       // Parse title and extract year
       const { title: name, year: titleYear } = extractYearAndCleanTitle(primaryTitle)
