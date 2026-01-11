@@ -1,5 +1,57 @@
 # Changelog
 
+# [0.5.0](https://github.com/select/movies-deluxe/compare/v0.4.0...v0.5.0) (2026-01-11)
+
+
+### Bug Fixes
+
+* **components:** resolve movie card skeleton loading issue ([d3b6889](https://github.com/select/movies-deluxe/commit/d3b6889238a1f5b105272abf5656bcb998e3cdb9))
+* **deps:** add pnpm override to force prettier 3.3.3 ([f38bdbe](https://github.com/select/movies-deluxe/commit/f38bdbece598a100f9f3d4a4925e27396a04c196))
+* duplicate votes text and improve imdbVotes data handling ([f896c3e](https://github.com/select/movies-deluxe/commit/f896c3e628ce6b6a464a19385abb1e5927aef38b))
+* **lint:** configure eslint and prettier for consistent self-closing tags ([38f1eb1](https://github.com/select/movies-deluxe/commit/38f1eb1ef2ed78e9c8aa3339a2ef97f03da9908f))
+* resolve typescript errors in FilterSortControl and SearchHeader ([b6e655a](https://github.com/select/movies-deluxe/commit/b6e655a5488176c3d59197da25a0dec1d486c97d))
+* search clear not resetting movie list ([e75e578](https://github.com/select/movies-deluxe/commit/e75e5785b1e4934828d62206caba23b913253130))
+* **search:** fix ReferenceError for lightweightMovies in search.vue ([8f48229](https://github.com/select/movies-deluxe/commit/8f48229b2908f16aa095929c3b2f389a169357aa))
+* **search:** fix SQL error when filtering by source ([a7fd178](https://github.com/select/movies-deluxe/commit/a7fd1789360de49803ee228648503b2a15e094d9))
+* **store:** remove json fallback from fetchMoviesByIds ([25cb565](https://github.com/select/movies-deluxe/commit/25cb5657ea1a4e9d9583f2ff12318b95050045b0))
+* **types:** resolve imdbRating and imdbVotes type mismatches ([ccc4756](https://github.com/select/movies-deluxe/commit/ccc4756f18da485dd2808de8238665cdc9647022))
+* **types:** resolve typescript errors across codebase ([3f0dac3](https://github.com/select/movies-deluxe/commit/3f0dac3a8d1e4a02acc56d571b218e8a33a4e592))
+
+
+### Features
+
+* add Criterion Collection scraper and fix movie detail votes display ([d026ea4](https://github.com/select/movies-deluxe/commit/d026ea4a6c02c72d86786b06745b400cdd6a7574))
+* **admin:** add source quality dialog component ([2fd3202](https://github.com/select/movies-deluxe/commit/2fd32021bbdfe90db859f178134e945705ac53c6))
+* **admin:** add source-level quality marking system ([43293e8](https://github.com/select/movies-deluxe/commit/43293e82b9ea8e31fb2aadf6454b5340d909716f))
+* **admin:** display source file size in curation panel ([2d5df32](https://github.com/select/movies-deluxe/commit/2d5df32ae8a237b94570259444aab7fa3e2a0b08))
+* **admin:** remove refresh collection from queries feature ([1152d66](https://github.com/select/movies-deluxe/commit/1152d6619525dfe07e8d968feaa74aabf4a79937))
+* **collections:** add billy wilder collection ([dd9effd](https://github.com/select/movies-deluxe/commit/dd9effd452ef647ec02156788cac1d7687ce94ae))
+* **collections:** add script to update criterion collection from data file ([8b35fe3](https://github.com/select/movies-deluxe/commit/8b35fe304008148be9720bb76600aaa6309585a7))
+* **collections:** populate billy wilder collection with 11 films ([d39b8fb](https://github.com/select/movies-deluxe/commit/d39b8fb04cd66461994558323d676aacf4ec85d0))
+* complete Phase 6 of Lazy Loading Optimization and close Epic ([e410c09](https://github.com/select/movies-deluxe/commit/e410c095ac002f40076b4c0ff35d0509dc52f0b6))
+* **components:** extract theme selector into standalone ThemeMenu component ([3fc1a68](https://github.com/select/movies-deluxe/commit/3fc1a68ca7a3dd8f9d55cd69560ecc8267e63509))
+* **components:** implement per-movie debounced rendering in virtual grid ([7221d89](https://github.com/select/movies-deluxe/commit/7221d89e5452baeb0057065ca274e869280f6d4d))
+* **filters:** refactor filter menu into integrated search header ([952d9ff](https://github.com/select/movies-deluxe/commit/952d9ffd9cc148c863236b434264a2c2dace32de))
+* **plugin:** add git hook protection plugin ([52a4fdf](https://github.com/select/movies-deluxe/commit/52a4fdf99eece9284583826b2298e3440f501f3c))
+* **plugin:** enhance idle notifications with message summaries ([d777550](https://github.com/select/movies-deluxe/commit/d777550f49a6d026c1931665a6af91cd10617014))
+* **quality:** add script to mark small movies as clips ([d8e35aa](https://github.com/select/movies-deluxe/commit/d8e35aacf9111bbbc798fb85dca62741b9ce119f))
+* **search:** keep search header open on search page and show all results by default ([1c9e27f](https://github.com/select/movies-deluxe/commit/1c9e27fb7fe32b2b0b787abe00cf1e3893f9ab6b))
+* **search:** move search header to search page and make it sticky ([050136f](https://github.com/select/movies-deluxe/commit/050136fe34de3928109bb3e6ff1f56258e054c9d))
+* **skills:** add skill-creator skill for creating new skills ([5f8b68c](https://github.com/select/movies-deluxe/commit/5f8b68cab2d0a7dfa4ea02e678eba9f54d2f160b))
+* **types:** harmonize imdbRating and imdbVotes as numbers ([95aba90](https://github.com/select/movies-deluxe/commit/95aba90dde91b2b8e9d4139b5cd8196145d38a21))
+* **ui:** display source quality marks in movie detail page ([69b4a44](https://github.com/select/movies-deluxe/commit/69b4a44c16d8f4316964a03baa864be172b628c8))
+
+
+### Performance Improvements
+
+* **components:** avoid unnecessary MovieCard re-renders ([5851a97](https://github.com/select/movies-deluxe/commit/5851a9715eee5c27e870746b54ac67455143cf77))
+* **components:** preload MovieCard details offscreen ([6be87b6](https://github.com/select/movies-deluxe/commit/6be87b6962bc09f4589c850d84193fbd24ca6f28))
+* inline liked check in useMovieStore ([88d8a23](https://github.com/select/movies-deluxe/commit/88d8a23f026d2febef8fb178b4037b4cba8d81f5))
+* optimize index page with lazy loading and background db init ([558e981](https://github.com/select/movies-deluxe/commit/558e98186094f47322bbb6c378ef4ef3049c53a3))
+* **search:** optimize search performance by reducing redundant database calls ([1c7f737](https://github.com/select/movies-deluxe/commit/1c7f73747436418734db0f077b527a0766a41bf4))
+* **ui:** debounce virtual grid rendering for smooth scrolling ([c8f5fd6](https://github.com/select/movies-deluxe/commit/c8f5fd63ee37f5cb9dceb80a51bc7f435b3e9c1c))
+* **ui:** reduce pre-fetch batch size from 40 to 30 movies ([97116c3](https://github.com/select/movies-deluxe/commit/97116c32500680c5f716717cfcbcdbbe1d44fd68))
+
 # [0.4.0](https://github.com/select/movies-deluxe/compare/v0.3.0...v0.4.0) (2026-01-09)
 
 ### Bug Fixes
