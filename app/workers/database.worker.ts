@@ -348,9 +348,6 @@ async function handleMessage(e: QueuedMessage) {
         .filter(Boolean)
 
       self.postMessage({ id, result: sortedResults })
-    } else if (type === 'query-related') {
-      // Related movies are now stored in individual JSON files
-      self.postMessage({ id, result: [] })
     } else if (type === 'query-collections-for-movie') {
       // Query collections for a specific movie
       const { movieId } = e

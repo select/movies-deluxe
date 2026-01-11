@@ -480,7 +480,7 @@ import type { MovieEntry, LightweightMovie } from '~/types'
 // Stores - get reactive state and methods once
 const movieStore = useMovieStore()
 const { currentMovieList, likedMovieIds } = storeToRefs(movieStore)
-const { getMovieById, getRelatedMovies, loadFromFile, toggleLike } = movieStore
+const { getMovieById, fetchMoviesByIds, loadFromFile, toggleLike } = movieStore
 const { showToast } = useUiStore()
 const route = useRoute()
 
@@ -503,7 +503,7 @@ const hasLoadedRelated = ref(false)
 useIntersectionObserver(relatedMoviesContainer, entries => {
   const entry = entries[0]
   if (entry?.isIntersecting && !hasLoadedRelated.value && movie.value) {
-    loadRelatedMovies(movie.value.imdbId)
+    loadRelatedMovies()
   }
 })
 
@@ -532,11 +532,11 @@ const isLiked = computed(() => {
 })
 
 // Load related movies
-const loadRelatedMovies = async (movieId: string) => {
-  if (hasLoadedRelated.value) return
+const loadRelatedMovies = async () => {
+  if (hasLoadedRelated.value || !movie.value?.relatedMovies?.length) return
   isRelatedLoading.value = true
   try {
-    relatedMovies.value = await getRelatedMovies(movieId, 8)
+    relatedMovies.value = await fetchMoviesByIds(movie.value.relatedMovies)
     hasLoadedRelated.value = true
   } catch {
     // Failed to load related movies, silently continue
