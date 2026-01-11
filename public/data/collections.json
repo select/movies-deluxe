@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-11T01:09:26.024Z"
+    "lastUpdated": "2026-01-11T02:45:09.402Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -2080,9 +2080,22 @@
     "id": "billy-wilder",
     "name": "Billy Wilder",
     "description": "Brilliant films from Billy Wilder, master filmmaker known for his sharp wit, cynical humor, and genre-defying classics that blend drama, comedy, and film noir.",
-    "movieIds": [],
+    "movieIds": [
+      "archive-1945-the-lost-week-end-dias-sin-huella-billy-wilder-vose",
+      "tt0043338",
+      "tt0023740",
+      "tt0029929",
+      "tt0036775",
+      "tt0055256",
+      "tt0047437",
+      "tt0053291",
+      "tt0046359",
+      "tt0043014",
+      "tt0037884",
+      "tt0051201"
+    ],
     "createdAt": "2026-01-10T18:30:00.000Z",
-    "updatedAt": "2026-01-10T18:30:00.000Z",
+    "updatedAt": "2026-01-11T02:45:09.399Z",
     "savedQueries": [
       {
         "searchQuery": "Billy Wilder",
