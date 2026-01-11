@@ -164,22 +164,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
-  const cleanupCollection = async (collectionId?: string) => {
-    try {
-      const response = await $fetch<{ success: boolean }>('/api/admin/collections/cleanup', {
-        method: 'POST',
-        body: { collectionId },
-      })
-      if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
-      }
-      return response.success
-    } catch {
-      return false
-    }
-  }
-
   const removeMoviesFromCollection = async (collectionId: string, movieIds: string[]) => {
     try {
       const response = await $fetch<{ success: boolean }>(
@@ -245,7 +229,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     addQueryToCollection,
     removeQueryFromCollection,
     updateCollectionTags,
-    cleanupCollection,
     removeMoviesFromCollection,
   }
 })
