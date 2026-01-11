@@ -4,13 +4,7 @@
     <MovieHeader />
 
     <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
-    <Sidebar
-      @open-filters="isFilterMenuOpen = true"
-      @open-theme-selection="isThemeMenuOpen = true"
-    />
-
-    <!-- Filter Menu -->
-    <FilterMenu :is-open="isFilterMenuOpen" @close="isFilterMenuOpen = false" />
+    <Sidebar @open-theme-selection="isThemeMenuOpen = true" />
 
     <!-- Theme Menu -->
     <ThemeMenu :is-open="isThemeMenuOpen" @close="isThemeMenuOpen = false" />
@@ -26,8 +20,7 @@
 <script setup lang="ts">
 import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
 
-// Menu state (shared across all pages)
-const isFilterMenuOpen = ref(false)
+// Menu state
 const isThemeMenuOpen = ref(false)
 
 // Keyboard shortcuts
@@ -37,15 +30,13 @@ const { Escape } = keys
 // Escape key closes menus
 if (Escape) {
   whenever(Escape, () => {
-    if (isFilterMenuOpen.value) {
-      isFilterMenuOpen.value = false
-    } else if (isThemeMenuOpen.value) {
+    if (isThemeMenuOpen.value) {
       isThemeMenuOpen.value = false
     }
   })
 }
 
-// 'K' key toggles filter menu (with Ctrl/Cmd modifier)
+// 'K' key navigates to search page (with Ctrl/Cmd modifier)
 onKeyStroke('k', e => {
   if (e.ctrlKey || e.metaKey) {
     const activeElement = window.document.activeElement
@@ -53,7 +44,7 @@ onKeyStroke('k', e => {
 
     if (!isTyping) {
       e.preventDefault()
-      isFilterMenuOpen.value = !isFilterMenuOpen.value
+      navigateTo('/search')
     }
   }
 })

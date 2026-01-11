@@ -2,40 +2,191 @@
   <div
     v-show="shouldShowSearch"
     ref="searchContainer"
-    class="fixed top-0 left-0 right-0 z-50 bg-theme-surface border-b border-theme-border shadow-xl px-4 py-4 md:py-6 transition-transform duration-300"
+    class="fixed top-0 left-0 right-0 z-50 bg-theme-surface border-b border-theme-border shadow-xl transition-all duration-300"
     :class="shouldShowSearch ? 'translate-y-0' : '-translate-y-full'"
   >
-    <div class="max-w-4xl mx-auto flex items-center gap-4">
-      <div class="relative flex-1">
-        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <div class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
+    <div class="max-w-4xl mx-auto px-4 py-4 space-y-4">
+      <!-- Search Input Row -->
+      <div class="flex items-center gap-4">
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <div class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
+          </div>
+          <input
+            ref="searchInput"
+            v-model="localQuery"
+            type="text"
+            class="block w-full pl-12 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
+            placeholder="Search movies, actors, directors..."
+            @keydown.esc="handleEscape"
+            @keydown.enter="handleEnter"
+          />
+          <button
+            v-if="localQuery"
+            class="absolute inset-y-0 right-0 pr-4 flex items-center"
+            @click="clearSearch"
+          >
+            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
+          </button>
         </div>
-        <input
-          ref="searchInput"
-          v-model="localQuery"
-          type="text"
-          class="block w-full pl-12 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
-          placeholder="Search movies, actors, directors..."
-          @keydown.esc="handleEscape"
-          @keydown.enter="handleEnter"
-        />
         <button
-          v-if="localQuery"
-          class="absolute inset-y-0 right-0 pr-4 flex items-center"
-          @click="clearSearch"
+          v-if="!localQuery"
+          class="p-2 md:p-3 rounded-xl hover:bg-theme-background text-theme-textmuted hover:text-theme-text transition-colors"
+          title="Close search"
+          @click="closeSearch"
         >
-          <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
+          <div class="i-mdi-close text-2xl md:text-3xl"></div>
         </button>
       </div>
-      <button
-        v-if="!localQuery"
-        class="p-2 md:p-3 rounded-xl hover:bg-theme-background text-theme-textmuted hover:text-theme-text transition-colors"
-        title="Close search"
-        @click="closeSearch"
+
+      <!-- Filter Buttons Row -->
+      <div
+        class="flex items-center gap-2 overflow-x-auto scrollbar-hidden pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap"
       >
-        <div class="i-mdi-close text-2xl md:text-3xl"></div>
-      </button>
+        <!-- Sort -->
+        <FilterButton
+          category="Sort"
+          icon="i-mdi-sort"
+          :active-value="currentSortLabel"
+          :is-active="!isDefaultSort"
+          @click="openPopup('sort', $event)"
+          @clear="resetSort"
+        />
+
+        <!-- Rating -->
+        <FilterButton
+          category="Rating"
+          icon="i-mdi-star"
+          :active-value="filters.minRating > 0 ? `${filters.minRating.toFixed(1)}+` : ''"
+          :is-active="filters.minRating > 0"
+          @click="openPopup('rating', $event)"
+          @clear="setMinRating(0)"
+        />
+
+        <!-- Year -->
+        <FilterButton
+          category="Year"
+          icon="i-mdi-calendar"
+          :active-value="yearLabel"
+          :is-active="filters.minYear > 0 || filters.maxYear > 0"
+          @click="openPopup('year', $event)"
+          @clear="clearYears"
+        />
+
+        <!-- Votes -->
+        <FilterButton
+          category="Votes"
+          icon="i-mdi-account-group"
+          :active-value="votesLabel"
+          :is-active="filters.minVotes > 0 || (filters.maxVotes > 0 && filters.maxVotes < 1000000)"
+          @click="openPopup('votes', $event)"
+          @clear="clearVotes"
+        />
+
+        <!-- Genres -->
+        <FilterButton
+          category="Genres"
+          icon="i-mdi-movie-filter"
+          :active-value="filters.genres.length > 0 ? filters.genres.length : ''"
+          :is-active="filters.genres.length > 0"
+          @click="openPopup('genres', $event)"
+          @clear="setGenres([])"
+        />
+
+        <!-- Countries -->
+        <FilterButton
+          category="Countries"
+          icon="i-mdi-earth"
+          :active-value="filters.countries.length > 0 ? filters.countries.length : ''"
+          :is-active="filters.countries.length > 0"
+          @click="openPopup('countries', $event)"
+          @clear="setCountries([])"
+        />
+
+        <!-- Source -->
+        <FilterButton
+          category="Source"
+          icon="i-mdi-source-branch"
+          :active-value="filters.sources.length > 0 ? filters.sources.length : ''"
+          :is-active="filters.sources.length > 0"
+          @click="openPopup('source', $event)"
+          @clear="setSources([])"
+        />
+
+        <!-- Clear All -->
+        <button
+          v-if="hasActiveFilters"
+          class="text-xs font-bold text-theme-primary hover:bg-theme-primary/10 px-3 py-1.5 rounded-full transition-colors whitespace-nowrap md:ml-auto"
+          @click="resetFilters"
+        >
+          Clear All
+        </button>
+      </div>
     </div>
+
+    <!-- Popups -->
+    <FilterPopup
+      :is-open="activePopup === 'sort'"
+      title="Sort By"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterSortControl />
+    </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'rating'"
+      title="Minimum Rating"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterRatingControl />
+    </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'year'"
+      title="Year Range"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterYearControl />
+    </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'votes'"
+      title="Votes Range"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterVotesControl />
+    </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'genres'"
+      title="Genres"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterGenresControl />
+    </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'countries'"
+      title="Countries"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterCountriesControl />
+    </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'source'"
+      title="Sources"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterSourceControl />
+    </FilterPopup>
   </div>
 </template>
 
@@ -43,8 +194,20 @@
 import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
-const { setSearchQuery, setSort } = movieStore
+const { filters, hasActiveFilters } = storeToRefs(movieStore)
+const {
+  setSearchQuery,
+  setSort,
+  setMinRating,
+  setMinYear,
+  setMaxYear,
+  setMinVotes,
+  setMaxVotes,
+  setGenres,
+  setCountries,
+  setSources,
+  resetFilters,
+} = movieStore
 
 const uiStore = useUiStore()
 const { isSearchOpen } = storeToRefs(uiStore)
@@ -56,6 +219,71 @@ const route = useRoute()
 
 // Local query for immediate UI updates
 const localQuery = ref(filters.value.searchQuery)
+
+// Popup state
+const activePopup = ref<string | null>(null)
+const anchorEl = ref<HTMLElement | null>(null)
+
+const openPopup = (type: string, event: MouseEvent) => {
+  if (activePopup.value === type) {
+    activePopup.value = null
+    anchorEl.value = null
+  } else {
+    activePopup.value = type
+    anchorEl.value = event.currentTarget as HTMLElement
+  }
+}
+
+const closePopup = () => {
+  activePopup.value = null
+  anchorEl.value = null
+}
+
+// Labels and computed state
+const isDefaultSort = computed(() => {
+  return filters.value.sort.field === 'year' && filters.value.sort.direction === 'desc'
+})
+
+const currentSortLabel = computed(() => {
+  if (isDefaultSort.value) return ''
+  const field = filters.value.sort.field
+  const dir = filters.value.sort.direction
+
+  if (field === 'relevance') return 'Relevance'
+  if (field === 'year') return dir === 'desc' ? 'Newest' : 'Oldest'
+  if (field === 'rating') return dir === 'desc' ? 'High' : 'Low'
+  if (field === 'title') return dir === 'asc' ? 'A-Z' : 'Z-A'
+  if (field === 'votes') return 'Popular'
+  return ''
+})
+
+const yearLabel = computed(() => {
+  const min = filters.value.minYear
+  const max = filters.value.maxYear
+  if (min && max && min !== 1910 && max !== 2025) return `${min}-${max}`
+  if (min && min !== 1910) return `${min}+`
+  if (max && max !== 2025) return `Up to ${max}`
+  return ''
+})
+
+const votesLabel = computed(() => {
+  const min = filters.value.minVotes
+  const max = filters.value.maxVotes
+  if (min && max && max < 1000000) return `${formatCount(min)}-${formatCount(max)}`
+  if (min) return `${formatCount(min)}+`
+  if (max && max < 1000000) return `< ${formatCount(max)}`
+  return ''
+})
+
+const resetSort = () => setSort({ field: 'year', direction: 'desc' })
+const clearYears = () => {
+  setMinYear(0)
+  setMaxYear(0)
+}
+const clearVotes = () => {
+  setMinVotes(0)
+  setMaxVotes(0)
+}
 
 // Initialize search from URL query parameter on mount
 onMounted(() => {
@@ -135,9 +363,9 @@ watch(
   }
 )
 
-// Click outside to close (only when query is empty)
+// Click outside to close (only when query is empty and no popup open)
 onClickOutside(searchContainer, () => {
-  if (!localQuery.value) {
+  if (!localQuery.value && !activePopup.value) {
     closeSearch()
   }
 })
@@ -152,9 +380,11 @@ const closeSearch = () => {
   setSearchOpen(false)
 }
 
-// Handle ESC key: first press clears query, second press closes
+// Handle ESC key: first press closes popup, second clears query, third closes
 const handleEscape = () => {
-  if (localQuery.value) {
+  if (activePopup.value) {
+    closePopup()
+  } else if (localQuery.value) {
     // First ESC: clear the query
     clearSearch()
   } else {
@@ -165,6 +395,8 @@ const handleEscape = () => {
 
 // Handle Enter key
 const handleEnter = () => {
-  closeSearch()
+  if (!activePopup.value) {
+    closeSearch()
+  }
 }
 </script>

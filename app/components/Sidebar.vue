@@ -84,37 +84,6 @@
         <div v-else class="i-material-symbols-light-dark-mode text-xl"></div>
       </button>
 
-      <!-- Filters -->
-      <div class="relative group">
-        <button
-          class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
-          title="Filters"
-          :class="{ 'bg-theme-primary/20': activeFiltersCount > 0 }"
-          @click="openFilters"
-        >
-          <div
-            class="i-mdi-filter-variant text-xl"
-            :class="{ 'text-theme-primary': activeFiltersCount > 0 }"
-          ></div>
-          <span
-            v-if="activeFiltersCount > 0"
-            class="absolute top-0 -right-1 bg-theme-primary text-white text-xs rounded-full size-4 flex items-center justify-center font-medium"
-          >
-            {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
-          </span>
-        </button>
-
-        <!-- Clear Filters Button (appears on hover when filters are active) -->
-        <button
-          v-if="activeFiltersCount > 0"
-          class="absolute -top-1 -right-1 size-5 rounded-full bg-theme-surface/90 backdrop-blur-sm border border-theme-border shadow-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-theme-accent/20 hover:border-theme-accent z-10"
-          title="Clear all filters"
-          @click.stop="clearFilters"
-        >
-          <div class="i-mdi-close text-xs text-theme-textmuted hover:text-theme-accent"></div>
-        </button>
-      </div>
-
       <!-- GitHub Link -->
       <a
         href="https://github.com/select/movies-deluxe"
@@ -228,37 +197,6 @@
         <div v-else class="i-material-symbols-light-dark-mode text-2xl"></div>
       </button>
 
-      <!-- Filters -->
-      <div class="relative group flex-shrink-0">
-        <button
-          class="p-2 hover:bg-theme-selection rounded-full transition-colors relative"
-          aria-label="Filters"
-          :class="{ 'bg-theme-primary/20': activeFiltersCount > 0 }"
-          @click="openFilters"
-        >
-          <div
-            class="i-mdi-filter-variant text-2xl"
-            :class="{ 'text-theme-primary': activeFiltersCount > 0 }"
-          ></div>
-          <span
-            v-if="activeFiltersCount > 0"
-            class="absolute -top-1 -right-1 bg-theme-primary text-white text-xs rounded-full size-5 flex items-center justify-center font-medium"
-          >
-            {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
-          </span>
-        </button>
-
-        <!-- Clear Filters Button (appears on hover when filters are active) -->
-        <button
-          v-if="activeFiltersCount > 0"
-          class="absolute -top-1 -right-1 size-6 rounded-full bg-theme-surface/90 backdrop-blur-sm border border-theme-border shadow-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-theme-accent/20 hover:border-theme-accent z-10"
-          aria-label="Clear all filters"
-          @click.stop="clearFilters"
-        >
-          <div class="i-mdi-close text-sm text-theme-textmuted hover:text-theme-accent"></div>
-        </button>
-      </div>
-
       <!-- GitHub Link -->
       <a
         href="https://github.com/select/movies-deluxe"
@@ -285,12 +223,11 @@
 
 <script setup lang="ts">
 const emit = defineEmits<{
-  openFilters: []
   openThemeSelection: []
 }>()
 
 const movieStore = useMovieStore()
-const { likedCount, activeFiltersCount } = storeToRefs(movieStore)
+const { likedCount } = storeToRefs(movieStore)
 
 const uiStore = useUiStore()
 const { setSearchOpen } = uiStore
@@ -321,24 +258,8 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateScrollState)
 })
 
-// Watch for changes in active filters count as it might change width
-watch(activeFiltersCount, () => {
-  nextTick(updateScrollState)
-})
-
-const openFilters = () => {
-  if (route.path !== '/search') {
-    navigateTo('/search')
-  }
-  emit('openFilters')
-}
-
 const openThemeSelection = () => {
   emit('openThemeSelection')
-}
-
-const clearFilters = () => {
-  movieStore.resetFilters()
 }
 
 const scroll = (direction: 'left' | 'right') => {

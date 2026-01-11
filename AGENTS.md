@@ -64,7 +64,7 @@ Use the commit-message skill to craft a good commit message
 ## Common Workflows
 
 **Working on an issue:**
-When working on a list of issues use a subagent.
+When working on a list of issues: **use a subagent for each issue**.
 Finish the sub issue and return to main threat to look for the next sub issue.
 
 **Starting work:**
