@@ -193,21 +193,4 @@ pnpm tsx scripts/<name>.ts            # Run scripts
 
 ## Frontend Verification
 
-**IMPORTANT**: Always verify frontend changes using the **chrome-devtools** MCP.
-
-- When using the MCP server nerver kill chorme before or after usage
-
-### Dev Server Management
-
-- **Check first**: Always check if dev server is already running
-  - Use `curl -s http://localhost:3003/api/readyz` to check server status
-  - If returns JSON with `"status": "ready"`, server is running
-- **Ask user to start Dev server**: if it's not already running
-- **NEVER stop at end**: Do NOT kill the server when you're done working
-  - Leave it running for continuous frontend verification
-
-### Verification Steps
-
-- Use `chrome-devtools_navigate_page` to `http://localhost:3003`
-- Use `chrome-devtools_take_screenshot` or `chrome-devtools_take_snapshot` to verify UI
-- Check console for errors with `chrome-devtools_list_console_messages`
+**IMPORTANT**: Always verify frontend changes using the **frontend-verification** skill.
