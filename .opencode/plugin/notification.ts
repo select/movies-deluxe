@@ -59,17 +59,14 @@ export const NotificationPlugin: Plugin = async ({ $ }) => {
 function getIdleSummary(text: string | null): string | undefined {
   if (!text) return
 
+  const cleanText = (str: string) =>
+    str
+      .replace(/(Perfect|Excellent|Great|Amazing|Wonderful|Fantastic)!?\s*/gi, '')
+      .replace(/^#+\s*/, '')
+      .replace(/^prefect\/\.\.\s*/i, '')
+
   const idleMatch = text.match(/[_*]Summary:[_*]? (.*)[_*]?$/m)
-  if (idleMatch && idleMatch[1]) {
-    let summary = idleMatch[1].trim()
-    // Filter out leading exclamations like "Perfect!", "Excellent!", etc.
-    summary = summary.replace(/^(Perfect|Excellent|Great|Amazing|Wonderful|Fantastic)!?\s*/i, '')
-    return summary
-  }
+  const summary = cleanText(idleMatch?.[1]?.trim() ?? text.trim())
 
-  if (text.length > 80) {
-    return text.slice(0, 80) + '...'
-  }
-
-  return text
+  return summary.length > 80 ? summary.slice(0, 80) + '...' : summary
 }
