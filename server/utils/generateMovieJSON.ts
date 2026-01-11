@@ -10,7 +10,7 @@ import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'f
 import { loadMoviesDatabase } from './movieData'
 import { loadCollectionsDatabase } from './collections'
 import { createLogger } from './logger'
-import type { MovieEntry, ArchiveOrgSource, YouTubeSource } from '../../shared/types/movie'
+import type { MovieEntry, MovieSource } from '../../shared/types/movie'
 import type { Collection } from '../../shared/types/collections'
 
 const logger = createLogger('MovieJSONGen')
@@ -78,8 +78,7 @@ export async function generateMovieJSON() {
     imdbVotes: m.metadata?.imdbVotes,
     language: m.metadata?.Language,
     sourceType: m.sources[0]?.type,
-    channelName:
-      m.sources[0]?.type === 'youtube' ? (m.sources[0] as YouTubeSource).channelName : undefined,
+    channelName: m.sources[0]?.channelName,
     genres: m.metadata?.Genre
       ? m.metadata.Genre.split(',')
           .map(g => g.trim().toLowerCase())
@@ -196,33 +195,38 @@ export async function generateMovieJSON() {
         title: movie.title,
         year: movie.year,
         sources: movie.sources.map(s => {
-          const base: Partial<YouTubeSource | ArchiveOrgSource> = {
+          const mapped: MovieSource = {
             type: s.type,
             url: s.url,
+            id: s.id,
             title: s.title,
             description: s.description,
             quality: s.quality,
             qualityMarks: s.qualityMarks,
             label: s.label,
-            fileSize:
-              s.fileSize || (s.type === 'archive.org' ? (s as ArchiveOrgSource).size : undefined),
+            fileSize: s.fileSize || s.size,
+            addedAt: s.addedAt,
+            thumbnail: s.thumbnail,
+            duration: s.duration,
+            language: s.language,
+            year: s.year || s.releaseYear,
           }
+
           if (s.type === 'youtube') {
-            const yt = s as YouTubeSource
-            return {
-              ...base,
-              id: yt.id,
-              channelName: yt.channelName,
-              channelId: yt.channelId,
-              regionRestriction: yt.regionRestriction,
-            }
-          } else {
-            const ao = s as ArchiveOrgSource
-            return {
-              ...base,
-              id: ao.id,
-            }
+            mapped.channelName = s.channelName
+            mapped.channelId = s.channelId
+            mapped.regionRestriction = s.regionRestriction
           }
+
+          if (s.type === 'archive.org') {
+            mapped.collection = s.collection
+            mapped.downloads = s.downloads
+          }
+
+          // Remove undefined fields to keep JSON clean
+          return Object.fromEntries(
+            Object.entries(mapped).filter(([_, v]) => v !== undefined)
+          ) as unknown as MovieSource
         }),
         // Only include metadata fields that are used in the UI
         metadata: movie.metadata

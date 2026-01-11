@@ -11,36 +11,6 @@
 export type MovieSourceType = 'archive.org' | 'youtube'
 
 /**
- * Base interface for all movie sources
- */
-export interface MovieSourceBase {
-  type: MovieSourceType
-  url: string
-  title: string // Original title from the source (before cleaning/processing)
-  description?: string // Original source description (e.g., YouTube description)
-  label?: string // Custom label for this source (e.g. "Director's Cut")
-  quality?: string // Quality info (e.g. "1080p", "SD")
-  qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")
-  fileSize?: number // File size in bytes
-  addedAt: string // ISO 8601 timestamp
-}
-
-/**
- * Archive.org specific source data
- */
-export interface ArchiveOrgSource extends MovieSourceBase {
-  type: 'archive.org'
-  id: string // Archive.org identifier (e.g., "HeartsOfHumanity")
-  collection?: string // e.g., 'feature_films'
-  downloads?: number
-  thumbnail?: string
-  duration?: number // Duration in seconds
-  year?: number // Extracted year from Archive.org metadata - REQUIRED for OMDB year validation
-  language?: string | string[] // Language code from Archive.org metadata (e.g., 'en', 'es', 'fr') - can be array
-  size?: number // File size in bytes
-}
-
-/**
  * YouTube region restriction data
  */
 export interface YouTubeRegionRestriction {
@@ -49,26 +19,52 @@ export interface YouTubeRegionRestriction {
 }
 
 /**
- * YouTube specific source data
+ * Base interface for all movie sources
  */
-export interface YouTubeSource extends MovieSourceBase {
-  type: 'youtube'
-  id: string // YouTube video ID (e.g., "dQw4w9WgXcQ")
-  channelName: string
-  channelId?: string
-  releaseYear?: number // Extracted from video title - REQUIRED for OMDB year validation
-  language?: string // Language code from channel config (e.g., 'en', 'es')
+export interface MovieSource {
+  type: MovieSourceType
+  url: string
+  id: string // Archive.org identifier or YouTube video ID
+  title: string // Original title from the source (before cleaning/processing)
+  description?: string // Original source description (e.g., YouTube description)
+  label?: string // Custom label for this source (e.g. "Director's Cut")
+  quality?: string // Quality info (e.g. "1080p", "SD")
+  qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")
+  fileSize?: number // File size in bytes
+  size?: number // Legacy Archive.org file size (alias for fileSize)
+  addedAt: string // ISO 8601 timestamp
+  thumbnail?: string
   duration?: number // Duration in seconds
+  language?: string | string[] // Language code(s) (e.g., 'en', 'es')
+  year?: number // Unified release year
+  releaseYear?: number // Legacy YouTube release year (alias for year)
+
+  // Archive.org specific
+  collection?: string // e.g., 'feature_films'
+  downloads?: number
+
+  // YouTube specific
+  channelName?: string
+  channelId?: string
   publishedAt?: string
   viewCount?: number
-  thumbnail?: string
   regionRestriction?: YouTubeRegionRestriction // Geographic restrictions
 }
 
 /**
- * Union type for all movie sources
+ * Archive.org specific source data (for type safety when needed)
  */
-export type MovieSource = ArchiveOrgSource | YouTubeSource
+export interface ArchiveOrgSource extends MovieSource {
+  type: 'archive.org'
+}
+
+/**
+ * YouTube specific source data (for type safety when needed)
+ */
+export interface YouTubeSource extends MovieSource {
+  type: 'youtube'
+  channelName: string // Required for YouTube
+}
 
 /**
  * OMDB metadata structure

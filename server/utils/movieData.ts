@@ -363,8 +363,7 @@ export async function getDatabaseStatsWithChannels(db: MoviesDatabase): Promise<
         stats.youtubeSources++
 
         // Count per channel (match by channel ID)
-        const youtubeSource = source as YouTubeSource
-        const channelStats = channelStatsMap.get(youtubeSource.channelId ?? '')
+        const channelStats = channelStatsMap.get(source.channelId ?? '')
         if (channelStats) {
           channelStats.scraped++
         }
