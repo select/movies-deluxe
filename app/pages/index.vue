@@ -61,6 +61,61 @@
           :key="collection.id"
           :collection="collection"
         />
+
+        <!-- Discover More Section -->
+        <section
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-12 border-t border-theme-border/30"
+        >
+          <!-- Collections Link -->
+          <NuxtLink
+            to="/collections"
+            class="group p-8 rounded-2xl bg-theme-surface border border-theme-border/50 hover:border-theme-accent transition-all duration-300 flex flex-col items-start space-y-4"
+          >
+            <div
+              class="p-3 rounded-xl bg-theme-accent/10 text-theme-accent group-hover:bg-theme-accent group-hover:text-black transition-colors duration-300"
+            >
+              <div class="i-mdi:movie-roll text-2xl"></div>
+            </div>
+            <div class="space-y-2 text-left">
+              <h3 class="text-xl font-bold">Browse Collections</h3>
+              <p class="text-theme-textmuted">
+                Explore our curated sets of movies, from silent film masterpieces to cult classics
+                and noir thrillers.
+              </p>
+            </div>
+            <div
+              class="flex items-center text-theme-accent font-medium pt-2 group-hover:translate-x-1 transition-transform"
+            >
+              View all collections
+              <div class="i-mdi-arrow-right ml-1"></div>
+            </div>
+          </NuxtLink>
+
+          <!-- Search Link -->
+          <NuxtLink
+            to="/search"
+            class="group p-8 rounded-2xl bg-theme-surface border border-theme-border/50 hover:border-theme-accent transition-all duration-300 flex flex-col items-start space-y-4"
+          >
+            <div
+              class="p-3 rounded-xl bg-theme-accent/10 text-theme-accent group-hover:bg-theme-accent group-hover:text-black transition-colors duration-300"
+            >
+              <div class="i-mdi-magnify text-2xl"></div>
+            </div>
+            <div class="space-y-2 text-left">
+              <h3 class="text-xl font-bold">Search Catalog</h3>
+              <p class="text-theme-textmuted">
+                Looking for something specific? Search our full library of
+                {{ totalMoviesCount.toLocaleString() }} movies by title, year, or genre.
+              </p>
+            </div>
+            <div
+              class="flex items-center text-theme-accent font-medium pt-2 group-hover:translate-x-1 transition-transform"
+            >
+              Start searching
+              <div class="i-mdi-arrow-right ml-1"></div>
+            </div>
+          </NuxtLink>
+        </section>
       </div>
     </div>
   </main>

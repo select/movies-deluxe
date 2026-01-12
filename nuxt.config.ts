@@ -25,6 +25,10 @@ export default defineNuxtConfig({
   // Apply font-sans class to body element globally
   app: {
     head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ],
       bodyAttrs: {
         class: 'font-sans',
       },
