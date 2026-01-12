@@ -1,5 +1,5 @@
 import type { MovieEntry, MovieSource, MovieSourceType, LightweightMovie } from '~/types'
-import { useStorage } from '@vueuse/core'
+import { useStorage, watchDebounced } from '@vueuse/core'
 
 /**
  * Movie Store
@@ -83,6 +83,10 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Track IDs currently being fetched to avoid duplicate requests
   const pendingIds = new Set<string>()
+
+  // Track the latest request ID for filter/search queries to discard stale results
+  const currentSearchSessionId = ref(0)
+  let lastRequestId = 0
 
   // ============================================
   // COMPUTED PROPERTIES - Data Views
@@ -328,7 +332,9 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch total count of movies matching filters
    */
   const fetchMovieCount = async (): Promise<number> => {
-    console.log('[fetchMovieCount] Starting movie count fetch')
+    const sessionId = currentSearchSessionId.value
+    const requestId = ++lastRequestId
+    console.log('[fetchMovieCount] Starting movie count fetch', sessionId, requestId)
     // Wait for database to be ready if it's still initializing
     if (!db.isReady.value) {
       if (isInitialLoading.value && !isLoading.value.movies) {
@@ -343,6 +349,11 @@ export const useMovieStore = defineStore('movie', () => {
 
       if (!db.isReady.value) {
         console.error('[fetchMovieCount] Database not ready for count')
+        return 0
+      }
+
+      if (sessionId !== currentSearchSessionId.value) {
+        console.log('[fetchMovieCount] Discarding stale count result after wait', sessionId)
         return 0
       }
     }
@@ -393,6 +404,11 @@ export const useMovieStore = defineStore('movie', () => {
         where: where.join(' AND '),
         params,
       })
+
+      if (sessionId !== currentSearchSessionId.value) {
+        console.log('[fetchMovieCount] Discarding stale count result', sessionId)
+        return 0
+      }
 
       console.log('[fetchMovieCount] Count result:', count)
       totalFiltered.value = count
@@ -676,7 +692,9 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch lightweight movie list (IDs and titles only) for virtual scrolling
    */
   const fetchLightweightMovies = async (options: { limit?: number; offset?: number } = {}) => {
-    console.log('[fetchLightweightMovies] Starting with options:', options)
+    const sessionId = currentSearchSessionId.value
+    const requestId = ++lastRequestId
+    console.log('[fetchLightweightMovies] Starting with options:', options, sessionId, requestId)
     if (!db.isReady.value) {
       console.log('[fetchLightweightMovies] DB not ready, cannot fetch lightweight movies')
       return
@@ -767,6 +785,16 @@ export const useMovieStore = defineStore('movie', () => {
         includeCount: isInitial,
       })
 
+      if (sessionId !== currentSearchSessionId.value) {
+        console.log('[fetchLightweightMovies] Discarding stale session result', sessionId)
+        return
+      }
+
+      if (isInitial && requestId !== lastRequestId) {
+        console.log('[fetchLightweightMovies] Discarding stale request result', requestId)
+        return
+      }
+
       if (isInitial) {
         lightweightMovies.value = result || []
         if (totalCount !== undefined) {
@@ -804,7 +832,9 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch movies from SQLite based on current filters
    */
   const fetchFilteredMovies = async (append = false) => {
-    console.log('[fetchFilteredMovies] Starting with append:', append)
+    const sessionId = currentSearchSessionId.value
+    const requestId = ++lastRequestId
+    console.log('[fetchFilteredMovies] Starting with append:', append, sessionId, requestId)
     if (!db.isReady.value) {
       // Fallback to JS filtering if DB not ready
       console.error('[fetchFilteredMovies] DB not ready, using JS filtering')
@@ -908,6 +938,16 @@ export const useMovieStore = defineStore('movie', () => {
         offset,
         includeCount: !append, // Only count on initial fetch
       })
+
+      if (sessionId !== currentSearchSessionId.value) {
+        console.log('[fetchFilteredMovies] Discarding stale session result', sessionId)
+        return
+      }
+
+      if (!append && requestId !== lastRequestId) {
+        console.log('[fetchFilteredMovies] Discarding stale request result', requestId)
+        return
+      }
 
       if (append) {
         filteredAndSortedMovies.value = [...filteredAndSortedMovies.value, ...result]
@@ -1319,8 +1359,8 @@ export const useMovieStore = defineStore('movie', () => {
   // WATCHERS
   // ============================================
 
-  // Watch for filter changes and fetch
-  watch(
+  // Watch for filter changes and fetch (debounced to avoid rapid queries)
+  watchDebounced(
     () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { currentPage, lastScrollY, ...rest } = filters.value
@@ -1329,6 +1369,9 @@ export const useMovieStore = defineStore('movie', () => {
     () => {
       // Only apply filters on the search page
       if (useRoute().path !== '/search') return
+
+      // Increment session ID to cancel any pending requests from previous filter state
+      currentSearchSessionId.value++
 
       // Reset to page 1 only if not already there
       const wasPageOne = filters.value.currentPage === 1
@@ -1341,7 +1384,8 @@ export const useMovieStore = defineStore('movie', () => {
       if (wasPageOne) {
         fetchLightweightMovies({ limit: 50 })
       }
-    }
+    },
+    { debounce: 300, maxWait: 1000 }
   )
 
   // Watch for page changes
