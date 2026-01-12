@@ -55,12 +55,36 @@ export const useUiStore = defineStore('ui', () => {
   // Search overlay state
   const isSearchOpen = ref(false)
 
+  // Scroll positions state (not persistent across sessions)
+  const scrollPositions = ref<Record<string, number>>({})
+
   /**
    * Set theme by ID
    */
   const setTheme = (themeId: string) => {
     currentThemeId.value = themeId
     previewThemeId.value = null
+  }
+
+  /**
+   * Save scroll position for a route
+   */
+  const saveScrollPosition = (route: string, position: number) => {
+    scrollPositions.value[route] = position
+  }
+
+  /**
+   * Get scroll position for a route
+   */
+  const getScrollPosition = (route: string): number | undefined => {
+    return scrollPositions.value[route]
+  }
+
+  /**
+   * Clear scroll position for a route
+   */
+  const clearScrollPosition = (route: string) => {
+    delete scrollPositions.value[route]
   }
 
   /**
@@ -183,6 +207,7 @@ export const useUiStore = defineStore('ui', () => {
     toasts,
     toastQueue,
     isSearchOpen,
+    scrollPositions,
 
     // Actions
     setTheme,
@@ -194,6 +219,9 @@ export const useUiStore = defineStore('ui', () => {
     clearToasts,
     toggleSearch: () => (isSearchOpen.value = !isSearchOpen.value),
     setSearchOpen: (value: boolean) => (isSearchOpen.value = value),
+    saveScrollPosition,
+    getScrollPosition,
+    clearScrollPosition,
   }
 })
 
