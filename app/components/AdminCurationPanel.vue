@@ -39,9 +39,18 @@
                 "
                 class="text-lg"
               ></div>
-              <span class="font-medium text-theme-text">{{ source.type }}</span>
+              <div class="flex flex-col flex-1 min-w-0">
+                <span class="font-medium text-theme-text">{{ source.type }}</span>
+                <span
+                  v-if="source.type === 'youtube' && source.channelName"
+                  class="text-xs text-theme-textmuted truncate"
+                  :title="source.channelName"
+                >
+                  {{ source.channelName }}
+                </span>
+              </div>
               <button
-                class="ml-auto p-1 text-theme-textmuted hover:text-yellow-500 transition-colors"
+                class="p-1 text-theme-textmuted hover:text-yellow-500 transition-colors"
                 title="Mark source quality"
                 @click="openSourceQualityDialog(source)"
               >
