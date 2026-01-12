@@ -1,5 +1,27 @@
 # Changelog
 
+# [0.6.0](https://github.com/select/movies-deluxe/compare/v0.5.0...v0.6.0) (2026-01-12)
+
+
+### Bug Fixes
+
+* **admin:** ensure collection cleanup correctly identifies missing movies ([cc94c7f](https://github.com/select/movies-deluxe/commit/cc94c7f36a1a9c91dbfbcbccc538a6a40aa17664))
+* **admin:** show missing movies in collection list for manual removal ([f552bd4](https://github.com/select/movies-deluxe/commit/f552bd40d5516a4156ba4a66f71a202d66b36b6c))
+
+
+### Features
+
+* add file size indicator bar to Archive.org source buttons ([b8f5be1](https://github.com/select/movies-deluxe/commit/b8f5be10c263b3c0f87d2b3bc8e4c7e1bba15e9d))
+* add tooltip to file size indicator bar ([33dce00](https://github.com/select/movies-deluxe/commit/33dce00ad1358577ff9815a63e0d66a0b4f62c20))
+* **admin:** add cleanup button to remove missing movies from collections ([37eb2c7](https://github.com/select/movies-deluxe/commit/37eb2c75556b0d8ae0dc94f628da934821ee9329))
+* **admin:** implement client-side collection cleanup for missing movies ([c056053](https://github.com/select/movies-deluxe/commit/c0560538e3f2889ea156c9f9bdec37401a206eb2))
+* **app:** sort movie sources by type and file size ([f49288c](https://github.com/select/movies-deluxe/commit/f49288c8a22a065211980aec0f82c72d89381838))
+* **collections:** add surrealist cinema collection with buñuel and cocteau films ([3d178e0](https://github.com/select/movies-deluxe/commit/3d178e082e4a41cd3c7478b9629c616ab11600bc))
+* **enrichment:** add verified flag to classic films ([d5bfaf8](https://github.com/select/movies-deluxe/commit/d5bfaf808c02555e64efe19cdec0d75e0da4fed2))
+* **enrichment:** merge duplicate entries and add omdb metadata for surrealist films ([ed82cc6](https://github.com/select/movies-deluxe/commit/ed82cc6cbd0dc84108abd609f9a6ecb26a8013cb))
+* filter out low-quality sources and movies from public data ([d8ee24f](https://github.com/select/movies-deluxe/commit/d8ee24fd6780ae1ad7a8d700fd69693575750b82))
+* **ui:** add horizontal scroll controls to related movies carousel ([4dea73b](https://github.com/select/movies-deluxe/commit/4dea73b391952e92c33d0fe983fedcadbb144273))
+
 # [0.5.0](https://github.com/select/movies-deluxe/compare/v0.4.0...v0.5.0) (2026-01-11)
 
 
