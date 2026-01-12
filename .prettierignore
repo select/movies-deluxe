@@ -19,6 +19,7 @@ public/sqlite-wasm
 
 # Beads
 .beads/*.jsonl
+.beads/
 
 # Git
 .git
