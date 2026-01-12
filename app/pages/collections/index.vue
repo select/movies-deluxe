@@ -49,11 +49,7 @@
         v-if="isLoading"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        <div
-          v-for="i in 4"
-          :key="i"
-          class="h-64 rounded-2xl bg-theme-surface border border-theme-border/50 animate-pulse"
-        ></div>
+        <CollectionCardSkeleton v-for="i in 8" :key="i" />
       </div>
 
       <!-- Empty State -->
