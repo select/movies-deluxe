@@ -21,9 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeRouteLeave } from 'vue-router'
-import { useWindowScroll, useStorage } from '@vueuse/core'
-
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
@@ -33,10 +30,6 @@ const { getCollectionById } = collectionsStore
 const collection = ref<Collection | null>(null)
 const movies = ref<LightweightMovie[]>([])
 const isLoading = ref(true)
-
-// Track window scroll position
-const { y: windowScrollY } = useWindowScroll()
-const scrollPositions = useStorage<Record<string, number>>('movies-deluxe-collection-scroll', {})
 
 onMounted(async () => {
   const id = route.params.id as string
@@ -57,29 +50,10 @@ onMounted(async () => {
       const firstBatch = collection.value.movieIds.slice(0, 30)
       movieStore.fetchMoviesByIds(firstBatch)
     }
-
-    // Restore scroll position
-    await nextTick()
-    await nextTick()
-
-    const savedScrollY = scrollPositions.value[id]
-    if (savedScrollY && savedScrollY > 0) {
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: savedScrollY, behavior: 'instant' })
-      })
-    }
   } catch {
     // Error loading collection - handled silently
   } finally {
     isLoading.value = false
-  }
-})
-
-// Save scroll position before leaving
-onBeforeRouteLeave(() => {
-  const id = route.params.id as string
-  if (id) {
-    scrollPositions.value[id] = windowScrollY.value
   }
 })
 

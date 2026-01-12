@@ -36,10 +36,19 @@ export default defineNuxtPlugin({
       }
 
       const savedPosition = uiStore.getScrollPosition(fullPath)
-      if (savedPosition !== undefined) {
-        // Use nextTick to ensure DOM is updated after page transition
-        nextTick(() => {
+      if (savedPosition !== undefined && savedPosition > 0) {
+        // Use multiple ticks and requestAnimationFrame to ensure DOM is updated
+        // and virtual grids have had a chance to calculate their height
+        nextTick(async () => {
+          await nextTick()
           window.scrollTo({ top: savedPosition, behavior: 'instant' })
+
+          // Fallback for slow-loading content/virtual grids
+          requestAnimationFrame(() => {
+            if (Math.abs(window.scrollY - savedPosition) > 10) {
+              window.scrollTo({ top: savedPosition, behavior: 'instant' })
+            }
+          })
         })
       } else {
         window.scrollTo({ top: 0, behavior: 'instant' })

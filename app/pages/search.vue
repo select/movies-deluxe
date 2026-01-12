@@ -38,9 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeRouteLeave } from 'vue-router'
-import { useWindowScroll } from '@vueuse/core'
-
 // Set page title and meta
 useHead({
   title: 'Search Movies - Movies Deluxe',
@@ -64,12 +61,9 @@ const {
   filters,
   lightweightMovies,
 } = storeToRefs(movieStore)
-const { loadFromFile, setCurrentPage, setScrollY } = movieStore
+const { loadFromFile, setCurrentPage } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
-
-// Track window scroll position
-const { y: windowScrollY } = useWindowScroll()
 
 // Load movies on mount
 onMounted(async () => {
@@ -79,27 +73,6 @@ onMounted(async () => {
   if (lightweightMovies.value.length === 0) {
     movieStore.fetchLightweightMovies({ limit: 50 })
   }
-
-  // Restore scroll position after content loads
-  await nextTick()
-  await nextTick()
-
-  const savedScrollY = filters.value.lastScrollY
-  if (savedScrollY > 0) {
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: savedScrollY, behavior: 'instant' })
-      setTimeout(() => {
-        if (Math.abs(window.scrollY - savedScrollY) > 10) {
-          window.scrollTo({ top: savedScrollY, behavior: 'instant' })
-        }
-      }, 50)
-    })
-  }
-})
-
-// Save scroll position before leaving
-onBeforeRouteLeave(() => {
-  setScrollY(windowScrollY.value)
 })
 
 // Load more movies
