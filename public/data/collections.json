@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-11T23:19:04.832Z"
+    "lastUpdated": "2026-01-12T00:28:15.424Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1446,7 +1446,7 @@
   "martial-arts": {
     "id": "martial-arts",
     "name": "Martial Arts",
-    "description": "A collection of classic martial arts, kung fu, and ninja movies from around the world.",
+    "description": "A collection of classic martial arts, kung fu, samurai, and ninja movies from around the world.",
     "movieIds": [
       "tt0398913",
       "archive-shoguns-ninja-sonny-chiba",
@@ -1483,24 +1483,51 @@
       "tt0328113",
       "tt0342258",
       "tt0913968",
-      "tt0940808",
       "tt1686784",
       "tt2644714",
       "youtube-iGGk97eT384",
       "youtube-bmHFoKFsxjQ",
       "youtube-ZjKwt3FgkvY",
       "youtube-2u-Le5E7v6U",
-      "tt0133226"
+      "tt0133226",
+      "archive-le-samurai-vose-sellada",
+      "tt0076024",
+      "tt0045935",
+      "tt1165285",
+      "tt0099753",
+      "tt0063186",
+      "tt0058279",
+      "tt0143348",
+      "tt0058430",
+      "tt0130236",
+      "tt3398252",
+      "tt0047444",
+      "tt0048579",
+      "tt0049710",
+      "youtube-wXpCUmh4ka0",
+      "youtube-_GT-W6r28hQ",
+      "tt0061847",
+      "tt0059303",
+      "tt0056443",
+      "tt0814302",
+      "tt0033654",
+      "youtube-qKKMBy4aB5k",
+      "tt0036034",
+      "tt0004838",
+      "tt0046478",
+      "tt0420280",
+      "tt0055630"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-07T00:32:07.557Z",
+    "updatedAt": "2026-01-12T00:28:15.424Z",
     "savedQueries": [],
     "tags": [
       "action",
       "kung-fu",
       "martial-arts",
       "asian-cinema",
-      "fight-scenes"
+      "fight-scenes",
+      "samurai"
     ],
     "enabled": true
   },
