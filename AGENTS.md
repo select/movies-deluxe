@@ -1,10 +1,5 @@
 # Agent Instructions
 
-# Beads Workflow Context
-
-> **Context Recovery**: Run `bd prime` after compaction, clear, or new session
-> Hooks auto-call this in Claude Code when .beads/ detected
-
 # 🚨 SESSION CLOSE PROTOCOL 🚨
 
 **CRITICAL**: Before saying "done" or "complete", you MUST run this checklist:
