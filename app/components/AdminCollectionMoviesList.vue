@@ -93,10 +93,7 @@ const loadCollectionMovies = async () => {
       return
     }
 
-    // Ensure database is initialized
-    if (!movieStore.totalMovies && !movieStore.isLoading.movies) {
-      await movieStore.loadFromFile()
-    }
+    // Database will already be ready thanks to the splash screen plugin
 
     // Use toRaw to avoid Proxy cloning issues with Web Workers
     const movieIds = toRaw(collection.movieIds)

@@ -163,17 +163,13 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`)
 
 const movieStore = useMovieStore()
-const { isFiltering, totalMovies } = storeToRefs(movieStore)
+const { totalMovies } = storeToRefs(movieStore)
 
 const _displayText = ref('thousands of')
 const isShowingNumber = ref(false)
 
 onMounted(async () => {
-  // Initialize DB if needed (totalMovies will be reactive once DB is loaded)
-  if (isFiltering.value) {
-    await movieStore.loadFromFile()
-  }
-
+  // Database will already be ready thanks to the splash screen plugin
   // Start animation loop
   setInterval(() => {
     isShowingNumber.value = !isShowingNumber.value

@@ -86,11 +86,10 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Search result movies for virtual scrolling
-   * Only includes essential fields (imdbId, title, year)
-   * Can contain null values for movies that haven't been loaded yet
+   * Search result movie IDs (in order)
+   * Contains the IDs of movies that match current search/filter criteria
    */
-  const searchResultMovies = ref<(LightweightMovie | null)[]>([])
+  const searchResultMovies = ref<string[]>([])
 
   /**
    * Current movie list for navigation (uses lightweight movies for consistency with index page)
@@ -98,7 +97,17 @@ export const useMovieStore = defineStore('movie', () => {
    * Returns empty array when no search results are available
    */
   const currentMovieList = computed((): (LightweightMovie | null)[] => {
-    return searchResultMovies.value
+    // Convert IDs to lightweight movies from cache
+    return searchResultMovies.value.map(id => {
+      const cached = lightweightMovieCache.value.get(id)
+      return cached
+        ? {
+            imdbId: cached.imdbId,
+            title: cached.title,
+            year: cached.year || 0,
+          }
+        : null
+    })
   })
 
   // ============================================
@@ -416,6 +425,163 @@ export const useMovieStore = defineStore('movie', () => {
   // FILTERING & SORTING ACTIONS
   // ============================================
 
+  /**
+   * Build unified SQL query for both search and filter scenarios
+   */
+  const buildFilterQuery = (searchQuery?: string) => {
+    let sql: string
+    const params: (string | number)[] = []
+
+    if (searchQuery?.trim()) {
+      // Search query - use FTS5 full-text search
+      const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
+      sql = `
+        SELECT m.imdbId
+        FROM fts_movies f
+        JOIN movies m ON f.imdbId = m.imdbId
+        WHERE fts_movies MATCH ?
+      `
+      params.push(`"${sanitizedQuery}"`)
+    } else {
+      // No search query - query all movies
+      sql = `
+        SELECT m.imdbId
+        FROM movies m
+        WHERE 1=1
+      `
+    }
+
+    // Add common filter conditions
+    if (filters.value.minRating > 0) {
+      sql += ` AND m.imdbRating >= ?`
+      params.push(filters.value.minRating)
+    }
+
+    if (filters.value.minYear > 0) {
+      sql += ` AND m.year >= ?`
+      params.push(filters.value.minYear)
+    }
+
+    if (filters.value.maxYear && filters.value.maxYear > 0) {
+      sql += ` AND m.year <= ?`
+      params.push(filters.value.maxYear)
+    }
+
+    if (filters.value.minVotes > 0) {
+      sql += ` AND m.imdbVotes >= ?`
+      params.push(filters.value.minVotes)
+    }
+
+    if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+      sql += ` AND m.imdbVotes <= ?`
+      params.push(filters.value.maxVotes)
+    }
+
+    // Add source filters (now in SQL for better performance)
+    if (filters.value.sources.length > 0) {
+      const sourceConditions: string[] = []
+
+      filters.value.sources.forEach(source => {
+        if (source === 'archive.org') {
+          sourceConditions.push('m.primarySourceType = ?')
+          params.push('archive.org')
+        } else {
+          // YouTube channel name
+          sourceConditions.push('(m.primarySourceType = ? AND m.primaryChannelName = ?)')
+          params.push('youtube', source)
+        }
+      })
+
+      if (sourceConditions.length > 0) {
+        sql += ` AND (${sourceConditions.join(' OR ')})`
+      }
+    }
+
+    // Add genre filters (now in SQL using LIKE for comma-separated values)
+    if (filters.value.genres.length > 0) {
+      const genreConditions = filters.value.genres.map(
+        () => '(m.genre LIKE ? OR m.genre LIKE ? OR m.genre LIKE ? OR m.genre = ?)'
+      )
+
+      filters.value.genres.forEach(genre => {
+        // Match: "Genre, ...", "..., Genre, ...", "..., Genre", or exact "Genre"
+        params.push(`${genre},%`, `%, ${genre},%`, `%, ${genre}`, genre)
+      })
+
+      sql += ` AND (${genreConditions.join(' OR ')})`
+    }
+
+    // Add country filters (now in SQL using LIKE for comma-separated values)
+    if (filters.value.countries.length > 0) {
+      const countryConditions = filters.value.countries.map(
+        () => '(m.country LIKE ? OR m.country LIKE ? OR m.country LIKE ? OR m.country = ?)'
+      )
+
+      filters.value.countries.forEach(country => {
+        // Match: "Country, ...", "..., Country, ...", "..., Country", or exact "Country"
+        params.push(`${country},%`, `%, ${country},%`, `%, ${country}`, country)
+      })
+
+      sql += ` AND (${countryConditions.join(' OR ')})`
+    }
+
+    // Add sorting (only for non-search queries or when not using relevance)
+    const sortOption =
+      SORT_OPTIONS.find(
+        opt =>
+          opt.field === filters.value.sort.field && opt.direction === filters.value.sort.direction
+      ) || SORT_OPTIONS[0]!
+
+    if (!searchQuery?.trim() || sortOption.field !== 'relevance') {
+      if (sortOption.field === 'year') {
+        sql += ` ORDER BY m.year ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+      } else if (sortOption.field === 'rating') {
+        sql += ` ORDER BY m.imdbRating ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+      } else if (sortOption.field === 'title') {
+        sql += ` ORDER BY m.title ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+      } else if (sortOption.field === 'votes') {
+        sql += ` ORDER BY m.imdbVotes ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+      } else {
+        sql += ` ORDER BY m.year DESC` // Default sort
+      }
+    } else if (searchQuery?.trim()) {
+      // For search queries, default to title order for consistency
+      sql += ` ORDER BY m.title ASC`
+    }
+
+    return { sql, params }
+  }
+
+  /**
+   * Execute unified filter query and return only movie IDs
+   */
+  const executeFilterQuery = async (sessionId: number): Promise<string[]> => {
+    if (!db.isReady.value) {
+      console.log('[executeFilterQuery] DB not ready, returning empty results')
+      return []
+    }
+
+    try {
+      const { sql, params } = buildFilterQuery(filters.value.searchQuery.trim())
+
+      console.log('[executeFilterQuery] Executing query with', params.length, 'parameters')
+      const results = await db.query<{ imdbId: string }>(sql, params)
+      console.log('[executeFilterQuery] Found', results.length, 'matches')
+
+      // Check if this request is still current
+      if (sessionId !== currentSearchSessionId.value) {
+        console.log('[executeFilterQuery] Request cancelled, ignoring results')
+        return []
+      }
+
+      // Return only the IDs - no need to fetch full movie data or use cache
+      return results.map(row => row.imdbId)
+    } catch (err) {
+      console.error('[executeFilterQuery] Query failed:', err)
+      return []
+    }
+  }
+
   // ============================================
   // LIKES ACTIONS
   // ============================================
@@ -443,11 +609,10 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Watch for filter changes and fetch (debounced to avoid rapid queries)
   watchDebounced(
-    () => {
-      return JSON.stringify(filters.value)
-    },
+    () => JSON.stringify(filters.value),
     async () => {
-      console.log('[watchFilters] ')
+      console.log('[watchFilters] Filter change detected')
+
       // Only apply filters on the search page
       if (useRoute().path !== '/search') return
 
@@ -459,279 +624,23 @@ export const useMovieStore = defineStore('movie', () => {
       isFiltering.value = true
 
       try {
-        let filteredResults: MovieEntry[] = []
+        // Execute unified query to get movie IDs
+        const filteredResults = await executeFilterQuery(sessionId)
 
-        // If there's a search query, search using FTS5 full-text search
-        if (filters.value.searchQuery.trim()) {
-          console.log('[watchFilters] Searching for:', filters.value.searchQuery)
-
-          if (!db.isReady.value) {
-            console.log('[watchFilters] DB not ready, returning empty results')
-            filteredResults = []
-          } else {
-            try {
-              const sanitizedQuery = filters.value.searchQuery.replace(/"/g, '""').trim()
-
-              // Build the SQL query with filters - only return IDs for performance
-              let sql = `
-                SELECT m.imdbId
-                FROM fts_movies f
-                JOIN movies m ON f.imdbId = m.imdbId
-                WHERE fts_movies MATCH ?
-              `
-              const params: (string | number)[] = [`"${sanitizedQuery}"`]
-
-              // Add filter conditions
-              if (filters.value.minRating > 0) {
-                sql += ` AND m.imdbRating >= ?`
-                params.push(filters.value.minRating)
-              }
-
-              if (filters.value.minYear > 0) {
-                sql += ` AND m.year >= ?`
-                params.push(filters.value.minYear)
-              }
-
-              if (filters.value.maxYear && filters.value.maxYear > 0) {
-                sql += ` AND m.year <= ?`
-                params.push(filters.value.maxYear)
-              }
-
-              if (filters.value.minVotes > 0) {
-                sql += ` AND m.imdbVotes >= ?`
-                params.push(filters.value.minVotes)
-              }
-
-              if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-                sql += ` AND m.imdbVotes <= ?`
-                params.push(filters.value.maxVotes)
-              }
-
-              sql += ` ORDER BY m.title ASC`
-
-              const results = await db.query<{ imdbId: string }>(sql, params)
-              console.log('[watchFilters] Found', results.length, 'matches')
-
-              // Extract IDs and fetch full movie data
-              const imdbIds = results.map(row => row.imdbId)
-              await fetchMoviesByIds(imdbIds)
-
-              // Get movies from cache and convert to MovieEntry objects
-              const movieEntries = imdbIds
-                .map(id => lightweightMovieCache.value.get(id))
-                .filter(Boolean)
-                .map(mapRowToMovie)
-
-              filteredResults = movieEntries
-            } catch (err) {
-              console.error('[watchFilters] Search failed:', err)
-              filteredResults = []
-            }
-          }
-
-          // Check if this request is still current
-          if (sessionId !== currentSearchSessionId.value) {
-            console.log('[watchFilters] Search request cancelled, ignoring results')
-            return
-          }
-
-          // Apply additional filters to search results (sources, genres, countries)
-          // These filters are not easily handled in SQL, so we filter the results
-          console.log(
-            '[watchFilters] Applying additional filters to',
-            filteredResults.length,
-            'movies'
-          )
-          let filtered = [...filteredResults]
-
-          // 1. Filter by source
-          if (filters.value.sources.length > 0) {
-            filtered = filtered.filter(movie => {
-              return movie.sources.some((source: MovieSource) => {
-                if (source.type === 'archive.org') {
-                  return filters.value.sources.includes('archive.org')
-                }
-                if (source.type === 'youtube') {
-                  return source.channelName
-                    ? filters.value.sources.includes(source.channelName)
-                    : false
-                }
-                return false
-              })
-            })
-          }
-
-          // 5. Filter by genres
-          if (filters.value.genres.length > 0) {
-            filtered = filtered.filter(movie => {
-              const movieGenres =
-                movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-              return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
-            })
-          }
-
-          // 6. Filter by countries
-          if (filters.value.countries.length > 0) {
-            filtered = filtered.filter(movie => {
-              const movieCountries =
-                movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-              return filters.value.countries.some(selectedCountry =>
-                movieCountries.includes(selectedCountry)
-              )
-            })
-          }
-
-          // 8. Apply sorting if not relevance
-          const sortOption =
-            SORT_OPTIONS.find(
-              opt =>
-                opt.field === filters.value.sort.field &&
-                opt.direction === filters.value.sort.direction
-            ) || SORT_OPTIONS[0]!
-
-          if (sortOption.field !== 'relevance') {
-            filtered = sortMovies(filtered, sortOption)
-          }
-
-          filteredResults = filtered
-        } else {
-          // No search query - get movies from database with filters
-          console.log('[watchFilters] Applying filters to database query')
-
-          if (!db.isReady.value) {
-            console.log('[watchFilters] DB not ready, returning empty results')
-            filteredResults = []
-          } else {
-            try {
-              // Build the SQL query with filters - only return IDs for performance
-              let sql = `
-                SELECT m.imdbId
-                FROM movies m
-                WHERE 1=1
-              `
-              const params: (string | number)[] = []
-
-              // Add filter conditions
-              if (filters.value.minRating > 0) {
-                sql += ` AND m.imdbRating >= ?`
-                params.push(filters.value.minRating)
-              }
-
-              if (filters.value.minYear > 0) {
-                sql += ` AND m.year >= ?`
-                params.push(filters.value.minYear)
-              }
-
-              if (filters.value.maxYear && filters.value.maxYear > 0) {
-                sql += ` AND m.year <= ?`
-                params.push(filters.value.maxYear)
-              }
-
-              if (filters.value.minVotes > 0) {
-                sql += ` AND m.imdbVotes >= ?`
-                params.push(filters.value.minVotes)
-              }
-
-              if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-                sql += ` AND m.imdbVotes <= ?`
-                params.push(filters.value.maxVotes)
-              }
-
-              // Apply sorting
-              const sortOption =
-                SORT_OPTIONS.find(
-                  opt =>
-                    opt.field === filters.value.sort.field &&
-                    opt.direction === filters.value.sort.direction
-                ) || SORT_OPTIONS[0]!
-
-              if (sortOption.field === 'year') {
-                sql += ` ORDER BY m.year ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
-              } else if (sortOption.field === 'rating') {
-                sql += ` ORDER BY m.imdbRating ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
-              } else if (sortOption.field === 'title') {
-                sql += ` ORDER BY m.title ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
-              } else {
-                sql += ` ORDER BY m.year DESC` // Default sort
-              }
-
-              const results = await db.query<{ imdbId: string }>(sql, params)
-              console.log('[watchFilters] Found', results.length, 'matches')
-
-              // Extract IDs and fetch full movie data
-              const imdbIds = results.map(row => row.imdbId)
-              await fetchMoviesByIds(imdbIds)
-
-              // Get movies from cache and convert to MovieEntry objects
-              let movieEntries = imdbIds
-                .map(id => lightweightMovieCache.value.get(id))
-                .filter(Boolean)
-                .map(mapRowToMovie)
-
-              // Apply additional filters that can't be done in SQL
-              // 1. Filter by source
-              if (filters.value.sources.length > 0) {
-                movieEntries = movieEntries.filter(movie => {
-                  return movie.sources.some((source: MovieSource) => {
-                    if (source.type === 'archive.org') {
-                      return filters.value.sources.includes('archive.org')
-                    }
-                    if (source.type === 'youtube') {
-                      return source.channelName
-                        ? filters.value.sources.includes(source.channelName)
-                        : false
-                    }
-                    return false
-                  })
-                })
-              }
-
-              // 5. Filter by genres
-              if (filters.value.genres.length > 0) {
-                movieEntries = movieEntries.filter(movie => {
-                  const movieGenres =
-                    movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-                  return filters.value.genres.some(selectedGenre =>
-                    movieGenres.includes(selectedGenre)
-                  )
-                })
-              }
-
-              // 6. Filter by countries
-              if (filters.value.countries.length > 0) {
-                movieEntries = movieEntries.filter(movie => {
-                  const movieCountries =
-                    movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-                  return filters.value.countries.some(selectedCountry =>
-                    movieCountries.includes(selectedCountry)
-                  )
-                })
-              }
-
-              filteredResults = movieEntries
-            } catch (err) {
-              console.error('[watchFilters] Database query failed:', err)
-              filteredResults = []
-            }
-          }
+        // Check if this request is still current (double-check after async operations)
+        if (sessionId !== currentSearchSessionId.value) {
+          console.log('[watchFilters] Request cancelled after execution, ignoring results')
+          return
         }
 
-        // Extract movie IDs from filtered results
-        // const movieIds = filteredResults.map(movie => movie.imdbId)
-
-        // Convert to lightweight movies for the search results
-        searchResultMovies.value = filteredResults.map(movie => ({
-          imdbId: movie.imdbId,
-          title: movie.title,
-          year: movie.year || 0,
-        }))
-
+        // Store the filtered movie IDs directly
+        searchResultMovies.value = filteredResults
         totalFiltered.value = filteredResults.length
 
         console.log(
           '[watchFilters] Updated search results:',
           searchResultMovies.value.length,
-          'movies'
+          'movie IDs'
         )
       } catch (error) {
         console.error('[watchFilters] Failed to fetch filtered movies:', error)
@@ -755,253 +664,17 @@ export const useMovieStore = defineStore('movie', () => {
     isFiltering.value = true
 
     try {
-      let filteredResults: MovieEntry[] = []
+      // Use the same unified query approach to get movie IDs
+      const filteredResults = await executeFilterQuery(currentSearchSessionId.value)
 
-      // If there's a search query, search using FTS5 full-text search
-      if (filters.value.searchQuery.trim()) {
-        console.log('[triggerSearchUpdate] Searching for:', filters.value.searchQuery)
-
-        if (!db.isReady.value) {
-          console.log('[triggerSearchUpdate] DB not ready, returning empty results')
-          filteredResults = []
-        } else {
-          try {
-            const sanitizedQuery = filters.value.searchQuery.replace(/"/g, '""').trim()
-
-            // Build the SQL query with filters - only return IDs for performance
-            let sql = `
-              SELECT m.imdbId
-              FROM fts_movies f
-              JOIN movies m ON f.imdbId = m.imdbId
-              WHERE fts_movies MATCH ?
-            `
-            const params: (string | number)[] = [`"${sanitizedQuery}"`]
-
-            // Add filter conditions
-            if (filters.value.minRating > 0) {
-              sql += ` AND m.imdbRating >= ?`
-              params.push(filters.value.minRating)
-            }
-
-            if (filters.value.minYear > 0) {
-              sql += ` AND m.year >= ?`
-              params.push(filters.value.minYear)
-            }
-
-            if (filters.value.maxYear && filters.value.maxYear > 0) {
-              sql += ` AND m.year <= ?`
-              params.push(filters.value.maxYear)
-            }
-
-            if (filters.value.minVotes > 0) {
-              sql += ` AND m.imdbVotes >= ?`
-              params.push(filters.value.minVotes)
-            }
-
-            if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-              sql += ` AND m.imdbVotes <= ?`
-              params.push(filters.value.maxVotes)
-            }
-
-            sql += ` ORDER BY m.title ASC`
-
-            const results = await db.query<{ imdbId: string }>(sql, params)
-            console.log('[triggerSearchUpdate] Found', results.length, 'matches')
-
-            // Extract IDs and fetch full movie data
-            const imdbIds = results.map(row => row.imdbId)
-            await fetchMoviesByIds(imdbIds)
-
-            // Get movies from cache and convert to MovieEntry objects
-            let movieEntries = imdbIds
-              .map(id => lightweightMovieCache.value.get(id))
-              .filter(Boolean)
-              .map(mapRowToMovie)
-
-            // Apply additional filters that can't be done in SQL
-            // 1. Filter by source
-            if (filters.value.sources.length > 0) {
-              movieEntries = movieEntries.filter(movie => {
-                return movie.sources.some((source: MovieSource) => {
-                  if (source.type === 'archive.org') {
-                    return filters.value.sources.includes('archive.org')
-                  }
-                  if (source.type === 'youtube') {
-                    return source.channelName
-                      ? filters.value.sources.includes(source.channelName)
-                      : false
-                  }
-                  return false
-                })
-              })
-            }
-
-            // 5. Filter by genres
-            if (filters.value.genres.length > 0) {
-              movieEntries = movieEntries.filter(movie => {
-                const movieGenres =
-                  movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-                return filters.value.genres.some(selectedGenre =>
-                  movieGenres.includes(selectedGenre)
-                )
-              })
-            }
-
-            // 6. Filter by countries
-            if (filters.value.countries.length > 0) {
-              movieEntries = movieEntries.filter(movie => {
-                const movieCountries =
-                  movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-                return filters.value.countries.some(selectedCountry =>
-                  movieCountries.includes(selectedCountry)
-                )
-              })
-            }
-
-            filteredResults = movieEntries
-          } catch (err) {
-            console.error('[triggerSearchUpdate] Search failed:', err)
-            filteredResults = []
-          }
-        }
-      } else {
-        // No search query - get movies from database with filters
-        console.log('[triggerSearchUpdate] Applying filters to database query')
-
-        if (!db.isReady.value) {
-          console.log('[triggerSearchUpdate] DB not ready, returning empty results')
-          filteredResults = []
-        } else {
-          try {
-            // Build the SQL query with filters - only return IDs for performance
-            let sql = `
-              SELECT m.imdbId
-              FROM movies m
-              WHERE 1=1
-            `
-            const params: (string | number)[] = []
-
-            // Add filter conditions
-            if (filters.value.minRating > 0) {
-              sql += ` AND m.imdbRating >= ?`
-              params.push(filters.value.minRating)
-            }
-
-            if (filters.value.minYear > 0) {
-              sql += ` AND m.year >= ?`
-              params.push(filters.value.minYear)
-            }
-
-            if (filters.value.maxYear && filters.value.maxYear > 0) {
-              sql += ` AND m.year <= ?`
-              params.push(filters.value.maxYear)
-            }
-
-            if (filters.value.minVotes > 0) {
-              sql += ` AND m.imdbVotes >= ?`
-              params.push(filters.value.minVotes)
-            }
-
-            if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-              sql += ` AND m.imdbVotes <= ?`
-              params.push(filters.value.maxVotes)
-            }
-
-            // Apply sorting
-            const sortOption =
-              SORT_OPTIONS.find(
-                opt =>
-                  opt.field === filters.value.sort.field &&
-                  opt.direction === filters.value.sort.direction
-              ) || SORT_OPTIONS[0]!
-
-            if (sortOption.field === 'year') {
-              sql += ` ORDER BY m.year ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
-            } else if (sortOption.field === 'rating') {
-              sql += ` ORDER BY m.imdbRating ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
-            } else if (sortOption.field === 'title') {
-              sql += ` ORDER BY m.title ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
-            } else {
-              sql += ` ORDER BY m.year DESC` // Default sort
-            }
-
-            const results = await db.query<{ imdbId: string }>(sql, params)
-            console.log('[triggerSearchUpdate] Found', results.length, 'movies')
-
-            // Extract IDs and fetch full movie data
-            const imdbIds = results.map(row => row.imdbId)
-            await fetchMoviesByIds(imdbIds)
-
-            // Get movies from cache and convert to MovieEntry objects
-            let movieEntries = imdbIds
-              .map(id => lightweightMovieCache.value.get(id))
-              .filter(Boolean)
-              .map(mapRowToMovie)
-
-            // Apply additional filters that can't be done in SQL
-            // 1. Filter by source
-            if (filters.value.sources.length > 0) {
-              movieEntries = movieEntries.filter(movie => {
-                return movie.sources.some((source: MovieSource) => {
-                  if (source.type === 'archive.org') {
-                    return filters.value.sources.includes('archive.org')
-                  }
-                  if (source.type === 'youtube') {
-                    return source.channelName
-                      ? filters.value.sources.includes(source.channelName)
-                      : false
-                  }
-                  return false
-                })
-              })
-            }
-
-            // 5. Filter by genres
-            if (filters.value.genres.length > 0) {
-              movieEntries = movieEntries.filter(movie => {
-                const movieGenres =
-                  movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-                return filters.value.genres.some(selectedGenre =>
-                  movieGenres.includes(selectedGenre)
-                )
-              })
-            }
-
-            // 6. Filter by countries
-            if (filters.value.countries.length > 0) {
-              movieEntries = movieEntries.filter(movie => {
-                const movieCountries =
-                  movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-                return filters.value.countries.some(selectedCountry =>
-                  movieCountries.includes(selectedCountry)
-                )
-              })
-            }
-
-            filteredResults = movieEntries
-          } catch (err) {
-            console.error('[triggerSearchUpdate] Database query failed:', err)
-            filteredResults = []
-          }
-        }
-      }
-
-      // Extract movie IDs from filtered results
-      // const movieIds = filteredResults.map(movie => movie.imdbId)
-
-      // Convert to lightweight movies for the search results
-      searchResultMovies.value = filteredResults.map(movie => ({
-        imdbId: movie.imdbId,
-        title: movie.title,
-        year: movie.year || 0,
-      }))
-
+      // Store the filtered movie IDs directly
+      searchResultMovies.value = filteredResults
       totalFiltered.value = filteredResults.length
 
       console.log(
         '[triggerSearchUpdate] Updated search results:',
         searchResultMovies.value.length,
-        'movies'
+        'movie IDs'
       )
     } catch (error) {
       console.error('[triggerSearchUpdate] Failed to update search results:', error)

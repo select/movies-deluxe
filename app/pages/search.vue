@@ -47,21 +47,18 @@ useHead({
 
 const movieStore = useMovieStore()
 const { isFiltering, totalFiltered, searchResultMovies } = storeToRefs(movieStore)
-const { loadFromFile, triggerSearchUpdate } = movieStore
+const { triggerSearchUpdate } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
-// Extract movie IDs from lightweight movies for the virtual grid
+// searchResultMovies is now already an array of movie IDs
 const movieIds = computed(() => {
   return searchResultMovies.value
-    .filter((movie): movie is NonNullable<typeof movie> => movie !== null)
-    .map(movie => movie.imdbId)
 })
 
-// Load movies on mount - MovieVirtualGrid will handle the actual movie loading
+// Trigger initial search results population when page mounts
+// Database will already be ready thanks to the splash screen plugin
 onMounted(async () => {
-  await loadFromFile()
-  // Trigger initial search results population
   await triggerSearchUpdate()
 })
 </script>
