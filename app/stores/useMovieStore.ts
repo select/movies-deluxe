@@ -52,9 +52,8 @@ export const useMovieStore = defineStore('movie', () => {
   // STATE
   // ============================================
 
-  // Single source of truth - all movies stored here
-  // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
-  const allMovies = shallowRef<Map<string, MovieEntry>>(new Map())
+  // Removed allMovies - only use lightweightMovieCache for caching
+  // Full MovieEntry objects are loaded on-demand for single movie pages
 
   // Cache for lightweight movies (for grid display)
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
@@ -98,17 +97,10 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Current movie list for navigation (uses lightweight movies for consistency with index page)
    * Returns the list of movie IDs in the same order as displayed on the index page
-   * Falls back to all movies sorted by year if no filtering has been applied yet
+   * Returns empty array when no search results are available
    */
   const currentMovieList = computed((): (LightweightMovie | null)[] => {
-    if (searchResultMovies.value.length > 0) {
-      return searchResultMovies.value
-    }
-    // Fallback to all movies sorted by year (newest first) as lightweight entries
-    return Array.from(allMovies.value.values())
-      .filter(m => m.year !== undefined) // Filter out movies without year
-      .sort((a, b) => (b.year || 0) - (a.year || 0))
-      .map(m => ({ imdbId: m.imdbId, title: m.title, year: m.year || 0 }))
+    return searchResultMovies.value
   })
 
   // ============================================
@@ -217,43 +209,6 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  /**
-   * Map SQL row to MovieEntry (lightweight version)
-   * Sources are now loaded separately from JSON files
-   */
-  const mapRowToMovie = (row: LightweightMovie): MovieEntry => {
-    // console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
-    // Create a minimal source object from database fields for UI display
-    const sources: MovieSource[] = []
-    if (row.sourceType) {
-      sources.push({
-        type: row.sourceType,
-        id: '', // Not available in database, but not needed for icon display
-        url: '', // Not available in database, but not needed for icon display
-        title: row.title,
-        channelName: row.sourceType === 'youtube' ? row.channelName || undefined : undefined,
-        addedAt: row.lastUpdated || new Date().toISOString(),
-      })
-    }
-
-    return {
-      imdbId: row.imdbId,
-      title: row.title,
-      year: row.year,
-      lastUpdated: row.lastUpdated || new Date().toISOString(),
-      sources,
-      metadata: {
-        imdbRating: row.imdbRating,
-        imdbVotes: row.imdbVotes,
-        imdbID: row.imdbId,
-        Genre: row.genre,
-        Language: row.language,
-        Country: row.country,
-      },
-      verified: row.verified,
-    }
-  }
-
   // ============================================
   // DATA LOADING ACTIONS
   // ============================================
@@ -358,10 +313,6 @@ export const useMovieStore = defineStore('movie', () => {
       movies.forEach(movie => {
         const lightweight = mapMovieToLightweight(movie)
         lightweightMovieCache.value.set(movie.imdbId, lightweight)
-        // Also update allMovies if not present
-        if (!allMovies.value.has(movie.imdbId)) {
-          allMovies.value.set(movie.imdbId, movie)
-        }
       })
 
       // Handle IDs that were not found in the database (e.g., temporary IDs or missing entries)
@@ -383,22 +334,12 @@ export const useMovieStore = defineStore('movie', () => {
             title: id, // Fallback to ID as title
             year: 0,
           }
-          const minimalEntry: MovieEntry = {
-            imdbId: id,
-            title: id, // Fallback to ID as title
-            sources: [],
-            lastUpdated: new Date().toISOString(),
-          }
           lightweightMovieCache.value.set(id, minimalLightweight)
-          if (!allMovies.value.has(id)) {
-            allMovies.value.set(id, minimalEntry)
-          }
         })
       }
 
-      // Trigger reactivity by replacing the Map instances
+      // Trigger reactivity by replacing the Map instance
       lightweightMovieCache.value = new Map(lightweightMovieCache.value)
-      allMovies.value = new Map(allMovies.value)
     } catch (err) {
       console.error('[fetchMoviesByIds] Failed to fetch movies by IDs:', err)
     } finally {
@@ -408,19 +349,10 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Get a single movie by ID (from cache or API)
+   * Get a single movie by ID (loads from JSON file on demand)
    */
   const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
     console.log('[getMovieById] Getting movie:', imdbId)
-
-    // Check allMovies - if it has sources with valid IDs, it's a full entry
-    if (allMovies.value.has(imdbId)) {
-      const movie = allMovies.value.get(imdbId)
-      if (movie && movie.sources && movie.sources.length > 0 && movie.sources[0]?.id) {
-        console.log('[getMovieById] Found in allMovies with full sources')
-        return movie
-      }
-    }
 
     // Fetch full details from JSON file (static deployment)
     console.log('[getMovieById] Fetching from JSON file')
@@ -432,8 +364,6 @@ export const useMovieStore = defineStore('movie', () => {
       // Validate that we got a proper movie object (not HTML or malformed data)
       if (movie && typeof movie === 'object' && movie.imdbId && movie.title) {
         console.log('[getMovieById] Successfully fetched movie from JSON')
-        // Store in allMovies instead of separate cache
-        allMovies.value.set(imdbId, movie)
         return movie
       }
       // If we got invalid data, treat it as not found
@@ -505,36 +435,56 @@ export const useMovieStore = defineStore('movie', () => {
           console.log('[watchFilters] Searching for:', filters.value.searchQuery)
 
           if (!db.isReady.value) {
-            console.log('[watchFilters] DB not ready, using JS fallback search')
-            // Fallback to simple JS search if DB is not ready
-            const lowerQuery = filters.value.searchQuery.toLowerCase()
-            const searchResults = Array.from(allMovies.value.values()).filter(
-              (movie: MovieEntry) => {
-                const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
-                return titles.some((t: string) => t.toLowerCase().includes(lowerQuery))
-              }
-            )
-            filteredResults = searchResults
+            console.log('[watchFilters] DB not ready, returning empty results')
+            filteredResults = []
           } else {
             try {
               const sanitizedQuery = filters.value.searchQuery.replace(/"/g, '""').trim()
-              const results = await db.query<{ imdbId: string }>(
-                `
-                SELECT m.imdbId
+
+              // Build the SQL query with filters
+              let sql = `
+                SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
+                       m.language, m.sourceType, m.channelName, m.verified,
+                       m.genre, m.country, m.lastUpdated
                 FROM fts_movies f
                 JOIN movies m ON f.imdbId = m.imdbId
                 WHERE fts_movies MATCH ?
-                ORDER BY m.title ASC
-              `,
-                [`"${sanitizedQuery}"`]
-              )
+              `
+              const params: (string | number)[] = [`"${sanitizedQuery}"`]
 
-              const matchedIds = new Set(results.map(r => r.imdbId as string))
-              console.log('[watchFilters] Found', matchedIds.size, 'matches')
-              const searchResults = Array.from(allMovies.value.values()).filter(m =>
-                matchedIds.has(m.imdbId)
-              )
-              filteredResults = searchResults
+              // Add filter conditions
+              if (filters.value.minRating > 0) {
+                sql += ` AND m.imdbRating >= ?`
+                params.push(filters.value.minRating)
+              }
+
+              if (filters.value.minYear > 0) {
+                sql += ` AND m.year >= ?`
+                params.push(filters.value.minYear)
+              }
+
+              if (filters.value.maxYear && filters.value.maxYear > 0) {
+                sql += ` AND m.year <= ?`
+                params.push(filters.value.maxYear)
+              }
+
+              if (filters.value.minVotes > 0) {
+                sql += ` AND m.imdbVotes >= ?`
+                params.push(filters.value.minVotes)
+              }
+
+              if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+                sql += ` AND m.imdbVotes <= ?`
+                params.push(filters.value.maxVotes)
+              }
+
+              sql += ` ORDER BY m.title ASC`
+
+              const results = await db.query<LightweightMovie>(sql, params)
+              console.log('[watchFilters] Found', results.length, 'matches')
+
+              // Convert to MovieEntry objects
+              filteredResults = results.map(mapRowToMovie)
             } catch (err) {
               console.error('[watchFilters] Search failed:', err)
               filteredResults = []
@@ -547,8 +497,13 @@ export const useMovieStore = defineStore('movie', () => {
             return
           }
 
-          // Apply additional filters to search results
-          console.log('[watchFilters] Applying filters to', filteredResults.length, 'movies')
+          // Apply additional filters to search results (sources, genres, countries)
+          // These filters are not easily handled in SQL, so we filter the results
+          console.log(
+            '[watchFilters] Applying additional filters to',
+            filteredResults.length,
+            'movies'
+          )
           let filtered = [...filteredResults]
 
           // 1. Filter by source
@@ -568,48 +523,6 @@ export const useMovieStore = defineStore('movie', () => {
             })
           }
 
-          // 2. Filter by minimum rating
-          if (filters.value.minRating > 0) {
-            filtered = filtered.filter(movie => {
-              const rating =
-                typeof movie.metadata?.imdbRating === 'number' ? movie.metadata.imdbRating : 0
-              return rating >= filters.value.minRating
-            })
-          }
-
-          // 3. Filter by year range
-          if (filters.value.minYear > 0 || (filters.value.maxYear && filters.value.maxYear > 0)) {
-            filtered = filtered.filter(movie => {
-              const year = movie.year || 0
-              if (filters.value.minYear > 0 && year < filters.value.minYear) return false
-              if (
-                filters.value.maxYear &&
-                filters.value.maxYear > 0 &&
-                year > filters.value.maxYear
-              )
-                return false
-              return true
-            })
-          }
-
-          // 4. Filter by votes range
-          if (
-            filters.value.minVotes > 0 ||
-            (filters.value.maxVotes && filters.value.maxVotes > 0)
-          ) {
-            filtered = filtered.filter(movie => {
-              const votes = movie.metadata?.imdbVotes || 0
-              if (filters.value.minVotes > 0 && votes < filters.value.minVotes) return false
-              if (
-                filters.value.maxVotes &&
-                filters.value.maxVotes > 0 &&
-                votes > filters.value.maxVotes
-              )
-                return false
-              return true
-            })
-          }
-
           // 5. Filter by genres
           if (filters.value.genres.length > 0) {
             filtered = filtered.filter(movie => {
@@ -630,7 +543,7 @@ export const useMovieStore = defineStore('movie', () => {
             })
           }
 
-          // 8. Apply sorting
+          // 8. Apply sorting if not relevance
           const sortOption =
             SORT_OPTIONS.find(
               opt =>
@@ -644,118 +557,124 @@ export const useMovieStore = defineStore('movie', () => {
 
           filteredResults = filtered
         } else {
-          // No search query - get all movies and apply filters
-          console.log('[watchFilters] Applying filters to all movies')
-          const allMoviesArray = Array.from(allMovies.value.values())
-          let filtered = [...allMoviesArray]
+          // No search query - get movies from database with filters
+          console.log('[watchFilters] Applying filters to database query')
 
-          // 1. Filter by source
-          if (filters.value.sources.length > 0) {
-            filtered = filtered.filter(movie => {
-              return movie.sources.some((source: MovieSource) => {
-                if (source.type === 'archive.org') {
-                  return filters.value.sources.includes('archive.org')
-                }
-                if (source.type === 'youtube') {
-                  return source.channelName
-                    ? filters.value.sources.includes(source.channelName)
-                    : false
-                }
-                return false
-              })
-            })
-          }
+          if (!db.isReady.value) {
+            console.log('[watchFilters] DB not ready, returning empty results')
+            filteredResults = []
+          } else {
+            try {
+              // Build the SQL query with filters
+              let sql = `
+                SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
+                       m.language, m.sourceType, m.channelName, m.verified,
+                       m.genre, m.country, m.lastUpdated
+                FROM movies m
+                WHERE 1=1
+              `
+              const params: (string | number)[] = []
 
-          // 2. Filter by minimum rating
-          if (filters.value.minRating > 0) {
-            filtered = filtered.filter(movie => {
-              const rating =
-                typeof movie.metadata?.imdbRating === 'number' ? movie.metadata.imdbRating : 0
-              return rating >= filters.value.minRating
-            })
-          }
+              // Add filter conditions
+              if (filters.value.minRating > 0) {
+                sql += ` AND m.imdbRating >= ?`
+                params.push(filters.value.minRating)
+              }
 
-          // 3. Filter by year range
-          if (filters.value.minYear > 0 || (filters.value.maxYear && filters.value.maxYear > 0)) {
-            filtered = filtered.filter(movie => {
-              const year = movie.year || 0
-              if (filters.value.minYear > 0 && year < filters.value.minYear) return false
-              if (
-                filters.value.maxYear &&
-                filters.value.maxYear > 0 &&
-                year > filters.value.maxYear
-              )
-                return false
-              return true
-            })
-          }
+              if (filters.value.minYear > 0) {
+                sql += ` AND m.year >= ?`
+                params.push(filters.value.minYear)
+              }
 
-          // 4. Filter by votes range
-          if (
-            filters.value.minVotes > 0 ||
-            (filters.value.maxVotes && filters.value.maxVotes > 0)
-          ) {
-            filtered = filtered.filter(movie => {
-              const votes = movie.metadata?.imdbVotes || 0
-              if (filters.value.minVotes > 0 && votes < filters.value.minVotes) return false
-              if (
-                filters.value.maxVotes &&
-                filters.value.maxVotes > 0 &&
-                votes > filters.value.maxVotes
-              )
-                return false
-              return true
-            })
-          }
+              if (filters.value.maxYear && filters.value.maxYear > 0) {
+                sql += ` AND m.year <= ?`
+                params.push(filters.value.maxYear)
+              }
 
-          // 5. Filter by genres
-          if (filters.value.genres.length > 0) {
-            filtered = filtered.filter(movie => {
-              const movieGenres =
-                movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-              return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
-            })
-          }
+              if (filters.value.minVotes > 0) {
+                sql += ` AND m.imdbVotes >= ?`
+                params.push(filters.value.minVotes)
+              }
 
-          // 6. Filter by countries
-          if (filters.value.countries.length > 0) {
-            filtered = filtered.filter(movie => {
-              const movieCountries =
-                movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-              return filters.value.countries.some(selectedCountry =>
-                movieCountries.includes(selectedCountry)
-              )
-            })
-          }
+              if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+                sql += ` AND m.imdbVotes <= ?`
+                params.push(filters.value.maxVotes)
+              }
 
-          // 8. Apply sorting
-          const sortOption =
-            SORT_OPTIONS.find(
-              opt =>
-                opt.field === filters.value.sort.field &&
-                opt.direction === filters.value.sort.direction
-            ) || SORT_OPTIONS[0]!
+              // Apply sorting
+              const sortOption =
+                SORT_OPTIONS.find(
+                  opt =>
+                    opt.field === filters.value.sort.field &&
+                    opt.direction === filters.value.sort.direction
+                ) || SORT_OPTIONS[0]!
 
-          if (sortOption.field !== 'relevance') {
-            filtered = sortMovies(filtered, sortOption)
-          }
+              if (sortOption.field === 'year') {
+                sql += ` ORDER BY m.year ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+              } else if (sortOption.field === 'rating') {
+                sql += ` ORDER BY m.imdbRating ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+              } else if (sortOption.field === 'title') {
+                sql += ` ORDER BY m.title ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+              } else {
+                sql += ` ORDER BY m.year DESC` // Default sort
+              }
 
-          filteredResults = filtered
+              const results = await db.query<LightweightMovie>(sql, params)
+              console.log('[watchFilters] Found', results.length, 'movies')
 
-          // Check if this request is still current
-          if (sessionId !== currentSearchSessionId.value) {
-            console.log('[watchFilters] Filter request cancelled, ignoring results')
-            return
+              // Convert to MovieEntry objects
+              let movieEntries = results.map(mapRowToMovie)
+
+              // Apply additional filters that can't be done in SQL
+              // 1. Filter by source
+              if (filters.value.sources.length > 0) {
+                movieEntries = movieEntries.filter(movie => {
+                  return movie.sources.some((source: MovieSource) => {
+                    if (source.type === 'archive.org') {
+                      return filters.value.sources.includes('archive.org')
+                    }
+                    if (source.type === 'youtube') {
+                      return source.channelName
+                        ? filters.value.sources.includes(source.channelName)
+                        : false
+                    }
+                    return false
+                  })
+                })
+              }
+
+              // 5. Filter by genres
+              if (filters.value.genres.length > 0) {
+                movieEntries = movieEntries.filter(movie => {
+                  const movieGenres =
+                    movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
+                  return filters.value.genres.some(selectedGenre =>
+                    movieGenres.includes(selectedGenre)
+                  )
+                })
+              }
+
+              // 6. Filter by countries
+              if (filters.value.countries.length > 0) {
+                movieEntries = movieEntries.filter(movie => {
+                  const movieCountries =
+                    movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
+                  return filters.value.countries.some(selectedCountry =>
+                    movieCountries.includes(selectedCountry)
+                  )
+                })
+              }
+
+              filteredResults = movieEntries
+            } catch (err) {
+              console.error('[watchFilters] Database query failed:', err)
+              filteredResults = []
+            }
           }
         }
 
         // Extract movie IDs from filtered results
         // const movieIds = filteredResults.map(movie => movie.imdbId)
-
-        // Store the filtered movies in the cache (they're already full MovieEntry objects)
-        filteredResults.forEach(movie => {
-          allMovies.value.set(movie.imdbId, movie)
-        })
 
         // Convert to lightweight movies for the search results
         searchResultMovies.value = filteredResults.map(movie => ({
@@ -800,229 +719,222 @@ export const useMovieStore = defineStore('movie', () => {
         console.log('[triggerSearchUpdate] Searching for:', filters.value.searchQuery)
 
         if (!db.isReady.value) {
-          console.log('[triggerSearchUpdate] DB not ready, using JS fallback search')
-          // Fallback to simple JS search if DB is not ready
-          const lowerQuery = filters.value.searchQuery.toLowerCase()
-          const searchResults = Array.from(allMovies.value.values()).filter((movie: MovieEntry) => {
-            const titles = Array.isArray(movie.title) ? movie.title : [movie.title]
-            return titles.some((t: string) => t.toLowerCase().includes(lowerQuery))
-          })
-          filteredResults = searchResults
+          console.log('[triggerSearchUpdate] DB not ready, returning empty results')
+          filteredResults = []
         } else {
           try {
             const sanitizedQuery = filters.value.searchQuery.replace(/"/g, '""').trim()
-            const results = await db.query<{ imdbId: string }>(
-              `
-              SELECT m.imdbId
+
+            // Build the SQL query with filters
+            let sql = `
+              SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
+                     m.language, m.sourceType, m.channelName, m.verified,
+                     m.genre, m.country, m.lastUpdated
               FROM fts_movies f
               JOIN movies m ON f.imdbId = m.imdbId
               WHERE fts_movies MATCH ?
-              ORDER BY m.title ASC
-            `,
-              [`"${sanitizedQuery}"`]
-            )
+            `
+            const params: (string | number)[] = [`"${sanitizedQuery}"`]
 
-            const matchedIds = new Set(results.map(r => r.imdbId as string))
-            console.log('[triggerSearchUpdate] Found', matchedIds.size, 'matches')
-            const searchResults = Array.from(allMovies.value.values()).filter(m =>
-              matchedIds.has(m.imdbId)
-            )
-            filteredResults = searchResults
+            // Add filter conditions
+            if (filters.value.minRating > 0) {
+              sql += ` AND m.imdbRating >= ?`
+              params.push(filters.value.minRating)
+            }
+
+            if (filters.value.minYear > 0) {
+              sql += ` AND m.year >= ?`
+              params.push(filters.value.minYear)
+            }
+
+            if (filters.value.maxYear && filters.value.maxYear > 0) {
+              sql += ` AND m.year <= ?`
+              params.push(filters.value.maxYear)
+            }
+
+            if (filters.value.minVotes > 0) {
+              sql += ` AND m.imdbVotes >= ?`
+              params.push(filters.value.minVotes)
+            }
+
+            if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+              sql += ` AND m.imdbVotes <= ?`
+              params.push(filters.value.maxVotes)
+            }
+
+            sql += ` ORDER BY m.title ASC`
+
+            const results = await db.query<LightweightMovie>(sql, params)
+            console.log('[triggerSearchUpdate] Found', results.length, 'matches')
+
+            // Convert to MovieEntry objects
+            let movieEntries = results.map(mapRowToMovie)
+
+            // Apply additional filters that can't be done in SQL
+            // 1. Filter by source
+            if (filters.value.sources.length > 0) {
+              movieEntries = movieEntries.filter(movie => {
+                return movie.sources.some((source: MovieSource) => {
+                  if (source.type === 'archive.org') {
+                    return filters.value.sources.includes('archive.org')
+                  }
+                  if (source.type === 'youtube') {
+                    return source.channelName
+                      ? filters.value.sources.includes(source.channelName)
+                      : false
+                  }
+                  return false
+                })
+              })
+            }
+
+            // 5. Filter by genres
+            if (filters.value.genres.length > 0) {
+              movieEntries = movieEntries.filter(movie => {
+                const movieGenres =
+                  movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
+                return filters.value.genres.some(selectedGenre =>
+                  movieGenres.includes(selectedGenre)
+                )
+              })
+            }
+
+            // 6. Filter by countries
+            if (filters.value.countries.length > 0) {
+              movieEntries = movieEntries.filter(movie => {
+                const movieCountries =
+                  movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
+                return filters.value.countries.some(selectedCountry =>
+                  movieCountries.includes(selectedCountry)
+                )
+              })
+            }
+
+            filteredResults = movieEntries
           } catch (err) {
             console.error('[triggerSearchUpdate] Search failed:', err)
             filteredResults = []
           }
         }
-
-        // Apply additional filters to search results
-        console.log('[triggerSearchUpdate] Applying filters to', filteredResults.length, 'movies')
-        let filtered = [...filteredResults]
-
-        // 1. Filter by source
-        if (filters.value.sources.length > 0) {
-          filtered = filtered.filter(movie => {
-            return movie.sources.some((source: MovieSource) => {
-              if (source.type === 'archive.org') {
-                return filters.value.sources.includes('archive.org')
-              }
-              if (source.type === 'youtube') {
-                return source.channelName
-                  ? filters.value.sources.includes(source.channelName)
-                  : false
-              }
-              return false
-            })
-          })
-        }
-
-        // 2. Filter by minimum rating
-        if (filters.value.minRating > 0) {
-          filtered = filtered.filter(movie => {
-            const rating =
-              typeof movie.metadata?.imdbRating === 'number' ? movie.metadata.imdbRating : 0
-            return rating >= filters.value.minRating
-          })
-        }
-
-        // 3. Filter by year range
-        if (filters.value.minYear > 0 || (filters.value.maxYear && filters.value.maxYear > 0)) {
-          filtered = filtered.filter(movie => {
-            const year = movie.year || 0
-            if (filters.value.minYear > 0 && year < filters.value.minYear) return false
-            if (filters.value.maxYear && filters.value.maxYear > 0 && year > filters.value.maxYear)
-              return false
-            return true
-          })
-        }
-
-        // 4. Filter by votes range
-        if (filters.value.minVotes > 0 || (filters.value.maxVotes && filters.value.maxVotes > 0)) {
-          filtered = filtered.filter(movie => {
-            const votes = movie.metadata?.imdbVotes || 0
-            if (filters.value.minVotes > 0 && votes < filters.value.minVotes) return false
-            if (
-              filters.value.maxVotes &&
-              filters.value.maxVotes > 0 &&
-              votes > filters.value.maxVotes
-            )
-              return false
-            return true
-          })
-        }
-
-        // 5. Filter by genres
-        if (filters.value.genres.length > 0) {
-          filtered = filtered.filter(movie => {
-            const movieGenres =
-              movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-            return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
-          })
-        }
-
-        // 6. Filter by countries
-        if (filters.value.countries.length > 0) {
-          filtered = filtered.filter(movie => {
-            const movieCountries =
-              movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-            return filters.value.countries.some(selectedCountry =>
-              movieCountries.includes(selectedCountry)
-            )
-          })
-        }
-
-        // 8. Apply sorting
-        const sortOption =
-          SORT_OPTIONS.find(
-            opt =>
-              opt.field === filters.value.sort.field &&
-              opt.direction === filters.value.sort.direction
-          ) || SORT_OPTIONS[0]!
-
-        if (sortOption.field !== 'relevance') {
-          filtered = sortMovies(filtered, sortOption)
-        }
-
-        filteredResults = filtered
       } else {
-        // No search query - get all movies and apply filters
-        console.log('[triggerSearchUpdate] Applying filters to all movies')
-        const allMoviesArray = Array.from(allMovies.value.values())
-        let filtered = [...allMoviesArray]
+        // No search query - get movies from database with filters
+        console.log('[triggerSearchUpdate] Applying filters to database query')
 
-        // 1. Filter by source
-        if (filters.value.sources.length > 0) {
-          filtered = filtered.filter(movie => {
-            return movie.sources.some((source: MovieSource) => {
-              if (source.type === 'archive.org') {
-                return filters.value.sources.includes('archive.org')
-              }
-              if (source.type === 'youtube') {
-                return source.channelName
-                  ? filters.value.sources.includes(source.channelName)
-                  : false
-              }
-              return false
-            })
-          })
+        if (!db.isReady.value) {
+          console.log('[triggerSearchUpdate] DB not ready, returning empty results')
+          filteredResults = []
+        } else {
+          try {
+            // Build the SQL query with filters
+            let sql = `
+              SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
+                     m.language, m.sourceType, m.channelName, m.verified,
+                     m.genre, m.country, m.lastUpdated
+              FROM movies m
+              WHERE 1=1
+            `
+            const params: (string | number)[] = []
+
+            // Add filter conditions
+            if (filters.value.minRating > 0) {
+              sql += ` AND m.imdbRating >= ?`
+              params.push(filters.value.minRating)
+            }
+
+            if (filters.value.minYear > 0) {
+              sql += ` AND m.year >= ?`
+              params.push(filters.value.minYear)
+            }
+
+            if (filters.value.maxYear && filters.value.maxYear > 0) {
+              sql += ` AND m.year <= ?`
+              params.push(filters.value.maxYear)
+            }
+
+            if (filters.value.minVotes > 0) {
+              sql += ` AND m.imdbVotes >= ?`
+              params.push(filters.value.minVotes)
+            }
+
+            if (filters.value.maxVotes && filters.value.maxVotes > 0) {
+              sql += ` AND m.imdbVotes <= ?`
+              params.push(filters.value.maxVotes)
+            }
+
+            // Apply sorting
+            const sortOption =
+              SORT_OPTIONS.find(
+                opt =>
+                  opt.field === filters.value.sort.field &&
+                  opt.direction === filters.value.sort.direction
+              ) || SORT_OPTIONS[0]!
+
+            if (sortOption.field === 'year') {
+              sql += ` ORDER BY m.year ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+            } else if (sortOption.field === 'rating') {
+              sql += ` ORDER BY m.imdbRating ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+            } else if (sortOption.field === 'title') {
+              sql += ` ORDER BY m.title ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
+            } else {
+              sql += ` ORDER BY m.year DESC` // Default sort
+            }
+
+            const results = await db.query<LightweightMovie>(sql, params)
+            console.log('[triggerSearchUpdate] Found', results.length, 'movies')
+
+            // Convert to MovieEntry objects
+            let movieEntries = results.map(mapRowToMovie)
+
+            // Apply additional filters that can't be done in SQL
+            // 1. Filter by source
+            if (filters.value.sources.length > 0) {
+              movieEntries = movieEntries.filter(movie => {
+                return movie.sources.some((source: MovieSource) => {
+                  if (source.type === 'archive.org') {
+                    return filters.value.sources.includes('archive.org')
+                  }
+                  if (source.type === 'youtube') {
+                    return source.channelName
+                      ? filters.value.sources.includes(source.channelName)
+                      : false
+                  }
+                  return false
+                })
+              })
+            }
+
+            // 5. Filter by genres
+            if (filters.value.genres.length > 0) {
+              movieEntries = movieEntries.filter(movie => {
+                const movieGenres =
+                  movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
+                return filters.value.genres.some(selectedGenre =>
+                  movieGenres.includes(selectedGenre)
+                )
+              })
+            }
+
+            // 6. Filter by countries
+            if (filters.value.countries.length > 0) {
+              movieEntries = movieEntries.filter(movie => {
+                const movieCountries =
+                  movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
+                return filters.value.countries.some(selectedCountry =>
+                  movieCountries.includes(selectedCountry)
+                )
+              })
+            }
+
+            filteredResults = movieEntries
+          } catch (err) {
+            console.error('[triggerSearchUpdate] Database query failed:', err)
+            filteredResults = []
+          }
         }
-
-        // 2. Filter by minimum rating
-        if (filters.value.minRating > 0) {
-          filtered = filtered.filter(movie => {
-            const rating =
-              typeof movie.metadata?.imdbRating === 'number' ? movie.metadata.imdbRating : 0
-            return rating >= filters.value.minRating
-          })
-        }
-
-        // 3. Filter by year range
-        if (filters.value.minYear > 0 || (filters.value.maxYear && filters.value.maxYear > 0)) {
-          filtered = filtered.filter(movie => {
-            const year = movie.year || 0
-            if (filters.value.minYear > 0 && year < filters.value.minYear) return false
-            if (filters.value.maxYear && filters.value.maxYear > 0 && year > filters.value.maxYear)
-              return false
-            return true
-          })
-        }
-
-        // 4. Filter by votes range
-        if (filters.value.minVotes > 0 || (filters.value.maxVotes && filters.value.maxVotes > 0)) {
-          filtered = filtered.filter(movie => {
-            const votes = movie.metadata?.imdbVotes || 0
-            if (filters.value.minVotes > 0 && votes < filters.value.minVotes) return false
-            if (
-              filters.value.maxVotes &&
-              filters.value.maxVotes > 0 &&
-              votes > filters.value.maxVotes
-            )
-              return false
-            return true
-          })
-        }
-
-        // 5. Filter by genres
-        if (filters.value.genres.length > 0) {
-          filtered = filtered.filter(movie => {
-            const movieGenres =
-              movie.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-            return filters.value.genres.some(selectedGenre => movieGenres.includes(selectedGenre))
-          })
-        }
-
-        // 6. Filter by countries
-        if (filters.value.countries.length > 0) {
-          filtered = filtered.filter(movie => {
-            const movieCountries =
-              movie.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-            return filters.value.countries.some(selectedCountry =>
-              movieCountries.includes(selectedCountry)
-            )
-          })
-        }
-
-        // 8. Apply sorting
-        const sortOption =
-          SORT_OPTIONS.find(
-            opt =>
-              opt.field === filters.value.sort.field &&
-              opt.direction === filters.value.sort.direction
-          ) || SORT_OPTIONS[0]!
-
-        if (sortOption.field !== 'relevance') {
-          filtered = sortMovies(filtered, sortOption)
-        }
-
-        filteredResults = filtered
       }
 
       // Extract movie IDs from filtered results
       // const movieIds = filteredResults.map(movie => movie.imdbId)
-
-      // Store the filtered movies in the cache (they're already full MovieEntry objects)
-      filteredResults.forEach(movie => {
-        allMovies.value.set(movie.imdbId, movie)
-      })
 
       // Convert to lightweight movies for the search results
       searchResultMovies.value = filteredResults.map(movie => ({
@@ -1055,7 +967,6 @@ export const useMovieStore = defineStore('movie', () => {
     // ============================================
     // STATE
     // ============================================
-    allMovies,
     lightweightMovieCache,
     filters,
     isFiltering,
@@ -1085,7 +996,6 @@ export const useMovieStore = defineStore('movie', () => {
     loadFromFile,
     fetchMoviesByIds,
     getMovieById,
-    mapRowToMovie,
     mapMovieToLightweight,
     triggerSearchUpdate,
 
