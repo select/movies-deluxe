@@ -1,4 +1,4 @@
-import type { MovieEntry, MovieSource, MovieSourceType, LightweightMovie } from '~/types'
+import type { MovieEntry, MovieSourceType, LightweightMovie } from '~/types'
 import { useStorage, watchDebounced } from '@vueuse/core'
 
 /**
@@ -216,43 +216,6 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  /**
-   * Map SQL row to MovieEntry (lightweight version)
-   * Sources are now loaded separately from JSON files
-   */
-  const mapRowToMovie = (row: LightweightMovie): MovieEntry => {
-    // console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
-    // Create a minimal source object from database fields for UI display
-    const sources: MovieSource[] = []
-    if (row.sourceType) {
-      sources.push({
-        type: row.sourceType,
-        id: '', // Not available in database, but not needed for icon display
-        url: '', // Not available in database, but not needed for icon display
-        title: row.title,
-        channelName: row.sourceType === 'youtube' ? row.channelName || undefined : undefined,
-        addedAt: row.lastUpdated || new Date().toISOString(),
-      })
-    }
-
-    return {
-      imdbId: row.imdbId,
-      title: row.title,
-      year: row.year,
-      lastUpdated: row.lastUpdated || new Date().toISOString(),
-      sources,
-      metadata: {
-        imdbRating: row.imdbRating,
-        imdbVotes: row.imdbVotes,
-        imdbID: row.imdbId,
-        Genre: row.genre,
-        Language: row.language,
-        Country: row.country,
-      },
-      verified: row.verified,
-    }
-  }
-
   // ============================================
   // DATA LOADING ACTIONS
   // ============================================
@@ -319,28 +282,6 @@ export const useMovieStore = defineStore('movie', () => {
     // Mark as pending
     uncachedIds.forEach(id => pendingIds.add(id))
 
-    // Wait for database to be ready if it's still initializing
-    if (!db.isReady.value) {
-      // If not even started loading, start it
-      if (isFiltering.value && !isLoading.value.movies) {
-        loadFromFile()
-      }
-
-      // Wait for it to be ready
-      let attempts = 0
-      while (!db.isReady.value && attempts < 100) {
-        // Max 10 seconds
-        await new Promise(resolve => setTimeout(resolve, 100))
-        attempts++
-      }
-
-      if (!db.isReady.value) {
-        console.error('[fetchMoviesByIds] Database not ready after waiting')
-        uncachedIds.forEach(id => pendingIds.delete(id))
-        return
-      }
-    }
-
     // Double check cache after waiting (another request might have filled it)
     const stillUncachedIds = uncachedIds.filter(id => !lightweightMovieCache.value.has(id))
     if (stillUncachedIds.length === 0) {
@@ -349,18 +290,16 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     try {
-      const results = await db.queryByIds<LightweightMovie>(stillUncachedIds)
-      const movies = results.map(mapRowToMovie)
-      console.log('[fetchMoviesByIds] Fetched', movies.length, 'movies from database')
+      const lightweightMovies = await db.queryByIds<LightweightMovie>(stillUncachedIds)
+      console.log('[fetchMoviesByIds] Fetched', lightweightMovies.length, 'movies from database')
 
-      // Cache the results in the lightweight cache
-      movies.forEach(movie => {
-        const lightweight = mapMovieToLightweight(movie)
-        lightweightMovieCache.value.set(movie.imdbId, lightweight)
+      // Cache the results directly in the lightweight cache (no conversion needed)
+      lightweightMovies.forEach(movie => {
+        lightweightMovieCache.value.set(movie.imdbId, movie)
       })
 
       // Handle IDs that were not found in the database (e.g., temporary IDs or missing entries)
-      const foundIds = new Set(movies.map(m => m.imdbId))
+      const foundIds = new Set(lightweightMovies.map(m => m.imdbId))
       const missingIds = stillUncachedIds.filter(id => !foundIds.has(id))
 
       if (missingIds.length > 0) {
@@ -722,7 +661,6 @@ export const useMovieStore = defineStore('movie', () => {
     loadFromFile,
     fetchMoviesByIds,
     getMovieById,
-    mapRowToMovie,
     mapMovieToLightweight,
     triggerSearchUpdate,
 
