@@ -75,7 +75,25 @@
         <div class="i-mdi-source-branch"></div>
         {{ source }}
       </div>
-      <button class="text-xs text-theme-primary hover:underline ml-2" @click="resetFilters">
+      <button
+        class="text-xs text-theme-primary hover:underline ml-2"
+        @click="
+          Object.assign(filters, {
+            sort: { field: 'year', direction: 'desc' },
+            sources: [],
+            minRating: 0,
+            minYear: 0,
+            maxYear: 0,
+            minVotes: 0,
+            maxVotes: 0,
+            genres: [],
+            countries: [],
+            searchQuery: '',
+            currentPage: 1,
+            lastScrollY: 0,
+          })
+        "
+      >
         Clear All
       </button>
     </div>
@@ -196,7 +214,6 @@ const emit = defineEmits<{
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const { filters, activeFiltersCount, hasActiveFilters } = storeToRefs(movieStore)
-const { resetFilters } = movieStore
 const uiStore = useUiStore()
 
 const searchInput = ref<HTMLInputElement | null>(null)

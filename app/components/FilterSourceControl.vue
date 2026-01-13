@@ -12,7 +12,11 @@
       <div class="space-y-2">
         <AppInputCheckbox
           :checked="filters.sources.includes('archive.org')"
-          @change="toggleSource('archive.org')"
+          @change="
+            filters.sources.includes('archive.org')
+              ? (filters.sources = filters.sources.filter(s => s !== 'archive.org'))
+              : (filters.sources = [...filters.sources, 'archive.org'])
+          "
         >
           <span class="flex items-center justify-between gap-2 flex-1">
             <span class="text-sm font-medium text-theme-text">Archive.org</span>
@@ -32,7 +36,11 @@
             v-for="channel in channels"
             :key="channel.id"
             :checked="filters.sources.includes(channel.name)"
-            @change="toggleSource(channel.name)"
+            @change="
+              filters.sources.includes(channel.name)
+                ? (filters.sources = filters.sources.filter(s => s !== channel.name))
+                : (filters.sources = [...filters.sources, channel.name])
+            "
           >
             <span class="flex items-center justify-between gap-2 flex-1">
               <span class="text-sm text-theme-text">{{ channel.name }}</span>
@@ -65,7 +73,6 @@ import type { ChannelOption } from '~/types'
 
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-const { toggleSource, setSources } = movieStore
 
 const channels = ref<ChannelOption[]>([])
 const isLoading = ref(true)
@@ -84,7 +91,7 @@ const fetchChannels = async () => {
 }
 
 const clearSources = () => {
-  setSources([])
+  filters.value.sources = []
 }
 
 onMounted(() => {

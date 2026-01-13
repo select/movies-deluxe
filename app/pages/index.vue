@@ -163,14 +163,14 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`)
 
 const movieStore = useMovieStore()
-const { isInitialLoading: _isInitialLoading, totalMovies } = storeToRefs(movieStore)
+const { isFiltering, totalMovies } = storeToRefs(movieStore)
 
 const _displayText = ref('thousands of')
 const isShowingNumber = ref(false)
 
 onMounted(async () => {
   // Initialize DB if needed (totalMovies will be reactive once DB is loaded)
-  if (_isInitialLoading.value) {
+  if (isFiltering.value) {
     await movieStore.loadFromFile()
   }
 

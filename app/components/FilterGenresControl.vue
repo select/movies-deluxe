@@ -23,7 +23,11 @@
               ? 'bg-theme-primary text-white border-theme-primary shadow-sm'
               : 'bg-theme-selection text-theme-text border-theme-border/50 hover:border-theme-border hover:bg-theme-border/30',
           ]"
-          @click="toggleGenre(genre.name)"
+          @click="
+            filters.genres.includes(genre.name)
+              ? (filters.genres = filters.genres.filter(g => g !== genre.name))
+              : (filters.genres = [...filters.genres, genre.name])
+          "
         >
           <span>{{ genre.name }}</span>
           <span
@@ -52,7 +56,6 @@ import type { GenreOption } from '~/types'
 
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-const { toggleGenre, setGenres } = movieStore
 
 const genres = ref<GenreOption[]>([])
 const isLoading = ref(true)
@@ -74,7 +77,7 @@ const fetchGenres = async () => {
 }
 
 const clearGenres = () => {
-  setGenres([])
+  filters.value.genres = []
 }
 
 onMounted(() => {
