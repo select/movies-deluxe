@@ -199,39 +199,71 @@ const removeQuery = async (index: number) => {
 }
 
 const applyQuery = (query: SavedQuery) => {
-  movieStore.resetFilters()
+  // Reset filters to defaults
+  Object.assign(filters.value, {
+    sort: { field: 'year', direction: 'desc' },
+    sources: [],
+    minRating: 0,
+    minYear: 0,
+    maxYear: 0,
+    minVotes: 0,
+    maxVotes: 0,
+    genres: [],
+    countries: [],
+    searchQuery: '',
+    currentPage: 1,
+    lastScrollY: 0,
+  })
 
   // Restore search query from the saved query
   if (query.searchQuery) {
-    movieStore.setSearchQuery(query.searchQuery)
+    filters.value.searchQuery = query.searchQuery
   }
 
-  // Apply sort if it was saved (otherwise use default from resetFilters)
+  // Apply sort if it was saved (otherwise use default from reset)
   if (query.filterState.sort) {
-    movieStore.setSort(query.filterState.sort)
+    filters.value.sort = query.filterState.sort
   }
 
   // Apply filters only if they were saved
   if (query.filterState.minRating) {
-    movieStore.setMinRating(query.filterState.minRating)
+    filters.value.minRating = query.filterState.minRating
   }
   if (query.filterState.minYear) {
-    movieStore.setMinYear(query.filterState.minYear)
+    filters.value.minYear = query.filterState.minYear
   }
   if (query.filterState.maxYear) {
-    movieStore.setMaxYear(query.filterState.maxYear)
+    filters.value.maxYear = query.filterState.maxYear
   }
   if (query.filterState.minVotes) {
-    movieStore.setMinVotes(query.filterState.minVotes)
+    filters.value.minVotes = query.filterState.minVotes
   }
   if (query.filterState.maxVotes) {
-    movieStore.setMaxVotes(query.filterState.maxVotes)
+    filters.value.maxVotes = query.filterState.maxVotes
   }
 
   // Apply array filters
-  query.filterState.genres?.forEach(g => movieStore.toggleGenre(g))
-  query.filterState.countries?.forEach(c => movieStore.toggleCountry(c))
-  query.filterState.sources?.forEach(s => movieStore.toggleSource(s))
+  if (query.filterState.genres) {
+    query.filterState.genres.forEach(g => {
+      if (!filters.value.genres.includes(g)) {
+        filters.value.genres = [...filters.value.genres, g]
+      }
+    })
+  }
+  if (query.filterState.countries) {
+    query.filterState.countries.forEach(c => {
+      if (!filters.value.countries.includes(c)) {
+        filters.value.countries = [...filters.value.countries, c]
+      }
+    })
+  }
+  if (query.filterState.sources) {
+    query.filterState.sources.forEach(s => {
+      if (!filters.value.sources.includes(s)) {
+        filters.value.sources = [...filters.value.sources, s]
+      }
+    })
+  }
 
   // Emit event to notify parent that filters were applied
   emit('filtersApplied')

@@ -50,7 +50,7 @@
           :active-value="filters.minRating > 0 ? `${filters.minRating.toFixed(1)}+` : ''"
           :is-active="filters.minRating > 0"
           @click="openPopup('rating', $event)"
-          @clear="setMinRating(0)"
+          @clear="filters.minRating = 0"
         />
 
         <!-- Year -->
@@ -83,7 +83,7 @@
           :active-value="filters.genres.length > 0 ? filters.genres.length : ''"
           :is-active="filters.genres.length > 0"
           @click="openPopup('genres', $event)"
-          @clear="setGenres([])"
+          @clear="filters.genres = []"
         />
 
         <!-- Countries -->
@@ -93,7 +93,7 @@
           :active-value="filters.countries.length > 0 ? filters.countries.length : ''"
           :is-active="filters.countries.length > 0"
           @click="openPopup('countries', $event)"
-          @clear="setCountries([])"
+          @clear="filters.countries = []"
         />
 
         <!-- Source -->
@@ -103,14 +103,29 @@
           :active-value="filters.sources.length > 0 ? filters.sources.length : ''"
           :is-active="filters.sources.length > 0"
           @click="openPopup('source', $event)"
-          @clear="setSources([])"
+          @clear="filters.sources = []"
         />
 
         <!-- Clear All -->
         <button
           v-if="hasActiveFilters"
           class="text-xs font-bold text-theme-primary hover:bg-theme-primary/10 px-3 py-1.5 rounded-full transition-colors whitespace-nowrap md:ml-auto"
-          @click="resetFilters"
+          @click="
+            Object.assign(filters, {
+              sort: { field: 'year', direction: 'desc' },
+              sources: [],
+              minRating: 0,
+              minYear: 0,
+              maxYear: 0,
+              minVotes: 0,
+              maxVotes: 0,
+              genres: [],
+              countries: [],
+              searchQuery: '',
+              currentPage: 1,
+              lastScrollY: 0,
+            })
+          "
         >
           Clear All
         </button>
@@ -188,19 +203,6 @@ import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const { filters, hasActiveFilters } = storeToRefs(movieStore)
-const {
-  setSearchQuery,
-  setSort,
-  setMinRating,
-  setMinYear,
-  setMaxYear,
-  setMinVotes,
-  setMaxVotes,
-  setGenres,
-  setCountries,
-  setSources,
-  resetFilters,
-} = movieStore
 
 const uiStore = useUiStore()
 const { isSearchOpen } = storeToRefs(uiStore)
@@ -268,14 +270,16 @@ const votesLabel = computed(() => {
   return ''
 })
 
-const resetSort = () => setSort({ field: 'year', direction: 'desc' })
+const resetSort = () => {
+  filters.value.sort = { field: 'year', direction: 'desc' }
+}
 const clearYears = () => {
-  setMinYear(0)
-  setMaxYear(0)
+  filters.value.minYear = 0
+  filters.value.maxYear = 0
 }
 const clearVotes = () => {
-  setMinVotes(0)
-  setMaxVotes(0)
+  filters.value.minVotes = 0
+  filters.value.maxVotes = 0
 }
 
 // Initialize search from URL query parameter on mount
@@ -289,7 +293,7 @@ onMounted(() => {
 
 // Debounced function to update store (500ms delay)
 const debouncedSetSearchQuery = useDebounceFn((query: string) => {
-  setSearchQuery(query)
+  filters.value.searchQuery = query
 
   // Update URL query parameter (but not on admin pages)
   if (!route.path.startsWith('/admin')) {
@@ -307,7 +311,7 @@ const debouncedSetSearchQuery = useDebounceFn((query: string) => {
   }
 
   if (query && filters.value.sort.field !== 'relevance') {
-    setSort({ field: 'relevance', direction: 'desc' })
+    filters.value.sort = { field: 'relevance', direction: 'desc' }
   }
 }, 500)
 

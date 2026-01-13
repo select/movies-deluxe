@@ -23,7 +23,11 @@
               ? 'bg-theme-primary text-white border-theme-primary shadow-sm'
               : 'bg-theme-selection text-theme-text border-theme-border/50 hover:border-theme-border hover:bg-theme-border/30',
           ]"
-          @click="toggleCountry(country.name)"
+          @click="
+            filters.countries.includes(country.name)
+              ? (filters.countries = filters.countries.filter(c => c !== country.name))
+              : (filters.countries = [...filters.countries, country.name])
+          "
         >
           <span>{{ country.name }}</span>
           <span
@@ -55,7 +59,6 @@ import type { CountryOption } from '~/types'
 
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-const { toggleCountry, setCountries } = movieStore
 
 const countries = ref<CountryOption[]>([])
 const isLoading = ref(true)
@@ -77,7 +80,7 @@ const fetchCountries = async () => {
 }
 
 const clearCountries = () => {
-  setCountries([])
+  filters.value.countries = []
 }
 
 onMounted(() => {

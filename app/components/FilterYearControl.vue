@@ -66,7 +66,6 @@ import { useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-const { setMinYear, setMaxYear } = movieStore
 
 const localMin = ref(filters.value.minYear || 1910)
 const localMax = ref(filters.value.maxYear || 2025)
@@ -97,8 +96,8 @@ watch(localMax, newVal => {
 
 // Update store with debounce
 const debouncedUpdate = useDebounceFn(() => {
-  setMinYear(localMin.value === 1910 ? 0 : localMin.value)
-  setMaxYear(localMax.value === 2025 ? 0 : localMax.value)
+  filters.value.minYear = localMin.value === 1910 ? 0 : localMin.value
+  filters.value.maxYear = localMax.value === 2025 ? 0 : localMax.value
 }, 300)
 
 // Sync back if store changes externally

@@ -46,13 +46,12 @@ import { useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-const { setMinRating } = movieStore
 
 const localRating = ref(filters.value.minRating)
 
-// Update store with debounce
+// Update store directly with debounce
 const debouncedUpdate = useDebounceFn((val: number) => {
-  setMinRating(val)
+  filters.value.minRating = val
 }, 300)
 
 watch(localRating, newVal => {

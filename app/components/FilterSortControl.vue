@@ -3,7 +3,7 @@
     <AppSortButtonGroup
       :current-sort="filters.sort"
       :show-relevance="!!filters.searchQuery"
-      @select="setSort"
+      @select="filters.sort = $event"
     />
 
     <div v-if="!isDefaultSort" class="flex justify-end pt-2 border-t border-theme-border/30">
@@ -17,13 +17,12 @@
 <script setup lang="ts">
 const movieStore = useMovieStore()
 const { filters } = storeToRefs(movieStore)
-const { setSort } = movieStore
 
 const isDefaultSort = computed(() => {
   return filters.value.sort.field === 'year' && filters.value.sort.direction === 'desc'
 })
 
 const resetSort = () => {
-  setSort({ field: 'year', direction: 'desc' })
+  filters.value.sort = { field: 'year', direction: 'desc' }
 }
 </script>

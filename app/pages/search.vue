@@ -6,14 +6,11 @@
     <!-- Main Content -->
     <main class="md:ml-16 md:pt-16">
       <div class="px-4 lg:px-[6%] py-8">
-        <MovieStats
-          v-if="!isInitialLoading && safeTotalMovies > 0"
-          :total-movies="safeTotalMovies"
-        />
+        <MovieStats v-if="!isFiltering && safeTotalMovies > 0" :total-movies="safeTotalMovies" />
       </div>
 
       <div class="relative lg:px-[6%] px-4">
-        <template v-if="isInitialLoading || isFiltering">
+        <template v-if="isFiltering">
           <div
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
           >
@@ -49,8 +46,8 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const { isInitialLoading, isFiltering, totalFiltered, searchResultMovies } = storeToRefs(movieStore)
-const { loadFromFile } = movieStore
+const { isFiltering, totalFiltered, searchResultMovies } = storeToRefs(movieStore)
+const { loadFromFile, triggerSearchUpdate } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
@@ -64,7 +61,8 @@ const movieIds = computed(() => {
 // Load movies on mount - MovieVirtualGrid will handle the actual movie loading
 onMounted(async () => {
   await loadFromFile()
-  // MovieVirtualGrid will handle loading movies based on filters
+  // Trigger initial search results population
+  await triggerSearchUpdate()
 })
 </script>
 
