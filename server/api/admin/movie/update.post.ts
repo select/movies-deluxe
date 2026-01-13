@@ -7,6 +7,7 @@ import {
   generateYouTubeId,
   type MovieSource,
 } from '../../../../shared/types/movie'
+import { updateMovieIdInCollections } from '../../../utils/collections'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -82,12 +83,20 @@ export default defineEventHandler(async event => {
             ]
             existing.lastUpdated = new Date().toISOString()
             delete db[currentId]
+
+            // Update collections that reference the old ID
+            await updateMovieIdInCollections(currentId, tempId)
+
             currentId = tempId
             movie = existing
           } else {
             movie.imdbId = tempId
             db[tempId] = movie
             delete db[currentId]
+
+            // Update collections that reference the old ID
+            await updateMovieIdInCollections(currentId, tempId)
+
             currentId = tempId
           }
         }
@@ -170,10 +179,16 @@ export default defineEventHandler(async event => {
         existing.verified = movie.verified || existing.verified
         existing.lastUpdated = new Date().toISOString()
         delete db[currentId]
+
+        // Update collections that reference the old ID
+        await updateMovieIdInCollections(currentId, targetId)
       } else {
         movie.imdbId = targetId
         db[targetId] = movie
         delete db[currentId]
+
+        // Update collections that reference the old ID
+        await updateMovieIdInCollections(currentId, targetId)
       }
     }
 
