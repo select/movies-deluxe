@@ -87,7 +87,7 @@ function createDatabase() {
     })
   }
 
-  const queryByIds = async <T = MovieEntry>(imdbIds: string[]): Promise<T[]> => {
+  const queryByIds = async <T = MovieEntry>(movieIds: string[]): Promise<T[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
     }
@@ -99,7 +99,7 @@ function createDatabase() {
         reject,
       })
       // Use toRaw to ensure we don't pass Proxy objects to the worker
-      worker.value!.postMessage({ type: 'query-by-ids', id, imdbIds: toRaw(imdbIds) })
+      worker.value!.postMessage({ type: 'query-by-ids', id, movieIds: toRaw(movieIds) })
     })
   }
 
