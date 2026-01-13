@@ -186,7 +186,6 @@ const collectionSelector = ref<{
 } | null>(null)
 const moviesList = ref<{ refresh: () => Promise<void> } | null>(null)
 
-const movieStore = useMovieStore()
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
 
@@ -197,9 +196,7 @@ const selectedCollection = computed(() => {
 
 onMounted(async () => {
   isLocal.value = isLocalhost()
-  if (isLocal.value) {
-    await movieStore.loadFromFile()
-  }
+  // Database will already be ready thanks to the splash screen plugin
 })
 
 const onMovieAdded = () => {
