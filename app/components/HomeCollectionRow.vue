@@ -49,7 +49,7 @@
             :key="movie.imdbId"
             class="w-[200px] flex-shrink-0 snap-start"
           >
-            <MovieCard :movie="movie" />
+            <MovieCard :movie-id="movie.imdbId" />
           </div>
 
           <div class="w-[200px] flex-shrink-0 snap-start">
@@ -80,6 +80,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const { fetchMoviesByIds } = useMovieStore()
+const { lightweightMovieCache } = storeToRefs(useMovieStore())
 
 const isLoading = ref(true)
 const displayMovies = ref<LightweightMovie[]>([])
@@ -113,7 +114,15 @@ const loadMovies = async () => {
     isLoading.value = true
     // We only show up to 9 movies, then the explore more card
     const movieIds = props.collection.movieIds.slice(0, 9)
-    displayMovies.value = await fetchMoviesByIds(movieIds)
+
+    // Fetch movies into cache
+    await fetchMoviesByIds(movieIds)
+
+    // Get movies from cache
+    displayMovies.value = movieIds
+      .map(id => lightweightMovieCache.value.get(id))
+      .filter((movie): movie is LightweightMovie => !!movie)
+
     isLoading.value = false
     hasLoaded.value = true
 

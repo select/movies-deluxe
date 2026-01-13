@@ -76,6 +76,7 @@ const props = defineProps<{
 
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
+const { lightweightMovieCache } = storeToRefs(movieStore)
 const uiStore = useUiStore()
 const movies = ref<LightweightMovie[]>([])
 const isLoading = ref(false)
@@ -93,17 +94,17 @@ const loadCollectionMovies = async () => {
     }
 
     // Ensure database is initialized
-    if (!movieStore.allMovies.size && !movieStore.isLoading.movies) {
+    if (!movieStore.totalMovies && !movieStore.isLoading.movies) {
       await movieStore.loadFromFile()
     }
 
     // Use toRaw to avoid Proxy cloning issues with Web Workers
     const movieIds = toRaw(collection.movieIds)
-    const data = await movieStore.fetchMoviesByIds(movieIds)
+    await movieStore.fetchMoviesByIds(movieIds)
 
-    // Sort by the order in movieIds
+    // Get movies from cache and sort by the order in movieIds
     movies.value = movieIds.map((id: string) => {
-      const found = data.find((m: LightweightMovie) => m.imdbId === id)
+      const found = lightweightMovieCache.value.get(id)
       if (found) return found
       // Return a placeholder for missing movies so they can be removed
       return {

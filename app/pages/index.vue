@@ -12,7 +12,7 @@
                 isShowingNumber ? 'opacity-100' : 'opacity-0',
               ]"
             >
-              {{ totalMoviesCount.toLocaleString() }}
+              {{ totalMovies.toLocaleString() }}
             </span>
             <span
               :class="[
@@ -105,7 +105,7 @@
               <h3 class="text-xl font-bold">Search Catalog</h3>
               <p class="text-theme-textmuted">
                 Looking for something specific? Search our full library of
-                {{ totalMoviesCount.toLocaleString() }} movies by title, year, or genre.
+                {{ totalMovies.toLocaleString() }} movies by title, year, or genre.
               </p>
             </div>
             <div
@@ -163,15 +163,16 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`)
 
 const movieStore = useMovieStore()
-const { isInitialLoading: _isInitialLoading } = storeToRefs(movieStore)
+const { isInitialLoading: _isInitialLoading, totalMovies } = storeToRefs(movieStore)
 
-const totalMoviesCount = ref(0)
 const _displayText = ref('thousands of')
 const isShowingNumber = ref(false)
 
 onMounted(async () => {
-  // Fetch total count (this will initialize DB if needed and wait for it)
-  totalMoviesCount.value = await movieStore.fetchMovieCount()
+  // Initialize DB if needed (totalMovies will be reactive once DB is loaded)
+  if (_isInitialLoading.value) {
+    await movieStore.loadFromFile()
+  }
 
   // Start animation loop
   setInterval(() => {

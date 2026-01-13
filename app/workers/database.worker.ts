@@ -255,8 +255,45 @@ async function handleMessage(e: QueuedMessage) {
       }
 
       self.postMessage({ id, result, totalCount })
+    } else if (type === 'search-query') {
+      // Search query for grid display - always returns only IDs for optimal performance
+      const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e
+
+      // Always select only imdbId for performance
+      let sql = `SELECT m.imdbId FROM movies m`
+      if (where) sql += ` WHERE ${where}`
+
+      const finalOrderBy = orderBy || 'm.year DESC, m.imdbId ASC'
+      sql += ` ORDER BY ${finalOrderBy}`
+
+      if (limit !== undefined) sql += ` LIMIT ${limit}`
+      if (offset !== undefined) sql += ` OFFSET ${offset}`
+
+      const result = db.exec({
+        sql,
+        bind: params,
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      let totalCount = undefined
+      if (includeCount) {
+        let countSql = `SELECT COUNT(*) as count FROM movies m`
+        if (where) countSql += ` WHERE ${where}`
+
+        const countResult = db.exec({
+          sql: countSql,
+          bind: params,
+          returnValue: 'resultRows',
+          rowMode: 'object',
+        })
+        const firstRow = countResult[0] as { count: number } | undefined
+        totalCount = firstRow?.count
+      }
+
+      self.postMessage({ id, result, totalCount })
     } else if (type === 'query-lightweight') {
-      // Lightweight query for grid display (minimal data, no joins)
+      // Legacy support - redirect to search-query
       const { where = '', params = [], orderBy = '', limit, offset, includeCount = false } = e
 
       // Select essential fields for grid display and filtering

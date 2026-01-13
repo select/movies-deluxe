@@ -42,9 +42,9 @@
                 class="text-xs text-theme-accent font-bold px-1"
               >
                 {{
-                  filteredMovies.length === 0
+                  (props.movieIds && searchQuery.trim()) || filteredMovies.length === 0
                     ? 'No movies found'
-                    : `Found ${filteredMovies.length} movie${filteredMovies.length === 1 ? '' : 's'}`
+                    : `Found ${props.movieIds ? props.movieIds.length : filteredMovies.length} movie${(props.movieIds ? props.movieIds.length : filteredMovies.length) === 1 ? '' : 's'}`
                 }}
               </div>
             </div>
@@ -68,8 +68,13 @@
       </div>
 
       <!-- Movies Grid -->
-      <template v-else-if="filteredMovies && filteredMovies.length > 0">
-        <MovieVirtualGrid :movies="filteredMovies" :total-movies="filteredMovies.length" />
+      <template
+        v-else-if="
+          (filteredMovies && filteredMovies.length > 0) ||
+          (props.movieIds && props.movieIds.length > 0 && !searchQuery.trim())
+        "
+      >
+        <MovieVirtualGrid v-bind="gridProps" />
       </template>
 
       <!-- Empty State / No Results -->
@@ -119,8 +124,9 @@ interface Props {
   titleIcon?: string
   breadcrumbs?: Breadcrumbs
 
-  // Movies data
-  movies: LightweightMovie[]
+  // Movies data - provide either movies OR movieIds
+  movies?: (LightweightMovie | null)[]
+  movieIds?: string[]
   movieCount: number
   isLoading: boolean
 
@@ -138,7 +144,14 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  titleIcon: undefined,
+  breadcrumbs: undefined,
+  movies: undefined,
+  movieIds: undefined,
   searchPlaceholder: 'Search movies...',
+  emptyStateButtonTo: undefined,
+  emptyStateButtonText: undefined,
+  emptyStateButtonIcon: undefined,
   showClearSearch: true,
 })
 
@@ -147,7 +160,23 @@ const searchQuery = ref('')
 
 // Filtered movies with search
 const filteredMovies = computed(() => {
-  let filtered = props.movies
+  if (props.movieIds) {
+    // For movieIds mode, we'll handle filtering differently
+    // For now, return the movieIds as lightweight movies for search
+    const movieList = props.movieIds.map(id => ({ imdbId: id, title: '' }) as LightweightMovie)
+
+    if (searchQuery.value.trim()) {
+      // TODO: Implement search for movieIds mode
+      // This would require fetching movie details for search
+      // For now, return empty array to show "no results"
+      return []
+    }
+
+    return movieList
+  }
+
+  // Legacy movies mode
+  let filtered = props.movies || []
 
   if (searchQuery.value.trim()) {
     const fuse = new Fuse(filtered, {
@@ -165,6 +194,21 @@ const filteredMovies = computed(() => {
   }
 
   return filtered
+})
+
+// Determine which props to pass to MovieVirtualGrid
+const gridProps = computed(() => {
+  if (props.movieIds) {
+    return {
+      movieIds: searchQuery.value.trim() ? [] : props.movieIds,
+    }
+  } else {
+    // Legacy mode is no longer supported - MovieVirtualGrid only accepts movieIds
+    console.warn('[MovieListPage] Legacy movies prop is no longer supported. Use movieIds instead.')
+    return {
+      movieIds: [],
+    }
+  }
 })
 
 // Computed empty state properties

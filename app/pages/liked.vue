@@ -3,9 +3,9 @@
     title="Liked Movies"
     description="Your personal collection of favorite movies"
     title-icon="i-mdi-heart text-theme-accent"
-    :movies="likedMoviesData"
+    :movie-ids="likedMovieIds"
     :movie-count="likedCount"
-    :is-loading="isLoadingLiked"
+    :is-loading="false"
     search-placeholder="Search liked movies..."
     empty-state-icon="i-mdi-heart-outline"
     empty-state-title="No liked movies yet"
@@ -38,27 +38,6 @@ const movieStore = useMovieStore()
 // Get likedMovieIds directly from store (VueUse storage)
 const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 
-// Local state for liked movies (since store uses lazy loading)
-const likedMoviesData = ref<LightweightMovie[]>([])
-const isLoadingLiked = ref(true)
-
-// Initialize database and load liked movies
-onMounted(async () => {
-  try {
-    // Set lightweight movies with just IDs to allow virtual grid to fetch visible ones
-    if (likedMovieIds.value.length > 0) {
-      likedMoviesData.value = likedMovieIds.value.map(
-        id => ({ imdbId: id, title: '' }) as LightweightMovie
-      )
-
-      // Pre-fetch first batch for instant display
-      const firstBatch = likedMovieIds.value.slice(0, 30)
-      movieStore.fetchMoviesByIds([...firstBatch])
-    }
-  } catch {
-    // Failed to load liked movies, continue with empty state
-  } finally {
-    isLoadingLiked.value = false
-  }
-})
+// Local loading state (not currently used but kept for future enhancements)
+const _isLoadingLiked = ref(false)
 </script>

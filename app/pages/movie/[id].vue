@@ -409,7 +409,7 @@
                     :key="relatedMovie.imdbId"
                     class="flex-shrink-0 w-48 snap-start"
                   >
-                    <MovieCard :movie="relatedMovie" />
+                    <MovieCard :movie-id="relatedMovie.imdbId" />
                   </div>
                 </template>
                 <template v-else-if="isRelatedLoading">
@@ -505,7 +505,8 @@ import type { MovieEntry, LightweightMovie } from '~/types'
 
 // Stores - get reactive state and methods once
 const movieStore = useMovieStore()
-const { currentMovieList, likedMovieIds } = storeToRefs(movieStore)
+const { likedMovieIds, currentMovieList } = storeToRefs(movieStore)
+const { lightweightMovieCache } = storeToRefs(movieStore)
 const { getMovieById, fetchMoviesByIds, loadFromFile, toggleLike } = movieStore
 const { showToast } = useUiStore()
 const route = useRoute()
@@ -602,7 +603,14 @@ const loadRelatedMovies = async () => {
   if (hasLoadedRelated.value || !movie.value?.relatedMovies?.length) return
   isRelatedLoading.value = true
   try {
-    relatedMovies.value = await fetchMoviesByIds(movie.value.relatedMovies)
+    // Fetch movies into cache
+    await fetchMoviesByIds(movie.value.relatedMovies)
+
+    // Get movies from cache
+    relatedMovies.value = movie.value.relatedMovies
+      .map(id => lightweightMovieCache.value.get(id))
+      .filter((movie): movie is LightweightMovie => !!movie)
+
     hasLoadedRelated.value = true
     // Ensure scroll state is updated after loading
     nextTick(() => {
@@ -727,7 +735,7 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   if (!currentId) return
 
   const movies = currentMovieList.value
-  const currentIndex = movies.findIndex((m: LightweightMovie) => m.imdbId === currentId)
+  const currentIndex = movies.findIndex((m: LightweightMovie | null) => m?.imdbId === currentId)
 
   if (currentIndex === -1) return
 

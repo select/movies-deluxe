@@ -56,9 +56,9 @@ export const useMovieStore = defineStore('movie', () => {
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
   const allMovies = shallowRef<Map<string, MovieEntry>>(new Map())
 
-  // Cache for movie details
+  // Cache for lightweight movies (for grid display)
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
-  const movieDetailsCache = shallowRef<Map<string, MovieEntry>>(new Map())
+  const lightweightMovieCache = shallowRef<Map<string, LightweightMovie>>(new Map())
 
   // Liked movie IDs stored in localStorage using VueUse
   const likedMovieIds = useStorage<string[]>('movies-deluxe-liked', [])
@@ -74,6 +74,7 @@ export const useMovieStore = defineStore('movie', () => {
   })
   const isInitialLoading = ref(true)
   const isFiltering = ref(false)
+  const isAppending = ref(false)
 
   // Database composable
   const db = useDatabase()
@@ -86,31 +87,26 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Track the latest request ID for filter/search queries to discard stale results
   const currentSearchSessionId = ref(0)
-  let lastRequestId = 0
 
   // ============================================
   // COMPUTED PROPERTIES - Data Views
   // ============================================
 
   /**
-   * Lightweight movies for virtual scrolling
+   * Search result movies for virtual scrolling
    * Only includes essential fields (imdbId, title, year)
+   * Can contain null values for movies that haven't been loaded yet
    */
-  const lightweightMovies = ref<LightweightMovie[]>([])
-
-  /**
-   * Filtered and sorted movies for display
-   */
-  const filteredAndSortedMovies = ref<MovieEntry[]>([])
+  const searchResultMovies = ref<(LightweightMovie | null)[]>([])
 
   /**
    * Current movie list for navigation (uses lightweight movies for consistency with index page)
    * Returns the list of movie IDs in the same order as displayed on the index page
    * Falls back to all movies sorted by year if no filtering has been applied yet
    */
-  const currentMovieList = computed((): LightweightMovie[] => {
-    if (lightweightMovies.value.length > 0) {
-      return lightweightMovies.value
+  const currentMovieList = computed((): (LightweightMovie | null)[] => {
+    if (searchResultMovies.value.length > 0) {
+      return searchResultMovies.value
     }
     // Fallback to all movies sorted by year (newest first) as lightweight entries
     return Array.from(allMovies.value.values())
@@ -124,9 +120,9 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Total number of movies in the database
+   * Total number of movies in the database (set once during initialization)
    */
-  const totalMovies = computed((): number => allMovies.value.size)
+  const totalMovies = ref(0)
 
   /**
    * Number of movies after applying filters
@@ -184,37 +180,6 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
   // UTILITY FUNCTIONS
   // ============================================
-
-  /**
-   * Map LightweightMovie to MovieEntry
-   * Sources are now loaded separately from JSON files
-   */
-  const mapLightweightToMovie = (movie: LightweightMovie): MovieEntry => {
-    // console.log('[mapLightweightToMovie] Mapping movie:', movie.imdbId, movie.title)
-    return {
-      imdbId: movie.imdbId,
-      title: movie.title,
-      year: movie.year,
-      lastUpdated: new Date().toISOString(), // Not available in lightweight version
-      sources: [], // Sources will be loaded from JSON files when needed
-      metadata: {
-        imdbRating:
-          typeof movie.imdbRating === 'number'
-            ? movie.imdbRating
-            : movie.imdbRating
-              ? parseFloat(String(movie.imdbRating))
-              : undefined,
-        imdbVotes:
-          typeof movie.imdbVotes === 'number'
-            ? movie.imdbVotes
-            : movie.imdbVotes
-              ? parseInt(String(movie.imdbVotes).replace(/,/g, ''), 10)
-              : undefined,
-        imdbID: movie.imdbId,
-        Language: movie.language,
-      },
-    }
-  }
 
   /**
    * Map MovieEntry to LightweightMovie
@@ -310,6 +275,10 @@ export const useMovieStore = defineStore('movie', () => {
       await db.init(`${useRuntimeConfig().app.baseURL}data/movies.db`)
       console.log('[loadFromFile] Database initialized successfully')
 
+      // Get total movie count once database is ready
+      totalMovies.value = await db.getMovieCount()
+      console.log('[loadFromFile] Total movies count:', totalMovies.value)
+
       isInitialLoading.value = false
     } catch (err) {
       console.error('[loadFromFile] Failed to initialize SQLite:', err)
@@ -329,97 +298,6 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fetch total count of movies matching filters
-   */
-  const fetchMovieCount = async (): Promise<number> => {
-    const sessionId = currentSearchSessionId.value
-    const requestId = ++lastRequestId
-    console.log('[fetchMovieCount] Starting movie count fetch', sessionId, requestId)
-    // Wait for database to be ready if it's still initializing
-    if (!db.isReady.value) {
-      if (isInitialLoading.value && !isLoading.value.movies) {
-        loadFromFile()
-      }
-
-      let attempts = 0
-      while (!db.isReady.value && attempts < 100) {
-        await new Promise(resolve => setTimeout(resolve, 100))
-        attempts++
-      }
-
-      if (!db.isReady.value) {
-        console.error('[fetchMovieCount] Database not ready for count')
-        return 0
-      }
-
-      if (sessionId !== currentSearchSessionId.value) {
-        console.log('[fetchMovieCount] Discarding stale count result after wait', sessionId)
-        return 0
-      }
-    }
-
-    try {
-      const params: (string | number)[] = []
-      const where: string[] = []
-
-      // Apply filters (same logic as fetchLightweightMovies)
-      if (filters.value.minRating > 0) {
-        where.push('m.imdbRating >= ?')
-        params.push(filters.value.minRating)
-      }
-      if (filters.value.minYear > 0) {
-        where.push('m.year >= ?')
-        params.push(filters.value.minYear)
-      }
-      if (filters.value.maxYear && filters.value.maxYear > 0) {
-        where.push('m.year <= ?')
-        params.push(filters.value.maxYear)
-      }
-      if (filters.value.minVotes > 0) {
-        where.push('m.imdbVotes >= ?')
-        params.push(filters.value.minVotes)
-      }
-      if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-        where.push('m.imdbVotes <= ?')
-        params.push(filters.value.maxVotes)
-      }
-
-      // Genre filters
-      if (filters.value.genres.length > 0) {
-        filters.value.genres.forEach(genre => {
-          where.push('m.genre LIKE ?')
-          params.push(`%${genre}%`)
-        })
-      }
-
-      // Country filters
-      if (filters.value.countries.length > 0) {
-        filters.value.countries.forEach(country => {
-          where.push('m.country LIKE ?')
-          params.push(`%${country}%`)
-        })
-      }
-
-      const count = await db.getMovieCount({
-        where: where.join(' AND '),
-        params,
-      })
-
-      if (sessionId !== currentSearchSessionId.value) {
-        console.log('[fetchMovieCount] Discarding stale count result', sessionId)
-        return 0
-      }
-
-      console.log('[fetchMovieCount] Count result:', count)
-      totalFiltered.value = count
-      return count
-    } catch (err) {
-      console.error('[fetchMovieCount] Failed to fetch movie count:', err)
-      return 0
-    }
-  }
-
-  /**
    * Fetch movies from database (lightweight version)
    */
   const fetchMovies = async (options: {
@@ -430,7 +308,7 @@ export const useMovieStore = defineStore('movie', () => {
     offset?: number
     includeCount?: boolean
     searchQuery?: string
-  }) => {
+  }): Promise<{ result: string[]; totalCount: number }> => {
     console.log('[fetchMovies] Starting fetch with options:', {
       ...options,
       params: options.params?.length,
@@ -453,7 +331,7 @@ export const useMovieStore = defineStore('movie', () => {
       finalParams.push(`"${sanitizedQuery}"`)
     }
 
-    const { result, totalCount } = await db.lightweightQuery({
+    const { result, totalCount } = await db.searchQuery({
       where: finalWhere,
       params: finalParams,
       orderBy: orderBy || 'm.year DESC, m.imdbId',
@@ -462,38 +340,33 @@ export const useMovieStore = defineStore('movie', () => {
       includeCount,
     })
 
-    console.log('[fetchMovies] Fetched', result.length, 'movies, total count:', totalCount)
+    console.log('[fetchMovies] Fetched', result.length, 'movie IDs, total count:', totalCount)
     return {
-      result: result.map(mapLightweightToMovie),
+      result: result.map(r => r.imdbId),
       totalCount: totalCount || 0,
     }
   }
 
   /**
    * Fetch lightweight movie details for specific IDs (with caching)
-   * Returns essential fields for grid display
+   * Populates the lightweightMovieCache and does not return movies directly
    */
-  const fetchMoviesByIds = async (imdbIds: string[]): Promise<LightweightMovie[]> => {
-    if (!imdbIds || imdbIds.length === 0) return []
+  const fetchMoviesByIds = async (imdbIds: string[]): Promise<void> => {
+    if (!imdbIds || imdbIds.length === 0) return
 
     // Ensure cache is initialized
-    if (!movieDetailsCache.value) {
-      movieDetailsCache.value = new Map()
+    if (!lightweightMovieCache.value) {
+      lightweightMovieCache.value = new Map()
     }
 
     // Filter out IDs that are already cached or pending
     const uncachedIds = imdbIds.filter(
-      id => !movieDetailsCache.value.has(id) && !pendingIds.has(id)
+      id => !lightweightMovieCache.value.has(id) && !pendingIds.has(id)
     )
 
     if (uncachedIds.length === 0) {
       // All movies are either cached or already being fetched
-      return imdbIds
-        .map(id => {
-          const movie = movieDetailsCache.value.get(id)
-          return movie ? mapMovieToLightweight(movie) : undefined
-        })
-        .filter((m): m is LightweightMovie => !!m)
+      return
     }
 
     console.log('[fetchMoviesByIds] Fetching', uncachedIds.length, 'uncached movies from database')
@@ -519,20 +392,15 @@ export const useMovieStore = defineStore('movie', () => {
       if (!db.isReady.value) {
         console.error('[fetchMoviesByIds] Database not ready after waiting')
         uncachedIds.forEach(id => pendingIds.delete(id))
-        return []
+        return
       }
     }
 
     // Double check cache after waiting (another request might have filled it)
-    const stillUncachedIds = uncachedIds.filter(id => !movieDetailsCache.value.has(id))
+    const stillUncachedIds = uncachedIds.filter(id => !lightweightMovieCache.value.has(id))
     if (stillUncachedIds.length === 0) {
       uncachedIds.forEach(id => pendingIds.delete(id))
-      return imdbIds
-        .map(id => {
-          const movie = movieDetailsCache.value.get(id)
-          return movie ? mapMovieToLightweight(movie) : undefined
-        })
-        .filter((m): m is LightweightMovie => !!m)
+      return
     }
 
     try {
@@ -540,9 +408,10 @@ export const useMovieStore = defineStore('movie', () => {
       const movies = results.map(mapRowToMovie)
       console.log('[fetchMoviesByIds] Fetched', movies.length, 'movies from database')
 
-      // Cache the results and merge with allMovies
+      // Cache the results in the lightweight cache
       movies.forEach(movie => {
-        movieDetailsCache.value.set(movie.imdbId, movie)
+        const lightweight = mapMovieToLightweight(movie)
+        lightweightMovieCache.value.set(movie.imdbId, lightweight)
         // Also update allMovies if not present
         if (!allMovies.value.has(movie.imdbId)) {
           allMovies.value.set(movie.imdbId, movie)
@@ -563,13 +432,18 @@ export const useMovieStore = defineStore('movie', () => {
         // Create minimal entries for movies not found in database
         // This prevents infinite loading states
         missingIds.forEach(id => {
+          const minimalLightweight: LightweightMovie = {
+            imdbId: id,
+            title: id, // Fallback to ID as title
+            year: 0,
+          }
           const minimalEntry: MovieEntry = {
             imdbId: id,
             title: id, // Fallback to ID as title
             sources: [],
             lastUpdated: new Date().toISOString(),
           }
-          movieDetailsCache.value.set(id, minimalEntry)
+          lightweightMovieCache.value.set(id, minimalLightweight)
           if (!allMovies.value.has(id)) {
             allMovies.value.set(id, minimalEntry)
           }
@@ -577,19 +451,10 @@ export const useMovieStore = defineStore('movie', () => {
       }
 
       // Trigger reactivity by replacing the Map instances
-      movieDetailsCache.value = new Map(movieDetailsCache.value)
+      lightweightMovieCache.value = new Map(lightweightMovieCache.value)
       allMovies.value = new Map(allMovies.value)
-
-      // Return all requested movies (cached + newly fetched) as lightweight entries
-      return imdbIds
-        .map(id => {
-          const movie = movieDetailsCache.value.get(id)
-          return movie ? mapMovieToLightweight(movie) : undefined
-        })
-        .filter((m): m is LightweightMovie => !!m)
     } catch (err) {
       console.error('[fetchMoviesByIds] Failed to fetch movies by IDs:', err)
-      return []
     } finally {
       // Remove from pending
       uncachedIds.forEach(id => pendingIds.delete(id))
@@ -597,18 +462,18 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
+   * Get a lightweight movie from cache by ID
+   */
+  const getLightweightMovieById = (imdbId: string): LightweightMovie | null => {
+    if (!imdbId) return null
+    return lightweightMovieCache.value.get(imdbId) || null
+  }
+
+  /**
    * Get a single movie by ID (from cache or API)
    */
   const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
     console.log('[getMovieById] Getting movie:', imdbId)
-    // Check cache first - but only if it has sources loaded with valid IDs
-    if (movieDetailsCache.value.has(imdbId)) {
-      const cached = movieDetailsCache.value.get(imdbId)
-      if (cached && cached.sources && cached.sources.length > 0 && cached.sources[0]?.id) {
-        console.log('[getMovieById] Found in cache with full sources')
-        return cached
-      }
-    }
 
     // Check allMovies - if it has sources with valid IDs, it's a full entry
     if (allMovies.value.has(imdbId)) {
@@ -629,7 +494,8 @@ export const useMovieStore = defineStore('movie', () => {
       // Validate that we got a proper movie object (not HTML or malformed data)
       if (movie && typeof movie === 'object' && movie.imdbId && movie.title) {
         console.log('[getMovieById] Successfully fetched movie from JSON')
-        movieDetailsCache.value.set(imdbId, movie)
+        // Store in allMovies instead of separate cache
+        allMovies.value.set(imdbId, movie)
         return movie
       }
       // If we got invalid data, treat it as not found
@@ -687,305 +553,6 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
   // FILTERING & SORTING ACTIONS
   // ============================================
-
-  /**
-   * Fetch lightweight movie list (IDs and titles only) for virtual scrolling
-   */
-  const fetchLightweightMovies = async (options: { limit?: number; offset?: number } = {}) => {
-    const sessionId = currentSearchSessionId.value
-    const requestId = ++lastRequestId
-    console.log('[fetchLightweightMovies] Starting with options:', options, sessionId, requestId)
-    if (!db.isReady.value) {
-      console.log('[fetchLightweightMovies] DB not ready, cannot fetch lightweight movies')
-      return
-    }
-
-    const { limit, offset } = options
-    const isInitial = offset === undefined || offset === 0
-
-    if (isInitial) {
-      isFiltering.value = true
-    }
-
-    try {
-      const params: (string | number)[] = []
-      const where: string[] = []
-
-      // Apply filters
-      if (filters.value.minRating > 0) {
-        where.push('m.imdbRating >= ?')
-        params.push(filters.value.minRating)
-      }
-      if (filters.value.minYear > 0) {
-        where.push('m.year >= ?')
-        params.push(filters.value.minYear)
-      }
-      if (filters.value.maxYear && filters.value.maxYear > 0) {
-        where.push('m.year <= ?')
-        params.push(filters.value.maxYear)
-      }
-      if (filters.value.minVotes > 0) {
-        where.push('m.imdbVotes >= ?')
-        params.push(filters.value.minVotes)
-      }
-      if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-        where.push('m.imdbVotes <= ?')
-        params.push(filters.value.maxVotes)
-      }
-
-      // Genre filters
-      if (filters.value.genres.length > 0) {
-        filters.value.genres.forEach(genre => {
-          where.push('m.genre LIKE ?')
-          params.push(`%${genre}%`)
-        })
-      }
-
-      // Country filters
-      if (filters.value.countries.length > 0) {
-        filters.value.countries.forEach(country => {
-          where.push('m.country LIKE ?')
-          params.push(`%${country}%`)
-        })
-      }
-
-      // Source filters require joins, so use full query
-      if (filters.value.sources.length > 0) {
-        console.log('[fetchLightweightMovies] Using full query for source filters')
-        await fetchFilteredMovies(offset !== undefined && offset > 0)
-        return
-      }
-
-      // Sorting
-      let orderBy = ''
-      const sortField = filters.value.sort.field
-      const sortDir = filters.value.sort.direction.toUpperCase()
-
-      if (sortField === 'relevance' && filters.value.searchQuery) {
-        console.log('[fetchLightweightMovies] Using full query for search relevance')
-        // For search, we need to use FTS which requires full query
-        await fetchFilteredMovies(offset !== undefined && offset > 0)
-        return
-      } else if (sortField === 'rating') {
-        orderBy = `m.imdbRating ${sortDir}`
-      } else if (sortField === 'year') {
-        orderBy = `m.year ${sortDir}`
-      } else if (sortField === 'title') {
-        orderBy = `m.title ${sortDir}`
-      } else if (sortField === 'votes') {
-        orderBy = `m.imdbVotes ${sortDir}`
-      }
-
-      const { result, totalCount } = await db.lightweightQuery({
-        where: where.join(' AND '),
-        params,
-        orderBy,
-        limit,
-        offset,
-        includeCount: isInitial,
-      })
-
-      if (sessionId !== currentSearchSessionId.value) {
-        console.log('[fetchLightweightMovies] Discarding stale session result', sessionId)
-        return
-      }
-
-      if (isInitial && requestId !== lastRequestId) {
-        console.log('[fetchLightweightMovies] Discarding stale request result', requestId)
-        return
-      }
-
-      if (isInitial) {
-        lightweightMovies.value = result || []
-        if (totalCount !== undefined) {
-          totalFiltered.value = totalCount
-        }
-        console.log(
-          '[fetchLightweightMovies] Initial load:',
-          result?.length,
-          'movies, total:',
-          totalCount
-        )
-      } else {
-        // Append results for now, until we implement full range tracking
-        lightweightMovies.value = [...lightweightMovies.value, ...(result || [])]
-        console.log(
-          '[fetchLightweightMovies] Appended',
-          result?.length,
-          'movies, total now:',
-          lightweightMovies.value.length
-        )
-      }
-    } catch (err: unknown) {
-      console.error('[fetchLightweightMovies] Lightweight query failed:', err)
-      if (isInitial) {
-        lightweightMovies.value = []
-      }
-    } finally {
-      if (isInitial) {
-        isFiltering.value = false
-      }
-    }
-  }
-
-  /**
-   * Fetch movies from SQLite based on current filters
-   */
-  const fetchFilteredMovies = async (append = false) => {
-    const sessionId = currentSearchSessionId.value
-    const requestId = ++lastRequestId
-    console.log('[fetchFilteredMovies] Starting with append:', append, sessionId, requestId)
-    if (!db.isReady.value) {
-      // Fallback to JS filtering if DB not ready
-      console.error('[fetchFilteredMovies] DB not ready, using JS filtering')
-      const allMoviesArray = await searchMovies(filters.value.searchQuery)
-      filteredAndSortedMovies.value = applyFilters(allMoviesArray)
-      totalFiltered.value = filteredAndSortedMovies.value.length
-      return
-    }
-
-    if (!append) {
-      isFiltering.value = true
-    }
-    try {
-      const params: (string | number)[] = []
-      const where: string[] = []
-
-      // Filters
-      if (filters.value.minRating > 0) {
-        where.push('m.imdbRating >= ?')
-        params.push(filters.value.minRating)
-      }
-      if (filters.value.minYear > 0) {
-        where.push('m.year >= ?')
-        params.push(filters.value.minYear)
-      }
-      if (filters.value.maxYear && filters.value.maxYear > 0) {
-        where.push('m.year <= ?')
-        params.push(filters.value.maxYear)
-      }
-      if (filters.value.minVotes > 0) {
-        where.push('m.imdbVotes >= ?')
-        params.push(filters.value.minVotes)
-      }
-      if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-        where.push('m.imdbVotes <= ?')
-        params.push(filters.value.maxVotes)
-      }
-
-      // Source filters
-      if (filters.value.sources.length > 0) {
-        const sourceConditions: string[] = []
-        if (filters.value.sources.includes('archive.org')) {
-          sourceConditions.push("m.primarySourceType = 'archive.org'")
-        }
-        const youtubeChannels = filters.value.sources.filter(s => s !== 'archive.org')
-        if (youtubeChannels.length > 0) {
-          sourceConditions.push(
-            `(m.primarySourceType = 'youtube' AND m.primaryChannelName IN (${youtubeChannels.map(() => '?').join(',')}))`
-          )
-          params.push(...youtubeChannels)
-        }
-        if (sourceConditions.length > 0) {
-          where.push(`(${sourceConditions.join(' OR ')})`)
-        }
-      }
-
-      // Genre filters
-      if (filters.value.genres.length > 0) {
-        filters.value.genres.forEach(genre => {
-          where.push('m.genre LIKE ?')
-          params.push(`%${genre}%`)
-        })
-      }
-
-      // Country filters
-      if (filters.value.countries.length > 0) {
-        filters.value.countries.forEach(country => {
-          where.push('m.country LIKE ?')
-          params.push(`%${country}%`)
-        })
-      }
-
-      // Sorting
-      let orderBy = ''
-      const sortField = filters.value.sort.field
-      const sortDir = filters.value.sort.direction.toUpperCase()
-
-      // When searching, ignore relevance sort and just use title
-      if (sortField === 'relevance' && filters.value.searchQuery) {
-        orderBy = `m.title ${sortDir}`
-      } else if (sortField === 'rating') {
-        orderBy = `m.imdbRating ${sortDir}`
-      } else if (sortField === 'year') {
-        orderBy = `m.year ${sortDir}`
-      } else if (sortField === 'title') {
-        orderBy = `m.title ${sortDir}`
-      } else if (sortField === 'votes') {
-        orderBy = `m.imdbVotes ${sortDir}`
-      }
-
-      const itemsPerPage = 50
-      const offset = append ? (filters.value.currentPage - 1) * itemsPerPage : 0
-      const limit = itemsPerPage
-
-      const { result, totalCount } = await fetchMovies({
-        searchQuery: filters.value.searchQuery,
-        where: where.join(' AND '),
-        params,
-        orderBy,
-        limit,
-        offset,
-        includeCount: !append, // Only count on initial fetch
-      })
-
-      if (sessionId !== currentSearchSessionId.value) {
-        console.log('[fetchFilteredMovies] Discarding stale session result', sessionId)
-        return
-      }
-
-      if (!append && requestId !== lastRequestId) {
-        console.log('[fetchFilteredMovies] Discarding stale request result', requestId)
-        return
-      }
-
-      if (append) {
-        filteredAndSortedMovies.value = [...filteredAndSortedMovies.value, ...result]
-        // Also append to lightweight movies for virtual scrolling
-        lightweightMovies.value = [
-          ...lightweightMovies.value,
-          ...result.map(m => ({
-            imdbId: m.imdbId,
-            title: m.title,
-            year: m.year || 0,
-          })),
-        ]
-      } else {
-        filteredAndSortedMovies.value = result
-        // Also populate lightweight movies for virtual scrolling
-        lightweightMovies.value = result.map(m => ({
-          imdbId: m.imdbId,
-          title: m.title,
-          year: m.year || 0,
-        }))
-      }
-
-      if (totalCount !== undefined) {
-        totalFiltered.value = totalCount
-      }
-      console.log(
-        '[fetchFilteredMovies] Result:',
-        filteredAndSortedMovies.value.length,
-        'movies, total:',
-        totalCount
-      )
-    } catch (err: unknown) {
-      console.error('[fetchFilteredMovies] SQL filtering failed:', err)
-      filteredAndSortedMovies.value = []
-    } finally {
-      isFiltering.value = false
-    }
-  }
 
   /**
    * Apply all filters to a list of movies (for JS fallback or liked.vue)
@@ -1373,65 +940,13 @@ export const useMovieStore = defineStore('movie', () => {
       // Increment session ID to cancel any pending requests from previous filter state
       currentSearchSessionId.value++
 
-      // Reset to page 1 only if not already there
-      const wasPageOne = filters.value.currentPage === 1
+      // Reset to page 1
       filters.value.currentPage = 1
 
-      // Fetch count first for immediate feedback
-      fetchMovieCount()
-      // Then fetch first page of movies only if we were already on page 1
-      // (otherwise the page watcher will trigger the fetch)
-      if (wasPageOne) {
-        fetchLightweightMovies({ limit: 50 })
-      }
+      // MovieVirtualGrid will handle loading movies based on filters
+      // No need to manually fetch here
     },
     { debounce: 300, maxWait: 1000 }
-  )
-
-  // Watch for page changes
-  watch(
-    () => filters.value.currentPage,
-    (newPage, oldPage) => {
-      // Only apply pagination on the search page
-      if (useRoute().path !== '/search') return
-
-      // Only fetch more if page increased
-      if (newPage > oldPage) {
-        const itemsPerPage = 50
-        const offset = (newPage - 1) * itemsPerPage
-
-        // Check if we already have all available movies
-        if (totalFiltered.value > 0 && lightweightMovies.value.length >= totalFiltered.value) {
-          console.log('[watch:currentPage] Already have all movies loaded, skipping fetch')
-          return
-        }
-
-        // Check if we already have enough movies loaded for this page
-        const expectedMovies = newPage * itemsPerPage
-        if (lightweightMovies.value.length >= expectedMovies) {
-          console.log('[watch:currentPage] Already have enough movies loaded, skipping fetch')
-          return
-        }
-
-        // If we have source filters or search query, use fetchFilteredMovies
-        if (
-          filters.value.sources.length > 0 ||
-          (filters.value.sort.field === 'relevance' && filters.value.searchQuery)
-        ) {
-          fetchFilteredMovies(true)
-        } else {
-          // Otherwise use fetchLightweightMovies with pagination
-          fetchLightweightMovies({
-            limit: itemsPerPage,
-            offset,
-          })
-        }
-      } else if (newPage === 1 && oldPage !== 1) {
-        // Reset case - fetch first page
-        const itemsPerPage = 50
-        fetchLightweightMovies({ limit: itemsPerPage })
-      }
-    }
   )
 
   // ============================================
@@ -1440,28 +955,28 @@ export const useMovieStore = defineStore('movie', () => {
 
   return {
     // ============================================
-    // STATE (Read-only refs)
+    // STATE
     // ============================================
-    allMovies: readonly(allMovies),
-    movieDetailsCache: readonly(movieDetailsCache),
-    filters: readonly(filters),
-    isInitialLoading: readonly(isInitialLoading),
-    isFiltering: readonly(isFiltering),
-    isLoading: readonly(isLoading),
-    likedMovieIds: readonly(likedMovieIds),
+    allMovies,
+    lightweightMovieCache,
+    filters,
+    isInitialLoading,
+    isFiltering,
+    isAppending,
+    isLoading,
+    likedMovieIds,
 
     // ============================================
     // COMPUTED PROPERTIES
     // ============================================
 
     // Data views
-    filteredAndSortedMovies: readonly(filteredAndSortedMovies),
-    lightweightMovies: readonly(lightweightMovies),
+    searchResultMovies,
     currentMovieList,
 
     // Statistics
     totalMovies,
-    totalFiltered: readonly(totalFiltered),
+    totalFiltered,
     likedCount,
     activeFiltersCount,
     hasActiveFilters,
@@ -1471,9 +986,9 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Data Loading
     // ============================================
     loadFromFile,
-    fetchMovieCount,
     fetchMovies,
     fetchMoviesByIds,
+    getLightweightMovieById,
     getMovieById,
     searchMovies,
     mapRowToMovie,
@@ -1497,8 +1012,6 @@ export const useMovieStore = defineStore('movie', () => {
     setCountries,
     resetFilters,
     applyFilters,
-    fetchFilteredMovies,
-    fetchLightweightMovies,
 
     // ============================================
     // ACTIONS - Pagination

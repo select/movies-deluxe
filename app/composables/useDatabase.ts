@@ -1,5 +1,5 @@
 import type { WorkerResponse, FilterOptionsResponse } from '~/types/database'
-import type { Collection, LightweightMovie } from '~/types'
+import type { Collection } from '~/types'
 
 // Singleton instance
 let dbInstance: ReturnType<typeof createDatabase> | null = null
@@ -111,7 +111,7 @@ function createDatabase() {
     })
   }
 
-  const lightweightQuery = async (options: {
+  const searchQuery = async (options: {
     where?: string
     params?: (string | number)[]
     orderBy?: string
@@ -119,7 +119,7 @@ function createDatabase() {
     offset?: number
     includeCount?: boolean
   }): Promise<{
-    result: LightweightMovie[]
+    result: { imdbId: string }[]
     totalCount?: number
   }> => {
     if (!isReady.value) {
@@ -131,7 +131,7 @@ function createDatabase() {
       pendingQueries.set(id, {
         resolve: (data: WorkerResponse) =>
           resolve({
-            result: (data.result as LightweightMovie[]) ?? [],
+            result: (data.result as { imdbId: string }[]) ?? [],
             totalCount: data.totalCount,
           }),
         reject,
@@ -143,7 +143,7 @@ function createDatabase() {
         rawOptions.params = toRaw(rawOptions.params)
       }
 
-      worker.value!.postMessage({ type: 'query-lightweight', id, ...rawOptions })
+      worker.value!.postMessage({ type: 'search-query', id, ...rawOptions })
     })
   }
 
@@ -228,7 +228,7 @@ function createDatabase() {
     init,
     query,
     extendedQuery,
-    lightweightQuery,
+    searchQuery,
     queryByIds,
     getCollectionsForMovie,
     getFilterOptions,
