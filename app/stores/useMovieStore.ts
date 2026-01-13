@@ -1,4 +1,5 @@
-import type { MovieEntry, MovieSourceType, LightweightMovie, FilterOptionsResponse } from '~/types'
+import type { MovieEntry, MovieSourceType, LightweightMovie, SortOption } from '~/types'
+import type { FilterOptionsResponse } from '~/types/database'
 import { useStorage, watchDebounced } from '@vueuse/core'
 
 /**
@@ -15,6 +16,20 @@ export interface LoadingState {
   movieDetails: boolean
   imdbFetch: boolean
 }
+
+/**
+ * Available sort options for movies
+ */
+const SORT_OPTIONS: SortOption[] = [
+  { field: 'relevance', direction: 'desc', label: 'Relevance' },
+  { field: 'year', direction: 'desc', label: 'Year (Newest)' },
+  { field: 'year', direction: 'asc', label: 'Year (Oldest)' },
+  { field: 'rating', direction: 'desc', label: 'Rating (High)' },
+  { field: 'rating', direction: 'asc', label: 'Rating (Low)' },
+  { field: 'title', direction: 'asc', label: 'Title (A-Z)' },
+  { field: 'title', direction: 'desc', label: 'Title (Z-A)' },
+  { field: 'votes', direction: 'desc', label: 'Most Popular' },
+]
 
 /**
  * Default filter state
