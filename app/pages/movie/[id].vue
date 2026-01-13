@@ -422,6 +422,85 @@
           </div>
         </div>
 
+        <!-- Similar Movies (Vector Search) -->
+        <div
+          ref="similarMoviesContainer"
+          class="pt-8 border-t border-theme-border/50 min-h-[300px] group/similar"
+        >
+          <div v-if="similarMovies.length > 0 || isSimilarLoading">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold flex items-center gap-2">
+                <div class="i-mdi-auto-fix text-theme-accent"></div>
+                Similar Movies
+              </h2>
+              <div class="text-sm text-theme-textmuted italic">Powered by vector search</div>
+            </div>
+
+            <!-- Horizontal scrollable grid -->
+            <div class="relative">
+              <!-- Left Scroll Button -->
+              <button
+                v-if="canScrollSimilarLeft"
+                class="absolute left-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover/similar:opacity-100 group-hover/similar:animate-pulse"
+                @click="scrollSimilar('left')"
+              >
+                <div class="i-mdi-chevron-left text-2xl"></div>
+              </button>
+
+              <!-- Right Scroll Button -->
+              <button
+                v-if="canScrollSimilarRight"
+                class="absolute right-2 top-[calc(50%-2rem)] -translate-y-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 hidden md:flex items-center justify-center opacity-0 group-hover/similar:opacity-100 group-hover/similar:animate-pulse"
+                @click="scrollSimilar('right')"
+              >
+                <div class="i-mdi-chevron-right text-2xl"></div>
+              </button>
+
+              <div
+                ref="similarScrollContainer"
+                class="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory hide-scrollbar scroll-smooth"
+                @scroll="updateSimilarScrollState"
+              >
+                <template v-if="similarMovies.length > 0">
+                  <div
+                    v-for="similarMovie in similarMovies"
+                    :key="similarMovie.imdbId"
+                    class="flex-shrink-0 w-48 snap-start flex flex-col gap-2"
+                  >
+                    <MovieCard :movie-id="similarMovie.imdbId" />
+                    <!-- Similarity Info -->
+                    <div class="px-2 flex flex-col gap-1">
+                      <div class="flex items-center justify-between">
+                        <div
+                          class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-theme-accent/20 text-theme-accent border border-theme-accent/30 uppercase tracking-wider"
+                        >
+                          {{ formatSimilarity(similarMovie.distance) }} Match
+                        </div>
+                        <div class="group relative" :title="getSimilarityReason(similarMovie)">
+                          <div
+                            class="i-mdi-information-outline text-theme-textmuted hover:text-theme-accent cursor-help"
+                          ></div>
+                          <!-- Tooltip -->
+                          <div
+                            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-theme-surface border border-theme-border rounded shadow-xl text-[10px] leading-tight w-32 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20"
+                          >
+                            {{ getSimilarityReason(similarMovie) }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <template v-else-if="isSimilarLoading">
+                  <div v-for="i in 6" :key="i" class="flex-shrink-0 w-48 snap-start">
+                    <MovieCardSkeleton />
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Admin Curation Panel -->
         <AdminCurationPanel v-if="movie" :movie="movie" @updated="handleMovieUpdated" />
       </div>
@@ -507,7 +586,7 @@ import type { MovieEntry, LightweightMovie } from '~/types'
 const movieStore = useMovieStore()
 const { likedMovieIds, searchResultMovies } = storeToRefs(movieStore)
 const { lightweightMovieCache } = storeToRefs(movieStore)
-const { getMovieById, fetchMoviesByIds, loadFromFile, toggleLike } = movieStore
+const { getMovieById, fetchMoviesByIds, getSimilarMovies, loadFromFile, toggleLike } = movieStore
 const { showToast } = useToastStore()
 const route = useRoute()
 
@@ -517,8 +596,10 @@ const { y: scrollY } = useWindowScroll()
 // Component state
 const movie = ref<MovieEntry | null>(null)
 const relatedMovies = ref<LightweightMovie[]>([])
+const similarMovies = ref<LightweightMovie[]>([])
 const isLoading = ref(true)
 const isRelatedLoading = ref(false)
+const isSimilarLoading = ref(false)
 const error = ref<string | null>(null)
 const selectedSourceIndex = ref(0)
 const isPlotExpanded = ref(false)
@@ -530,6 +611,14 @@ const hasLoadedRelated = ref(false)
 
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
+
+// Similar movies lazy loading
+const similarMoviesContainer = ref<HTMLElement | null>(null)
+const similarScrollContainer = ref<HTMLElement | null>(null)
+const hasLoadedSimilar = ref(false)
+
+const canScrollSimilarLeft = ref(false)
+const canScrollSimilarRight = ref(false)
 
 const updateRelatedScrollState = () => {
   if (!relatedScrollContainer.value) return
@@ -547,10 +636,33 @@ const scrollRelated = (direction: 'left' | 'right') => {
   })
 }
 
+const updateSimilarScrollState = () => {
+  if (!similarScrollContainer.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = similarScrollContainer.value
+  canScrollSimilarLeft.value = scrollLeft > 20
+  canScrollSimilarRight.value = scrollLeft + clientWidth < scrollWidth - 20
+}
+
+const scrollSimilar = (direction: 'left' | 'right') => {
+  if (!similarScrollContainer.value) return
+  const scrollAmount = similarScrollContainer.value.clientWidth * 0.8
+  similarScrollContainer.value.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth',
+  })
+}
+
 useIntersectionObserver(relatedMoviesContainer, entries => {
   const entry = entries[0]
   if (entry?.isIntersecting && !hasLoadedRelated.value && movie.value) {
     loadRelatedMovies()
+  }
+})
+
+useIntersectionObserver(similarMoviesContainer, entries => {
+  const entry = entries[0]
+  if (entry?.isIntersecting && !hasLoadedSimilar.value && movie.value) {
+    loadSimilarMovies()
   }
 })
 
@@ -624,13 +736,82 @@ const loadRelatedMovies = async () => {
   }
 }
 
+// Load similar movies using vector search
+const loadSimilarMovies = async () => {
+  if (hasLoadedSimilar.value || !movie.value?.imdbId) return
+  isSimilarLoading.value = true
+  try {
+    const results = await getSimilarMovies(movie.value.imdbId)
+    similarMovies.value = results
+    hasLoadedSimilar.value = true
+    // Ensure scroll state is updated after loading
+    nextTick(() => {
+      updateSimilarScrollState()
+    })
+  } catch (err) {
+    console.error('Failed to load similar movies:', err)
+    similarMovies.value = []
+  } finally {
+    isSimilarLoading.value = false
+  }
+}
+
+// Format similarity score (distance to percentage)
+const formatSimilarity = (distance?: number) => {
+  if (distance === undefined) return '90%'
+  // Cosine distance is 0 to 2, we want to map it to a percentage
+  // Most similar results will have very low distance (0.0 to 0.4)
+  const similarity = Math.max(0, 1 - distance)
+  return Math.round(similarity * 100) + '%'
+}
+
+// Get similarity reason based on matching attributes
+const getSimilarityReason = (relatedMovie: LightweightMovie) => {
+  if (!movie.value) return ''
+  const reasons: string[] = []
+
+  // Compare genres
+  if (movie.value.metadata?.Genre && relatedMovie.genre) {
+    const movieGenres = movie.value.metadata.Genre.split(',').map(g => g.trim())
+    const relatedGenres = relatedMovie.genre.split(',').map(g => g.trim())
+    const matchingGenres = movieGenres.filter(g => relatedGenres.includes(g))
+    if (matchingGenres.length > 0) {
+      reasons.push(`Matching genres: ${matchingGenres.slice(0, 2).join(', ')}`)
+    }
+  }
+
+  // Compare year
+  if (movie.value.year && relatedMovie.year) {
+    if (movie.value.year === relatedMovie.year) {
+      reasons.push(`Same release year (${movie.value.year})`)
+    } else if (Math.abs(movie.value.year - relatedMovie.year) <= 2) {
+      reasons.push(`Similar release period`)
+    }
+  }
+
+  // Compare country
+  if (movie.value.metadata?.Country && relatedMovie.country) {
+    const movieCountries = movie.value.metadata.Country.split(',').map(c => c.trim())
+    const relatedCountries = relatedMovie.country.split(',').map(c => c.trim())
+    const matchingCountries = movieCountries.filter(c => relatedCountries.includes(c))
+    if (matchingCountries.length > 0) {
+      reasons.push(`Both from ${matchingCountries[0]}`)
+    }
+  }
+
+  if (reasons.length === 0) return 'Found via semantic content analysis'
+  return reasons.join('. ')
+}
+
 // Load movie data
 const loadMovieData = async (movieId: string) => {
   isLoading.value = true
   error.value = null
   selectedSourceIndex.value = 0
   relatedMovies.value = []
+  similarMovies.value = []
   hasLoadedRelated.value = false
+  hasLoadedSimilar.value = false
   isPlotExpanded.value = false
 
   try {
@@ -899,7 +1080,10 @@ const handlePosterError = (event: Event) => {
 
 // Update scroll state on window resize
 if (typeof window !== 'undefined') {
-  useEventListener('resize', updateRelatedScrollState)
+  useEventListener('resize', () => {
+    updateRelatedScrollState()
+    updateSimilarScrollState()
+  })
 }
 </script>
 

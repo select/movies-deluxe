@@ -45,6 +45,7 @@ const DEFAULT_FILTERS: FilterState = {
   genres: [],
   countries: [],
   searchQuery: '',
+  searchMode: 'keyword',
 }
 
 /**
@@ -71,6 +72,9 @@ export const useMovieStore = defineStore('movie', () => {
   // Cache for lightweight movies (for grid display)
   // Use shallowRef to avoid deep reactivity on movie objects (performance optimization)
   const lightweightMovieCache = shallowRef<Map<string, LightweightMovie>>(new Map())
+
+  // Cache for similar movies (vector search results)
+  const similarMoviesCache = shallowRef<Map<string, LightweightMovie[]>>(new Map())
 
   // Liked movie IDs stored in localStorage using VueUse
   const likedMovieIds = useStorage<string[]>('movies-deluxe-liked', [])
@@ -352,6 +356,8 @@ export const useMovieStore = defineStore('movie', () => {
   const buildFilterQuery = (searchQuery?: string) => {
     let sql: string
     const params: (string | number)[] = []
+    const whereConditions: string[] = []
+    const whereParams: (string | number)[] = []
 
     if (searchQuery?.trim()) {
       // Search query - use FTS5 full-text search
@@ -374,79 +380,111 @@ export const useMovieStore = defineStore('movie', () => {
 
     // Add common filter conditions
     if (filters.value.minRating > 0) {
-      sql += ` AND m.imdbRating >= ?`
-      params.push(filters.value.minRating)
+      const cond = `m.imdbRating >= ?`
+      whereConditions.push(cond)
+      whereParams.push(filters.value.minRating)
+      if (!searchQuery?.trim() || sql.includes('WHERE 1=1')) {
+        sql += ` AND ${cond}`
+        params.push(filters.value.minRating)
+      } else {
+        sql += ` AND ${cond}`
+        params.push(filters.value.minRating)
+      }
     }
 
     if (filters.value.minYear > 0) {
-      sql += ` AND m.year >= ?`
+      const cond = `m.year >= ?`
+      whereConditions.push(cond)
+      whereParams.push(filters.value.minYear)
+      sql += ` AND ${cond}`
       params.push(filters.value.minYear)
     }
 
     if (filters.value.maxYear && filters.value.maxYear > 0) {
-      sql += ` AND m.year <= ?`
+      const cond = `m.year <= ?`
+      whereConditions.push(cond)
+      whereParams.push(filters.value.maxYear)
+      sql += ` AND ${cond}`
       params.push(filters.value.maxYear)
     }
 
     if (filters.value.minVotes > 0) {
-      sql += ` AND m.imdbVotes >= ?`
+      const cond = `m.imdbVotes >= ?`
+      whereConditions.push(cond)
+      whereParams.push(filters.value.minVotes)
+      sql += ` AND ${cond}`
       params.push(filters.value.minVotes)
     }
 
     if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-      sql += ` AND m.imdbVotes <= ?`
+      const cond = `m.imdbVotes <= ?`
+      whereConditions.push(cond)
+      whereParams.push(filters.value.maxVotes)
+      sql += ` AND ${cond}`
       params.push(filters.value.maxVotes)
     }
 
-    // Add source filters (now in SQL for better performance)
+    // Add source filters
     if (filters.value.sources.length > 0) {
       const sourceConditions: string[] = []
+      const sourceParams: (string | number)[] = []
 
       filters.value.sources.forEach(source => {
         if (source === 'archive.org') {
           sourceConditions.push('m.primarySourceType = ?')
-          params.push('archive.org')
+          sourceParams.push('archive.org')
         } else {
-          // YouTube channel name
           sourceConditions.push('(m.primarySourceType = ? AND m.primaryChannelName = ?)')
-          params.push('youtube', source)
+          sourceParams.push('youtube', source)
         }
       })
 
       if (sourceConditions.length > 0) {
-        sql += ` AND (${sourceConditions.join(' OR ')})`
+        const cond = `(${sourceConditions.join(' OR ')})`
+        whereConditions.push(cond)
+        whereParams.push(...sourceParams)
+        sql += ` AND ${cond}`
+        params.push(...sourceParams)
       }
     }
 
-    // Add genre filters (now in SQL using LIKE for comma-separated values)
+    // Add genre filters
     if (filters.value.genres.length > 0) {
       const genreConditions = filters.value.genres.map(
         () => '(m.genre LIKE ? OR m.genre LIKE ? OR m.genre LIKE ? OR m.genre = ?)'
       )
+      const genreParams: (string | number)[] = []
 
       filters.value.genres.forEach(genre => {
-        // Match: "Genre, ...", "..., Genre, ...", "..., Genre", or exact "Genre"
-        params.push(`${genre},%`, `%, ${genre},%`, `%, ${genre}`, genre)
+        genreParams.push(`${genre},%`, `%, ${genre},%`, `%, ${genre}`, genre)
       })
 
-      sql += ` AND (${genreConditions.join(' OR ')})`
+      const cond = `(${genreConditions.join(' OR ')})`
+      whereConditions.push(cond)
+      whereParams.push(...genreParams)
+      sql += ` AND ${cond}`
+      params.push(...genreParams)
     }
 
-    // Add country filters (now in SQL using LIKE for comma-separated values)
+    // Add country filters
     if (filters.value.countries.length > 0) {
       const countryConditions = filters.value.countries.map(
         () => '(m.country LIKE ? OR m.country LIKE ? OR m.country LIKE ? OR m.country = ?)'
       )
+      const countryParams: (string | number)[] = []
 
       filters.value.countries.forEach(country => {
-        // Match: "Country, ...", "..., Country, ...", "..., Country", or exact "Country"
-        params.push(`${country},%`, `%, ${country},%`, `%, ${country}`, country)
+        countryParams.push(`${country},%`, `%, ${country},%`, `%, ${country}`, country)
       })
 
-      sql += ` AND (${countryConditions.join(' OR ')})`
+      const cond = `(${countryConditions.join(' OR ')})`
+      whereConditions.push(cond)
+      whereParams.push(...countryParams)
+      sql += ` AND ${cond}`
+      params.push(...countryParams)
     }
 
-    // Add sorting (only for non-search queries or when not using relevance)
+    // Add sorting
     const sortOption =
       SORT_OPTIONS.find(
         opt =>
@@ -463,14 +501,37 @@ export const useMovieStore = defineStore('movie', () => {
       } else if (sortOption.field === 'votes') {
         sql += ` ORDER BY m.imdbVotes ${sortOption.direction === 'desc' ? 'DESC' : 'ASC'}`
       } else {
-        sql += ` ORDER BY m.year DESC` // Default sort
+        sql += ` ORDER BY m.year DESC`
       }
     } else if (searchQuery?.trim()) {
-      // For search queries, default to title order for consistency
       sql += ` ORDER BY m.title ASC`
     }
 
-    return { sql, params }
+    return {
+      sql,
+      params,
+      where: whereConditions.length > 0 ? whereConditions.join(' AND ') : undefined,
+      whereParams: whereConditions.length > 0 ? whereParams : undefined,
+    }
+  }
+
+  /**
+   * Reciprocal Rank Fusion (RRF) to combine multiple ranked result sets.
+   */
+  const reciprocalRankFusion = (sets: string[][], k: number = 60): string[] => {
+    const scores = new Map<string, number>()
+
+    for (const set of sets) {
+      for (let i = 0; i < set.length; i++) {
+        const id = set[i]!
+        const score = 1 / (k + i + 1)
+        scores.set(id, (scores.get(id) || 0) + score)
+      }
+    }
+
+    return Array.from(scores.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(entry => entry[0])
   }
 
   /**
@@ -482,12 +543,44 @@ export const useMovieStore = defineStore('movie', () => {
       return []
     }
 
-    try {
-      const { sql, params } = buildFilterQuery(filters.value.searchQuery.trim())
+    const query = filters.value.searchQuery.trim()
+    const mode = filters.value.searchMode
+    const vectorSearch = useVectorSearch()
 
-      console.log('[executeFilterQuery] Executing query with', params.length, 'parameters')
-      const results = await db.query<{ imdbId: string }>(sql, params)
-      console.log('[executeFilterQuery] Found', results.length, 'matches')
+    try {
+      let results: string[] = []
+
+      if (query && (mode === 'semantic' || mode === 'hybrid')) {
+        const { where, whereParams } = buildFilterQuery()
+
+        // Perform vector search with filters
+        console.log('[executeFilterQuery] Performing vector search...')
+        const vectorResults = await vectorSearch.search(query, 100, where, whereParams)
+
+        if (mode === 'semantic') {
+          results = vectorResults.map(r => r.imdbId)
+        } else {
+          // Hybrid search: combine FTS and Vector search using RRF
+          console.log('[executeFilterQuery] Performing hybrid search...')
+          const { sql: ftsSql, params: ftsParams } = buildFilterQuery(query)
+          const ftsResults = await db.query<{ imdbId: string }>(ftsSql, ftsParams)
+
+          results = reciprocalRankFusion([
+            ftsResults.map(r => r.imdbId),
+            vectorResults.map(r => r.imdbId),
+          ])
+        }
+      } else {
+        // Keyword search or no query
+        const { sql, params } = buildFilterQuery(query)
+        console.log(
+          '[executeFilterQuery] Executing keyword query with',
+          params.length,
+          'parameters'
+        )
+        const dbResults = await db.query<{ imdbId: string }>(sql, params)
+        results = dbResults.map(row => row.imdbId)
+      }
 
       // Check if this request is still current
       if (sessionId !== currentSearchSessionId.value) {
@@ -495,10 +588,48 @@ export const useMovieStore = defineStore('movie', () => {
         return []
       }
 
-      // Return only the IDs - no need to fetch full movie data or use cache
-      return results.map(row => row.imdbId)
+      console.log('[executeFilterQuery] Found', results.length, 'matches')
+      return results
     } catch (err) {
       console.error('[executeFilterQuery] Query failed:', err)
+      return []
+    }
+  }
+
+  /**
+   * Get similar movies for a given movie ID using vector search
+   */
+  const getSimilarMovies = async (
+    imdbId: string,
+    limit: number = 10
+  ): Promise<LightweightMovie[]> => {
+    // Check cache first
+    if (similarMoviesCache.value.has(imdbId)) {
+      return similarMoviesCache.value.get(imdbId) || []
+    }
+
+    const vectorSearch = useVectorSearch()
+    try {
+      const results = await vectorSearch.findSimilar(imdbId, limit)
+
+      // Convert to lightweight movies and cache them
+      const lightweightResults = results.map(r => {
+        // Ensure movie is also in the general lightweight cache
+        const lightweight = mapMovieToLightweight(r)
+        if (!lightweightMovieCache.value.has(lightweight.imdbId)) {
+          lightweightMovieCache.value.set(lightweight.imdbId, lightweight)
+        }
+        return lightweight
+      })
+
+      // Update both caches
+      similarMoviesCache.value.set(imdbId, lightweightResults)
+      lightweightMovieCache.value = new Map(lightweightMovieCache.value)
+      similarMoviesCache.value = new Map(similarMoviesCache.value)
+
+      return lightweightResults
+    } catch (err) {
+      console.error('[getSimilarMovies] Failed to fetch similar movies:', err)
       return []
     }
   }
@@ -615,6 +746,7 @@ export const useMovieStore = defineStore('movie', () => {
     // STATE
     // ============================================
     lightweightMovieCache,
+    similarMoviesCache,
     filters,
     isFiltering,
     likedMovieIds,
@@ -640,6 +772,7 @@ export const useMovieStore = defineStore('movie', () => {
     loadFromFile,
     fetchMoviesByIds,
     getMovieById,
+    getSimilarMovies,
     getFilterOptions,
     mapMovieToLightweight,
     triggerSearchUpdate,

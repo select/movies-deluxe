@@ -157,6 +157,7 @@ export interface LightweightMovie {
   lastUpdated?: string
   genre?: string
   country?: string
+  distance?: number // Distance for vector search results
 }
 
 /**
