@@ -14,8 +14,13 @@ function createDatabase() {
 
   const initPromise = ref<Promise<void> | null>(null)
 
-  const init = async (url?: string) => {
-    if (initPromise.value) return initPromise.value
+  const init = async (url?: string): Promise<number> => {
+    if (initPromise.value) {
+      await initPromise.value
+      return 0 // Already initialized, return 0 as we don't store the count
+    }
+
+    let totalMovies = 0
 
     initPromise.value = (async (): Promise<void> => {
       const DatabaseWorker = await import('~/workers/database.worker?worker')
@@ -50,14 +55,18 @@ function createDatabase() {
       const id = Math.random().toString(36).substring(7)
       return new Promise<void>((resolve, reject) => {
         pendingQueries.set(id, {
-          resolve: (_data: WorkerResponse) => resolve(),
+          resolve: (data: WorkerResponse) => {
+            totalMovies = data.totalMovies || 0
+            resolve()
+          },
           reject,
         })
         worker.value!.postMessage({ type: 'init', id, url })
       })
     })()
 
-    return initPromise.value
+    await initPromise.value
+    return totalMovies
   }
 
   const query = async <T = Record<string, string | number>>(

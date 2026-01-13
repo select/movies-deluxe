@@ -26,6 +26,8 @@ export interface WorkerResponse<T = LightweightMovie[] | Collection[] | FilterOp
   genres?: GenreOption[]
   countries?: CountryOption[]
   channels?: ChannelOption[]
+  success?: boolean
+  totalMovies?: number
 }
 
 /**

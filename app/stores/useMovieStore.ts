@@ -229,12 +229,9 @@ export const useMovieStore = defineStore('movie', () => {
     isLoading.value.movies = true
 
     try {
-      // Initialize database from remote file
-      await db.init(`${useRuntimeConfig().app.baseURL}data/movies.db`)
+      // Initialize database from remote file and get total movie count
+      totalMovies.value = await db.init(`${useRuntimeConfig().app.baseURL}data/movies.db`)
       console.log('[loadFromFile] Database initialized successfully')
-
-      // Get total movie count once database is ready
-      totalMovies.value = await db.getMovieCount()
       console.log('[loadFromFile] Total movies count:', totalMovies.value)
 
       isFiltering.value = false
