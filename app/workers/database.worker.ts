@@ -109,8 +109,9 @@ async function loadRemoteDatabase(url: string) {
     })
 
     const firstRow = testResult[0] as { count: number } | undefined
-    console.log('Database loaded successfully, movies count:', firstRow?.count)
-    return true
+    const movieCount = firstRow?.count || 0
+    console.log('Database loaded successfully, movies count:', movieCount)
+    return movieCount
   } catch (err) {
     console.error('Failed to load remote database:', err)
     throw err
@@ -174,12 +175,17 @@ async function handleMessage(e: QueuedMessage) {
       initializationPromise = (async () => {
         await initDatabase()
         if (url) {
-          await loadRemoteDatabase(url)
+          const totalMovies = await loadRemoteDatabase(url)
+          // Store totalMovies to return it
+          ;(initializationPromise as Promise<void> & { totalMovies?: number }).totalMovies =
+            totalMovies
         }
       })()
 
       await initializationPromise
-      self.postMessage({ id, type: 'init-success', success: true })
+      const totalMovies =
+        (initializationPromise as Promise<void> & { totalMovies?: number }).totalMovies || 0
+      self.postMessage({ id, type: 'init-success', success: true, totalMovies })
       return
     }
 
