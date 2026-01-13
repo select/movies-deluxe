@@ -13,7 +13,7 @@
 
     <!-- Content -->
     <div v-else class="space-y-4">
-      <div class="flex flex-wrap gap-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
+      <div class="flex flex-wrap gap-2">
         <button
           v-for="country in countries"
           :key="country.name"

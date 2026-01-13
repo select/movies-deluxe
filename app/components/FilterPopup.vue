@@ -36,7 +36,7 @@
             <!-- Content -->
             <div
               ref="contentRef"
-              class="p-4 overflow-y-auto scrollbar-thin max-h-[60vh] md:max-h-[400px] relative"
+              class="p-4 overflow-y-auto scrollbar-thin max-h-[40vh] md:max-h-[280px] relative"
               @scroll="updateScrollState"
             >
               <slot></slot>
@@ -120,7 +120,10 @@ watch(
     if (val) {
       nextTick(() => {
         setTimeout(() => activate(), 50)
-        updateScrollState()
+        // Check scroll state multiple times to account for async content loading
+        setTimeout(() => updateScrollState(), 100)
+        setTimeout(() => updateScrollState(), 300)
+        setTimeout(() => updateScrollState(), 500)
       })
     } else {
       deactivate()
