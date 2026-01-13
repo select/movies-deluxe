@@ -129,6 +129,7 @@ interface QueuedMessage {
   imdbIds?: string[]
   movieId?: string
   movieIds?: string[]
+  embedding?: Float32Array | number[]
   limit?: number
   offset?: number
   includeCount?: boolean
@@ -266,6 +267,62 @@ async function handleMessage(e: QueuedMessage) {
         .filter(Boolean)
 
       self.postMessage({ id, result: sortedResults })
+    } else if (type === 'vector-search') {
+      const { embedding, limit = 20, where, params: whereParams } = e
+
+      if (!embedding) {
+        self.postMessage({ id, error: 'Embedding is required for vector search' })
+        return
+      }
+
+      // Ensure embedding is a Float32Array for sqlite-vec
+      let bindEmbedding: Float32Array
+      if (embedding instanceof Float32Array) {
+        bindEmbedding = embedding
+      } else if (embedding instanceof Uint8Array) {
+        bindEmbedding = new Float32Array(
+          embedding.buffer,
+          embedding.byteOffset,
+          embedding.byteLength / 4
+        )
+      } else if (Array.isArray(embedding)) {
+        bindEmbedding = new Float32Array(embedding)
+      } else {
+        self.postMessage({ id, error: 'Invalid embedding format' })
+        return
+      }
+
+      let sql = `
+        SELECT 
+          m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
+          m.primarySourceType as sourceType, m.primaryChannelName as channelName,
+          m.verified, m.lastUpdated, m.genre, m.country,
+          v.distance
+        FROM vec_movies v
+        INNER JOIN movies m ON v.imdbId = m.imdbId
+        WHERE v.embedding MATCH ?
+          AND k = ?
+      `
+
+      const bindParams: (Float32Array | number | string)[] = [bindEmbedding, limit]
+
+      if (where) {
+        sql += ` AND ${where}`
+        if (whereParams) {
+          bindParams.push(...(whereParams as (string | number)[]))
+        }
+      }
+
+      sql += ` ORDER BY v.distance ASC`
+
+      const result = db.exec({
+        sql,
+        bind: bindParams,
+        returnValue: 'resultRows',
+        rowMode: 'object',
+      })
+
+      self.postMessage({ id, result })
     } else if (type === 'query-collections-for-movie') {
       // Query collections for a specific movie
       const { movieId } = e
