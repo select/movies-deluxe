@@ -68,8 +68,7 @@ const fetchCountries = async () => {
   isLoading.value = true
   error.value = null
   try {
-    const db = useDatabase()
-    const options = await db.getFilterOptions()
+    const options = await movieStore.getFilterOptions()
     countries.value = options.countries
   } catch (err) {
     error.value = 'Failed to load countries'
