@@ -80,8 +80,7 @@ const isLoading = ref(true)
 const fetchChannels = async () => {
   isLoading.value = true
   try {
-    const db = useDatabase()
-    const options = await db.getFilterOptions()
+    const options = await movieStore.getFilterOptions()
     channels.value = options.channels
   } catch (err) {
     console.error(err)

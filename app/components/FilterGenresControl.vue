@@ -65,8 +65,7 @@ const fetchGenres = async () => {
   isLoading.value = true
   error.value = null
   try {
-    const db = useDatabase()
-    const options = await db.getFilterOptions()
+    const options = await movieStore.getFilterOptions()
     genres.value = options.genres
   } catch (err) {
     error.value = 'Failed to load genres'

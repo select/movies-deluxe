@@ -1,4 +1,4 @@
-import type { MovieEntry, MovieSourceType, LightweightMovie } from '~/types'
+import type { MovieEntry, MovieSourceType, LightweightMovie, FilterOptionsResponse } from '~/types'
 import { useStorage, watchDebounced } from '@vueuse/core'
 
 /**
@@ -80,6 +80,9 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Track the latest request ID for filter/search queries to discard stale results
   const currentSearchSessionId = ref(0)
+
+  // Simple cache for filter options
+  let cachedFilterOptions: FilterOptionsResponse | null = null
 
   // ============================================
   // COMPUTED PROPERTIES - Data Views
@@ -355,6 +358,29 @@ export const useMovieStore = defineStore('movie', () => {
     } finally {
       isLoading.value.movieDetails = false
     }
+  }
+
+  /**
+   * Get filter options with simple caching
+   */
+  const getFilterOptions = async (): Promise<FilterOptionsResponse> => {
+    // Return cached data if available
+    if (cachedFilterOptions) {
+      return cachedFilterOptions
+    }
+
+    // Fetch from database and cache
+    console.log('[getFilterOptions] Fetching filter options from database')
+    const data = await db.getFilterOptions()
+    cachedFilterOptions = data
+
+    console.log('[getFilterOptions] Cached filter options:', {
+      genres: data.genres.length,
+      countries: data.countries.length,
+      channels: data.channels.length,
+    })
+
+    return data
   }
 
   // ============================================
@@ -658,6 +684,7 @@ export const useMovieStore = defineStore('movie', () => {
     loadFromFile,
     fetchMoviesByIds,
     getMovieById,
+    getFilterOptions,
     mapMovieToLightweight,
     triggerSearchUpdate,
 
