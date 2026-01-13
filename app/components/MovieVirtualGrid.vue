@@ -49,6 +49,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+console.log('MovieVirtualGrid loaded', props.movieIds)
 
 const gridRef = ref<HTMLElement | null>(null)
 const firstRowRef = ref<HTMLElement | null>(null)
@@ -168,44 +169,17 @@ const visibleRows = ref(calculateVisibleRows())
 const updateVisibleRows = useDebounceFn(() => {
   visibleRows.value = calculateVisibleRows()
 
-  // Handle missing movies using cache-based loading logic
-  handleMissingMovies()
-}, 80) // 80ms debounce for smooth scrolling
-
-// ============================================
-// CACHE-BASED LOADING LOGIC
-// ============================================
-
-/**
- * Load movies for the currently visible range
- */
-const loadVisibleRange = async () => {
+  // Load movies for visible range
   const visibleIds = visibleRows.value
     .flatMap(row => row.movieIds)
     .filter((id): id is string => id !== null && !!id && id.startsWith('tt'))
 
   if (visibleIds.length > 0) {
-    try {
-      // fetchMoviesByIds now populates the cache instead of returning movies
-      await fetchMoviesByIds(visibleIds)
-    } catch (error) {
+    fetchMoviesByIds(visibleIds).catch(error => {
       console.error('[MovieVirtualGrid] Failed to load visible range:', error)
-    }
+    })
   }
-}
-
-/**
- * Handle missing movies in visible range
- */
-const handleMissingMovies = () => {
-  const visibleIds = visibleRows.value.flatMap(row => row.movieIds)
-  const hasMissingMovies = visibleIds.some(id => id === null)
-
-  if (hasMissingMovies) {
-    // Load specific missing IDs
-    loadVisibleRange()
-  }
-}
+}, 80) // 80ms debounce for smooth scrolling
 
 // Watch scroll position and trigger debounced update
 watch([windowScrollY, windowHeight, rowHeight, cols, totalMovies], () => {
@@ -218,7 +192,15 @@ watch(
   () => {
     if (props.movieIds) {
       visibleRows.value = calculateVisibleRows()
-      loadVisibleRange()
+
+      // Load visible movies
+      const visibleIds = visibleRows.value
+        .flatMap(row => row.movieIds)
+        .filter((id): id is string => id !== null && !!id)
+
+      if (visibleIds.length > 0) {
+        fetchMoviesByIds(visibleIds)
+      }
     }
   },
   { deep: true }
@@ -230,10 +212,11 @@ onMounted(async () => {
   if (props.movieIds) {
     visibleRows.value = calculateVisibleRows()
 
-    // Trigger initial load for visible movies
+    // Load initial visible movies
     const visibleIds = visibleRows.value
       .flatMap(row => row.movieIds)
       .filter((id): id is string => id !== null && !!id)
+
     if (visibleIds.length > 0) {
       fetchMoviesByIds(visibleIds)
     }
