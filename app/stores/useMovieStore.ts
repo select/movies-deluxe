@@ -298,56 +298,6 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Fetch movies from database (lightweight version)
-   */
-  const fetchMovies = async (options: {
-    where?: string
-    params?: (string | number)[]
-    orderBy?: string
-    limit?: number
-    offset?: number
-    includeCount?: boolean
-    searchQuery?: string
-  }): Promise<{ result: string[]; totalCount: number }> => {
-    console.log('[fetchMovies] Starting fetch with options:', {
-      ...options,
-      params: options.params?.length,
-    })
-    if (!db.isReady.value) return { result: [], totalCount: 0 }
-
-    const { searchQuery, where, params = [], orderBy, limit, offset, includeCount } = options
-
-    let finalWhere = where || ''
-    const finalParams = [...params]
-
-    if (searchQuery?.trim()) {
-      // Use FTS5 search
-      const searchWhere =
-        'EXISTS (SELECT 1 FROM fts_movies f WHERE f.imdbId = m.imdbId AND fts_movies MATCH ?)'
-      finalWhere = finalWhere ? `(${finalWhere}) AND (${searchWhere})` : searchWhere
-
-      // Sanitize search query for FTS5
-      const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-      finalParams.push(`"${sanitizedQuery}"`)
-    }
-
-    const { result, totalCount } = await db.searchQuery({
-      where: finalWhere,
-      params: finalParams,
-      orderBy: orderBy || 'm.year DESC, m.imdbId',
-      limit,
-      offset,
-      includeCount,
-    })
-
-    console.log('[fetchMovies] Fetched', result.length, 'movie IDs, total count:', totalCount)
-    return {
-      result: result.map(r => r.imdbId),
-      totalCount: totalCount || 0,
-    }
-  }
-
-  /**
    * Fetch lightweight movie details for specific IDs (with caching)
    * Populates the lightweightMovieCache and does not return movies directly
    */
@@ -933,21 +883,135 @@ export const useMovieStore = defineStore('movie', () => {
       const { currentPage, lastScrollY, ...rest } = filters.value
       return JSON.stringify(rest)
     },
-    () => {
+    async () => {
       // Only apply filters on the search page
       if (useRoute().path !== '/search') return
 
       // Increment session ID to cancel any pending requests from previous filter state
       currentSearchSessionId.value++
+      const sessionId = currentSearchSessionId.value
 
       // Reset to page 1
       filters.value.currentPage = 1
 
-      // MovieVirtualGrid will handle loading movies based on filters
-      // No need to manually fetch here
+      // Set filtering state
+      isFiltering.value = true
+
+      try {
+        let filteredResults: MovieEntry[] = []
+
+        // If there's a search query, use searchMovies to get all matching movies
+        if (filters.value.searchQuery.trim()) {
+          const searchResults = await searchMovies(filters.value.searchQuery)
+
+          // Check if this request is still current
+          if (sessionId !== currentSearchSessionId.value) {
+            console.log('[watchFilters] Search request cancelled, ignoring results')
+            return
+          }
+
+          // Apply additional filters to search results
+          filteredResults = applyFilters(searchResults)
+        } else {
+          // No search query - get all movies and apply filters
+          const allMoviesArray = Array.from(allMovies.value.values())
+          filteredResults = applyFilters(allMoviesArray)
+
+          // Check if this request is still current
+          if (sessionId !== currentSearchSessionId.value) {
+            console.log('[watchFilters] Filter request cancelled, ignoring results')
+            return
+          }
+        }
+
+        // Extract movie IDs from filtered results
+        // const movieIds = filteredResults.map(movie => movie.imdbId)
+
+        // Store the filtered movies in the cache (they're already full MovieEntry objects)
+        filteredResults.forEach(movie => {
+          allMovies.value.set(movie.imdbId, movie)
+        })
+
+        // Convert to lightweight movies for the search results
+        searchResultMovies.value = filteredResults.map(movie => ({
+          imdbId: movie.imdbId,
+          title: movie.title,
+          year: movie.year || 0,
+        }))
+
+        totalFiltered.value = filteredResults.length
+
+        console.log(
+          '[watchFilters] Updated search results:',
+          searchResultMovies.value.length,
+          'movies'
+        )
+      } catch (error) {
+        console.error('[watchFilters] Failed to fetch filtered movies:', error)
+        searchResultMovies.value = []
+        totalFiltered.value = 0
+      } finally {
+        isFiltering.value = false
+      }
     },
     { debounce: 300, maxWait: 1000 }
   )
+
+  /**
+   * Trigger search results update (for initial load on search page)
+   */
+  const triggerSearchUpdate = async () => {
+    // Only trigger on search page
+    if (useRoute().path !== '/search') return
+
+    // Set filtering state
+    isFiltering.value = true
+
+    try {
+      let filteredResults: MovieEntry[] = []
+
+      // If there's a search query, use searchMovies to get all matching movies
+      if (filters.value.searchQuery.trim()) {
+        const searchResults = await searchMovies(filters.value.searchQuery)
+
+        // Apply additional filters to search results
+        filteredResults = applyFilters(searchResults)
+      } else {
+        // No search query - get all movies and apply filters
+        const allMoviesArray = Array.from(allMovies.value.values())
+        filteredResults = applyFilters(allMoviesArray)
+      }
+
+      // Extract movie IDs from filtered results
+      // const movieIds = filteredResults.map(movie => movie.imdbId)
+
+      // Store the filtered movies in the cache (they're already full MovieEntry objects)
+      filteredResults.forEach(movie => {
+        allMovies.value.set(movie.imdbId, movie)
+      })
+
+      // Convert to lightweight movies for the search results
+      searchResultMovies.value = filteredResults.map(movie => ({
+        imdbId: movie.imdbId,
+        title: movie.title,
+        year: movie.year || 0,
+      }))
+
+      totalFiltered.value = filteredResults.length
+
+      console.log(
+        '[triggerSearchUpdate] Updated search results:',
+        searchResultMovies.value.length,
+        'movies'
+      )
+    } catch (error) {
+      console.error('[triggerSearchUpdate] Failed to update search results:', error)
+      searchResultMovies.value = []
+      totalFiltered.value = 0
+    } finally {
+      isFiltering.value = false
+    }
+  }
 
   // ============================================
   // RETURN STORE API
@@ -986,13 +1050,13 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Data Loading
     // ============================================
     loadFromFile,
-    fetchMovies,
     fetchMoviesByIds,
     getLightweightMovieById,
     getMovieById,
     searchMovies,
     mapRowToMovie,
     mapMovieToLightweight,
+    triggerSearchUpdate,
 
     // ============================================
     // ACTIONS - Filtering & Sorting
