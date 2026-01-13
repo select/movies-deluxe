@@ -212,7 +212,7 @@ const emit = defineEmits<{
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const { filters, activeFiltersCount, hasActiveFilters } = storeToRefs(movieStore)
-const uiStore = useUiStore()
+const toastStore = useToastStore()
 
 const searchInput = ref<HTMLInputElement | null>(null)
 const searchQuery = ref('')
@@ -301,7 +301,7 @@ const performSearch = async () => {
     })
     results.value = data.slice(0, 300).map(movieStore.mapMovieToLightweight)
   } catch {
-    uiStore.showToast('Search failed', 'error')
+    toastStore.showToast('Search failed', 'error')
   } finally {
     isLoading.value = false
   }
@@ -322,13 +322,13 @@ const addMovie = async (movieId: string) => {
   try {
     const success = await collectionsStore.addMovieToCollection(props.collectionId, movieId)
     if (success) {
-      uiStore.showToast('Movie added to collection')
+      toastStore.showToast('Movie added to collection')
       emit('add')
     } else {
-      uiStore.showToast('Failed to add movie', 'error')
+      toastStore.showToast('Failed to add movie', 'error')
     }
   } catch {
-    uiStore.showToast('Error adding movie', 'error')
+    toastStore.showToast('Error adding movie', 'error')
   } finally {
     isAdding.value = ''
   }
@@ -344,7 +344,7 @@ const addAllMovies = async () => {
     const moviesToAdd = results.value.filter(movie => !isInCollection(movie.imdbId))
 
     if (moviesToAdd.length === 0) {
-      uiStore.showToast('All movies are already in the collection', 'info')
+      toastStore.showToast('All movies are already in the collection', 'info')
       return
     }
 
@@ -366,12 +366,15 @@ const addAllMovies = async () => {
     }
 
     if (addedCount > 0) {
-      uiStore.showToast(`Added ${addedCount} movie${addedCount > 1 ? 's' : ''} to collection`)
+      toastStore.showToast(`Added ${addedCount} movie${addedCount > 1 ? 's' : ''} to collection`)
       emit('add')
     }
 
     if (failedCount > 0) {
-      uiStore.showToast(`Failed to add ${failedCount} movie${failedCount > 1 ? 's' : ''}`, 'error')
+      toastStore.showToast(
+        `Failed to add ${failedCount} movie${failedCount > 1 ? 's' : ''}`,
+        'error'
+      )
     }
   } finally {
     addingAll.value = false

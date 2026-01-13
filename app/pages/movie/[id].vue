@@ -508,7 +508,7 @@ const movieStore = useMovieStore()
 const { likedMovieIds, searchResultMovies } = storeToRefs(movieStore)
 const { lightweightMovieCache } = storeToRefs(movieStore)
 const { getMovieById, fetchMoviesByIds, loadFromFile, toggleLike } = movieStore
-const { showToast } = useUiStore()
+const { showToast } = useToastStore()
 const route = useRoute()
 
 // Window scroll control

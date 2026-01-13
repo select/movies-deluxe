@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-const { toasts, toastQueue, removeToast } = useUiStore()
+const { toasts, toastQueue, removeToast } = useToastStore()
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'
 

@@ -224,7 +224,7 @@ const onCleanupCollection = async () => {
     // 1. Get all movie IDs in the collection
     const movieIds = toRaw(selectedCollection.value.movieIds)
     if (!movieIds.length) {
-      useUiStore().showToast('Collection is already empty')
+      useToastStore().showToast('Collection is already empty')
       return
     }
 
@@ -232,7 +232,7 @@ const onCleanupCollection = async () => {
     // We use the database composable directly to check for existing IDs
     const db = useDatabase()
     if (!db.isReady.value) {
-      useUiStore().showToast('Database not ready', 'error')
+      useToastStore().showToast('Database not ready', 'error')
       return
     }
 
@@ -243,7 +243,7 @@ const onCleanupCollection = async () => {
     const missingIds = movieIds.filter(id => !existingIds.has(id))
 
     if (missingIds.length === 0) {
-      useUiStore().showToast('No missing movies found in this collection')
+      useToastStore().showToast('No missing movies found in this collection')
       return
     }
 
@@ -254,16 +254,16 @@ const onCleanupCollection = async () => {
     )
 
     if (success) {
-      useUiStore().showToast(`Removed ${missingIds.length} missing movies from collection`)
+      useToastStore().showToast(`Removed ${missingIds.length} missing movies from collection`)
       if (moviesList.value) {
         moviesList.value.refresh()
       }
     } else {
-      useUiStore().showToast('Failed to remove missing movies', 'error')
+      useToastStore().showToast('Failed to remove missing movies', 'error')
     }
   } catch (err) {
     console.error('Cleanup failed:', err)
-    useUiStore().showToast('Error during cleanup', 'error')
+    useToastStore().showToast('Error during cleanup', 'error')
   }
 }
 </script>
