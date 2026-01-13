@@ -21,12 +21,8 @@
           </div>
         </template>
 
-        <template v-else-if="currentMovieList.length > 0">
-          <MovieVirtualGrid
-            :movies="currentMovieList"
-            :total-movies="safeTotalMovies"
-            @load-more="loadMore"
-          />
+        <template v-else-if="movieIds.length > 0">
+          <MovieVirtualGrid :movie-ids="movieIds" />
         </template>
 
         <div v-else class="text-center py-12">
@@ -53,32 +49,23 @@ useHead({
 })
 
 const movieStore = useMovieStore()
-const {
-  isInitialLoading,
-  isFiltering,
-  currentMovieList,
-  totalFiltered,
-  filters,
-  lightweightMovies,
-} = storeToRefs(movieStore)
-const { loadFromFile, setCurrentPage } = movieStore
+const { isInitialLoading, isFiltering, totalFiltered, searchResultMovies } = storeToRefs(movieStore)
+const { loadFromFile } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
-// Load movies on mount
-onMounted(async () => {
-  await loadFromFile()
-
-  // If no movies are loaded yet, trigger initial fetch
-  if (lightweightMovies.value.length === 0) {
-    movieStore.fetchLightweightMovies({ limit: 50 })
-  }
+// Extract movie IDs from lightweight movies for the virtual grid
+const movieIds = computed(() => {
+  return searchResultMovies.value
+    .filter((movie): movie is NonNullable<typeof movie> => movie !== null)
+    .map(movie => movie.imdbId)
 })
 
-// Load more movies
-const loadMore = () => {
-  setCurrentPage(filters.value.currentPage + 1)
-}
+// Load movies on mount - MovieVirtualGrid will handle the actual movie loading
+onMounted(async () => {
+  await loadFromFile()
+  // MovieVirtualGrid will handle loading movies based on filters
+})
 </script>
 
 <style scoped>

@@ -15,9 +15,9 @@
       :class="gridClass"
     >
       <MovieCard
-        v-for="movie in row.movies"
-        :key="movie.imdbId"
-        :movie="getMovieWithDetails(movie)"
+        v-for="(movieId, i) in row.movieIds"
+        :key="movieId || `skeleton-${row.index}-${i}`"
+        :movie-id="movieId"
       />
     </div>
 
@@ -39,15 +39,16 @@ import {
   useWindowSize,
   useDebounceFn,
 } from '@vueuse/core'
-import type { LightweightMovie } from '~/types'
 
 interface Props {
-  movies: LightweightMovie[]
+  // Movie IDs to display
+  movieIds: string[]
+
+  // Configuration props
   columnCount?: number
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits(['load-more'])
 
 const gridRef = ref<HTMLElement | null>(null)
 const firstRowRef = ref<HTMLElement | null>(null)
@@ -55,6 +56,13 @@ const firstRowRef = ref<HTMLElement | null>(null)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const { y: windowScrollY } = useWindowScroll()
 const { height: windowHeight, width: windowWidth } = useWindowSize()
+
+// Movie store for cache-based loading
+const movieStore = useMovieStore()
+const { fetchMoviesByIds } = movieStore
+
+// Total count of movies to display
+const totalMovies = computed(() => props.movieIds.length)
 
 // Grid configuration
 const cols = computed(() => {
@@ -101,8 +109,7 @@ const rowHeight = computed(() => {
 
 const buffer = 3 // Number of rows to render above/below viewport
 
-// Use currently loaded movies for virtual scroll calculations, not total
-const totalRows = computed(() => Math.ceil(props.movies.length / cols.value))
+const totalRows = computed(() => Math.ceil(totalMovies.value / cols.value))
 const totalHeight = computed(() => totalRows.value * rowHeight.value)
 
 // We need to account for the offset of the grid from the top of the page
@@ -126,7 +133,7 @@ onUnmounted(() => {
 
 // Calculate visible rows based on scroll position
 const calculateVisibleRows = () => {
-  if (!props.movies || props.movies.length === 0) {
+  if (totalMovies.value === 0) {
     return []
   }
 
@@ -141,13 +148,13 @@ const calculateVisibleRows = () => {
   const rows = []
   for (let i = startRow; i <= endRow; i++) {
     const startIndex = i * cols.value
-    const rowMovies = props.movies.slice(startIndex, startIndex + cols.value)
+    const rowMovieIds = props.movieIds?.slice(startIndex, startIndex + cols.value) || []
 
-    if (rowMovies.length > 0) {
+    if (rowMovieIds.length > 0) {
       rows.push({
         index: i,
         top: i * rowHeight.value,
-        movies: rowMovies,
+        movieIds: rowMovieIds,
       })
     }
   }
@@ -157,73 +164,79 @@ const calculateVisibleRows = () => {
 // Use ref instead of computed for debounced updates
 const visibleRows = ref(calculateVisibleRows())
 
-const movieStore = useMovieStore()
-const { fetchMoviesByIds, mapMovieToLightweight } = movieStore
-const { movieDetailsCache } = storeToRefs(movieStore)
-
-// Track last fetched IDs to avoid redundant fetches
-const lastFetchedIds = ref<Set<string>>(new Set())
-
-/**
- * Get movie with full details from cache, or return lightweight entry
- * This ensures MovieCard receives the full movie data once it's fetched
- */
-const getMovieWithDetails = (lightweightMovie: LightweightMovie): LightweightMovie => {
-  const cached = movieDetailsCache.value.get(lightweightMovie.imdbId)
-  if (cached && cached.title) {
-    return mapMovieToLightweight(cached)
-  }
-  // Return the lightweight entry as-is if not cached yet
-  return lightweightMovie
-}
-
-// Debounced fetch function to prevent excessive calls during scroll
-const debouncedFetch = useDebounceFn((ids: string[]) => {
-  // Filter out IDs that are already cached or were just fetched
-  const uncachedIds = ids.filter(
-    id => !movieDetailsCache.value.has(id) && !lastFetchedIds.value.has(id)
-  )
-
-  if (uncachedIds.length > 0) {
-    console.log('[MovieVirtualGrid] Fetching', uncachedIds.length, 'uncached movies')
-    // Add to last fetched set
-    uncachedIds.forEach(id => lastFetchedIds.value.add(id))
-    fetchMoviesByIds(uncachedIds)
-  }
-}, 300) // 300ms debounce
-
 // Debounced update of visible rows for smooth scrolling
 const updateVisibleRows = useDebounceFn(() => {
   visibleRows.value = calculateVisibleRows()
 
-  // Calculate rows based on currently loaded movies, not total
-  const loadedRows = Math.ceil(props.movies.length / cols.value)
-
-  // Check if we're rendering the last few rows of loaded content
-  const lastVisibleRow = visibleRows.value[visibleRows.value.length - 1]
-  if (lastVisibleRow && lastVisibleRow.index >= loadedRows - buffer - 1) {
-    emit('load-more')
-  }
-
-  // Fetch full data for visible rows (debounced)
-  const visibleIds = visibleRows.value.flatMap(row => row.movies.map(m => m.imdbId)).filter(Boolean)
-  if (visibleIds.length > 0) {
-    debouncedFetch(visibleIds)
-  }
+  // Handle missing movies using cache-based loading logic
+  handleMissingMovies()
 }, 80) // 80ms debounce for smooth scrolling
 
+// ============================================
+// CACHE-BASED LOADING LOGIC
+// ============================================
+
+/**
+ * Load movies for the currently visible range
+ */
+const loadVisibleRange = async () => {
+  const visibleIds = visibleRows.value
+    .flatMap(row => row.movieIds)
+    .filter((id): id is string => id !== null && !!id && id.startsWith('tt'))
+
+  if (visibleIds.length > 0) {
+    try {
+      // fetchMoviesByIds now populates the cache instead of returning movies
+      await fetchMoviesByIds(visibleIds)
+    } catch (error) {
+      console.error('[MovieVirtualGrid] Failed to load visible range:', error)
+    }
+  }
+}
+
+/**
+ * Handle missing movies in visible range
+ */
+const handleMissingMovies = () => {
+  const visibleIds = visibleRows.value.flatMap(row => row.movieIds)
+  const hasMissingMovies = visibleIds.some(id => id === null)
+
+  if (hasMissingMovies) {
+    // Load specific missing IDs
+    loadVisibleRange()
+  }
+}
+
 // Watch scroll position and trigger debounced update
-watch([windowScrollY, windowHeight, rowHeight, cols, () => props.movies.length], () => {
+watch([windowScrollY, windowHeight, rowHeight, cols, totalMovies], () => {
   updateVisibleRows()
 })
 
+// Watch for prop changes to reinitialize
+watch(
+  () => props.movieIds,
+  () => {
+    if (props.movieIds) {
+      visibleRows.value = calculateVisibleRows()
+      loadVisibleRange()
+    }
+  },
+  { deep: true }
+)
+
 // Initial render
-onMounted(() => {
-  visibleRows.value = calculateVisibleRows()
-  // Trigger initial fetch
-  const visibleIds = visibleRows.value.flatMap(row => row.movies.map(m => m.imdbId)).filter(Boolean)
-  if (visibleIds.length > 0) {
-    debouncedFetch(visibleIds)
+onMounted(async () => {
+  // Initialize based on props
+  if (props.movieIds) {
+    visibleRows.value = calculateVisibleRows()
+
+    // Trigger initial load for visible movies
+    const visibleIds = visibleRows.value
+      .flatMap(row => row.movieIds)
+      .filter((id): id is string => id !== null && !!id)
+    if (visibleIds.length > 0) {
+      fetchMoviesByIds(visibleIds)
+    }
   }
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <MovieCardSkeleton v-if="!movie.title" />
+  <MovieCardSkeleton v-if="!movie || !movie.title" />
   <NuxtLink
     v-else-if="movie.imdbId"
     ref="cardRef"
@@ -130,7 +130,7 @@
   <div
     v-else
     class="flex flex-col border border-red-500/50 rounded-xl overflow-hidden bg-theme-surface text-theme-text opacity-50"
-    title="Invalid movie data: missing imdbId"
+    title="Invalid movie data: missing imdbId or movie not loaded"
   >
     <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
       <div class="w-full h-full flex items-center justify-center text-red-400">
@@ -139,25 +139,33 @@
     </div>
     <div class="p-3 flex-shrink-0">
       <h3 class="font-bold text-sm line-clamp-2 mb-1.5 leading-snug min-h-[2.5rem] text-red-400">
-        {{ movie.title || 'Unknown Movie' }}
+        {{ movie?.title || props.movieId || 'Unknown Movie' }}
       </h3>
-      <div class="text-[11px] text-red-400 font-medium">Missing ID</div>
+      <div class="text-[11px] text-red-400 font-medium">
+        {{ movie ? 'Missing ID' : 'Loading...' }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useIntersectionObserver, useTimeoutFn } from '@vueuse/core'
-import type { LightweightMovie, Collection } from '~/types'
+import type { Collection } from '~/types'
 
 interface Props {
-  movie: LightweightMovie
+  movieId: string | null
 }
 
 const props = defineProps<Props>()
 
-const { likedMovieIds } = storeToRefs(useMovieStore())
+const { likedMovieIds, lightweightMovieCache } = storeToRefs(useMovieStore())
 const { getCollectionsForMovie } = useCollectionsStore()
+
+// Get movie from cache reactively
+const movie = computed(() => {
+  if (!props.movieId) return null
+  return lightweightMovieCache.value.get(props.movieId) || null
+})
 
 const imageLoaded = ref(false)
 const movieCollections = ref<Collection[]>([])
@@ -171,8 +179,8 @@ const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(
   async () => {
     showFullDetails.value = true
     // Fetch collections when showing full details
-    if (props.movie.imdbId && movieCollections.value.length === 0) {
-      movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+    if (movie.value?.imdbId && movieCollections.value.length === 0) {
+      movieCollections.value = await getCollectionsForMovie(movie.value.imdbId)
     }
   },
   200,
