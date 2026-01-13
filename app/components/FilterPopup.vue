@@ -34,8 +34,21 @@
             </div>
 
             <!-- Content -->
-            <div class="p-4 overflow-y-auto scrollbar-thin max-h-[60vh] md:max-h-[400px]">
+            <div
+              ref="contentRef"
+              class="p-4 overflow-y-auto scrollbar-thin max-h-[60vh] md:max-h-[400px] relative"
+              @scroll="updateScrollState"
+            >
               <slot></slot>
+
+              <!-- Down Scroll Indicator -->
+              <button
+                v-if="canScrollDown"
+                class="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 p-2 rounded-full bg-theme-surface/60 border border-theme-border/20 text-theme-text/50 shadow-sm hover:bg-theme-accent hover:text-black hover:border-theme-accent transition-all duration-200 flex items-center justify-center animate-pulse"
+                @click="scrollDown"
+              >
+                <div class="i-mdi-chevron-down text-2xl"></div>
+              </button>
             </div>
           </div>
         </Transition>
@@ -67,12 +80,30 @@ const emit = defineEmits<{
 }>()
 
 const popupRef = ref<HTMLElement | null>(null)
+const contentRef = ref<HTMLElement | null>(null)
+const canScrollDown = ref(false)
 const { width: windowWidth, height: windowHeight } = useWindowSize()
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const isMobile = breakpoints.smaller('md')
 
 // Scroll lock for body when popup is open
 const isLocked = useScrollLock(typeof window !== 'undefined' ? document.body : null)
+
+// Scroll state tracking
+const updateScrollState = () => {
+  if (!contentRef.value) return
+  const { scrollTop, scrollHeight, clientHeight } = contentRef.value
+  canScrollDown.value = scrollTop + clientHeight < scrollHeight - 20
+}
+
+// Scroll down function
+const scrollDown = () => {
+  if (!contentRef.value) return
+  contentRef.value.scrollBy({
+    top: 200,
+    behavior: 'smooth',
+  })
+}
 
 // Focus trap
 const { activate, deactivate } = useFocusTrap(popupRef, {
@@ -89,6 +120,7 @@ watch(
     if (val) {
       nextTick(() => {
         setTimeout(() => activate(), 50)
+        updateScrollState()
       })
     } else {
       deactivate()
