@@ -172,19 +172,16 @@ async function handleMessage(e: QueuedMessage) {
         return
       }
 
+      let totalMovies = 0
+
       initializationPromise = (async () => {
         await initDatabase()
         if (url) {
-          const totalMovies = await loadRemoteDatabase(url)
-          // Store totalMovies to return it
-          ;(initializationPromise as Promise<void> & { totalMovies?: number }).totalMovies =
-            totalMovies
+          totalMovies = await loadRemoteDatabase(url)
         }
       })()
 
       await initializationPromise
-      const totalMovies =
-        (initializationPromise as Promise<void> & { totalMovies?: number }).totalMovies || 0
       self.postMessage({ id, type: 'init-success', success: true, totalMovies })
       return
     }
