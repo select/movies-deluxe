@@ -447,6 +447,7 @@ export const useMovieStore = defineStore('movie', () => {
       return JSON.stringify(filters.value)
     },
     async () => {
+      console.log('[watchFilters] ')
       // Only apply filters on the search page
       if (useRoute().path !== '/search') return
 
@@ -471,11 +472,9 @@ export const useMovieStore = defineStore('movie', () => {
             try {
               const sanitizedQuery = filters.value.searchQuery.replace(/"/g, '""').trim()
 
-              // Build the SQL query with filters
+              // Build the SQL query with filters - only return IDs for performance
               let sql = `
-                SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
-                       m.language, m.sourceType, m.channelName, m.verified,
-                       m.genre, m.country, m.lastUpdated
+                SELECT m.imdbId
                 FROM fts_movies f
                 JOIN movies m ON f.imdbId = m.imdbId
                 WHERE fts_movies MATCH ?
@@ -510,11 +509,20 @@ export const useMovieStore = defineStore('movie', () => {
 
               sql += ` ORDER BY m.title ASC`
 
-              const results = await db.query<LightweightMovie>(sql, params)
+              const results = await db.query<{ imdbId: string }>(sql, params)
               console.log('[watchFilters] Found', results.length, 'matches')
 
-              // Convert to MovieEntry objects
-              filteredResults = results.map(mapRowToMovie)
+              // Extract IDs and fetch full movie data
+              const imdbIds = results.map(row => row.imdbId)
+              await fetchMoviesByIds(imdbIds)
+
+              // Get movies from cache and convert to MovieEntry objects
+              const movieEntries = imdbIds
+                .map(id => lightweightMovieCache.value.get(id))
+                .filter(Boolean)
+                .map(mapRowToMovie)
+
+              filteredResults = movieEntries
             } catch (err) {
               console.error('[watchFilters] Search failed:', err)
               filteredResults = []
@@ -595,11 +603,9 @@ export const useMovieStore = defineStore('movie', () => {
             filteredResults = []
           } else {
             try {
-              // Build the SQL query with filters
+              // Build the SQL query with filters - only return IDs for performance
               let sql = `
-                SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
-                       m.language, m.sourceType, m.channelName, m.verified,
-                       m.genre, m.country, m.lastUpdated
+                SELECT m.imdbId
                 FROM movies m
                 WHERE 1=1
               `
@@ -649,11 +655,18 @@ export const useMovieStore = defineStore('movie', () => {
                 sql += ` ORDER BY m.year DESC` // Default sort
               }
 
-              const results = await db.query<LightweightMovie>(sql, params)
-              console.log('[watchFilters] Found', results.length, 'movies')
+              const results = await db.query<{ imdbId: string }>(sql, params)
+              console.log('[watchFilters] Found', results.length, 'matches')
 
-              // Convert to MovieEntry objects
-              let movieEntries = results.map(mapRowToMovie)
+              // Extract IDs and fetch full movie data
+              const imdbIds = results.map(row => row.imdbId)
+              await fetchMoviesByIds(imdbIds)
+
+              // Get movies from cache and convert to MovieEntry objects
+              let movieEntries = imdbIds
+                .map(id => lightweightMovieCache.value.get(id))
+                .filter(Boolean)
+                .map(mapRowToMovie)
 
               // Apply additional filters that can't be done in SQL
               // 1. Filter by source
@@ -755,11 +768,9 @@ export const useMovieStore = defineStore('movie', () => {
           try {
             const sanitizedQuery = filters.value.searchQuery.replace(/"/g, '""').trim()
 
-            // Build the SQL query with filters
+            // Build the SQL query with filters - only return IDs for performance
             let sql = `
-              SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
-                     m.language, m.sourceType, m.channelName, m.verified,
-                     m.genre, m.country, m.lastUpdated
+              SELECT m.imdbId
               FROM fts_movies f
               JOIN movies m ON f.imdbId = m.imdbId
               WHERE fts_movies MATCH ?
@@ -794,11 +805,18 @@ export const useMovieStore = defineStore('movie', () => {
 
             sql += ` ORDER BY m.title ASC`
 
-            const results = await db.query<LightweightMovie>(sql, params)
+            const results = await db.query<{ imdbId: string }>(sql, params)
             console.log('[triggerSearchUpdate] Found', results.length, 'matches')
 
-            // Convert to MovieEntry objects
-            let movieEntries = results.map(mapRowToMovie)
+            // Extract IDs and fetch full movie data
+            const imdbIds = results.map(row => row.imdbId)
+            await fetchMoviesByIds(imdbIds)
+
+            // Get movies from cache and convert to MovieEntry objects
+            let movieEntries = imdbIds
+              .map(id => lightweightMovieCache.value.get(id))
+              .filter(Boolean)
+              .map(mapRowToMovie)
 
             // Apply additional filters that can't be done in SQL
             // 1. Filter by source
@@ -855,11 +873,9 @@ export const useMovieStore = defineStore('movie', () => {
           filteredResults = []
         } else {
           try {
-            // Build the SQL query with filters
+            // Build the SQL query with filters - only return IDs for performance
             let sql = `
-              SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes,
-                     m.language, m.sourceType, m.channelName, m.verified,
-                     m.genre, m.country, m.lastUpdated
+              SELECT m.imdbId
               FROM movies m
               WHERE 1=1
             `
@@ -909,11 +925,18 @@ export const useMovieStore = defineStore('movie', () => {
               sql += ` ORDER BY m.year DESC` // Default sort
             }
 
-            const results = await db.query<LightweightMovie>(sql, params)
+            const results = await db.query<{ imdbId: string }>(sql, params)
             console.log('[triggerSearchUpdate] Found', results.length, 'movies')
 
-            // Convert to MovieEntry objects
-            let movieEntries = results.map(mapRowToMovie)
+            // Extract IDs and fetch full movie data
+            const imdbIds = results.map(row => row.imdbId)
+            await fetchMoviesByIds(imdbIds)
+
+            // Get movies from cache and convert to MovieEntry objects
+            let movieEntries = imdbIds
+              .map(id => lightweightMovieCache.value.get(id))
+              .filter(Boolean)
+              .map(mapRowToMovie)
 
             // Apply additional filters that can't be done in SQL
             // 1. Filter by source
