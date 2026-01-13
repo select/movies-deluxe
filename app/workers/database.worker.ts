@@ -1,4 +1,4 @@
-import sqlite3InitModule from '@sqlite.org/sqlite-wasm'
+import sqlite3InitModule from 'sqlite-wasm-vec'
 import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 
 // SqlValue type from sqlite-wasm

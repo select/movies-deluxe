@@ -6,6 +6,7 @@
  */
 
 import Database from 'better-sqlite3'
+import * as sqliteVec from 'sqlite-vec'
 import { join } from 'path'
 import { existsSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from './movieData'
@@ -65,6 +66,7 @@ export async function generateSQLite(
 
   // 4. Initialize Database
   const sqlite = new Database(DB_PATH)
+  sqliteVec.load(sqlite)
 
   // Use DELETE mode instead of WAL for better compatibility with WASM
   sqlite.pragma('journal_mode = DELETE')

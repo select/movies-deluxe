@@ -155,7 +155,7 @@ export default defineNuxtConfig({
   // Vite configuration for SQLite WASM support
   vite: {
     optimizeDeps: {
-      exclude: ['@sqlite.org/sqlite-wasm'],
+      exclude: ['@sqlite.org/sqlite-wasm', 'sqlite-wasm-vec'],
     },
     server: {
       headers: {
@@ -184,5 +184,6 @@ export default defineNuxtConfig({
     minMovieDurationMinutes: 40,
     googleApiKey: process.env.GOOGLE_API_KEY || process.env.YOUTUBE_API_KEY,
     googleSearchCx: process.env.GOOGLE_SEARCH_CX,
+    ollamaHost: process.env.OLLAMA_HOST || 'http://localhost:11434',
   },
 })

@@ -5,7 +5,7 @@
  * The library provides official TypeScript types.
  */
 
-import type sqlite3InitModule from '@sqlite.org/sqlite-wasm'
+import type sqlite3InitModule from 'sqlite-wasm-vec'
 
 /**
  * The SQLite3 static object returned by the init module
