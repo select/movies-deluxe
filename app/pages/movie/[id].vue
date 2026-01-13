@@ -746,7 +746,7 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   if (targetIndex < 0 || targetIndex >= movies.length) return
 
   const targetMovie = movies[targetIndex]
-  if (targetMovie) navigateTo(`/movie/${targetMovie.imdbId}`)
+  if (targetMovie) navigateTo(`/movie/${targetMovie}`)
 }
 
 // Handle movie updated from curation panel

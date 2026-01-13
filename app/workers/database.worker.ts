@@ -128,6 +128,7 @@ interface QueuedMessage {
   imdbId?: string
   imdbIds?: string[]
   movieId?: string
+  movieIds?: string[]
   limit?: number
   offset?: number
   includeCount?: boolean
@@ -211,9 +212,9 @@ async function handleMessage(e: QueuedMessage) {
       self.postMessage({ id, result })
     } else if (type === 'query-by-ids') {
       // Query lightweight movie details for specific IDs (sources now in JSON files)
-      const { imdbIds } = e
+      const { movieIds } = e
 
-      if (!imdbIds || imdbIds.length === 0) {
+      if (!movieIds || movieIds.length === 0) {
         self.postMessage({ id, result: [] })
         return
       }
@@ -222,7 +223,7 @@ async function handleMessage(e: QueuedMessage) {
       const idsToFetch: string[] = []
 
       // Check cache first
-      for (const imdbId of imdbIds as string[]) {
+      for (const imdbId of movieIds as string[]) {
         const cached = movieCache.get(imdbId)
         if (cached) {
           results.push(cached)
@@ -234,8 +235,8 @@ async function handleMessage(e: QueuedMessage) {
       if (idsToFetch.length > 0) {
         const placeholders = idsToFetch.map(() => '?').join(',')
         const sql = `
-          SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language, 
-                 m.primarySourceType as sourceType, m.primaryChannelName as channelName, 
+          SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
+                 m.primarySourceType as sourceType, m.primaryChannelName as channelName,
                  m.verified, m.lastUpdated, m.genre, m.country
           FROM movies m
           WHERE m.imdbId IN (${placeholders})
@@ -260,7 +261,7 @@ async function handleMessage(e: QueuedMessage) {
       }
 
       // Sort results to match the order of requested IDs
-      const sortedResults = (imdbIds as string[])
+      const sortedResults = (movieIds as string[])
         .map(imdbId => results.find(r => r.imdbId === imdbId))
         .filter(Boolean)
 

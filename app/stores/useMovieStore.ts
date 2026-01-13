@@ -249,11 +249,6 @@ export const useMovieStore = defineStore('movie', () => {
   const fetchMoviesByIds = async (imdbIds: string[]): Promise<void> => {
     if (!imdbIds || imdbIds.length === 0) return
 
-    // Ensure cache is initialized
-    if (!lightweightMovieCache.value) {
-      lightweightMovieCache.value = new Map()
-    }
-
     // Filter out IDs that are already cached or pending
     const uncachedIds = imdbIds.filter(
       id => !lightweightMovieCache.value.has(id) && !pendingIds.has(id)
@@ -266,18 +261,8 @@ export const useMovieStore = defineStore('movie', () => {
 
     console.log('[fetchMoviesByIds] Fetching', uncachedIds.length, 'uncached movies from database')
 
-    // Mark as pending
-    uncachedIds.forEach(id => pendingIds.add(id))
-
-    // Double check cache after waiting (another request might have filled it)
-    const stillUncachedIds = uncachedIds.filter(id => !lightweightMovieCache.value.has(id))
-    if (stillUncachedIds.length === 0) {
-      uncachedIds.forEach(id => pendingIds.delete(id))
-      return
-    }
-
     try {
-      const lightweightMovies = await db.queryByIds<LightweightMovie>(stillUncachedIds)
+      const lightweightMovies = await db.queryByIds<LightweightMovie>(uncachedIds)
       console.log('[fetchMoviesByIds] Fetched', lightweightMovies.length, 'movies from database')
 
       // Cache the results directly in the lightweight cache (no conversion needed)
@@ -287,7 +272,7 @@ export const useMovieStore = defineStore('movie', () => {
 
       // Handle IDs that were not found in the database (e.g., temporary IDs or missing entries)
       const foundIds = new Set(lightweightMovies.map(m => m.imdbId))
-      const missingIds = stillUncachedIds.filter(id => !foundIds.has(id))
+      const missingIds = uncachedIds.filter(id => !foundIds.has(id))
 
       if (missingIds.length > 0) {
         console.warn(
@@ -296,16 +281,6 @@ export const useMovieStore = defineStore('movie', () => {
           'movies not found in database:',
           missingIds
         )
-        // Create minimal entries for movies not found in database
-        // This prevents infinite loading states
-        missingIds.forEach(id => {
-          const minimalLightweight: LightweightMovie = {
-            imdbId: id,
-            title: id, // Fallback to ID as title
-            year: 0,
-          }
-          lightweightMovieCache.value.set(id, minimalLightweight)
-        })
       }
 
       // Trigger reactivity by replacing the Map instance
