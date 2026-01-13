@@ -10,14 +10,18 @@
       <div class="flex items-center gap-4">
         <div class="relative flex-1">
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <div class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
+            <div
+              v-if="isFiltering"
+              class="i-mdi-loading animate-spin text-2xl text-theme-primary"
+            ></div>
+            <div v-else class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
           </div>
           <input
             ref="searchInput"
             v-model="localQuery"
             type="text"
             class="block w-full pl-12 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
-            placeholder="Search movies, actors, directors..."
+            :placeholder="searchPlaceholder"
             @keydown.esc="handleEscape"
             @keydown.enter="handleEnter"
           />
@@ -106,6 +110,16 @@
           @clear="filters.sources = []"
         />
 
+        <!-- Search Mode -->
+        <FilterButton
+          category="Mode"
+          :icon="modeIcon"
+          :active-value="modeLabel"
+          :is-active="filters.searchMode !== 'keyword'"
+          @click="openPopup('mode', $event)"
+          @clear="filters.searchMode = 'keyword'"
+        />
+
         <!-- Clear All -->
         <button
           v-if="hasActiveFilters"
@@ -122,6 +136,7 @@
               genres: [],
               countries: [],
               searchQuery: '',
+              searchMode: 'keyword',
             })
           "
         >
@@ -193,6 +208,15 @@
     >
       <FilterSourceControl />
     </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'mode'"
+      title="Search Mode"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <FilterSearchModeControl />
+    </FilterPopup>
   </div>
 </template>
 
@@ -200,7 +224,7 @@
 import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
-const { filters, hasActiveFilters } = storeToRefs(movieStore)
+const { filters, hasActiveFilters, isFiltering } = storeToRefs(movieStore)
 
 const uiStore = useUiStore()
 const { isSearchOpen } = storeToRefs(uiStore)
@@ -266,6 +290,29 @@ const votesLabel = computed(() => {
   if (min) return `${formatCount(min)}+`
   if (max && max < 1000000) return `< ${formatCount(max)}`
   return ''
+})
+
+const modeLabel = computed(() => {
+  const mode = filters.value.searchMode
+  if (mode === 'keyword') return ''
+  if (mode === 'semantic') return 'Semantic'
+  if (mode === 'hybrid') return 'Hybrid'
+  return ''
+})
+
+const modeIcon = computed(() => {
+  const mode = filters.value.searchMode
+  if (mode === 'keyword') return 'i-mdi-alphabetical'
+  if (mode === 'semantic') return 'i-mdi-brain'
+  if (mode === 'hybrid') return 'i-mdi-auto-fix'
+  return 'i-mdi-alphabetical'
+})
+
+const searchPlaceholder = computed(() => {
+  const mode = filters.value.searchMode
+  if (mode === 'semantic') return 'Describe what you want to watch...'
+  if (mode === 'hybrid') return 'Search keywords or describe a vibe...'
+  return 'Search movies, actors, directors...'
 })
 
 const resetSort = () => {

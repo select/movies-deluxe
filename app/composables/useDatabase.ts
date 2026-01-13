@@ -1,5 +1,5 @@
 import type { WorkerResponse, FilterOptionsResponse } from '~/types/database'
-import type { Collection } from '~/types'
+import type { Collection, MovieEntry } from '~/types'
 
 // Singleton instance
 let dbInstance: ReturnType<typeof createDatabase> | null = null
@@ -138,12 +138,41 @@ function createDatabase() {
     })
   }
 
+  const vectorSearch = async <T = MovieEntry>(
+    embedding: Float32Array | number[],
+    limit: number = 20,
+    where?: string,
+    params?: (string | number)[]
+  ): Promise<(T & { distance: number })[]> => {
+    if (!isReady.value) {
+      throw new Error('Database not initialized')
+    }
+
+    const id = Math.random().toString(36).substring(7)
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: WorkerResponse) =>
+          resolve((data.result as (T & { distance: number })[]) ?? []),
+        reject,
+      })
+      worker.value!.postMessage({
+        type: 'vector-search',
+        id,
+        embedding: toRaw(embedding),
+        limit,
+        where,
+        params: toRaw(params),
+      })
+    })
+  }
+
   return {
     init,
     query,
     queryByIds,
     getCollectionsForMovie,
     getFilterOptions,
+    vectorSearch,
     isReady,
   }
 }

@@ -23,6 +23,7 @@
     "youtube:setup": "tsx scripts/setup-youtube-api.ts",
     "youtube:detect-blocked": "tsx scripts/detect-blocked-youtube.ts",
     "quality:mark-clips": "tsx scripts/mark-clips.ts",
+    "embeddings:generate": "tsx scripts/generate-embeddings.ts",
     "release": "release-it"
   },
   "simple-git-hooks": {

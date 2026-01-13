@@ -221,3 +221,35 @@ export async function extractMovieMetadata(
     return null
   }
 }
+
+/**
+ * Generate embedding for a text using Ollama
+ *
+ * @param text - Text to generate embedding for
+ * @param model - Model name to use (default: nomic-embed-text)
+ * @param host - Ollama host URL
+ * @returns Promise<number[]> - Embedding vector
+ */
+export async function generateEmbedding(
+  text: string,
+  model = 'nomic-embed-text',
+  host = DEFAULT_CONFIG.host
+): Promise<number[]> {
+  const response = await fetch(`${host}/api/embeddings`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      prompt: text,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`Ollama API error: ${response.status} ${response.statusText}`)
+  }
+
+  const data = (await response.json()) as { embedding: number[] }
+  return data.embedding
+}

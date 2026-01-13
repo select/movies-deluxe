@@ -65,6 +65,11 @@ export interface SortState {
 }
 
 /**
+ * Search mode for movie queries
+ */
+export type SearchMode = 'keyword' | 'semantic' | 'hybrid'
+
+/**
  * Filter state interface
  * Contains all parameters for filtering and sorting movies
  */
@@ -94,6 +99,7 @@ export interface FilterState {
 
   // Search query
   searchQuery: string
+  searchMode: SearchMode
 
   // Pagination & UI state
   previousSort?: SortState

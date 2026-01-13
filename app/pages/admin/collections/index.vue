@@ -126,7 +126,11 @@
                 <div class="i-mdi-magnify text-blue-600"></div>
                 Search Library
               </h2>
-              <AdminMovieSearch :collection-id="selectedCollectionId" @add="onMovieAdded" />
+              <AdminMovieSearch
+                ref="movieSearch"
+                :collection-id="selectedCollectionId"
+                @add="onMovieAdded"
+              />
             </div>
           </div>
 
@@ -159,7 +163,11 @@
                 Cleanup
               </button>
             </div>
-            <AdminCollectionMoviesList ref="moviesList" :collection-id="selectedCollectionId" />
+            <AdminCollectionMoviesList
+              ref="moviesList"
+              :collection-id="selectedCollectionId"
+              @find-similar="onFindSimilar"
+            />
           </div>
         </section>
       </div>
@@ -185,6 +193,7 @@ const collectionSelector = ref<{
   openCreateModal: () => void
 } | null>(null)
 const moviesList = ref<{ refresh: () => Promise<void> } | null>(null)
+const movieSearch = ref<{ setExternalResults: (results: LightweightMovie[]) => void } | null>(null)
 
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
@@ -203,6 +212,14 @@ const onMovieAdded = () => {
   // Refresh collection list
   if (moviesList.value) {
     moviesList.value.refresh()
+  }
+}
+
+const onFindSimilar = (similarMovies: LightweightMovie[]) => {
+  if (movieSearch.value) {
+    movieSearch.value.setExternalResults(similarMovies)
+    // Scroll to search section
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 

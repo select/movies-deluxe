@@ -105,7 +105,8 @@
         class="p-4 border-b border-theme-border flex items-center justify-between bg-theme-bg/30"
       >
         <div class="text-sm text-theme-textmuted">
-          <span class="font-semibold text-theme-text">{{ results.length }}</span> results
+          <span class="font-semibold text-theme-text">{{ results.length }}</span>
+          {{ isExternalResults ? 'similar movies found' : 'results' }}
           <span v-if="results.length === 300" class="text-xs">(limited to 300)</span>
         </div>
         <button
@@ -221,6 +222,13 @@ const isLoading = ref(false)
 const isAdding = ref('')
 const addingAll = ref(false)
 const showFilters = ref(false)
+const isExternalResults = ref(false)
+
+const setExternalResults = (newResults: LightweightMovie[]) => {
+  results.value = newResults
+  isExternalResults.value = true
+  searchQuery.value = ''
+}
 
 // Local shortcut to focus search
 onKeyStroke('/', e => {
@@ -284,6 +292,7 @@ const performSearch = async () => {
   }
 
   isLoading.value = true
+  isExternalResults.value = false
   try {
     const data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
       query: {
@@ -380,4 +389,8 @@ const addAllMovies = async () => {
     addingAll.value = false
   }
 }
+
+defineExpose({
+  setExternalResults,
+})
 </script>

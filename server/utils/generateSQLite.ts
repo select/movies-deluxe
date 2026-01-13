@@ -8,7 +8,7 @@
 import Database from 'better-sqlite3'
 import * as sqliteVec from 'sqlite-vec'
 import { join } from 'path'
-import { existsSync, unlinkSync } from 'fs'
+import { existsSync, unlinkSync, readFileSync } from 'fs'
 import { loadMoviesDatabase } from './movieData'
 import { loadCollectionsDatabase } from './collections'
 import { createLogger } from './logger'
@@ -32,6 +32,20 @@ export async function generateSQLite(
   // 2. Load JSON data
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
+
+  // Load embeddings
+  const EMBEDDINGS_PATH = join(process.cwd(), 'public/data/embeddings.json')
+  let embeddings: Record<string, number[]> = {}
+  if (existsSync(EMBEDDINGS_PATH)) {
+    logger.info('Loading embeddings...')
+    try {
+      embeddings = JSON.parse(readFileSync(EMBEDDINGS_PATH, 'utf-8'))
+      logger.info(`Loaded ${Object.keys(embeddings).length} embeddings`)
+    } catch {
+      logger.warn('Failed to load embeddings.json, vector search will be empty.')
+    }
+  }
+
   const allMovies = Object.values(db)
     .filter(
       (entry): entry is MovieEntry =>
@@ -129,6 +143,12 @@ export async function generateSQLite(
         tokenize='unicode61'
       );
 
+      -- Vector Table for Semantic Search
+      CREATE VIRTUAL TABLE vec_movies USING vec0(
+        imdbId TEXT PRIMARY KEY,
+        embedding FLOAT[768]
+      );
+
       -- Indexes for efficient filtering and sorting
       CREATE INDEX idx_movies_year ON movies(year);
       CREATE INDEX idx_movies_rating ON movies(imdbRating);
@@ -165,6 +185,11 @@ export async function generateSQLite(
 
     const insertFts = sqlite.prepare(`
       INSERT INTO fts_movies (imdbId, title)
+      VALUES (?, ?)
+    `)
+
+    const insertVec = sqlite.prepare(`
+      INSERT INTO vec_movies (imdbId, embedding)
       VALUES (?, ?)
     `)
 
@@ -230,6 +255,11 @@ export async function generateSQLite(
         // Insert into FTS
         const ftsTitle = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
         insertFts.run(movie.imdbId, ftsTitle)
+
+        // Insert into Vector Table if embedding exists
+        if (embeddings[movie.imdbId]) {
+          insertVec.run(movie.imdbId, new Float32Array(embeddings[movie.imdbId]))
+        }
 
         count++
         if (count % 1000 === 0) {

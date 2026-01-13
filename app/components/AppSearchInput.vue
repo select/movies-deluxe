@@ -1,7 +1,8 @@
 <template>
   <div class="relative w-full md:w-64 md:flex-shrink-0">
     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      <div class="i-mdi-magnify text-lg text-theme-textmuted"></div>
+      <div v-if="loading" class="i-mdi-loading animate-spin text-lg text-theme-primary"></div>
+      <div v-else class="i-mdi-magnify text-lg text-theme-textmuted"></div>
     </div>
     <input
       v-model="model"
@@ -24,6 +25,7 @@
 <script setup lang="ts">
 defineProps<{
   placeholder?: string
+  loading?: boolean
 }>()
 
 const model = defineModel<string>({ default: '' })
