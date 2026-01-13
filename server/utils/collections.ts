@@ -201,3 +201,32 @@ export async function updateCollectionTags(collectionId: string, tags: string[])
   }
   return false
 }
+
+/**
+ * Update a movie ID across all collections that reference it
+ * Used when a movie's ID changes (e.g., from temp ID to IMDB ID)
+ */
+export async function updateMovieIdInCollections(oldId: string, newId: string): Promise<number> {
+  const db = await loadCollectionsDatabase()
+  let updatedCount = 0
+
+  for (const [key, value] of Object.entries(db)) {
+    if (key.startsWith('_')) continue
+
+    const collection = value as Collection
+    const index = collection.movieIds.indexOf(oldId)
+
+    if (index !== -1) {
+      // Replace old ID with new ID
+      collection.movieIds[index] = newId
+      collection.updatedAt = new Date().toISOString()
+      updatedCount++
+    }
+  }
+
+  if (updatedCount > 0) {
+    await saveCollectionsDatabase(db)
+  }
+
+  return updatedCount
+}
