@@ -505,7 +505,7 @@ import type { MovieEntry, LightweightMovie } from '~/types'
 
 // Stores - get reactive state and methods once
 const movieStore = useMovieStore()
-const { likedMovieIds, currentMovieList } = storeToRefs(movieStore)
+const { likedMovieIds, searchResultMovies } = storeToRefs(movieStore)
 const { lightweightMovieCache } = storeToRefs(movieStore)
 const { getMovieById, fetchMoviesByIds, loadFromFile, toggleLike } = movieStore
 const { showToast } = useUiStore()
@@ -734,8 +734,8 @@ const navigateToAdjacentMovie = (direction: 'prev' | 'next') => {
   const currentId = route.params.id as string
   if (!currentId) return
 
-  const movies = currentMovieList.value
-  const currentIndex = movies.findIndex((m: LightweightMovie | null) => m?.imdbId === currentId)
+  const movies = searchResultMovies.value
+  const currentIndex = movies.findIndex((id: string) => id === currentId)
 
   if (currentIndex === -1) return
 
