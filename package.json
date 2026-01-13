@@ -42,7 +42,6 @@
   "dependencies": {
     "@opencode-ai/sdk": "1.0.160",
     "@pinia/nuxt": "0.11.3",
-    "@sqlite.org/sqlite-wasm": "3.51.1-build2",
     "@types/tar": "6.1.13",
     "@vueuse/core": "14.1.0",
     "@vueuse/integrations": "14.1.0",
@@ -52,7 +51,10 @@
     "fuse.js": "7.1.0",
     "googleapis": "169.0.0",
     "nuxt": "4.2.2",
+    "ollama": "0.6.3",
     "pinia": "3.0.4",
+    "sqlite-vec": "0.1.7-alpha.2",
+    "sqlite-wasm-vec": "0.1.11",
     "tar": "7.5.2",
     "vue": "3.5.25",
     "vue-router": "4.6.4"
