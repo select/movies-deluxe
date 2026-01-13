@@ -151,8 +151,6 @@ const saveCurrentQuery = async () => {
   // Create a clean FilterState, only including non-default values
   const filterState: SavedQueryFilterState = {
     searchQuery: filters.value.searchQuery,
-    currentPage: 1,
-    lastScrollY: 0,
   }
 
   // Only add non-default values
@@ -211,8 +209,6 @@ const applyQuery = (query: SavedQuery) => {
     genres: [],
     countries: [],
     searchQuery: '',
-    currentPage: 1,
-    lastScrollY: 0,
   })
 
   // Restore search query from the saved query

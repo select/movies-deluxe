@@ -30,8 +30,6 @@ const DEFAULT_FILTERS: FilterState = {
   genres: [],
   countries: [],
   searchQuery: '',
-  currentPage: 1,
-  lastScrollY: 0,
 }
 
 /**
@@ -206,6 +204,43 @@ export const useMovieStore = defineStore('movie', () => {
       verified: movie.verified,
       genre: movie.metadata?.Genre,
       country: movie.metadata?.Country,
+    }
+  }
+
+  /**
+   * Map SQL row to MovieEntry (lightweight version)
+   * Sources are now loaded separately from JSON files
+   */
+  const mapRowToMovie = (row: LightweightMovie): MovieEntry => {
+    // console.log('[mapRowToMovie] Mapping row:', row.imdbId, row.title)
+    // Create a minimal source object from database fields for UI display
+    const sources: MovieSource[] = []
+    if (row.sourceType) {
+      sources.push({
+        type: row.sourceType,
+        id: '', // Not available in database, but not needed for icon display
+        url: '', // Not available in database, but not needed for icon display
+        title: row.title,
+        channelName: row.sourceType === 'youtube' ? row.channelName || undefined : undefined,
+        addedAt: row.lastUpdated || new Date().toISOString(),
+      })
+    }
+
+    return {
+      imdbId: row.imdbId,
+      title: row.title,
+      year: row.year,
+      lastUpdated: row.lastUpdated || new Date().toISOString(),
+      sources,
+      metadata: {
+        imdbRating: row.imdbRating,
+        imdbVotes: row.imdbVotes,
+        imdbID: row.imdbId,
+        Genre: row.genre,
+        Language: row.language,
+        Country: row.country,
+      },
+      verified: row.verified,
     }
   }
 
@@ -409,9 +444,7 @@ export const useMovieStore = defineStore('movie', () => {
   // Watch for filter changes and fetch (debounced to avoid rapid queries)
   watchDebounced(
     () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { currentPage, lastScrollY, ...rest } = filters.value
-      return JSON.stringify(rest)
+      return JSON.stringify(filters.value)
     },
     async () => {
       // Only apply filters on the search page
@@ -420,9 +453,6 @@ export const useMovieStore = defineStore('movie', () => {
       // Increment session ID to cancel any pending requests from previous filter state
       currentSearchSessionId.value++
       const sessionId = currentSearchSessionId.value
-
-      // Reset to page 1
-      filters.value.currentPage = 1
 
       // Set filtering state
       isFiltering.value = true
@@ -996,6 +1026,7 @@ export const useMovieStore = defineStore('movie', () => {
     loadFromFile,
     fetchMoviesByIds,
     getMovieById,
+    mapRowToMovie,
     mapMovieToLightweight,
     triggerSearchUpdate,
 
