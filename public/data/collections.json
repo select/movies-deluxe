@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-12T00:28:15.424Z"
+    "lastUpdated": "2026-01-13T19:08:42.937Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1534,10 +1534,11 @@
       "archive-lassie-a-christmas-story-1959-film-noir-christmas-special",
       "tt0043895",
       "tt0463721",
-      "tt0003855"
+      "tt0003855",
+      "tt0093132"
     ],
     "createdAt": "2025-12-29T16:18:00.000Z",
-    "updatedAt": "2026-01-07T00:31:27.845Z",
+    "updatedAt": "2026-01-13T19:08:42.937Z",
     "savedQueries": [],
     "tags": [
       "family",
