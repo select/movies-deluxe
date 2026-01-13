@@ -77,7 +77,7 @@ const props = defineProps<{
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
 const { lightweightMovieCache } = storeToRefs(movieStore)
-const uiStore = useUiStore()
+const toastStore = useToastStore()
 const movies = ref<LightweightMovie[]>([])
 const isLoading = ref(false)
 const isRemoving = ref('')
@@ -112,7 +112,7 @@ const loadCollectionMovies = async () => {
     })
   } catch (err) {
     window.console.error('Failed to load collection movies:', err)
-    uiStore.showToast('Failed to load collection movies', 'error')
+    toastStore.showToast('Failed to load collection movies', 'error')
   } finally {
     isLoading.value = false
   }
@@ -128,13 +128,13 @@ const removeMovie = async (movie: LightweightMovie) => {
       movie.imdbId
     )
     if (success) {
-      uiStore.showToast('Movie removed from collection')
+      toastStore.showToast('Movie removed from collection')
       await loadCollectionMovies()
     } else {
-      uiStore.showToast('Failed to remove movie', 'error')
+      toastStore.showToast('Failed to remove movie', 'error')
     }
   } catch {
-    uiStore.showToast('Error removing movie', 'error')
+    toastStore.showToast('Error removing movie', 'error')
   } finally {
     isRemoving.value = ''
   }

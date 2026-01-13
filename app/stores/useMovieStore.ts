@@ -230,7 +230,7 @@ export const useMovieStore = defineStore('movie', () => {
       console.error('[loadFromFile] Failed to initialize SQLite:', err)
 
       // Show toast notification for database initialization failure
-      const { showToast } = useUiStore()
+      const { showToast } = useToastStore()
       showToast(
         'Failed to load movie database. Please refresh the page to try again.',
         'error',
