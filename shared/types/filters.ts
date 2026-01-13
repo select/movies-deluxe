@@ -96,7 +96,5 @@ export interface FilterState {
   searchQuery: string
 
   // Pagination & UI state
-  currentPage: number
-  lastScrollY: number
   previousSort?: SortState
 }

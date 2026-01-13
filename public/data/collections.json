@@ -142,8 +142,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -243,8 +241,6 @@
         "searchQuery": "Charlie Chaplin",
         "filterState": {
           "searchQuery": "Charlie Chaplin",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -1426,8 +1422,6 @@
         "searchQuery": "Popey",
         "filterState": {
           "searchQuery": "Popey",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -2051,8 +2045,6 @@
         "searchQuery": "Alfred Hitchcock",
         "filterState": {
           "searchQuery": "Alfred Hitchcock",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -2128,8 +2120,6 @@
         "searchQuery": "Billy Wilder",
         "filterState": {
           "searchQuery": "Billy Wilder",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -2241,8 +2231,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -2364,8 +2352,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -2535,8 +2521,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -2737,8 +2721,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -2884,8 +2866,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3056,8 +3036,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3231,8 +3209,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3360,8 +3336,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3572,8 +3546,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3690,8 +3662,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3706,8 +3676,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3850,8 +3818,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -3941,8 +3907,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4139,8 +4103,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4310,8 +4272,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4439,8 +4399,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4504,8 +4462,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4583,8 +4539,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4703,8 +4657,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4848,8 +4800,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4897,8 +4847,6 @@
         "searchQuery": "",
         "filterState": {
           "searchQuery": "",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "rating",
             "direction": "desc"
@@ -4976,8 +4924,6 @@
         "searchQuery": "Sherlock Holmes",
         "filterState": {
           "searchQuery": "Sherlock Holmes",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -5016,8 +4962,6 @@
         "searchQuery": "Luis Buñuel",
         "filterState": {
           "searchQuery": "Luis Buñuel",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -5028,8 +4972,6 @@
         "searchQuery": "Jean Cocteau",
         "filterState": {
           "searchQuery": "Jean Cocteau",
-          "currentPage": 1,
-          "lastScrollY": 0,
           "sort": {
             "field": "relevance",
             "direction": "desc"

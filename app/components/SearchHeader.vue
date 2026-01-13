@@ -122,8 +122,6 @@
               genres: [],
               countries: [],
               searchQuery: '',
-              currentPage: 1,
-              lastScrollY: 0,
             })
           "
         >

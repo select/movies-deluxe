@@ -16,8 +16,6 @@ export interface SavedQueryFilterState {
   genres?: string[] // Only store if non-empty
   countries?: string[] // Only store if non-empty
   searchQuery: string // Always store
-  currentPage: number // Always store (for pagination)
-  lastScrollY: number // Always store (for scroll position)
 }
 
 export interface SavedQuery {
