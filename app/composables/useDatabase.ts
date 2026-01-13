@@ -87,75 +87,6 @@ function createDatabase() {
     })
   }
 
-  const extendedQuery = async <T = Record<string, string | number>>(options: {
-    select?: string
-    from: string
-    where?: string
-    params?: (string | number)[]
-    groupBy?: string
-    orderBy?: string
-    limit?: number
-    offset?: number
-    includeCount?: boolean
-  }): Promise<{ result: T[]; totalCount?: number }> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
-    }
-
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) =>
-          resolve({ result: (data.result as T[]) ?? [], totalCount: data.totalCount }),
-        reject,
-      })
-
-      // Clone options and ensure params is raw
-      const rawOptions = { ...options }
-      if (rawOptions.params) {
-        rawOptions.params = toRaw(rawOptions.params)
-      }
-
-      worker.value!.postMessage({ type: 'query', id, ...rawOptions })
-    })
-  }
-
-  const searchQuery = async (options: {
-    where?: string
-    params?: (string | number)[]
-    orderBy?: string
-    limit?: number
-    offset?: number
-    includeCount?: boolean
-  }): Promise<{
-    result: { imdbId: string }[]
-    totalCount?: number
-  }> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
-    }
-
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) =>
-          resolve({
-            result: (data.result as { imdbId: string }[]) ?? [],
-            totalCount: data.totalCount,
-          }),
-        reject,
-      })
-
-      // Clone options and ensure params is raw
-      const rawOptions = { ...options }
-      if (rawOptions.params) {
-        rawOptions.params = toRaw(rawOptions.params)
-      }
-
-      worker.value!.postMessage({ type: 'search-query', id, ...rawOptions })
-    })
-  }
-
   const queryByIds = async <T = MovieEntry>(imdbIds: string[]): Promise<T[]> => {
     if (!isReady.value) {
       throw new Error('Database not initialized')
@@ -207,41 +138,12 @@ function createDatabase() {
     })
   }
 
-  const getMovieCount = async (
-    options: {
-      where?: string
-      params?: (string | number)[]
-    } = {}
-  ): Promise<number> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
-    }
-
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) => resolve(data.count ?? 0),
-        reject,
-      })
-
-      const rawOptions = { ...options }
-      if (rawOptions.params) {
-        rawOptions.params = toRaw(rawOptions.params)
-      }
-
-      worker.value!.postMessage({ type: 'get-movie-count', id, ...rawOptions })
-    })
-  }
-
   return {
     init,
     query,
-    extendedQuery,
-    searchQuery,
     queryByIds,
     getCollectionsForMovie,
     getFilterOptions,
-    getMovieCount,
     isReady,
   }
 }
