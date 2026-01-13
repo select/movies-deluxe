@@ -78,14 +78,7 @@ export const useMovieStore = defineStore('movie', () => {
   // Filter state stored in localStorage using VueUse
   const filters = useStorage<FilterState>('movies-deluxe-filters', DEFAULT_FILTERS)
 
-  // Loading states
-  const isLoading = ref<LoadingState>({
-    movies: false,
-    movieDetails: false,
-    imdbFetch: false,
-  })
   const isFiltering = ref(false)
-  const isAppending = ref(false)
 
   // Database composable
   const db = useDatabase()
@@ -108,25 +101,6 @@ export const useMovieStore = defineStore('movie', () => {
    * Contains the IDs of movies that match current search/filter criteria
    */
   const searchResultMovies = ref<string[]>([])
-
-  /**
-   * Current movie list for navigation (uses lightweight movies for consistency with index page)
-   * Returns the list of movie IDs in the same order as displayed on the index page
-   * Returns empty array when no search results are available
-   */
-  const currentMovieList = computed((): (LightweightMovie | null)[] => {
-    // Convert IDs to lightweight movies from cache
-    return searchResultMovies.value.map(id => {
-      const cached = lightweightMovieCache.value.get(id)
-      return cached
-        ? {
-            imdbId: cached.imdbId,
-            title: cached.title,
-            year: cached.year || 0,
-          }
-        : null
-    })
-  })
 
   // ============================================
   // COMPUTED PROPERTIES - Statistics
@@ -244,7 +218,6 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const loadFromFile = async () => {
     console.log('[loadFromFile] Starting database initialization')
-    isLoading.value.movies = true
 
     try {
       // Initialize database from remote file and get total movie count
@@ -265,7 +238,6 @@ export const useMovieStore = defineStore('movie', () => {
       )
     } finally {
       console.log('[loadFromFile] Finished database initialization')
-      isLoading.value.movies = false
       isFiltering.value = false
     }
   }
@@ -354,7 +326,6 @@ export const useMovieStore = defineStore('movie', () => {
 
     // Fetch full details from JSON file (static deployment)
     console.log('[getMovieById] Fetching from JSON file')
-    isLoading.value.movieDetails = true
     try {
       const movie = await $fetch<MovieEntry>(
         `${useRuntimeConfig().app.baseURL}movies/${imdbId}.json`
@@ -370,8 +341,6 @@ export const useMovieStore = defineStore('movie', () => {
     } catch (err) {
       console.error(`[getMovieById] Failed to fetch movie details for ${imdbId}:`, err)
       return undefined
-    } finally {
-      isLoading.value.movieDetails = false
     }
   }
 
@@ -673,8 +642,6 @@ export const useMovieStore = defineStore('movie', () => {
     lightweightMovieCache,
     filters,
     isFiltering,
-    isAppending,
-    isLoading,
     likedMovieIds,
 
     // ============================================
@@ -683,7 +650,6 @@ export const useMovieStore = defineStore('movie', () => {
 
     // Data views
     searchResultMovies,
-    currentMovieList,
 
     // Statistics
     totalMovies,
