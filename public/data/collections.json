@@ -2,7 +2,82 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-18T21:24:02.282Z"
+    "lastUpdated": "2026-01-18T23:57:04.505Z"
+  },
+  "monster-madness": {
+    "id": "monster-madness",
+    "name": "Monster Madness",
+    "description": "Giant monster movies featuring the legendary kaiju: Godzilla, King Kong, and Gamera. Classic creature features from Japan and beyond.",
+    "movieIds": [
+      "youtube-TwcGiBaQVk4",
+      "tt0047034",
+      "tt1543211",
+      "archive-godzilla-1954-colorization-2020",
+      "tt0048127",
+      "tt0197521",
+      "tt0059346",
+      "youtube-0eOtvOC324M",
+      "youtube-uFL5GK7qzy4",
+      "youtube-kor6ghJ344I",
+      "youtube-AZWDlEHIi_4",
+      "tt0116390",
+      "tt0184503",
+      "youtube-h_wwLcUX1LU",
+      "youtube-1MlbLcd_TWs",
+      "tt0113142",
+      "tt0467923",
+      "archive-gamera-tai-uchu-kaiju-bairasu-1968",
+      "archive-gamera-tai-daiakuju-giron-1969",
+      "youtube-171tNN5CuqE",
+      "youtube-yI0Qkiv8fVQ",
+      "tt0024216",
+      "archive-king-kong-1933-espanol_202401",
+      "tt0158780",
+      "archive-Fire_Monsters_Against_The_Son_of_Hercules",
+      "archive-MonsterA.k.a.Monstroid"
+    ],
+    "createdAt": "2026-01-19T00:50:00.000Z",
+    "updatedAt": "2026-01-18T23:57:04.505Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Godzilla",
+        "filterState": {
+          "searchQuery": "Godzilla",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "King Kong",
+        "filterState": {
+          "searchQuery": "King Kong",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Gamera",
+        "filterState": {
+          "searchQuery": "Gamera",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "kaiju",
+      "monsters",
+      "giant-creatures",
+      "japanese-cinema",
+      "sci-fi",
+      "action"
+    ]
   },
   "top-movies": {
     "id": "top-movies",
