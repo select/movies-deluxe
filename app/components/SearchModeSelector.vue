@@ -57,7 +57,7 @@ const modes = [
   {
     id: 'semantic' as SearchMode,
     label: 'Semantic',
-    icon: 'i-mdi-brain',
+    icon: 'i-mdi-sparkles',
     description: 'AI-powered search. Understands meaning and concepts (e.g., "space travel").',
   },
 ]
