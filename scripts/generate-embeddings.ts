@@ -8,14 +8,14 @@ import { createLogger } from '../server/utils/logger'
 import type { MovieEntry } from '../shared/types/movie'
 
 const logger = createLogger('Embeddings')
-const EMBEDDINGS_FILE = join(process.cwd(), 'public/data/embeddings.json')
+const EMBEDDINGS_FILE = join(process.cwd(), 'data/embeddings.json')
 const MODEL = 'nomic-embed-text'
 
 async function main() {
   logger.info('Starting embedding generation...')
 
-  // 1. Ensure public/data exists
-  const dataDir = join(process.cwd(), 'public/data')
+  // 1. Ensure data directory exists
+  const dataDir = join(process.cwd(), 'data')
   if (!existsSync(dataDir)) {
     await mkdir(dataDir, { recursive: true })
   }

@@ -34,7 +34,7 @@ export async function generateSQLite(
   const collectionsDb = await loadCollectionsDatabase()
 
   // Load embeddings
-  const EMBEDDINGS_PATH = join(process.cwd(), 'public/data/embeddings.json')
+  const EMBEDDINGS_PATH = join(process.cwd(), 'data/embeddings.json')
   let embeddings: Record<string, number[]> = {}
   if (existsSync(EMBEDDINGS_PATH)) {
     logger.info('Loading embeddings...')
