@@ -11,8 +11,8 @@ export interface ParsedQuery {
  * Supports keywords: actor:, director:, writer:, title:
  * Supports quoted strings for values with spaces.
  *
- * Example: 'actor:"Tom Hanks" director:Spielberg Inception'
- * Returns: { actors: ['Tom Hanks'], directors: ['Spielberg'], general: 'Inception' }
+ * Example: 'actor:"Roy Rogers" director:Dave Fleischer Inception'
+ * Returns: { actors: ['Roy Rogers'], directors: ['Dave Fleischer'], general: 'Inception' }
  */
 export function parseSearchQuery(query: string): ParsedQuery {
   const result: ParsedQuery = {}
