@@ -370,15 +370,89 @@ export const useMovieStore = defineStore('movie', () => {
     const whereParams: (string | number)[] = []
 
     if (searchQuery?.trim()) {
-      // Search query - use FTS5 full-text search
-      const sanitizedQuery = searchQuery.replace(/"/g, '""').trim()
-      sql = `
-        SELECT m.imdbId
-        FROM fts_movies f
-        JOIN movies m ON f.imdbId = m.imdbId
-        WHERE fts_movies MATCH ?
-      `
-      params.push(`"${sanitizedQuery}"`)
+      const parsed = parseSearchQuery(searchQuery)
+      const hasKeywords = !!(
+        parsed.actors?.length ||
+        parsed.directors?.length ||
+        parsed.writers?.length ||
+        parsed.title
+      )
+
+      if (hasKeywords) {
+        const joins: string[] = []
+        const searchConditions: string[] = []
+
+        if (parsed.title) {
+          joins.push(`JOIN fts_movies ft ON m.imdbId = ft.imdbId`)
+          searchConditions.push(`ft.title MATCH ?`)
+          params.push(`"${parsed.title.replace(/"/g, '""')}"`)
+        }
+
+        if (parsed.actors) {
+          parsed.actors.forEach((actor, i) => {
+            const ma = `ma${i}`
+            const fa = `fa${i}`
+            joins.push(`JOIN movie_actors ${ma} ON m.imdbId = ${ma}.movieId`)
+            joins.push(`JOIN fts_actors ${fa} ON ${ma}.actorId = ${fa}.actorId`)
+            searchConditions.push(`${fa}.name MATCH ?`)
+            params.push(`"${actor.replace(/"/g, '""')}"`)
+          })
+        }
+
+        if (parsed.directors) {
+          parsed.directors.forEach((director, i) => {
+            const md = `md${i}`
+            const fd = `fd${i}`
+            joins.push(`JOIN movie_directors ${md} ON m.imdbId = ${md}.movieId`)
+            joins.push(`JOIN fts_directors ${fd} ON ${md}.directorId = ${fd}.directorId`)
+            searchConditions.push(`${fd}.name MATCH ?`)
+            params.push(`"${director.replace(/"/g, '""')}"`)
+          })
+        }
+
+        if (parsed.writers) {
+          parsed.writers.forEach((writer, i) => {
+            const mw = `mw${i}`
+            const fw = `fw${i}`
+            joins.push(`JOIN movie_writers ${mw} ON m.imdbId = ${mw}.movieId`)
+            joins.push(`JOIN fts_writers ${fw} ON ${mw}.writerId = ${fw}.writerId`)
+            searchConditions.push(`${fw}.name MATCH ?`)
+            params.push(`"${writer.replace(/"/g, '""')}"`)
+          })
+        }
+
+        if (parsed.general) {
+          joins.push(`JOIN fts_movies fg ON m.imdbId = fg.imdbId`)
+          searchConditions.push(`fg.title MATCH ?`)
+          params.push(`"${parsed.general.replace(/"/g, '""')}"`)
+        }
+
+        sql = `
+          SELECT DISTINCT m.imdbId
+          FROM movies m
+          ${joins.join(' ')}
+          WHERE ${searchConditions.join(' AND ')}
+        `
+      } else if (parsed.general) {
+        // General search across all fields using UNION for better performance and correctness
+        const generalTerm = `"${parsed.general.replace(/"/g, '""')}"`
+        sql = `
+          SELECT m.imdbId
+          FROM movies m
+          WHERE m.imdbId IN (
+            SELECT imdbId FROM fts_movies WHERE title MATCH ?
+            UNION
+            SELECT ma.movieId FROM fts_actors fa JOIN movie_actors ma ON fa.actorId = ma.actorId WHERE name MATCH ?
+            UNION
+            SELECT md.movieId FROM fts_directors fd JOIN movie_directors md ON fd.directorId = md.directorId WHERE name MATCH ?
+            UNION
+            SELECT mw.movieId FROM fts_writers fw JOIN movie_writers mw ON fw.writerId = mw.writerId WHERE name MATCH ?
+          )
+        `
+        params.push(generalTerm, generalTerm, generalTerm, generalTerm)
+      } else {
+        sql = `SELECT m.imdbId FROM movies m WHERE 1=1`
+      }
     } else {
       // No search query - query all movies
       sql = `

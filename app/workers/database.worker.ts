@@ -129,6 +129,13 @@ interface QueuedMessage {
   imdbIds?: string[]
   movieId?: string
   movieIds?: string[]
+  parsedQuery?: {
+    actors?: string[]
+    directors?: string[]
+    writers?: string[]
+    title?: string
+    general?: string
+  }
   embedding?: Float32Array | number[]
   limit?: number
   offset?: number

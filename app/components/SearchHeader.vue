@@ -24,13 +24,25 @@
             @keydown.esc="handleEscape"
             @keydown.enter="handleEnter"
           />
-          <button
-            v-if="localQuery"
-            class="absolute inset-y-0 right-0 pr-4 flex items-center z-10"
-            @click="clearSearch"
-          >
-            <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
-          </button>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-2 z-10">
+            <button
+              v-if="localQuery"
+              class="p-2 hover:bg-theme-background rounded-full transition-colors"
+              title="Clear search"
+              @click="clearSearch"
+            >
+              <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
+            </button>
+            <button
+              class="p-2 hover:bg-theme-background rounded-full transition-colors group"
+              title="Search tips"
+              @click="openPopup('help', $event)"
+            >
+              <div
+                class="i-mdi-help-circle-outline text-xl text-theme-textmuted group-hover:text-theme-primary transition-colors"
+              ></div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -197,6 +209,55 @@
     >
       <FilterSourceControl />
     </FilterPopup>
+
+    <FilterPopup
+      :is-open="activePopup === 'help'"
+      title="Search Tips"
+      :anchor-el="anchorEl"
+      @close="closePopup"
+    >
+      <div class="p-4 max-w-xs space-y-3 text-sm">
+        <p class="text-theme-textmuted">Use keywords for field-specific search:</p>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-2">
+            <code class="bg-theme-background px-1.5 py-0.5 rounded text-theme-primary font-mono"
+              >actor:</code
+            >
+            <span class="text-theme-text">Search by actor</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <code class="bg-theme-background px-1.5 py-0.5 rounded text-theme-primary font-mono"
+              >director:</code
+            >
+            <span class="text-theme-text">Search by director</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <code class="bg-theme-background px-1.5 py-0.5 rounded text-theme-primary font-mono"
+              >writer:</code
+            >
+            <span class="text-theme-text">Search by writer</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <code class="bg-theme-background px-1.5 py-0.5 rounded text-theme-primary font-mono"
+              >title:</code
+            >
+            <span class="text-theme-text">Search by title</span>
+          </li>
+        </ul>
+        <div class="pt-2 border-t border-theme-border">
+          <p class="text-theme-textmuted mb-1">Use quotes for spaces:</p>
+          <code class="block bg-theme-background p-2 rounded text-theme-primary font-mono"
+            >actor:"Tom Hanks"</code
+          >
+        </div>
+        <div class="pt-2 border-t border-theme-border">
+          <p class="text-theme-textmuted mb-1">Combine multiple keywords:</p>
+          <code class="block bg-theme-background p-2 rounded text-theme-primary font-mono"
+            >actor:Keanu title:Matrix</code
+          >
+        </div>
+      </div>
+    </FilterPopup>
   </div>
 </template>
 
@@ -275,7 +336,7 @@ const votesLabel = computed(() => {
 const searchPlaceholder = computed(() => {
   const mode = filters.value.searchMode
   if (mode === 'semantic') return 'Describe what you want to watch...'
-  return 'Search movies, actors, directors...'
+  return 'Search movies... (try: actor:Tom Hanks, director:Nolan)'
 })
 
 const resetSort = () => {
