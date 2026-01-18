@@ -56,7 +56,13 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
               <h4 class="font-bold truncate">
-                {{ movie.title }}
+                <NuxtLink
+                  :to="`/movie/${movie.movieId}`"
+                  target="_blank"
+                  class="hover:text-blue-600 transition-colors"
+                >
+                  {{ movie.title }}
+                </NuxtLink>
               </h4>
               <span class="text-xs text-theme-textmuted font-mono">{{ movie.year }}</span>
             </div>
