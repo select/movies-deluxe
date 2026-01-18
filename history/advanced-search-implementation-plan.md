@@ -58,8 +58,8 @@ Implement advanced search functionality with field-specific keyword search (acto
 1. **Create Query Parser Utility**
 
    - Parse search queries for keywords: `actor:`, `director:`, `writer:`, `title:`
-   - Support multiple keywords in one query: `actor:Tom Hanks director:Spielberg`
-   - Handle quoted strings: `actor:"Tom Hanks" title:"Saving Private Ryan"`
+   - Support multiple keywords in one query: `actor:Roy Rogers director:Dave Fleischer`
+   - Handle quoted strings: `actor:"Roy Rogers" title:"Saving Private Ryan"`
    - Default behavior: search all fields when no keyword present
 
 2. **Query Structure**

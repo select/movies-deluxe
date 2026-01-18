@@ -247,7 +247,7 @@
         <div class="pt-2 border-t border-theme-border">
           <p class="text-theme-textmuted mb-1">Use quotes for spaces:</p>
           <code class="block bg-theme-background p-2 rounded text-theme-primary font-mono"
-            >actor:"Tom Hanks"</code
+            >actor:"Roy Rogers"</code
           >
         </div>
         <div class="pt-2 border-t border-theme-border">
@@ -336,7 +336,7 @@ const votesLabel = computed(() => {
 const searchPlaceholder = computed(() => {
   const mode = filters.value.searchMode
   if (mode === 'semantic') return 'Describe what you want to watch...'
-  return 'Search movies... (try: actor:Tom Hanks, director:Nolan)'
+  return 'Search movies... (try: actor:Roy Rogers, director:Dave Fleischer)'
 })
 
 const resetSort = () => {
