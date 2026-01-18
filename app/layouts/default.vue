@@ -9,8 +9,10 @@
     <!-- Theme Menu -->
     <ThemeMenu :is-open="isThemeMenuOpen" @close="isThemeMenuOpen = false" />
 
-    <!-- Page Content -->
-    <slot></slot>
+    <!-- Page Content with mobile bottom padding for navigation clearance -->
+    <div class="pb-24 md:pb-0">
+      <slot></slot>
+    </div>
 
     <!-- Toast Container -->
     <AppToastContainer />

@@ -186,6 +186,17 @@ function createDatabase() {
     })
   }
 
+  /**
+   * Wait for the database to be ready
+   * Returns immediately if already ready, otherwise waits for initialization
+   */
+  const waitForReady = async (): Promise<void> => {
+    if (isReady.value) return
+    if (initPromise.value) {
+      await initPromise.value
+    }
+  }
+
   return {
     init,
     query,
@@ -194,6 +205,7 @@ function createDatabase() {
     getFilterOptions,
     vectorSearch,
     isReady,
+    waitForReady,
   }
 }
 

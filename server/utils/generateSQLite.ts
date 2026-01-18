@@ -329,7 +329,9 @@ export async function generateSQLite(
           collection.updatedAt
         )
 
-        for (const movieId of collection.movieIds) {
+        // Deduplicate movieIds to avoid UNIQUE constraint violations
+        const uniqueMovieIds = [...new Set(collection.movieIds)]
+        for (const movieId of uniqueMovieIds) {
           // Only insert if movie exists in our filtered database (not quality-labeled)
           if (validMovieIds.has(movieId)) {
             insertCollectionMovie.run(collection.id, movieId, collection.updatedAt)

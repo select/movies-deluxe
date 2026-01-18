@@ -68,5 +68,5 @@ function getIdleSummary(text: string | null): string | undefined {
   const idleMatch = text.match(/[_*]Summary:[_*]? (.*)[_*]?$/m)
   const summary = cleanText(idleMatch?.[1]?.trim() ?? text.trim())
 
-  return summary.length > 80 ? summary.slice(0, 80) + '...' : summary
+  return summary.length > 150 ? summary.slice(0, 150) + '...' : summary
 }

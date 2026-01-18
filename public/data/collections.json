@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-13T19:08:42.937Z"
+    "lastUpdated": "2026-01-16T00:09:16.336Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1996,6 +1996,43 @@
       "slapstick",
       "wordplay"
     ]
+  },
+  "elia-kazan": {
+    "id": "elia-kazan",
+    "name": "Elia Kazan",
+    "description": "Films directed by Elia Kazan, the acclaimed director known for his work on Broadway and Hollywood classics including 'A Streetcar Named Desire', 'On the Waterfront', and 'East of Eden'.",
+    "movieIds": [
+      "tt0039208",
+      "tt0038190",
+      "tt0054476",
+      "tt0046040",
+      "tt0046040",
+      "tt0047296",
+      "tt0042832",
+      "tt0041746"
+    ],
+    "createdAt": "2026-01-16T00:00:00.000Z",
+    "updatedAt": "2026-01-16T00:09:16.336Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Elia Kazan",
+        "filterState": {
+          "searchQuery": "Elia Kazan",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "drama",
+      "classic-hollywood",
+      "theatrical",
+      "oscar-winner",
+      "method-acting"
+    ],
+    "enabled": true
   },
   "alfred-hitchcock": {
     "id": "alfred-hitchcock",
