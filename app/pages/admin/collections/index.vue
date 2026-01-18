@@ -253,7 +253,7 @@ const onCleanupCollection = async () => {
       return
     }
 
-    const existingMovies = await db.queryByIds<{ movieId: string }>(movieIds)
+    const existingMovies = await db.queryByIds(movieIds)
     const existingIds = new Set(existingMovies.map(m => m.movieId))
 
     // 3. Identify missing IDs

@@ -1,5 +1,4 @@
 import { useDatabase } from './useDatabase'
-import type { MovieEntry } from '~/types'
 
 export function useVectorSearch() {
   const db = useDatabase()
@@ -38,7 +37,7 @@ export function useVectorSearch() {
       }
 
       // 2. Perform vector search in the database worker
-      const results = await db.vectorSearch<MovieEntry>(response.embedding, limit, where, params)
+      const results = await db.vectorSearch(response.embedding, limit, where, params)
       return results
     } catch (err: unknown) {
       console.error('Vector search failed:', err)
@@ -65,7 +64,7 @@ export function useVectorSearch() {
     try {
       // 1. Get the embedding for the movie from the database
       // We need to use a raw query because vectorSearch expects the embedding blob
-      const movieEmbeddingResult = await db.query<{ embedding: Uint8Array }>(
+      const movieEmbeddingResult = await db.query(
         'SELECT embedding FROM vec_movies WHERE movieId = ?',
         [movieId]
       )
@@ -75,11 +74,22 @@ export function useVectorSearch() {
         return []
       }
 
-      const embedding = movieEmbeddingResult[0].embedding
+      const firstResult = movieEmbeddingResult[0]
+      const embedding = firstResult?.embedding as Uint8Array | undefined
+      if (!embedding) {
+        console.warn(`No embedding found for movie ${movieId}`)
+        return []
+      }
 
       // 2. Perform vector search using that embedding
       // We ask for limit + 1 because the movie itself will be the closest match
-      const results = await db.vectorSearch<MovieEntry>(embedding, limit + 1)
+      // Convert Uint8Array from DB to Float32Array for vector search
+      const float32Embedding = new Float32Array(
+        embedding.buffer,
+        embedding.byteOffset,
+        embedding.byteLength / 4
+      )
+      const results = await db.vectorSearch(float32Embedding, limit + 1)
 
       // Filter out the current movie and return requested limit
       return results.filter(r => r.movieId !== movieId).slice(0, limit)
