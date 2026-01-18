@@ -45,7 +45,10 @@
 import type { SearchMode } from '~/types'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const { filters: storeFilters } = storeToRefs(movieStore)
+
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || storeFilters
 
 const modes = [
   {

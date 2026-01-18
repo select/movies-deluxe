@@ -33,6 +33,14 @@
               <span class="font-bold text-sm">
                 {{ query.searchQuery || 'All Movies' }}
               </span>
+              <!-- Search Mode Badge -->
+              <div
+                v-if="query.filterState.searchMode && query.filterState.searchMode !== 'exact'"
+                class="px-2 py-0.5 bg-blue-600/10 text-blue-600 border border-blue-600/20 rounded text-[10px] font-bold flex items-center gap-1"
+              >
+                <div class="i-mdi-sparkles"></div>
+                Semantic
+              </div>
             </div>
 
             <div class="flex flex-wrap gap-2">
@@ -124,11 +132,13 @@
 </template>
 
 <script setup lang="ts">
+import type { FilterState } from '~/types'
 // SavedQuery and SavedQueryFilterState are auto-imported from shared/types/
 
 const props = defineProps<{
   collectionId: string
   queries?: SavedQuery[]
+  filters: FilterState
 }>()
 
 const emit = defineEmits<{
@@ -136,54 +146,58 @@ const emit = defineEmits<{
 }>()
 
 const collectionsStore = useCollectionsStore()
-const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || toRef(props, 'filters')
 
 const saveCurrentQuery = async () => {
   // Default values to compare against
   const DEFAULT_SORT = { field: 'year', direction: 'desc' }
+  const DEFAULT_MODE = 'exact'
 
   // Only include sort if it's not the default
   const isDefaultSort =
-    filters.value.sort.field === DEFAULT_SORT.field &&
-    filters.value.sort.direction === DEFAULT_SORT.direction
+    props.filters.sort.field === DEFAULT_SORT.field &&
+    props.filters.sort.direction === DEFAULT_SORT.direction
 
   // Create a clean FilterState, only including non-default values
   const filterState: SavedQueryFilterState = {
-    searchQuery: filters.value.searchQuery,
+    searchQuery: props.filters.searchQuery,
   }
 
   // Only add non-default values
   if (!isDefaultSort) {
-    filterState.sort = { ...filters.value.sort }
+    filterState.sort = { ...props.filters.sort }
   }
-  if (filters.value.sources.length > 0) {
-    filterState.sources = [...filters.value.sources]
+  if (props.filters.searchMode !== DEFAULT_MODE) {
+    filterState.searchMode = props.filters.searchMode
   }
-  if (filters.value.minRating > 0) {
-    filterState.minRating = filters.value.minRating
+  if (props.filters.sources.length > 0) {
+    filterState.sources = [...props.filters.sources]
   }
-  if (filters.value.minYear > 0) {
-    filterState.minYear = filters.value.minYear
+  if (props.filters.minRating > 0) {
+    filterState.minRating = props.filters.minRating
   }
-  if (filters.value.maxYear && filters.value.maxYear > 0) {
-    filterState.maxYear = filters.value.maxYear
+  if (props.filters.minYear > 0) {
+    filterState.minYear = props.filters.minYear
   }
-  if (filters.value.minVotes > 0) {
-    filterState.minVotes = filters.value.minVotes
+  if (props.filters.maxYear && props.filters.maxYear > 0) {
+    filterState.maxYear = props.filters.maxYear
   }
-  if (filters.value.maxVotes && filters.value.maxVotes > 0) {
-    filterState.maxVotes = filters.value.maxVotes
+  if (props.filters.minVotes > 0) {
+    filterState.minVotes = props.filters.minVotes
   }
-  if (filters.value.genres.length > 0) {
-    filterState.genres = [...filters.value.genres]
+  if (props.filters.maxVotes && props.filters.maxVotes > 0) {
+    filterState.maxVotes = props.filters.maxVotes
   }
-  if (filters.value.countries.length > 0) {
-    filterState.countries = [...filters.value.countries]
+  if (props.filters.genres.length > 0) {
+    filterState.genres = [...props.filters.genres]
+  }
+  if (props.filters.countries.length > 0) {
+    filterState.countries = [...props.filters.countries]
   }
 
   const query: SavedQuery = {
-    searchQuery: filters.value.searchQuery,
+    searchQuery: props.filters.searchQuery,
     filterState,
   }
 
@@ -209,11 +223,17 @@ const applyQuery = (query: SavedQuery) => {
     genres: [],
     countries: [],
     searchQuery: '',
+    searchMode: 'exact',
   })
 
   // Restore search query from the saved query
   if (query.searchQuery) {
     filters.value.searchQuery = query.searchQuery
+  }
+
+  // Restore search mode
+  if (query.filterState.searchMode) {
+    filters.value.searchMode = query.filterState.searchMode
   }
 
   // Apply sort if it was saved (otherwise use default from reset)
@@ -240,25 +260,13 @@ const applyQuery = (query: SavedQuery) => {
 
   // Apply array filters
   if (query.filterState.genres) {
-    query.filterState.genres.forEach(g => {
-      if (!filters.value.genres.includes(g)) {
-        filters.value.genres = [...filters.value.genres, g]
-      }
-    })
+    filters.value.genres = [...query.filterState.genres]
   }
   if (query.filterState.countries) {
-    query.filterState.countries.forEach(c => {
-      if (!filters.value.countries.includes(c)) {
-        filters.value.countries = [...filters.value.countries, c]
-      }
-    })
+    filters.value.countries = [...query.filterState.countries]
   }
   if (query.filterState.sources) {
-    query.filterState.sources.forEach(s => {
-      if (!filters.value.sources.includes(s)) {
-        filters.value.sources = [...filters.value.sources, s]
-      }
-    })
+    filters.value.sources = [...query.filterState.sources]
   }
 
   // Emit event to notify parent that filters were applied

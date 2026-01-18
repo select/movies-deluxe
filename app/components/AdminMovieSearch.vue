@@ -1,100 +1,6 @@
 <template>
   <div class="space-y-4">
-    <div class="flex items-center gap-4">
-      <div class="relative flex-1">
-        <div
-          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-theme-textmuted"
-        >
-          <div class="i-mdi-magnify text-xl"></div>
-        </div>
-        <input
-          ref="searchInput"
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search by title, director, writer, plot or IMDb ID... (or use filters below)"
-          class="block w-full pl-10 pr-3 py-3 border border-theme-border rounded-xl bg-theme-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
-          @input="onInput"
-        />
-        <div v-if="isLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-          <div class="i-mdi-loading animate-spin text-blue-600"></div>
-        </div>
-      </div>
-
-      <button
-        class="px-4 py-3 bg-theme-surface border border-theme-border rounded-xl text-sm font-bold hover:bg-theme-selection transition-colors flex items-center gap-2"
-        @click="showFilters = true"
-      >
-        <div class="i-mdi-filter-variant"></div>
-        Filters
-        <span
-          v-if="activeFiltersCount > 0"
-          class="bg-blue-600 text-white px-1.5 py-0.5 rounded-full text-[10px]"
-        >
-          {{ activeFiltersCount }}
-        </span>
-      </button>
-    </div>
-
-    <!-- Active Filters Display -->
-    <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-2">
-      <div
-        v-if="filters.minRating > 0"
-        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
-      >
-        <div class="i-mdi-star"></div>
-        {{ filters.minRating }}+
-      </div>
-      <div
-        v-if="filters.minYear > 0 || filters.maxYear"
-        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
-      >
-        <div class="i-mdi-calendar"></div>
-        {{ filters.minYear || 1910 }} - {{ filters.maxYear || 2025 }}
-      </div>
-      <div
-        v-if="filters.minVotes > 0 || filters.maxVotes"
-        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
-      >
-        <div class="i-mdi-account-group"></div>
-        {{ filters.minVotes.toLocaleString() }} -
-        {{ filters.maxVotes ? filters.maxVotes.toLocaleString() : 'Any' }}
-      </div>
-      <div
-        v-for="genre in filters.genres"
-        :key="genre"
-        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
-      >
-        <div class="i-mdi-movie-filter"></div>
-        {{ genre }}
-      </div>
-      <div
-        v-for="source in filters.sources"
-        :key="source"
-        class="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg text-xs font-medium flex items-center gap-1"
-      >
-        <div class="i-mdi-source-branch"></div>
-        {{ source }}
-      </div>
-      <button
-        class="text-xs text-theme-primary hover:underline ml-2"
-        @click="
-          Object.assign(filters, {
-            sort: { field: 'year', direction: 'desc' },
-            sources: [],
-            minRating: 0,
-            minYear: 0,
-            maxYear: 0,
-            minVotes: 0,
-            maxVotes: 0,
-            genres: [],
-            countries: [],
-            searchQuery: '',
-          })
-        "
-      >
-        Clear All
-      </button>
-    </div>
+    <AdminSearchHeader :filters="filters" :is-filtering="isLoading" @search="performSearch" />
 
     <div
       v-if="results.length > 0"
@@ -188,22 +94,22 @@
     </div>
 
     <div
-      v-else-if="(searchQuery.length >= 3 || hasActiveFilters) && !isLoading"
+      v-else-if="(filters.searchQuery.length >= 3 || hasActiveFilters) && !isLoading"
       class="p-8 text-center text-theme-textmuted bg-theme-surface border border-theme-border border-dashed rounded-2xl"
     >
-      No movies found{{ searchQuery ? ` for "${searchQuery}"` : ''
+      No movies found{{ filters.searchQuery ? ` for "${filters.searchQuery}"` : ''
       }}{{ hasActiveFilters ? ' with current filters' : '' }}
     </div>
-
-    <FilterMenu :is-open="showFilters" @close="showFilters = false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useDebounceFn, onKeyStroke } from '@vueuse/core'
+import type { FilterState } from '~/types'
 
 const props = defineProps<{
   collectionId: string
+  filters?: FilterState
 }>()
 
 const emit = defineEmits<{
@@ -212,22 +118,36 @@ const emit = defineEmits<{
 
 const collectionsStore = useCollectionsStore()
 const movieStore = useMovieStore()
-const { filters, activeFiltersCount, hasActiveFilters } = storeToRefs(movieStore)
 const toastStore = useToastStore()
 
-const searchInput = ref<HTMLInputElement | null>(null)
-const searchQuery = ref('')
+// Use injected filters if available, otherwise use local admin search filters
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const { filters: localFilters } = useAdminSearchFilters()
+
+const filters = computed(() => props.filters || injectedFilters?.value || localFilters.value)
+
+const hasActiveFilters = computed(() => {
+  const f = filters.value
+  return (
+    f.sources.length > 0 ||
+    f.minRating > 0 ||
+    f.minYear > 0 ||
+    f.minVotes > 0 ||
+    f.genres.length > 0 ||
+    f.countries.length > 0
+  )
+})
+
 const results = ref<LightweightMovie[]>([])
 const isLoading = ref(false)
 const isAdding = ref('')
 const addingAll = ref(false)
-const showFilters = ref(false)
 const isExternalResults = ref(false)
 
 const setExternalResults = (newResults: LightweightMovie[]) => {
   results.value = newResults
   isExternalResults.value = true
-  searchQuery.value = ''
+  filters.value.searchQuery = ''
 }
 
 // Local shortcut to focus search
@@ -239,51 +159,15 @@ onKeyStroke('/', e => {
   e.preventDefault()
 
   if (!isTyping) {
-    searchInput.value?.focus()
+    // Focus the input inside AdminSearchHeader if possible
+    const input = document.querySelector('input[type="text"]') as HTMLInputElement
+    input?.focus()
   }
 })
 
-// Admin search should not sync with global store to avoid URL query updates
-// Only sync when query is set from store (e.g., from saved queries)
-watch(
-  () => filters.value.searchQuery,
-  newVal => {
-    if (newVal !== searchQuery.value) {
-      searchQuery.value = newVal
-      // Trigger search when query is set from store (e.g., from saved queries)
-      if (newVal.length >= 3 || hasActiveFilters.value) {
-        debouncedSearch()
-      } else {
-        results.value = []
-      }
-    }
-  }
-)
-
-// Watch for filter changes and trigger search
-watch(
-  () => [
-    filters.value.minRating,
-    filters.value.minYear,
-    filters.value.maxYear,
-    filters.value.minVotes,
-    filters.value.maxVotes,
-    filters.value.genres,
-    filters.value.countries,
-    filters.value.sources,
-  ],
-  () => {
-    // Trigger search when filters change
-    if (searchQuery.value.length >= 3 || hasActiveFilters.value) {
-      debouncedSearch()
-    }
-  },
-  { deep: true }
-)
-
 const performSearch = async () => {
   // Allow search with filters even if query is empty
-  const hasQuery = searchQuery.value.length >= 3
+  const hasQuery = filters.value.searchQuery.length >= 3
   const hasFilters = hasActiveFilters.value
 
   if (!hasQuery && !hasFilters) {
@@ -293,21 +177,99 @@ const performSearch = async () => {
 
   isLoading.value = true
   isExternalResults.value = false
+
   try {
-    const data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
-      query: {
-        q: searchQuery.value,
-        // Pass filters to the API
-        minRating: filters.value.minRating || undefined,
-        minYear: filters.value.minYear || undefined,
-        maxYear: filters.value.maxYear || undefined,
-        minVotes: filters.value.minVotes || undefined,
-        maxVotes: filters.value.maxVotes || undefined,
-        genres: filters.value.genres.join(',') || undefined,
-        countries: filters.value.countries.join(',') || undefined,
-        sources: filters.value.sources.join(',') || undefined,
-      },
-    })
+    let data: MovieEntry[] = []
+
+    if (filters.value.searchMode === 'semantic' && filters.value.searchQuery) {
+      // Use vector search composable for semantic search
+      const vectorSearch = useVectorSearch()
+
+      const whereConditions: string[] = []
+      const whereParams: (string | number)[] = []
+
+      if (filters.value.minRating > 0) {
+        whereConditions.push('m.imdbRating >= ?')
+        whereParams.push(filters.value.minRating)
+      }
+      if (filters.value.minYear > 0) {
+        whereConditions.push('m.year >= ?')
+        whereParams.push(filters.value.minYear)
+      }
+      if ((filters.value.maxYear ?? 0) > 0) {
+        whereConditions.push('m.year <= ?')
+        whereParams.push(filters.value.maxYear!)
+      }
+      if (filters.value.minVotes > 0) {
+        whereConditions.push('m.imdbVotes >= ?')
+        whereParams.push(filters.value.minVotes)
+      }
+      if ((filters.value.maxVotes ?? 0) > 0) {
+        whereConditions.push('m.imdbVotes <= ?')
+        whereParams.push(filters.value.maxVotes!)
+      }
+
+      // Add genre filters
+      if (filters.value.genres.length > 0) {
+        const genreConditions = filters.value.genres.map(
+          () => '(m.genre LIKE ? OR m.genre LIKE ? OR m.genre LIKE ? OR m.genre = ?)'
+        )
+        whereConditions.push(`(${genreConditions.join(' OR ')})`)
+        filters.value.genres.forEach((genre: string) => {
+          whereParams.push(`${genre},%`, `%, ${genre},%`, `%, ${genre}`, genre)
+        })
+      }
+
+      // Add country filters
+      if (filters.value.countries.length > 0) {
+        const countryConditions = filters.value.countries.map(
+          () => '(m.country LIKE ? OR m.country LIKE ? OR m.country LIKE ? OR m.country = ?)'
+        )
+        whereConditions.push(`(${countryConditions.join(' OR ')})`)
+        filters.value.countries.forEach((country: string) => {
+          whereParams.push(`${country},%`, `%, ${country},%`, `%, ${country}`, country)
+        })
+      }
+
+      // Add source filters
+      if (filters.value.sources.length > 0) {
+        const sourceConditions: string[] = []
+        filters.value.sources.forEach((source: string) => {
+          if (source === 'archive.org') {
+            sourceConditions.push('m.primarySourceType = ?')
+            whereParams.push('archive.org')
+          } else {
+            sourceConditions.push('(m.primarySourceType = ? AND m.primaryChannelName = ?)')
+            whereParams.push('youtube', source)
+          }
+        })
+        whereConditions.push(`(${sourceConditions.join(' OR ')})`)
+      }
+
+      const vectorResults = await vectorSearch.search(
+        filters.value.searchQuery,
+        300,
+        whereConditions.length > 0 ? whereConditions.join(' AND ') : undefined,
+        whereConditions.length > 0 ? whereParams : undefined
+      )
+      data = vectorResults as unknown as MovieEntry[]
+    } else {
+      // Exact search
+      data = await $fetch<MovieEntry[]>('/api/admin/movies/search', {
+        query: {
+          q: filters.value.searchQuery,
+          minRating: filters.value.minRating || undefined,
+          minYear: filters.value.minYear || undefined,
+          maxYear: filters.value.maxYear || undefined,
+          minVotes: filters.value.minVotes || undefined,
+          maxVotes: filters.value.maxVotes || undefined,
+          genres: filters.value.genres.join(',') || undefined,
+          countries: filters.value.countries.join(',') || undefined,
+          sources: filters.value.sources.join(',') || undefined,
+        },
+      })
+    }
+
     results.value = data.slice(0, 300).map(movieStore.mapMovieToLightweight)
   } catch {
     toastStore.showToast('Search failed', 'error')
@@ -318,9 +280,14 @@ const performSearch = async () => {
 
 const debouncedSearch = useDebounceFn(performSearch, 300)
 
-const onInput = () => {
-  debouncedSearch()
-}
+// Watch for filter changes and trigger search
+watch(
+  () => filters.value,
+  () => {
+    debouncedSearch()
+  },
+  { deep: true }
+)
 
 const isInCollection = (movieId: string) => {
   return collectionsStore.isMovieInCollection(movieId, props.collectionId)
@@ -349,7 +316,6 @@ const addAllMovies = async () => {
   let failedCount = 0
 
   try {
-    // Filter out movies that are already in the collection
     const moviesToAdd = results.value.filter(movie => !isInCollection(movie.movieId))
 
     if (moviesToAdd.length === 0) {
@@ -357,7 +323,6 @@ const addAllMovies = async () => {
       return
     }
 
-    // Add movies sequentially to avoid overwhelming the API
     for (const movie of moviesToAdd) {
       try {
         const success = await collectionsStore.addMovieToCollection(

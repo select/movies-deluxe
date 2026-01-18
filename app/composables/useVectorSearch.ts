@@ -40,7 +40,6 @@ export function useVectorSearch() {
       const results = await db.vectorSearch(response.embedding, limit, where, params)
       return results
     } catch (err: unknown) {
-      console.error('Vector search failed:', err)
       error.value = err instanceof Error ? err.message : 'Search failed'
       return []
     } finally {
@@ -70,14 +69,12 @@ export function useVectorSearch() {
       )
 
       if (movieEmbeddingResult.length === 0) {
-        console.warn(`No embedding found for movie ${movieId}`)
         return []
       }
 
       const firstResult = movieEmbeddingResult[0]
       const embedding = firstResult?.embedding as Uint8Array | undefined
       if (!embedding) {
-        console.warn(`No embedding found for movie ${movieId}`)
         return []
       }
 
@@ -94,7 +91,6 @@ export function useVectorSearch() {
       // Filter out the current movie and return requested limit
       return results.filter(r => r.movieId !== movieId).slice(0, limit)
     } catch (err: unknown) {
-      console.error('Find similar movies failed:', err)
       error.value = err instanceof Error ? err.message : 'Search failed'
       return []
     } finally {
