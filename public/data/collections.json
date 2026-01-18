@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-16T00:09:16.336Z"
+    "lastUpdated": "2026-01-18T20:56:00.000Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -5024,5 +5024,33 @@
       "avant-garde",
       "dreamlike"
     ]
+  },
+  "vampire-movies": {
+    "id": "vampire-movies",
+    "name": "Vampire Movies",
+    "description": "Classic and iconic vampire films from silent era to modern cinema, featuring Dracula, Nosferatu, and other creatures of the night.",
+    "movieIds": [],
+    "createdAt": "2026-01-18T20:56:00.000Z",
+    "updatedAt": "2026-01-18T20:56:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "vampire",
+        "filterState": {
+          "searchQuery": "vampire",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "horror",
+      "vampires",
+      "gothic",
+      "supernatural",
+      "classic-horror"
+    ],
+    "enabled": true
   }
 }
