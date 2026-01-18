@@ -538,9 +538,11 @@ export const useMovieStore = defineStore('movie', () => {
    * Execute unified filter query and return only movie IDs
    */
   const executeFilterQuery = async (sessionId: number): Promise<string[]> => {
+    // Wait for database to be ready before querying
     if (!db.isReady.value) {
-      console.log('[executeFilterQuery] DB not ready, returning empty results')
-      return []
+      console.log('[executeFilterQuery] Waiting for DB to be ready...')
+      await db.waitForReady()
+      console.log('[executeFilterQuery] DB is now ready')
     }
 
     const query = filters.value.searchQuery.trim()

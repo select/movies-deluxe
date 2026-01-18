@@ -169,10 +169,10 @@ const visibleRows = ref(calculateVisibleRows())
 const updateVisibleRows = useDebounceFn(() => {
   visibleRows.value = calculateVisibleRows()
 
-  // Load movies for visible range
+  // Load movies for visible range - include all valid IDs (not just IMDB tt* IDs)
   const visibleIds = visibleRows.value
     .flatMap(row => row.movieIds)
-    .filter((id): id is string => id !== null && !!id && id.startsWith('tt'))
+    .filter((id): id is string => id !== null && !!id)
 
   if (visibleIds.length > 0) {
     fetchMoviesByIds(visibleIds).catch(error => {
