@@ -65,7 +65,10 @@
 import { useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const { filters: storeFilters } = storeToRefs(movieStore)
+
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || storeFilters
 
 const votesScale = [0, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000]
 const scaleLabels = ['0', '1K', '5K', '50K', '500K', '1M+']

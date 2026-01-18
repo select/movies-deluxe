@@ -25,7 +25,7 @@
           ]"
           @click="
             filters.countries.includes(country.name)
-              ? (filters.countries = filters.countries.filter(c => c !== country.name))
+              ? (filters.countries = filters.countries.filter((c: string) => c !== country.name))
               : (filters.countries = [...filters.countries, country.name])
           "
         >
@@ -58,7 +58,10 @@
 import type { CountryOption } from '~/types'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const { filters: storeFilters } = storeToRefs(movieStore)
+
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || storeFilters
 
 const countries = ref<CountryOption[]>([])
 const isLoading = ref(true)
@@ -70,9 +73,8 @@ const fetchCountries = async () => {
   try {
     const options = await movieStore.getFilterOptions()
     countries.value = options.countries
-  } catch (err) {
+  } catch {
     error.value = 'Failed to load countries'
-    console.error(err)
   } finally {
     isLoading.value = false
   }

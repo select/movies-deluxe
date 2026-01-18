@@ -25,7 +25,7 @@
           ]"
           @click="
             filters.genres.includes(genre.name)
-              ? (filters.genres = filters.genres.filter(g => g !== genre.name))
+              ? (filters.genres = filters.genres.filter((g: string) => g !== genre.name))
               : (filters.genres = [...filters.genres, genre.name])
           "
         >
@@ -55,7 +55,10 @@
 import type { GenreOption } from '~/types'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const { filters: storeFilters } = storeToRefs(movieStore)
+
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || storeFilters
 
 const genres = ref<GenreOption[]>([])
 const isLoading = ref(true)
@@ -67,9 +70,8 @@ const fetchGenres = async () => {
   try {
     const options = await movieStore.getFilterOptions()
     genres.value = options.genres
-  } catch (err) {
+  } catch {
     error.value = 'Failed to load genres'
-    console.error(err)
   } finally {
     isLoading.value = false
   }

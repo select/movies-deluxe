@@ -65,7 +65,10 @@
 import { useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const { filters: storeFilters } = storeToRefs(movieStore)
+
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || storeFilters
 
 const localMin = ref(filters.value.minYear || 1910)
 const localMax = ref(filters.value.maxYear || 2025)

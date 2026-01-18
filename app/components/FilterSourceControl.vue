@@ -14,7 +14,7 @@
           :checked="filters.sources.includes('archive.org')"
           @change="
             filters.sources.includes('archive.org')
-              ? (filters.sources = filters.sources.filter(s => s !== 'archive.org'))
+              ? (filters.sources = filters.sources.filter((s: string) => s !== 'archive.org'))
               : (filters.sources = [...filters.sources, 'archive.org'])
           "
         >
@@ -38,7 +38,7 @@
             :checked="filters.sources.includes(channel.name)"
             @change="
               filters.sources.includes(channel.name)
-                ? (filters.sources = filters.sources.filter(s => s !== channel.name))
+                ? (filters.sources = filters.sources.filter((s: string) => s !== channel.name))
                 : (filters.sources = [...filters.sources, channel.name])
             "
           >
@@ -72,7 +72,10 @@
 import type { ChannelOption } from '~/types'
 
 const movieStore = useMovieStore()
-const { filters } = storeToRefs(movieStore)
+const { filters: storeFilters } = storeToRefs(movieStore)
+
+const injectedFilters = inject(FILTER_STATE_KEY, null)
+const filters = injectedFilters || storeFilters
 
 const channels = ref<ChannelOption[]>([])
 const isLoading = ref(true)
@@ -82,8 +85,8 @@ const fetchChannels = async () => {
   try {
     const options = await movieStore.getFilterOptions()
     channels.value = options.channels
-  } catch (err) {
-    console.error(err)
+  } catch {
+    // Error handled by UI
   } finally {
     isLoading.value = false
   }

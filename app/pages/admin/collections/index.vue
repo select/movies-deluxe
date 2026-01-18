@@ -129,6 +129,7 @@
               <AdminMovieSearch
                 ref="movieSearch"
                 :collection-id="selectedCollectionId"
+                :filters="filters"
                 @add="onMovieAdded"
               />
             </div>
@@ -145,6 +146,7 @@
               <AdminSavedQueryManager
                 :collection-id="selectedCollectionId"
                 :queries="selectedCollection?.savedQueries"
+                :filters="filters"
                 @filters-applied="onFiltersApplied"
               />
             </div>
@@ -183,6 +185,10 @@ useHead({
   title: 'Collection Editor - Movies Deluxe Admin',
   meta: [{ name: 'robots', content: 'noindex, nofollow' }],
 })
+
+const adminSearch = useAdminSearchFilters()
+const { filters } = adminSearch
+provide(FILTER_STATE_KEY, filters)
 
 const isLocal = ref(false)
 const selectedCollectionId = ref('')
@@ -278,8 +284,7 @@ const onCleanupCollection = async () => {
     } else {
       useToastStore().showToast('Failed to remove missing movies', 'error')
     }
-  } catch (err) {
-    console.error('Cleanup failed:', err)
+  } catch {
     useToastStore().showToast('Error during cleanup', 'error')
   }
 }

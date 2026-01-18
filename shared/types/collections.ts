@@ -1,5 +1,5 @@
 import type { DatabaseSchema } from './movie'
-import type { SortState } from './filters'
+import type { SortState, SearchMode } from './filters'
 
 /**
  * Saved query filter state - optimized version that omits default values
@@ -16,6 +16,7 @@ export interface SavedQueryFilterState {
   genres?: string[] // Only store if non-empty
   countries?: string[] // Only store if non-empty
   searchQuery: string // Always store
+  searchMode?: SearchMode // Optional to avoid storing default mode
 }
 
 export interface SavedQuery {
