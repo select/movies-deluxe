@@ -69,10 +69,10 @@ function createDatabase() {
     return totalMovies
   }
 
-  const query = async (
+  const query = async <T = Record<string, unknown>>(
     sql: string,
     params: (string | number)[] = []
-  ): Promise<Record<string, unknown>[]> => {
+  ): Promise<T[]> => {
     // Wait for worker to be created (init must be called first)
     if (initPromise.value) {
       await initPromise.value
@@ -84,8 +84,7 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) =>
-          resolve(('result' in data ? data.result : []) as Record<string, unknown>[]),
+        resolve: (data: WorkerResponse) => resolve(('result' in data ? data.result : []) as T[]),
         reject,
       })
       worker.value!.postMessage({ type: 'exec', id, sql, params: toRaw(params) })
@@ -101,6 +100,9 @@ function createDatabase() {
       throw new Error('Database not initialized - call init() first')
     }
 
+    // Build query using centralized query builder
+    const { sql, params } = buildQueryByIdsQuery(movieIds)
+
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
@@ -108,60 +110,48 @@ function createDatabase() {
           resolve(('result' in data ? data.result : []) as MovieEntry[]),
         reject,
       })
-      // Use toRaw to ensure we don't pass Proxy objects to the worker
-      worker.value!.postMessage({ type: 'query-by-ids', id, movieIds: toRaw(movieIds) })
+      // Pass pre-built SQL to worker
+      worker.value!.postMessage({
+        type: 'query-by-ids',
+        id,
+        movieIds: toRaw(movieIds),
+        sql,
+        params: toRaw(params),
+      })
     })
   }
 
   const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
-    // Wait for worker to be created (init must be called first)
-    if (initPromise.value) {
-      await initPromise.value
-    }
-    if (!worker.value) {
-      throw new Error('Database not initialized - call init() first')
-    }
-
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) =>
-          resolve(('result' in data ? data.result : []) as Collection[]),
-        reject,
-      })
-      worker.value!.postMessage({ type: 'query-collections-for-movie', id, movieId })
-    })
+    // Build query using centralized query builder
+    const { sql, params } = buildCollectionsForMovieQuery(movieId)
+    return query<Collection>(sql, params)
   }
 
   const getFilterOptions = async (): Promise<FilterOptionsResponse> => {
-    // Wait for worker to be created (init must be called first)
-    if (initPromise.value) {
-      await initPromise.value
-    }
-    if (!worker.value) {
-      throw new Error('Database not initialized - call init() first')
-    }
+    // Build queries using centralized query builder
+    const queries = buildFilterOptionsQueries()
 
-    const id = Math.random().toString(36).substring(7)
-    return new Promise((resolve, reject) => {
-      pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) =>
-          resolve({
-            genres: 'genres' in data ? data.genres : [],
-            countries: 'countries' in data ? data.countries : [],
-            channels: 'channels' in data ? data.channels : [],
-          }),
-        reject,
-      })
-      worker.value!.postMessage({ type: 'get-filter-options', id })
-    })
+    // Execute all three queries in parallel using the generic query function
+    const [genres, countries, channels] = await Promise.all([
+      query<FilterOptionsResponse['genres'][number]>(queries.genres.sql, queries.genres.params),
+      query<FilterOptionsResponse['countries'][number]>(
+        queries.countries.sql,
+        queries.countries.params
+      ),
+      query<FilterOptionsResponse['channels'][number]>(
+        queries.channels.sql,
+        queries.channels.params
+      ),
+    ])
+
+    return { genres, countries, channels }
   }
 
   const vectorSearch = async (
     embedding: Float32Array | number[],
     limit: number = 20,
     where?: string,
-    params?: (string | number)[]
+    whereParams?: (string | number)[]
   ): Promise<VectorSearchResult[]> => {
     // Wait for worker to be created (init must be called first)
     if (initPromise.value) {
@@ -170,6 +160,9 @@ function createDatabase() {
     if (!worker.value) {
       throw new Error('Database not initialized - call init() first')
     }
+
+    // Build query using centralized query builder
+    const { sql, params } = buildVectorSearchQuery(limit, where, whereParams)
 
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
@@ -183,7 +176,7 @@ function createDatabase() {
         id,
         embedding: toRaw(embedding),
         limit,
-        where,
+        sql,
         params: toRaw(params),
       })
     })
