@@ -1,4 +1,4 @@
-import type { WorkerResponse, FilterOptionsResponse } from '~/types/database'
+import type { WorkerResponse, FilterOptionsResponse, VectorSearchResult } from '~/types/database'
 import type { Collection, MovieEntry } from '~/types'
 
 // Singleton instance
@@ -56,7 +56,7 @@ function createDatabase() {
       return new Promise<void>((resolve, reject) => {
         pendingQueries.set(id, {
           resolve: (data: WorkerResponse) => {
-            totalMovies = data.totalMovies || 0
+            totalMovies = 'totalMovies' in data ? data.totalMovies : 0
             resolve()
           },
           reject,
@@ -69,10 +69,10 @@ function createDatabase() {
     return totalMovies
   }
 
-  const query = async <T = Record<string, string | number>>(
+  const query = async (
     sql: string,
     params: (string | number)[] = []
-  ): Promise<T[]> => {
+  ): Promise<Record<string, unknown>[]> => {
     // Wait for worker to be created (init must be called first)
     if (initPromise.value) {
       await initPromise.value
@@ -84,14 +84,15 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) => resolve((data.result as T[]) ?? []),
+        resolve: (data: WorkerResponse) =>
+          resolve(('result' in data ? data.result : []) as Record<string, unknown>[]),
         reject,
       })
       worker.value!.postMessage({ type: 'exec', id, sql, params: toRaw(params) })
     })
   }
 
-  const queryByIds = async <T = MovieEntry>(movieIds: string[]): Promise<T[]> => {
+  const queryByIds = async (movieIds: string[]): Promise<MovieEntry[]> => {
     // Wait for worker to be created (init must be called first)
     if (initPromise.value) {
       await initPromise.value
@@ -103,7 +104,8 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) => resolve((data.result as T[]) ?? []),
+        resolve: (data: WorkerResponse) =>
+          resolve(('result' in data ? data.result : []) as MovieEntry[]),
         reject,
       })
       // Use toRaw to ensure we don't pass Proxy objects to the worker
@@ -123,7 +125,8 @@ function createDatabase() {
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
-        resolve: (data: WorkerResponse) => resolve((data.result as Collection[]) ?? []),
+        resolve: (data: WorkerResponse) =>
+          resolve(('result' in data ? data.result : []) as Collection[]),
         reject,
       })
       worker.value!.postMessage({ type: 'query-collections-for-movie', id, movieId })
@@ -144,9 +147,9 @@ function createDatabase() {
       pendingQueries.set(id, {
         resolve: (data: WorkerResponse) =>
           resolve({
-            genres: data.genres ?? [],
-            countries: data.countries ?? [],
-            channels: data.channels ?? [],
+            genres: 'genres' in data ? data.genres : [],
+            countries: 'countries' in data ? data.countries : [],
+            channels: 'channels' in data ? data.channels : [],
           }),
         reject,
       })
@@ -154,12 +157,12 @@ function createDatabase() {
     })
   }
 
-  const vectorSearch = async <T = MovieEntry>(
+  const vectorSearch = async (
     embedding: Float32Array | number[],
     limit: number = 20,
     where?: string,
     params?: (string | number)[]
-  ): Promise<(T & { distance: number })[]> => {
+  ): Promise<VectorSearchResult[]> => {
     // Wait for worker to be created (init must be called first)
     if (initPromise.value) {
       await initPromise.value
@@ -172,7 +175,7 @@ function createDatabase() {
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
         resolve: (data: WorkerResponse) =>
-          resolve((data.result as (T & { distance: number })[]) ?? []),
+          resolve(('result' in data ? data.result : []) as VectorSearchResult[]),
         reject,
       })
       worker.value!.postMessage({
