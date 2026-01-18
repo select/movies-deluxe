@@ -276,7 +276,7 @@ export const useMovieStore = defineStore('movie', () => {
     console.log('[fetchMoviesByIds] Fetching', uncachedIds.length, 'uncached movies from database')
 
     try {
-      const lightweightMovies = await db.queryByIds<LightweightMovie>(uncachedIds)
+      const lightweightMovies = await db.queryByIds(uncachedIds)
       console.log('[fetchMoviesByIds] Fetched', lightweightMovies.length, 'movies from database')
 
       // Cache the results directly in the lightweight cache (no conversion needed)
@@ -628,8 +628,8 @@ export const useMovieStore = defineStore('movie', () => {
         // Exact search or no query
         const { sql, params } = buildFilterQuery(query)
         console.log('[executeFilterQuery] Executing exact query with', params.length, 'parameters')
-        const dbResults = await db.query<{ movieId: string }>(sql, params)
-        results = dbResults.map(row => row.movieId)
+        const dbResults = await db.query(sql, params)
+        results = dbResults.map(row => row.movieId as string)
       }
 
       // Check if this request is still current
