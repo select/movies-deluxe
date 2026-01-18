@@ -45,7 +45,7 @@ const DEFAULT_FILTERS: FilterState = {
   genres: [],
   countries: [],
   searchQuery: '',
-  searchMode: 'keyword',
+  searchMode: 'exact',
 }
 
 /**
@@ -81,6 +81,16 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Filter state stored in localStorage using VueUse
   const filters = useStorage<FilterState>('movies-deluxe-filters', DEFAULT_FILTERS)
+
+  // Migration for searchMode
+  onMounted(() => {
+    const currentMode = filters.value.searchMode as string
+    if (currentMode === 'keyword') {
+      filters.value.searchMode = 'exact'
+    } else if (currentMode === 'hybrid') {
+      filters.value.searchMode = 'semantic'
+    }
+  })
 
   const isFiltering = ref(false)
 
@@ -516,25 +526,6 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   /**
-   * Reciprocal Rank Fusion (RRF) to combine multiple ranked result sets.
-   */
-  const reciprocalRankFusion = (sets: string[][], k: number = 60): string[] => {
-    const scores = new Map<string, number>()
-
-    for (const set of sets) {
-      for (let i = 0; i < set.length; i++) {
-        const id = set[i]!
-        const score = 1 / (k + i + 1)
-        scores.set(id, (scores.get(id) || 0) + score)
-      }
-    }
-
-    return Array.from(scores.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map(entry => entry[0])
-  }
-
-  /**
    * Execute unified filter query and return only movie IDs
    */
   const executeFilterQuery = async (sessionId: number): Promise<string[]> => {
@@ -552,34 +543,17 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       let results: string[] = []
 
-      if (query && (mode === 'semantic' || mode === 'hybrid')) {
+      if (query && mode === 'semantic') {
         const { where, whereParams } = buildFilterQuery()
 
         // Perform vector search with filters
         console.log('[executeFilterQuery] Performing vector search...')
         const vectorResults = await vectorSearch.search(query, 100, where, whereParams)
-
-        if (mode === 'semantic') {
-          results = vectorResults.map(r => r.imdbId)
-        } else {
-          // Hybrid search: combine FTS and Vector search using RRF
-          console.log('[executeFilterQuery] Performing hybrid search...')
-          const { sql: ftsSql, params: ftsParams } = buildFilterQuery(query)
-          const ftsResults = await db.query<{ imdbId: string }>(ftsSql, ftsParams)
-
-          results = reciprocalRankFusion([
-            ftsResults.map(r => r.imdbId),
-            vectorResults.map(r => r.imdbId),
-          ])
-        }
+        results = vectorResults.map(r => r.imdbId)
       } else {
-        // Keyword search or no query
+        // Exact search or no query
         const { sql, params } = buildFilterQuery(query)
-        console.log(
-          '[executeFilterQuery] Executing keyword query with',
-          params.length,
-          'parameters'
-        )
+        console.log('[executeFilterQuery] Executing exact query with', params.length, 'parameters')
         const dbResults = await db.query<{ imdbId: string }>(sql, params)
         results = dbResults.map(row => row.imdbId)
       }
