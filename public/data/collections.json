@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-18T20:11:02.920Z"
+    "lastUpdated": "2026-01-18T21:24:02.282Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -4985,16 +4985,13 @@
       "tt0020530",
       "tt0055601",
       "tt0074486",
-      "tt0042804",
       "tt0018770",
-      "tt0068361",
       "tt0048037",
-      "tt0075824",
       "tt0021331",
       "tt0054377"
     ],
     "createdAt": "2026-01-12T00:00:00.000Z",
-    "updatedAt": "2026-01-11T23:19:04.832Z",
+    "updatedAt": "2026-01-18T21:24:02.282Z",
     "savedQueries": [
       {
         "searchQuery": "Luis Buñuel",
