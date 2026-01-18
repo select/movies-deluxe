@@ -90,10 +90,10 @@ export async function processArchiveMovie(
   }
 
   // Always use generated Archive ID - OMDB enrichment is done separately
-  const imdbId: string = generateArchiveId(movie.identifier)
+  const movieId: string = generateArchiveId(movie.identifier)
 
   const entry: MovieEntry = {
-    imdbId,
+    movieId,
     title: movie.title, // Store original title
     year,
     sources: [source],

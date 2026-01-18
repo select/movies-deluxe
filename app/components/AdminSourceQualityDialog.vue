@@ -129,7 +129,7 @@ const save = async () => {
     const res = await $fetch<{ success: boolean }>('/api/admin/movie/update-source-quality', {
       method: 'POST',
       body: {
-        movieId: props.movie.imdbId,
+        movieId: props.movie.movieId,
         sourceId: props.source.id,
         qualityMarks: selectedMarks.value,
       },

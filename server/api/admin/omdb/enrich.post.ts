@@ -100,7 +100,7 @@ export default defineEventHandler(async event => {
       if (moviesToProcess.length >= targetLimit) break
 
       // Validate it's a movie entry
-      if (typeof value !== 'object' || value === null || !('imdbId' in value)) continue
+      if (typeof value !== 'object' || value === null || !('movieId' in value)) continue
 
       const entry = value as MovieEntry
 
@@ -124,7 +124,7 @@ export default defineEventHandler(async event => {
 
     // Process each movie
     for (const movie of moviesToProcess) {
-      const oldId = movie.imdbId
+      const oldId = movie.movieId
 
       emitProgress({
         type: 'omdb',
@@ -223,7 +223,7 @@ export default defineEventHandler(async event => {
         }
 
         // We have a match!
-        const newId = matchResult.imdbId!
+        const newId = matchResult.movieId!
         result.matched++
 
         // Remove from failed list if it was there (successful retry)
@@ -233,7 +233,7 @@ export default defineEventHandler(async event => {
         }
 
         // Update the movie entry
-        movie.imdbId = newId
+        movie.movieId = newId
         movie.title = matchResult.title!
         movie.year = matchResult.year ? parseInt(matchResult.year, 10) : undefined
         movie.metadata = matchResult.metadata

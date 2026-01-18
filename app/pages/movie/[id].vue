@@ -85,8 +85,8 @@
               class="w-full md:w-80 aspect-[2/3] bg-theme-selection rounded-lg overflow-hidden border border-theme-border/50"
             >
               <img
-                v-if="movie.imdbId?.startsWith('tt')"
-                :src="getPosterPath(movie.imdbId)"
+                v-if="movie.movieId?.startsWith('tt')"
+                :src="getPosterPath(movie.movieId)"
                 :alt="movie.title"
                 class="w-full h-full object-cover object-center"
                 @error="handlePosterError"
@@ -357,10 +357,10 @@
               {{ movie.metadata.Awards }}
             </p>
           </div>
-          <div v-if="movie.imdbId?.startsWith('tt')">
+          <div v-if="movie.movieId?.startsWith('tt')">
             <h3 class="movie-label">IMDB</h3>
             <a
-              :href="`https://www.imdb.com/title/${movie.imdbId}/`"
+              :href="`https://www.imdb.com/title/${movie.movieId}/`"
               target="_blank"
               rel="noopener noreferrer"
               class="text-theme-primary hover:underline"
@@ -406,10 +406,10 @@
                 <template v-if="relatedMovies.length > 0">
                   <div
                     v-for="relatedMovie in relatedMovies"
-                    :key="relatedMovie.imdbId"
+                    :key="relatedMovie.movieId"
                     class="flex-shrink-0 w-48 snap-start"
                   >
-                    <MovieCard :movie-id="relatedMovie.imdbId" />
+                    <MovieCard :movie-id="relatedMovie.movieId" />
                   </div>
                 </template>
                 <template v-else-if="isRelatedLoading">
@@ -464,10 +464,10 @@
                 <template v-if="similarMovies.length > 0">
                   <div
                     v-for="similarMovie in similarMovies"
-                    :key="similarMovie.imdbId"
+                    :key="similarMovie.movieId"
                     class="flex-shrink-0 w-48 snap-start flex flex-col gap-2"
                   >
-                    <MovieCard :movie-id="similarMovie.imdbId" />
+                    <MovieCard :movie-id="similarMovie.movieId" />
                     <!-- Similarity Info -->
                     <div class="px-2 flex flex-col gap-1">
                       <div class="flex items-center justify-between">
@@ -707,7 +707,7 @@ const getFileSizeBarWidth = (bytes?: number) => {
 
 // Liked computed
 const isLiked = computed(() => {
-  return movie.value ? likedMovieIds.value.includes(movie.value.imdbId) : false
+  return movie.value ? likedMovieIds.value.includes(movie.value.movieId) : false
 })
 
 // Load related movies
@@ -738,10 +738,10 @@ const loadRelatedMovies = async () => {
 
 // Load similar movies using vector search
 const loadSimilarMovies = async () => {
-  if (hasLoadedSimilar.value || !movie.value?.imdbId) return
+  if (hasLoadedSimilar.value || !movie.value?.movieId) return
   isSimilarLoading.value = true
   try {
-    const results = await getSimilarMovies(movie.value.imdbId)
+    const results = await getSimilarMovies(movie.value.movieId)
     similarMovies.value = results
     hasLoadedSimilar.value = true
     // Ensure scroll state is updated after loading
@@ -936,7 +936,7 @@ const handleMovieUpdated = async (newId: string) => {
   await loadFromFile()
 
   // If ID changed, update the URL without full navigation if possible
-  if (newId !== movie.value?.imdbId) {
+  if (newId !== movie.value?.movieId) {
     // Use window.history.replaceState to update URL without triggering Nuxt navigation/reload
     // This keeps the current component state but updates the address bar
     const newPath = `/movie/${newId}`
@@ -959,7 +959,7 @@ const updateMetaTags = (movie: MovieEntry) => {
   const title = movie.title + (movie.year ? ` (${movie.year})` : '')
   const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
   const poster = movie.metadata?.Poster || '/favicon.ico'
-  const url = `https://movies-deluxe.app/movie/${movie.imdbId}`
+  const url = `https://movies-deluxe.app/movie/${movie.movieId}`
 
   useHead({
     title,
@@ -1022,8 +1022,8 @@ const updateMetaTags = (movie: MovieEntry) => {
               }),
             },
           }),
-          ...(movie.imdbId?.startsWith('tt') && {
-            sameAs: `https://www.imdb.com/title/${movie.imdbId}/`,
+          ...(movie.movieId?.startsWith('tt') && {
+            sameAs: `https://www.imdb.com/title/${movie.movieId}/`,
           }),
         }),
       },
@@ -1034,7 +1034,7 @@ const updateMetaTags = (movie: MovieEntry) => {
 // Toggle liked
 const toggleLiked = () => {
   if (!movie.value) return
-  toggleLike(movie.value.imdbId)
+  toggleLike(movie.value.movieId)
 }
 
 // Share movie
@@ -1043,7 +1043,7 @@ const shareMovie = async () => {
 
   const title = movie.value.title + (movie.value.year ? ` (${movie.value.year})` : '')
   const text = movie.value.metadata?.Plot || `Watch ${movie.value.title} for free on Movies Deluxe`
-  const url = `${window.location.origin}/movie/${movie.value.imdbId}`
+  const url = `${window.location.origin}/movie/${movie.value.movieId}`
 
   // Try Web Share API first (mobile and some desktop browsers)
   if (!navigator.share) {

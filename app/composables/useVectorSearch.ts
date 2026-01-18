@@ -52,12 +52,12 @@ export function useVectorSearch() {
   /**
    * Find similar movies for a given movie ID using vector similarity.
    *
-   * @param imdbId - The IMDB ID of the movie to find similar movies for
+   * @param movieId - The IMDB ID of the movie to find similar movies for
    * @param limit - Maximum number of results to return
    * @returns Promise of movie entries with their similarity distance
    */
-  const findSimilar = async (imdbId: string, limit: number = 10) => {
-    if (!imdbId) return []
+  const findSimilar = async (movieId: string, limit: number = 10) => {
+    if (!movieId) return []
 
     isSearching.value = true
     error.value = null
@@ -66,12 +66,12 @@ export function useVectorSearch() {
       // 1. Get the embedding for the movie from the database
       // We need to use a raw query because vectorSearch expects the embedding blob
       const movieEmbeddingResult = await db.query<{ embedding: Uint8Array }>(
-        'SELECT embedding FROM vec_movies WHERE imdbId = ?',
-        [imdbId]
+        'SELECT embedding FROM vec_movies WHERE movieId = ?',
+        [movieId]
       )
 
       if (movieEmbeddingResult.length === 0) {
-        console.warn(`No embedding found for movie ${imdbId}`)
+        console.warn(`No embedding found for movie ${movieId}`)
         return []
       }
 
@@ -82,7 +82,7 @@ export function useVectorSearch() {
       const results = await db.vectorSearch<MovieEntry>(embedding, limit + 1)
 
       // Filter out the current movie and return requested limit
-      return results.filter(r => r.imdbId !== imdbId).slice(0, limit)
+      return results.filter(r => r.movieId !== movieId).slice(0, limit)
     } catch (err: unknown) {
       console.error('Find similar movies failed:', err)
       error.value = err instanceof Error ? err.message : 'Search failed'

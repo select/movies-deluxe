@@ -7,7 +7,7 @@ const CACHE_FILE = join(process.cwd(), 'data/criterion-cache.json')
 const DELAY_MS = 1500
 
 interface Cache {
-  [movieUrl: string]: string | null // movieUrl -> imdbId
+  [movieUrl: string]: string | null // movieUrl -> movieId
 }
 
 async function sleep(ms: number) {
@@ -112,14 +112,14 @@ async function main() {
       console.log(`⚠️ Limiting to first ${limit} movies for this run`)
     }
 
-    const imdbIds: string[] = []
+    const movieIds: string[] = []
 
     for (let i = 0; i < moviesToProcess.length; i++) {
       const movieUrl = moviesToProcess[i]
 
       if (cache[movieUrl]) {
         if (cache[movieUrl] !== 'NOT_FOUND') {
-          imdbIds.push(cache[movieUrl]!)
+          movieIds.push(cache[movieUrl]!)
         }
         continue
       }
@@ -127,12 +127,12 @@ async function main() {
       console.log(`🍿 [${i + 1}/${uniqueMovieUrls.length}] Scraping: ${movieUrl}`)
       try {
         const movieHtml = await fetchHtml(movieUrl)
-        const imdbId = extractImdbId(movieHtml)
+        const movieId = extractImdbId(movieHtml)
 
-        if (imdbId) {
-          console.log(`  ✨ Found IMDB ID: ${imdbId}`)
-          imdbIds.push(imdbId)
-          cache[movieUrl] = imdbId
+        if (movieId) {
+          console.log(`  ✨ Found IMDB ID: ${movieId}`)
+          movieIds.push(movieId)
+          cache[movieUrl] = movieId
         } else {
           console.warn(`  ⚠️ No IMDB ID found for: ${movieUrl}`)
           cache[movieUrl] = 'NOT_FOUND'
@@ -155,7 +155,7 @@ async function main() {
     // Final save
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2))
 
-    const finalImdbIds = [...new Set(imdbIds)].sort()
+    const finalImdbIds = [...new Set(movieIds)].sort()
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalImdbIds, null, 2))
 
     console.log('\n' + '='.repeat(40))

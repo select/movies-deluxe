@@ -46,10 +46,10 @@
         <template v-else>
           <div
             v-for="movie in displayMovies"
-            :key="movie.imdbId"
+            :key="movie.movieId"
             class="w-[200px] flex-shrink-0 snap-start"
           >
-            <MovieCard :movie-id="movie.imdbId" />
+            <MovieCard :movie-id="movie.movieId" />
           </div>
 
           <div class="w-[200px] flex-shrink-0 snap-start">

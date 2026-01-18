@@ -122,7 +122,7 @@ async function removeDuplicateSources() {
   }
 
   const examples: Array<{
-    imdbId: string
+    movieId: string
     title: string
     before: number
     after: number
@@ -169,7 +169,7 @@ async function removeDuplicateSources() {
       // Save example
       if (examples.length < 5) {
         examples.push({
-          imdbId: movieEntry.imdbId,
+          movieId: movieEntry.movieId,
           title: movieEntry.title,
           before: originalCount,
           after: deduplicated.length,
@@ -190,7 +190,7 @@ async function removeDuplicateSources() {
   if (examples.length > 0) {
     console.log('📝 Examples:\n')
     for (const example of examples) {
-      console.log(`  ${example.imdbId}`)
+      console.log(`  ${example.movieId}`)
       console.log(`  Title: ${example.title}`)
       console.log(`  Sources: ${example.before} → ${example.after} (removed ${example.removed})`)
       console.log()

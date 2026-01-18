@@ -129,13 +129,13 @@
       <div class="divide-y divide-theme-border">
         <div
           v-for="movie in results"
-          :key="movie.imdbId"
+          :key="movie.movieId"
           class="p-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
         >
           <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
             <img
-              v-if="movie.imdbId?.startsWith('tt')"
-              :src="getPosterPath(movie.imdbId)"
+              v-if="movie.movieId?.startsWith('tt')"
+              :src="getPosterPath(movie.movieId)"
               :alt="movie.title"
               class="w-full h-full object-cover"
               @error="e => ((e.target as HTMLImageElement).style.display = 'none')"
@@ -158,7 +158,7 @@
               {{ movie.genre || 'Unknown Genre' }}
             </p>
             <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
-              <span class="font-mono">{{ movie.imdbId }}</span>
+              <span class="font-mono">{{ movie.movieId }}</span>
               <span v-if="movie.imdbRating" class="flex items-center gap-1">
                 <span class="opacity-50">•</span>
                 <div class="i-mdi-star text-theme-accent text-xs"></div>
@@ -172,16 +172,16 @@
           <button
             class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 disabled:opacity-50"
             :class="
-              isInCollection(movie.imdbId)
+              isInCollection(movie.movieId)
                 ? 'bg-theme-selection text-theme-textmuted cursor-default'
                 : 'bg-blue-600 hover:bg-blue-500 text-white'
             "
-            :disabled="isInCollection(movie.imdbId) || isAdding === movie.imdbId"
-            @click="addMovie(movie.imdbId)"
+            :disabled="isInCollection(movie.movieId) || isAdding === movie.movieId"
+            @click="addMovie(movie.movieId)"
           >
-            <div v-if="isAdding === movie.imdbId" class="i-mdi-loading animate-spin"></div>
-            <div v-else :class="isInCollection(movie.imdbId) ? 'i-mdi-check' : 'i-mdi-plus'"></div>
-            {{ isInCollection(movie.imdbId) ? 'Added' : 'Add' }}
+            <div v-if="isAdding === movie.movieId" class="i-mdi-loading animate-spin"></div>
+            <div v-else :class="isInCollection(movie.movieId) ? 'i-mdi-check' : 'i-mdi-plus'"></div>
+            {{ isInCollection(movie.movieId) ? 'Added' : 'Add' }}
           </button>
         </div>
       </div>
@@ -350,7 +350,7 @@ const addAllMovies = async () => {
 
   try {
     // Filter out movies that are already in the collection
-    const moviesToAdd = results.value.filter(movie => !isInCollection(movie.imdbId))
+    const moviesToAdd = results.value.filter(movie => !isInCollection(movie.movieId))
 
     if (moviesToAdd.length === 0) {
       toastStore.showToast('All movies are already in the collection', 'info')
@@ -362,7 +362,7 @@ const addAllMovies = async () => {
       try {
         const success = await collectionsStore.addMovieToCollection(
           props.collectionId,
-          movie.imdbId
+          movie.movieId
         )
         if (success) {
           addedCount++

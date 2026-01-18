@@ -2,7 +2,7 @@
  * Centralized Movie Data Types
  *
  * This file defines the TypeScript interfaces for the centralized movie database
- * stored in data/movies.json. Movies are indexed by imdbId or temporary IDs.
+ * stored in data/movies.json. Movies are indexed by movieId (IMDB IDs or temporary IDs).
  */
 
 /**
@@ -145,7 +145,7 @@ export enum SourceQualityMark {
  * Used for initial load to minimize memory usage and for grid display
  */
 export interface LightweightMovie {
-  imdbId: string
+  movieId: string
   title: string
   year?: number
   imdbRating?: number
@@ -164,7 +164,7 @@ export interface LightweightMovie {
  * Main movie entry structure
  */
 export interface MovieEntry {
-  imdbId: string // IMDB ID (e.g., 'tt0012345') or temporary ID (e.g., 'archive-xyz', 'youtube-abc')
+  movieId: string // IMDB ID (e.g., 'tt0012345') or temporary ID (e.g., 'archive-xyz', 'youtube-abc')
   title: string
   year?: number
   sources: MovieSource[]
@@ -194,7 +194,7 @@ export interface DatabaseSchema {
 export interface MoviesDatabase {
   _schema: DatabaseSchema
   _example?: MovieEntry // Optional example entry for documentation
-  [imdbId: string]: MovieEntry | DatabaseSchema | MovieEntry | undefined
+  [movieId: string]: MovieEntry | DatabaseSchema | MovieEntry | undefined
 }
 
 /**
@@ -280,7 +280,7 @@ export enum MatchConfidence {
  */
 export interface MatchResult {
   confidence: MatchConfidence
-  imdbId?: string
+  movieId?: string
   title?: string
   year?: string
   metadata?: MovieMetadata

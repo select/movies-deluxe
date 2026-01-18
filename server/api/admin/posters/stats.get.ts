@@ -4,7 +4,8 @@ import { join } from 'node:path'
 export default defineEventHandler(async _event => {
   const db = await loadMoviesDatabase()
   const entries = Object.values(db).filter(
-    (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
+    (entry): entry is MovieEntry =>
+      typeof entry === 'object' && entry !== null && 'movieId' in entry
   )
 
   const postersDir = join(process.cwd(), 'public/posters')
@@ -17,7 +18,7 @@ export default defineEventHandler(async _event => {
 
   // Count posters that match movies in the database
   const posterImdbIds = new Set(posterFiles.map(f => f.replace('.jpg', '')))
-  const movieImdbIds = new Set(entries.map(m => m.imdbId))
+  const movieImdbIds = new Set(entries.map(m => m.movieId))
 
   const matchedPosters = Array.from(posterImdbIds).filter(id => movieImdbIds.has(id))
   const orphanedPosters = Array.from(posterImdbIds).filter(id => !movieImdbIds.has(id))
@@ -30,10 +31,10 @@ export default defineEventHandler(async _event => {
     const posterUrl = movie.metadata?.Poster
     if (posterUrl && posterUrl !== 'N/A') {
       totalWithPosterUrl++
-      if (posterImdbIds.has(movie.imdbId)) {
+      if (posterImdbIds.has(movie.movieId)) {
         totalDownloaded++
       } else {
-        missingPosters.push(movie.imdbId)
+        missingPosters.push(movie.movieId)
       }
     }
   })

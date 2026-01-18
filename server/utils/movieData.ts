@@ -139,7 +139,7 @@ function createEmptyDatabase(): MoviesDatabase {
   return {
     _schema: {
       version: '1.0.0',
-      description: 'Centralized movie database indexed by imdbId.',
+      description: 'Centralized movie database indexed by movieId.',
       lastUpdated: new Date().toISOString(),
     },
   }
@@ -372,8 +372,8 @@ export async function getDatabaseStatsWithChannels(db: MoviesDatabase): Promise<
     // Consider curated if it has metadata and was manually updated or has high confidence
     if (
       movieEntry.metadata &&
-      !movieEntry.imdbId.startsWith('archive-') &&
-      !movieEntry.imdbId.startsWith('youtube-')
+      !movieEntry.movieId.startsWith('archive-') &&
+      !movieEntry.movieId.startsWith('youtube-')
     ) {
       stats.curatedCount++
     }
@@ -417,8 +417,8 @@ export function migrateMovieId(db: MoviesDatabase, oldId: string, newId: string)
 
   console.log(`Migrating movie from ${oldId} to ${newId}`)
 
-  // Update the imdbId in the entry
-  oldEntry.imdbId = newId
+  // Update the movieId in the entry
+  oldEntry.movieId = newId
 
   // Add/merge to new ID
   upsertMovie(db, newId, oldEntry)
@@ -511,7 +511,7 @@ function getEditDistance(str1: string, str2: string): number {
  */
 export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): MovieEntry {
   // Prefer entry with real IMDB ID
-  const primary = entry1.imdbId.startsWith('tt') ? entry1 : entry2
+  const primary = entry1.movieId.startsWith('tt') ? entry1 : entry2
   const secondary = primary === entry1 ? entry2 : entry1
 
   // Merge sources
@@ -632,7 +632,7 @@ export function mergeDuplicates(
     let score = 0
 
     // Prefer entries with real IMDB IDs
-    if (entry.imdbId.startsWith('tt')) score += 100
+    if (entry.movieId.startsWith('tt')) score += 100
 
     // Prefer entries with OMDB metadata
     if (entry.metadata) score += 50
@@ -661,7 +661,7 @@ export function mergeDuplicates(
 
   // Add sources from other duplicates
   for (const entry of duplicates) {
-    if (entry.imdbId === best.imdbId) continue
+    if (entry.movieId === best.movieId) continue
 
     for (const source of entry.sources) {
       const key = source.type === 'archive.org' ? `archive:${source.id}` : `youtube:${source.id}`
@@ -718,7 +718,7 @@ export function removeDuplicateIds(db: MoviesDatabase): { removed: string[]; kep
 
   for (const [key, entry] of entries) {
     const movieEntry = entry as MovieEntry
-    const id = movieEntry.imdbId
+    const id = movieEntry.movieId
 
     if (seen.has(id)) {
       // Duplicate ID - remove this entry

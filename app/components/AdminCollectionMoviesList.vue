@@ -19,13 +19,13 @@
       <div class="overflow-hidden divide-y divide-theme-border">
         <div
           v-for="movie in movies"
-          :key="movie.imdbId"
+          :key="movie.movieId"
           class="py-4 flex items-center gap-4 hover:bg-theme-bg/50 transition-colors"
         >
           <div class="w-12 h-16 rounded bg-theme-selection relative overflow-hidden flex-shrink-0">
             <img
-              v-if="movie.imdbId?.startsWith('tt')"
-              :src="getPosterPath(movie.imdbId)"
+              v-if="movie.movieId?.startsWith('tt')"
+              :src="getPosterPath(movie.movieId)"
               :alt="movie.title"
               class="w-full h-full object-cover"
               @error="e => ((e.target as HTMLImageElement).style.display = 'none')"
@@ -48,7 +48,7 @@
               {{ movie.genre || 'Unknown Genre' }}
             </p>
             <div class="flex items-center gap-2 text-[10px] text-theme-textmuted mt-0.5">
-              <span class="font-mono">{{ movie.imdbId }}</span>
+              <span class="font-mono">{{ movie.movieId }}</span>
               <span v-if="movie.imdbRating" class="flex items-center gap-1">
                 <span class="opacity-50">•</span>
                 <div class="i-mdi-star text-theme-accent text-xs"></div>
@@ -63,11 +63,11 @@
             <button
               class="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
               title="Find similar movies"
-              :disabled="isFindingSimilar === movie.imdbId"
+              :disabled="isFindingSimilar === movie.movieId"
               @click="findSimilar(movie)"
             >
               <div
-                v-if="isFindingSimilar === movie.imdbId"
+                v-if="isFindingSimilar === movie.movieId"
                 class="i-mdi-loading animate-spin text-xl"
               ></div>
               <div v-else class="i-mdi-auto-fix text-xl"></div>
@@ -75,11 +75,11 @@
             <button
               class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
               title="Remove from collection"
-              :disabled="isRemoving === movie.imdbId"
+              :disabled="isRemoving === movie.movieId"
               @click="removeMovie(movie)"
             >
               <div
-                v-if="isRemoving === movie.imdbId"
+                v-if="isRemoving === movie.movieId"
                 class="i-mdi-loading animate-spin text-xl"
               ></div>
               <div v-else class="i-mdi-trash-can-outline text-xl"></div>
@@ -141,7 +141,7 @@ const loadCollectionMovies = async () => {
       if (found) return found
       // Return a placeholder for missing movies so they can be removed
       return {
-        imdbId: id,
+        movieId: id,
         title: `Missing: ${id}`,
         year: 0,
       } as LightweightMovie
@@ -155,9 +155,9 @@ const loadCollectionMovies = async () => {
 }
 
 const findSimilar = async (movie: LightweightMovie) => {
-  isFindingSimilar.value = movie.imdbId
+  isFindingSimilar.value = movie.movieId
   try {
-    const similar = await movieStore.getSimilarMovies(movie.imdbId, 20)
+    const similar = await movieStore.getSimilarMovies(movie.movieId, 20)
     emit('find-similar', similar)
     toastStore.showToast(`Found ${similar.length} similar movies`)
   } catch {
@@ -175,16 +175,16 @@ const suggestRelated = async () => {
 
     // Find similar movies for each movie in the collection
     for (const movie of movies.value) {
-      const similar = await movieStore.getSimilarMovies(movie.imdbId, 10)
+      const similar = await movieStore.getSimilarMovies(movie.movieId, 10)
       similar.forEach(s => {
         // Skip movies already in the collection
-        if (movies.value.some(m => m.imdbId === s.imdbId)) return
+        if (movies.value.some(m => m.movieId === s.movieId)) return
 
-        const existing = allSimilar.get(s.imdbId)
+        const existing = allSimilar.get(s.movieId)
         if (existing) {
           existing.count++
         } else {
-          allSimilar.set(s.imdbId, { movie: s, count: 1 })
+          allSimilar.set(s.movieId, { movie: s, count: 1 })
         }
       })
     }
@@ -207,11 +207,11 @@ const suggestRelated = async () => {
 const removeMovie = async (movie: LightweightMovie) => {
   if (!confirm(`Remove "${movie.title}" from this collection?`)) return
 
-  isRemoving.value = movie.imdbId
+  isRemoving.value = movie.movieId
   try {
     const success = await collectionsStore.removeMovieFromCollection(
       props.collectionId,
-      movie.imdbId
+      movie.movieId
     )
     if (success) {
       toastStore.showToast('Movie removed from collection')

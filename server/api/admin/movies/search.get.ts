@@ -33,7 +33,7 @@ export default defineEventHandler(async event => {
 
   const db = await loadMoviesDatabase()
   const results: Array<{
-    imdbId: string
+    movieId: string
     title: string
     year?: number
     metadata?: {
@@ -58,7 +58,7 @@ export default defineEventHandler(async event => {
         entry.metadata?.Writer,
         entry.metadata?.Actors,
         entry.metadata?.Plot,
-        entry.imdbId,
+        entry.movieId,
       ].filter(Boolean) as string[]
 
       const matches = searchFields.some(field => field.toLowerCase().includes(q))
@@ -119,7 +119,7 @@ export default defineEventHandler(async event => {
 
     // Return only necessary fields for the search result list
     results.push({
-      imdbId: entry.imdbId,
+      movieId: entry.movieId,
       title: entry.title,
       year: entry.year,
       metadata: {

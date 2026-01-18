@@ -51,8 +51,8 @@ export default defineEventHandler(async event => {
     const formattedResults = items
       .filter(r => r.link && r.link.includes('imdb.com/title/tt'))
       .map(r => {
-        const imdbIdMatch = r.link.match(/tt\d+/)
-        const imdbId = imdbIdMatch ? imdbIdMatch[0] : null
+        const movieIdMatch = r.link.match(/tt\d+/)
+        const movieId = movieIdMatch ? movieIdMatch[0] : null
 
         // Try to extract year from title or snippet if available
         const yearMatch = (r.title + ' ' + r.snippet).match(/\((\d{4})\)/)
@@ -69,7 +69,7 @@ export default defineEventHandler(async event => {
         return {
           Title: cleanTitle,
           Year: year,
-          imdbID: imdbId,
+          imdbID: movieId,
           Type: 'movie',
           link: r.link,
           Snippet: r.snippet || '',

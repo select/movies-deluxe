@@ -26,13 +26,13 @@ async function runBenchmark() {
   const testMovies = db
     .prepare(
       `
-    SELECT m.imdbId, m.title 
+    SELECT m.movieId, m.title 
     FROM movies m 
-    JOIN vec_movies v ON m.imdbId = v.imdbId 
+    JOIN vec_movies v ON m.movieId = v.movieId 
     ORDER BY RANDOM() LIMIT 5
   `
     )
-    .all() as { imdbId: string; title: string }[]
+    .all() as { movieId: string; title: string }[]
 
   if (testMovies.length === 0) {
     console.log('No movies with embeddings found in vec_movies table.')
@@ -43,8 +43,8 @@ async function runBenchmark() {
   console.log('\n--- Similarity Search (KNN) ---')
   for (const movie of testMovies) {
     const embeddingRow = db
-      .prepare('SELECT embedding FROM vec_movies WHERE imdbId = ?')
-      .get(movie.imdbId) as { embedding: Buffer }
+      .prepare('SELECT embedding FROM vec_movies WHERE movieId = ?')
+      .get(movie.movieId) as { embedding: Buffer }
     if (!embeddingRow) continue
 
     const start = performance.now()
@@ -53,7 +53,7 @@ async function runBenchmark() {
         `
       SELECT m.title, v.distance
       FROM vec_movies v
-      JOIN movies m ON v.imdbId = m.imdbId
+      JOIN movies m ON v.movieId = m.movieId
       WHERE v.embedding MATCH ?
         AND k = 11
       ORDER BY v.distance ASC
@@ -62,7 +62,7 @@ async function runBenchmark() {
       .all(embeddingRow.embedding) as { title: string; distance: number }[]
     const end = performance.now()
 
-    console.log(`\nMovie: "${movie.title}" (${movie.imdbId})`)
+    console.log(`\nMovie: "${movie.title}" (${movie.movieId})`)
     console.log(`Latency: ${(end - start).toFixed(2)}ms`)
     console.log('Top 5 similar:')
     results.slice(1, 6).forEach((r, i) => {
@@ -96,8 +96,8 @@ async function runBenchmark() {
   console.log('\n--- Hybrid Search Simulation (RRF) ---')
   const queryMovie = testMovies[0]
   const queryEmbedding = db
-    .prepare('SELECT embedding FROM vec_movies WHERE imdbId = ?')
-    .get(queryMovie.imdbId) as { embedding: Buffer }
+    .prepare('SELECT embedding FROM vec_movies WHERE movieId = ?')
+    .get(queryMovie.movieId) as { embedding: Buffer }
 
   const startHybrid = performance.now()
 
@@ -105,31 +105,31 @@ async function runBenchmark() {
   const vecResults = db
     .prepare(
       `
-    SELECT imdbId FROM vec_movies WHERE embedding MATCH ? AND k = 50
+    SELECT movieId FROM vec_movies WHERE embedding MATCH ? AND k = 50
   `
     )
-    .all(queryEmbedding.embedding) as { imdbId: string }[]
+    .all(queryEmbedding.embedding) as { movieId: string }[]
 
   // Get FTS results (using first word of title)
   const firstWord = queryMovie.title.split(' ')[0]
   const ftsResults = db
     .prepare(
       `
-    SELECT imdbId FROM fts_movies WHERE title MATCH ? LIMIT 50
+    SELECT movieId FROM fts_movies WHERE title MATCH ? LIMIT 50
   `
     )
-    .all(firstWord) as { imdbId: string }[]
+    .all(firstWord) as { movieId: string }[]
 
   // RRF implementation
   const k_rrf = 60
   const scores = new Map<string, number>()
 
   vecResults.forEach((r, i) => {
-    scores.set(r.imdbId, (scores.get(r.imdbId) || 0) + 1 / (k_rrf + i + 1))
+    scores.set(r.movieId, (scores.get(r.movieId) || 0) + 1 / (k_rrf + i + 1))
   })
 
   ftsResults.forEach((r, i) => {
-    scores.set(r.imdbId, (scores.get(r.imdbId) || 0) + 1 / (k_rrf + i + 1))
+    scores.set(r.movieId, (scores.get(r.movieId) || 0) + 1 / (k_rrf + i + 1))
   })
 
   const hybridResults = Array.from(scores.entries())
@@ -142,7 +142,7 @@ async function runBenchmark() {
   console.log(`Latency: ${(endHybrid - startHybrid).toFixed(2)}ms`)
   console.log('Top 5 results:')
   hybridResults.slice(0, 5).forEach((r, i) => {
-    const titleRow = db.prepare('SELECT title FROM movies WHERE imdbId = ?').get(r[0]) as {
+    const titleRow = db.prepare('SELECT title FROM movies WHERE movieId = ?').get(r[0]) as {
       title: string
     }
     console.log(`  ${i + 1}. ${titleRow?.title || r[0]} (score: ${r[1].toFixed(6)})`)

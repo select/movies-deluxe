@@ -2,7 +2,7 @@
  * Movie JSON Generation Utility
  *
  * Splits the large data/movies.json into individual JSON files
- * in public/movies/[imdbId].json for on-demand loading.
+ * in public/movies/[movieId].json for on-demand loading.
  */
 
 import { join } from 'path'
@@ -42,7 +42,7 @@ export async function generateMovieJSON() {
   const movies = Object.values(db)
     .filter(
       (entry): entry is MovieEntry =>
-        typeof entry === 'object' && entry !== null && 'imdbId' in entry
+        typeof entry === 'object' && entry !== null && 'movieId' in entry
     )
     .map(movie => ({
       ...movie,
@@ -77,7 +77,7 @@ export async function generateMovieJSON() {
   // 4. Calculate Related Movies
   logger.info('Calculating related movies...')
   const processedMovies = movies.map(m => ({
-    imdbId: m.imdbId,
+    movieId: m.movieId,
     title: m.title,
     year: m.year,
     hasMetadata: !!m.metadata,
@@ -106,19 +106,19 @@ export async function generateMovieJSON() {
   for (const m of processedMovies) {
     for (const g of m.genres) {
       if (!genreMap.has(g)) genreMap.set(g, [])
-      genreMap.get(g)!.push(m.imdbId)
+      genreMap.get(g)!.push(m.movieId)
     }
     for (const a of m.actors) {
       if (!actorMap.has(a)) actorMap.set(a, [])
-      actorMap.get(a)!.push(m.imdbId)
+      actorMap.get(a)!.push(m.movieId)
     }
     if (m.director) {
       if (!directorMap.has(m.director)) directorMap.set(m.director, [])
-      directorMap.get(m.director)!.push(m.imdbId)
+      directorMap.get(m.director)!.push(m.movieId)
     }
   }
 
-  const movieMap = new Map(processedMovies.map(m => [m.imdbId, m]))
+  const movieMap = new Map(processedMovies.map(m => [m.movieId, m]))
   const relatedMap = new Map<string, string[]>()
 
   for (let i = 0; i < processedMovies.length; i++) {
@@ -127,21 +127,21 @@ export async function generateMovieJSON() {
 
     for (const g of m1.genres) {
       for (const id of genreMap.get(g) || []) {
-        if (id === m1.imdbId) continue
+        if (id === m1.movieId) continue
         candidateScores.set(id, (candidateScores.get(id) || 0) + 10)
       }
     }
 
     if (m1.director) {
       for (const id of directorMap.get(m1.director) || []) {
-        if (id === m1.imdbId) continue
+        if (id === m1.movieId) continue
         candidateScores.set(id, (candidateScores.get(id) || 0) + 15)
       }
     }
 
     for (const a of m1.actors) {
       for (const id of actorMap.get(a) || []) {
-        if (id === m1.imdbId) continue
+        if (id === m1.movieId) continue
         candidateScores.set(id, (candidateScores.get(id) || 0) + 5)
       }
     }
@@ -160,7 +160,7 @@ export async function generateMovieJSON() {
 
     finalScores.sort((a, b) => b.score - a.score)
     const topRelated = finalScores.slice(0, 12).map(r => r.id)
-    relatedMap.set(m1.imdbId, topRelated)
+    relatedMap.set(m1.movieId, topRelated)
 
     if ((i + 1) % 5000 === 0) {
       logger.info(`Calculated related movies for ${i + 1} movies...`)
@@ -170,11 +170,11 @@ export async function generateMovieJSON() {
   // 5. Write individual files
   let count = 0
   for (const movie of movies) {
-    const filePath = join(MOVIES_DIR, `${movie.imdbId}.json`)
+    const filePath = join(MOVIES_DIR, `${movie.movieId}.json`)
     try {
       // Only store fields that are actually used in the UI
       const jsonData = {
-        imdbId: movie.imdbId,
+        movieId: movie.movieId,
         title: movie.title,
         year: movie.year,
         sources: movie.sources.map(s => {
@@ -228,8 +228,8 @@ export async function generateMovieJSON() {
               Awards: movie.metadata.Awards,
             }
           : undefined,
-        relatedMovies: relatedMap.get(movie.imdbId) || [],
-        collections: movieToCollectionsMap.get(movie.imdbId) || [],
+        relatedMovies: relatedMap.get(movie.movieId) || [],
+        collections: movieToCollectionsMap.get(movie.movieId) || [],
         // Admin fields (localhost only)
         is_curated: !!movie.metadata,
         verified: !!movie.verified,
@@ -242,7 +242,7 @@ export async function generateMovieJSON() {
         logger.info(`Generated ${count} files...`)
       }
     } catch (err) {
-      logger.error(`Failed to write JSON for movie ${movie.imdbId}:`, err)
+      logger.error(`Failed to write JSON for movie ${movie.movieId}:`, err)
     }
   }
 

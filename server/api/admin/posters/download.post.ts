@@ -7,7 +7,8 @@ export default defineEventHandler(async event => {
 
   const db = await loadMoviesDatabase()
   const entries = Object.values(db).filter(
-    (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
+    (entry): entry is MovieEntry =>
+      typeof entry === 'object' && entry !== null && 'movieId' in entry
   )
 
   const results = {
@@ -32,10 +33,10 @@ export default defineEventHandler(async event => {
     })
     .filter(movie => {
       if (force) return true
-      const filepath = join(postersDir, `${movie.imdbId}.jpg`)
+      const filepath = join(postersDir, `${movie.movieId}.jpg`)
       return !existsSync(filepath) // Not already downloaded
     })
-    .filter(movie => !failedPosters.has(movie.imdbId)) // Not previously failed
+    .filter(movie => !failedPosters.has(movie.movieId)) // Not previously failed
     .slice(0, limit) // Take only limit items
 
   const total = toProcess.length
@@ -53,7 +54,7 @@ export default defineEventHandler(async event => {
     // const posterUrl = movie.metadata!.Poster as string
 
     try {
-      const success = await downloadPoster(movie.imdbId, force)
+      const success = await downloadPoster(movie.movieId, force)
       if (success) {
         results.successful++
       } else {
@@ -64,7 +65,7 @@ export default defineEventHandler(async event => {
     } catch (e: unknown) {
       results.failed++
       results.errors.push(
-        `Error downloading poster for ${movie.imdbId}: ${e instanceof Error ? e.message : String(e)}`
+        `Error downloading poster for ${movie.movieId}: ${e instanceof Error ? e.message : String(e)}`
       )
     }
 

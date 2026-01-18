@@ -6,7 +6,7 @@ import { join } from 'node:path'
 const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'data/failed-posters.json')
 
 interface FailedDownload {
-  imdbId: string
+  movieId: string
   url: string
   failedAt: string
   error: string
@@ -14,14 +14,14 @@ interface FailedDownload {
 
 /**
  * Load failed downloads from disk
- * Returns a Set of imdbIds that have previously failed
+ * Returns a Set of movieIds that have previously failed
  */
 export function loadFailedPosterIds(): Set<string> {
   try {
     if (fs.existsSync(FAILED_DOWNLOADS_FILE)) {
       const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
       const failed: FailedDownload[] = JSON.parse(data)
-      return new Set(failed.map(f => f.imdbId))
+      return new Set(failed.map(f => f.movieId))
     }
   } catch (error) {
     console.error('Failed to load failed downloads:', error)
@@ -32,7 +32,7 @@ export function loadFailedPosterIds(): Set<string> {
 /**
  * Save failed download to disk
  */
-function saveFailedDownload(imdbId: string, url: string, error: string): void {
+function saveFailedDownload(movieId: string, url: string, error: string): void {
   try {
     const dataDir = join(process.cwd(), 'data')
     if (!fs.existsSync(dataDir)) {
@@ -46,11 +46,11 @@ function saveFailedDownload(imdbId: string, url: string, error: string): void {
     }
 
     // Remove existing entry if present
-    failed = failed.filter(f => f.imdbId !== imdbId)
+    failed = failed.filter(f => f.movieId !== movieId)
 
     // Add new failed entry
     failed.push({
-      imdbId,
+      movieId,
       url,
       failedAt: new Date().toISOString(),
       error,
@@ -65,13 +65,13 @@ function saveFailedDownload(imdbId: string, url: string, error: string): void {
 /**
  * Remove from failed downloads (successful retry)
  */
-function removeFailedDownload(imdbId: string): void {
+function removeFailedDownload(movieId: string): void {
   try {
     if (!fs.existsSync(FAILED_DOWNLOADS_FILE)) return
 
     const data = fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
     let failed: FailedDownload[] = JSON.parse(data)
-    failed = failed.filter(f => f.imdbId !== imdbId)
+    failed = failed.filter(f => f.movieId !== movieId)
     fs.writeFileSync(FAILED_DOWNLOADS_FILE, JSON.stringify(failed, null, 2))
   } catch (err) {
     console.error('Failed to remove from failed downloads:', err)
@@ -167,9 +167,9 @@ function extractPosterUrl(html: string): string | null {
 /**
  * Scrape poster URL from IMDB page
  */
-async function scrapeImdbPoster(imdbId: string): Promise<string | null> {
+async function scrapeImdbPoster(movieId: string): Promise<string | null> {
   try {
-    const imdbUrl = `https://www.imdb.com/title/${imdbId}/`
+    const imdbUrl = `https://www.imdb.com/title/${movieId}/`
     const html = await fetchHtml(imdbUrl)
     return extractPosterUrl(html)
   } catch {
@@ -177,15 +177,15 @@ async function scrapeImdbPoster(imdbId: string): Promise<string | null> {
   }
 }
 
-export async function downloadPoster(imdbId: string, force: boolean = false): Promise<boolean> {
-  if (!imdbId) return false
+export async function downloadPoster(movieId: string, force: boolean = false): Promise<boolean> {
+  if (!movieId) return false
 
   const postersDir = join(process.cwd(), 'public/posters')
   if (!fs.existsSync(postersDir)) {
     fs.mkdirSync(postersDir, { recursive: true })
   }
 
-  const filepath = join(postersDir, `${imdbId}.jpg`)
+  const filepath = join(postersDir, `${movieId}.jpg`)
 
   // Skip if already exists
   if (!force && fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
@@ -196,10 +196,10 @@ export async function downloadPoster(imdbId: string, force: boolean = false): Pr
   const urlsToTry: string[] = []
 
   // 1. For IMDb IDs, try OMDB Poster API first (most reliable)
-  if (imdbId.startsWith('tt')) {
+  if (movieId.startsWith('tt')) {
     const omdbApiKey = process.env.OMDB_API_KEY
     if (omdbApiKey && omdbApiKey !== 'your_omdb_api_key_here') {
-      const omdbPosterUrl = `http://img.omdbapi.com/?apikey=${omdbApiKey}&i=${imdbId}`
+      const omdbPosterUrl = `http://img.omdbapi.com/?apikey=${omdbApiKey}&i=${movieId}`
       urlsToTry.push(omdbPosterUrl)
     }
   }
@@ -220,21 +220,21 @@ export async function downloadPoster(imdbId: string, force: boolean = false): Pr
     try {
       if (isFallback) {
         const source = isOmdbApi ? 'OMDB Poster API' : 'fallback URL'
-        console.log(`Trying ${source} ${i} for ${imdbId}`)
+        console.log(`Trying ${source} ${i} for ${movieId}`)
       }
       await downloadImageOnce(currentUrl, filepath, 30000)
       // Remove from failed downloads if it was there
-      removeFailedDownload(imdbId)
+      removeFailedDownload(movieId)
       if (isFallback) {
         const source = isOmdbApi ? 'OMDB Poster API' : 'fallback URL'
-        console.log(`✅ Successfully downloaded from ${source} ${i} for ${imdbId}`)
+        console.log(`✅ Successfully downloaded from ${source} ${i} for ${movieId}`)
       }
       return true
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error)
       if (isFallback) {
         const source = isOmdbApi ? 'OMDB Poster API' : 'fallback URL'
-        console.error(`Failed ${source} ${i} for ${imdbId}:`, lastError)
+        console.error(`Failed ${source} ${i} for ${movieId}:`, lastError)
       }
       if (fs.existsSync(filepath)) {
         fs.unlinkSync(filepath)
@@ -244,23 +244,23 @@ export async function downloadPoster(imdbId: string, force: boolean = false): Pr
   }
 
   // 2. If OMDB API failed and this is an IMDB ID, try scraping IMDB page
-  if (imdbId.startsWith('tt')) {
+  if (movieId.startsWith('tt')) {
     try {
-      console.log(`Trying IMDB scraping fallback for ${imdbId}`)
-      const scrapedUrl = await scrapeImdbPoster(imdbId)
+      console.log(`Trying IMDB scraping fallback for ${movieId}`)
+      const scrapedUrl = await scrapeImdbPoster(movieId)
 
       if (scrapedUrl) {
         await downloadImageOnce(scrapedUrl, filepath, 30000)
-        removeFailedDownload(imdbId)
-        console.log(`✅ Successfully downloaded from IMDB scraping for ${imdbId}`)
+        removeFailedDownload(movieId)
+        console.log(`✅ Successfully downloaded from IMDB scraping for ${movieId}`)
         return true
       } else {
         lastError = 'No poster found on IMDB page'
-        console.error(`Failed IMDB scraping for ${imdbId}: ${lastError}`)
+        console.error(`Failed IMDB scraping for ${movieId}: ${lastError}`)
       }
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error)
-      console.error(`Failed IMDB scraping for ${imdbId}:`, lastError)
+      console.error(`Failed IMDB scraping for ${movieId}:`, lastError)
       if (fs.existsSync(filepath)) {
         fs.unlinkSync(filepath)
       }
@@ -269,12 +269,12 @@ export async function downloadPoster(imdbId: string, force: boolean = false): Pr
 
   // All methods failed
   console.error(
-    `Failed to download poster for ${imdbId} (tried ${urlsToTry.length + 1} methods):`,
+    `Failed to download poster for ${movieId} (tried ${urlsToTry.length + 1} methods):`,
     lastError
   )
   // Track failed download with the first URL tried
   const urlToLog = urlsToTry[0] || 'N/A'
-  saveFailedDownload(imdbId, urlToLog, lastError)
+  saveFailedDownload(movieId, urlToLog, lastError)
   return false
 }
 

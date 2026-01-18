@@ -214,7 +214,7 @@
             </div>
             <div class="flex gap-2">
               <input
-                v-model.trim="imdbIdInput"
+                v-model.trim="movieIdInput"
                 type="text"
                 placeholder="tt1234567"
                 class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm font-mono"
@@ -222,7 +222,7 @@
               />
               <button
                 class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold transition-colors disabled:opacity-50"
-                :disabled="isSearching || !imdbIdInput"
+                :disabled="isSearching || !movieIdInput"
                 @click="handleDirectImdbFetch"
               >
                 Fetch
@@ -403,7 +403,7 @@
       v-model="showSourceQualityDialog"
       :movie="movie"
       :source="selectedSource"
-      @saved="emit('updated', movie.imdbId)"
+      @saved="emit('updated', movie.movieId)"
     />
   </div>
 </template>
@@ -434,7 +434,7 @@ const emit = defineEmits<{
 const isLocalhost = ref(false)
 const searchTitle = ref('')
 const searchYear = ref('')
-const imdbIdInput = ref('')
+const movieIdInput = ref('')
 const isSearching = ref(false)
 const showSourceQualityDialog = ref(false)
 const selectedSource = ref<MovieSource | null>(null)
@@ -462,7 +462,7 @@ const isUpdatingCollection = ref(false)
 const movieCollections = ref<Collection[]>([])
 const availableCollections = computed(() => {
   return Array.from(collections.value.values()).filter(
-    c => !c.movieIds.includes(props.movie.imdbId)
+    c => !c.movieIds.includes(props.movie.movieId)
   )
 })
 
@@ -479,12 +479,12 @@ onMounted(async () => {
   }
 
   // Load collections for this movie from database
-  movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+  movieCollections.value = await getCollectionsForMovie(props.movie.movieId)
 })
 
 // Watch for movie changes and reload collections
 watch(
-  () => props.movie.imdbId,
+  () => props.movie.movieId,
   async newId => {
     if (newId) {
       movieCollections.value = await getCollectionsForMovie(newId)
@@ -497,11 +497,11 @@ const addToCollection = async () => {
 
   isUpdatingCollection.value = true
   try {
-    const success = await addMovieToCollection(selectedCollectionId.value, props.movie.imdbId)
+    const success = await addMovieToCollection(selectedCollectionId.value, props.movie.movieId)
     if (success) {
       selectedCollectionId.value = ''
       // Reload collections for this movie from database
-      movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+      movieCollections.value = await getCollectionsForMovie(props.movie.movieId)
     }
   } finally {
     isUpdatingCollection.value = false
@@ -513,9 +513,9 @@ const removeFromCollection = async (collectionId: string) => {
 
   isUpdatingCollection.value = true
   try {
-    await removeMovieFromCollection(collectionId, props.movie.imdbId)
+    await removeMovieFromCollection(collectionId, props.movie.movieId)
     // Reload collections for this movie from database
-    movieCollections.value = await getCollectionsForMovie(props.movie.imdbId)
+    movieCollections.value = await getCollectionsForMovie(props.movie.movieId)
   } finally {
     isUpdatingCollection.value = false
   }
@@ -523,11 +523,11 @@ const removeFromCollection = async (collectionId: string) => {
 
 // Watch for movie changes to update search fields
 watch(
-  () => props.movie.imdbId,
+  () => props.movie.movieId,
   () => {
     searchTitle.value = props.movie.title
     searchYear.value = props.movie.year?.toString() || ''
-    imdbIdInput.value = ''
+    movieIdInput.value = ''
     searchResults.value = []
     searchError.value = ''
     initSourceSearchTitles()
@@ -621,7 +621,7 @@ const removeSource = async (sourceId: string) => {
       {
         method: 'POST',
         body: {
-          movieId: props.movie.imdbId,
+          movieId: props.movie.movieId,
           sourceId,
         },
       }
@@ -645,7 +645,7 @@ const removeSource = async (sourceId: string) => {
 }
 
 const handleDirectImdbFetch = async () => {
-  const input = imdbIdInput.value.trim()
+  const input = movieIdInput.value.trim()
   if (!input) return
 
   // Extract IMDB ID from input (could be full URL or just the ID)
@@ -659,7 +659,7 @@ const handleDirectImdbFetch = async () => {
   await selectMovie(id)
 }
 
-const selectMovie = async (imdbId: string) => {
+const selectMovie = async (movieId: string) => {
   try {
     isSearching.value = true
     // Get full details first
@@ -667,7 +667,7 @@ const selectMovie = async (imdbId: string) => {
     const details = await $fetch<MovieMetadata & { Response: string; Error?: string }>(
       '/api/admin/omdb/details',
       {
-        query: { i: imdbId },
+        query: { i: movieId },
       }
     )
 
@@ -675,7 +675,7 @@ const selectMovie = async (imdbId: string) => {
       const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
         method: 'POST',
         body: {
-          movieId: props.movie.imdbId,
+          movieId: props.movie.movieId,
           metadata: details,
         },
       })
@@ -709,7 +709,7 @@ const removeMetadata = async () => {
     const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
-        movieId: props.movie.imdbId,
+        movieId: props.movie.movieId,
         removeMetadata: true,
       },
     })
@@ -732,7 +732,7 @@ const verifyMovie = async () => {
     const res = await $fetch<UpdateResponse>('/api/admin/movie/update', {
       method: 'POST',
       body: {
-        movieId: props.movie.imdbId,
+        movieId: props.movie.movieId,
         verified: true,
       },
     })

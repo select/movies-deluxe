@@ -93,7 +93,7 @@ export default defineEventHandler(async _event => {
     // Poster stats
     const entries = Object.values(db).filter(
       (entry): entry is MovieEntry =>
-        typeof entry === 'object' && entry !== null && 'imdbId' in entry
+        typeof entry === 'object' && entry !== null && 'movieId' in entry
     )
 
     const postersDir = join(process.cwd(), 'public/posters')
@@ -107,7 +107,7 @@ export default defineEventHandler(async _event => {
 
     // Count posters that match movies in the database
     const posterImdbIds = new Set(posterFiles.map(f => f.replace('.jpg', '')))
-    const movieImdbIds = new Set(entries.map(m => m.imdbId))
+    const movieImdbIds = new Set(entries.map(m => m.movieId))
     const matchedPosters = Array.from(posterImdbIds).filter(id => movieImdbIds.has(id))
 
     let totalWithPosterUrl = 0
@@ -117,7 +117,7 @@ export default defineEventHandler(async _event => {
       const posterUrl = movie.metadata?.Poster
       if (posterUrl && posterUrl !== 'N/A') {
         totalWithPosterUrl++
-        if (posterImdbIds.has(movie.imdbId)) {
+        if (posterImdbIds.has(movie.movieId)) {
           totalDownloaded++
         }
       }
@@ -125,7 +125,7 @@ export default defineEventHandler(async _event => {
 
     emitStepProgress('Calculating AI extraction statistics...')
     // AI extraction stats (count unmatched movies with AI data)
-    const unmatchedMovies = entries.filter(m => !m.imdbId.startsWith('tt'))
+    const unmatchedMovies = entries.filter(m => !m.movieId.startsWith('tt'))
     const withAiData = unmatchedMovies.filter(m => m.ai?.title).length
     const withoutAiData = unmatchedMovies.length - withAiData
 

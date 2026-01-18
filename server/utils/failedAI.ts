@@ -16,7 +16,7 @@ interface AIExtractionAttempt {
  * Failed AI extraction entry
  */
 interface FailedAIExtraction {
-  identifier: string // Movie identifier (imdbId or temporary ID)
+  identifier: string // Movie identifier (movieId or temporary ID)
   originalTitle: string // Original title from source
   attempts: AIExtractionAttempt[] // All extraction attempts
   failedAt: string // ISO timestamp of first failure
@@ -49,7 +49,7 @@ export function loadFailedAIExtractions(): Set<string> {
 
 /**
  * Save failed AI extraction to disk with detailed attempt tracking
- * @param identifier - Movie identifier (imdbId or temporary ID)
+ * @param identifier - Movie identifier (movieId or temporary ID)
  * @param originalTitle - Original title from source
  * @param reason - Reason for failure
  * @param attempt - Extraction attempt details

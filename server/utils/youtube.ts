@@ -210,9 +210,9 @@ export async function fetchChannelVideos(
       // Process video into movie entry
       const movieEntry = await processYouTubeVideo(videoData, channelConfig)
       if (movieEntry) {
-        const existing = db[movieEntry.imdbId]
+        const existing = db[movieEntry.movieId]
         const { upsertMovie } = await import('./movieData')
-        upsertMovie(db, movieEntry.imdbId, movieEntry)
+        upsertMovie(db, movieEntry.movieId, movieEntry)
 
         const result = existing ? 'updated' : 'added'
         await onVideoProcessed({ id: videoId, title }, result)
@@ -287,10 +287,10 @@ export async function processYouTubeVideo(
   }
 
   // Always use generated YouTube ID - OMDB enrichment is done separately
-  const imdbId: string = generateYouTubeId(video.id)
+  const movieId: string = generateYouTubeId(video.id)
 
   return {
-    imdbId,
+    movieId,
     title: originalTitle, // Store original title
     year: parsedYear,
     sources: [source],

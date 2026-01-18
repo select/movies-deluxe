@@ -57,7 +57,7 @@ export default defineEventHandler(async event => {
       if (!db[removedSourceTempId]) {
         // Create new entry
         const newEntry: MovieEntry = {
-          imdbId: removedSourceTempId,
+          movieId: removedSourceTempId,
           title: removedSource.title,
           sources: [removedSource],
           lastUpdated: new Date().toISOString(),
@@ -127,7 +127,7 @@ export default defineEventHandler(async event => {
             finalMovieId = newTempId
           } else {
             // Rename key
-            movie.imdbId = newTempId
+            movie.movieId = newTempId
             db[newTempId] = movie
             delete db[movieId]
             finalMovieId = newTempId

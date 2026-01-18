@@ -47,7 +47,7 @@ export function loadFailedOmdbMatches(): Set<string> {
 
 /**
  * Save failed OMDB match to disk with detailed attempt tracking
- * @param identifier - Movie identifier (imdbId or temporary ID)
+ * @param identifier - Movie identifier (movieId or temporary ID)
  * @param originalTitle - Original title before cleaning
  * @param reason - Reason for failure
  * @param attempts - Array of title queries attempted with their years

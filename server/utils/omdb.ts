@@ -93,14 +93,14 @@ function transformOMDBResponse(data: Record<string, unknown>): MovieMetadata {
  * Get detailed movie information by IMDB ID
  */
 export async function getMovieByImdbId(
-  imdbId: string,
+  movieId: string,
   apiKey?: string
 ): Promise<MovieMetadata | null> {
   if (!apiKey) {
     throw new Error('OMDB API key is required')
   }
 
-  const url = `https://www.omdbapi.com/?apikey=${apiKey}&i=${imdbId}&plot=full`
+  const url = `https://www.omdbapi.com/?apikey=${apiKey}&i=${movieId}&plot=full`
 
   try {
     const response = await rateLimitedFetch(url)
@@ -112,7 +112,7 @@ export async function getMovieByImdbId(
 
     return transformOMDBResponse(data)
   } catch (error) {
-    console.error(`Failed to fetch movie ${imdbId}:`, error)
+    console.error(`Failed to fetch movie ${movieId}:`, error)
     throw error
   }
 }
@@ -236,7 +236,7 @@ export async function matchMovie(
 
     return {
       confidence: bestConfidence,
-      imdbId: bestMatch.imdbID,
+      movieId: bestMatch.imdbID,
       title: bestMatch.Title,
       year: bestMatch.Year,
       metadata: metadata || undefined,

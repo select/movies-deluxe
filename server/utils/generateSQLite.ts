@@ -49,7 +49,7 @@ export async function generateSQLite(
   const allMovies = Object.values(db)
     .filter(
       (entry): entry is MovieEntry =>
-        typeof entry === 'object' && entry !== null && 'imdbId' in entry
+        typeof entry === 'object' && entry !== null && 'movieId' in entry
     )
     .map(movie => ({
       ...movie,
@@ -61,7 +61,7 @@ export async function generateSQLite(
   const movies = allMovies
 
   // Create a Set of valid movie IDs for quick lookup
-  const validMovieIds = new Set(movies.map(m => m.imdbId))
+  const validMovieIds = new Set(movies.map(m => m.movieId))
 
   logger.info(`Loaded ${allMovies.length} total movies`)
   logger.info(`Processing ${movies.length} movies for database`)
@@ -91,7 +91,7 @@ export async function generateSQLite(
     onProgress?.({ current: 0, total: movies.length, message: 'Creating database schema' })
     sqlite.exec(`
       CREATE TABLE movies (
-        imdbId TEXT PRIMARY KEY,
+        movieId TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         year INTEGER,
         imdbRating REAL,
@@ -133,7 +133,7 @@ export async function generateSQLite(
         addedAt TEXT NOT NULL,
         PRIMARY KEY (collectionId, movieId),
         FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,
-        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE
+        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE
       );
 
       -- People tables
@@ -161,7 +161,7 @@ export async function generateSQLite(
         actorId INTEGER NOT NULL,
         character TEXT,
         PRIMARY KEY (movieId, actorId),
-        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE,
         FOREIGN KEY (actorId) REFERENCES actors (id) ON DELETE CASCADE
       );
 
@@ -169,7 +169,7 @@ export async function generateSQLite(
         movieId TEXT NOT NULL,
         directorId INTEGER NOT NULL,
         PRIMARY KEY (movieId, directorId),
-        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE,
         FOREIGN KEY (directorId) REFERENCES directors (id) ON DELETE CASCADE
       );
 
@@ -177,13 +177,13 @@ export async function generateSQLite(
         movieId TEXT NOT NULL,
         writerId INTEGER NOT NULL,
         PRIMARY KEY (movieId, writerId),
-        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE,
         FOREIGN KEY (writerId) REFERENCES writers (id) ON DELETE CASCADE
       );
 
       -- FTS5 Virtual Table for Search (title only)
       CREATE VIRTUAL TABLE fts_movies USING fts5(
-        imdbId UNINDEXED,
+        movieId UNINDEXED,
         title,
         tokenize='unicode61'
       );
@@ -209,7 +209,7 @@ export async function generateSQLite(
 
       -- Vector Table for Semantic Search
       CREATE VIRTUAL TABLE vec_movies USING vec0(
-        imdbId TEXT PRIMARY KEY,
+        movieId TEXT PRIMARY KEY,
         embedding FLOAT[768]
       );
 
@@ -247,7 +247,7 @@ export async function generateSQLite(
     // 5. Prepare Statements
     const insertMovie = sqlite.prepare(`
       INSERT INTO movies (
-        imdbId, title, year, imdbRating, imdbVotes, language, genre, country,
+        movieId, title, year, imdbRating, imdbVotes, language, genre, country,
         primarySourceType, primaryChannelName, verified, lastUpdated
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
@@ -263,12 +263,12 @@ export async function generateSQLite(
     `)
 
     const insertFts = sqlite.prepare(`
-      INSERT INTO fts_movies (imdbId, title)
+      INSERT INTO fts_movies (movieId, title)
       VALUES (?, ?)
     `)
 
     const insertVec = sqlite.prepare(`
-      INSERT INTO vec_movies (imdbId, embedding)
+      INSERT INTO vec_movies (movieId, embedding)
       VALUES (?, ?)
     `)
 
@@ -348,7 +348,7 @@ export async function generateSQLite(
         }
 
         insertMovie.run(
-          movie.imdbId,
+          movie.movieId,
           Array.isArray(movie.title) ? movie.title[0] : movie.title,
           movie.year || null,
           imdbRating,
@@ -366,11 +366,12 @@ export async function generateSQLite(
 
         // Insert into FTS
         const ftsTitle = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
-        insertFts.run(movie.imdbId, ftsTitle)
+        insertFts.run(movie.movieId, ftsTitle)
 
         // Insert into Vector Table if embedding exists
-        if (embeddings[movie.imdbId]) {
-          insertVec.run(movie.imdbId, new Float32Array(embeddings[movie.imdbId]))
+        const embedding = embeddings[movie.movieId]
+        if (embedding && Array.isArray(embedding)) {
+          insertVec.run(movie.movieId, new Float32Array(embedding))
         }
 
         // Insert People (Actors, Directors, Writers)
@@ -382,7 +383,7 @@ export async function generateSQLite(
             insertActor.run(name)
             const row = getActorId.get(name) as { id: number }
             if (row) {
-              insertMovieActor.run(movie.imdbId, row.id)
+              insertMovieActor.run(movie.movieId, row.id)
             }
           }
         }
@@ -395,7 +396,7 @@ export async function generateSQLite(
             insertDirector.run(name)
             const row = getDirectorId.get(name) as { id: number }
             if (row) {
-              insertMovieDirector.run(movie.imdbId, row.id)
+              insertMovieDirector.run(movie.movieId, row.id)
             }
           }
         }
@@ -408,7 +409,7 @@ export async function generateSQLite(
             insertWriter.run(name)
             const row = getWriterId.get(name) as { id: number }
             if (row) {
-              insertMovieWriter.run(movie.imdbId, row.id)
+              insertMovieWriter.run(movie.movieId, row.id)
             }
           }
         }
