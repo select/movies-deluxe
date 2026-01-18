@@ -67,7 +67,7 @@ export interface SortState {
 /**
  * Search mode for movie queries
  */
-export type SearchMode = 'keyword' | 'semantic' | 'hybrid'
+export type SearchMode = 'exact' | 'semantic'
 
 /**
  * Filter state interface

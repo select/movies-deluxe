@@ -125,7 +125,7 @@
               genres: [],
               countries: [],
               searchQuery: '',
-              searchMode: 'keyword',
+              searchMode: 'exact',
             })
           "
         >
@@ -275,7 +275,6 @@ const votesLabel = computed(() => {
 const searchPlaceholder = computed(() => {
   const mode = filters.value.searchMode
   if (mode === 'semantic') return 'Describe what you want to watch...'
-  if (mode === 'hybrid') return 'Search keywords or describe a vibe...'
   return 'Search movies, actors, directors...'
 })
 
