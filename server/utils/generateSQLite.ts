@@ -136,10 +136,74 @@ export async function generateSQLite(
         FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE
       );
 
+      -- People tables
+      CREATE TABLE actors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        movie_count INTEGER DEFAULT 0
+      );
+
+      CREATE TABLE directors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        movie_count INTEGER DEFAULT 0
+      );
+
+      CREATE TABLE writers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        movie_count INTEGER DEFAULT 0
+      );
+
+      -- Junction tables
+      CREATE TABLE movie_actors (
+        movieId TEXT NOT NULL,
+        actorId INTEGER NOT NULL,
+        character TEXT,
+        PRIMARY KEY (movieId, actorId),
+        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (actorId) REFERENCES actors (id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE movie_directors (
+        movieId TEXT NOT NULL,
+        directorId INTEGER NOT NULL,
+        PRIMARY KEY (movieId, directorId),
+        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (directorId) REFERENCES directors (id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE movie_writers (
+        movieId TEXT NOT NULL,
+        writerId INTEGER NOT NULL,
+        PRIMARY KEY (movieId, writerId),
+        FOREIGN KEY (movieId) REFERENCES movies (imdbId) ON DELETE CASCADE,
+        FOREIGN KEY (writerId) REFERENCES writers (id) ON DELETE CASCADE
+      );
+
       -- FTS5 Virtual Table for Search (title only)
       CREATE VIRTUAL TABLE fts_movies USING fts5(
         imdbId UNINDEXED,
         title,
+        tokenize='unicode61'
+      );
+
+      -- FTS5 Virtual Tables for People
+      CREATE VIRTUAL TABLE fts_actors USING fts5(
+        actorId UNINDEXED,
+        name,
+        tokenize='unicode61'
+      );
+
+      CREATE VIRTUAL TABLE fts_directors USING fts5(
+        directorId UNINDEXED,
+        name,
+        tokenize='unicode61'
+      );
+
+      CREATE VIRTUAL TABLE fts_writers USING fts5(
+        writerId UNINDEXED,
+        name,
         tokenize='unicode61'
       );
 
@@ -163,6 +227,21 @@ export async function generateSQLite(
       CREATE INDEX idx_countries_count ON countries(movie_count DESC);
       CREATE INDEX idx_collection_movies_collectionId ON collection_movies(collectionId);
       CREATE INDEX idx_collection_movies_movieId ON collection_movies(movieId);
+
+      -- People indexes
+      CREATE INDEX idx_actors_name ON actors(name);
+      CREATE INDEX idx_actors_count ON actors(movie_count DESC);
+      CREATE INDEX idx_directors_name ON directors(name);
+      CREATE INDEX idx_directors_count ON directors(movie_count DESC);
+      CREATE INDEX idx_writers_name ON writers(name);
+      CREATE INDEX idx_writers_count ON writers(movie_count DESC);
+
+      CREATE INDEX idx_movie_actors_movieId ON movie_actors(movieId);
+      CREATE INDEX idx_movie_actors_actorId ON movie_actors(actorId);
+      CREATE INDEX idx_movie_directors_movieId ON movie_directors(movieId);
+      CREATE INDEX idx_movie_directors_directorId ON movie_directors(directorId);
+      CREATE INDEX idx_movie_writers_movieId ON movie_writers(movieId);
+      CREATE INDEX idx_movie_writers_writerId ON movie_writers(writerId);
     `)
 
     // 5. Prepare Statements
@@ -201,6 +280,39 @@ export async function generateSQLite(
     const insertCollectionMovie = sqlite.prepare(`
       INSERT INTO collection_movies (collectionId, movieId, addedAt)
       VALUES (?, ?, ?)
+    `)
+
+    const insertActor = sqlite.prepare(`
+      INSERT OR IGNORE INTO actors (name) VALUES (?)
+    `)
+    const getActorId = sqlite.prepare(`SELECT id FROM actors WHERE name = ?`)
+    const insertMovieActor = sqlite.prepare(`
+      INSERT OR IGNORE INTO movie_actors (movieId, actorId) VALUES (?, ?)
+    `)
+    const insertFtsActor = sqlite.prepare(`
+      INSERT INTO fts_actors (actorId, name) VALUES (?, ?)
+    `)
+
+    const insertDirector = sqlite.prepare(`
+      INSERT OR IGNORE INTO directors (name) VALUES (?)
+    `)
+    const getDirectorId = sqlite.prepare(`SELECT id FROM directors WHERE name = ?`)
+    const insertMovieDirector = sqlite.prepare(`
+      INSERT OR IGNORE INTO movie_directors (movieId, directorId) VALUES (?, ?)
+    `)
+    const insertFtsDirector = sqlite.prepare(`
+      INSERT INTO fts_directors (directorId, name) VALUES (?, ?)
+    `)
+
+    const insertWriter = sqlite.prepare(`
+      INSERT OR IGNORE INTO writers (name) VALUES (?)
+    `)
+    const getWriterId = sqlite.prepare(`SELECT id FROM writers WHERE name = ?`)
+    const insertMovieWriter = sqlite.prepare(`
+      INSERT OR IGNORE INTO movie_writers (movieId, writerId) VALUES (?, ?)
+    `)
+    const insertFtsWriter = sqlite.prepare(`
+      INSERT INTO fts_writers (writerId, name) VALUES (?, ?)
     `)
 
     // 6. Insert Data in a Transaction
@@ -259,6 +371,46 @@ export async function generateSQLite(
         // Insert into Vector Table if embedding exists
         if (embeddings[movie.imdbId]) {
           insertVec.run(movie.imdbId, new Float32Array(embeddings[movie.imdbId]))
+        }
+
+        // Insert People (Actors, Directors, Writers)
+        if (m.Actors && m.Actors !== 'N/A') {
+          const actors = m.Actors.split(',')
+            .map(a => a.trim())
+            .filter(Boolean)
+          for (const name of actors) {
+            insertActor.run(name)
+            const row = getActorId.get(name) as { id: number }
+            if (row) {
+              insertMovieActor.run(movie.imdbId, row.id)
+            }
+          }
+        }
+
+        if (m.Director && m.Director !== 'N/A') {
+          const directors = m.Director.split(',')
+            .map(d => d.trim())
+            .filter(Boolean)
+          for (const name of directors) {
+            insertDirector.run(name)
+            const row = getDirectorId.get(name) as { id: number }
+            if (row) {
+              insertMovieDirector.run(movie.imdbId, row.id)
+            }
+          }
+        }
+
+        if (m.Writer && m.Writer !== 'N/A') {
+          const writers = m.Writer.split(',')
+            .map(w => w.trim())
+            .filter(Boolean)
+          for (const name of writers) {
+            insertWriter.run(name)
+            const row = getWriterId.get(name) as { id: number }
+            if (row) {
+              insertMovieWriter.run(movie.imdbId, row.id)
+            }
+          }
         }
 
         count++
@@ -340,6 +492,50 @@ export async function generateSQLite(
       }
       logger.info(`Inserted ${collections.length} collections`)
 
+      // 6.8. Update People Counts and FTS
+      logger.info('Updating people counts and FTS...')
+      onProgress?.({
+        current: movies.length,
+        total: movies.length,
+        message: 'Updating people counts and FTS',
+      })
+
+      // Update counts
+      sqlite.exec(`
+        UPDATE actors SET movie_count = (SELECT COUNT(*) FROM movie_actors WHERE actorId = actors.id);
+        UPDATE directors SET movie_count = (SELECT COUNT(*) FROM movie_directors WHERE directorId = directors.id);
+        UPDATE writers SET movie_count = (SELECT COUNT(*) FROM movie_writers WHERE writerId = writers.id);
+      `)
+
+      // Populate FTS
+      const allActors = sqlite.prepare('SELECT id, name FROM actors').all() as {
+        id: number
+        name: string
+      }[]
+      for (const actor of allActors) {
+        insertFtsActor.run(actor.id, actor.name)
+      }
+
+      const allDirectors = sqlite.prepare('SELECT id, name FROM directors').all() as {
+        id: number
+        name: string
+      }[]
+      for (const director of allDirectors) {
+        insertFtsDirector.run(director.id, director.name)
+      }
+
+      const allWriters = sqlite.prepare('SELECT id, name FROM writers').all() as {
+        id: number
+        name: string
+      }[]
+      for (const writer of allWriters) {
+        insertFtsWriter.run(writer.id, writer.name)
+      }
+
+      logger.info(
+        `Processed ${allActors.length} actors, ${allDirectors.length} directors, ${allWriters.length} writers`
+      )
+
       sqlite.exec('COMMIT')
     } catch (err) {
       sqlite.exec('ROLLBACK')
@@ -350,6 +546,9 @@ export async function generateSQLite(
     logger.info('Optimizing database...')
     onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing database' })
     sqlite.exec("INSERT INTO fts_movies(fts_movies) VALUES('optimize')")
+    sqlite.exec("INSERT INTO fts_actors(fts_actors) VALUES('optimize')")
+    sqlite.exec("INSERT INTO fts_directors(fts_directors) VALUES('optimize')")
+    sqlite.exec("INSERT INTO fts_writers(fts_writers) VALUES('optimize')")
     sqlite.exec('VACUUM')
     sqlite.exec('ANALYZE')
 
