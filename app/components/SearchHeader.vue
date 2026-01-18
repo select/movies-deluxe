@@ -9,25 +9,24 @@
       <!-- Search Input Row -->
       <div class="flex items-center gap-4">
         <div class="relative flex-1">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <div
-              v-if="isFiltering"
-              class="i-mdi-loading animate-spin text-2xl text-theme-primary"
-            ></div>
-            <div v-else class="i-mdi-magnify text-2xl text-theme-textmuted"></div>
+          <div class="absolute inset-y-0 left-2 flex items-center z-10">
+            <div v-if="isFiltering" class="pl-2 pr-1">
+              <div class="i-mdi-loading animate-spin text-lg text-theme-primary"></div>
+            </div>
+            <SearchModeSelector />
           </div>
           <input
             ref="searchInput"
             v-model="localQuery"
             type="text"
-            class="block w-full pl-12 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
+            class="block w-full pl-32 md:pl-36 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
             :placeholder="searchPlaceholder"
             @keydown.esc="handleEscape"
             @keydown.enter="handleEnter"
           />
           <button
             v-if="localQuery"
-            class="absolute inset-y-0 right-0 pr-4 flex items-center"
+            class="absolute inset-y-0 right-0 pr-4 flex items-center z-10"
             @click="clearSearch"
           >
             <div class="i-mdi-close text-xl text-theme-textmuted hover:text-theme-text"></div>
@@ -100,7 +99,7 @@
           @clear="filters.countries = []"
         />
 
-        <!-- Source -->
+        <!-- Sources -->
         <FilterButton
           category="Source"
           icon="i-mdi-source-branch"
@@ -108,16 +107,6 @@
           :is-active="filters.sources.length > 0"
           @click="openPopup('source', $event)"
           @clear="filters.sources = []"
-        />
-
-        <!-- Search Mode -->
-        <FilterButton
-          category="Mode"
-          :icon="modeIcon"
-          :active-value="modeLabel"
-          :is-active="filters.searchMode !== 'keyword'"
-          @click="openPopup('mode', $event)"
-          @clear="filters.searchMode = 'keyword'"
         />
 
         <!-- Clear All -->
@@ -208,15 +197,6 @@
     >
       <FilterSourceControl />
     </FilterPopup>
-
-    <FilterPopup
-      :is-open="activePopup === 'mode'"
-      title="Search Mode"
-      :anchor-el="anchorEl"
-      @close="closePopup"
-    >
-      <FilterSearchModeControl />
-    </FilterPopup>
   </div>
 </template>
 
@@ -290,22 +270,6 @@ const votesLabel = computed(() => {
   if (min) return `${formatCount(min)}+`
   if (max && max < 1000000) return `< ${formatCount(max)}`
   return ''
-})
-
-const modeLabel = computed(() => {
-  const mode = filters.value.searchMode
-  if (mode === 'keyword') return ''
-  if (mode === 'semantic') return 'Semantic'
-  if (mode === 'hybrid') return 'Hybrid'
-  return ''
-})
-
-const modeIcon = computed(() => {
-  const mode = filters.value.searchMode
-  if (mode === 'keyword') return 'i-mdi-alphabetical'
-  if (mode === 'semantic') return 'i-mdi-brain'
-  if (mode === 'hybrid') return 'i-mdi-auto-fix'
-  return 'i-mdi-alphabetical'
 })
 
 const searchPlaceholder = computed(() => {
