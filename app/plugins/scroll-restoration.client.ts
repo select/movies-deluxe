@@ -1,6 +1,9 @@
 /**
  * Client-side plugin to handle scroll restoration between page navigations.
  * Uses useUiStore to remember scroll positions for non-excluded routes.
+ *
+ * For pages with virtual grids (like /search), uses polling to wait for
+ * the document to reach the required height before restoring scroll.
  */
 export default defineNuxtPlugin({
   name: 'scroll-restoration',
@@ -8,6 +11,9 @@ export default defineNuxtPlugin({
   setup(nuxtApp) {
     const router = useRouter()
     const uiStore = useUiStore()
+
+    // Routes that use virtual grids and need delayed scroll restoration
+    const virtualGridRoutes = ['/search']
 
     // Helper to check if route should be excluded from scroll memory
     const isExcluded = (path: string) => {
@@ -17,6 +23,11 @@ export default defineNuxtPlugin({
         path === '/admin' ||
         path.startsWith('/admin/')
       )
+    }
+
+    // Helper to check if route uses virtual grid
+    const usesVirtualGrid = (path: string) => {
+      return virtualGridRoutes.some(route => path === route || path.startsWith(route + '?'))
     }
 
     // Save scroll position before navigation
@@ -36,20 +47,37 @@ export default defineNuxtPlugin({
       }
 
       const savedPosition = uiStore.getScrollPosition(fullPath)
-      if (savedPosition !== undefined && savedPosition > 0) {
-        // Use multiple ticks and requestAnimationFrame to ensure DOM is updated
-        // and virtual grids have had a chance to calculate their height
-        nextTick(async () => {
-          await nextTick()
-          window.scrollTo({ top: savedPosition, behavior: 'instant' })
 
-          // Fallback for slow-loading content/virtual grids
-          requestAnimationFrame(() => {
-            if (Math.abs(window.scrollY - savedPosition) > 10) {
+      if (savedPosition !== undefined && savedPosition > 0) {
+        if (usesVirtualGrid(path)) {
+          // For virtual grid pages, poll until document is tall enough
+          let attempts = 0
+          const maxAttempts = 50 // 50 * 50ms = 2.5s max wait
+          const poll = () => {
+            const docHeight = document.documentElement.scrollHeight
+            if (docHeight >= savedPosition + window.innerHeight || attempts >= maxAttempts) {
               window.scrollTo({ top: savedPosition, behavior: 'instant' })
+            } else {
+              attempts++
+              setTimeout(poll, 50)
             }
+          }
+          // Start polling after a short delay for initial render
+          setTimeout(poll, 50)
+        } else {
+          // For regular pages, restore immediately with fallback
+          nextTick(async () => {
+            await nextTick()
+            window.scrollTo({ top: savedPosition, behavior: 'instant' })
+
+            // Fallback for slow-loading content
+            requestAnimationFrame(() => {
+              if (Math.abs(window.scrollY - savedPosition) > 10) {
+                window.scrollTo({ top: savedPosition, behavior: 'instant' })
+              }
+            })
           })
-        })
+        }
       } else {
         window.scrollTo({ top: 0, behavior: 'instant' })
       }
