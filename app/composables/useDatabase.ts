@@ -73,8 +73,12 @@ function createDatabase() {
     sql: string,
     params: (string | number)[] = []
   ): Promise<T[]> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
+    // Wait for worker to be created (init must be called first)
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
     }
 
     const id = Math.random().toString(36).substring(7)
@@ -88,8 +92,12 @@ function createDatabase() {
   }
 
   const queryByIds = async <T = MovieEntry>(movieIds: string[]): Promise<T[]> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
+    // Wait for worker to be created (init must be called first)
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
     }
 
     const id = Math.random().toString(36).substring(7)
@@ -104,8 +112,12 @@ function createDatabase() {
   }
 
   const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
+    // Wait for worker to be created (init must be called first)
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
     }
 
     const id = Math.random().toString(36).substring(7)
@@ -119,8 +131,12 @@ function createDatabase() {
   }
 
   const getFilterOptions = async (): Promise<FilterOptionsResponse> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
+    // Wait for worker to be created (init must be called first)
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
     }
 
     const id = Math.random().toString(36).substring(7)
@@ -144,8 +160,12 @@ function createDatabase() {
     where?: string,
     params?: (string | number)[]
   ): Promise<(T & { distance: number })[]> => {
-    if (!isReady.value) {
-      throw new Error('Database not initialized')
+    // Wait for worker to be created (init must be called first)
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
     }
 
     const id = Math.random().toString(36).substring(7)
