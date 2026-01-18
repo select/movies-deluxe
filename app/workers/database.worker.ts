@@ -120,30 +120,18 @@ async function loadRemoteDatabase(url: string) {
 
 // Message queue to ensure sequential processing
 interface QueuedMessage {
-  type: string
+  type: 'init' | 'exec' | 'query-by-ids' | 'vector-search'
   id: string
+  // For init
+  url?: string
+  // For exec, query-by-ids, vector-search (pre-built SQL)
   sql?: string
   params?: (string | number)[]
-  url?: string
-  movieId?: string
+  // For query-by-ids
   movieIds?: string[]
-  parsedQuery?: {
-    actors?: string[]
-    directors?: string[]
-    writers?: string[]
-    title?: string
-    general?: string
-  }
+  // For vector-search
   embedding?: Float32Array | number[]
   limit?: number
-  offset?: number
-  includeCount?: boolean
-  select?: string
-  from?: string
-  where?: string
-  groupBy?: string
-  orderBy?: string
-  options?: Record<string, string | number | boolean>
 }
 
 const messageQueue: QueuedMessage[] = []
@@ -217,11 +205,17 @@ async function handleMessage(e: QueuedMessage) {
       })
       self.postMessage({ id, result })
     } else if (type === 'query-by-ids') {
-      // Query lightweight movie details for specific IDs (sources now in JSON files)
-      const { movieIds } = e
+      // Query lightweight movie details for specific IDs
+      // Receives pre-built SQL from the store via useDatabase composable
+      const { movieIds, sql: prebuiltSql, params: prebuiltParams } = e
 
       if (!movieIds || movieIds.length === 0) {
         self.postMessage({ id, result: [] })
+        return
+      }
+
+      if (!prebuiltSql || !prebuiltParams) {
+        self.postMessage({ id, error: 'Pre-built SQL and params are required for query-by-ids' })
         return
       }
 
@@ -239,18 +233,9 @@ async function handleMessage(e: QueuedMessage) {
       }
 
       if (idsToFetch.length > 0) {
-        const placeholders = idsToFetch.map(() => '?').join(',')
-        const sql = `
-          SELECT m.movieId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
-                 m.primarySourceType as sourceType, m.primaryChannelName as channelName,
-                 m.verified, m.lastUpdated, m.genre, m.country
-          FROM movies m
-          WHERE m.movieId IN (${placeholders})
-        `
-
         const dbResults = db.exec({
-          sql,
-          bind: idsToFetch,
+          sql: prebuiltSql,
+          bind: prebuiltParams as string[],
           returnValue: 'resultRows',
           rowMode: 'object',
         })
@@ -273,10 +258,17 @@ async function handleMessage(e: QueuedMessage) {
 
       self.postMessage({ id, result: sortedResults })
     } else if (type === 'vector-search') {
-      const { embedding, limit = 20, where, params: whereParams } = e
+      // Vector similarity search
+      // Receives pre-built SQL from the store, but handles embedding conversion here
+      const { embedding, limit = 20, params: whereParams, sql: prebuiltSql } = e
 
       if (!embedding) {
         self.postMessage({ id, error: 'Embedding is required for vector search' })
+        return
+      }
+
+      if (!prebuiltSql) {
+        self.postMessage({ id, error: 'Pre-built SQL is required for vector-search' })
         return
       }
 
@@ -295,87 +287,26 @@ async function handleMessage(e: QueuedMessage) {
         return
       }
 
-      let sql = `
-        SELECT 
-          m.movieId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
-          m.primarySourceType as sourceType, m.primaryChannelName as channelName,
-          m.verified, m.lastUpdated, m.genre, m.country,
-          v.distance
-        FROM vec_movies v
-        INNER JOIN movies m ON v.movieId = m.movieId
-        WHERE v.embedding MATCH ?
-          AND k = ?
-      `
-
       // sqlite-wasm-vec expects ArrayBuffer for vector binding, not Float32Array
+      // Embedding and limit are always first two params
       const bindParams: (ArrayBuffer | number | string)[] = [
         bindEmbedding.buffer as ArrayBuffer,
         limit,
       ]
 
-      if (where) {
-        sql += ` AND ${where}`
-        if (whereParams) {
-          bindParams.push(...(whereParams as (string | number)[]))
-        }
+      // Add WHERE clause params if provided
+      if (whereParams) {
+        bindParams.push(...(whereParams as (string | number)[]))
       }
 
-      sql += ` ORDER BY v.distance ASC`
-
       const result = db.exec({
-        sql,
+        sql: prebuiltSql,
         bind: bindParams,
         returnValue: 'resultRows',
         rowMode: 'object',
       })
 
       self.postMessage({ id, result })
-    } else if (type === 'query-collections-for-movie') {
-      // Query collections for a specific movie
-      const { movieId } = e
-
-      const sql = `
-        SELECT c.id, c.name, c.description, c.createdAt, c.updatedAt
-        FROM collections c
-        INNER JOIN collection_movies cm ON c.id = cm.collectionId
-        WHERE cm.movieId = ?
-        ORDER BY c.name ASC
-      `
-
-      const result = db.exec({
-        sql,
-        bind: [movieId],
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      })
-
-      self.postMessage({ id, result })
-    } else if (type === 'get-filter-options') {
-      const genres = db.exec({
-        sql: 'SELECT name, movie_count as count FROM genres ORDER BY movie_count DESC, name ASC',
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      })
-
-      const countries = db.exec({
-        sql: 'SELECT name, movie_count as count FROM countries ORDER BY movie_count DESC, name ASC',
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      })
-
-      const channels = db.exec({
-        sql: `
-          SELECT primaryChannelName as name, COUNT(*) as count
-          FROM movies
-          WHERE primaryChannelName IS NOT NULL
-          GROUP BY primaryChannelName
-          ORDER BY count DESC, primaryChannelName ASC
-        `,
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      })
-
-      self.postMessage({ id, genres, countries, channels })
     }
   } catch (err: unknown) {
     console.error('Worker error:', err)
