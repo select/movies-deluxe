@@ -49,7 +49,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-console.log('MovieVirtualGrid loaded', props.movieIds)
 
 const gridRef = ref<HTMLElement | null>(null)
 const firstRowRef = ref<HTMLElement | null>(null)
@@ -221,5 +220,11 @@ onMounted(async () => {
       fetchMoviesByIds(visibleIds)
     }
   }
+
+  // Update offset after initial render
+  await nextTick()
+  requestAnimationFrame(() => {
+    updateOffset()
+  })
 })
 </script>
