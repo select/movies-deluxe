@@ -281,21 +281,17 @@ async function handleMessage(e: QueuedMessage) {
       }
 
       // Convert embedding to Float32Array for sqlite-vec
-      // Callers send either number[] (from API) or Uint8Array (from DB query)
+      // Callers send either number[] (from API) or Float32Array
       let bindEmbedding: Float32Array
       if (Array.isArray(embedding)) {
         bindEmbedding = new Float32Array(embedding)
-      } else if (embedding instanceof Uint8Array) {
-        // Uint8Array from DB contains raw float bytes - reinterpret as Float32Array
-        bindEmbedding = new Float32Array(
-          embedding.buffer,
-          embedding.byteOffset,
-          embedding.byteLength / 4
-        )
       } else if (embedding instanceof Float32Array) {
         bindEmbedding = embedding
       } else {
-        self.postMessage({ id, error: `Invalid embedding format: expected number[] or Uint8Array` })
+        self.postMessage({
+          id,
+          error: `Invalid embedding format: expected number[] or Float32Array`,
+        })
         return
       }
 
@@ -312,7 +308,10 @@ async function handleMessage(e: QueuedMessage) {
       `
 
       // sqlite-wasm-vec expects ArrayBuffer for vector binding, not Float32Array
-      const bindParams: (ArrayBuffer | number | string)[] = [bindEmbedding.buffer, limit]
+      const bindParams: (ArrayBuffer | number | string)[] = [
+        bindEmbedding.buffer as ArrayBuffer,
+        limit,
+      ]
 
       if (where) {
         sql += ` AND ${where}`
