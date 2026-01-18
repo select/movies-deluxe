@@ -4,34 +4,86 @@
  * Type definitions for communication between the main thread and database worker.
  */
 
-import type { GenreOption, CountryOption, ChannelOption, LightweightMovie } from '~/types'
+import type {
+  GenreOption,
+  CountryOption,
+  ChannelOption,
+  LightweightMovie,
+  Collection,
+  MovieEntry,
+} from '~/types'
 
 /**
- * Base message structure for worker communication
+ * Vector search result with distance
  */
-export interface WorkerMessage {
-  id: string
-  type: string
+export interface VectorSearchResult extends LightweightMovie {
+  distance: number
 }
 
 /**
- * Worker response structure
+ * Base worker response with common fields
  */
-export interface WorkerResponse<T = LightweightMovie[] | Collection[] | FilterOptionsResponse> {
+interface WorkerResponseBase {
   id: string
-  error?: string
-  result?: T
+}
+
+/**
+ * Error response from worker
+ */
+interface WorkerErrorResponse extends WorkerResponseBase {
+  error: string
+}
+
+/**
+ * Successful init response
+ */
+interface WorkerInitResponse extends WorkerResponseBase {
+  totalMovies: number
+}
+
+/**
+ * Query result response (movies, collections, etc.)
+ */
+interface WorkerQueryResponse extends WorkerResponseBase {
+  result:
+    | LightweightMovie[]
+    | MovieEntry[]
+    | Collection[]
+    | VectorSearchResult[]
+    | Record<string, unknown>[]
   totalCount?: number
   count?: number
-  genres?: GenreOption[]
-  countries?: CountryOption[]
-  channels?: ChannelOption[]
-  success?: boolean
-  totalMovies?: number
 }
 
 /**
- * Filter options response
+ * Filter options response from worker
+ */
+interface WorkerFilterOptionsResponse extends WorkerResponseBase {
+  genres: GenreOption[]
+  countries: CountryOption[]
+  channels: ChannelOption[]
+}
+
+/**
+ * Generic success response
+ */
+interface WorkerSuccessResponse extends WorkerResponseBase {
+  success: boolean
+}
+
+/**
+ * Worker response - discriminated union of all response types
+ * Use type guards or check specific fields to narrow the type
+ */
+export type WorkerResponse =
+  | WorkerErrorResponse
+  | WorkerInitResponse
+  | WorkerQueryResponse
+  | WorkerFilterOptionsResponse
+  | WorkerSuccessResponse
+
+/**
+ * Filter options response structure
  */
 export interface FilterOptionsResponse {
   genres: GenreOption[]
