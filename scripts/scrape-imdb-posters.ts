@@ -7,7 +7,7 @@ const POSTERS_DIR = join(process.cwd(), 'public/posters')
 const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'data/failed-posters.json')
 
 interface FailedDownload {
-  imdbId: string
+  movieId: string
   url: string
   failedAt: string
   error: string
@@ -19,7 +19,7 @@ interface ScrapeStats {
   successful: number
   failed: number
   skipped: number
-  errors: Array<{ imdbId: string; error: string }>
+  errors: Array<{ movieId: string; error: string }>
 }
 
 /**
@@ -159,8 +159,8 @@ function sleep(ms: number): Promise<void> {
 /**
  * Scrape and download poster for a single IMDB ID
  */
-async function scrapePoster(imdbId: string, stats: ScrapeStats): Promise<boolean> {
-  const filepath = join(POSTERS_DIR, `${imdbId}.jpg`)
+async function scrapePoster(movieId: string, stats: ScrapeStats): Promise<boolean> {
+  const filepath = join(POSTERS_DIR, `${movieId}.jpg`)
 
   // Skip if poster already exists
   if (fs.existsSync(filepath) && fs.statSync(filepath).size > 0) {
@@ -172,7 +172,7 @@ async function scrapePoster(imdbId: string, stats: ScrapeStats): Promise<boolean
     stats.attempted++
 
     // Fetch IMDB page
-    const imdbUrl = `https://www.imdb.com/title/${imdbId}/`
+    const imdbUrl = `https://www.imdb.com/title/${movieId}/`
     const html = await fetchHtml(imdbUrl)
 
     // Extract poster URL
@@ -185,13 +185,13 @@ async function scrapePoster(imdbId: string, stats: ScrapeStats): Promise<boolean
     await downloadImage(posterUrl, filepath)
 
     stats.successful++
-    console.log(`✅ [${stats.attempted}/${stats.total}] Successfully downloaded: ${imdbId}`)
+    console.log(`✅ [${stats.attempted}/${stats.total}] Successfully downloaded: ${movieId}`)
     return true
   } catch (error) {
     stats.failed++
     const errorMsg = error instanceof Error ? error.message : String(error)
-    stats.errors.push({ imdbId, error: errorMsg })
-    console.error(`❌ [${stats.attempted}/${stats.total}] Failed: ${imdbId} - ${errorMsg}`)
+    stats.errors.push({ movieId, error: errorMsg })
+    console.error(`❌ [${stats.attempted}/${stats.total}] Failed: ${movieId} - ${errorMsg}`)
     return false
   }
 }
@@ -200,13 +200,13 @@ async function scrapePoster(imdbId: string, stats: ScrapeStats): Promise<boolean
  * Main function to scrape IMDB posters
  */
 async function scrapeImdbPosters(options: {
-  imdbIds?: string[]
+  movieIds?: string[]
   limit?: number
   delayMs?: number
   dryRun?: boolean
   useFailedList?: boolean
 }) {
-  const { imdbIds, limit, delayMs = 1000, dryRun = false, useFailedList = false } = options
+  const { movieIds, limit, delayMs = 1000, dryRun = false, useFailedList = false } = options
 
   // Ensure posters directory exists
   if (!fs.existsSync(POSTERS_DIR)) {
@@ -228,12 +228,12 @@ async function scrapeImdbPosters(options: {
     )
 
     // Filter to only IMDb IDs
-    idsToScrape = failedDownloads.filter(f => f.imdbId.startsWith('tt')).map(f => f.imdbId)
+    idsToScrape = failedDownloads.filter(f => f.movieId.startsWith('tt')).map(f => f.movieId)
 
     console.log(`\n📊 Found ${failedDownloads.length} failed poster downloads`)
     console.log(`📊 ${idsToScrape.length} are IMDb movies`)
-  } else if (imdbIds && imdbIds.length > 0) {
-    idsToScrape = imdbIds
+  } else if (movieIds && movieIds.length > 0) {
+    idsToScrape = movieIds
   } else {
     console.error('❌ Error: No IMDB IDs provided. Use --ids or --use-failed-list')
     process.exit(1)
@@ -269,10 +269,10 @@ async function scrapeImdbPosters(options: {
   const successfulIds: string[] = []
 
   // Process each IMDB ID
-  for (const imdbId of toScrape) {
-    const success = await scrapePoster(imdbId, stats)
-    if (success && fs.existsSync(join(POSTERS_DIR, `${imdbId}.jpg`))) {
-      successfulIds.push(imdbId)
+  for (const movieId of toScrape) {
+    const success = await scrapePoster(movieId, stats)
+    if (success && fs.existsSync(join(POSTERS_DIR, `${movieId}.jpg`))) {
+      successfulIds.push(movieId)
     }
 
     // Rate limiting delay (be respectful to IMDB)
@@ -292,7 +292,7 @@ async function scrapeImdbPosters(options: {
       fs.readFileSync(FAILED_DOWNLOADS_FILE, 'utf-8')
     )
     const successSet = new Set(successfulIds)
-    const updatedFailures = failedDownloads.filter(f => !successSet.has(f.imdbId))
+    const updatedFailures = failedDownloads.filter(f => !successSet.has(f.movieId))
     fs.writeFileSync(FAILED_DOWNLOADS_FILE, JSON.stringify(updatedFailures, null, 2))
     console.log(
       `✅ Updated failed-posters.json (${failedDownloads.length} → ${updatedFailures.length})`
@@ -316,12 +316,12 @@ async function scrapeImdbPosters(options: {
   if (stats.errors.length > 0 && stats.errors.length <= 10) {
     console.log('\n❌ Errors:')
     stats.errors.forEach(e => {
-      console.log(`  ${e.imdbId}: ${e.error}`)
+      console.log(`  ${e.movieId}: ${e.error}`)
     })
   } else if (stats.errors.length > 10) {
     console.log(`\n❌ ${stats.errors.length} errors occurred (showing first 10):`)
     stats.errors.slice(0, 10).forEach(e => {
-      console.log(`  ${e.imdbId}: ${e.error}`)
+      console.log(`  ${e.movieId}: ${e.error}`)
     })
   }
 
@@ -331,7 +331,7 @@ async function scrapeImdbPosters(options: {
 // Parse command line arguments
 const args = process.argv.slice(2)
 const options: {
-  imdbIds?: string[]
+  movieIds?: string[]
   limit?: number
   delayMs?: number
   dryRun?: boolean
@@ -341,7 +341,7 @@ const options: {
 for (let i = 0; i < args.length; i++) {
   const arg = args[i]
   if (arg === '--ids' && args[i + 1]) {
-    options.imdbIds = args[i + 1]!.split(',')
+    options.movieIds = args[i + 1]!.split(',')
     i++
   } else if (arg === '--limit' && args[i + 1]) {
     options.limit = parseInt(args[i + 1]!, 10)

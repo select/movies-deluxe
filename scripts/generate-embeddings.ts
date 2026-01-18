@@ -35,7 +35,8 @@ async function main() {
   // 3. Load movies
   const db = await loadMoviesDatabase()
   const movies = Object.values(db).filter(
-    (entry): entry is MovieEntry => typeof entry === 'object' && entry !== null && 'imdbId' in entry
+    (entry): entry is MovieEntry =>
+      typeof entry === 'object' && entry !== null && 'movieId' in entry
   )
 
   const limit = process.argv.includes('--limit')
@@ -55,7 +56,7 @@ async function main() {
     const movie = movies[i]!
 
     // Skip if already in cache
-    if (embeddingsCache[movie.imdbId]) {
+    if (embeddingsCache[movie.movieId]) {
       skipCount++
       continue
     }
@@ -67,7 +68,7 @@ async function main() {
         prompt: text,
       })
 
-      embeddingsCache[movie.imdbId] = response.embedding
+      embeddingsCache[movie.movieId] = response.embedding
       newCount++
 
       if (newCount % 10 === 0) {
@@ -76,7 +77,7 @@ async function main() {
         await writeFile(EMBEDDINGS_FILE, JSON.stringify(embeddingsCache))
       }
     } catch (err) {
-      logger.error(`Failed to generate embedding for ${movie.imdbId}:`, err)
+      logger.error(`Failed to generate embedding for ${movie.movieId}:`, err)
       errorCount++
     }
   }

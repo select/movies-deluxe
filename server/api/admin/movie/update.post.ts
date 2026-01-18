@@ -90,7 +90,7 @@ export default defineEventHandler(async event => {
             currentId = tempId
             movie = existing
           } else {
-            movie.imdbId = tempId
+            movie.movieId = tempId
             db[tempId] = movie
             delete db[currentId]
 
@@ -183,7 +183,7 @@ export default defineEventHandler(async event => {
         // Update collections that reference the old ID
         await updateMovieIdInCollections(currentId, targetId)
       } else {
-        movie.imdbId = targetId
+        movie.movieId = targetId
         db[targetId] = movie
         delete db[currentId]
 

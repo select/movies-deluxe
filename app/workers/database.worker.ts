@@ -125,8 +125,6 @@ interface QueuedMessage {
   sql?: string
   params?: (string | number)[]
   url?: string
-  imdbId?: string
-  imdbIds?: string[]
   movieId?: string
   movieIds?: string[]
   parsedQuery?: {
@@ -231,23 +229,23 @@ async function handleMessage(e: QueuedMessage) {
       const idsToFetch: string[] = []
 
       // Check cache first
-      for (const imdbId of movieIds as string[]) {
-        const cached = movieCache.get(imdbId)
+      for (const movieId of movieIds as string[]) {
+        const cached = movieCache.get(movieId)
         if (cached) {
           results.push(cached)
         } else {
-          idsToFetch.push(imdbId)
+          idsToFetch.push(movieId)
         }
       }
 
       if (idsToFetch.length > 0) {
         const placeholders = idsToFetch.map(() => '?').join(',')
         const sql = `
-          SELECT m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
+          SELECT m.movieId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
                  m.primarySourceType as sourceType, m.primaryChannelName as channelName,
                  m.verified, m.lastUpdated, m.genre, m.country
           FROM movies m
-          WHERE m.imdbId IN (${placeholders})
+          WHERE m.movieId IN (${placeholders})
         `
 
         const dbResults = db.exec({
@@ -263,14 +261,14 @@ async function handleMessage(e: QueuedMessage) {
             ...row,
             verified: row.verified === 1,
           }
-          movieCache.set(row.imdbId as string, transformed)
+          movieCache.set(row.movieId as string, transformed)
           results.push(transformed)
         }
       }
 
       // Sort results to match the order of requested IDs
       const sortedResults = (movieIds as string[])
-        .map(imdbId => results.find(r => r.imdbId === imdbId))
+        .map(movieId => results.find(r => r.movieId === movieId))
         .filter(Boolean)
 
       self.postMessage({ id, result: sortedResults })
@@ -294,6 +292,8 @@ async function handleMessage(e: QueuedMessage) {
           embedding.byteOffset,
           embedding.byteLength / 4
         )
+      } else if (embedding instanceof Float32Array) {
+        bindEmbedding = embedding
       } else {
         self.postMessage({ id, error: `Invalid embedding format: expected number[] or Uint8Array` })
         return
@@ -301,12 +301,12 @@ async function handleMessage(e: QueuedMessage) {
 
       let sql = `
         SELECT 
-          m.imdbId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
+          m.movieId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
           m.primarySourceType as sourceType, m.primaryChannelName as channelName,
           m.verified, m.lastUpdated, m.genre, m.country,
           v.distance
         FROM vec_movies v
-        INNER JOIN movies m ON v.imdbId = m.imdbId
+        INNER JOIN movies m ON v.movieId = m.movieId
         WHERE v.embedding MATCH ?
           AND k = ?
       `

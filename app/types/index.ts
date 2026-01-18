@@ -40,6 +40,7 @@ import type {
   SortOption,
   SortState,
   FilterState,
+  SearchMode,
 } from '../../shared/types/filters'
 
 /**
@@ -101,6 +102,7 @@ export type {
   SortOption,
   SortState,
   FilterState,
+  SearchMode,
 }
 
 // Re-export utility functions

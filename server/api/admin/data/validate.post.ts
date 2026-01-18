@@ -20,7 +20,7 @@ interface ValidationOptions {
 
 interface ValidationIssue {
   severity: 'error' | 'warning' | 'info'
-  category: 'imdbId' | 'title' | 'sources' | 'metadata' | 'duplicates' | 'orphaned' | 'schema'
+  category: 'movieId' | 'title' | 'sources' | 'metadata' | 'duplicates' | 'orphaned' | 'schema'
   movieId: string
   message: string
   fixable: boolean
@@ -44,19 +44,19 @@ function validateImdbId(movieId: string, movie: MovieEntry): ValidationIssue | n
   if (!isImdbId(movieId) && !isTemporaryId(movieId)) {
     return {
       severity: 'error',
-      category: 'imdbId',
+      category: 'movieId',
       movieId,
       message: `Invalid ID format: "${movieId}". Must be IMDB ID (tt1234567) or temporary ID (archive-*, youtube-*)`,
       fixable: false,
     }
   }
 
-  if (movie.imdbId !== movieId) {
+  if (movie.movieId !== movieId) {
     return {
       severity: 'error',
-      category: 'imdbId',
+      category: 'movieId',
       movieId,
-      message: `ID mismatch: key="${movieId}" but movie.imdbId="${movie.imdbId}"`,
+      message: `ID mismatch: key="${movieId}" but movie.movieId="${movie.movieId}"`,
       fixable: true,
     }
   }
@@ -421,8 +421,8 @@ function fixIssue(db: MoviesDatabase, issue: ValidationIssue): boolean {
 
   try {
     // Fix ID mismatch
-    if (issue.category === 'imdbId' && issue.message.includes('ID mismatch')) {
-      movie.imdbId = issue.movieId
+    if (issue.category === 'movieId' && issue.message.includes('ID mismatch')) {
+      movie.movieId = issue.movieId
       issue.fixed = true
       return true
     }

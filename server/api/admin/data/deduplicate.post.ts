@@ -16,12 +16,12 @@ interface DeduplicateOptions {
 
 interface DeduplicateResult {
   titleGroups: number
-  imdbIdGroups: number
+  movieIdGroups: number
   mergedCount: number
   removedCount: number
   totalMovies: number
   groups?: Array<{
-    type: 'title' | 'imdbId'
+    type: 'title' | 'movieId'
     entries: Array<{ id: string; title: string; sources: number }>
   }>
 }
@@ -114,17 +114,17 @@ function findDuplicateGroups(
 function findSameImdbIdGroups(
   entries: Array<[string, MovieEntry]>
 ): Array<Array<[string, MovieEntry]>> {
-  const imdbIdMap = new Map<string, Array<[string, MovieEntry]>>()
+  const movieIdMap = new Map<string, Array<[string, MovieEntry]>>()
 
   for (const [key, entry] of entries) {
-    if (entry.imdbId.startsWith('tt')) {
-      const existing = imdbIdMap.get(entry.imdbId) || []
+    if (entry.movieId.startsWith('tt')) {
+      const existing = movieIdMap.get(entry.movieId) || []
       existing.push([key, entry])
-      imdbIdMap.set(entry.imdbId, existing)
+      movieIdMap.set(entry.movieId, existing)
     }
   }
 
-  return Array.from(imdbIdMap.values()).filter(group => group.length > 1)
+  return Array.from(movieIdMap.values()).filter(group => group.length > 1)
 }
 
 /**
@@ -168,7 +168,7 @@ function chooseBestEntry(entries: Array<[string, MovieEntry]>): [string, MovieEn
     const [_, movieEntry] = entry
     let score = 0
 
-    if (movieEntry.imdbId.startsWith('tt')) score += 100
+    if (movieEntry.movieId.startsWith('tt')) score += 100
     if (movieEntry.metadata) score += 50
     score += movieEntry.sources.length * 5
     if (movieEntry.year) score += 10
@@ -241,13 +241,13 @@ export default defineEventHandler(async event => {
       .filter(([key]) => !key.startsWith('_'))
       .map(([key, value]) => [key, value as MovieEntry] as [string, MovieEntry])
 
-    const imdbIdGroups = findSameImdbIdGroups(entries)
+    const movieIdGroups = findSameImdbIdGroups(entries)
     const titleGroups = findDuplicateGroups(entries, threshold)
-    const allGroups = [...imdbIdGroups, ...titleGroups]
+    const allGroups = [...movieIdGroups, ...titleGroups]
 
     const result: DeduplicateResult = {
       titleGroups: titleGroups.length,
-      imdbIdGroups: imdbIdGroups.length,
+      movieIdGroups: movieIdGroups.length,
       mergedCount: 0,
       removedCount: 0,
       totalMovies: entries.length,
@@ -255,7 +255,7 @@ export default defineEventHandler(async event => {
 
     if (reportOnly) {
       result.groups = allGroups.map(group => ({
-        type: imdbIdGroups.includes(group) ? 'imdbId' : 'title',
+        type: movieIdGroups.includes(group) ? 'movieId' : 'title',
         entries: group.map(([id, entry]) => ({
           id,
           title: entry.title,

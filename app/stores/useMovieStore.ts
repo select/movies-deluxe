@@ -186,7 +186,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Map MovieEntry to LightweightMovie
    */
   const mapMovieToLightweight = (movie: {
-    readonly imdbId: string
+    readonly movieId: string
     readonly title: string
     readonly year?: number
     readonly metadata?: {
@@ -204,7 +204,7 @@ export const useMovieStore = defineStore('movie', () => {
     readonly verified?: boolean
   }): LightweightMovie => {
     return {
-      imdbId: movie.imdbId,
+      movieId: movie.movieId,
       title: movie.title,
       year: movie.year,
       imdbRating: movie.metadata?.imdbRating,
@@ -260,11 +260,11 @@ export const useMovieStore = defineStore('movie', () => {
    * Fetch lightweight movie details for specific IDs (with caching)
    * Populates the lightweightMovieCache and does not return movies directly
    */
-  const fetchMoviesByIds = async (imdbIds: string[]): Promise<void> => {
-    if (!imdbIds || imdbIds.length === 0) return
+  const fetchMoviesByIds = async (movieIds: string[]): Promise<void> => {
+    if (!movieIds || movieIds.length === 0) return
 
     // Filter out IDs that are already cached or pending
-    const uncachedIds = imdbIds.filter(
+    const uncachedIds = movieIds.filter(
       id => !lightweightMovieCache.value.has(id) && !pendingIds.has(id)
     )
 
@@ -281,11 +281,11 @@ export const useMovieStore = defineStore('movie', () => {
 
       // Cache the results directly in the lightweight cache (no conversion needed)
       lightweightMovies.forEach(movie => {
-        lightweightMovieCache.value.set(movie.imdbId, movie)
+        lightweightMovieCache.value.set(movie.movieId, movie)
       })
 
       // Handle IDs that were not found in the database (e.g., temporary IDs or missing entries)
-      const foundIds = new Set(lightweightMovies.map(m => m.imdbId))
+      const foundIds = new Set(lightweightMovies.map(m => m.movieId))
       const missingIds = uncachedIds.filter(id => !foundIds.has(id))
 
       if (missingIds.length > 0) {
@@ -310,17 +310,17 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Get a single movie by ID (loads from JSON file on demand)
    */
-  const getMovieById = async (imdbId: string): Promise<MovieEntry | undefined> => {
-    console.log('[getMovieById] Getting movie:', imdbId)
+  const getMovieById = async (movieId: string): Promise<MovieEntry | undefined> => {
+    console.log('[getMovieById] Getting movie:', movieId)
 
     // Fetch full details from JSON file (static deployment)
     console.log('[getMovieById] Fetching from JSON file')
     try {
       const movie = await $fetch<MovieEntry>(
-        `${useRuntimeConfig().app.baseURL}movies/${imdbId}.json`
+        `${useRuntimeConfig().app.baseURL}movies/${movieId}.json`
       )
       // Validate that we got a proper movie object (not HTML or malformed data)
-      if (movie && typeof movie === 'object' && movie.imdbId && movie.title) {
+      if (movie && typeof movie === 'object' && movie.movieId && movie.title) {
         console.log('[getMovieById] Successfully fetched movie from JSON')
         return movie
       }
@@ -328,7 +328,7 @@ export const useMovieStore = defineStore('movie', () => {
       console.warn('[getMovieById] Invalid movie data received')
       return undefined
     } catch (err) {
-      console.error(`[getMovieById] Failed to fetch movie details for ${imdbId}:`, err)
+      console.error(`[getMovieById] Failed to fetch movie details for ${movieId}:`, err)
       return undefined
     }
   }
@@ -383,7 +383,7 @@ export const useMovieStore = defineStore('movie', () => {
         const searchConditions: string[] = []
 
         if (parsed.title) {
-          joins.push(`JOIN fts_movies ft ON m.imdbId = ft.imdbId`)
+          joins.push(`JOIN fts_movies ft ON m.movieId = ft.movieId`)
           searchConditions.push(`ft.title MATCH ?`)
           params.push(`"${parsed.title.replace(/"/g, '""')}"`)
         }
@@ -392,7 +392,7 @@ export const useMovieStore = defineStore('movie', () => {
           parsed.actors.forEach((actor, i) => {
             const ma = `ma${i}`
             const fa = `fa${i}`
-            joins.push(`JOIN movie_actors ${ma} ON m.imdbId = ${ma}.movieId`)
+            joins.push(`JOIN movie_actors ${ma} ON m.movieId = ${ma}.movieId`)
             joins.push(`JOIN fts_actors ${fa} ON ${ma}.actorId = ${fa}.actorId`)
             searchConditions.push(`${fa}.name MATCH ?`)
             params.push(`"${actor.replace(/"/g, '""')}"`)
@@ -403,7 +403,7 @@ export const useMovieStore = defineStore('movie', () => {
           parsed.directors.forEach((director, i) => {
             const md = `md${i}`
             const fd = `fd${i}`
-            joins.push(`JOIN movie_directors ${md} ON m.imdbId = ${md}.movieId`)
+            joins.push(`JOIN movie_directors ${md} ON m.movieId = ${md}.movieId`)
             joins.push(`JOIN fts_directors ${fd} ON ${md}.directorId = ${fd}.directorId`)
             searchConditions.push(`${fd}.name MATCH ?`)
             params.push(`"${director.replace(/"/g, '""')}"`)
@@ -414,7 +414,7 @@ export const useMovieStore = defineStore('movie', () => {
           parsed.writers.forEach((writer, i) => {
             const mw = `mw${i}`
             const fw = `fw${i}`
-            joins.push(`JOIN movie_writers ${mw} ON m.imdbId = ${mw}.movieId`)
+            joins.push(`JOIN movie_writers ${mw} ON m.movieId = ${mw}.movieId`)
             joins.push(`JOIN fts_writers ${fw} ON ${mw}.writerId = ${fw}.writerId`)
             searchConditions.push(`${fw}.name MATCH ?`)
             params.push(`"${writer.replace(/"/g, '""')}"`)
@@ -422,13 +422,13 @@ export const useMovieStore = defineStore('movie', () => {
         }
 
         if (parsed.general) {
-          joins.push(`JOIN fts_movies fg ON m.imdbId = fg.imdbId`)
+          joins.push(`JOIN fts_movies fg ON m.movieId = fg.movieId`)
           searchConditions.push(`fg.title MATCH ?`)
           params.push(`"${parsed.general.replace(/"/g, '""')}"`)
         }
 
         sql = `
-          SELECT DISTINCT m.imdbId
+          SELECT DISTINCT m.movieId
           FROM movies m
           ${joins.join(' ')}
           WHERE ${searchConditions.join(' AND ')}
@@ -437,10 +437,10 @@ export const useMovieStore = defineStore('movie', () => {
         // General search across all fields using UNION for better performance and correctness
         const generalTerm = `"${parsed.general.replace(/"/g, '""')}"`
         sql = `
-          SELECT m.imdbId
+          SELECT m.movieId
           FROM movies m
-          WHERE m.imdbId IN (
-            SELECT imdbId FROM fts_movies WHERE title MATCH ?
+          WHERE m.movieId IN (
+            SELECT movieId FROM fts_movies WHERE title MATCH ?
             UNION
             SELECT ma.movieId FROM fts_actors fa JOIN movie_actors ma ON fa.actorId = ma.actorId WHERE name MATCH ?
             UNION
@@ -451,12 +451,12 @@ export const useMovieStore = defineStore('movie', () => {
         `
         params.push(generalTerm, generalTerm, generalTerm, generalTerm)
       } else {
-        sql = `SELECT m.imdbId FROM movies m WHERE 1=1`
+        sql = `SELECT m.movieId FROM movies m WHERE 1=1`
       }
     } else {
       // No search query - query all movies
       sql = `
-        SELECT m.imdbId
+        SELECT m.movieId
         FROM movies m
         WHERE 1=1
       `
@@ -623,13 +623,13 @@ export const useMovieStore = defineStore('movie', () => {
         // Perform vector search with filters
         console.log('[executeFilterQuery] Performing vector search...')
         const vectorResults = await vectorSearch.search(query, 100, where, whereParams)
-        results = vectorResults.map(r => r.imdbId)
+        results = vectorResults.map(r => r.movieId)
       } else {
         // Exact search or no query
         const { sql, params } = buildFilterQuery(query)
         console.log('[executeFilterQuery] Executing exact query with', params.length, 'parameters')
-        const dbResults = await db.query<{ imdbId: string }>(sql, params)
-        results = dbResults.map(row => row.imdbId)
+        const dbResults = await db.query<{ movieId: string }>(sql, params)
+        results = dbResults.map(row => row.movieId)
       }
 
       // Check if this request is still current
@@ -650,30 +650,30 @@ export const useMovieStore = defineStore('movie', () => {
    * Get similar movies for a given movie ID using vector search
    */
   const getSimilarMovies = async (
-    imdbId: string,
+    movieId: string,
     limit: number = 10
   ): Promise<LightweightMovie[]> => {
     // Check cache first
-    if (similarMoviesCache.value.has(imdbId)) {
-      return similarMoviesCache.value.get(imdbId) || []
+    if (similarMoviesCache.value.has(movieId)) {
+      return similarMoviesCache.value.get(movieId) || []
     }
 
     const vectorSearch = useVectorSearch()
     try {
-      const results = await vectorSearch.findSimilar(imdbId, limit)
+      const results = await vectorSearch.findSimilar(movieId, limit)
 
       // Convert to lightweight movies and cache them
       const lightweightResults = results.map(r => {
         // Ensure movie is also in the general lightweight cache
         const lightweight = mapMovieToLightweight(r)
-        if (!lightweightMovieCache.value.has(lightweight.imdbId)) {
-          lightweightMovieCache.value.set(lightweight.imdbId, lightweight)
+        if (!lightweightMovieCache.value.has(lightweight.movieId)) {
+          lightweightMovieCache.value.set(lightweight.movieId, lightweight)
         }
         return lightweight
       })
 
       // Update both caches
-      similarMoviesCache.value.set(imdbId, lightweightResults)
+      similarMoviesCache.value.set(movieId, lightweightResults)
       lightweightMovieCache.value = new Map(lightweightMovieCache.value)
       similarMoviesCache.value = new Map(similarMoviesCache.value)
 

@@ -277,7 +277,7 @@ class BlockedYouTubeDetector {
             if (!videoToMovieMap.has(source.id)) {
               videoToMovieMap.set(source.id, [])
             }
-            videoToMovieMap.get(source.id)!.push(movie.imdbId)
+            videoToMovieMap.get(source.id)!.push(movie.movieId)
           }
         }
       }
@@ -367,7 +367,7 @@ class BlockedYouTubeDetector {
               : 'YouTube video blocked/unavailable'
 
             updatedMovies++
-            logger.info(`Marked movie ${movie.imdbId} (${movie.title}) as BLOCKED`)
+            logger.info(`Marked movie ${movie.movieId} (${movie.title}) as BLOCKED`)
           }
         }
 
@@ -386,8 +386,8 @@ class BlockedYouTubeDetector {
       // Convert back to object format
       const updatedData: Record<string, MovieEntry> = {}
       for (const movie of movies) {
-        if (typeof movie === 'object' && movie.imdbId) {
-          updatedData[movie.imdbId] = movie
+        if (typeof movie === 'object' && movie.movieId) {
+          updatedData[movie.movieId] = movie
         }
       }
 

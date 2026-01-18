@@ -2,7 +2,7 @@
  * Movie JSON Generation Script
  *
  * Splits the large data/movies.json into individual JSON files
- * in public/movies/[imdbId].json for on-demand loading.
+ * in public/movies/[movieId].json for on-demand loading.
  */
 
 import { generateMovieJSON } from '../server/utils/generateMovieJSON'

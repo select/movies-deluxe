@@ -163,7 +163,7 @@ const filteredMovies = computed(() => {
   if (props.movieIds) {
     // For movieIds mode, we'll handle filtering differently
     // For now, return the movieIds as lightweight movies for search
-    const movieList = props.movieIds.map(id => ({ imdbId: id, title: '' }) as LightweightMovie)
+    const movieList = props.movieIds.map(id => ({ movieId: id, title: '' }) as LightweightMovie)
 
     if (searchQuery.value.trim()) {
       // TODO: Implement search for movieIds mode

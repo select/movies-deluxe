@@ -105,7 +105,7 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
     // Extract movies (filter out _schema)
     const movies = Object.values(data as MoviesDatabase).filter(
       (item: unknown): item is MovieEntry =>
-        typeof item === 'object' && item !== null && 'imdbId' in item
+        typeof item === 'object' && item !== null && 'movieId' in item
     )
 
     let totalSources = 0
@@ -153,7 +153,7 @@ export default defineEventHandler(async (event): Promise<DeduplicationResult> =>
     // Write the updated data back to the file
     const updatedData = {
       _schema: data._schema,
-      ...Object.fromEntries(movies.map(movie => [movie.imdbId, movie])),
+      ...Object.fromEntries(movies.map(movie => [movie.movieId, movie])),
     }
 
     // Update the lastUpdated timestamp
