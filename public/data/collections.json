@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-19T00:04:27.411Z"
+    "lastUpdated": "2026-01-19T00:09:10.338Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1760,6 +1760,303 @@
       "family"
     ]
   },
+  "monster-madness": {
+    "id": "monster-madness",
+    "name": "Monster Madness",
+    "description": "Giant monster movies featuring the legendary kaiju: Godzilla, King Kong, and Gamera. Classic creature features from Japan and beyond.",
+    "movieIds": [
+      "youtube-TwcGiBaQVk4",
+      "tt0047034",
+      "tt1543211",
+      "archive-godzilla-1954-colorization-2020",
+      "tt0048127",
+      "tt0197521",
+      "tt0059346",
+      "youtube-0eOtvOC324M",
+      "youtube-uFL5GK7qzy4",
+      "youtube-kor6ghJ344I",
+      "youtube-AZWDlEHIi_4",
+      "tt0116390",
+      "tt0184503",
+      "youtube-h_wwLcUX1LU",
+      "youtube-1MlbLcd_TWs",
+      "tt0113142",
+      "tt0467923",
+      "archive-gamera-tai-uchu-kaiju-bairasu-1968",
+      "archive-gamera-tai-daiakuju-giron-1969",
+      "youtube-171tNN5CuqE",
+      "youtube-yI0Qkiv8fVQ",
+      "tt0024216",
+      "archive-king-kong-1933-espanol_202401",
+      "tt0158780",
+      "archive-Fire_Monsters_Against_The_Son_of_Hercules",
+      "archive-MonsterA.k.a.Monstroid"
+    ],
+    "createdAt": "2026-01-19T00:50:00.000Z",
+    "updatedAt": "2026-01-18T23:57:04.505Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Godzilla",
+        "filterState": {
+          "searchQuery": "Godzilla",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "King Kong",
+        "filterState": {
+          "searchQuery": "King Kong",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Gamera",
+        "filterState": {
+          "searchQuery": "Gamera",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "kaiju",
+      "monsters",
+      "giant-creatures",
+      "japanese-cinema",
+      "sci-fi",
+      "action"
+    ]
+  },
+  "sherlock-holmes": {
+    "id": "sherlock-holmes",
+    "name": "Sherlock Holmes",
+    "description": "Classic detective films featuring the legendary Sherlock Holmes and Dr. Watson solving mysteries.",
+    "movieIds": [
+      "tt0024625",
+      "tt0038494",
+      "tt0099732",
+      "tt0029565",
+      "youtube-oSHUhqa-b6I",
+      "tt0161929",
+      "tt0988045",
+      "tt0007338",
+      "tt0013597",
+      "archive-SherlockHolmes-TheManWhoDisappearedfailedPilot",
+      "youtube-kBpqVDtQyuc",
+      "youtube-psU0YDidS6o",
+      "youtube-f46uuHG6SYw",
+      "youtube-inDZjZTLL1c",
+      "youtube-hdGNbzud_Xk",
+      "archive-Sherlock_Holmes_1954",
+      "tt0035317",
+      "tt0035318",
+      "tt0291476",
+      "youtube-0qILka1Lz2U",
+      "tt0036348",
+      "archive-svtplay-KQ7Y4dV",
+      "tt0036349",
+      "archive-sherlock-holmes-movies-colorized",
+      "archive-svtplay-jpz1EWG",
+      "archive-svtplay-8YwYpvJ",
+      "archive-sherlock-holmes-och-kvinnan-i-gront",
+      "youtube-Ae5KnCP6QbI",
+      "archive-SherlockHolmes-TheWomanInGreenVost-fr",
+      "youtube-UsoGpbn3GKM",
+      "tt34381727",
+      "tt0022373",
+      "archive-sherlock-holmes-fatal-hour-with-arthur-wontner-1931-1080p-hd-film",
+      "tt1144469",
+      "tt0011907",
+      "tt0031022",
+      "tt0037794",
+      "tt0037168",
+      "tt0037248",
+      "tt0023469",
+      "tt0037303",
+      "tt0027136",
+      "youtube-toZblGsqNt0",
+      "tt0406934"
+    ],
+    "createdAt": "2026-01-11T19:30:00.000Z",
+    "updatedAt": "2026-01-11T22:35:46.781Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Sherlock Holmes",
+        "filterState": {
+          "searchQuery": "Sherlock Holmes",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "mystery",
+      "detective",
+      "classic",
+      "crime",
+      "british"
+    ]
+  },
+  "vampire-movies": {
+    "id": "vampire-movies",
+    "name": "Vampire Movies",
+    "description": "Classic and iconic vampire films from silent era to modern cinema, featuring Dracula, Nosferatu, and other creatures of the night.",
+    "movieIds": [
+      "archive-13.-the-vampire-men",
+      "tt0005339",
+      "youtube-AptpRjLrK60",
+      "tt24733392",
+      "youtube-M-AxNOJCUHo",
+      "youtube-_dWZzsy-MNo",
+      "tt0207145",
+      "tt0054285",
+      "archive-AtomAgeVampireSmaller",
+      "youtube-NsgT7dqLG1U",
+      "youtube-ZjQWYUlNSAA",
+      "tt0057603",
+      "youtube-T1C-8AgvstM",
+      "tt8075634",
+      "archive-DEVILDESERTGOLIATHVAMPIRES",
+      "archive-ATOMAGESPIDERISLAND",
+      "archive-WEREWOLFWASHINGTONGRAVEVAMPIRE",
+      "tt0055650",
+      "youtube-dHBwHSzbmIk",
+      "tt0071276",
+      "tt0103957",
+      "tt0026230",
+      "tt0069933",
+      "tt0059100",
+      "tt0021814",
+      "tt4401006",
+      "tt0062957",
+      "tt0011221",
+      "tt0068658",
+      "archive-horrible-sexy-vampire-1970-walst-davis-barta-barri-anastsio-campoy-susan-carvasa",
+      "tt5886388",
+      "tt0758755",
+      "tt0209091",
+      "tt0436670",
+      "tt0764729",
+      "tt0006206",
+      "tt0067341",
+      "tt0018097",
+      "youtube-jfaFNpb-35M",
+      "archive-lust-for-a-vampire-1971_202405",
+      "tt0081107",
+      "archive-mark-of-the-vampire-1935_202507",
+      "tt6554976",
+      "tt0087796",
+      "tt0787495",
+      "youtube-9dLbFna6d4s",
+      "tt5040012",
+      "tt0013442",
+      "tt12059016",
+      "archive-Revised-shockerInternetDriveInWeek7Redo-Vampires",
+      "tt0121694",
+      "tt10523424",
+      "tt10873438",
+      "tt0046802",
+      "youtube-Y7jL_eMVRqg",
+      "tt0057156",
+      "tt0065854",
+      "tt4537888",
+      "tt0067490",
+      "tt0056633",
+      "archive-the-vampire-and-the-ballerina-1960-full-movie-english-dub-1080p-hd-blu-ray",
+      "tt0024727",
+      "youtube-5ZwKV-ST7NE",
+      "tt0065762",
+      "archive-the-vampires-night-orgy-1974",
+      "archive-the-werewolf-vs-the-vampire-woman-1971",
+      "archive-the-werewolf-vs-the-vampire-woman_202407",
+      "tt0090196",
+      "tt0053340",
+      "archive-vampire-circus-1972_202406",
+      "archive-vampire-ecstasy-1973",
+      "youtube-wKO6n8KiKvc",
+      "tt0044925",
+      "youtube-tAoCycVmdcA",
+      "youtube-CPYfv-rOQcI",
+      "tt0023649",
+      "tt3675748",
+      "youtube-moUHNMXUBGM",
+      "archive-young-hannah-queen-of-the-vampires-1973",
+      "archive-the-vampire-doll-1970_202507",
+      "tt0060168",
+      "archive-blood-of-draculas-castle",
+      "archive-blood-of-draculas-castle-1969",
+      "archive-bram-stokers-dracula-1992_202108",
+      "youtube-4k7ujejgchU",
+      "youtube-0a1PSsHTZ0Q",
+      "youtube-KwZyXhUkVws",
+      "tt29418698",
+      "tt0067017",
+      "archive-DraculaVs.FrankensteinakaAssignmentTerrorPaulNaschy",
+      "youtube-iVAk7bkNMqE",
+      "youtube-noTRODcPm50",
+      "youtube-rEduLaA5Vcc",
+      "archive-dracula-s-daughter-1936.",
+      "archive-draculas-daughter-colorized-1936-720p",
+      "archive-horror-of-dracula-1958_202406",
+      "archive-house-of-dracula",
+      "archive-HouseOfDracula-Trailer",
+      "tt0445212",
+      "archive-saga-of-dracula-1972",
+      "tt0067713",
+      "archive-scars-of-dracula-1970_202406",
+      "archive-son-of-dracula-1943_202406",
+      "archive-the-brides-of-dracula-1960_202406",
+      "tt0031796",
+      "tt0070634",
+      "archive-the-satanic-rites-of-dracula-1973",
+      "archive-zoltan-hound-of-dracula-1977",
+      "archive-evil-of-dracula-1974",
+      "archive-lake-of-dracula-1971",
+      "tt0040068"
+    ],
+    "createdAt": "2026-01-18T20:56:00.000Z",
+    "updatedAt": "2026-01-19T00:09:10.338Z",
+    "savedQueries": [
+      {
+        "searchQuery": "vampire",
+        "filterState": {
+          "searchQuery": "vampire",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "dracula",
+        "filterState": {
+          "searchQuery": "dracula",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "horror",
+      "vampires",
+      "gothic",
+      "supernatural",
+      "classic-horror"
+    ],
+    "enabled": true
+  },
   "martial-arts": {
     "id": "martial-arts",
     "name": "Martial Arts",
@@ -1971,81 +2268,6 @@
       "duo",
       "slapstick",
       "wordplay"
-    ]
-  },
-  "monster-madness": {
-    "id": "monster-madness",
-    "name": "Monster Madness",
-    "description": "Giant monster movies featuring the legendary kaiju: Godzilla, King Kong, and Gamera. Classic creature features from Japan and beyond.",
-    "movieIds": [
-      "youtube-TwcGiBaQVk4",
-      "tt0047034",
-      "tt1543211",
-      "archive-godzilla-1954-colorization-2020",
-      "tt0048127",
-      "tt0197521",
-      "tt0059346",
-      "youtube-0eOtvOC324M",
-      "youtube-uFL5GK7qzy4",
-      "youtube-kor6ghJ344I",
-      "youtube-AZWDlEHIi_4",
-      "tt0116390",
-      "tt0184503",
-      "youtube-h_wwLcUX1LU",
-      "youtube-1MlbLcd_TWs",
-      "tt0113142",
-      "tt0467923",
-      "archive-gamera-tai-uchu-kaiju-bairasu-1968",
-      "archive-gamera-tai-daiakuju-giron-1969",
-      "youtube-171tNN5CuqE",
-      "youtube-yI0Qkiv8fVQ",
-      "tt0024216",
-      "archive-king-kong-1933-espanol_202401",
-      "tt0158780",
-      "archive-Fire_Monsters_Against_The_Son_of_Hercules",
-      "archive-MonsterA.k.a.Monstroid"
-    ],
-    "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-01-18T23:57:04.505Z",
-    "savedQueries": [
-      {
-        "searchQuery": "Godzilla",
-        "filterState": {
-          "searchQuery": "Godzilla",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "King Kong",
-        "filterState": {
-          "searchQuery": "King Kong",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "Gamera",
-        "filterState": {
-          "searchQuery": "Gamera",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "kaiju",
-      "monsters",
-      "giant-creatures",
-      "japanese-cinema",
-      "sci-fi",
-      "action"
     ]
   },
   "elia-kazan": {
@@ -3649,6 +3871,51 @@
     ],
     "enabled": true
   },
+  "surrealist-cinema": {
+    "id": "surrealist-cinema",
+    "name": "Surrealist Cinema",
+    "description": "Mind-bending surrealist masterpieces from Luis Buñuel, Jean Cocteau, David Lynch, and other visionary directors who challenged conventional narrative and explored the subconscious through dreamlike imagery.",
+    "movieIds": [
+      "tt0020530",
+      "tt0055601",
+      "tt0074486",
+      "tt0018770",
+      "tt0048037",
+      "tt0021331",
+      "tt0054377"
+    ],
+    "createdAt": "2026-01-12T00:00:00.000Z",
+    "updatedAt": "2026-01-18T21:24:02.282Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Luis Buñuel",
+        "filterState": {
+          "searchQuery": "Luis Buñuel",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Jean Cocteau",
+        "filterState": {
+          "searchQuery": "Jean Cocteau",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "surrealism",
+      "art-house",
+      "experimental",
+      "avant-garde",
+      "dreamlike"
+    ]
+  },
   "1920s": {
     "id": "1920s",
     "name": "1920s Cinema",
@@ -4953,242 +5220,6 @@
       "new-releases",
       "modern",
       "current"
-    ],
-    "enabled": true
-  },
-  "sherlock-holmes": {
-    "id": "sherlock-holmes",
-    "name": "Sherlock Holmes",
-    "description": "Classic detective films featuring the legendary Sherlock Holmes and Dr. Watson solving mysteries.",
-    "movieIds": [
-      "tt0024625",
-      "tt0038494",
-      "tt0099732",
-      "tt0029565",
-      "youtube-oSHUhqa-b6I",
-      "tt0161929",
-      "tt0988045",
-      "tt0007338",
-      "tt0013597",
-      "archive-SherlockHolmes-TheManWhoDisappearedfailedPilot",
-      "youtube-kBpqVDtQyuc",
-      "youtube-psU0YDidS6o",
-      "youtube-f46uuHG6SYw",
-      "youtube-inDZjZTLL1c",
-      "youtube-hdGNbzud_Xk",
-      "archive-Sherlock_Holmes_1954",
-      "tt0035317",
-      "tt0035318",
-      "tt0291476",
-      "youtube-0qILka1Lz2U",
-      "tt0036348",
-      "archive-svtplay-KQ7Y4dV",
-      "tt0036349",
-      "archive-sherlock-holmes-movies-colorized",
-      "archive-svtplay-jpz1EWG",
-      "archive-svtplay-8YwYpvJ",
-      "archive-sherlock-holmes-och-kvinnan-i-gront",
-      "youtube-Ae5KnCP6QbI",
-      "archive-SherlockHolmes-TheWomanInGreenVost-fr",
-      "youtube-UsoGpbn3GKM",
-      "tt34381727",
-      "tt0022373",
-      "archive-sherlock-holmes-fatal-hour-with-arthur-wontner-1931-1080p-hd-film",
-      "tt1144469",
-      "tt0011907",
-      "tt0031022",
-      "tt0037794",
-      "tt0037168",
-      "tt0037248",
-      "tt0023469",
-      "tt0037303",
-      "tt0027136",
-      "youtube-toZblGsqNt0",
-      "tt0406934"
-    ],
-    "createdAt": "2026-01-11T19:30:00.000Z",
-    "updatedAt": "2026-01-11T22:35:46.781Z",
-    "savedQueries": [
-      {
-        "searchQuery": "Sherlock Holmes",
-        "filterState": {
-          "searchQuery": "Sherlock Holmes",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "mystery",
-      "detective",
-      "classic",
-      "crime",
-      "british"
-    ]
-  },
-  "surrealist-cinema": {
-    "id": "surrealist-cinema",
-    "name": "Surrealist Cinema",
-    "description": "Mind-bending surrealist masterpieces from Luis Buñuel, Jean Cocteau, David Lynch, and other visionary directors who challenged conventional narrative and explored the subconscious through dreamlike imagery.",
-    "movieIds": [
-      "tt0020530",
-      "tt0055601",
-      "tt0074486",
-      "tt0018770",
-      "tt0048037",
-      "tt0021331",
-      "tt0054377"
-    ],
-    "createdAt": "2026-01-12T00:00:00.000Z",
-    "updatedAt": "2026-01-18T21:24:02.282Z",
-    "savedQueries": [
-      {
-        "searchQuery": "Luis Buñuel",
-        "filterState": {
-          "searchQuery": "Luis Buñuel",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "Jean Cocteau",
-        "filterState": {
-          "searchQuery": "Jean Cocteau",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "surrealism",
-      "art-house",
-      "experimental",
-      "avant-garde",
-      "dreamlike"
-    ]
-  },
-  "vampire-movies": {
-    "id": "vampire-movies",
-    "name": "Vampire Movies",
-    "description": "Classic and iconic vampire films from silent era to modern cinema, featuring Dracula, Nosferatu, and other creatures of the night.",
-    "movieIds": [
-      "archive-13.-the-vampire-men",
-      "tt0005339",
-      "youtube-AptpRjLrK60",
-      "tt24733392",
-      "youtube-M-AxNOJCUHo",
-      "youtube-_dWZzsy-MNo",
-      "tt0207145",
-      "tt0054285",
-      "archive-AtomAgeVampireSmaller",
-      "youtube-NsgT7dqLG1U",
-      "youtube-ZjQWYUlNSAA",
-      "tt0057603",
-      "youtube-T1C-8AgvstM",
-      "tt8075634",
-      "archive-DEVILDESERTGOLIATHVAMPIRES",
-      "archive-ATOMAGESPIDERISLAND",
-      "archive-WEREWOLFWASHINGTONGRAVEVAMPIRE",
-      "tt0055650",
-      "youtube-dHBwHSzbmIk",
-      "tt0071276",
-      "tt0103957",
-      "tt0026230",
-      "tt0069933",
-      "tt0059100",
-      "tt0021814",
-      "tt4401006",
-      "tt0062957",
-      "tt0011221",
-      "tt0068658",
-      "archive-horrible-sexy-vampire-1970-walst-davis-barta-barri-anastsio-campoy-susan-carvasa",
-      "tt5886388",
-      "tt0758755",
-      "tt0209091",
-      "tt0436670",
-      "tt0764729",
-      "tt0006206",
-      "tt0067341",
-      "tt0018097",
-      "youtube-jfaFNpb-35M",
-      "archive-lust-for-a-vampire-1971_202405",
-      "tt0081107",
-      "archive-mark-of-the-vampire-1935_202507",
-      "tt6554976",
-      "tt0087796",
-      "tt0787495",
-      "youtube-9dLbFna6d4s",
-      "tt5040012",
-      "tt0013442",
-      "tt12059016",
-      "archive-Revised-shockerInternetDriveInWeek7Redo-Vampires",
-      "tt0121694",
-      "tt10523424",
-      "tt10873438",
-      "tt0046802",
-      "youtube-Y7jL_eMVRqg",
-      "tt0057156",
-      "tt0065854",
-      "tt4537888",
-      "tt0067490",
-      "tt0056633",
-      "archive-the-vampire-and-the-ballerina-1960-full-movie-english-dub-1080p-hd-blu-ray",
-      "tt0024727",
-      "youtube-5ZwKV-ST7NE",
-      "tt0065762",
-      "archive-the-vampires-night-orgy-1974",
-      "archive-the-werewolf-vs-the-vampire-woman-1971",
-      "archive-the-werewolf-vs-the-vampire-woman_202407",
-      "tt0090196",
-      "tt0053340",
-      "archive-vampire-circus-1972_202406",
-      "archive-vampire-ecstasy-1973",
-      "youtube-wKO6n8KiKvc",
-      "tt0044925",
-      "youtube-tAoCycVmdcA",
-      "youtube-CPYfv-rOQcI",
-      "tt0023649",
-      "tt3675748",
-      "youtube-moUHNMXUBGM",
-      "archive-young-hannah-queen-of-the-vampires-1973",
-      "archive-the-vampire-doll-1970_202507"
-    ],
-    "createdAt": "2026-01-18T20:56:00.000Z",
-    "updatedAt": "2026-01-19T00:04:27.411Z",
-    "savedQueries": [
-      {
-        "searchQuery": "vampire",
-        "filterState": {
-          "searchQuery": "vampire",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "dracula",
-        "filterState": {
-          "searchQuery": "dracula",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "horror",
-      "vampires",
-      "gothic",
-      "supernatural",
-      "classic-horror"
     ],
     "enabled": true
   },
