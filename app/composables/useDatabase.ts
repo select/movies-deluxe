@@ -23,8 +23,7 @@ function createDatabase() {
     let totalMovies = 0
 
     initPromise.value = (async (): Promise<void> => {
-      const DatabaseWorker = await import('~/workers/database.worker?worker')
-      worker.value = new DatabaseWorker.default()
+      worker.value = new Worker(new URL('../workers/database.worker.ts', import.meta.url))
 
       worker.value!.onmessage = e => {
         const { id, error, type: responseType } = e.data
