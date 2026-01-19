@@ -1,5 +1,52 @@
 # Changelog
 
+# [0.7.0](https://github.com/select/movies-deluxe/compare/v0.6.0...v0.7.0) (2026-01-19)
+
+
+### Bug Fixes
+
+* **collections:** update movie id references when movie id changes ([7045af8](https://github.com/select/movies-deluxe/commit/7045af824317ad6c7c8cb3ab65fdca72a614426c))
+* **db:** await initialization in useDatabase methods to prevent race conditions ([48e9050](https://github.com/select/movies-deluxe/commit/48e9050294366cc6a1d8ced7aa15ce4074c0ba89))
+* **filters:** enable scroll indicator in filter popups ([e9009b6](https://github.com/select/movies-deluxe/commit/e9009b6658d7ec306d5b39af7e7851e686e66a76))
+* **scroll:** add polling for virtual grid scroll restoration ([5aa93aa](https://github.com/select/movies-deluxe/commit/5aa93aa10a7dc9471411d2dae27348cf217a6609))
+* **store:** resolve SQLite error with missing sourceType column ([4a28cd0](https://github.com/select/movies-deluxe/commit/4a28cd08083bac8e624335ec263af8f18d77ace1))
+* **types:** resolve typescript errors after movieSort removal ([304d660](https://github.com/select/movies-deluxe/commit/304d6603c7d3d3c244aaa163bd7fd2445e1e29d5))
+* **types:** update callers to use non-generic useDatabase methods ([6f9e3a9](https://github.com/select/movies-deluxe/commit/6f9e3a9171ec4d5ce3d57edda6df3858ebe18402))
+* **ui:** correct movie loading logic in virtual grid ([0156d8e](https://github.com/select/movies-deluxe/commit/0156d8e7e5924ea1c10362b654a546a0b97ecfb8))
+
+
+### Features
+
+* **admin:** add filter menu to admin collection search ([d8c1763](https://github.com/select/movies-deluxe/commit/d8c1763d1a099ab684979c248b1602af888b7970))
+* **admin:** add movie detail page links in collection editor ([cf19c48](https://github.com/select/movies-deluxe/commit/cf19c489e25f68e7063b2327429689110bbb4f6d))
+* **admin:** allow drag and drop sort collections in collection editor ([fdf30f4](https://github.com/select/movies-deluxe/commit/fdf30f4297b566d9feef344acedb771f0626b379))
+* **admin:** show youtube channel names in curation panel ([cd8751f](https://github.com/select/movies-deluxe/commit/cd8751f14e3055424bea9363d34cf79c6a39ef8e))
+* **collections:** add vampire movies collection ([c1351f6](https://github.com/select/movies-deluxe/commit/c1351f6255fd14d30fd7014969e44ad2872a2464))
+* **collections:** improve skeleton loaders to match CollectionCard layout ([1df7e45](https://github.com/select/movies-deluxe/commit/1df7e4503e06c9c9db9517763097f83f54ea3b15))
+* **components:** add pulsing down chevron scroll indicator to FilterPopup ([7cfeec7](https://github.com/select/movies-deluxe/commit/7cfeec702e910efc579d0ba9e82b080ef0314119))
+* **data:** add migration script for imdbId to movieId ([fda5abc](https://github.com/select/movies-deluxe/commit/fda5abc5df91e67dd1df1a23787fb7c862ebbee9))
+* **data:** migrate all movie entries from imdbId to movieId ([9e3f805](https://github.com/select/movies-deluxe/commit/9e3f80553742fd36084d1c74c2e794730ce23dc0))
+* **embeddings:** enhance plot with source fallback and popularity metrics ([70d2df4](https://github.com/select/movies-deluxe/commit/70d2df47dc902791d4d937a5fe359d6d6391c80b))
+* **home:** add discover section and update collection icon ([89cc610](https://github.com/select/movies-deluxe/commit/89cc610d2986e0482ef4d13248eee0a82969361c))
+* install and configure sqlite-vec and ollama dependencies ([770fa46](https://github.com/select/movies-deluxe/commit/770fa46fa32e13b740d3725bbaebe01bed5fc0c5))
+* **mobile:** add bottom padding for navigation clearance and improve database handling ([c9074c1](https://github.com/select/movies-deluxe/commit/c9074c177e2d137ae5926bc082f7d07a8cf92a5b))
+* **search:** implement advanced keyword search with people indexing ([51cffd8](https://github.com/select/movies-deluxe/commit/51cffd81ecf151bef5620148e487c340d06c9420))
+* **search:** implement search cancellation and debouncing ([24c788c](https://github.com/select/movies-deluxe/commit/24c788c99aeaf6a308f26e215c08629c33e2ca6a))
+* **search:** implement similar movies using vector search ([209341e](https://github.com/select/movies-deluxe/commit/209341e9fffc032a7bb56b722535839ccd5cfe4a))
+* **search:** refactor mode selector to inline icons with hover effects ([475f38a](https://github.com/select/movies-deluxe/commit/475f38a765744ac435cb0481f03f4de5c5a63f53))
+* **search:** replace brain icon with sparkles for semantic search ([4da806a](https://github.com/select/movies-deluxe/commit/4da806aa43cfcc36016cc45cfe34b249c4010e6f))
+* **search:** simplify search modes and fix mobile popup positioning ([a2b685e](https://github.com/select/movies-deluxe/commit/a2b685ece81f2872442e6ff7d5f27c12b32f5321))
+* **ui:** implement scroll restoration for page navigation ([acd2233](https://github.com/select/movies-deluxe/commit/acd2233884de88a92feb5c938fc1cb285ca86c65))
+* **vector-search:** implement search mode toggle and collection suggestions ([7acb823](https://github.com/select/movies-deluxe/commit/7acb82348e2c19f6d1a9923b036b006506ea8c78))
+
+
+### Performance Improvements
+
+* **db:** optimize movie count retrieval during init ([246bf09](https://github.com/select/movies-deluxe/commit/246bf09684dbf138041c29b91bc5857f2dcab95d))
+* **filters:** cache getFilterOptions to reduce database queries ([2b6b75e](https://github.com/select/movies-deluxe/commit/2b6b75e8bf7ecbc4771ffd66ca395b1dd5d0369d))
+* **store:** optimize movie filtering to return IDs only ([21c77c1](https://github.com/select/movies-deluxe/commit/21c77c1955aa699e938c2c2b1f4fccfb367affab))
+* **store:** remove unnecessary conversions in fetchMoviesByIds ([88707f2](https://github.com/select/movies-deluxe/commit/88707f2211942bc2a59e76f499d9d6a56855b0f1))
+
 # [0.6.0](https://github.com/select/movies-deluxe/compare/v0.5.0...v0.6.0) (2026-01-12)
 
 
