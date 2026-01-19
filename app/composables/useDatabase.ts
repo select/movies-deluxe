@@ -14,7 +14,7 @@ function createDatabase() {
 
   const initPromise = ref<Promise<void> | null>(null)
 
-  const init = async (url?: string): Promise<number> => {
+  const init = async (url?: string, baseURL?: string): Promise<number> => {
     if (initPromise.value) {
       await initPromise.value
       return 0 // Already initialized, return 0 as we don't store the count
@@ -23,7 +23,8 @@ function createDatabase() {
     let totalMovies = 0
 
     initPromise.value = (async (): Promise<void> => {
-      worker.value = new Worker(new URL('../workers/database.worker.ts', import.meta.url))
+      const DatabaseWorker = await import('~/workers/database.worker?worker')
+      worker.value = new DatabaseWorker.default()
 
       worker.value!.onmessage = e => {
         const { id, error, type: responseType } = e.data
@@ -60,7 +61,7 @@ function createDatabase() {
           },
           reject,
         })
-        worker.value!.postMessage({ type: 'init', id, url })
+        worker.value!.postMessage({ type: 'init', id, url, baseURL })
       })
     })()
 

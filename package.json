@@ -6,9 +6,11 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:baseurl": "NUXT_APP_BASE_URL=/movies/ nuxt dev",
     "build:prod": "NUXT_APP_BASE_URL=/movies/ nuxt generate --preset github_pages",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "preview:baseurl": "NUXT_APP_BASE_URL=/movies/ nuxt preview",
     "postinstall": "nuxt prepare && tsx scripts/copy-sqlite-wasm.ts",
     "prepare": "simple-git-hooks",
     "commitlint": "commitlint --edit",

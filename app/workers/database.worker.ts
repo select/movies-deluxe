@@ -8,6 +8,9 @@ let db: SQLiteDatabase | null = null
 let sqlite3: SQLite3 | null = null
 let initializationPromise: Promise<void> | null = null
 
+// Base URL for loading WASM files (set during init)
+let baseURL = '/'
+
 // Cache for movie data to avoid re-fetching
 const movieCache = new Map<string, Record<string, unknown>>()
 
@@ -19,9 +22,9 @@ async function initDatabase() {
       print: (...args: string[]) => console.log(...args),
       printErr: (...args: string[]) => console.error(...args),
       locateFile: (file: string) => {
-        // Point to the WASM file in the public directory
+        // Point to the WASM file in the public directory, respecting base URL
         if (file.endsWith('.wasm')) {
-          return `/sqlite-wasm/${file}`
+          return `${baseURL}sqlite-wasm/${file}`
         }
         return file
       },
@@ -124,6 +127,7 @@ interface QueuedMessage {
   id: string
   // For init
   url?: string
+  baseURL?: string
   // For exec, query-by-ids, vector-search (pre-built SQL)
   sql?: string
   params?: (string | number)[]
@@ -157,7 +161,7 @@ self.onmessage = (e: MessageEvent) => {
 }
 
 async function handleMessage(e: QueuedMessage) {
-  const { type, sql, params, id, url } = e
+  const { type, sql, params, id, url, baseURL: msgBaseURL } = e
 
   try {
     if (type === 'init') {
@@ -165,6 +169,11 @@ async function handleMessage(e: QueuedMessage) {
         await initializationPromise
         self.postMessage({ id, type: 'init-success', success: true })
         return
+      }
+
+      // Set base URL for WASM file loading (must be set before initDatabase)
+      if (msgBaseURL) {
+        baseURL = msgBaseURL
       }
 
       let totalMovies = 0

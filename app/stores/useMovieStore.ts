@@ -227,7 +227,7 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
-   * Initialize database (user data loaded automatically via VueUse storage)
+   * Load movies from the SQLite database file
    * Called once on app initialization
    */
   const loadFromFile = async () => {
@@ -235,7 +235,9 @@ export const useMovieStore = defineStore('movie', () => {
 
     try {
       // Initialize database from remote file and get total movie count
-      totalMovies.value = await db.init(`${useRuntimeConfig().app.baseURL}data/movies.db`)
+      // Pass baseURL for WASM file loading
+      const baseURL = useRuntimeConfig().app.baseURL
+      totalMovies.value = await db.init(`${baseURL}data/movies.db`, baseURL)
       console.log('[loadFromFile] Database initialized successfully')
       console.log('[loadFromFile] Total movies count:', totalMovies.value)
 
