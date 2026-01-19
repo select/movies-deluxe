@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/select/movies-deluxe/compare/v0.7.1...v0.7.2) (2026-01-19)
+
+
+### Bug Fixes
+
+* **db:** use base URL for SQLite WASM file loading ([eb60e9d](https://github.com/select/movies-deluxe/commit/eb60e9d5951a2966cf4253076fd0db6186f92edc))
+
 ## [0.7.1](https://github.com/select/movies-deluxe/compare/v0.7.0...v0.7.1) (2026-01-19)
 
 
