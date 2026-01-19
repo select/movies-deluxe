@@ -20,16 +20,23 @@
 
     <div class="flex flex-wrap gap-2">
       <button
-        v-for="collection in collectionsList"
+        v-for="(collection, index) in collectionsList"
         :key="collection.id"
-        class="px-4 py-2 rounded-xl border transition-all text-sm font-bold flex items-center gap-2"
+        draggable="true"
+        class="px-4 py-2 rounded-xl border transition-all text-sm font-bold flex items-center gap-2 cursor-move"
         :class="[
           selectedId === collection.id
             ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/20'
             : 'bg-theme-surface border-theme-border hover:border-theme-textmuted text-theme-text',
           collection.enabled === false ? 'opacity-60' : '',
+          draggedIndex === index ? 'opacity-20' : '',
+          dropTargetIndex === index ? 'border-blue-500 border-2' : '',
         ]"
         @click="select(collection.id)"
+        @dragstart="onDragStart(index)"
+        @dragover.prevent="onDragOver(index)"
+        @drop="onDrop(index)"
+        @dragend="onDragEnd"
       >
         {{ collection.name }}
         <div v-if="collection.enabled === false" class="i-mdi-eye-off text-xs opacity-70"></div>
@@ -182,6 +189,42 @@ const emit = defineEmits<{
 const select = (id: string) => {
   selectedId.value = id
   emit('select', id)
+}
+
+// Drag and Drop Logic
+const draggedIndex = ref<number | null>(null)
+const dropTargetIndex = ref<number | null>(null)
+
+const onDragStart = (index: number) => {
+  draggedIndex.value = index
+}
+
+const onDragOver = (index: number) => {
+  dropTargetIndex.value = index
+}
+
+const onDrop = async (index: number) => {
+  if (draggedIndex.value === null || draggedIndex.value === index) {
+    return
+  }
+
+  const newList = [...collectionsList.value]
+  const [draggedItem] = newList.splice(draggedIndex.value, 1)
+  if (!draggedItem) return
+
+  newList.splice(index, 0, draggedItem)
+
+  const success = await collectionsStore.reorderCollections(newList.map(c => c.id))
+  if (success) {
+    useToastStore().showToast('Collections reordered')
+  } else {
+    useToastStore().showToast('Failed to reorder collections', 'error')
+  }
+}
+
+const onDragEnd = () => {
+  draggedIndex.value = null
+  dropTargetIndex.value = null
 }
 
 // Management Logic

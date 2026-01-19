@@ -188,6 +188,22 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
+  const reorderCollections = async (collectionIds: string[]) => {
+    try {
+      const response = await $fetch<{ success: boolean }>('/api/admin/collections/reorder', {
+        method: 'POST',
+        body: { collectionIds },
+      })
+      if (response.success) {
+        isLoaded.value = false
+        await loadCollections()
+      }
+      return response.success
+    } catch {
+      return false
+    }
+  }
+
   /**
    * Get all collections that contain a specific movie
    * Queries the database to find which collections include this movie
@@ -230,6 +246,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     removeQueryFromCollection,
     updateCollectionTags,
     removeMoviesFromCollection,
+    reorderCollections,
   }
 })
 
