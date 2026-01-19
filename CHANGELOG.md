@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/select/movies-deluxe/compare/v0.7.0...v0.7.1) (2026-01-19)
+
+
+### Bug Fixes
+
+* try to bring back worker location for github page ([e750aa4](https://github.com/select/movies-deluxe/commit/e750aa4a700ce979ab45b1984b140a48efe14c0b))
+
 # [0.7.0](https://github.com/select/movies-deluxe/compare/v0.6.0...v0.7.0) (2026-01-19)
 
 
