@@ -32,6 +32,28 @@
           <div class="font-bold text-theme-text">{{ mode.label }}</div>
         </div>
         <div class="text-theme-textmuted leading-relaxed">{{ mode.description }}</div>
+
+        <!-- Model Info (only for semantic) -->
+        <div
+          v-if="mode.id === 'semantic' && modelInfo"
+          class="mt-2 pt-2 border-t border-theme-border/50 space-y-1"
+        >
+          <div class="flex justify-between items-center">
+            <span class="text-theme-textmuted">Model:</span>
+            <span class="text-theme-text font-medium">{{ modelInfo.name }}</span>
+          </div>
+          <div class="flex justify-between items-center text-[10px]">
+            <span class="text-theme-textmuted">Dimensions:</span>
+            <span class="text-theme-text">{{ modelInfo.dimensions }}</span>
+          </div>
+          <div class="flex justify-between items-center text-[10px]">
+            <span class="text-theme-textmuted">Source:</span>
+            <span class="text-theme-text">{{
+              modelInfo.ollamaModel ? 'Ollama API' : 'Browser'
+            }}</span>
+          </div>
+        </div>
+
         <!-- Arrow -->
         <div
           class="absolute -top-1 w-2 h-2 bg-theme-surface border-t border-l border-theme-border rotate-45 left-4 md:left-1/2 md:-translate-x-1/2"
@@ -43,9 +65,13 @@
 
 <script setup lang="ts">
 import type { SearchMode } from '~/types'
+import type { EmbeddingModelConfig } from '~~/config/embedding-models'
 
 const movieStore = useMovieStore()
 const { filters: storeFilters } = storeToRefs(movieStore)
+
+const db = useDatabase()
+const modelInfo = ref<EmbeddingModelConfig | null>(null)
 
 const injectedFilters = inject(FILTER_STATE_KEY, null)
 const filters = injectedFilters || storeFilters
@@ -77,6 +103,10 @@ const hoverStyle = ref({
 const selectMode = (mode: SearchMode) => {
   filters.value.searchMode = mode
 }
+
+onMounted(async () => {
+  modelInfo.value = await db.getEmbeddingModelInfo()
+})
 
 const updateHover = (modeId: string) => {
   hoveredMode.value = modeId

@@ -14,6 +14,9 @@ let baseURL = '/'
 // Cache for movie data to avoid re-fetching
 const movieCache = new Map<string, Record<string, unknown>>()
 
+// Cache for embedding dimensions from database metadata
+let cachedDimensions: number | null = null
+
 async function initDatabase() {
   if (sqlite3) return sqlite3
 
@@ -182,6 +185,24 @@ async function handleMessage(e: QueuedMessage) {
         await initDatabase()
         if (url) {
           totalMovies = await loadRemoteDatabase(url)
+
+          // Fetch embedding dimensions from config table if it exists
+          if (db) {
+            try {
+              const rows = db.exec({
+                sql: "SELECT value FROM config WHERE key = 'embedding_dimensions'",
+                returnValue: 'resultRows',
+                rowMode: 'object',
+              })
+              if (rows.length > 0) {
+                const value = (rows[0] as { value: string }).value
+                cachedDimensions = parseInt(value, 10)
+                console.log('Detected embedding dimensions from DB config:', cachedDimensions)
+              }
+            } catch (err) {
+              console.warn('Could not fetch embedding_dimensions from config table:', err)
+            }
+          }
         }
       })()
 
@@ -292,6 +313,15 @@ async function handleMessage(e: QueuedMessage) {
         self.postMessage({
           id,
           error: `Invalid embedding format: expected number[] or Float32Array`,
+        })
+        return
+      }
+
+      // Validate dimensions if we have them cached from DB metadata
+      if (cachedDimensions !== null && bindEmbedding.length !== cachedDimensions) {
+        self.postMessage({
+          id,
+          error: `Dimension mismatch: database expects ${cachedDimensions} dimensions, but received ${bindEmbedding.length}. Please check your embedding model configuration.`,
         })
         return
       }
