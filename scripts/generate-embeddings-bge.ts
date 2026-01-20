@@ -40,37 +40,35 @@ async function main() {
   logger.success('Model loaded successfully!')
 
   // 3. Initialize or open SQLite database
-  let db: Database.Database
   const isNewDb = !existsSync(EMBEDDINGS_DB)
 
-  if (isNewDb) {
-    logger.info('Creating new embeddings database...')
-    db = new Database(EMBEDDINGS_DB)
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS embeddings (
-        movie_id TEXT PRIMARY KEY,
-        embedding BLOB NOT NULL,
-        created_at TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS idx_embeddings_created_at ON embeddings(created_at);
+  logger.info(
+    isNewDb ? 'Creating new embeddings database...' : 'Opening existing embeddings database...'
+  )
+  const db = new Database(EMBEDDINGS_DB)
 
-      CREATE TABLE IF NOT EXISTS config (
-        key TEXT PRIMARY KEY,
-        value TEXT
-      );
-    `)
+  // Ensure schema exists
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS embeddings (
+      movie_id TEXT PRIMARY KEY,
+      embedding BLOB NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_embeddings_created_at ON embeddings(created_at);
 
-    // Insert model metadata
-    const insertConfig = db.prepare('INSERT INTO config (key, value) VALUES (?, ?)')
-    insertConfig.run('embedding_model_id', modelConfig.id)
-    insertConfig.run('embedding_model_name', modelConfig.name)
-    insertConfig.run('embedding_model_dimensions', modelConfig.dimensions.toString())
-    if (modelConfig.ollamaModel) {
-      insertConfig.run('embedding_model_ollama', modelConfig.ollamaModel)
-    }
-  } else {
-    logger.info('Opening existing embeddings database...')
-    db = new Database(EMBEDDINGS_DB)
+    CREATE TABLE IF NOT EXISTS config (
+      key TEXT PRIMARY KEY,
+      value TEXT
+    );
+  `)
+
+  // Insert or update model metadata
+  const insertConfig = db.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)')
+  insertConfig.run('embedding_model_id', modelConfig.id)
+  insertConfig.run('embedding_model_name', modelConfig.name)
+  insertConfig.run('embedding_model_dimensions', modelConfig.dimensions.toString())
+  if (modelConfig.ollamaModel) {
+    insertConfig.run('embedding_model_ollama', modelConfig.ollamaModel)
   }
 
   // 4. Load existing embeddings from database for caching
