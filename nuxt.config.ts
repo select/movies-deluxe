@@ -155,7 +155,7 @@ export default defineNuxtConfig({
   // Vite configuration for SQLite WASM support
   vite: {
     optimizeDeps: {
-      exclude: ['@sqlite.org/sqlite-wasm', 'sqlite-wasm-vec'],
+      exclude: ['@sqlite.org/sqlite-wasm', 'sqlite-wasm-vec', 'onnxruntime-web'],
     },
     server: {
       headers: {

@@ -10,6 +10,7 @@ import { unlink } from 'fs/promises'
 import { join } from 'path'
 import type { MovieEntry, MoviesDatabase } from '../../../../shared/types/movie'
 import { isImdbId, isTemporaryId } from '../../../../shared/types/movie'
+import { updateMovieIdInCollections } from '../../../utils/collections'
 
 // Note: loadMoviesDatabase, saveMoviesDatabase, findOrphanedPosters are auto-imported
 
@@ -415,14 +416,19 @@ function findOrphanedTempIds(db: MoviesDatabase): ValidationIssue[] {
 /**
  * Fix issues where possible
  */
-function fixIssue(db: MoviesDatabase, issue: ValidationIssue): boolean {
+async function fixIssue(db: MoviesDatabase, issue: ValidationIssue): Promise<boolean> {
   const movie = db[issue.movieId] as MovieEntry
   if (!movie) return false
 
   try {
     // Fix ID mismatch
     if (issue.category === 'movieId' && issue.message.includes('ID mismatch')) {
+      const oldId = movie.movieId
       movie.movieId = issue.movieId
+      // Ensure collections are updated if the internal ID was being used
+      if (oldId !== issue.movieId) {
+        await updateMovieIdInCollections(oldId, issue.movieId)
+      }
       issue.fixed = true
       return true
     }
@@ -545,7 +551,7 @@ export default defineEventHandler(async event => {
             } catch (error) {
               console.error(`Failed to delete orphaned poster: ${error}`)
             }
-          } else if (fixIssue(db, issue)) {
+          } else if (await fixIssue(db, issue)) {
             result.fixed++
           }
         }

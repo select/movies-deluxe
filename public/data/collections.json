@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-19T00:09:10.338Z"
+    "lastUpdated": "2026-01-19T01:52:27.409Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -2452,19 +2452,12 @@
     "description": "Explore the future, space, and beyond with classic and contemporary science fiction films.",
     "movieIds": [
       "tt0087803",
-      "tt0062622",
-      "tt12385804",
       "tt3460068",
-      "tt0120591",
       "tt0015214",
       "tt0092610",
       "tt0143127",
-      "tt0068270",
-      "tt0085267",
       "tt4759544",
       "tt6264824",
-      "tt0458339",
-      "tt1843866",
       "tt0252973",
       "tt0184342",
       "tt6613878",
@@ -2485,7 +2478,6 @@
       "tt0045920",
       "tt0041514",
       "tt0070233",
-      "tt5442430",
       "tt0026663",
       "tt0079501",
       "tt0017136",
@@ -2496,7 +2488,6 @@
       "tt35667868",
       "tt0050873",
       "tt0062168",
-      "tt0433035",
       "tt0081455",
       "tt2433494",
       "tt0031951",
@@ -2514,7 +2505,6 @@
       "tt3986820",
       "tt0133751",
       "tt0051622",
-      "tt0050539",
       "tt0024184",
       "tt0058700",
       "tt0044876",
@@ -2532,11 +2522,10 @@
       "tt0098546",
       "tt0122111",
       "tt0407304",
-      "tt0348366",
-      "tt0044207"
+      "tt0348366"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-09T00:49:04.369Z",
+    "updatedAt": "2026-01-19T01:52:27.409Z",
     "savedQueries": [
       {
         "searchQuery": "",

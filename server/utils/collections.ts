@@ -230,3 +230,31 @@ export async function updateMovieIdInCollections(oldId: string, newId: string): 
 
   return updatedCount
 }
+
+/**
+ * Remove a movie ID from all collections that reference it
+ */
+export async function removeMovieFromAllCollections(movieId: string): Promise<number> {
+  const db = await loadCollectionsDatabase()
+  let updatedCount = 0
+
+  for (const [key, value] of Object.entries(db)) {
+    if (key.startsWith('_')) continue
+
+    const collection = value as Collection
+    const index = collection.movieIds.indexOf(movieId)
+
+    if (index !== -1) {
+      // Remove the ID
+      collection.movieIds.splice(index, 1)
+      collection.updatedAt = new Date().toISOString()
+      updatedCount++
+    }
+  }
+
+  if (updatedCount > 0) {
+    await saveCollectionsDatabase(db)
+  }
+
+  return updatedCount
+}

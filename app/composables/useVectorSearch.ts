@@ -27,9 +27,14 @@ export function useVectorSearch() {
 
     try {
       // 1. Generate embedding for the query via server API
+      // Auto-detect model from database config
+      const dbConfig = await db.getConfig()
+      const model =
+        dbConfig.embedding_model_ollama || dbConfig.embedding_model_id || 'nomic-embed-text'
+
       const response = await $fetch<{ embedding: number[] }>('/api/embeddings', {
         method: 'POST',
-        body: { text: query },
+        body: { text: query, model },
       })
 
       if (!response.embedding) {

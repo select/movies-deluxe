@@ -8,42 +8,77 @@
 import Database from 'better-sqlite3'
 import * as sqliteVec from 'sqlite-vec'
 import { join } from 'path'
-import { existsSync, unlinkSync, readFileSync } from 'fs'
+import { existsSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from './movieData'
 import { loadCollectionsDatabase } from './collections'
 import { createLogger } from './logger'
 import { normalizeLanguageCode } from '../../shared/utils/languageNormalizer'
 import { generateMovieJSON } from './generateMovieJSON'
+import { getDefaultModel } from '../../config/embedding-models'
+import type { EmbeddingModelConfig } from '../../config/embedding-models'
 import type { MovieEntry } from '../../shared/types/movie'
 import type { Collection } from '../../shared/types/collections'
 
 const logger = createLogger('SQLiteGen')
 const DB_PATH = join(process.cwd(), 'public/data/movies.db')
 
-export async function generateSQLite(
+export interface GenerateSQLiteOptions {
+  embeddingModel?: EmbeddingModelConfig
+  skipJsonGeneration?: boolean
   onProgress?: (progress: { current: number; total: number; message: string }) => void
-) {
-  logger.info('Starting SQLite database generation...')
+}
+
+export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
+  const { embeddingModel = getDefaultModel(), skipJsonGeneration = false, onProgress } = options
+
+  logger.info(`Starting SQLite database generation with model: ${embeddingModel.name}...`)
 
   // 1. Generate individual movie JSON files first
-  logger.info('Generating individual movie JSON files...')
-  await generateMovieJSON()
+  if (!skipJsonGeneration) {
+    logger.info('Generating individual movie JSON files...')
+    await generateMovieJSON()
+  } else {
+    logger.info('Skipping individual movie JSON generation')
+  }
 
   // 2. Load JSON data
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
 
-  // Load embeddings
-  const EMBEDDINGS_PATH = join(process.cwd(), 'data/embeddings.json')
-  let embeddings: Record<string, number[]> = {}
-  if (existsSync(EMBEDDINGS_PATH)) {
-    logger.info('Loading embeddings...')
+  // Load embeddings from SQLite database
+  const EMBEDDINGS_DB_PATH = join(process.cwd(), 'data', embeddingModel.dbFileName)
+  const embeddings: Record<string, Float32Array> = {}
+  let embeddingsDb: Database.Database | null = null
+
+  if (existsSync(EMBEDDINGS_DB_PATH)) {
+    logger.info(`Loading embeddings from ${embeddingModel.dbFileName}...`)
     try {
-      embeddings = JSON.parse(readFileSync(EMBEDDINGS_PATH, 'utf-8'))
-      logger.info(`Loaded ${Object.keys(embeddings).length} embeddings`)
-    } catch {
-      logger.warn('Failed to load embeddings.json, vector search will be empty.')
+      embeddingsDb = new Database(EMBEDDINGS_DB_PATH, { readonly: true })
+      const rows = embeddingsDb.prepare('SELECT movie_id, embedding FROM embeddings').all() as {
+        movie_id: string
+        embedding: Buffer
+      }[]
+
+      for (const row of rows) {
+        // Convert Buffer back to Float32Array
+        embeddings[row.movie_id] = new Float32Array(
+          row.embedding.buffer,
+          row.embedding.byteOffset,
+          row.embedding.byteLength / 4
+        )
+      }
+
+      logger.info(`Loaded ${Object.keys(embeddings).length} embeddings from database`)
+    } catch (err) {
+      logger.warn('Failed to load embeddings database, vector search will be empty.', err)
+    } finally {
+      if (embeddingsDb) {
+        embeddingsDb.close()
+        embeddingsDb = null
+      }
     }
+  } else {
+    logger.warn('Embeddings database not found, vector search will be empty.')
   }
 
   const allMovies = Object.values(db)
@@ -210,7 +245,13 @@ export async function generateSQLite(
       -- Vector Table for Semantic Search
       CREATE VIRTUAL TABLE vec_movies USING vec0(
         movieId TEXT PRIMARY KEY,
-        embedding FLOAT[768]
+        embedding FLOAT[${embeddingModel.dimensions}]
+      );
+
+      -- Config table for metadata
+      CREATE TABLE config (
+        key TEXT PRIMARY KEY,
+        value TEXT
       );
 
       -- Indexes for efficient filtering and sorting
@@ -282,6 +323,10 @@ export async function generateSQLite(
       VALUES (?, ?, ?)
     `)
 
+    const insertConfig = sqlite.prepare(`
+      INSERT INTO config (key, value) VALUES (?, ?)
+    `)
+
     const insertActor = sqlite.prepare(`
       INSERT OR IGNORE INTO actors (name) VALUES (?)
     `)
@@ -319,6 +364,14 @@ export async function generateSQLite(
     logger.info('Inserting data...')
     sqlite.exec('BEGIN TRANSACTION')
     try {
+      // Insert config metadata
+      insertConfig.run('embedding_model_id', embeddingModel.id)
+      insertConfig.run('embedding_model_name', embeddingModel.name)
+      insertConfig.run('embedding_model_dimensions', embeddingModel.dimensions.toString())
+      if (embeddingModel.ollamaModel) {
+        insertConfig.run('embedding_model_ollama', embeddingModel.ollamaModel)
+      }
+
       let count = 0
       for (const movie of movies) {
         // Map metadata fields
@@ -370,8 +423,8 @@ export async function generateSQLite(
 
         // Insert into Vector Table if embedding exists
         const embedding = embeddings[movie.movieId]
-        if (embedding && Array.isArray(embedding)) {
-          insertVec.run(movie.movieId, new Float32Array(embedding))
+        if (embedding && embedding instanceof Float32Array) {
+          insertVec.run(movie.movieId, embedding)
         }
 
         // Insert People (Actors, Directors, Writers)

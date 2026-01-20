@@ -3,6 +3,7 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 import { normalizeTitleForComparison } from '../../shared/utils/movieTitle'
 import type { MoviesDatabase, MovieEntry, MovieSource } from '../../shared/types/movie'
+import { updateMovieIdInCollections } from './collections'
 
 const DATA_DIR = join(process.cwd(), 'data')
 const MOVIES_FILE = join(DATA_DIR, 'movies.json')
@@ -407,7 +408,11 @@ async function loadYouTubeChannels(): Promise<
  * Migrate a movie from a temporary ID to an IMDB ID
  * Merges data if the IMDB ID already exists
  */
-export function migrateMovieId(db: MoviesDatabase, oldId: string, newId: string): void {
+export async function migrateMovieId(
+  db: MoviesDatabase,
+  oldId: string,
+  newId: string
+): Promise<void> {
   const oldEntry = db[oldId] as MovieEntry | undefined
 
   if (!oldEntry) {
@@ -425,6 +430,9 @@ export function migrateMovieId(db: MoviesDatabase, oldId: string, newId: string)
 
   // Remove old entry
   delete db[oldId]
+
+  // Update collections.json
+  await updateMovieIdInCollections(oldId, newId)
 }
 
 /**

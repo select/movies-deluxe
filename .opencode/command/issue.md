@@ -2,4 +2,4 @@
 description: Create a beads issue
 ---
 
-create a beads issue, explore and research what needs to be done, use subagens for explore tasks, create one or more issues, only issue work on implementation: $ARGUMENTS
+use subagent for explore tasks, explore and research what needs to be done, create one or more beads issues, only issue creation no implementation: $ARGUMENTS

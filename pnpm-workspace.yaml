@@ -1,7 +1,1 @@
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - better-sqlite3
-  - esbuild
-  - protobufjs
-  - simple-git-hooks
-  - unrs-resolver
+onlyBuiltDependencies: onnxruntime-node

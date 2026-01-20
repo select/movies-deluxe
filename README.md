@@ -47,6 +47,25 @@ pnpm db:generate
 pnpm posters:extract
 ```
 
+### Database Generation Options
+
+The `pnpm db:generate` command supports several options for customizing the database generation:
+
+- `-m, --embedding-model <model>`: Select the embedding model to use for semantic search.
+  - `nomic`: Nomic Embed Text (768D, default)
+  - `bge-micro`: BGE Micro v2 (384D)
+  - `potion`: Potion Base 2M (64D)
+- `--skip-json`: Skip generating individual movie JSON files (faster if only the SQLite database needs updating).
+- `-h, --help`: Show help message.
+
+Example:
+
+```bash
+pnpm db:generate -m bge-micro --skip-json
+```
+
+For more details on embedding models, see [Embedding Models Documentation](./docs/embedding-models.md).
+
 ## API Keys
 
 The admin features require API keys for various services. See the [API Keys Setup Guide](./docs/api-keys.md) for detailed configuration instructions.
