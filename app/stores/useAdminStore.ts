@@ -9,6 +9,7 @@ import type {
   OMDBOptions,
   DeduplicationResult,
   CollectionCleanupResult,
+  GenerateDatabaseRequest,
 } from '~/types/admin'
 
 export interface ProgressUpdate {
@@ -201,11 +202,12 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const generateSqlite = async () => {
+  const generateSqlite = async (options: GenerateDatabaseRequest = {}) => {
     generatingSqlite.value = true
     try {
       await $fetch('/api/admin/sqlite/generate', {
         method: 'POST',
+        body: options,
       })
     } catch (e) {
       window.console.error('SQLite generation failed', e)

@@ -68,17 +68,6 @@
             </NuxtLink>
             <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              :disabled="loading || generatingSqlite"
-              @click="adminStore.generateSqlite"
-            >
-              <div
-                class="i-mdi-database-export"
-                :class="{ 'animate-spin': generatingSqlite }"
-              ></div>
-              Generate SQLite
-            </button>
-            <button
-              class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               :disabled="loading || generatingHomePages"
               @click="adminStore.generateHomePages"
             >
@@ -93,24 +82,6 @@
               <div class="i-mdi-refresh" :class="{ 'animate-spin': refreshingStats }"></div>
               Refresh Stats
             </button>
-          </div>
-          <!-- SQLite Generation Progress -->
-          <div
-            v-if="progress.sqlite && progress.sqlite.status === 'in_progress'"
-            class="w-full max-w-md space-y-2"
-          >
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-theme-textmuted truncate mr-2">{{ progress.sqlite.message }}</span>
-              <span class="font-mono text-nowrap"
-                >{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span
-              >
-            </div>
-            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
-              <div
-                class="h-full bg-blue-500 transition-all duration-300"
-                :style="{ width: `${(progress.sqlite.current / progress.sqlite.total) * 100}%` }"
-              ></div>
-            </div>
           </div>
           <!-- Home Page Generation Progress -->
           <div
@@ -325,6 +296,18 @@
             />
 
             <AdminPosterArchiver />
+          </div>
+        </section>
+
+        <!-- Database Management Section -->
+        <section>
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <div class="i-mdi-database-cog text-blue-600"></div>
+            Database Management
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <AdminDatabaseGenerator />
+
             <!-- Data Cleanup Section -->
             <div>
               <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -375,7 +358,6 @@ const { connect: connectProgress, isConnected, isReconnecting } = useProgress()
 // Extract reactive state from store
 const {
   loading,
-  generatingSqlite,
   generatingHomePages,
   stats,
   archiveOptions,

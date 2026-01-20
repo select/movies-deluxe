@@ -1,12 +1,12 @@
 import { defineEventHandler, readBody, createError } from 'h3'
-import { readFile, writeFile } from 'fs/promises'
-import { join } from 'path'
 import {
   isImdbId,
   generateArchiveId,
   generateYouTubeId,
   type MovieEntry,
 } from '../../../../shared/types/movie'
+import { loadMoviesDatabase, saveMoviesDatabase, migrateMovieId } from '../../../utils/movieData'
+import { removeMovieFromAllCollections } from '../../../utils/collections'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -20,9 +20,7 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    const filePath = join(process.cwd(), 'data/movies.json')
-    const content = await readFile(filePath, 'utf-8')
-    const db = JSON.parse(content)
+    const db = await loadMoviesDatabase()
 
     const movie = db[movieId] as MovieEntry
     if (!movie) {
@@ -95,6 +93,7 @@ export default defineEventHandler(async event => {
     if (movie.sources.length === 0) {
       // Delete the movie entry entirely
       delete db[movieId]
+      await removeMovieFromAllCollections(movieId)
       finalMovieId = null
       deleted = true
     } else {
@@ -115,33 +114,21 @@ export default defineEventHandler(async event => {
         }
 
         if (newTempId !== movieId) {
-          const existing = db[newTempId] as MovieEntry | undefined
-          if (existing) {
-            // Merge remaining sources into existing entry
-            existing.sources = [
-              ...(existing.sources || []),
-              ...movie.sources.filter(s => !(existing.sources || []).some(es => es.id === s.id)),
-            ]
-            existing.lastUpdated = new Date().toISOString()
-            delete db[movieId]
-            finalMovieId = newTempId
-          } else {
-            // Rename key
-            movie.movieId = newTempId
-            db[newTempId] = movie
-            delete db[movieId]
-            finalMovieId = newTempId
-          }
+          // Use migrateMovieId to handle both key renaming/merging and collections update
+          await migrateMovieId(db, movieId, newTempId)
+          finalMovieId = newTempId
         }
       }
 
-      if (finalMovieId && db[finalMovieId]) {
-        db[finalMovieId].lastUpdated = new Date().toISOString()
+      if (finalMovieId) {
+        const entry = db[finalMovieId] as MovieEntry | undefined
+        if (entry) {
+          entry.lastUpdated = new Date().toISOString()
+        }
       }
     }
 
-    db._schema.lastUpdated = new Date().toISOString()
-    await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
+    await saveMoviesDatabase(db)
 
     return {
       success: true,

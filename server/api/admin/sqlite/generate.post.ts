@@ -1,24 +1,47 @@
+import { getModelConfig, getDefaultModel } from '../../../../config/embedding-models'
 import { generateSQLite } from '../../../utils/generateSQLite'
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async event => {
+  // Only allow from localhost
+  const host = getRequestHeader(event, 'host')
+  if (!host?.startsWith('localhost') && !host?.startsWith('127.0.0.1')) {
+    throw createError({ statusCode: 403, message: 'Access denied' })
+  }
+
+  const body = await readBody(event)
+  const modelId = body?.embeddingModel || getDefaultModel().id
+  const skipJson = body?.skipJsonGeneration || false
+
+  const modelConfig = getModelConfig(modelId)
+  if (!modelConfig) {
+    throw createError({
+      statusCode: 400,
+      message: `Unknown embedding model: ${modelId}`,
+    })
+  }
+
   try {
     emitProgress({
       type: 'sqlite',
       status: 'starting',
-      message: 'Starting SQLite generation...',
+      message: `Starting SQLite generation with model: ${modelConfig.name}...`,
       current: 0,
       total: 100,
     })
 
     // Call the generation function with progress callback
-    await generateSQLite(progress => {
-      emitProgress({
-        type: 'sqlite',
-        status: 'in_progress',
-        current: progress.current,
-        total: progress.total,
-        message: progress.message,
-      })
+    await generateSQLite({
+      embeddingModel: modelConfig,
+      skipJsonGeneration: skipJson,
+      onProgress: progress => {
+        emitProgress({
+          type: 'sqlite',
+          status: 'in_progress',
+          current: progress.current,
+          total: progress.total,
+          message: progress.message,
+        })
+      },
     })
 
     emitProgress({

@@ -240,7 +240,7 @@ export default defineEventHandler(async event => {
 
         // Migrate if ID changed
         if (oldId !== newId) {
-          migrateMovieId(db, oldId, newId)
+          await migrateMovieId(db, oldId, newId)
         }
       } catch (error) {
         result.failed++

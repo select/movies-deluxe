@@ -13,6 +13,7 @@ function createDatabase() {
   >()
 
   const initPromise = ref<Promise<void> | null>(null)
+  const configCache = ref<Record<string, string> | null>(null)
 
   const init = async (url?: string, baseURL?: string): Promise<number> => {
     if (initPromise.value) {
@@ -182,6 +183,27 @@ function createDatabase() {
     })
   }
 
+  const getConfig = async (): Promise<Record<string, string>> => {
+    if (configCache.value) return configCache.value
+
+    try {
+      const rows = await query<{ key: string; value: string }>('SELECT key, value FROM config')
+      const config = rows.reduce(
+        (acc, row) => {
+          acc[row.key] = row.value
+          return acc
+        },
+        {} as Record<string, string>
+      )
+
+      configCache.value = config
+      return config
+    } catch (err) {
+      console.warn('Failed to fetch config from database (might be an old version):', err)
+      return {}
+    }
+  }
+
   /**
    * Wait for the database to be ready
    * Returns immediately if already ready, otherwise waits for initialization
@@ -200,6 +222,7 @@ function createDatabase() {
     getCollectionsForMovie,
     getFilterOptions,
     vectorSearch,
+    getConfig,
     isReady,
     waitForReady,
   }
