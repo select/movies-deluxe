@@ -6,15 +6,24 @@ import Database from 'better-sqlite3'
 import { loadMoviesDatabase } from '../server/utils/movieData'
 import { movieToMarkdown } from '../server/utils/movieEmbeddings'
 import { createLogger } from '../server/utils/logger'
+import { getModelConfig } from '../config/embedding-models'
 import type { MovieEntry } from '../shared/types/movie'
 
 const logger = createLogger('Embeddings')
 const EMBEDDINGS_FILE = join(process.cwd(), 'data/embeddings.json')
-const EMBEDDINGS_DB = join(process.cwd(), 'data/embeddings-nomic-movies.db')
-const MODEL = 'nomic-embed-text'
+const MODEL_ID = 'nomic'
+const modelConfig = getModelConfig(MODEL_ID)
+
+if (!modelConfig) {
+  logger.error(`Model configuration for "${MODEL_ID}" not found.`)
+  process.exit(1)
+}
+
+const EMBEDDINGS_DB = join(process.cwd(), 'data', modelConfig.dbFileName)
+const MODEL = modelConfig.ollamaModel || 'nomic-embed-text'
 
 async function main() {
-  logger.info('Starting embedding generation...')
+  logger.info(`Starting embedding generation for model: ${modelConfig.name}...`)
 
   // 1. Ensure data directory exists
   const dataDir = join(process.cwd(), 'data')
@@ -36,7 +45,21 @@ async function main() {
         created_at TEXT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS idx_embeddings_created_at ON embeddings(created_at);
+
+      CREATE TABLE IF NOT EXISTS config (
+        key TEXT PRIMARY KEY,
+        value TEXT
+      );
     `)
+
+    // Insert model metadata
+    const insertConfig = db.prepare('INSERT INTO config (key, value) VALUES (?, ?)')
+    insertConfig.run('embedding_model_id', modelConfig.id)
+    insertConfig.run('embedding_model_name', modelConfig.name)
+    insertConfig.run('embedding_model_dimensions', modelConfig.dimensions.toString())
+    if (modelConfig.ollamaModel) {
+      insertConfig.run('embedding_model_ollama', modelConfig.ollamaModel)
+    }
   } else {
     logger.info('Opening existing embeddings database...')
     db = new Database(EMBEDDINGS_DB)
