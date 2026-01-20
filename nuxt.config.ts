@@ -176,6 +176,22 @@ export default defineNuxtConfig({
           'Content-Type': 'application/wasm',
         },
       },
+      // Cache ML model files permanently (immutable content)
+      '/models/**/*.onnx': {
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      },
+      '/models/**/*.json': {
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      },
+      '/models/**/*.txt': {
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      },
     },
   },
 

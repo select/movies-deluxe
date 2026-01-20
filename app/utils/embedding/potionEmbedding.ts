@@ -54,9 +54,8 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
     try {
       if (onProgress) onProgress(0.1)
 
-      // Fetch tokenizer from Hugging Face CDN
-      const tokenizerUrl =
-        'https://huggingface.co/minishlab/potion-base-2M/resolve/main/tokenizer.json'
+      // Fetch tokenizer from local /models/ directory (served from public/models/)
+      const tokenizerUrl = '/models/potion-base-2M/tokenizer.json'
       const tokenizerResp = await fetch(tokenizerUrl)
       if (!tokenizerResp.ok) {
         throw new Error(`Failed to fetch tokenizer from ${tokenizerUrl}`)
@@ -66,10 +65,8 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
 
       if (onProgress) onProgress(0.3)
 
-      // Initialize ONNX runtime session
-      // Model URL from Hugging Face CDN
-      const modelUrl =
-        'https://huggingface.co/minishlab/potion-base-2M/resolve/main/onnx/model.onnx'
+      // Initialize ONNX runtime session with local model
+      const modelUrl = '/models/potion-base-2M/onnx/model.onnx'
 
       // Note: In some browser environments, you might need to specify WASM paths:
       // ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/';

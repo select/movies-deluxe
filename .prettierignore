@@ -33,5 +33,8 @@ public/data
 public/movies
 public/posters
 
+# ML model files (third-party, do not format)
+public/models
+
 # Large data files (do not auto-format)
 data/
