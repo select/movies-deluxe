@@ -1,5 +1,9 @@
-import { pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers'
+import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import type { EmbeddingProvider } from '~/types/embedding'
+
+// Configure transformers.js to use local models only
+env.allowLocalModels = true
+env.allowRemoteModels = false
 
 /**
  * Clean text for BERT-based embedding models.
@@ -47,8 +51,10 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
 
     this.initializing = true
     try {
-      this.pipeline = (await pipeline('feature-extraction', 'TaylorAI/bge-micro-v2', {
+      // Load model from local /models/ directory (served from public/models/)
+      this.pipeline = (await pipeline('feature-extraction', '/models/bge-micro-v2/', {
         dtype: 'q8',
+        local_files_only: true,
         progress_callback: (info: { status: string; progress: number }) => {
           if (info.status === 'progress' && onProgress) {
             // progress is 0-100 in transformers.js

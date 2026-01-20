@@ -53,5 +53,9 @@ public/sqlite-wasm/
 # Generated movie metadata JSONs
 public/movies/
 
-# ML model files (downloaded on demand)
-models/
+# ML model files (source, downloaded on demand)
+/models/
+
+# Public model files are tracked in git (~26MB total)
+# These are served to the browser for local embedding generation
+!public/models/
