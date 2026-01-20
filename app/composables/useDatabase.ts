@@ -1,5 +1,6 @@
 import type { WorkerResponse, FilterOptionsResponse, VectorSearchResult } from '~/types/database'
 import type { Collection, MovieEntry } from '~/types'
+import { getModelConfig, type EmbeddingModelConfig } from '~~/config/embedding-models'
 
 // Singleton instance
 let dbInstance: ReturnType<typeof createDatabase> | null = null
@@ -67,6 +68,8 @@ function createDatabase() {
     })()
 
     await initPromise.value
+    // Pre-fetch config to ensure metadata is available immediately
+    await getConfig()
     return totalMovies
   }
 
@@ -204,6 +207,13 @@ function createDatabase() {
     }
   }
 
+  const getEmbeddingModelInfo = async (): Promise<EmbeddingModelConfig | null> => {
+    const config = await getConfig()
+    const modelId = config.embedding_model_id
+    if (!modelId) return null
+    return getModelConfig(modelId) || null
+  }
+
   /**
    * Wait for the database to be ready
    * Returns immediately if already ready, otherwise waits for initialization
@@ -223,6 +233,7 @@ function createDatabase() {
     getFilterOptions,
     vectorSearch,
     getConfig,
+    getEmbeddingModelInfo,
     isReady,
     waitForReady,
   }

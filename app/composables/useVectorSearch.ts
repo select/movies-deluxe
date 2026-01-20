@@ -1,7 +1,9 @@
 import { useDatabase } from './useDatabase'
+import { useBrowserEmbedding } from './useBrowserEmbedding'
 
 export function useVectorSearch() {
   const db = useDatabase()
+  const browserEmbedding = useBrowserEmbedding()
   const isSearching = ref(false)
   const error = ref<string | null>(null)
 
@@ -26,23 +28,32 @@ export function useVectorSearch() {
     error.value = null
 
     try {
-      // 1. Generate embedding for the query via server API
+      // 1. Generate embedding for the query
       // Auto-detect model from database config
-      const dbConfig = await db.getConfig()
-      const model =
-        dbConfig.embedding_model_ollama || dbConfig.embedding_model_id || 'nomic-embed-text'
+      const modelInfo = await db.getEmbeddingModelInfo()
 
-      const response = await $fetch<{ embedding: number[] }>('/api/embeddings', {
-        method: 'POST',
-        body: { text: query, model },
-      })
+      let embedding: number[] | Float32Array
 
-      if (!response.embedding) {
-        throw new Error('Failed to generate embedding for query')
+      // Route to browser or API based on model
+      if (modelInfo?.id === 'bge-micro' || modelInfo?.id === 'potion') {
+        const provider = modelInfo.id === 'bge-micro' ? 'bge' : 'potion'
+        await browserEmbedding.init(provider)
+        embedding = await browserEmbedding.embed(query)
+      } else {
+        const model = modelInfo?.ollamaModel || modelInfo?.id || 'nomic-embed-text'
+        const response = await $fetch<{ embedding: number[] }>('/api/embeddings', {
+          method: 'POST',
+          body: { text: query, model },
+        })
+
+        if (!response.embedding) {
+          throw new Error('Failed to generate embedding for query')
+        }
+        embedding = response.embedding
       }
 
       // 2. Perform vector search in the database worker
-      const results = await db.vectorSearch(response.embedding, limit, where, params)
+      const results = await db.vectorSearch(embedding, limit, where, params)
       return results
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Search failed'
@@ -108,5 +119,8 @@ export function useVectorSearch() {
     findSimilar,
     isSearching,
     error,
+    // Expose browser embedding state for UI feedback (e.g. loading progress)
+    embeddingProgress: browserEmbedding.progress,
+    isEmbeddingLoading: browserEmbedding.isLoading,
   }
 }
