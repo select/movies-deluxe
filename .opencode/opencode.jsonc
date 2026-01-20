@@ -5,6 +5,7 @@
   "permission": {
     "doom_loop": "ask",
     "bash": {
+      "git restore *": "ask",
       "pkill -f \"nuxt dev\"*": "deny",
     },
   },
