@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-21T02:48:32.211Z"
+    "lastUpdated": "2026-01-21T02:54:00.111Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -2363,10 +2363,21 @@
       "archive-AwesomePower",
       "tt7718636",
       "tt3451956",
-      "tt1785669"
+      "tt1785669",
+      "tt0325013",
+      "tt3466816",
+      "tt6735670",
+      "tt0073244",
+      "tt0057547",
+      "tt0225797",
+      "archive-the-vagabond-king_1930",
+      "archive-silent-the-life-and-death-of-king-richard-iii",
+      "tt0001857",
+      "archive-lancelot-and-guinevere-1963",
+      "youtube-x38I1bWOxb8"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-21T02:46:18.396Z",
+    "updatedAt": "2026-01-21T02:54:00.111Z",
     "savedQueries": [
       {
         "searchQuery": "knight",
@@ -2382,6 +2393,16 @@
         "searchQuery": "viking",
         "filterState": {
           "searchQuery": "viking",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "lancelot",
+        "filterState": {
+          "searchQuery": "lancelot",
           "sort": {
             "field": "relevance",
             "direction": "desc"
