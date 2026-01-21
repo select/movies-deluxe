@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-21T02:54:00.111Z"
+    "lastUpdated": "2026-01-21T02:58:56.560Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1760,88 +1760,6 @@
       "family"
     ]
   },
-  "monster-madness": {
-    "id": "monster-madness",
-    "name": "Monster Madness",
-    "description": "Giant monster movies featuring the legendary kaiju: Godzilla, King Kong, and Gamera. Classic creature features from Japan and beyond.",
-    "movieIds": [
-      "youtube-TwcGiBaQVk4",
-      "tt0047034",
-      "tt1543211",
-      "archive-godzilla-1954-colorization-2020",
-      "tt0048127",
-      "tt0197521",
-      "tt0059346",
-      "youtube-0eOtvOC324M",
-      "youtube-uFL5GK7qzy4",
-      "youtube-kor6ghJ344I",
-      "youtube-AZWDlEHIi_4",
-      "tt0116390",
-      "tt0184503",
-      "youtube-h_wwLcUX1LU",
-      "youtube-1MlbLcd_TWs",
-      "tt0113142",
-      "tt0467923",
-      "archive-gamera-tai-uchu-kaiju-bairasu-1968",
-      "archive-gamera-tai-daiakuju-giron-1969",
-      "youtube-171tNN5CuqE",
-      "youtube-yI0Qkiv8fVQ",
-      "tt0024216",
-      "archive-king-kong-1933-espanol_202401",
-      "tt0158780",
-      "archive-Fire_Monsters_Against_The_Son_of_Hercules",
-      "archive-MonsterA.k.a.Monstroid",
-      "tt21097864",
-      "tt16429984",
-      "tt24221914",
-      "tt18937574",
-      "tt0471561",
-      "tt0221905",
-      "tt0048215"
-    ],
-    "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-01-21T02:32:18.252Z",
-    "savedQueries": [
-      {
-        "searchQuery": "Godzilla",
-        "filterState": {
-          "searchQuery": "Godzilla",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "King Kong",
-        "filterState": {
-          "searchQuery": "King Kong",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "Gamera",
-        "filterState": {
-          "searchQuery": "Gamera",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "kaiju",
-      "monsters",
-      "giant-creatures",
-      "japanese-cinema",
-      "sci-fi",
-      "action"
-    ]
-  },
   "sherlock-holmes": {
     "id": "sherlock-holmes",
     "name": "Sherlock Holmes",
@@ -2163,93 +2081,160 @@
       "honor"
     ]
   },
-  "martial-arts": {
-    "id": "martial-arts",
-    "name": "Martial Arts",
-    "description": "A collection of classic martial arts, kung fu, samurai, and ninja movies from around the world.",
+  "knights-and-vikings": {
+    "id": "knights-and-vikings",
+    "name": "Knights & Vikings",
+    "description": "Epic tales of medieval knights and Norse warriors, featuring battles, honor, quests, and legendary heroes from the age of swords and shields.",
     "movieIds": [
-      "tt0398913",
-      "archive-shoguns-ninja-sonny-chiba",
-      "archive-the-little-dragons-karate-kids-usa-1979-family-action-comedy",
-      "archive-rningai--daiichiwa-utsukushiki-emono-aka-jobless-samurai_1928",
-      "youtube-9eGWe1THw14",
-      "youtube--LEoqYF0X7I",
-      "archive-meng-jiao-di-she-long-nu-1973",
-      "archive-xiao-quan-wang-1972",
-      "tt0056058",
-      "archive-JackieChanFirstMovieBigAndLittleWongTinBar",
-      "tt0079509",
-      "tt0085127",
-      "tt0089374",
-      "tt0091655",
-      "tt0095403",
-      "tt0099812",
-      "tt0103950",
-      "tt18757236",
-      "tt4687848",
-      "youtube-izJVVBjIN3Q",
-      "youtube-PdVMOvOzZNw",
-      "youtube-PofsGjGYfUs",
-      "youtube-xU9eLFJ6ZJ4",
-      "archive-LADYWHIRLWIND1973_1",
-      "tt0095937",
-      "tt1442571",
-      "tt6083388",
-      "youtube-Fm229Xcte1A",
-      "tt0079891",
-      "tt0099818",
-      "tt0103285",
-      "tt0108624",
-      "tt0328113",
-      "tt0342258",
-      "tt0913968",
-      "tt1686784",
-      "tt2644714",
-      "youtube-iGGk97eT384",
-      "youtube-bmHFoKFsxjQ",
-      "youtube-ZjKwt3FgkvY",
-      "youtube-2u-Le5E7v6U",
-      "tt0133226",
-      "archive-le-samurai-vose-sellada",
-      "tt0076024",
-      "tt0045935",
-      "tt1165285",
-      "tt0099753",
-      "tt0063186",
-      "tt0058279",
-      "tt0143348",
-      "tt0058430",
-      "tt0130236",
-      "tt3398252",
-      "tt0047444",
-      "tt0048579",
-      "tt0049710",
-      "youtube-wXpCUmh4ka0",
-      "youtube-_GT-W6r28hQ",
-      "tt0061847",
-      "tt0059303",
-      "tt0056443",
-      "tt0814302",
-      "tt0033654",
-      "youtube-qKKMBy4aB5k",
-      "tt0036034",
-      "tt0004838",
-      "tt0046478",
-      "tt0420280",
-      "tt0055630"
+      "tt8444480",
+      "tt0047365",
+      "archive-tarkan-viking-kani_movie",
+      "tt8284860",
+      "tt0529758",
+      "tt0019532",
+      "tt0052365",
+      "archive-AwesomePower",
+      "tt7718636",
+      "tt3451956",
+      "tt1785669",
+      "tt0325013",
+      "tt3466816",
+      "tt6735670",
+      "tt0073244",
+      "tt0057547",
+      "tt0225797",
+      "archive-the-vagabond-king_1930",
+      "archive-silent-the-life-and-death-of-king-richard-iii",
+      "tt0001857",
+      "archive-lancelot-and-guinevere-1963",
+      "youtube-x38I1bWOxb8"
     ],
-    "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-12T00:28:15.424Z",
-    "savedQueries": [],
+    "createdAt": "2026-01-21T00:00:00.000Z",
+    "updatedAt": "2026-01-21T02:54:00.111Z",
+    "savedQueries": [
+      {
+        "searchQuery": "knight",
+        "filterState": {
+          "searchQuery": "knight",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "viking",
+        "filterState": {
+          "searchQuery": "viking",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "lancelot",
+        "filterState": {
+          "searchQuery": "lancelot",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
     "tags": [
-      "action",
-      "kung-fu",
-      "martial-arts",
-      "asian-cinema",
-      "fight-scenes",
-      "samurai"
+      "medieval",
+      "knights",
+      "vikings",
+      "norse",
+      "chivalry",
+      "historical",
+      "adventure",
+      "warriors"
+    ]
+  },
+  "monster-madness": {
+    "id": "monster-madness",
+    "name": "Monster Madness",
+    "description": "Giant monster movies featuring the legendary kaiju: Godzilla, King Kong, and Gamera. Classic creature features from Japan and beyond.",
+    "movieIds": [
+      "youtube-TwcGiBaQVk4",
+      "tt0047034",
+      "tt1543211",
+      "archive-godzilla-1954-colorization-2020",
+      "tt0048127",
+      "tt0197521",
+      "tt0059346",
+      "youtube-0eOtvOC324M",
+      "youtube-uFL5GK7qzy4",
+      "youtube-kor6ghJ344I",
+      "youtube-AZWDlEHIi_4",
+      "tt0116390",
+      "tt0184503",
+      "youtube-h_wwLcUX1LU",
+      "youtube-1MlbLcd_TWs",
+      "tt0113142",
+      "tt0467923",
+      "archive-gamera-tai-uchu-kaiju-bairasu-1968",
+      "archive-gamera-tai-daiakuju-giron-1969",
+      "youtube-171tNN5CuqE",
+      "youtube-yI0Qkiv8fVQ",
+      "tt0024216",
+      "archive-king-kong-1933-espanol_202401",
+      "tt0158780",
+      "archive-Fire_Monsters_Against_The_Son_of_Hercules",
+      "archive-MonsterA.k.a.Monstroid",
+      "tt21097864",
+      "tt16429984",
+      "tt24221914",
+      "tt18937574",
+      "tt0471561",
+      "tt0221905",
+      "tt0048215"
     ],
-    "enabled": true
+    "createdAt": "2026-01-19T00:50:00.000Z",
+    "updatedAt": "2026-01-21T02:32:18.252Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Godzilla",
+        "filterState": {
+          "searchQuery": "Godzilla",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "King Kong",
+        "filterState": {
+          "searchQuery": "King Kong",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Gamera",
+        "filterState": {
+          "searchQuery": "Gamera",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "kaiju",
+      "monsters",
+      "giant-creatures",
+      "japanese-cinema",
+      "sci-fi",
+      "action"
+    ]
   },
   "buster-keaton": {
     "id": "buster-keaton",
@@ -2346,79 +2331,6 @@
       "slapstick",
       "physical-comedy",
       "classic-hollywood"
-    ]
-  },
-  "knights-and-vikings": {
-    "id": "knights-and-vikings",
-    "name": "Knights & Vikings",
-    "description": "Epic tales of medieval knights and Norse warriors, featuring battles, honor, quests, and legendary heroes from the age of swords and shields.",
-    "movieIds": [
-      "tt8444480",
-      "tt0047365",
-      "archive-tarkan-viking-kani_movie",
-      "tt8284860",
-      "tt0529758",
-      "tt0019532",
-      "tt0052365",
-      "archive-AwesomePower",
-      "tt7718636",
-      "tt3451956",
-      "tt1785669",
-      "tt0325013",
-      "tt3466816",
-      "tt6735670",
-      "tt0073244",
-      "tt0057547",
-      "tt0225797",
-      "archive-the-vagabond-king_1930",
-      "archive-silent-the-life-and-death-of-king-richard-iii",
-      "tt0001857",
-      "archive-lancelot-and-guinevere-1963",
-      "youtube-x38I1bWOxb8"
-    ],
-    "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-21T02:54:00.111Z",
-    "savedQueries": [
-      {
-        "searchQuery": "knight",
-        "filterState": {
-          "searchQuery": "knight",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "viking",
-        "filterState": {
-          "searchQuery": "viking",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      },
-      {
-        "searchQuery": "lancelot",
-        "filterState": {
-          "searchQuery": "lancelot",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "medieval",
-      "knights",
-      "vikings",
-      "norse",
-      "chivalry",
-      "historical",
-      "adventure",
-      "warriors"
     ]
   },
   "abbott-and-costello": {
@@ -2624,6 +2536,94 @@
       "classic-hollywood",
       "auteur"
     ]
+  },
+  "martial-arts": {
+    "id": "martial-arts",
+    "name": "Martial Arts",
+    "description": "A collection of classic martial arts, kung fu, samurai, and ninja movies from around the world.",
+    "movieIds": [
+      "tt0398913",
+      "archive-shoguns-ninja-sonny-chiba",
+      "archive-the-little-dragons-karate-kids-usa-1979-family-action-comedy",
+      "archive-rningai--daiichiwa-utsukushiki-emono-aka-jobless-samurai_1928",
+      "youtube-9eGWe1THw14",
+      "youtube--LEoqYF0X7I",
+      "archive-meng-jiao-di-she-long-nu-1973",
+      "archive-xiao-quan-wang-1972",
+      "tt0056058",
+      "archive-JackieChanFirstMovieBigAndLittleWongTinBar",
+      "tt0079509",
+      "tt0085127",
+      "tt0089374",
+      "tt0091655",
+      "tt0095403",
+      "tt0099812",
+      "tt0103950",
+      "tt18757236",
+      "tt4687848",
+      "youtube-izJVVBjIN3Q",
+      "youtube-PdVMOvOzZNw",
+      "youtube-PofsGjGYfUs",
+      "youtube-xU9eLFJ6ZJ4",
+      "archive-LADYWHIRLWIND1973_1",
+      "tt0095937",
+      "tt1442571",
+      "tt6083388",
+      "youtube-Fm229Xcte1A",
+      "tt0079891",
+      "tt0099818",
+      "tt0103285",
+      "tt0108624",
+      "tt0328113",
+      "tt0342258",
+      "tt0913968",
+      "tt1686784",
+      "tt2644714",
+      "youtube-iGGk97eT384",
+      "youtube-bmHFoKFsxjQ",
+      "youtube-ZjKwt3FgkvY",
+      "youtube-2u-Le5E7v6U",
+      "tt0133226",
+      "archive-le-samurai-vose-sellada",
+      "tt0076024",
+      "tt0045935",
+      "tt1165285",
+      "tt0099753",
+      "tt0063186",
+      "tt0058279",
+      "tt0143348",
+      "tt0058430",
+      "tt0130236",
+      "tt3398252",
+      "tt0047444",
+      "tt0048579",
+      "tt0049710",
+      "youtube-wXpCUmh4ka0",
+      "youtube-_GT-W6r28hQ",
+      "tt0061847",
+      "tt0059303",
+      "tt0056443",
+      "tt0814302",
+      "tt0033654",
+      "youtube-qKKMBy4aB5k",
+      "tt0036034",
+      "tt0004838",
+      "tt0046478",
+      "tt0420280",
+      "tt0055630"
+    ],
+    "createdAt": "2025-12-29T16:08:00.000Z",
+    "updatedAt": "2026-01-12T00:28:15.424Z",
+    "savedQueries": [],
+    "tags": [
+      "action",
+      "kung-fu",
+      "martial-arts",
+      "asian-cinema",
+      "fight-scenes",
+      "samurai"
+    ],
+    "enabled": true
   },
   "sci-fi": {
     "id": "sci-fi",
