@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-21T02:46:18.396Z"
+    "lastUpdated": "2026-01-21T02:48:32.211Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1856,12 +1856,10 @@
       "tt0988045",
       "tt0007338",
       "tt0013597",
-      "archive-SherlockHolmes-TheManWhoDisappearedfailedPilot",
       "youtube-kBpqVDtQyuc",
-      "youtube-psU0YDidS6o",
+      "tt0038494",
       "youtube-f46uuHG6SYw",
       "youtube-inDZjZTLL1c",
-      "youtube-hdGNbzud_Xk",
       "archive-Sherlock_Holmes_1954",
       "tt0035317",
       "tt0035318",
@@ -1893,7 +1891,7 @@
       "tt0406934"
     ],
     "createdAt": "2026-01-11T19:30:00.000Z",
-    "updatedAt": "2026-01-11T22:35:46.781Z",
+    "updatedAt": "2026-01-21T02:48:32.211Z",
     "savedQueries": [
       {
         "searchQuery": "Sherlock Holmes",
@@ -1927,11 +1925,8 @@
       "youtube-_dWZzsy-MNo",
       "tt0207145",
       "tt0054285",
-      "archive-AtomAgeVampireSmaller",
-      "youtube-NsgT7dqLG1U",
       "youtube-ZjQWYUlNSAA",
       "tt0057603",
-      "youtube-T1C-8AgvstM",
       "tt8075634",
       "archive-DEVILDESERTGOLIATHVAMPIRES",
       "archive-ATOMAGESPIDERISLAND",
@@ -1985,7 +1980,6 @@
       "tt0065762",
       "archive-the-vampires-night-orgy-1974",
       "archive-the-werewolf-vs-the-vampire-woman-1971",
-      "archive-the-werewolf-vs-the-vampire-woman_202407",
       "tt0090196",
       "tt0053340",
       "archive-vampire-circus-1972_202406",
@@ -2003,7 +1997,6 @@
       "archive-blood-of-draculas-castle",
       "archive-blood-of-draculas-castle-1969",
       "archive-bram-stokers-dracula-1992_202108",
-      "youtube-4k7ujejgchU",
       "youtube-0a1PSsHTZ0Q",
       "youtube-KwZyXhUkVws",
       "tt29418698",
@@ -2016,23 +2009,19 @@
       "archive-draculas-daughter-colorized-1936-720p",
       "archive-horror-of-dracula-1958_202406",
       "archive-house-of-dracula",
-      "archive-HouseOfDracula-Trailer",
       "tt0445212",
       "archive-saga-of-dracula-1972",
       "tt0067713",
-      "archive-scars-of-dracula-1970_202406",
       "archive-son-of-dracula-1943_202406",
-      "archive-the-brides-of-dracula-1960_202406",
       "tt0031796",
       "tt0070634",
       "archive-the-satanic-rites-of-dracula-1973",
       "archive-zoltan-hound-of-dracula-1977",
-      "archive-evil-of-dracula-1974",
       "archive-lake-of-dracula-1971",
       "tt0040068"
     ],
     "createdAt": "2026-01-18T20:56:00.000Z",
-    "updatedAt": "2026-01-19T00:09:10.338Z",
+    "updatedAt": "2026-01-21T02:47:08.303Z",
     "savedQueries": [
       {
         "searchQuery": "vampire",
@@ -2359,10 +2348,10 @@
       "classic-hollywood"
     ]
   },
-  "knight": {
-    "id": "knight",
-    "name": "Knights",
-    "description": "Medieval knight films featuring chivalry, quests, battles, and tales of honor from the age of castles and kingdoms.",
+  "knights-and-vikings": {
+    "id": "knights-and-vikings",
+    "name": "Knights & Vikings",
+    "description": "Epic tales of medieval knights and Norse warriors, featuring battles, honor, quests, and legendary heroes from the age of swords and shields.",
     "movieIds": [
       "tt8444480",
       "tt0047365",
@@ -2388,15 +2377,27 @@
             "direction": "desc"
           }
         }
+      },
+      {
+        "searchQuery": "viking",
+        "filterState": {
+          "searchQuery": "viking",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
       }
     ],
     "tags": [
       "medieval",
       "knights",
+      "vikings",
+      "norse",
       "chivalry",
       "historical",
       "adventure",
-      "fantasy"
+      "warriors"
     ]
   },
   "abbott-and-costello": {
