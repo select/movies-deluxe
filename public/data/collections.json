@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-19T01:52:27.409Z"
+    "lastUpdated": "2026-01-21T02:46:18.396Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1790,10 +1790,17 @@
       "archive-king-kong-1933-espanol_202401",
       "tt0158780",
       "archive-Fire_Monsters_Against_The_Son_of_Hercules",
-      "archive-MonsterA.k.a.Monstroid"
+      "archive-MonsterA.k.a.Monstroid",
+      "tt21097864",
+      "tt16429984",
+      "tt24221914",
+      "tt18937574",
+      "tt0471561",
+      "tt0221905",
+      "tt0048215"
     ],
     "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-01-18T23:57:04.505Z",
+    "updatedAt": "2026-01-21T02:32:18.252Z",
     "savedQueries": [
       {
         "searchQuery": "Godzilla",
@@ -2057,6 +2064,116 @@
     ],
     "enabled": true
   },
+  "ninja": {
+    "id": "ninja",
+    "name": "Ninja",
+    "description": "Action-packed ninja films featuring martial arts, stealth, and ancient warrior traditions.",
+    "movieIds": [
+      "youtube-eCMeway-jTg",
+      "tt0106257",
+      "tt0109280",
+      "tt1294141",
+      "tt0165755",
+      "tt0082332",
+      "tt0488015",
+      "tt0164635",
+      "youtube-85UxL-AJdpQ",
+      "youtube-4qibUC40OCo",
+      "youtube-SXUbp1Nn4dw",
+      "youtube-pabciQ-MJD0",
+      "archive-ninja-assassins-1979",
+      "tt0199814",
+      "archive-NinjaDeathTrilogy",
+      "tt0087805",
+      "tt0199849",
+      "tt0199861",
+      "tt0084674",
+      "tt2458106",
+      "youtube-k_wRylWxgo0",
+      "tt0086192",
+      "tt0165247",
+      "archive-shoguns-ninja-sonny-chiba"
+    ],
+    "createdAt": "2026-01-21T00:00:00.000Z",
+    "updatedAt": "2026-01-21T02:45:26.765Z",
+    "savedQueries": [
+      {
+        "searchQuery": "ninja",
+        "filterState": {
+          "searchQuery": "ninja",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "martial-arts",
+      "action",
+      "ninja",
+      "japanese-cinema",
+      "warriors"
+    ]
+  },
+  "samurai": {
+    "id": "samurai",
+    "name": "Samurai",
+    "description": "Epic samurai films showcasing the way of the warrior, honor, and legendary swordsmen from feudal Japan.",
+    "movieIds": [
+      "archive-le-samurai-vose-sellada",
+      "tt0076024",
+      "tt0045935",
+      "tt1165285",
+      "tt0056058",
+      "tt0099753",
+      "tt0063186",
+      "tt0058279",
+      "tt0143348",
+      "tt0058430",
+      "archive-rningai--daiichiwa-utsukushiki-emono-aka-jobless-samurai_1928",
+      "tt0130236",
+      "tt3398252",
+      "tt0047444",
+      "tt0048579",
+      "tt0049710",
+      "youtube-wXpCUmh4ka0",
+      "youtube-_GT-W6r28hQ",
+      "tt0061847",
+      "tt0059303",
+      "tt0056443",
+      "tt0814302",
+      "tt0033654",
+      "youtube-qKKMBy4aB5k",
+      "tt0036034",
+      "tt0004838",
+      "tt0046478",
+      "tt0420280",
+      "tt0055630"
+    ],
+    "createdAt": "2026-01-21T00:00:00.000Z",
+    "updatedAt": "2026-01-21T02:44:43.662Z",
+    "savedQueries": [
+      {
+        "searchQuery": "samurai",
+        "filterState": {
+          "searchQuery": "samurai",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "samurai",
+      "japanese-cinema",
+      "martial-arts",
+      "historical",
+      "warriors",
+      "honor"
+    ]
+  },
   "martial-arts": {
     "id": "martial-arts",
     "name": "Martial Arts",
@@ -2240,6 +2357,46 @@
       "slapstick",
       "physical-comedy",
       "classic-hollywood"
+    ]
+  },
+  "knight": {
+    "id": "knight",
+    "name": "Knights",
+    "description": "Medieval knight films featuring chivalry, quests, battles, and tales of honor from the age of castles and kingdoms.",
+    "movieIds": [
+      "tt8444480",
+      "tt0047365",
+      "archive-tarkan-viking-kani_movie",
+      "tt8284860",
+      "tt0529758",
+      "tt0019532",
+      "tt0052365",
+      "archive-AwesomePower",
+      "tt7718636",
+      "tt3451956",
+      "tt1785669"
+    ],
+    "createdAt": "2026-01-21T00:00:00.000Z",
+    "updatedAt": "2026-01-21T02:46:18.396Z",
+    "savedQueries": [
+      {
+        "searchQuery": "knight",
+        "filterState": {
+          "searchQuery": "knight",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "medieval",
+      "knights",
+      "chivalry",
+      "historical",
+      "adventure",
+      "fantasy"
     ]
   },
   "abbott-and-costello": {
@@ -2461,7 +2618,7 @@
       "tt0252973",
       "tt0184342",
       "tt6613878",
-      "tt26584495",
+      "tt12093604",
       "tt0046876",
       "tt0011130",
       "tt0022835",
@@ -2525,7 +2682,7 @@
       "tt0348366"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-19T01:52:27.409Z",
+    "updatedAt": "2026-01-21T02:26:36.180Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2549,6 +2706,37 @@
       "future",
       "technology",
       "aliens"
+    ]
+  },
+  "animation-features": {
+    "id": "animation-features",
+    "name": "Animation Features",
+    "description": "Full-length animated feature films spanning classic Disney, anime, and modern computer-generated masterpieces.",
+    "movieIds": [],
+    "createdAt": "2026-01-21T00:00:00.000Z",
+    "updatedAt": "2026-01-21T00:00:00.000Z",
+    "savedQueries": [
+      {
+        "searchQuery": "",
+        "filterState": {
+          "searchQuery": "",
+          "sort": {
+            "field": "year",
+            "direction": "desc"
+          },
+          "genres": [
+            "Animation"
+          ],
+          "minRuntime": 60
+        }
+      }
+    ],
+    "tags": [
+      "animation",
+      "feature-length",
+      "family",
+      "anime",
+      "animated-films"
     ]
   },
   "horror": {
@@ -3048,30 +3236,21 @@
     "description": "Epic adventures and thrilling journeys across land, sea, and time.",
     "movieIds": [
       "tt0046672",
-      "tt0062622",
       "tt0000417",
       "tt0068182",
-      "tt0437086",
-      "tt0181875",
       "tt0072231",
-      "tt1630029",
       "tt0016641",
-      "tt0090728",
-      "tt0055796",
       "tt0101465",
       "tt0237534",
       "tt0064115",
       "tt0003740",
-      "tt1843866",
       "tt0042367",
       "tt0002130",
       "tt0071411",
       "tt0015174",
       "tt0015175",
       "tt0070030",
-      "tt0461770",
       "tt0049223",
-      "tt0057076",
       "tt0045808",
       "tt0038574",
       "tt0063056",
@@ -3085,9 +3264,7 @@
       "tt0052948",
       "tt0065938",
       "tt0060584",
-      "tt0446724",
       "tt0024216",
-      "tt0056172",
       "tt0006206",
       "tt0053106",
       "tt0164085",
@@ -3096,15 +3273,11 @@
       "tt0068815",
       "tt0029162",
       "tt0049513",
-      "tt0071853",
       "tt0026752",
       "tt0844457",
       "tt0053126",
-      "tt0190590",
       "tt0037954",
       "tt0031742",
-      "tt0464913",
-      "tt0383574",
       "tt0028119",
       "tt0085127",
       "tt0082484",
@@ -3113,14 +3286,11 @@
       "tt0048579",
       "tt0049710",
       "tt0045125",
-      "tt6864046",
       "tt0023458",
       "tt0988045",
       "tt1127715",
-      "tt0053285",
       "tt0069293",
       "tt0054331",
-      "tt0031971",
       "tt0020691",
       "tt0050212",
       "tt0025004",
@@ -3160,7 +3330,7 @@
       "tt0066565"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-11T22:17:32.090Z",
+    "updatedAt": "2026-01-21T02:20:33.988Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -3386,7 +3556,7 @@
       "tt0071315",
       "tt0074312",
       "tt0091251",
-      "tt26584495",
+      "tt12093604",
       "tt0073582",
       "tt0013086",
       "tt0067023",
@@ -3503,7 +3673,7 @@
       "tt0055630"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-11T21:21:04.984Z",
+    "updatedAt": "2026-01-21T02:26:36.180Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -5172,7 +5342,7 @@
     "movieIds": [
       "tt22687790",
       "tt28362963",
-      "tt26584495",
+      "tt12093604",
       "tt13649700",
       "tt32308418",
       "tt15392282",
@@ -5186,7 +5356,7 @@
       "tt11976532"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-11T22:38:26.929Z",
+    "updatedAt": "2026-01-21T02:26:36.180Z",
     "savedQueries": [
       {
         "searchQuery": "",
