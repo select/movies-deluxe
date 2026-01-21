@@ -13,4 +13,16 @@ BAD
 ></div>
 ```
 
+GOOD
+
+```vue
+<div
+  class="max-w-none mx-auto px-4 lg:px-[6%] flex items-center justify-between"
+  :class="{
+  	'py-6 md:py-10': isHeroPage
+    'py-3': !isHeroPage,
+  }"
+></div>
+```
+
 $ARGUMENTS
