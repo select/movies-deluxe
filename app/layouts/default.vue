@@ -4,7 +4,7 @@
     <MovieHeader />
 
     <!-- Sidebar (responsive: vertical on desktop, horizontal on mobile) -->
-    <Sidebar @open-theme-selection="isThemeMenuOpen = true" />
+    <AppSidebar @open-theme-selection="isThemeMenuOpen = true" />
 
     <!-- Theme Menu -->
     <ThemeMenu :is-open="isThemeMenuOpen" @close="isThemeMenuOpen = false" />
