@@ -4,6 +4,9 @@
   "plugin": ["opencode-beads@0.3.2", "opencode-gemini-auth@latest"],
   "permission": {
     "doom_loop": "ask",
+    "edit": {
+      "eslint.config.ts": "deny",
+    },
     "bash": {
       "git restore *": "ask",
       "pkill -f \"nuxt dev\"*": "deny",
