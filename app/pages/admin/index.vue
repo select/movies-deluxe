@@ -255,11 +255,13 @@
             Data Collection
           </h2>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <AdminArchiveScraper
-              v-model="archiveOptions"
-              :loading="scraping"
-              @start="adminStore.startArchiveScrape"
-            />
+            <div>
+              <AdminArchiveScraper
+                v-model="archiveOptions"
+                :loading="scraping"
+                @start="adminStore.startArchiveScrape"
+              />
+            </div>
 
             <AdminYouTubeScraper
               v-model="youtubeOptions"
@@ -310,11 +312,7 @@
 
             <!-- Data Cleanup Section -->
             <div>
-              <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                <div class="i-mdi-broom text-orange-600"></div>
-                Data Cleanup
-              </h3>
-              <div class="space-y-4">
+              <div class="space-y-8">
                 <AdminDataDeduplication
                   :loading="deduplicating"
                   :results="deduplicationResults"

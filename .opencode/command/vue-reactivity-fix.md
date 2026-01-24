@@ -45,7 +45,7 @@ const { progress } = storeToRefs(useAdminStore())
 <template>
 ```
 
-with functions
+GOOD with functions
 
 ```ts
 const { progress } = storeToRefs(useAdminStore())

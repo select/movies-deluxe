@@ -2,15 +2,31 @@
 
 Movies Deluxe uses vector embeddings to power semantic search, allowing users to find movies based on meaning and context rather than just keyword matching.
 
+## Leaderboard
+
+https://huggingface.co/spaces/mteb/leaderboard
+
+The challenge is to find a good model that is small enough
+
+- for storing/loading 30k embeddings (more dimensions, bigger size)
+- for storing/loading the model itself
+  in the browser. The browser has an additional limitation that the models must be able to run. With the help of [ONNX](https://onnx.ai/) and [Transformers.js](https://huggingface.co/docs/transformers.js), this is possible but requires some research in finding the right balance.
+
 ## Available Models
 
-We support multiple embedding models with different trade-offs between search quality, database size, and generation speed.
+We support multiple embedding models with different trade-offs between search quality, database size, and generation speed. Each model contains approximately **30,600 movie embeddings**.
 
-| Model                | ID               | Dimensions | DB File                          | Description                                                                 |
-| -------------------- | ---------------- | ---------- | -------------------------------- | --------------------------------------------------------------------------- |
-| **Nomic Embed Text** | `nomic`          | 768        | `embeddings-nomic-movies.db`     | **Default.** Best search quality, but largest database size.                |
-| **BGE Micro v2**     | `bge-micro`      | 384        | `embeddings-bge-micro-movies.db` | Good balance between size and quality. Faster generation.                   |
-| **Potion Base 2M**   | `potion-base-2M` | 64         | `embeddings-potion-movies.db`    | Smallest and fastest. Ideal for low-bandwidth or low-resource environments. |
+| Model                | ID               | Dimensions | DB File                          | File Size |
+| -------------------- | ---------------- | ---------- | -------------------------------- | --------- |
+| **Nomic Embed Text** | `nomic`          | 768        | `embeddings-nomic-movies.db`     | 122 MB    |
+| **BGE Micro v2**     | `bge-micro`      | 384        | `embeddings-bge-micro-movies.db` | 62 MB     |
+| **Potion Base 2M**   | `potion-base-2M` | 64         | `embeddings-potion-movies.db`    | 12 MB     |
+
+### Model Details
+
+- **Nomic Embed Text** (`nomic`): **Default.** Best search quality, but largest database size.
+- **BGE Micro v2** (`bge-micro`): Good balance between size and quality. Faster generation. The results are usable.
+- **Potion Base 2M** (`potion-base-2M`): Smallest and fastest. Ideal for low-bandwidth or low-resource environments. The results are not convincing at all.
 
 ## Database Generation
 

@@ -88,6 +88,8 @@ bd create --title="Write tests for X" --type=task
 bd dep add beads-yyy beads-xxx  # Tests depend on Feature (Feature blocks tests)
 ```
 
+# Wroking with code
+
 ## Commands
 
 ```bash
@@ -96,17 +98,7 @@ pnpm lint:fix               # Auto-fix issues
 pnpm typecheck              # TypeScript checking (slow, may timeout)
 ```
 
-**Testing**: ❌ No test framework configured. Do NOT run tests.
-
-## Issue Tracking with bd (beads)
-
-**IMPORTANT**: Use **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs or task lists.
-
-**Why bd?** Dependency-aware, git-friendly (auto-syncs to `.beads/issues.jsonl`), agent-optimized with JSON output.
-
-**Auto-Sync**: Exports to JSONL after changes (5s debounce), imports on `git pull`. Always commit `.beads/issues.jsonl` with code changes.
-
-**AI Planning Docs**: Store ephemeral planning documents (PLAN.md, IMPLEMENTATION.md, etc.) in `history/` directory to keep repo root clean. When adding a planing doc for a epic reference it in the epic description.
+**Testing**: No test framework configured. Do NOT run tests.
 
 ## Code Style
 
