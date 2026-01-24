@@ -28,6 +28,7 @@
     "embeddings:generate": "tsx scripts/generate-embeddings.ts",
     "embeddings:generate-bge": "tsx scripts/generate-embeddings-bge.ts",
     "embeddings:generate-potion": "tsx scripts/generate-embeddings-potion.ts",
+    "posters:scrape-headless": "tsx scripts/scrape-imdb-headless.ts",
     "release": "release-it"
   },
   "simple-git-hooks": {
@@ -94,6 +95,9 @@
     "oxlint": "1.33.0",
     "prettier": "3.3.3",
     "prettier-plugin-vue": "1.1.6",
+    "puppeteer": "24.36.0",
+    "puppeteer-extra": "3.3.6",
+    "puppeteer-extra-plugin-stealth": "2.11.2",
     "release-it": "19.2.3",
     "simple-git-hooks": "2.13.1",
     "tsx": "4.21.0",
@@ -106,6 +110,9 @@
   "pnpm": {
     "overrides": {
       "prettier": "3.3.3"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "puppeteer"
+    ]
   }
 }
