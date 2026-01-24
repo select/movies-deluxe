@@ -2,6 +2,7 @@ import * as fs from 'node:fs'
 import * as https from 'node:https'
 import * as http from 'node:http'
 import { join } from 'node:path'
+import { loadMoviesDatabase, saveMoviesDatabase, migrateMovieId } from './movieData'
 
 const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'data/failed-posters.json')
 
@@ -95,8 +96,12 @@ export function getFailedPosterDownloads(): FailedDownload[] {
 
 /**
  * Fetch HTML content from URL with proper headers
+ * Returns both HTML and final URL (after redirects)
  */
-async function fetchHtml(url: string, timeout: number = 30000): Promise<string> {
+async function fetchHtml(
+  url: string,
+  timeout: number = 30000
+): Promise<{ html: string; finalUrl: string }> {
   return new Promise((resolve, reject) => {
     const options = {
       headers: {
@@ -129,7 +134,7 @@ async function fetchHtml(url: string, timeout: number = 30000): Promise<string> 
       })
 
       response.on('end', () => {
-        resolve(html)
+        resolve({ html, finalUrl: url })
       })
     })
 
@@ -166,14 +171,27 @@ function extractPosterUrl(html: string): string | null {
 
 /**
  * Scrape poster URL from IMDB page
+ * Returns poster URL and new IMDB ID if the page was redirected
  */
-async function scrapeImdbPoster(movieId: string): Promise<string | null> {
+async function scrapeImdbPoster(
+  movieId: string
+): Promise<{ posterUrl: string | null; newImdbId: string | null }> {
   try {
     const imdbUrl = `https://www.imdb.com/title/${movieId}/`
-    const html = await fetchHtml(imdbUrl)
-    return extractPosterUrl(html)
+    const { html, finalUrl } = await fetchHtml(imdbUrl)
+
+    // Extract new IMDB ID from final URL if redirected
+    let newImdbId: string | null = null
+    const imdbIdMatch = finalUrl.match(/\/title\/(tt\d+)/)
+    if (imdbIdMatch && imdbIdMatch[1] && imdbIdMatch[1] !== movieId) {
+      newImdbId = imdbIdMatch[1]
+      console.log(`IMDB ID redirect detected: ${movieId} -> ${newImdbId}`)
+    }
+
+    const posterUrl = extractPosterUrl(html)
+    return { posterUrl, newImdbId }
   } catch {
-    return null
+    return { posterUrl: null, newImdbId: null }
   }
 }
 
@@ -247,9 +265,40 @@ export async function downloadPoster(movieId: string, force: boolean = false): P
   if (movieId.startsWith('tt')) {
     try {
       console.log(`Trying IMDB scraping fallback for ${movieId}`)
-      const scrapedUrl = await scrapeImdbPoster(movieId)
+      const { posterUrl: scrapedUrl, newImdbId } = await scrapeImdbPoster(movieId)
 
-      if (scrapedUrl) {
+      // Handle IMDB ID redirect
+      if (newImdbId && newImdbId !== movieId) {
+        console.log(`Migrating movie ID from ${movieId} to ${newImdbId}`)
+
+        // Load database and migrate
+        const db = await loadMoviesDatabase()
+        await migrateMovieId(db, movieId, newImdbId)
+        await saveMoviesDatabase(db)
+
+        // Rename poster file if it exists
+        const oldPosterPath = join(postersDir, `${movieId}.jpg`)
+        const newPosterPath = join(postersDir, `${newImdbId}.jpg`)
+
+        if (fs.existsSync(oldPosterPath)) {
+          fs.renameSync(oldPosterPath, newPosterPath)
+          console.log(`Renamed poster from ${movieId}.jpg to ${newImdbId}.jpg`)
+        }
+
+        // Update failed downloads tracking
+        removeFailedDownload(movieId)
+
+        // Continue with new ID
+        if (scrapedUrl) {
+          await downloadImageOnce(scrapedUrl, newPosterPath, 30000)
+          console.log(`✅ Successfully downloaded poster for migrated ID ${newImdbId}`)
+          return true
+        } else {
+          lastError = 'No poster found on IMDB page'
+          console.error(`Failed IMDB scraping for migrated ID ${newImdbId}: ${lastError}`)
+        }
+      } else if (scrapedUrl) {
+        // No redirect, just download poster normally
         await downloadImageOnce(scrapedUrl, filepath, 30000)
         removeFailedDownload(movieId)
         console.log(`✅ Successfully downloaded from IMDB scraping for ${movieId}`)
