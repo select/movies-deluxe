@@ -26,7 +26,6 @@ export default withNuxt(
       ],
 
       // Vue rules
-      'vue/multi-word-component-names': 'off',
       'vue/no-v-html': 'warn',
       'vue/html-self-closing': [
         'error',
