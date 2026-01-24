@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-24T17:46:19.276Z"
+    "lastUpdated": "2026-01-24T18:06:36.818Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1636,15 +1636,123 @@
       "tt0161963",
       "youtube-u92t2pNOoqM",
       "tt0150031",
-      "tt0153753"
+      "tt0153753",
+      "tt0153339",
+      "tt0151948",
+      "tt0161333",
+      "tt0150275",
+      "tt0150279",
+      "tt0153194",
+      "tt0149592",
+      "tt0161646",
+      "tt0147829",
+      "tt0149726",
+      "tt0149765",
+      "tt0149801",
+      "tt0149847",
+      "tt0147936",
+      "tt0150122",
+      "tt0148036",
+      "tt0150293",
+      "tt0150569",
+      "tt0150591",
+      "tt0148201",
+      "tt0150794",
+      "tt0148246",
+      "tt0150831",
+      "tt0150841",
+      "tt0150865",
+      "tt0150895",
+      "tt0150963",
+      "tt0150974",
+      "tt0150981",
+      "tt0150983",
+      "tt0151020",
+      "tt0151029",
+      "tt0151060",
+      "tt0161729",
+      "tt0151315",
+      "tt0148404",
+      "tt0151362",
+      "tt0148443",
+      "tt0151563",
+      "tt0151565",
+      "tt0151642",
+      "tt0151673",
+      "tt0037108",
+      "tt0151692",
+      "tt0151747",
+      "tt0151842",
+      "tt0148610",
+      "tt0152301",
+      "tt0161929",
+      "tt0152406",
+      "tt0148905",
+      "tt0152489",
+      "tt0152597",
+      "tt0152716",
+      "tt0161998",
+      "tt0150001",
+      "tt0150072",
+      "tt0150215",
+      "tt0150286",
+      "tt0148190",
+      "tt0150785",
+      "tt0150826",
+      "tt0150854",
+      "tt0150879",
+      "tt0148339",
+      "tt0161735",
+      "tt0148407",
+      "tt0151519",
+      "tt0148563",
+      "tt0151943",
+      "tt0152445",
+      "tt0152601",
+      "tt0149212",
+      "tt0149263",
+      "tt0153363",
+      "tt0149264",
+      "tt0149293",
+      "tt0153299",
+      "tt0153345",
+      "tt0153740",
+      "tt0149373",
+      "tt0149375",
+      "tt0153862",
+      "tt0153985",
+      "tt1020989",
+      "tt0014560",
+      "archive-max-fleischers-gabby-the-complete-collection-1940-41",
+      "tt0019881"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-24T17:07:00.043Z",
+    "updatedAt": "2026-01-24T18:06:36.818Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
         "filterState": {
           "searchQuery": "Popey",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Eddie Donnelly",
+        "filterState": {
+          "searchQuery": "Eddie Donnelly",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Max Fleischer",
+        "filterState": {
+          "searchQuery": "Max Fleischer",
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -2900,9 +3008,13 @@
     "id": "animation-features",
     "name": "Animation Features",
     "description": "Full-length animated feature films spanning classic Disney, anime, and modern computer-generated masterpieces.",
-    "movieIds": [],
+    "movieIds": [
+      "tt1620449",
+      "tt1272051",
+      "youtube-xat8ZmhrG5o"
+    ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-21T00:00:00.000Z",
+    "updatedAt": "2026-01-24T18:01:33.320Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -2925,7 +3037,8 @@
       "family",
       "anime",
       "animated-films"
-    ]
+    ],
+    "enabled": false
   },
   "horror": {
     "id": "horror",
