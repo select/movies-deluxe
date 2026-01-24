@@ -37,6 +37,8 @@ Data is collected via multiple APIs
 
 as well as with the help of a local LLM (using [Ollama](https://ollama.com/)). The curation of the data is done with various regexes, small algorithms and manually via the admin UI of this project.
 
+**[Embedding Models](./docs/embedding-models.md)**: Learn about the different semantic search models available (Nomic, BGE Micro, Potion) with detailed comparisons of dimensions, file sizes, and performance trade-offs.
+
 ## Setup
 
 Install dependencies and set up data.
@@ -64,11 +66,11 @@ Example:
 pnpm db:generate -m bge-micro --skip-json
 ```
 
-For more details on embedding models, see [Embedding Models Documentation](./docs/embedding-models.md).
+For more details on embedding models, see the [Embedding Models Documentation](./docs/embedding-models.md).
 
-## API Keys
+### API Keys Setup
 
-The admin features require API keys for various services. See the [API Keys Setup Guide](./docs/api-keys.md) for detailed configuration instructions.
+**[API Keys Setup](./docs/api-keys.md)**: Configuration guide for admin features requiring external API access.
 
 ## Project Structure
 
