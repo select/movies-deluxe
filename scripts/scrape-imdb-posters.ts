@@ -131,7 +131,8 @@ function downloadImage(url: string, filepath: string, timeout: number = 30000): 
  */
 function extractPosterUrl(html: string): string | null {
   // Look for the first ipc-image with loading="eager" (usually the poster)
-  const posterRegex = /class="ipc-image"\s+loading="eager"\s+src="([^"]+)"/
+  // Updated regex to handle attributes in any order
+  const posterRegex = /<img[^>]*class="ipc-image"[^>]*loading="eager"[^>]*src="([^"]+)"/
   const match = html.match(posterRegex)
 
   if (match && match[1]) {
