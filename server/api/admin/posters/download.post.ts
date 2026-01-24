@@ -26,11 +26,7 @@ export default defineEventHandler(async event => {
 
   // Filter pipeline (functional composition)
   const toProcess = entries
-    .filter(movie => movie.metadata) // Has OMDB metadata
-    .filter(movie => {
-      const posterUrl = movie.metadata!.Poster
-      return posterUrl && posterUrl !== 'N/A' // Valid poster URL
-    })
+    .filter(movie => movie.movieId.startsWith('tt')) // Has IMDB ID (required for scraping fallback)
     .filter(movie => {
       if (force) return true
       const filepath = join(postersDir, `${movie.movieId}.jpg`)
@@ -50,8 +46,6 @@ export default defineEventHandler(async event => {
       current: count,
       total,
     })
-
-    // const posterUrl = movie.metadata!.Poster as string
 
     try {
       const success = await downloadPoster(movie.movieId, force)
