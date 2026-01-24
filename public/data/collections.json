@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-21T03:51:45.924Z"
+    "lastUpdated": "2026-01-24T17:46:19.276Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -15,11 +15,9 @@
       "tt0050825",
       "tt0051201",
       "tt0057012",
-      "tt0056592",
       "tt0017136",
       "tt0036775",
       "tt0091251",
-      "tt0071853",
       "tt0053291",
       "tt0057115",
       "tt0042192",
@@ -70,7 +68,6 @@
       "tt0068519",
       "tt0015881",
       "tt3390572",
-      "tt0056058",
       "tt0071604",
       "tt0023042",
       "tt0058604",
@@ -118,7 +115,6 @@
       "tt0056049",
       "tt0036244",
       "tt0012364",
-      "tt0040725",
       "tt0059527",
       "tt0053976",
       "tt0046268",
@@ -128,7 +124,6 @@
       "tt0051093",
       "tt0047281",
       "tt0046478",
-      "tt0055601",
       "tt1185616",
       "tt0054144",
       "tt0057358",
@@ -136,7 +131,7 @@
       "tt1332128"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-11T01:02:08.699Z",
+    "updatedAt": "2026-01-24T17:46:19.276Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -480,103 +475,6 @@
       "prestigious",
       "restored",
       "cinema-history"
-    ]
-  },
-  "charlie-chaplin": {
-    "id": "charlie-chaplin",
-    "name": "Charlie Chaplin",
-    "description": "Classic films featuring the legendary Charlie Chaplin, from his early shorts to his greatest masterpieces.",
-    "movieIds": [
-      "archive-CC_1915_10_04_CharlieShanghaied",
-      "archive-charlie_chaplin_film_fest",
-      "archive-AGentlemanOfNerve1914",
-      "archive-BETWEENSHOWERS1914CharlieChaplinFordSterlingChesterConklin",
-      "archive-CC_1914_02_07_KidsAutoRaceAtVenice",
-      "archive-CC_1914_02_09_MabelsStrangePredicament",
-      "archive-CC_1914_03_02_FilmJohnny",
-      "archive-CC_1914_03_16_HisFavoritePasttime",
-      "archive-CC_1914_04_04_TheLandladysPet",
-      "archive-CC_1914_04_27_CaughtinaCaberet",
-      "archive-CC_1914_06_20_CharlottEtLeMannequin",
-      "archive-CC_1914_07_09_LaffingGas",
-      "archive-CC_1914_08_01_CharolotGargonDeTheater",
-      "archive-CC_1914_08_13_CharliesRecreation",
-      "archive-CC_1914_10_10_TheRivalMashers",
-      "archive-CC_1914_10_29_CharlottMabelAuxCourses",
-      "archive-CC_1914_11_07_MusicalTramps",
-      "archive-CC_1914_11_14_TilliesPuncturedRomance",
-      "archive-CC_1916_08_07_One_A_M",
-      "archive-CC_1918_xx_xx_TripleTrouble",
-      "archive-CharlieChaplinsTheRink",
-      "archive-GentlemanofNerve",
-      "archive-GettingAcquainted1914",
-      "archive-InTheParktinted",
-      "archive-ScenesOfCityLife-dushifengguang",
-      "archive-THECHAMPION1915CharlieChaplinEdnaPurviance",
-      "archive-THEFACEONTHEBARROOMFLOOR1914CharlieChaplin",
-      "archive-THETRAMP1915CharlieChaplinEdnaPurviance",
-      "archive-a-days-pleasure-1919",
-      "archive-charlie-chaplin-.-a-night-in-the-show-1915-classic-short-colourized-bw-mix",
-      "archive-charlie-chaplin-.-mabels-strange-predicament-1914-restored-short-silent-film-noir-comedy",
-      "archive-charlie-chaplin-.-the-champion-1915-classic-silent-film-noir-dramady",
-      "archive-charlie-chaplin-.-the-cure-1917-classic-siletnt-film-noir-comedy",
-      "archive-charlie-chaplin-in-making-a-living-1914-colorized",
-      "archive-charolot-gargon-de-theater-1914",
-      "archive-getting-acquainted-1914-directed-by-charlie-chaplin-colorized",
-      "archive-his-favorite-pasttime-1914",
-      "archive-his-trysting-places-1914-directed-by-charles-chaplin",
-      "archive-laffing-gas-1914",
-      "archive-musical-tramps-1914",
-      "archive-one-a.-m.-1916-directed-by-charlie-chaplin",
-      "tt0003758",
-      "tt0004936",
-      "tt9459600",
-      "youtube-N9lDRiNJz3k",
-      "youtube-HKjr9MSZnPo",
-      "tt0004282",
-      "tt0004284",
-      "tt1283535",
-      "tt0004707",
-      "tt0009018",
-      "tt0470941",
-      "tt0003760",
-      "tt0004091",
-      "tt0004100",
-      "tt0192120",
-      "tt0004210",
-      "tt0004277",
-      "tt0007145",
-      "tt0015841",
-      "tt0013486",
-      "tt0029430",
-      "tt0004518",
-      "tt0009611",
-      "tt0486919",
-      "tt0012304",
-      "tt0012349",
-      "tt0014358",
-      "tt0004637"
-    ],
-    "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-05T23:47:01.907Z",
-    "savedQueries": [
-      {
-        "searchQuery": "Charlie Chaplin",
-        "filterState": {
-          "searchQuery": "Charlie Chaplin",
-          "sort": {
-            "field": "relevance",
-            "direction": "desc"
-          }
-        }
-      }
-    ],
-    "tags": [
-      "comedy",
-      "silent-film",
-      "slapstick",
-      "classic-hollywood",
-      "shorts"
     ]
   },
   "animation-shorts": {
@@ -1737,10 +1635,11 @@
       "tt0161951",
       "tt0161963",
       "youtube-u92t2pNOoqM",
-      "tt0150031"
+      "tt0150031",
+      "tt0153753"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-21T03:29:39.307Z",
+    "updatedAt": "2026-01-24T17:07:00.043Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -1972,6 +1871,168 @@
     ],
     "enabled": true
   },
+  "cloak-and-dagger": {
+    "id": "cloak-and-dagger",
+    "name": "Cloak and Dagger",
+    "description": "Swashbuckling adventures of intrigue, espionage, and swordplay - from musketeers and masked avengers to spies and secret agents in historical settings.",
+    "movieIds": [
+      "tt0012752",
+      "tt0024663",
+      "tt1977681",
+      "tt15711350",
+      "tt0031619",
+      "youtube-d28LWwGYNHg",
+      "tt0246544",
+      "tt0008309",
+      "tt0153019",
+      "tt0140680",
+      "tt0021751",
+      "tt0015758",
+      "tt0194584",
+      "tt0027007",
+      "tt0011439",
+      "archive-mark-of-zorro-1940",
+      "tt0029818",
+      "youtube-a8RSKsl3sXc",
+      "archive-zorro-s-black-whip-1944-colorized",
+      "tt0032164",
+      "tt0037481",
+      "tt0027377",
+      "tt0042367",
+      "tt0395983",
+      "archive-svtplay-8E4oVbN",
+      "archive-cyranodebergerac_sdrodrian",
+      "tt0046388",
+      "tt0025004",
+      "tt0033076",
+      "tt0149712",
+      "tt0013556",
+      "tt0152201",
+      "tt0031869",
+      "tt0039779",
+      "tt0034120",
+      "tt0040741",
+      "youtube-2-WTMJ_qR8o",
+      "tt0044104",
+      "tt0040166",
+      "tt0064892",
+      "tt0030675",
+      "tt0025748",
+      "tt0013674"
+    ],
+    "createdAt": "2026-01-24T00:00:00.000Z",
+    "updatedAt": "2026-01-24T17:14:55.090Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Three Musketeers",
+        "filterState": {
+          "searchQuery": "Three Musketeers",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "D'Artagnan",
+        "filterState": {
+          "searchQuery": "D'Artagnan",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Zorro",
+        "filterState": {
+          "searchQuery": "Zorro",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Scarlet Pimpernel",
+        "filterState": {
+          "searchQuery": "Scarlet Pimpernel",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "swashbuckler",
+        "filterState": {
+          "searchQuery": "swashbuckler",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "swordsman",
+        "filterState": {
+          "searchQuery": "swordsman",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "masked avenger",
+        "filterState": {
+          "searchQuery": "masked avenger",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Count of Monte Cristo",
+        "filterState": {
+          "searchQuery": "Count of Monte Cristo",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Robin Hood",
+        "filterState": {
+          "searchQuery": "Robin Hood",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Cyrano",
+        "filterState": {
+          "searchQuery": "Cyrano",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "adventure",
+      "swashbuckler",
+      "intrigue",
+      "action",
+      "historical",
+      "espionage"
+    ]
+  },
   "ninja": {
     "id": "ninja",
     "name": "Ninja",
@@ -2050,7 +2111,6 @@
       "tt0061847",
       "tt0059303",
       "tt0056443",
-      "tt0814302",
       "tt0033654",
       "youtube-qKKMBy4aB5k",
       "tt0036034",
@@ -2060,7 +2120,7 @@
       "tt0055630"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-21T02:44:43.662Z",
+    "updatedAt": "2026-01-24T17:20:38.539Z",
     "savedQueries": [
       {
         "searchQuery": "samurai",
@@ -2108,10 +2168,19 @@
       "archive-silent-the-life-and-death-of-king-richard-iii",
       "tt0001857",
       "archive-lancelot-and-guinevere-1963",
-      "youtube-x38I1bWOxb8"
+      "youtube-x38I1bWOxb8",
+      "youtube-JUzf0L8I98c",
+      "tt0053861",
+      "tt13117446",
+      "youtube-_Ku-49beN1U",
+      "tt1135493",
+      "tt6603378",
+      "tt4738360",
+      "tt1113818",
+      "tt0056211"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-21T02:54:00.111Z",
+    "updatedAt": "2026-01-24T16:47:40.337Z",
     "savedQueries": [
       {
         "searchQuery": "knight",
@@ -2170,15 +2239,15 @@
       "youtube-0eOtvOC324M",
       "youtube-uFL5GK7qzy4",
       "youtube-kor6ghJ344I",
-      "youtube-AZWDlEHIi_4",
+      "tt0113142",
       "tt0116390",
       "tt0184503",
-      "youtube-h_wwLcUX1LU",
+      "tt0061695",
       "youtube-1MlbLcd_TWs",
       "tt0113142",
       "tt0467923",
-      "archive-gamera-tai-uchu-kaiju-bairasu-1968",
-      "archive-gamera-tai-daiakuju-giron-1969",
+      "tt0063000",
+      "tt0064360",
       "youtube-171tNN5CuqE",
       "youtube-yI0Qkiv8fVQ",
       "tt0024216",
@@ -2195,7 +2264,7 @@
       "tt0048215"
     ],
     "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-01-21T02:32:18.252Z",
+    "updatedAt": "2026-01-24T17:18:08.690Z",
     "savedQueries": [
       {
         "searchQuery": "Godzilla",
@@ -2235,6 +2304,103 @@
       "japanese-cinema",
       "sci-fi",
       "action"
+    ]
+  },
+  "charlie-chaplin": {
+    "id": "charlie-chaplin",
+    "name": "Charlie Chaplin",
+    "description": "Classic films featuring the legendary Charlie Chaplin, from his early shorts to his greatest masterpieces.",
+    "movieIds": [
+      "archive-CC_1915_10_04_CharlieShanghaied",
+      "archive-charlie_chaplin_film_fest",
+      "archive-AGentlemanOfNerve1914",
+      "archive-BETWEENSHOWERS1914CharlieChaplinFordSterlingChesterConklin",
+      "archive-CC_1914_02_07_KidsAutoRaceAtVenice",
+      "archive-CC_1914_02_09_MabelsStrangePredicament",
+      "archive-CC_1914_03_02_FilmJohnny",
+      "archive-CC_1914_03_16_HisFavoritePasttime",
+      "archive-CC_1914_04_04_TheLandladysPet",
+      "archive-CC_1914_04_27_CaughtinaCaberet",
+      "archive-CC_1914_06_20_CharlottEtLeMannequin",
+      "archive-CC_1914_07_09_LaffingGas",
+      "archive-CC_1914_08_01_CharolotGargonDeTheater",
+      "archive-CC_1914_08_13_CharliesRecreation",
+      "archive-CC_1914_10_10_TheRivalMashers",
+      "archive-CC_1914_10_29_CharlottMabelAuxCourses",
+      "archive-CC_1914_11_07_MusicalTramps",
+      "archive-CC_1914_11_14_TilliesPuncturedRomance",
+      "archive-CC_1916_08_07_One_A_M",
+      "archive-CC_1918_xx_xx_TripleTrouble",
+      "archive-CharlieChaplinsTheRink",
+      "archive-GentlemanofNerve",
+      "archive-GettingAcquainted1914",
+      "archive-InTheParktinted",
+      "archive-ScenesOfCityLife-dushifengguang",
+      "archive-THECHAMPION1915CharlieChaplinEdnaPurviance",
+      "archive-THEFACEONTHEBARROOMFLOOR1914CharlieChaplin",
+      "archive-THETRAMP1915CharlieChaplinEdnaPurviance",
+      "archive-a-days-pleasure-1919",
+      "archive-charlie-chaplin-.-a-night-in-the-show-1915-classic-short-colourized-bw-mix",
+      "archive-charlie-chaplin-.-mabels-strange-predicament-1914-restored-short-silent-film-noir-comedy",
+      "archive-charlie-chaplin-.-the-champion-1915-classic-silent-film-noir-dramady",
+      "archive-charlie-chaplin-.-the-cure-1917-classic-siletnt-film-noir-comedy",
+      "archive-charlie-chaplin-in-making-a-living-1914-colorized",
+      "archive-charolot-gargon-de-theater-1914",
+      "archive-getting-acquainted-1914-directed-by-charlie-chaplin-colorized",
+      "archive-his-favorite-pasttime-1914",
+      "archive-his-trysting-places-1914-directed-by-charles-chaplin",
+      "archive-laffing-gas-1914",
+      "archive-musical-tramps-1914",
+      "archive-one-a.-m.-1916-directed-by-charlie-chaplin",
+      "tt0003758",
+      "tt0004936",
+      "tt9459600",
+      "youtube-N9lDRiNJz3k",
+      "youtube-HKjr9MSZnPo",
+      "tt0004282",
+      "tt0004284",
+      "tt1283535",
+      "tt0004707",
+      "tt0009018",
+      "tt0470941",
+      "tt0003760",
+      "tt0004091",
+      "tt0004100",
+      "tt0192120",
+      "tt0004210",
+      "tt0004277",
+      "tt0007145",
+      "tt0015841",
+      "tt0013486",
+      "tt0029430",
+      "tt0004518",
+      "tt0009611",
+      "tt0486919",
+      "tt0012304",
+      "tt0012349",
+      "tt0014358",
+      "tt0004637"
+    ],
+    "createdAt": "2025-12-29T00:00:00.000Z",
+    "updatedAt": "2026-01-05T23:47:01.907Z",
+    "savedQueries": [
+      {
+        "searchQuery": "Charlie Chaplin",
+        "filterState": {
+          "searchQuery": "Charlie Chaplin",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "comedy",
+      "silent-film",
+      "slapstick",
+      "classic-hollywood",
+      "shorts"
     ]
   },
   "buster-keaton": {
@@ -2604,7 +2770,6 @@
       "tt0061847",
       "tt0059303",
       "tt0056443",
-      "tt0814302",
       "tt0033654",
       "youtube-qKKMBy4aB5k",
       "tt0036034",
@@ -2614,7 +2779,7 @@
       "tt0055630"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-12T00:28:15.424Z",
+    "updatedAt": "2026-01-24T17:20:37.056Z",
     "savedQueries": [],
     "tags": [
       "action",
