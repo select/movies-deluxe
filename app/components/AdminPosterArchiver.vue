@@ -105,7 +105,7 @@
         @click="createArchives"
       >
         <div class="i-mdi-archive" :class="{ 'animate-spin': loading }"></div>
-        {{ loading ? 'Creating Archives...' : 'Create Poster Archives' }}
+        {{ loading ? 'Creating Archives...' : 'Create Archives' }}
       </button>
     </div>
   </div>

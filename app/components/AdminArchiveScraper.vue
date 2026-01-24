@@ -18,7 +18,7 @@
       >
         <div v-if="loading" class="i-mdi-loading animate-spin"></div>
         <div v-else class="i-mdi-play"></div>
-        {{ loading ? 'Scraping in progress...' : 'Start Archive.org Scrape' }}
+        {{ loading ? 'Scraping in progress...' : 'Start' }}
       </button>
 
       <!-- Progress -->

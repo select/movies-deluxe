@@ -70,5 +70,11 @@
     "url": "https://m.media-amazon.com/images/M/MV5BY2I3NzJjN2ItNzE2Mi00ZjY1LThiZTYtMjFiZDAzZDU2YjU1XkEyXkFqcGdeQXVyMTE2NzA0Ng@@._V1_SX300.jpg",
     "failedAt": "2025-12-29T04:33:48.601Z",
     "error": "HTTP 404: Not Found"
+  },
+  {
+    "movieId": "tt0029584",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0029584",
+    "failedAt": "2026-01-24T17:09:25.916Z",
+    "error": "No poster found on IMDB page"
   }
 ]
