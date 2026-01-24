@@ -72,9 +72,1317 @@
     "error": "HTTP 404: Not Found"
   },
   {
-    "movieId": "tt0029584",
-    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0029584",
-    "failedAt": "2026-01-24T17:09:25.916Z",
+    "movieId": "tt31778008",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt31778008",
+    "failedAt": "2026-01-24T18:17:28.162Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0005482",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0005482",
+    "failedAt": "2026-01-24T18:17:29.146Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt6564690",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt6564690",
+    "failedAt": "2026-01-24T18:17:29.657Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt4777586",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt4777586",
+    "failedAt": "2026-01-24T18:17:30.150Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt12822274",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt12822274",
+    "failedAt": "2026-01-24T18:17:30.594Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0187895",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0187895",
+    "failedAt": "2026-01-24T18:17:31.109Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt25601256",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt25601256",
+    "failedAt": "2026-01-24T18:17:31.599Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt12180592",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt12180592",
+    "failedAt": "2026-01-24T18:17:32.113Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0185836",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0185836",
+    "failedAt": "2026-01-24T18:17:32.606Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0389299",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0389299",
+    "failedAt": "2026-01-24T18:17:33.053Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0259908",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0259908",
+    "failedAt": "2026-01-24T18:17:33.565Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1419606",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1419606",
+    "failedAt": "2026-01-24T18:17:34.065Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0440334",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0440334",
+    "failedAt": "2026-01-24T18:17:34.578Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0308284",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0308284",
+    "failedAt": "2026-01-24T18:17:35.166Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3110548",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3110548",
+    "failedAt": "2026-01-24T18:17:35.714Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001987",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001987",
+    "failedAt": "2026-01-24T18:17:36.157Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0000537",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0000537",
+    "failedAt": "2026-01-24T18:17:36.621Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0334912",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0334912",
+    "failedAt": "2026-01-24T18:17:37.134Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3100486",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3100486",
+    "failedAt": "2026-01-24T18:17:37.625Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0446928",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0446928",
+    "failedAt": "2026-01-24T18:17:37.943Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1080805",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1080805",
+    "failedAt": "2026-01-24T18:17:38.415Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0259235",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0259235",
+    "failedAt": "2026-01-24T18:17:38.856Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1515754",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1515754",
+    "failedAt": "2026-01-24T18:17:39.298Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3112348",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3112348",
+    "failedAt": "2026-01-24T18:17:39.697Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1002443",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1002443",
+    "failedAt": "2026-01-24T18:17:40.633Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1334226",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1334226",
+    "failedAt": "2026-01-24T18:17:41.086Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2112135",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2112135",
+    "failedAt": "2026-01-24T18:17:41.401Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0201825",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0201825",
+    "failedAt": "2026-01-24T18:17:42.238Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0123090",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0123090",
+    "failedAt": "2026-01-24T18:17:42.553Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0487799",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0487799",
+    "failedAt": "2026-01-24T18:17:43.013Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0024967",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0024967",
+    "failedAt": "2026-01-24T18:17:43.466Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1671620",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1671620",
+    "failedAt": "2026-01-24T18:17:43.793Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0129200",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0129200",
+    "failedAt": "2026-01-24T18:17:44.242Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0233661",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0233661",
+    "failedAt": "2026-01-24T18:17:44.685Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0252622",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0252622",
+    "failedAt": "2026-01-24T18:17:45.135Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0240935",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0240935",
+    "failedAt": "2026-01-24T18:17:45.580Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0129887",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0129887",
+    "failedAt": "2026-01-24T18:17:45.893Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0140135",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0140135",
+    "failedAt": "2026-01-24T18:17:46.338Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1015200",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1015200",
+    "failedAt": "2026-01-24T18:17:46.656Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0249636",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0249636",
+    "failedAt": "2026-01-24T18:17:47.100Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0026695",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0026695",
+    "failedAt": "2026-01-24T18:17:47.547Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0025583",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0025583",
+    "failedAt": "2026-01-24T18:17:47.991Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0249362",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0249362",
+    "failedAt": "2026-01-24T18:17:48.442Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0249633",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0249633",
+    "failedAt": "2026-01-24T18:17:48.755Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0226802",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0226802",
+    "failedAt": "2026-01-24T18:17:49.203Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0027549",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0027549",
+    "failedAt": "2026-01-24T18:17:49.650Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0249487",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0249487",
+    "failedAt": "2026-01-24T18:17:49.963Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0028018",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0028018",
+    "failedAt": "2026-01-24T18:17:50.405Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0234981",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0234981",
+    "failedAt": "2026-01-24T18:17:50.848Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0328575",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0328575",
+    "failedAt": "2026-01-24T18:17:51.288Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0028019",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0028019",
+    "failedAt": "2026-01-24T18:17:51.732Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0348451",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0348451",
+    "failedAt": "2026-01-24T18:17:52.044Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0135858",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0135858",
+    "failedAt": "2026-01-24T18:17:52.486Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0483126",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0483126",
+    "failedAt": "2026-01-24T18:17:52.795Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0029521",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0029521",
+    "failedAt": "2026-01-24T18:17:53.238Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1015342",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1015342",
+    "failedAt": "2026-01-24T18:17:53.684Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0131420",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0131420",
+    "failedAt": "2026-01-24T18:17:53.995Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0170436",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0170436",
+    "failedAt": "2026-01-24T18:17:54.436Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0029142",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0029142",
+    "failedAt": "2026-01-24T18:17:54.890Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0029249",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0029249",
+    "failedAt": "2026-01-24T18:17:55.335Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0442382",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0442382",
+    "failedAt": "2026-01-24T18:17:55.645Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0029731",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0029731",
+    "failedAt": "2026-01-24T18:17:55.957Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0138182",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0138182",
+    "failedAt": "2026-01-24T18:17:56.394Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0249240",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0249240",
+    "failedAt": "2026-01-24T18:17:56.838Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0249245",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0249245",
+    "failedAt": "2026-01-24T18:17:57.288Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0246104",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0246104",
+    "failedAt": "2026-01-24T18:17:57.600Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0030579",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0030579",
+    "failedAt": "2026-01-24T18:17:57.911Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0030332",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0030332",
+    "failedAt": "2026-01-24T18:17:58.226Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0140398",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0140398",
+    "failedAt": "2026-01-24T18:17:58.672Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0030721",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0030721",
+    "failedAt": "2026-01-24T18:17:58.986Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0122801",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0122801",
+    "failedAt": "2026-01-24T18:17:59.422Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0247461",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0247461",
+    "failedAt": "2026-01-24T18:17:59.734Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0166324",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0166324",
+    "failedAt": "2026-01-24T18:18:00.056Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0140561",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0140561",
+    "failedAt": "2026-01-24T18:18:00.504Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0033217",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0033217",
+    "failedAt": "2026-01-24T18:18:00.820Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0130360",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0130360",
+    "failedAt": "2026-01-24T18:18:01.273Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0032697",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0032697",
+    "failedAt": "2026-01-24T18:18:01.735Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0130751",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0130751",
+    "failedAt": "2026-01-24T18:18:02.185Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0248006",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0248006",
+    "failedAt": "2026-01-24T18:18:02.631Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0248027",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0248027",
+    "failedAt": "2026-01-24T18:18:03.081Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0235105",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0235105",
+    "failedAt": "2026-01-24T18:18:03.398Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0159435",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0159435",
+    "failedAt": "2026-01-24T18:18:03.848Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0033701",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0033701",
+    "failedAt": "2026-01-24T18:18:04.291Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1418816",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1418816",
+    "failedAt": "2026-01-24T18:18:04.727Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0130357",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0130357",
+    "failedAt": "2026-01-24T18:18:05.040Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0035275",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0035275",
+    "failedAt": "2026-01-24T18:18:05.484Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1669636",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1669636",
+    "failedAt": "2026-01-24T18:18:06.014Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt10084944",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt10084944",
+    "failedAt": "2026-01-24T18:18:06.473Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1418793",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1418793",
+    "failedAt": "2026-01-24T18:18:07.073Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0247304",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0247304",
+    "failedAt": "2026-01-24T18:18:07.488Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1315413",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1315413",
+    "failedAt": "2026-01-24T18:18:08.118Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0812201",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0812201",
+    "failedAt": "2026-01-24T18:18:08.731Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt13364232",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt13364232",
+    "failedAt": "2026-01-24T18:18:09.267Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2080409",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2080409",
+    "failedAt": "2026-01-24T18:18:09.814Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2152805",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2152805",
+    "failedAt": "2026-01-24T18:18:10.123Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0040954",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0040954",
+    "failedAt": "2026-01-24T18:18:10.559Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7322114",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7322114",
+    "failedAt": "2026-01-24T18:18:11.009Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7322102",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7322102",
+    "failedAt": "2026-01-24T18:18:11.453Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7320904",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7320904",
+    "failedAt": "2026-01-24T18:18:11.773Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1765953",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1765953",
+    "failedAt": "2026-01-24T18:18:12.212Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0036019",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0036019",
+    "failedAt": "2026-01-24T18:18:12.526Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1695350",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1695350",
+    "failedAt": "2026-01-24T18:18:12.977Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0381923",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0381923",
+    "failedAt": "2026-01-24T18:18:13.294Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0148531",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0148531",
+    "failedAt": "2026-01-24T18:18:13.742Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt14022272",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt14022272",
+    "failedAt": "2026-01-24T18:18:14.065Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0231300",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0231300",
+    "failedAt": "2026-01-24T18:18:14.385Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0251230",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0251230",
+    "failedAt": "2026-01-24T18:18:14.836Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt5067452",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt5067452",
+    "failedAt": "2026-01-24T18:18:15.156Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt5272494",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt5272494",
+    "failedAt": "2026-01-24T18:18:15.590Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7752082",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7752082",
+    "failedAt": "2026-01-24T18:18:15.905Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0829184",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0829184",
+    "failedAt": "2026-01-24T18:18:16.355Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2585250",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2585250",
+    "failedAt": "2026-01-24T18:18:16.678Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt13967852",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt13967852",
+    "failedAt": "2026-01-24T18:18:17.000Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0004064",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0004064",
+    "failedAt": "2026-01-24T18:18:17.322Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1816543",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1816543",
+    "failedAt": "2026-01-24T18:18:17.638Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0031426",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0031426",
+    "failedAt": "2026-01-24T18:18:17.955Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0151004",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0151004",
+    "failedAt": "2026-01-24T18:18:18.405Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2150349",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2150349",
+    "failedAt": "2026-01-24T18:18:18.726Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt4738744",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt4738744",
+    "failedAt": "2026-01-24T18:18:19.043Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0000450",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0000450",
+    "failedAt": "2026-01-24T18:18:19.498Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1598572",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1598572",
+    "failedAt": "2026-01-24T18:18:19.941Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0460978",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0460978",
+    "failedAt": "2026-01-24T18:18:20.381Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0026619",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0026619",
+    "failedAt": "2026-01-24T18:18:20.697Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3765110",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3765110",
+    "failedAt": "2026-01-24T18:18:21.144Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0431889",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0431889",
+    "failedAt": "2026-01-24T18:18:21.464Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt32493438",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt32493438",
+    "failedAt": "2026-01-24T18:18:21.789Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0777934",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0777934",
+    "failedAt": "2026-01-24T18:18:22.105Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt5328220",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt5328220",
+    "failedAt": "2026-01-24T18:18:22.423Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7322080",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7322080",
+    "failedAt": "2026-01-24T18:18:22.741Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2116884",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2116884",
+    "failedAt": "2026-01-24T18:18:23.057Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7322088",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7322088",
+    "failedAt": "2026-01-24T18:18:23.374Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1816593",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1816593",
+    "failedAt": "2026-01-24T18:18:23.697Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt34700831",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt34700831",
+    "failedAt": "2026-01-24T18:18:24.139Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1207008",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1207008",
+    "failedAt": "2026-01-24T18:18:24.454Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt12816892",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt12816892",
+    "failedAt": "2026-01-24T18:18:24.767Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7322208",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7322208",
+    "failedAt": "2026-01-24T18:18:25.077Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3904376",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3904376",
+    "failedAt": "2026-01-24T18:18:25.391Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0234029",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0234029",
+    "failedAt": "2026-01-24T18:18:25.708Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0002521",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0002521",
+    "failedAt": "2026-01-24T18:18:26.020Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001262",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001262",
+    "failedAt": "2026-01-24T18:18:26.335Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0000492",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0000492",
+    "failedAt": "2026-01-24T18:18:26.649Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001054",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001054",
+    "failedAt": "2026-01-24T18:18:27.087Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3610118",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3610118",
+    "failedAt": "2026-01-24T18:18:27.401Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001598",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001598",
+    "failedAt": "2026-01-24T18:18:27.848Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0000880",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0000880",
+    "failedAt": "2026-01-24T18:18:28.286Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0233823",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0233823",
+    "failedAt": "2026-01-24T18:18:28.653Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0231716",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0231716",
+    "failedAt": "2026-01-24T18:18:28.982Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001283",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001283",
+    "failedAt": "2026-01-24T18:18:29.437Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0317876",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0317876",
+    "failedAt": "2026-01-24T18:18:29.763Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001315",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001315",
+    "failedAt": "2026-01-24T18:18:30.086Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0234435",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0234435",
+    "failedAt": "2026-01-24T18:18:30.958Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0232946",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0232946",
+    "failedAt": "2026-01-24T18:18:31.292Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0000785",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0000785",
+    "failedAt": "2026-01-24T18:18:31.629Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0002585",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0002585",
+    "failedAt": "2026-01-24T18:18:31.962Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1247273",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1247273",
+    "failedAt": "2026-01-24T18:18:32.317Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3189794",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3189794",
+    "failedAt": "2026-01-24T18:18:33.039Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0001871",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0001871",
+    "failedAt": "2026-01-24T18:18:33.361Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt7322294",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt7322294",
+    "failedAt": "2026-01-24T18:18:33.813Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1523561",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1523561",
+    "failedAt": "2026-01-24T18:18:34.135Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt8084578",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt8084578",
+    "failedAt": "2026-01-24T18:18:34.455Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt13622434",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt13622434",
+    "failedAt": "2026-01-24T18:18:34.901Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt6326174",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt6326174",
+    "failedAt": "2026-01-24T18:18:35.224Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0778617",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0778617",
+    "failedAt": "2026-01-24T18:18:35.541Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt14907022",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt14907022",
+    "failedAt": "2026-01-24T18:18:35.856Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3369930",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3369930",
+    "failedAt": "2026-01-24T18:18:36.302Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0083167",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0083167",
+    "failedAt": "2026-01-24T18:18:36.613Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt14091630",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt14091630",
+    "failedAt": "2026-01-24T18:18:37.065Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt5854638",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt5854638",
+    "failedAt": "2026-01-24T18:18:37.386Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt4755566",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt4755566",
+    "failedAt": "2026-01-24T18:18:37.696Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1144469",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1144469",
+    "failedAt": "2026-01-24T18:18:38.012Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0152188",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0152188",
+    "failedAt": "2026-01-24T18:18:38.326Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1880353",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1880353",
+    "failedAt": "2026-01-24T18:27:07.574Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1307879",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1307879",
+    "failedAt": "2026-01-24T18:27:08.038Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0003755",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0003755",
+    "failedAt": "2026-01-24T18:27:08.486Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0336434",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0336434",
+    "failedAt": "2026-01-24T18:27:08.960Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt14373844",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt14373844",
+    "failedAt": "2026-01-24T18:27:09.503Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0445338",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0445338",
+    "failedAt": "2026-01-24T18:27:10.123Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0002159",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0002159",
+    "failedAt": "2026-01-24T18:27:11.184Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt5503754",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt5503754",
+    "failedAt": "2026-01-24T18:27:11.636Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1816674",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1816674",
+    "failedAt": "2026-01-24T18:27:12.634Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0907746",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0907746",
+    "failedAt": "2026-01-24T18:27:13.129Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1794829",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1794829",
+    "failedAt": "2026-01-24T18:27:13.607Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0437237",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0437237",
+    "failedAt": "2026-01-24T18:27:14.061Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1283535",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1283535",
+    "failedAt": "2026-01-24T18:27:14.524Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0445537",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0445537",
+    "failedAt": "2026-01-24T18:27:15.002Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt15529086",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt15529086",
+    "failedAt": "2026-01-24T18:27:15.514Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt5172084",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt5172084",
+    "failedAt": "2026-01-24T18:27:15.963Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0453534",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0453534",
+    "failedAt": "2026-01-24T18:27:16.416Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0026933",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0026933",
+    "failedAt": "2026-01-24T18:27:16.867Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt9587320",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt9587320",
+    "failedAt": "2026-01-24T18:27:17.309Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0003578",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0003578",
+    "failedAt": "2026-01-24T18:27:17.759Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0000789",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0000789",
+    "failedAt": "2026-01-24T18:27:18.206Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0464747",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0464747",
+    "failedAt": "2026-01-24T18:27:18.660Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0234904",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0234904",
+    "failedAt": "2026-01-24T18:27:19.105Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt12658952",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt12658952",
+    "failedAt": "2026-01-24T18:27:19.546Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0234922",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0234922",
+    "failedAt": "2026-01-24T18:27:19.870Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0002550",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0002550",
+    "failedAt": "2026-01-24T18:27:20.180Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0139723",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0139723",
+    "failedAt": "2026-01-24T18:27:20.489Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2094185",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2094185",
+    "failedAt": "2026-01-24T18:27:20.938Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0441389",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0441389",
+    "failedAt": "2026-01-24T18:27:21.382Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt15527684",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt15527684",
+    "failedAt": "2026-01-24T18:27:21.819Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0351988",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0351988",
+    "failedAt": "2026-01-24T18:27:22.252Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0337476",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0337476",
+    "failedAt": "2026-01-24T18:27:22.562Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt1245916",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt1245916",
+    "failedAt": "2026-01-24T18:27:23.005Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3610606",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3610606",
+    "failedAt": "2026-01-24T18:27:23.444Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt3103732",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt3103732",
+    "failedAt": "2026-01-24T18:27:23.890Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt2058739",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt2058739",
+    "failedAt": "2026-01-24T18:27:24.341Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0149809",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0149809",
+    "failedAt": "2026-01-24T18:27:24.796Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0149808",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0149808",
+    "failedAt": "2026-01-24T18:27:25.256Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0147924",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0147924",
+    "failedAt": "2026-01-24T18:27:25.700Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0147923",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0147923",
+    "failedAt": "2026-01-24T18:27:26.154Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0161333",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0161333",
+    "failedAt": "2026-01-24T18:27:26.606Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0149982",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0149982",
+    "failedAt": "2026-01-24T18:27:26.925Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0147967",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0147967",
+    "failedAt": "2026-01-24T18:27:27.240Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0150152",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0150152",
+    "failedAt": "2026-01-24T18:27:27.694Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0150163",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0150163",
+    "failedAt": "2026-01-24T18:27:28.137Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0150275",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0150275",
+    "failedAt": "2026-01-24T18:27:28.587Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0150279",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0150279",
+    "failedAt": "2026-01-24T18:27:29.038Z",
+    "error": "No poster found on IMDB page"
+  },
+  {
+    "movieId": "tt0146629",
+    "url": "http://img.omdbapi.com/?apikey=5c0f92c7&i=tt0146629",
+    "failedAt": "2026-01-24T18:27:29.477Z",
     "error": "No poster found on IMDB page"
   }
 ]
