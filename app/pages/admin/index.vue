@@ -186,9 +186,9 @@
           icon="i-mdi-image-multiple"
           icon-color="text-purple-500"
           show-progress
-          :percent="stats.posters.percentOfMoviesWithUrl"
+          :percent="stats.posters.percentOfMoviesWithImdbId"
           progress-color="bg-purple-500"
-          :subtitle="`${stats.posters.downloaded} / ${stats.posters.withPosterUrl} posters`"
+          :subtitle="`${stats.posters.downloaded} / ${stats.posters.withImdbId} with IMDB ID`"
         />
 
         <AdminStatsCard
