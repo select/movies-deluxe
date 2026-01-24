@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <!-- Main Content -->
@@ -215,15 +216,66 @@
             <div class="space-y-3">
               <div v-if="movie.metadata?.Director">
                 <span class="movie-label block !mb-1">Director</span>
-                <span class="text-theme-text">{{ movie.metadata.Director }}</span>
+                <div class="flex flex-wrap gap-x-1 gap-y-2">
+                  <template
+                    v-for="(director, index) in movie.metadata.Director.split(', ')"
+                    :key="director"
+                  >
+                    <NuxtLink
+                      :to="getDirectorSearchUrl(director.trim())"
+                      class="text-theme-text hover:text-theme-primary hover:underline transition-colors"
+                    >
+                      {{ director.trim() }}
+                    </NuxtLink>
+                    <span
+                      v-if="index < movie.metadata.Director.split(', ').length - 1"
+                      class="text-theme-textmuted"
+                      >,</span
+                    >
+                  </template>
+                </div>
               </div>
               <div v-if="movie.metadata?.Writer">
                 <span class="movie-label block !mb-1">Writer</span>
-                <span class="text-theme-text">{{ movie.metadata.Writer }}</span>
+                <div class="flex flex-wrap gap-x-1 gap-y-2">
+                  <template
+                    v-for="(writer, index) in movie.metadata.Writer.split(', ')"
+                    :key="writer"
+                  >
+                    <NuxtLink
+                      :to="getWriterSearchUrl(writer.trim())"
+                      class="text-theme-text hover:text-theme-primary hover:underline transition-colors"
+                    >
+                      {{ writer.trim() }}
+                    </NuxtLink>
+                    <span
+                      v-if="index < movie.metadata.Writer.split(', ').length - 1"
+                      class="text-theme-textmuted"
+                      >,</span
+                    >
+                  </template>
+                </div>
               </div>
               <div v-if="movie.metadata?.Actors">
                 <span class="movie-label block !mb-1">Actors</span>
-                <span class="text-theme-text">{{ movie.metadata.Actors }}</span>
+                <div class="flex flex-wrap gap-x-1 gap-y-2">
+                  <template
+                    v-for="(actor, index) in movie.metadata.Actors.split(', ')"
+                    :key="actor"
+                  >
+                    <NuxtLink
+                      :to="getActorSearchUrl(actor.trim())"
+                      class="text-theme-text hover:text-theme-primary hover:underline transition-colors"
+                    >
+                      {{ actor.trim() }}
+                    </NuxtLink>
+                    <span
+                      v-if="index < movie.metadata.Actors.split(', ').length - 1"
+                      class="text-theme-textmuted"
+                      >,</span
+                    >
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -1029,6 +1081,19 @@ const updateMetaTags = (movie: MovieEntry) => {
       },
     ],
   })
+}
+
+// Helper functions to generate search URLs
+const getDirectorSearchUrl = (director: string) => {
+  return `/search?q=${encodeURIComponent(`director:"${director}"`)}`
+}
+
+const getWriterSearchUrl = (writer: string) => {
+  return `/search?q=${encodeURIComponent(`writer:"${writer}"`)}`
+}
+
+const getActorSearchUrl = (actor: string) => {
+  return `/search?q=${encodeURIComponent(`actor:"${actor}"`)}`
 }
 
 // Toggle liked
