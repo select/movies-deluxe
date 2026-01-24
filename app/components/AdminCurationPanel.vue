@@ -261,48 +261,33 @@
           <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted mb-3">
             Collections
           </h3>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <div
-              v-for="collection in movieCollections"
-              :key="collection.id"
-              class="flex items-center gap-2 px-3 py-1.5 bg-theme-primary/10 border border-theme-primary/30 rounded-lg text-sm"
-            >
-              <div class="i-mdi:movie-roll text-theme-primary"></div>
-              <span class="font-medium">{{ collection.name }}</span>
-              <button
-                class="p-0.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-red-500 transition-colors"
-                title="Remove from collection"
-                @click="removeFromCollection(collection.id)"
-              >
-                <div class="i-mdi-close text-xs"></div>
-              </button>
-            </div>
-            <div
-              v-if="movieCollections.length === 0"
-              class="text-sm text-theme-textmuted italic py-1.5"
-            >
-              Not in any collections
-            </div>
-          </div>
-
-          <div class="flex gap-2">
-            <select
-              v-model="selectedCollectionId"
-              class="flex-1 px-3 py-2 rounded border border-theme-border bg-theme-surface/50 text-theme-text text-sm"
-            >
-              <option value="" disabled>Add to collection...</option>
-              <option v-for="c in availableCollections" :key="c.id" :value="c.id">
-                {{ c.name }}
-              </option>
-            </select>
+          <div class="flex flex-wrap gap-2">
             <button
-              class="px-4 py-2 bg-theme-primary hover:bg-theme-primary/80 text-white rounded font-bold transition-colors disabled:opacity-50"
-              :disabled="!selectedCollectionId || isUpdatingCollection"
-              @click="addToCollection"
+              v-for="collection in allCollections"
+              :key="collection.id"
+              class="px-4 py-2 rounded-xl border transition-all text-sm font-bold flex items-center gap-2"
+              :class="[
+                isInCollection(collection.id)
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/20'
+                  : 'bg-theme-surface border-theme-border hover:border-theme-textmuted text-theme-text',
+                togglingCollectionId === collection.id ? 'opacity-50' : '',
+              ]"
+              :disabled="togglingCollectionId === collection.id"
+              @click="toggleCollection(collection.id)"
             >
-              <div v-if="isUpdatingCollection" class="i-mdi-loading animate-spin"></div>
-              <span v-else>Add</span>
+              <div
+                v-if="togglingCollectionId === collection.id"
+                class="i-mdi-loading animate-spin"
+              ></div>
+              <div v-else-if="isInCollection(collection.id)" class="i-mdi-check"></div>
+              {{ collection.name }}
             </button>
+            <div
+              v-if="allCollections.length === 0"
+              class="text-sm text-theme-textmuted italic py-2"
+            >
+              No collections available
+            </div>
           </div>
         </div>
       </div>
@@ -456,15 +441,14 @@ const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)
 const { getCollectionsForMovie, loadCollections, addMovieToCollection, removeMovieFromCollection } =
   collectionsStore
-const selectedCollectionId = ref('')
-const isUpdatingCollection = ref(false)
+const togglingCollectionId = ref<string | null>(null)
 
 const movieCollections = ref<Collection[]>([])
-const availableCollections = computed(() => {
-  return Array.from(collections.value.values()).filter(
-    c => !c.movieIds.includes(props.movie.movieId)
-  )
-})
+const allCollections = computed(() => Array.from(collections.value.values()))
+
+const isInCollection = (collectionId: string) => {
+  return movieCollections.value.some(c => c.id === collectionId)
+}
 
 onMounted(async () => {
   isLocalhost.value =
@@ -492,32 +476,19 @@ watch(
   }
 )
 
-const addToCollection = async () => {
-  if (!selectedCollectionId.value) return
-
-  isUpdatingCollection.value = true
+const toggleCollection = async (collectionId: string) => {
+  togglingCollectionId.value = collectionId
   try {
-    const success = await addMovieToCollection(selectedCollectionId.value, props.movie.movieId)
-    if (success) {
-      selectedCollectionId.value = ''
-      // Reload collections for this movie from database
-      movieCollections.value = await getCollectionsForMovie(props.movie.movieId)
+    const inCollection = isInCollection(collectionId)
+    if (inCollection) {
+      await removeMovieFromCollection(collectionId, props.movie.movieId)
+    } else {
+      await addMovieToCollection(collectionId, props.movie.movieId)
     }
-  } finally {
-    isUpdatingCollection.value = false
-  }
-}
-
-const removeFromCollection = async (collectionId: string) => {
-  if (!confirm('Remove movie from this collection?')) return
-
-  isUpdatingCollection.value = true
-  try {
-    await removeMovieFromCollection(collectionId, props.movie.movieId)
     // Reload collections for this movie from database
     movieCollections.value = await getCollectionsForMovie(props.movie.movieId)
   } finally {
-    isUpdatingCollection.value = false
+    togglingCollectionId.value = null
   }
 }
 
