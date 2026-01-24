@@ -111,12 +111,19 @@ export default defineEventHandler(async _event => {
     const matchedPosters = Array.from(posterImdbIds).filter(id => movieImdbIds.has(id))
 
     let totalWithPosterUrl = 0
+    let totalWithImdbId = 0
     let totalDownloaded = 0
 
     entries.forEach(movie => {
       const posterUrl = movie.metadata?.Poster
+      const hasImdbId = movie.movieId.startsWith('tt')
+
       if (posterUrl && posterUrl !== 'N/A') {
         totalWithPosterUrl++
+      }
+
+      if (hasImdbId) {
+        totalWithImdbId++
         if (posterImdbIds.has(movie.movieId)) {
           totalDownloaded++
         }
@@ -186,8 +193,9 @@ export default defineEventHandler(async _event => {
       posters: {
         totalMovies: entries.length,
         withPosterUrl: totalWithPosterUrl,
+        withImdbId: totalWithImdbId,
         downloaded: totalDownloaded,
-        missing: totalWithPosterUrl - totalDownloaded,
+        missing: totalWithImdbId - totalDownloaded,
         failed: failedPosters.length,
         failureRate:
           totalDownloaded + failedPosters.length > 0
@@ -195,6 +203,8 @@ export default defineEventHandler(async _event => {
             : 0,
         percentOfMoviesWithUrl:
           totalWithPosterUrl > 0 ? (totalDownloaded / totalWithPosterUrl) * 100 : 0,
+        percentOfMoviesWithImdbId:
+          totalWithImdbId > 0 ? (totalDownloaded / totalWithImdbId) * 100 : 0,
         percentOfAllMovies: entries.length > 0 ? (matchedPosters.length / entries.length) * 100 : 0,
         filesInDirectory: posterFiles.length,
         matchedPosters: matchedPosters.length,
