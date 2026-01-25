@@ -80,7 +80,7 @@ export function useVectorSearch() {
       // 1. Get the embedding for the movie from the database
       // We need to use a raw query because vectorSearch expects the embedding blob
       const movieEmbeddingResult = await db.query(
-        'SELECT embedding FROM vec_movies WHERE movieId = ?',
+        'SELECT embedding FROM embeddings_db.vec_movies WHERE movieId = ?',
         [movieId]
       )
 

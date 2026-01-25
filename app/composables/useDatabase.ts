@@ -8,6 +8,9 @@ let dbInstance: ReturnType<typeof createDatabase> | null = null
 function createDatabase() {
   const worker = ref<Worker | null>(null)
   const isReady = ref(false)
+  const embeddingsLoaded = ref(false)
+  const embeddingsModelId = ref<string | null>(null)
+  const embeddingsLoading = ref(false)
   const pendingQueries = new Map<
     string,
     { resolve: (value: WorkerResponse) => void; reject: (reason?: Error) => void }
@@ -34,6 +37,30 @@ function createDatabase() {
         // Handle initialization success message
         if (responseType === 'init-success') {
           isReady.value = true
+          const pending = pendingQueries.get(id)
+          if (pending) {
+            pending.resolve(e.data)
+            pendingQueries.delete(id)
+          }
+          return
+        }
+
+        // Handle attach-embeddings success message
+        if (responseType === 'attach-success') {
+          embeddingsLoaded.value = true
+          embeddingsLoading.value = false
+          const pending = pendingQueries.get(id)
+          if (pending) {
+            pending.resolve(e.data)
+            pendingQueries.delete(id)
+          }
+          return
+        }
+
+        // Handle detach-embeddings success message
+        if (responseType === 'detach-success') {
+          embeddingsLoaded.value = false
+          embeddingsModelId.value = null
           const pending = pendingQueries.get(id)
           if (pending) {
             pending.resolve(e.data)
@@ -225,6 +252,91 @@ function createDatabase() {
     }
   }
 
+  /**
+   * Attach an embeddings database for a specific model
+   * @param modelId - The model ID (e.g., 'nomic', 'bge-micro', 'potion')
+   * @returns Promise that resolves with the embeddings count on success
+   */
+  const attachEmbeddings = async (modelId: string): Promise<number> => {
+    // Wait for main database to be ready
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
+    }
+
+    // If same model is already loaded, return early
+    if (embeddingsLoaded.value && embeddingsModelId.value === modelId) {
+      return 0
+    }
+
+    embeddingsLoading.value = true
+
+    const url = `/data/embeddings-${modelId}-movies.db`
+    const id = Math.random().toString(36).substring(7)
+
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: (data: WorkerResponse) => {
+          embeddingsModelId.value = modelId
+          const count = 'embeddingsCount' in data ? data.embeddingsCount : 0
+          resolve(count)
+        },
+        reject: (error?: Error) => {
+          embeddingsLoading.value = false
+          embeddingsLoaded.value = false
+          embeddingsModelId.value = null
+          reject(error)
+        },
+      })
+      worker.value!.postMessage({ type: 'attach-embeddings', id, url })
+    })
+  }
+
+  /**
+   * Detach the currently attached embeddings database
+   */
+  const detachEmbeddings = async (): Promise<void> => {
+    // Wait for main database to be ready
+    if (initPromise.value) {
+      await initPromise.value
+    }
+    if (!worker.value) {
+      throw new Error('Database not initialized - call init() first')
+    }
+
+    // If no embeddings are loaded, return early
+    if (!embeddingsLoaded.value) {
+      return
+    }
+
+    const id = Math.random().toString(36).substring(7)
+
+    return new Promise((resolve, reject) => {
+      pendingQueries.set(id, {
+        resolve: () => resolve(),
+        reject,
+      })
+      worker.value!.postMessage({ type: 'detach-embeddings', id })
+    })
+  }
+
+  /**
+   * Check if embeddings are currently loaded
+   */
+  const isEmbeddingsLoaded = computed(() => embeddingsLoaded.value)
+
+  /**
+   * Get the currently loaded embeddings model ID
+   */
+  const currentEmbeddingsModelId = computed(() => embeddingsModelId.value)
+
+  /**
+   * Check if embeddings are currently being loaded
+   */
+  const isEmbeddingsLoading = computed(() => embeddingsLoading.value)
+
   return {
     init,
     query,
@@ -236,6 +348,11 @@ function createDatabase() {
     getEmbeddingModelInfo,
     isReady,
     waitForReady,
+    attachEmbeddings,
+    detachEmbeddings,
+    isEmbeddingsLoaded,
+    currentEmbeddingsModelId,
+    isEmbeddingsLoading,
   }
 }
 

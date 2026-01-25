@@ -61,8 +61,8 @@ export function buildVectorSearchQuery(
       m.primarySourceType as sourceType, m.primaryChannelName as channelName,
       m.verified, m.lastUpdated, m.genre, m.country,
       v.distance
-    FROM vec_movies v
-    INNER JOIN movies m ON v.movieId = m.movieId
+    FROM embeddings_db.vec_movies v
+    INNER JOIN main.movies m ON v.movieId = m.movieId
     WHERE v.embedding MATCH ?
       AND k = ?
   `
