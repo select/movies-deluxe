@@ -58,25 +58,6 @@
         {{ generating ? 'Generating Database...' : 'Start SQLite Generation' }}
       </button>
 
-      <!-- Progress -->
-      <div
-        v-if="progress.sqlite && progress.sqlite.status === 'in_progress'"
-        class="mt-4 space-y-2"
-      >
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-theme-textmuted truncate mr-2">{{ progress.sqlite.message }}</span>
-          <span class="font-mono text-nowrap"
-            >{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span
-          >
-        </div>
-        <div class="h-2 bg-theme-border rounded-full overflow-hidden">
-          <div
-            class="h-full bg-blue-500 transition-all duration-300"
-            :style="{ width: `${(progress.sqlite.current / progress.sqlite.total) * 100}%` }"
-          ></div>
-        </div>
-      </div>
-
       <!-- Success/Error Messages -->
       <div
         v-if="progress.sqlite?.status === 'completed'"
@@ -108,6 +89,15 @@ const skipJsonGeneration = ref(false)
 const selectedModelConfig = computed(() => getModelConfig(selectedModel.value))
 
 async function handleGenerate() {
+  // Set immediate feedback before API call
+  adminStore.updateProgress({
+    type: 'sqlite',
+    status: 'starting',
+    current: 0,
+    total: 0,
+    message: 'Starting SQLite generation...',
+  })
+
   await adminStore.generateSqlite({
     embeddingModel: selectedModel.value,
     skipJsonGeneration: skipJsonGeneration.value,

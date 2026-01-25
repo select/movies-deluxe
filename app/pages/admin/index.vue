@@ -119,6 +119,37 @@
               ></div>
             </div>
           </div>
+          <!-- SQLite Generation Progress -->
+          <div
+            v-if="
+              progress.sqlite &&
+              (progress.sqlite.status === 'in_progress' || progress.sqlite.status === 'starting')
+            "
+            class="w-full max-w-md space-y-2"
+          >
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-theme-textmuted truncate mr-2">{{ progress.sqlite.message }}</span>
+              <span v-if="progress.sqlite.total > 0" class="font-mono text-nowrap"
+                >{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span
+              >
+            </div>
+            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
+              <div
+                v-if="progress.sqlite.status === 'starting'"
+                class="h-full bg-purple-500 animate-pulse w-full"
+              ></div>
+              <div
+                v-else
+                class="h-full bg-purple-500 transition-all duration-300"
+                :style="{
+                  width:
+                    progress.sqlite.total > 0
+                      ? `${(progress.sqlite.current / progress.sqlite.total) * 100}%`
+                      : '0%',
+                }"
+              ></div>
+            </div>
+          </div>
         </div>
       </header>
 

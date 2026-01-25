@@ -18,6 +18,10 @@ export const useProgress = () => {
     es.onmessage = event => {
       try {
         const update = JSON.parse(event.data)
+        if (import.meta.dev) {
+          // eslint-disable-next-line no-console
+          console.debug('[SSE] Progress update:', update.type, update.status, update.message)
+        }
         adminStore.updateProgress(update)
       } catch (e) {
         // eslint-disable-next-line no-console
