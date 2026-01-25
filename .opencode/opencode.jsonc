@@ -5,7 +5,7 @@
   "permission": {
     "doom_loop": "ask",
     "edit": {
-      "eslint.config.ts": "deny",
+      "eslint.config.ts": "ask",
     },
     "bash": {
       "git restore *": "ask",

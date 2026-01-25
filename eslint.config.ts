@@ -180,6 +180,13 @@ export default withNuxt(
     },
   },
   {
+    // Allow console.log in database worker and movie store (debugging/logging)
+    files: ['app/workers/database.worker.ts', 'app/stores/useMovieStore.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     ignores: [
       '.nuxt',
       '.output',
