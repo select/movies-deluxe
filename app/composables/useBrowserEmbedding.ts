@@ -1,4 +1,3 @@
-// @ts-expect-error - Vite worker import
 import EmbeddingWorker from '~/workers/embedding.worker?worker'
 
 export function useBrowserEmbedding() {
