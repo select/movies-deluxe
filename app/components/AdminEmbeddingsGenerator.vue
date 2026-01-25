@@ -18,8 +18,8 @@
           <div v-for="model in EMBEDDING_MODELS" :key="model.id">
             <AppInputCheckbox
               :checked="selectedModels.includes(model.id)"
-              :label="`${model.name} (${model.dimensions}D)${model.id === 'potion' ? ' (CLI only)' : ''}`"
-              :disabled="generating || model.id === 'potion'"
+              :label="getModelLabel(model)"
+              :disabled="generating || isModelDisabled(model.id)"
               @change="toggleModel(model.id, $event)"
             />
             <p
@@ -27,6 +27,12 @@
               class="text-[10px] text-amber-600 dark:text-amber-400 ml-6 -mt-1"
             >
               Use CLI: pnpm tsx scripts/generate-embeddings-potion.ts
+            </p>
+            <p
+              v-if="model.id === 'nomic'"
+              class="text-[10px] text-amber-600 dark:text-amber-400 ml-6 -mt-1"
+            >
+              Server-only (requires Ollama). Use CLI: pnpm tsx scripts/generate-embeddings.ts
             </p>
           </div>
         </div>
@@ -203,9 +209,19 @@ function toggleModel(modelId: string, checked: boolean) {
   }
 }
 
+function isModelDisabled(modelId: string): boolean {
+  // potion and nomic require CLI - not available in admin UI
+  return modelId === 'potion' || modelId === 'nomic'
+}
+
+function getModelLabel(model: { id: string; name: string; dimensions: number }): string {
+  const suffix = isModelDisabled(model.id) ? ' (CLI only)' : ''
+  return `${model.name} (${model.dimensions}D)${suffix}`
+}
+
 function selectAll() {
-  // Exclude potion as it's only available via CLI
-  selectedModels.value = EMBEDDING_MODELS.filter(m => m.id !== 'potion').map(m => m.id)
+  // Only select models available in admin UI (exclude potion and nomic)
+  selectedModels.value = EMBEDDING_MODELS.filter(m => !isModelDisabled(m.id)).map(m => m.id)
 }
 
 function selectNone() {

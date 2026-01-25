@@ -78,9 +78,7 @@
           </div>
           <div class="flex justify-between items-center text-[10px]">
             <span class="text-theme-textmuted">Source:</span>
-            <span class="text-theme-text">{{
-              modelInfo.ollamaModel ? 'Ollama API' : 'Browser'
-            }}</span>
+            <span class="text-theme-text">Browser (WebGPU/WASM)</span>
           </div>
         </div>
 

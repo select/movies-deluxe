@@ -2,6 +2,9 @@
  * Copy embedding database files to public directory
  * This script copies pre-generated embedding databases from data/ to public/data/
  * for client-side vector search functionality.
+ *
+ * Only browser-compatible models are copied (bge-micro, potion).
+ * Nomic requires Ollama server and is not usable in browser.
  */
 
 import { copyFile, mkdir, stat } from 'fs/promises'
@@ -11,11 +14,9 @@ import { existsSync } from 'fs'
 const SOURCE_DIR = join(process.cwd(), 'data')
 const TARGET_DIR = join(process.cwd(), 'public/data')
 
-const EMBEDDING_DBS = [
-  'embeddings-nomic-movies.db',
-  'embeddings-bge-micro-movies.db',
-  'embeddings-potion-movies.db',
-]
+// Only browser-compatible embedding models
+// nomic is excluded - requires Ollama server, not usable in browser
+const EMBEDDING_DBS = ['embeddings-bge-micro-movies.db', 'embeddings-potion-movies.db']
 
 function formatSize(bytes: number): string {
   const mb = bytes / (1024 * 1024)
