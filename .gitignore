@@ -27,10 +27,8 @@ logs
 public/data/movies.db
 data/stats.json
 data/criterion-cache.json
-data/*.db
-
 # Embedding databases (generated locally)
-data/embeddings-*.db
+data/embeddings-nomic-movies.db
 
 # Poster images (keep directory structure)
 public/posters/*.jpg

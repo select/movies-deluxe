@@ -97,6 +97,11 @@ export const useMovieStore = defineStore('movie', () => {
   // Database composable
   const db = useDatabase()
 
+  // Expose embeddings state from database composable
+  const isEmbeddingsLoaded = computed(() => db.isEmbeddingsLoaded.value)
+  const isEmbeddingsLoading = computed(() => db.isEmbeddingsLoading.value)
+  const currentEmbeddingsModelId = computed(() => db.currentEmbeddingsModelId.value)
+
   // Track IDs currently being fetched to avoid duplicate requests
   const pendingIds = new Set<string>()
 
@@ -229,6 +234,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Load movies from the SQLite database file
    * Called once on app initialization
+   * Note: Only loads the main movies.db - embeddings are loaded separately via loadEmbeddings()
    */
   const loadFromFile = async () => {
     console.log('[loadFromFile] Starting database initialization')
@@ -255,6 +261,28 @@ export const useMovieStore = defineStore('movie', () => {
     } finally {
       console.log('[loadFromFile] Finished database initialization')
       isFiltering.value = false
+    }
+  }
+
+  /**
+   * Load embeddings for semantic search
+   * Can be called after loadFromFile() to enable semantic search functionality
+   * @param modelId - The embedding model ID (e.g., 'nomic', 'bge-micro', 'potion')
+   */
+  const loadEmbeddings = async (modelId: string): Promise<number> => {
+    console.log('[loadEmbeddings] Loading embeddings for model:', modelId)
+    try {
+      const count = await db.attachEmbeddings(modelId)
+      console.log('[loadEmbeddings] Embeddings loaded successfully, count:', count)
+      return count
+    } catch (err) {
+      console.error('[loadEmbeddings] Failed to load embeddings:', err)
+
+      // Show toast notification for embeddings loading failure
+      const { showToast } = useToastStore()
+      showToast('Failed to load embeddings for semantic search.', 'error', 5000)
+
+      throw err
     }
   }
 
@@ -803,6 +831,11 @@ export const useMovieStore = defineStore('movie', () => {
     isFiltering,
     likedMovieIds,
 
+    // Embeddings state (from useDatabase)
+    isEmbeddingsLoaded,
+    isEmbeddingsLoading,
+    currentEmbeddingsModelId,
+
     // ============================================
     // COMPUTED PROPERTIES
     // ============================================
@@ -822,6 +855,7 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Data Loading
     // ============================================
     loadFromFile,
+    loadEmbeddings,
     fetchMoviesByIds,
     getMovieById,
     getSimilarMovies,

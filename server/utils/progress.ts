@@ -13,6 +13,7 @@ export interface ProgressUpdate {
     | 'posterArchive'
     | 'stats'
     | 'home'
+    | 'embeddings'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number
@@ -21,6 +22,8 @@ export interface ProgressUpdate {
   successPrevious?: number
   failedCurrent?: number
   failedPrevious?: number
+  embeddingsPerSecond?: number
+  estimatedTimeRemaining?: number
 }
 
 export const emitProgress = (update: ProgressUpdate) => {

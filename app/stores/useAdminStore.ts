@@ -13,7 +13,16 @@ import type {
 } from '~/types/admin'
 
 export interface ProgressUpdate {
-  type: 'archive' | 'youtube' | 'omdb' | 'posters' | 'sqlite' | 'ai' | 'stats' | 'home'
+  type:
+    | 'archive'
+    | 'youtube'
+    | 'omdb'
+    | 'posters'
+    | 'sqlite'
+    | 'ai'
+    | 'stats'
+    | 'home'
+    | 'embeddings'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number
@@ -22,6 +31,8 @@ export interface ProgressUpdate {
   successPrevious?: number
   failedCurrent?: number
   failedPrevious?: number
+  embeddingsPerSecond?: number
+  estimatedTimeRemaining?: number
 }
 
 export const useAdminStore = defineStore('admin', () => {
