@@ -40,8 +40,7 @@ export function useVectorSearch() {
     try {
       await movieStore.loadEmbeddings(DEFAULT_EMBEDDING_MODEL)
       return true
-    } catch (err) {
-      console.error('[useVectorSearch] Failed to load embeddings:', err)
+    } catch {
       error.value = 'Failed to load embeddings database. Semantic search is unavailable.'
       return false
     } finally {

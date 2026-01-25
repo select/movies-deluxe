@@ -800,8 +800,7 @@ const loadSimilarMovies = async () => {
     nextTick(() => {
       updateSimilarScrollState()
     })
-  } catch (err) {
-    console.error('Failed to load similar movies:', err)
+  } catch {
     similarMovies.value = []
   } finally {
     isSimilarLoading.value = false
@@ -880,7 +879,6 @@ const loadMovieData = async (movieId: string) => {
 
     isLoading.value = false
   } catch (err) {
-    console.error('Failed to load movie:', err)
     error.value = `Failed to load movie data. ${err instanceof Error ? err.message : 'Please try again.'}`
     isLoading.value = false
   }

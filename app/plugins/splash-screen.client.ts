@@ -17,16 +17,14 @@ export default defineNuxtPlugin({
             const movieStore = useMovieStore()
             await movieStore.loadFromFile()
 
-            console.log('[splash-screen] Database ready, hiding splash screen')
-
             // Small delay to ensure styles are fully applied
             setTimeout(() => {
               splash.classList.add('hidden')
               // Remove from DOM after fade-out transition completes
               setTimeout(() => splash.remove(), 300)
             }, 100)
-          } catch (error) {
-            console.error('[splash-screen] Failed to initialize database:', error)
+          } catch {
+            // Failed to initialize database
             // Still hide splash screen even if database fails
             setTimeout(() => {
               splash.classList.add('hidden')

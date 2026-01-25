@@ -228,8 +228,8 @@ function createDatabase() {
 
       configCache.value = config
       return config
-    } catch (err) {
-      console.warn('Failed to fetch config from database (might be an old version):', err)
+    } catch {
+      // Failed to fetch config from database (might be an old version)
       return {}
     }
   }

@@ -148,8 +148,8 @@ const selectMode = async (mode: SearchMode) => {
   if (mode === 'semantic' && !isEmbeddingsLoaded.value) {
     try {
       await movieStore.loadEmbeddings(DEFAULT_EMBEDDING_MODEL)
-    } catch (err) {
-      console.error('[SearchModeSelector] Failed to load embeddings:', err)
+    } catch {
+      // Failed to load embeddings
       return // Don't switch mode if loading failed
     }
   }
