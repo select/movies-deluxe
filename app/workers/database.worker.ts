@@ -17,6 +17,11 @@ const movieCache = new Map<string, Record<string, unknown>>()
 // Cache for embedding dimensions from database metadata
 let cachedDimensions: number | null = null
 
+// Track attached embeddings database state
+let embeddingsDbAttached = false
+// Memory pointer kept for potential future cleanup (FREEONCLOSE handles deallocation on detach)
+let _embeddingsDbMemoryPointer: number | null = null
+
 async function initDatabase() {
   if (sqlite3) return sqlite3
 
@@ -126,9 +131,15 @@ async function loadRemoteDatabase(url: string) {
 
 // Message queue to ensure sequential processing
 interface QueuedMessage {
-  type: 'init' | 'exec' | 'query-by-ids' | 'vector-search'
+  type:
+    | 'init'
+    | 'exec'
+    | 'query-by-ids'
+    | 'vector-search'
+    | 'attach-embeddings'
+    | 'detach-embeddings'
   id: string
-  // For init
+  // For init, attach-embeddings
   url?: string
   baseURL?: string
   // For exec, query-by-ids, vector-search (pre-built SQL)
@@ -208,6 +219,179 @@ async function handleMessage(e: QueuedMessage) {
 
       await initializationPromise
       self.postMessage({ id, type: 'init-success', success: true, totalMovies })
+      return
+    }
+
+    // Handle attach-embeddings message
+    if (type === 'attach-embeddings') {
+      // Wait for initialization if it's in progress
+      if (initializationPromise) {
+        await initializationPromise
+      }
+
+      if (!db || !sqlite3) {
+        throw new Error('Main database not initialized. Call init first.')
+      }
+
+      if (!url) {
+        throw new Error('URL is required to attach embeddings database')
+      }
+
+      // Detach existing embeddings database if attached
+      if (embeddingsDbAttached) {
+        try {
+          db.exec({ sql: 'DETACH DATABASE embeddings_db' })
+          embeddingsDbAttached = false
+          // Note: We don't free the old memory pointer here because SQLITE_DESERIALIZE_FREEONCLOSE
+          // should handle it when the database is detached
+          _embeddingsDbMemoryPointer = null
+          console.log('Detached existing embeddings database before re-attaching')
+        } catch (err) {
+          console.warn('Failed to detach existing embeddings database:', err)
+        }
+      }
+
+      try {
+        console.log('Fetching embeddings database from:', url)
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch embeddings database: ${response.status} ${response.statusText}`
+          )
+        }
+
+        const arrayBuffer = await response.arrayBuffer()
+        const uint8Array = new Uint8Array(arrayBuffer)
+
+        // First, attach an empty in-memory database with the alias 'embeddings_db'
+        db.exec({ sql: "ATTACH DATABASE ':memory:' AS embeddings_db" })
+
+        // Allocate memory for the embeddings database
+        const pMem = sqlite3.capi.sqlite3_malloc(uint8Array.byteLength)
+        if (!pMem) {
+          // Detach the empty database on failure
+          db.exec({ sql: 'DETACH DATABASE embeddings_db' })
+          throw new Error('Failed to allocate memory for embeddings database')
+        }
+
+        // Store the memory pointer for potential cleanup
+        _embeddingsDbMemoryPointer = pMem
+
+        // Copy the database content to the allocated memory
+        sqlite3.wasm.heap8u().set(uint8Array, pMem)
+
+        const flags =
+          sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite3.capi.SQLITE_DESERIALIZE_READONLY
+
+        // Deserialize into the attached database
+        const rc = sqlite3.capi.sqlite3_deserialize(
+          db.pointer,
+          'embeddings_db',
+          pMem,
+          uint8Array.byteLength,
+          uint8Array.byteLength,
+          flags
+        )
+
+        if (rc !== sqlite3.capi.SQLITE_OK) {
+          const errMsg = sqlite3.capi.sqlite3_errmsg(db.pointer)
+          // Detach on failure
+          try {
+            db.exec({ sql: 'DETACH DATABASE embeddings_db' })
+          } catch {
+            // Ignore detach errors during cleanup
+          }
+          _embeddingsDbMemoryPointer = null
+          throw new Error(`Failed to deserialize embeddings database: ${errMsg}`)
+        }
+
+        embeddingsDbAttached = true
+
+        // Try to fetch embedding dimensions from the embeddings database config
+        try {
+          const rows = db.exec({
+            sql: "SELECT value FROM embeddings_db.config WHERE key = 'embedding_dimensions'",
+            returnValue: 'resultRows',
+            rowMode: 'object',
+          })
+          if (rows.length > 0) {
+            const value = (rows[0] as { value: string }).value
+            cachedDimensions = parseInt(value, 10)
+            console.log('Updated embedding dimensions from embeddings DB config:', cachedDimensions)
+          }
+        } catch (err) {
+          console.warn('Could not fetch embedding_dimensions from embeddings_db.config table:', err)
+        }
+
+        // Verify the embeddings database loaded correctly
+        let embeddingsCount = 0
+        try {
+          const testResult = db.exec({
+            sql: 'SELECT COUNT(*) as count FROM embeddings_db.movie_embeddings',
+            returnValue: 'resultRows',
+            rowMode: 'object',
+          })
+          const firstRow = testResult[0] as { count: number } | undefined
+          embeddingsCount = firstRow?.count || 0
+        } catch {
+          // Table might not exist or have different name
+          console.warn('Could not count embeddings - table may not exist')
+        }
+
+        console.log('Embeddings database attached successfully, embeddings count:', embeddingsCount)
+        self.postMessage({ id, type: 'attach-success', success: true, embeddingsCount })
+      } catch (err) {
+        console.error('Failed to attach embeddings database:', err)
+        self.postMessage({ id, error: (err as Error).message || String(err) })
+      }
+      return
+    }
+
+    // Handle detach-embeddings message
+    if (type === 'detach-embeddings') {
+      // Wait for initialization if it's in progress
+      if (initializationPromise) {
+        await initializationPromise
+      }
+
+      if (!db) {
+        throw new Error('Database not initialized. Call init first.')
+      }
+
+      if (!embeddingsDbAttached) {
+        self.postMessage({ id, type: 'detach-success', success: true, wasAttached: false })
+        return
+      }
+
+      try {
+        db.exec({ sql: 'DETACH DATABASE embeddings_db' })
+        embeddingsDbAttached = false
+        _embeddingsDbMemoryPointer = null
+
+        // Reset cached dimensions since they may have come from embeddings DB
+        cachedDimensions = null
+
+        // Try to re-fetch dimensions from main database
+        try {
+          const rows = db.exec({
+            sql: "SELECT value FROM config WHERE key = 'embedding_dimensions'",
+            returnValue: 'resultRows',
+            rowMode: 'object',
+          })
+          if (rows.length > 0) {
+            const value = (rows[0] as { value: string }).value
+            cachedDimensions = parseInt(value, 10)
+          }
+        } catch {
+          // Config table may not exist in main DB
+        }
+
+        console.log('Embeddings database detached successfully')
+        self.postMessage({ id, type: 'detach-success', success: true, wasAttached: true })
+      } catch (err) {
+        console.error('Failed to detach embeddings database:', err)
+        self.postMessage({ id, error: (err as Error).message || String(err) })
+      }
       return
     }
 
