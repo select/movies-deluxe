@@ -29,6 +29,9 @@ data/stats.json
 data/criterion-cache.json
 # Embedding databases (generated locally)
 data/embeddings-nomic-movies.db
+public/data/embeddings-nomic-movies.db
+public/data/embeddings-bge-micro-movies.db
+public/data/embeddings-potion-movies.db
 
 # Poster images (keep directory structure)
 public/posters/*.jpg
