@@ -52,7 +52,7 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
     this.initializing = true
     try {
       // Load model from local /models/ directory (served from public/models/)
-      this.pipeline = (await pipeline('feature-extraction', '/models/bge-micro-v2/', {
+      const result = await pipeline('feature-extraction', '/models/bge-micro-v2/', {
         dtype: 'q8',
         local_files_only: true,
         progress_callback: (info: { status: string; progress?: number }) => {
@@ -61,7 +61,8 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
             onProgress(info.progress / 100)
           }
         },
-      })) as FeatureExtractionPipeline
+      })
+      this.pipeline = result as FeatureExtractionPipeline
     } finally {
       this.initializing = false
     }
@@ -94,9 +95,7 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
 
   async dispose(): Promise<void> {
     if (this.pipeline) {
-      // @ts-expect-error - dispose() might not be present on all pipeline types in @huggingface/transformers
       if (typeof this.pipeline.dispose === 'function') {
-        // @ts-expect-error - dispose() might not be present on all pipeline types in @huggingface/transformers
         await this.pipeline.dispose()
       }
       this.pipeline = null
