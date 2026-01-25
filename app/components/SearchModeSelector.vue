@@ -162,6 +162,11 @@ const selectMode = async (mode: SearchMode) => {
     movieStore.clearAllFilters(true) // Keep the (possibly cleared) search query
   }
 
+  // When switching to exact mode, if there is a query, set sort to relevance
+  if (mode === 'exact' && filters.value.searchQuery && filters.value.sort.field !== 'relevance') {
+    filters.value.sort = { field: 'relevance', direction: 'desc' }
+  }
+
   filters.value.searchMode = mode
 }
 
