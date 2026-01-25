@@ -469,7 +469,7 @@ async function handleMessage(e: QueuedMessage) {
             imdbRating: (row.imdbRating as number | null) ?? undefined,
             imdbVotes: (row.imdbVotes as number | null) ?? undefined,
             language: (row.language as string | null) ?? undefined,
-            sourceType: (row.sourceType as string | null) ?? undefined,
+            sourceType: (row.sourceType as MovieSourceType | null) ?? undefined,
             channelName: (row.channelName as string | null) ?? undefined,
             verified: row.verified === 1,
             lastUpdated: (row.lastUpdated as string | null) ?? undefined,
