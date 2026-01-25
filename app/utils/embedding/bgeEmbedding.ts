@@ -1,9 +1,4 @@
-import {
-  env,
-  pipeline,
-  type FeatureExtractionPipeline,
-  type ProgressInfo,
-} from '@huggingface/transformers'
+import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import type { EmbeddingProvider } from '~/types/embedding'
 
 // Configure transformers.js to use local models only
@@ -60,9 +55,8 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
       this.pipeline = (await pipeline('feature-extraction', '/models/bge-micro-v2/', {
         dtype: 'q8',
         local_files_only: true,
-        progress_callback: (info: ProgressInfo) => {
-          // Only ProgressStatusInfo has the 'progress' property
-          if (info.status === 'progress' && 'progress' in info && onProgress) {
+        progress_callback: (info: { status: string; progress?: number }) => {
+          if (info.status === 'progress' && info.progress !== undefined && onProgress) {
             // progress is 0-100 in transformers.js
             onProgress(info.progress / 100)
           }
@@ -100,7 +94,9 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
 
   async dispose(): Promise<void> {
     if (this.pipeline) {
+      // @ts-expect-error - dispose() might not be present on all pipeline types in @huggingface/transformers
       if (typeof this.pipeline.dispose === 'function') {
+        // @ts-expect-error - dispose() might not be present on all pipeline types in @huggingface/transformers
         await this.pipeline.dispose()
       }
       this.pipeline = null

@@ -12,7 +12,7 @@ let initializationPromise: Promise<void> | null = null
 let baseURL = '/'
 
 // Cache for movie data to avoid re-fetching
-const movieCache = new Map<string, Record<string, unknown>>()
+const movieCache = new Map<string, LightweightMovie>()
 
 // Cache for embedding dimensions from database metadata
 let cachedDimensions: number | null = null
@@ -283,6 +283,12 @@ async function handleMessage(e: QueuedMessage) {
         const flags =
           sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite3.capi.SQLITE_DESERIALIZE_READONLY
 
+        if (!db.pointer) {
+          db.exec({ sql: 'DETACH DATABASE embeddings_db' })
+          _embeddingsDbMemoryPointer = null
+          throw new Error('Database pointer is undefined')
+        }
+
         // Deserialize into the attached database
         const rc = sqlite3.capi.sqlite3_deserialize(
           db.pointer,
@@ -327,7 +333,7 @@ async function handleMessage(e: QueuedMessage) {
         let embeddingsCount = 0
         try {
           const testResult = db.exec({
-            sql: 'SELECT COUNT(*) as count FROM embeddings_db.movie_embeddings',
+            sql: 'SELECT COUNT(*) as count FROM embeddings_db.vec_movies',
             returnValue: 'resultRows',
             rowMode: 'object',
           })
@@ -335,7 +341,7 @@ async function handleMessage(e: QueuedMessage) {
           embeddingsCount = firstRow?.count || 0
         } catch {
           // Table might not exist or have different name
-          console.warn('Could not count embeddings - table may not exist')
+          console.warn('Could not count embeddings - vec_movies table may not exist')
         }
 
         console.log('Embeddings database attached successfully, embeddings count:', embeddingsCount)
@@ -433,11 +439,11 @@ async function handleMessage(e: QueuedMessage) {
         return
       }
 
-      const results: Record<string, unknown>[] = []
+      const results: LightweightMovie[] = []
       const idsToFetch: string[] = []
 
       // Check cache first
-      for (const movieId of movieIds as string[]) {
+      for (const movieId of movieIds) {
         const cached = movieCache.get(movieId)
         if (cached) {
           results.push(cached)
@@ -456,19 +462,29 @@ async function handleMessage(e: QueuedMessage) {
 
         // Transform and cache new results
         for (const row of dbResults) {
-          const transformed = {
-            ...row,
+          const transformed: LightweightMovie = {
+            movieId: row.movieId as string,
+            title: row.title as string,
+            year: (row.year as number | null) ?? undefined,
+            imdbRating: (row.imdbRating as number | null) ?? undefined,
+            imdbVotes: (row.imdbVotes as number | null) ?? undefined,
+            language: (row.language as string | null) ?? undefined,
+            sourceType: (row.sourceType as string | null) ?? undefined,
+            channelName: (row.channelName as string | null) ?? undefined,
             verified: row.verified === 1,
+            lastUpdated: (row.lastUpdated as string | null) ?? undefined,
+            genre: (row.genre as string | null) ?? undefined,
+            country: (row.country as string | null) ?? undefined,
           }
-          movieCache.set(row.movieId as string, transformed)
+          movieCache.set(transformed.movieId, transformed)
           results.push(transformed)
         }
       }
 
       // Sort results to match the order of requested IDs
-      const sortedResults = (movieIds as string[])
+      const sortedResults = movieIds
         .map(movieId => results.find(r => r.movieId === movieId))
-        .filter(Boolean)
+        .filter((r): r is LightweightMovie => r !== undefined)
 
       self.postMessage({ id, result: sortedResults })
     } else if (type === 'vector-search') {
