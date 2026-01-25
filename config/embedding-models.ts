@@ -10,28 +10,28 @@ export interface EmbeddingModelConfig {
 
 export const EMBEDDING_MODELS: EmbeddingModelConfig[] = [
   {
-    id: 'nomic',
-    name: 'Nomic Embed Text',
-    dimensions: 768,
-    dbFileName: 'embeddings-nomic-movies.db',
-    description: 'Best quality, 768 dimensions (current production)',
-    ollamaModel: 'nomic-embed-text',
-    isDefault: true,
-  },
-  {
     id: 'bge-micro',
     name: 'BGE Micro v2',
     dimensions: 384,
     dbFileName: 'embeddings-bge-micro-movies.db',
-    description: 'Faster, smaller, 384 dimensions',
-    ollamaModel: 'bge-m3', // Closest match in Ollama if available, or custom
+    description: 'Good quality, runs in browser (384 dimensions)',
+    isDefault: true,
   },
   {
     id: 'potion',
     name: 'Potion Base 2M',
     dimensions: 64,
     dbFileName: 'embeddings-potion-movies.db',
-    description: 'Smallest/fastest, 64 dimensions',
+    description: 'Smallest/fastest, runs in browser (64 dimensions)',
+  },
+  {
+    id: 'nomic',
+    name: 'Nomic Embed Text',
+    dimensions: 768,
+    dbFileName: 'embeddings-nomic-movies.db',
+    description: 'Best quality, server-only via Ollama (768 dimensions)',
+    ollamaModel: 'nomic-embed-text',
+    // Note: nomic requires Ollama server, not available in browser
   },
 ]
 

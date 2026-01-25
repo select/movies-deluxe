@@ -1,7 +1,9 @@
 import { useDatabase } from './useDatabase'
 import { useBrowserEmbedding } from './useBrowserEmbedding'
 
-const DEFAULT_EMBEDDING_MODEL = 'nomic'
+// Default to bge-micro - runs in browser, good quality
+// Options: 'bge-micro' (384d) or 'potion' (64d)
+const DEFAULT_EMBEDDING_MODEL = 'bge-micro'
 
 export function useVectorSearch() {
   const db = useDatabase()
@@ -75,29 +77,20 @@ export function useVectorSearch() {
         return []
       }
 
-      // 1. Generate embedding for the query
+      // 1. Generate embedding for the query using browser-based model
       // Auto-detect model from database config
       const modelInfo = await db.getEmbeddingModelInfo()
 
-      let embedding: number[] | Float32Array
-
-      // Route to browser or API based on model
-      if (modelInfo?.id === 'bge-micro' || modelInfo?.id === 'potion') {
-        const provider = modelInfo.id === 'bge-micro' ? 'bge' : 'potion'
-        await browserEmbedding.init(provider)
-        embedding = await browserEmbedding.embed(query)
-      } else {
-        const model = modelInfo?.ollamaModel || modelInfo?.id || 'nomic-embed-text'
-        const response = await $fetch<{ embedding: number[] }>('/api/embeddings', {
-          method: 'POST',
-          body: { text: query, model },
-        })
-
-        if (!response.embedding) {
-          throw new Error('Failed to generate embedding for query')
-        }
-        embedding = response.embedding
+      // Only bge-micro and potion are supported in browser
+      const modelId = modelInfo?.id
+      if (modelId !== 'bge-micro' && modelId !== 'potion') {
+        error.value = `Unsupported embedding model: ${modelId}. Only bge-micro and potion work in browser.`
+        return []
       }
+
+      const provider = modelId === 'bge-micro' ? 'bge' : 'potion'
+      await browserEmbedding.init(provider)
+      const embedding = await browserEmbedding.embed(query)
 
       // 2. Perform vector search in the database worker
       const results = await db.vectorSearch(embedding, limit, where, params)
