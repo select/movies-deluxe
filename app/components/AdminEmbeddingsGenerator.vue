@@ -17,7 +17,7 @@
         <div class="space-y-2">
           <div v-for="model in EMBEDDING_MODELS" :key="model.id">
             <AppInputCheckbox
-              v-model="selectedModels[model.id]"
+              v-model="selectedModels[model.id]!"
               :label="getModelLabel(model)"
               :disabled="generating"
             />
