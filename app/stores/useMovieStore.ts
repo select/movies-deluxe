@@ -641,13 +641,24 @@ export const useMovieStore = defineStore('movie', () => {
     }
 
     const query = filters.value.searchQuery.trim()
-    const mode = filters.value.searchMode
     const vectorSearch = useVectorSearch()
 
     try {
       let results: string[] = []
 
-      if (query && mode === 'semantic') {
+      // Parse query to check for keywords
+      const parsed = parseSearchQuery(query)
+      if (
+        parsed.actors?.length ||
+        parsed.directors?.length ||
+        parsed.writers?.length ||
+        parsed.title
+      ) {
+        // Always switch to exact mode when using keywords
+        filters.value.searchMode = 'exact'
+      }
+
+      if (query && filters.value.searchMode === 'semantic') {
         const { where, whereParams } = buildFilterQuery()
 
         // Perform vector search with filters
