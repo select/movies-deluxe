@@ -1,4 +1,3 @@
-import { getModelConfig, getDefaultModel } from '../../../../config/embedding-models'
 import { generateSQLite } from '../../../utils/generateSQLite'
 
 export default defineEventHandler(async event => {
@@ -9,29 +8,19 @@ export default defineEventHandler(async event => {
   }
 
   const body = await readBody(event)
-  const modelId = body?.embeddingModel || getDefaultModel().id
   const skipJson = body?.skipJsonGeneration || false
-
-  const modelConfig = getModelConfig(modelId)
-  if (!modelConfig) {
-    throw createError({
-      statusCode: 400,
-      message: `Unknown embedding model: ${modelId}`,
-    })
-  }
 
   try {
     emitProgress({
       type: 'sqlite',
       status: 'starting',
-      message: `Starting SQLite generation with model: ${modelConfig.name}...`,
+      message: 'Starting SQLite generation...',
       current: 0,
       total: 100,
     })
 
     // Call the generation function with progress callback
     await generateSQLite({
-      embeddingModel: modelConfig,
       skipJsonGeneration: skipJson,
       onProgress: progress => {
         emitProgress({

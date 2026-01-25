@@ -1,5 +1,4 @@
 export interface GenerateDatabaseRequest {
-  embeddingModel?: string
   skipJsonGeneration?: boolean
 }
 

@@ -57,9 +57,9 @@
           v-else-if="mode.id === 'semantic' && !isEmbeddingsLoaded"
           class="mt-2 pt-2 border-t border-theme-border/50"
         >
-          <div class="flex items-center gap-2 text-theme-textmuted">
-            <div class="i-mdi-information-outline text-sm"></div>
-            <span>Embeddings not loaded</span>
+          <div class="flex items-center gap-2 text-theme-primary">
+            <div class="i-mdi-download text-sm"></div>
+            <span>Click to load embeddings</span>
           </div>
         </div>
 
@@ -128,23 +128,49 @@ const hoverStyle = ref({
   top: '0px',
 })
 
+// Default to bge-micro - runs in browser, good quality
+const DEFAULT_EMBEDDING_MODEL = 'bge-micro'
+
 /**
- * Check if semantic mode should be disabled
+ * Check if semantic mode should be disabled (only while loading)
  */
 const isSemanticDisabled = (modeId: SearchMode): boolean => {
-  return modeId === 'semantic' && !isEmbeddingsLoaded.value
+  return modeId === 'semantic' && isEmbeddingsLoading.value
 }
 
-const selectMode = (mode: SearchMode) => {
-  // Don't allow selecting semantic mode if embeddings aren't loaded
+const selectMode = async (mode: SearchMode) => {
+  // Don't allow clicking while embeddings are loading
   if (isSemanticDisabled(mode)) {
     return
   }
+
+  // If selecting semantic mode and embeddings aren't loaded, load them first
+  if (mode === 'semantic' && !isEmbeddingsLoaded.value) {
+    try {
+      await movieStore.loadEmbeddings(DEFAULT_EMBEDDING_MODEL)
+    } catch (err) {
+      console.error('[SearchModeSelector] Failed to load embeddings:', err)
+      return // Don't switch mode if loading failed
+    }
+  }
+
   filters.value.searchMode = mode
 }
 
 onMounted(async () => {
-  modelInfo.value = await db.getEmbeddingModelInfo()
+  // Get model info if embeddings are already loaded
+  if (isEmbeddingsLoaded.value) {
+    modelInfo.value = await db.getEmbeddingModelInfo()
+  }
+})
+
+// Update model info when embeddings are loaded
+watch(isEmbeddingsLoaded, async newValue => {
+  if (newValue) {
+    modelInfo.value = await db.getEmbeddingModelInfo()
+  } else {
+    modelInfo.value = null
+  }
 })
 
 const updateHover = (modeId: string) => {

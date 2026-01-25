@@ -3,15 +3,17 @@
  *
  * Converts data/movies.json to public/data/movies.db
  * Optimized for client-side SQLite Wasm usage.
+ *
+ * Note: Embeddings are stored separately in their own DB files
+ * (e.g., embeddings-bge-micro-movies.db) and are generated via
+ * the embeddings generation scripts or admin UI.
  */
 
 import { parseArgs } from 'node:util'
 import { generateSQLite } from '../server/utils/generateSQLite'
-import { EMBEDDING_MODELS, getModelConfig, getDefaultModel } from '../config/embedding-models'
 
 const { values } = parseArgs({
   options: {
-    'embedding-model': { type: 'string', short: 'm' },
     'skip-json': { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h' },
   },
@@ -22,33 +24,23 @@ if (values.help) {
 Usage: pnpm db:generate [options]
 
 Options:
-  -m, --embedding-model <model>  Embedding model to use (nomic, bge-micro, potion)
-  --skip-json                    Skip generating individual movie JSON files
-  -h, --help                     Show this help message
+  --skip-json    Skip generating individual movie JSON files
+  -h, --help     Show this help message
 
 Examples:
-  pnpm db:generate                           # Use default model (nomic)
-  pnpm db:generate -m bge-micro              # Use BGE model
-  pnpm db:generate --skip-json               # Skip JSON generation
-  pnpm db:generate -m potion --skip-json     # Use Potion, skip JSON
+  pnpm db:generate              # Generate database with JSON files
+  pnpm db:generate --skip-json  # Skip JSON generation (faster)
+
+Note: Embeddings are stored in separate database files and are
+generated via 'pnpm embeddings:generate-*' commands or the admin UI.
   `)
   process.exit(0)
-}
-
-const modelId = (values['embedding-model'] as string) || getDefaultModel().id
-const modelConfig = getModelConfig(modelId)
-
-if (!modelConfig) {
-  console.error(`Error: Unknown embedding model '${modelId}'`)
-  console.error(`Available models: ${EMBEDDING_MODELS.map(m => m.id).join(', ')}`)
-  process.exit(1)
 }
 
 const skipJson = (values['skip-json'] as boolean) || false
 
 // Run the generation
 generateSQLite({
-  embeddingModel: modelConfig,
   skipJsonGeneration: skipJson,
   onProgress: progress => {
     console.log(`[${progress.current}/${progress.total}] ${progress.message}`)
