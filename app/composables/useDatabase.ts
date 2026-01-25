@@ -1,5 +1,5 @@
 import type { WorkerResponse, FilterOptionsResponse, VectorSearchResult } from '~/types/database'
-import type { Collection, MovieEntry } from '~/types'
+import type { Collection } from '~/types'
 import { getModelConfig, type EmbeddingModelConfig } from '~~/config/embedding-models'
 
 // Singleton instance
@@ -122,7 +122,7 @@ function createDatabase() {
     })
   }
 
-  const queryByIds = async (movieIds: string[]): Promise<MovieEntry[]> => {
+  const queryByIds = async (movieIds: string[]): Promise<LightweightMovie[]> => {
     // Wait for worker to be created (init must be called first)
     if (initPromise.value) {
       await initPromise.value
@@ -138,7 +138,7 @@ function createDatabase() {
     return new Promise((resolve, reject) => {
       pendingQueries.set(id, {
         resolve: (data: WorkerResponse) =>
-          resolve(('result' in data ? data.result : []) as MovieEntry[]),
+          resolve(('result' in data ? data.result : []) as LightweightMovie[]),
         reject,
       })
       // Pass pre-built SQL to worker
@@ -285,7 +285,7 @@ function createDatabase() {
       pendingQueries.set(id, {
         resolve: (data: WorkerResponse) => {
           embeddingsModelId.value = modelId
-          const count = 'embeddingsCount' in data ? data.embeddingsCount : 0
+          const count = ('embeddingsCount' in data ? data.embeddingsCount : 0) as number
           resolve(count)
         },
         reject: (error?: Error) => {

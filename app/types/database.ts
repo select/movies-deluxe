@@ -10,7 +10,6 @@ import type {
   ChannelOption,
   LightweightMovie,
   Collection,
-  MovieEntry,
 } from '~/types'
 
 /**
@@ -45,12 +44,7 @@ interface WorkerInitResponse extends WorkerResponseBase {
  * Query result response (movies, collections, etc.)
  */
 interface WorkerQueryResponse extends WorkerResponseBase {
-  result:
-    | LightweightMovie[]
-    | MovieEntry[]
-    | Collection[]
-    | VectorSearchResult[]
-    | Record<string, unknown>[]
+  result: LightweightMovie[] | Collection[] | VectorSearchResult[] | Record<string, unknown>[]
   totalCount?: number
   count?: number
 }
@@ -72,6 +66,13 @@ interface WorkerSuccessResponse extends WorkerResponseBase {
 }
 
 /**
+ * Embeddings attach response
+ */
+interface WorkerAttachEmbeddingsResponse extends WorkerResponseBase {
+  embeddingsCount: number
+}
+
+/**
  * Worker response - discriminated union of all response types
  * Use type guards or check specific fields to narrow the type
  */
@@ -81,6 +82,7 @@ export type WorkerResponse =
   | WorkerQueryResponse
   | WorkerFilterOptionsResponse
   | WorkerSuccessResponse
+  | WorkerAttachEmbeddingsResponse
 
 /**
  * Filter options response structure
