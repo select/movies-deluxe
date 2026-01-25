@@ -6,7 +6,6 @@
  */
 
 import Database from 'better-sqlite3'
-import * as sqliteVec from 'sqlite-vec'
 import { join } from 'path'
 import { existsSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from './movieData'
@@ -45,41 +44,9 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
   const db = await loadMoviesDatabase()
   const collectionsDb = await loadCollectionsDatabase()
 
-  // Load embeddings from SQLite database
-  const EMBEDDINGS_DB_PATH = join(process.cwd(), 'data', embeddingModel.dbFileName)
-  const embeddings: Record<string, Float32Array> = {}
-  let embeddingsDb: Database.Database | null = null
-
-  if (existsSync(EMBEDDINGS_DB_PATH)) {
-    logger.info(`Loading embeddings from ${embeddingModel.dbFileName}...`)
-    try {
-      embeddingsDb = new Database(EMBEDDINGS_DB_PATH, { readonly: true })
-      const rows = embeddingsDb.prepare('SELECT movie_id, embedding FROM embeddings').all() as {
-        movie_id: string
-        embedding: Buffer
-      }[]
-
-      for (const row of rows) {
-        // Convert Buffer back to Float32Array
-        embeddings[row.movie_id] = new Float32Array(
-          row.embedding.buffer,
-          row.embedding.byteOffset,
-          row.embedding.byteLength / 4
-        )
-      }
-
-      logger.info(`Loaded ${Object.keys(embeddings).length} embeddings from database`)
-    } catch (err) {
-      logger.warn('Failed to load embeddings database, vector search will be empty.', err)
-    } finally {
-      if (embeddingsDb) {
-        embeddingsDb.close()
-        embeddingsDb = null
-      }
-    }
-  } else {
-    logger.warn('Embeddings database not found, vector search will be empty.')
-  }
+  // Note: Embeddings are stored externally in separate DB files (e.g., embeddings-nomic.db)
+  // They are NOT loaded into the main movies.db to keep its size small (~10MB vs 70MB)
+  // The embedding model metadata is still stored in config for reference
 
   const allMovies = Object.values(db)
     .filter(
@@ -105,7 +72,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
     (entry): entry is Collection => typeof entry === 'object' && entry !== null && 'id' in entry
   )
 
-  onProgress?.({ current: 0, total: movies.length, message: 'Loading movies from JSON' })
+  onProgress?.({ current: 0, total: movies.length, message: 'Loading data' })
 
   // 3. Remove existing DB if it exists
   if (existsSync(DB_PATH)) {
@@ -115,7 +82,6 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
 
   // 4. Initialize Database
   const sqlite = new Database(DB_PATH)
-  sqliteVec.load(sqlite)
 
   // Use DELETE mode instead of WAL for better compatibility with WASM
   sqlite.pragma('journal_mode = DELETE')
@@ -123,7 +89,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
   try {
     // 4. Create Schema
     logger.info('Creating schema...')
-    onProgress?.({ current: 0, total: movies.length, message: 'Creating database schema' })
+    onProgress?.({ current: 0, total: movies.length, message: 'Creating schema' })
     sqlite.exec(`
       CREATE TABLE movies (
         movieId TEXT PRIMARY KEY,
@@ -242,11 +208,8 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
         tokenize='unicode61'
       );
 
-      -- Vector Table for Semantic Search
-      CREATE VIRTUAL TABLE vec_movies USING vec0(
-        movieId TEXT PRIMARY KEY,
-        embedding FLOAT[${embeddingModel.dimensions}]
-      );
+      -- Note: Vector embeddings are stored externally in separate DB files
+      -- (e.g., data/embeddings-nomic.db) to keep movies.db lightweight
 
       -- Config table for metadata
       CREATE TABLE config (
@@ -308,11 +271,6 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
       VALUES (?, ?)
     `)
 
-    const insertVec = sqlite.prepare(`
-      INSERT INTO vec_movies (movieId, embedding)
-      VALUES (?, ?)
-    `)
-
     const insertCollection = sqlite.prepare(`
       INSERT INTO collections (id, name, description, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?)
@@ -365,9 +323,13 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
     sqlite.exec('BEGIN TRANSACTION')
     try {
       // Insert config metadata
+      // Embedding model metadata is stored for reference, but embeddings themselves
+      // are kept in external DB files (e.g., data/embeddings-nomic.db)
       insertConfig.run('embedding_model_id', embeddingModel.id)
       insertConfig.run('embedding_model_name', embeddingModel.name)
       insertConfig.run('embedding_model_dimensions', embeddingModel.dimensions.toString())
+      insertConfig.run('embeddings_external', 'true')
+      insertConfig.run('embeddings_db_file', embeddingModel.dbFileName)
       if (embeddingModel.ollamaModel) {
         insertConfig.run('embedding_model_ollama', embeddingModel.ollamaModel)
       }
@@ -421,11 +383,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
         const ftsTitle = Array.isArray(movie.title) ? movie.title.join(' ') : movie.title
         insertFts.run(movie.movieId, ftsTitle)
 
-        // Insert into Vector Table if embedding exists
-        const embedding = embeddings[movie.movieId]
-        if (embedding && embedding instanceof Float32Array) {
-          insertVec.run(movie.movieId, embedding)
-        }
+        // Note: Vector embeddings are stored externally, not in the main DB
 
         // Insert People (Actors, Directors, Writers)
         if (m.Actors && m.Actors !== 'N/A') {
@@ -468,11 +426,11 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
         }
 
         count++
-        if (count % 1000 === 0) {
+        if (count % 100 === 0) {
           onProgress?.({
             current: count,
             total: movies.length,
-            message: `Inserting movie ${count}`,
+            message: 'Inserting movies',
           })
         }
       }

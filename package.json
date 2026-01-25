@@ -28,6 +28,7 @@
     "embeddings:generate": "tsx scripts/generate-embeddings.ts",
     "embeddings:generate-bge": "tsx scripts/generate-embeddings-bge.ts",
     "embeddings:generate-potion": "tsx scripts/generate-embeddings-potion.ts",
+    "embeddings:copy": "tsx scripts/copy-embeddings-db.ts",
     "posters:scrape-headless": "tsx scripts/scrape-imdb-headless.ts",
     "release": "release-it"
   },
