@@ -14,14 +14,22 @@
       :class="[
         filters.searchMode === mode.id
           ? 'text-theme-primary'
-          : 'text-theme-textmuted hover:text-theme-text',
+          : isSemanticDisabled(mode.id)
+            ? 'text-theme-textmuted/50 cursor-not-allowed'
+            : 'text-theme-textmuted hover:text-theme-text',
       ]"
+      :disabled="isSemanticDisabled(mode.id)"
       :aria-label="`Search mode: ${mode.label}`"
       @click="selectMode(mode.id)"
       @mouseenter="updateHover(mode.id)"
       @mouseleave="clearHover"
     >
-      <div :class="mode.icon" class="text-xl md:text-2xl"></div>
+      <!-- Loading spinner for semantic mode -->
+      <div
+        v-if="mode.id === 'semantic' && isEmbeddingsLoading"
+        class="i-mdi-loading animate-spin text-xl md:text-2xl"
+      ></div>
+      <div v-else :class="mode.icon" class="text-xl md:text-2xl"></div>
 
       <!-- Tooltip -->
       <div
@@ -33,9 +41,31 @@
         </div>
         <div class="text-theme-textmuted leading-relaxed">{{ mode.description }}</div>
 
-        <!-- Model Info (only for semantic) -->
+        <!-- Loading state message (for semantic) -->
         <div
-          v-if="mode.id === 'semantic' && modelInfo"
+          v-if="mode.id === 'semantic' && isEmbeddingsLoading"
+          class="mt-2 pt-2 border-t border-theme-border/50"
+        >
+          <div class="flex items-center gap-2 text-theme-warning">
+            <div class="i-mdi-loading animate-spin text-sm"></div>
+            <span>Loading embeddings...</span>
+          </div>
+        </div>
+
+        <!-- Not loaded message (for semantic) -->
+        <div
+          v-else-if="mode.id === 'semantic' && !isEmbeddingsLoaded"
+          class="mt-2 pt-2 border-t border-theme-border/50"
+        >
+          <div class="flex items-center gap-2 text-theme-textmuted">
+            <div class="i-mdi-information-outline text-sm"></div>
+            <span>Embeddings not loaded</span>
+          </div>
+        </div>
+
+        <!-- Model Info (only for semantic when loaded) -->
+        <div
+          v-else-if="mode.id === 'semantic' && modelInfo"
           class="mt-2 pt-2 border-t border-theme-border/50 space-y-1"
         >
           <div class="flex justify-between items-center">
@@ -68,7 +98,7 @@ import type { SearchMode } from '~/types'
 import type { EmbeddingModelConfig } from '~~/config/embedding-models'
 
 const movieStore = useMovieStore()
-const { filters: storeFilters } = storeToRefs(movieStore)
+const { filters: storeFilters, isEmbeddingsLoaded, isEmbeddingsLoading } = storeToRefs(movieStore)
 
 const db = useDatabase()
 const modelInfo = ref<EmbeddingModelConfig | null>(null)
@@ -100,7 +130,18 @@ const hoverStyle = ref({
   top: '0px',
 })
 
+/**
+ * Check if semantic mode should be disabled
+ */
+const isSemanticDisabled = (modeId: SearchMode): boolean => {
+  return modeId === 'semantic' && !isEmbeddingsLoaded.value
+}
+
 const selectMode = (mode: SearchMode) => {
+  // Don't allow selecting semantic mode if embeddings aren't loaded
+  if (isSemanticDisabled(mode)) {
+    return
+  }
   filters.value.searchMode = mode
 }
 
