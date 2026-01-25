@@ -6,18 +6,18 @@
     <div
       class="flex items-center justify-center w-5 h-5 transition-colors"
       :class="{
-        'text-theme-primary': checked,
-        'text-theme-textmuted group-hover:text-theme-text': !checked,
+        'text-theme-primary': modelValue,
+        'text-theme-textmuted group-hover:text-theme-text': !modelValue,
       }"
       role="checkbox"
-      :aria-checked="checked"
+      :aria-checked="modelValue"
       :aria-disabled="disabled"
     >
-      <div v-if="checked" class="i-mdi-checkbox-marked text-xl"></div>
+      <div v-if="modelValue" class="i-mdi-checkbox-marked text-xl"></div>
       <div v-else class="i-mdi-checkbox-blank-outline text-xl"></div>
     </div>
     <input
-      :checked="checked"
+      :checked="modelValue"
       type="checkbox"
       :value="value"
       :disabled="disabled"
@@ -32,21 +32,19 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
-  checked: boolean
+defineProps<{
+  modelValue: boolean
   value?: string | number | boolean
   label?: string
   disabled?: boolean
-}
-
-defineProps<Props>()
+}>()
 
 const emit = defineEmits<{
-  change: [checked: boolean]
+  'update:modelValue': [value: boolean]
 }>()
 
 const handleChange = (event: Event) => {
   const target = event.target as HTMLInputElement
-  emit('change', target.checked)
+  emit('update:modelValue', target.checked)
 }
 </script>
