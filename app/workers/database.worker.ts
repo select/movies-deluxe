@@ -1,9 +1,6 @@
 import sqlite3InitModule from 'sqlite-wasm-vec'
 import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 
-// SqlValue type from sqlite-wasm
-type _SqlValue = string | number | null | bigint | Uint8Array | Int8Array | ArrayBuffer
-
 /**
  * Raw database row type from SQLite for lightweight movie queries
  *
@@ -40,6 +37,32 @@ interface LightweightMovieDbRow {
 }
 
 /**
+ * Generic wrapper for db.exec() that properly types the result rows
+ *
+ * This is safe because:
+ * 1. We control the SQL queries and know the exact column structure
+ * 2. SQLite guarantees type consistency for each column
+ * 3. The schema is validated at runtime when the database loads
+ *
+ * @param db - SQLite database instance
+ * @param sql - SQL query string
+ * @param bind - Optional bind parameters
+ * @returns Typed array of rows matching the generic type T
+ */
+function execTyped<T>(
+  db: SQLiteDatabase,
+  sql: string,
+  bind?: (string | number | ArrayBuffer)[]
+): T[] {
+  return db.exec({
+    sql,
+    bind,
+    returnValue: 'resultRows',
+    rowMode: 'object',
+  }) as T[]
+}
+
+/**
  * Transform a database row to a LightweightMovie object
  *
  * **Transformations:**
@@ -62,7 +85,7 @@ function transformLightweightMovie(row: LightweightMovieDbRow): LightweightMovie
     imdbRating: row.imdbRating ?? undefined,
     imdbVotes: row.imdbVotes ?? undefined,
     language: row.language ?? undefined,
-    sourceType: row.sourceType ?? undefined,
+    sourceType: (row.sourceType as MovieSourceType) ?? undefined,
     channelName: row.channelName ?? undefined,
     verified: row.verified === 1,
     lastUpdated: row.lastUpdated ?? undefined,
@@ -521,12 +544,11 @@ async function handleMessage(e: QueuedMessage) {
       }
 
       if (idsToFetch.length > 0) {
-        const dbResults = db.exec({
-          sql: prebuiltSql,
-          bind: prebuiltParams as string[],
-          returnValue: 'resultRows',
-          rowMode: 'object',
-        }) as LightweightMovieDbRow[]
+        const dbResults = execTyped<LightweightMovieDbRow>(
+          db,
+          prebuiltSql,
+          prebuiltParams as string[]
+        )
 
         // Transform and cache new results
         for (const row of dbResults) {
@@ -593,12 +615,7 @@ async function handleMessage(e: QueuedMessage) {
         bindParams.push(...(whereParams as (string | number)[]))
       }
 
-      const result = db.exec({
-        sql: prebuiltSql,
-        bind: bindParams,
-        returnValue: 'resultRows',
-        rowMode: 'object',
-      }) as LightweightMovieDbRow[]
+      const result = execTyped<LightweightMovieDbRow>(db, prebuiltSql, bindParams)
 
       const transformed = result.map(transformLightweightMovie)
       self.postMessage({ id, result: transformed })
