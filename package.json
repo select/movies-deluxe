@@ -110,7 +110,8 @@
   },
   "pnpm": {
     "overrides": {
-      "prettier": "3.3.3"
+      "prettier": "3.3.3",
+      "onnxruntime-node": "1.23.2"
     },
     "onlyBuiltDependencies": [
       "puppeteer"
