@@ -47,7 +47,6 @@ useHead({
 
 const movieStore = useMovieStore()
 const { isFiltering, totalFiltered, searchResultMovies } = storeToRefs(movieStore)
-const { triggerSearchUpdate } = movieStore
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)
 
@@ -56,11 +55,8 @@ const movieIds = computed(() => {
   return searchResultMovies.value
 })
 
-// Trigger initial search results population when page mounts
-// Database will already be ready thanks to the splash screen plugin
-onMounted(async () => {
-  await triggerSearchUpdate()
-})
+// Note: No need to call triggerSearchUpdate() on mount
+// The watchDebounced in useMovieStore already handles initial filter state
 </script>
 
 <style scoped>
