@@ -7,47 +7,41 @@
     <div class="relative aspect-[4/3] flex items-center justify-center perspective-1000">
       <!-- Bottom Right Poster (Tilted +5deg) -->
       <div
-        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-theme-selection transform rotate-5 translate-x-12 translate-z-0 group-hover:rotate-12 group-hover:translate-x-16 transition-all duration-500 z-10"
+        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-gradient-to-br from-theme-surface to-theme-selection transform rotate-5 translate-x-12 translate-z-0 group-hover:rotate-12 group-hover:translate-x-16 transition-all duration-500 z-10"
       >
         <img
-          v-if="posters[2]"
-          :src="posters[2]"
+          v-if="posterUrls[2]"
+          :src="posterUrls[2]"
           class="w-full h-full object-cover"
           loading="lazy"
+          @error="handlePosterError(2)"
         />
-        <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
-          <div class="i-mdi-movie text-3xl"></div>
-        </div>
       </div>
 
       <!-- Bottom Left Poster (Tilted -5deg) -->
       <div
-        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-theme-selection transform -rotate-5 -translate-x-12 translate-z-10 group-hover:-rotate-12 group-hover:-translate-x-16 transition-all duration-500 z-20"
+        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-gradient-to-br from-theme-surface to-theme-selection transform -rotate-5 -translate-x-12 translate-z-10 group-hover:-rotate-12 group-hover:-translate-x-16 transition-all duration-500 z-20"
       >
         <img
-          v-if="posters[1]"
-          :src="posters[1]"
+          v-if="posterUrls[1]"
+          :src="posterUrls[1]"
           class="w-full h-full object-cover"
           loading="lazy"
+          @error="handlePosterError(1)"
         />
-        <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
-          <div class="i-mdi-movie text-3xl"></div>
-        </div>
       </div>
 
       <!-- Top Poster (Centered) -->
       <div
-        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-theme-selection transform translate-z-20 group-hover:scale-105 transition-all duration-500 z-30"
+        class="absolute w-1/2 aspect-[2/3] rounded-lg overflow-hidden bg-gradient-to-br from-theme-surface to-theme-selection transform translate-z-20 group-hover:scale-105 transition-all duration-500 z-30"
       >
         <img
-          v-if="posters[0]"
-          :src="posters[0]"
+          v-if="posterUrls[0]"
+          :src="posterUrls[0]"
           class="w-full h-full object-cover"
           loading="lazy"
+          @error="handlePosterError(0)"
         />
-        <div v-else class="w-full h-full flex items-center justify-center text-theme-textmuted">
-          <div class="i-mdi-movie text-4xl"></div>
-        </div>
       </div>
 
       <!-- Movie Count Badge -->
@@ -86,26 +80,39 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled
 }
 
-// Get posters for preview movies (up to 3, with blanks if fewer)
-const posters = computed(() => {
-  // Filter for IMDb IDs only (they have posters)
-  // Shuffle and take up to 3 (may be less if collection has fewer IMDb movies)
-  const previewMovieIds = shuffleArray(
-    props.collection.movieIds.filter(id => id.startsWith('tt'))
-  ).slice(0, 3)
-  const posterUrls: (string | null)[] = []
+const selectedMovieIds = ref<(string | null)[]>([null, null, null])
+const failedMovieIds = ref<Set<string>>(new Set())
 
-  for (let i = 0; i < 3; i++) {
-    const movieId = previewMovieIds[i]
-    if (movieId) {
-      // Construct poster URL directly from IMDb ID
-      posterUrls.push(getPosterPath(movieId))
-    } else {
-      posterUrls.push(null)
-    }
+const initializePosters = () => {
+  const imdbIds = props.collection.movieIds.filter(id => id.startsWith('tt'))
+  const shuffled = shuffleArray(imdbIds)
+  selectedMovieIds.value = [shuffled[0] || null, shuffled[1] || null, shuffled[2] || null]
+}
+
+// Initialize and watch for collection changes
+watch(() => props.collection.id, initializePosters, { immediate: true })
+
+const handlePosterError = (index: number) => {
+  const failedId = selectedMovieIds.value[index]
+  if (!failedId) return
+
+  failedMovieIds.value.add(failedId)
+
+  const currentSelected = selectedMovieIds.value.filter((id): id is string => id !== null)
+  const availableIds = props.collection.movieIds.filter(
+    id => id.startsWith('tt') && !currentSelected.includes(id) && !failedMovieIds.value.has(id)
+  )
+
+  if (availableIds.length > 0) {
+    selectedMovieIds.value[index] = availableIds[Math.floor(Math.random() * availableIds.length)]
+  } else {
+    selectedMovieIds.value[index] = null
   }
+}
 
-  return posterUrls
+// Get poster URLs for selected movies
+const posterUrls = computed(() => {
+  return selectedMovieIds.value.map(id => (id ? getPosterPath(id) : null))
 })
 </script>
 
