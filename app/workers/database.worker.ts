@@ -4,6 +4,74 @@ import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
 // SqlValue type from sqlite-wasm
 type _SqlValue = string | number | null | bigint | Uint8Array | Int8Array | ArrayBuffer
 
+/**
+ * Raw database row type from SQLite for lightweight movie queries
+ *
+ * Matches the exact output of db.exec() with rowMode: 'object'
+ *
+ * **SQLite Type Mapping:**
+ * - SQLite NULL → JavaScript `null` (not `undefined`)
+ * - SQLite INTEGER → JavaScript `number`
+ * - SQLite TEXT → JavaScript `string`
+ * - Boolean columns stored as 0/1 → returned as `number`
+ *
+ * **Schema Assumptions:**
+ * This type assumes the database schema is always in sync with the TypeScript types.
+ * No runtime validation is needed - TypeScript provides compile-time safety.
+ * If the database schema changes, update this interface accordingly.
+ *
+ * @see transformLightweightMovie for conversion to LightweightMovie
+ * @see app/utils/queryBuilders.ts for SQL query definitions
+ */
+interface LightweightMovieDbRow {
+  movieId: string
+  title: string
+  year: number | null
+  imdbRating: number | null
+  imdbVotes: number | null
+  language: string | null
+  sourceType: string | null
+  channelName: string | null
+  verified: number // SQLite stores boolean as 0 or 1
+  lastUpdated: string | null
+  genre: string | null
+  country: string | null
+  distance?: number // Only present in vector search results
+}
+
+/**
+ * Transform a database row to a LightweightMovie object
+ *
+ * **Transformations:**
+ * - Converts SQLite `null` to JavaScript `undefined` (for optional fields)
+ * - Converts numeric boolean (0/1) to JavaScript `boolean`
+ * - Preserves all other fields as-is
+ *
+ * **Why null → undefined conversion?**
+ * SQLite returns `null` for NULL values, but our TypeScript types use `undefined`
+ * for optional fields to match JavaScript conventions and reduce bundle size.
+ *
+ * @param row - Raw database row from SQLite
+ * @returns Transformed LightweightMovie object
+ */
+function transformLightweightMovie(row: LightweightMovieDbRow): LightweightMovie {
+  return {
+    movieId: row.movieId,
+    title: row.title,
+    year: row.year ?? undefined,
+    imdbRating: row.imdbRating ?? undefined,
+    imdbVotes: row.imdbVotes ?? undefined,
+    language: row.language ?? undefined,
+    sourceType: row.sourceType ?? undefined,
+    channelName: row.channelName ?? undefined,
+    verified: row.verified === 1,
+    lastUpdated: row.lastUpdated ?? undefined,
+    genre: row.genre ?? undefined,
+    country: row.country ?? undefined,
+    distance: row.distance,
+  }
+}
+
 let db: SQLiteDatabase | null = null
 let sqlite3: SQLite3 | null = null
 let initializationPromise: Promise<void> | null = null
@@ -458,24 +526,11 @@ async function handleMessage(e: QueuedMessage) {
           bind: prebuiltParams as string[],
           returnValue: 'resultRows',
           rowMode: 'object',
-        })
+        }) as LightweightMovieDbRow[]
 
         // Transform and cache new results
         for (const row of dbResults) {
-          const transformed: LightweightMovie = {
-            movieId: row.movieId as string,
-            title: row.title as string,
-            year: (row.year as number | null) ?? undefined,
-            imdbRating: (row.imdbRating as number | null) ?? undefined,
-            imdbVotes: (row.imdbVotes as number | null) ?? undefined,
-            language: (row.language as string | null) ?? undefined,
-            sourceType: (row.sourceType as MovieSourceType | null) ?? undefined,
-            channelName: (row.channelName as string | null) ?? undefined,
-            verified: row.verified === 1,
-            lastUpdated: (row.lastUpdated as string | null) ?? undefined,
-            genre: (row.genre as string | null) ?? undefined,
-            country: (row.country as string | null) ?? undefined,
-          }
+          const transformed = transformLightweightMovie(row)
           movieCache.set(transformed.movieId, transformed)
           results.push(transformed)
         }
@@ -543,9 +598,10 @@ async function handleMessage(e: QueuedMessage) {
         bind: bindParams,
         returnValue: 'resultRows',
         rowMode: 'object',
-      })
+      }) as LightweightMovieDbRow[]
 
-      self.postMessage({ id, result })
+      const transformed = result.map(transformLightweightMovie)
+      self.postMessage({ id, result: transformed })
     }
   } catch (err: unknown) {
     console.error('Worker error:', err)

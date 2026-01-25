@@ -17,10 +17,9 @@
         <div class="space-y-2">
           <div v-for="model in EMBEDDING_MODELS" :key="model.id">
             <AppInputCheckbox
-              :checked="selectedModels.includes(model.id)"
+              v-model="selectedModels[model.id]"
               :label="getModelLabel(model)"
               :disabled="generating"
-              @change="toggleModel(model.id, $event)"
             />
             <p
               v-if="model.id === 'nomic'"
@@ -57,17 +56,16 @@
           :disabled="generating"
         />
         <AppInputCheckbox
-          :checked="options.forceRebuild"
+          v-model="options.forceRebuild"
           label="Force rebuild (delete existing databases)"
           :disabled="generating"
-          @change="options.forceRebuild = $event"
         />
       </div>
 
       <!-- Generate Button -->
       <button
         class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        :disabled="generating || selectedModels.length === 0"
+        :disabled="generating || !Object.values(selectedModels).some(v => v)"
         @click="handleGenerate"
       >
         <div v-if="generating" class="i-mdi-loading animate-spin"></div>
@@ -207,7 +205,10 @@ interface ModelResult {
 const { progress } = storeToRefs(useAdminStore())
 
 // Default to faster models (bge-micro and potion), exclude slow nomic
-const selectedModels = ref<string[]>(['bge-micro', 'potion'])
+const selectedModels = ref<Record<string, boolean>>({
+  'bge-micro': true,
+  potion: true,
+})
 const generating = ref(false)
 const lastResults = ref<ModelResult[] | null>(null)
 const apiErrors = ref<string[]>([])
@@ -217,26 +218,18 @@ const options = reactive({
   forceRebuild: false,
 })
 
-function toggleModel(modelId: string, checked: boolean) {
-  if (checked) {
-    if (!selectedModels.value.includes(modelId)) {
-      selectedModels.value.push(modelId)
-    }
-  } else {
-    selectedModels.value = selectedModels.value.filter(m => m !== modelId)
-  }
-}
-
 function getModelLabel(model: { id: string; name: string; dimensions: number }): string {
   return `${model.name} (${model.dimensions}D)`
 }
 
 function selectAll() {
-  selectedModels.value = EMBEDDING_MODELS.map(m => m.id)
+  EMBEDDING_MODELS.forEach(m => {
+    selectedModels.value[m.id] = true
+  })
 }
 
 function selectNone() {
-  selectedModels.value = []
+  selectedModels.value = {}
 }
 
 function getModelName(modelId: string): string {
@@ -264,7 +257,7 @@ async function handleGenerate() {
     }>('/api/admin/embeddings/generate', {
       method: 'POST',
       body: {
-        models: selectedModels.value,
+        models: Object.keys(selectedModels.value).filter(key => selectedModels.value[key]),
         limit: options.limit || undefined,
         forceRebuild: options.forceRebuild,
       },

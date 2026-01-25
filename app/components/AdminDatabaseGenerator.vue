@@ -15,10 +15,9 @@
       <!-- Options -->
       <div class="space-y-3">
         <AppInputCheckbox
-          :checked="skipJsonGeneration"
+          v-model="skipJsonGeneration"
           label="Skip individual movie JSON generation"
           :disabled="generating"
-          @change="skipJsonGeneration = $event"
         />
         <p class="text-xs text-theme-textmuted px-7 -mt-2">
           Faster if you only need to update the SQLite database and JSON files are already

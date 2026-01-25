@@ -10,14 +10,7 @@
     <div v-else class="space-y-4">
       <!-- Archive.org -->
       <div class="space-y-2">
-        <AppInputCheckbox
-          :checked="filters.sources.includes('archive.org')"
-          @change="
-            filters.sources.includes('archive.org')
-              ? (filters.sources = filters.sources.filter((s: string) => s !== 'archive.org'))
-              : (filters.sources = [...filters.sources, 'archive.org'])
-          "
-        >
+        <AppInputCheckbox v-model="archiveOrgSelected">
           <span class="flex items-center justify-between gap-2 flex-1">
             <span class="text-sm font-medium text-theme-text">Archive.org</span>
           </span>
@@ -35,12 +28,7 @@
           <AppInputCheckbox
             v-for="channel in channels"
             :key="channel.id"
-            :checked="filters.sources.includes(channel.name)"
-            @change="
-              filters.sources.includes(channel.name)
-                ? (filters.sources = filters.sources.filter((s: string) => s !== channel.name))
-                : (filters.sources = [...filters.sources, channel.name])
-            "
+            v-model="getChannelSelected(channel.name).value"
           >
             <span class="flex items-center justify-between gap-2 flex-1">
               <span class="text-sm text-theme-text">{{ channel.name }}</span>
@@ -79,6 +67,31 @@ const filters = injectedFilters || storeFilters
 
 const channels = ref<ChannelOption[]>([])
 const isLoading = ref(true)
+
+// Helper computed properties for v-model binding
+const archiveOrgSelected = computed({
+  get: () => filters.value.sources.includes('archive.org'),
+  set: (value: boolean) => {
+    if (value) {
+      filters.value.sources = [...filters.value.sources, 'archive.org']
+    } else {
+      filters.value.sources = filters.value.sources.filter((s: string) => s !== 'archive.org')
+    }
+  },
+})
+
+const getChannelSelected = (channelName: string) => {
+  return computed({
+    get: () => filters.value.sources.includes(channelName),
+    set: (value: boolean) => {
+      if (value) {
+        filters.value.sources = [...filters.value.sources, channelName]
+      } else {
+        filters.value.sources = filters.value.sources.filter((s: string) => s !== channelName)
+      }
+    },
+  })
+}
 
 const fetchChannels = async () => {
   isLoading.value = true
