@@ -56,3 +56,17 @@ export function parseSearchQuery(query: string): ParsedQuery {
 
   return result
 }
+
+/**
+ * Checks if a search query contains any field-specific keywords.
+ */
+export function hasKeywords(query: string): boolean {
+  if (!query) return false
+  const parsed = parseSearchQuery(query)
+  return !!(
+    parsed.actors?.length ||
+    parsed.directors?.length ||
+    parsed.writers?.length ||
+    parsed.title
+  )
+}

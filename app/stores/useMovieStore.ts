@@ -646,18 +646,6 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       let results: string[] = []
 
-      // Parse query to check for keywords
-      const parsed = parseSearchQuery(query)
-      if (
-        parsed.actors?.length ||
-        parsed.directors?.length ||
-        parsed.writers?.length ||
-        parsed.title
-      ) {
-        // Always switch to exact mode when using keywords
-        filters.value.searchMode = 'exact'
-      }
-
       if (query && filters.value.searchMode === 'semantic') {
         const { where, whereParams } = buildFilterQuery()
 
@@ -723,6 +711,22 @@ export const useMovieStore = defineStore('movie', () => {
       console.error('[getSimilarMovies] Failed to fetch similar movies:', err)
       return []
     }
+  }
+
+  /**
+   * Clear all active filters and reset to defaults
+   * @param keepSearch - Whether to keep the current search query
+   */
+  const clearAllFilters = (keepSearch = false) => {
+    const currentSearch = filters.value.searchQuery
+    const currentMode = filters.value.searchMode
+
+    Object.assign(filters.value, DEFAULT_FILTERS)
+
+    if (keepSearch) {
+      filters.value.searchQuery = currentSearch
+    }
+    filters.value.searchMode = currentMode
   }
 
   // ============================================
@@ -878,6 +882,7 @@ export const useMovieStore = defineStore('movie', () => {
     // ACTIONS - Likes
     // ============================================
     toggleLike,
+    clearAllFilters,
   }
 })
 
