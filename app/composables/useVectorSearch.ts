@@ -1,11 +1,51 @@
 import { useDatabase } from './useDatabase'
 import { useBrowserEmbedding } from './useBrowserEmbedding'
 
+const DEFAULT_EMBEDDING_MODEL = 'nomic'
+
 export function useVectorSearch() {
   const db = useDatabase()
   const browserEmbedding = useBrowserEmbedding()
+  const movieStore = useMovieStore()
   const isSearching = ref(false)
+  const isLoadingEmbeddings = ref(false)
   const error = ref<string | null>(null)
+
+  /**
+   * Ensure embeddings are loaded before performing vector search.
+   * Auto-loads embeddings if not already loaded.
+   * @returns true if embeddings are ready, false if loading failed
+   */
+  const ensureEmbeddingsLoaded = async (): Promise<boolean> => {
+    // Already loaded
+    if (movieStore.isEmbeddingsLoaded) {
+      return true
+    }
+
+    // Already loading (from another call or component)
+    if (movieStore.isEmbeddingsLoading) {
+      isLoadingEmbeddings.value = true
+      // Wait for loading to complete by polling
+      while (movieStore.isEmbeddingsLoading) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      isLoadingEmbeddings.value = false
+      return movieStore.isEmbeddingsLoaded
+    }
+
+    // Need to load embeddings
+    isLoadingEmbeddings.value = true
+    try {
+      await movieStore.loadEmbeddings(DEFAULT_EMBEDDING_MODEL)
+      return true
+    } catch (err) {
+      console.error('[useVectorSearch] Failed to load embeddings:', err)
+      error.value = 'Failed to load embeddings database. Semantic search is unavailable.'
+      return false
+    } finally {
+      isLoadingEmbeddings.value = false
+    }
+  }
 
   /**
    * Perform a semantic search using a natural language query.
@@ -28,6 +68,13 @@ export function useVectorSearch() {
     error.value = null
 
     try {
+      // Ensure embeddings are loaded before searching
+      const embeddingsReady = await ensureEmbeddingsLoaded()
+      if (!embeddingsReady) {
+        error.value = 'Embeddings database not available. Please try again later.'
+        return []
+      }
+
       // 1. Generate embedding for the query
       // Auto-detect model from database config
       const modelInfo = await db.getEmbeddingModelInfo()
@@ -77,6 +124,13 @@ export function useVectorSearch() {
     error.value = null
 
     try {
+      // Ensure embeddings are loaded before searching
+      const embeddingsReady = await ensureEmbeddingsLoaded()
+      if (!embeddingsReady) {
+        error.value = 'Embeddings database not available. Cannot find similar movies.'
+        return []
+      }
+
       // 1. Get the embedding for the movie from the database
       // We need to use a raw query because vectorSearch expects the embedding blob
       const movieEmbeddingResult = await db.query(
@@ -118,6 +172,7 @@ export function useVectorSearch() {
     search,
     findSimilar,
     isSearching,
+    isLoadingEmbeddings,
     error,
     // Expose browser embedding state for UI feedback (e.g. loading progress)
     embeddingProgress: browserEmbedding.progress,
