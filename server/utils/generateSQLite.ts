@@ -3,6 +3,10 @@
  *
  * Converts data/movies.json to public/data/movies.db
  * Optimized for client-side SQLite Wasm usage.
+ *
+ * Note: Embeddings are stored in separate DB files (e.g., embeddings-bge-micro-movies.db)
+ * and are generated via AdminEmbeddingsGenerator. This utility only generates the main
+ * movies.db with movie data, collections, and full-text search indexes.
  */
 
 import Database from 'better-sqlite3'
@@ -13,8 +17,6 @@ import { loadCollectionsDatabase } from './collections'
 import { createLogger } from './logger'
 import { normalizeLanguageCode } from '../../shared/utils/languageNormalizer'
 import { generateMovieJSON } from './generateMovieJSON'
-import { getDefaultModel } from '../../config/embedding-models'
-import type { EmbeddingModelConfig } from '../../config/embedding-models'
 import type { MovieEntry } from '../../shared/types/movie'
 import type { Collection } from '../../shared/types/collections'
 
@@ -22,15 +24,14 @@ const logger = createLogger('SQLiteGen')
 const DB_PATH = join(process.cwd(), 'public/data/movies.db')
 
 export interface GenerateSQLiteOptions {
-  embeddingModel?: EmbeddingModelConfig
   skipJsonGeneration?: boolean
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 }
 
 export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
-  const { embeddingModel = getDefaultModel(), skipJsonGeneration = false, onProgress } = options
+  const { skipJsonGeneration = false, onProgress } = options
 
-  logger.info(`Starting SQLite database generation with model: ${embeddingModel.name}...`)
+  logger.info('Starting SQLite database generation...')
 
   // 1. Generate individual movie JSON files first
   if (!skipJsonGeneration) {
@@ -323,16 +324,9 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
     sqlite.exec('BEGIN TRANSACTION')
     try {
       // Insert config metadata
-      // Embedding model metadata is stored for reference, but embeddings themselves
-      // are kept in external DB files (e.g., data/embeddings-nomic.db)
-      insertConfig.run('embedding_model_id', embeddingModel.id)
-      insertConfig.run('embedding_model_name', embeddingModel.name)
-      insertConfig.run('embedding_model_dimensions', embeddingModel.dimensions.toString())
-      insertConfig.run('embeddings_external', 'true')
-      insertConfig.run('embeddings_db_file', embeddingModel.dbFileName)
-      if (embeddingModel.ollamaModel) {
-        insertConfig.run('embedding_model_ollama', embeddingModel.ollamaModel)
-      }
+      // Note: Embedding model info is stored in the individual embedding DB files
+      // The main movies.db doesn't need to know about embeddings
+      insertConfig.run('generated_at', new Date().toISOString())
 
       let count = 0
       for (const movie of movies) {

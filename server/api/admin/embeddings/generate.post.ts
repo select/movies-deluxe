@@ -109,12 +109,10 @@ export default defineEventHandler(async event => {
         initPipeline = bgeModule.initBgeMicroPipeline
         generateEmbedding = bgeModule.generateBgeMicroEmbedding
       } else if (modelId === 'potion') {
-        // Potion model uses onnxruntime-node which has compatibility issues with Node 24+
-        // Use the CLI script instead: pnpm tsx scripts/generate-embeddings-potion.ts
-        errors.push(
-          `${modelConfig.name}: Not available in Admin UI. Use CLI: pnpm tsx scripts/generate-embeddings-potion.ts`
-        )
-        continue
+        const potionModule = await import('../../../utils/embeddings/_potion')
+        checkAvailability = potionModule.checkPotionAvailability
+        initPipeline = potionModule.initPotionPipeline
+        generateEmbedding = potionModule.generatePotionEmbedding
       } else {
         errors.push(`Unknown model type: ${modelId}`)
         continue

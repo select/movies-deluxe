@@ -1,10 +1,8 @@
-import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import { join } from 'path'
+import type { FeatureExtractionPipeline } from '@huggingface/transformers'
 
-// Configure transformers.js to use local models
-env.localModelPath = join(process.cwd(), 'models')
-env.allowRemoteModels = false
-
+// Lazy-loaded module reference
+let transformersModule: typeof import('@huggingface/transformers') | null = null
 let embeddingPipeline: FeatureExtractionPipeline | null = null
 
 /**
@@ -51,6 +49,20 @@ function cleanTextForEmbedding(text: string): string {
 }
 
 /**
+ * Lazily load the @huggingface/transformers module.
+ * This avoids loading onnxruntime-node at server startup.
+ */
+async function getTransformersModule() {
+  if (!transformersModule) {
+    transformersModule = await import('@huggingface/transformers')
+    // Configure transformers.js to use local models
+    transformersModule.env.localModelPath = join(process.cwd(), 'models')
+    transformersModule.env.allowRemoteModels = false
+  }
+  return transformersModule
+}
+
+/**
  * Initialize the bge-micro-v2 embedding pipeline.
  * Uses the quantized ONNX model for better performance.
  */
@@ -58,6 +70,8 @@ export async function initBgeMicroPipeline(): Promise<FeatureExtractionPipeline>
   if (embeddingPipeline) {
     return embeddingPipeline
   }
+
+  const { pipeline } = await getTransformersModule()
 
   embeddingPipeline = await pipeline('feature-extraction', 'bge-micro-v2', {
     dtype: 'q8',

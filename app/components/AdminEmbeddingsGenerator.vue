@@ -23,12 +23,6 @@
               @change="toggleModel(model.id, $event)"
             />
             <p
-              v-if="model.id === 'potion'"
-              class="text-[10px] text-amber-600 dark:text-amber-400 ml-6 -mt-1"
-            >
-              Use CLI: pnpm tsx scripts/generate-embeddings-potion.ts
-            </p>
-            <p
               v-if="model.id === 'nomic'"
               class="text-[10px] text-amber-600 dark:text-amber-400 ml-6 -mt-1"
             >
@@ -210,8 +204,8 @@ function toggleModel(modelId: string, checked: boolean) {
 }
 
 function isModelDisabled(modelId: string): boolean {
-  // potion and nomic require CLI - not available in admin UI
-  return modelId === 'potion' || modelId === 'nomic'
+  // nomic requires Ollama server - not available in admin UI
+  return modelId === 'nomic'
 }
 
 function getModelLabel(model: { id: string; name: string; dimensions: number }): string {
@@ -220,7 +214,7 @@ function getModelLabel(model: { id: string; name: string; dimensions: number }):
 }
 
 function selectAll() {
-  // Only select models available in admin UI (exclude potion and nomic)
+  // Only select models available in admin UI (exclude nomic which requires Ollama)
   selectedModels.value = EMBEDDING_MODELS.filter(m => !isModelDisabled(m.id)).map(m => m.id)
 }
 

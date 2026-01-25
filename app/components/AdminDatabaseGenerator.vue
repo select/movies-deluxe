@@ -7,31 +7,10 @@
 
     <div class="space-y-6">
       <p class="text-theme-textmuted text-sm">
-        Generates the SQLite database used for the frontend. You can select different embedding
-        models for semantic search.
+        Generates the main SQLite database (movies.db) used for the frontend. This contains movie
+        data, collections, and full-text search indexes. Embeddings are stored separately and
+        generated via the Embeddings Generator above.
       </p>
-
-      <!-- Model Selection -->
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-theme-textmuted">Embedding Model</label>
-        <div class="relative group">
-          <select
-            v-model="selectedModel"
-            class="w-full p-3 bg-theme-surface border border-theme-border rounded-2xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all disabled:opacity-50"
-            :disabled="generating"
-          >
-            <option v-for="model in EMBEDDING_MODELS" :key="model.id" :value="model.id">
-              {{ model.name }} ({{ model.dimensions }}D)
-            </option>
-          </select>
-          <div
-            class="absolute right-4 top-1/2 -translate-y-1/2 i-mdi-chevron-down text-theme-textmuted pointer-events-none"
-          ></div>
-        </div>
-        <p v-if="selectedModelConfig" class="text-xs text-theme-textmuted italic px-1">
-          {{ selectedModelConfig.description }}
-        </p>
-      </div>
 
       <!-- Options -->
       <div class="space-y-3">
@@ -78,15 +57,10 @@
 </template>
 
 <script setup lang="ts">
-import { EMBEDDING_MODELS, getModelConfig, getDefaultModel } from '../../config/embedding-models'
-
 const adminStore = useAdminStore()
 const { progress, generatingSqlite: generating } = storeToRefs(adminStore)
 
-const selectedModel = ref(getDefaultModel().id)
 const skipJsonGeneration = ref(false)
-
-const selectedModelConfig = computed(() => getModelConfig(selectedModel.value))
 
 async function handleGenerate() {
   // Set immediate feedback before API call
@@ -99,7 +73,6 @@ async function handleGenerate() {
   })
 
   await adminStore.generateSqlite({
-    embeddingModel: selectedModel.value,
     skipJsonGeneration: skipJsonGeneration.value,
   })
 }

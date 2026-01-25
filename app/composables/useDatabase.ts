@@ -234,11 +234,16 @@ function createDatabase() {
     }
   }
 
+  /**
+   * Get the embedding model info for the currently attached embeddings database.
+   * Returns null if no embeddings database is attached.
+   */
   const getEmbeddingModelInfo = async (): Promise<EmbeddingModelConfig | null> => {
-    const config = await getConfig()
-    const modelId = config.embedding_model_id
-    if (!modelId) return null
-    return getModelConfig(modelId) || null
+    // Return model info based on the currently attached embeddings database
+    if (!embeddingsLoaded.value || !embeddingsModelId.value) {
+      return null
+    }
+    return getModelConfig(embeddingsModelId.value) || null
   }
 
   /**

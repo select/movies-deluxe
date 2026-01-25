@@ -170,6 +170,12 @@ export default defineNuxtConfig({
 
   // Nitro configuration for serving WASM files with correct MIME type
   nitro: {
+    // Externalize packages that have native Node.js dependencies incompatible with Node 24
+    // onnxruntime-node doesn't support Node 24's NAPI v10 yet
+    externals: {
+      inline: [],
+      external: ['onnxruntime-node', '@huggingface/transformers'],
+    },
     routeRules: {
       '/**/*.wasm': {
         headers: {
