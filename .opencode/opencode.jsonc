@@ -2,6 +2,15 @@
   "$schema": "https://opencode.ai/config.json",
   // === Plugins ===
   "plugin": ["opencode-gemini-auth@latest"],
+  // === MCP Servers ===
+  // "mcp": {
+  //   "TypeSlayer": {
+  //     "type": "local",
+  //     "command": ["pnpm", "dlx", "typeslayer", "mcp"],
+  //     "enabled": true,
+  //   },
+  // },
+  // === Permissions ===
   "permission": {
     "doom_loop": "ask",
     "edit": {
@@ -9,7 +18,7 @@
     },
     "bash": {
       "git restore *": "ask",
-      "pkill -f \"nuxt dev\"*": "deny",
+      "pkill -f \"nuxt dev\"*": "ask",
     },
   },
   // === Models ===
