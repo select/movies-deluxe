@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-24T18:06:36.818Z"
+    "lastUpdated": "2026-01-25T20:37:07.921Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1724,10 +1724,48 @@
       "tt1020989",
       "tt0014560",
       "archive-max-fleischers-gabby-the-complete-collection-1940-41",
-      "tt0019881"
+      "tt0019881",
+      "tt0152446",
+      "tt0151637",
+      "tt0148028",
+      "tt0150391",
+      "tt0161528",
+      "tt0150503",
+      "tt0150732",
+      "tt0161617",
+      "tt0150908",
+      "tt0151154",
+      "tt0152210",
+      "tt0148984",
+      "tt0150743",
+      "tt0152138",
+      "tt0149315",
+      "tt0150871",
+      "tt0151319",
+      "tt0149255",
+      "tt0149376",
+      "tt0150213",
+      "tt0148044",
+      "tt0148058",
+      "tt0161530",
+      "tt0150606",
+      "tt0151410",
+      "tt0151413",
+      "tt0148474",
+      "tt0147054",
+      "tt0151865",
+      "tt0149760",
+      "tt0148137",
+      "tt0148475",
+      "tt0152160",
+      "tt0152213",
+      "tt0147509",
+      "tt0153104",
+      "tt0153387",
+      "tt0153658"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-24T18:06:36.818Z",
+    "updatedAt": "2026-01-25T20:37:07.921Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -1753,6 +1791,36 @@
         "searchQuery": "Max Fleischer",
         "filterState": {
           "searchQuery": "Max Fleischer",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Art Bartsch",
+        "filterState": {
+          "searchQuery": "Art Bartsch",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Martin Taras",
+        "filterState": {
+          "searchQuery": "Martin Taras",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Dave Tendlar",
+        "filterState": {
+          "searchQuery": "Dave Tendlar",
           "sort": {
             "field": "relevance",
             "direction": "desc"
