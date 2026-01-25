@@ -797,7 +797,7 @@ export const useMovieStore = defineStore('movie', () => {
         isFiltering.value = false
       }
     },
-    { debounce: 300, maxWait: 1000 }
+    { debounce: 300, maxWait: 1000, immediate: true }
   )
 
   /**
