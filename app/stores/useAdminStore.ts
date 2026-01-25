@@ -33,6 +33,7 @@ export interface ProgressUpdate {
   failedPrevious?: number
   embeddingsPerSecond?: number
   estimatedTimeRemaining?: number
+  lastError?: string
 }
 
 export const useAdminStore = defineStore('admin', () => {
