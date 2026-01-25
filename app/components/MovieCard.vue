@@ -10,14 +10,14 @@
     <div class="aspect-[2/3] bg-theme-selection relative flex-shrink-0 overflow-hidden">
       <!-- Shimmer loading state -->
       <div
-        v-if="movie.movieId?.startsWith('tt')"
+        v-if="movie.movieId?.startsWith('tt') && !posterError"
         class="absolute inset-0 shimmer z-10 transition-opacity duration-500"
         :class="{ 'opacity-0 pointer-events-none': imageLoaded, 'opacity-100': !imageLoaded }"
       ></div>
 
       <!-- Use local poster only for movies with real IMDB IDs -->
       <img
-        v-if="showFullDetails && movie.movieId?.startsWith('tt')"
+        v-if="showFullDetails && movie.movieId?.startsWith('tt') && !posterError"
         :src="getPosterPath(movie.movieId)"
         :alt="movie.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
@@ -26,13 +26,11 @@
         @load="imageLoaded = true"
         @error="handlePosterError"
       />
-      <!-- Icon fallback for movies without local posters -->
+      <!-- Icon fallback for movies without local posters or on error -->
       <div
         v-else
-        class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600"
-      >
-        <div class="i-mdi-movie text-6xl"></div>
-      </div>
+        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-theme-surface to-theme-selection"
+      ></div>
 
       <!-- Badges -->
       <div
@@ -168,6 +166,7 @@ const movie = computed(() => {
 })
 
 const imageLoaded = ref(false)
+const posterError = ref(false)
 const movieCollections = ref<Collection[]>([])
 
 // Per-movie debounced rendering state
@@ -214,10 +213,8 @@ onUnmounted(() => {
 })
 
 // Handle poster loading errors
-const handlePosterError = (event: Event) => {
+const handlePosterError = () => {
+  posterError.value = true
   imageLoaded.value = true // Stop shimmer
-  const img = event.target as HTMLImageElement
-  // Hide the image and show icon fallback
-  img.style.display = 'none'
 }
 </script>
