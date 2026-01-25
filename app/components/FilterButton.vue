@@ -5,7 +5,9 @@
       isActive
         ? 'bg-theme-primary/10 text-theme-primary border-theme-primary/30 shadow-sm'
         : 'bg-transparent text-theme-textmuted border-theme-border/50 hover:bg-theme-surface hover:border-theme-border',
+      disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : '',
     ]"
+    :disabled="disabled"
     @click="$emit('click', $event)"
   >
     <!-- Icon -->
@@ -50,6 +52,7 @@ interface Props {
   icon?: string
   activeValue?: string | number
   isActive?: boolean
+  disabled?: boolean
 }
 
 defineProps<Props>()

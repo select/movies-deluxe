@@ -154,6 +154,14 @@ const selectMode = async (mode: SearchMode) => {
     }
   }
 
+  // When switching to semantic mode, clear keywords and other filters as requested
+  if (mode === 'semantic') {
+    if (hasKeywords(filters.value.searchQuery)) {
+      filters.value.searchQuery = ''
+    }
+    movieStore.clearAllFilters(true) // Keep the (possibly cleared) search query
+  }
+
   filters.value.searchMode = mode
 }
 

@@ -47,6 +47,7 @@
         icon="i-mdi-sort"
         :active-value="currentSortLabel"
         :is-active="!isDefaultSort"
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('sort', $event)"
         @clear="resetSort"
       />
@@ -57,6 +58,7 @@
         icon="i-mdi-star"
         :active-value="filters.minRating > 0 ? `${filters.minRating.toFixed(1)}+` : ''"
         :is-active="filters.minRating > 0"
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('rating', $event)"
         @clear="
           () => {
@@ -71,6 +73,7 @@
         icon="i-mdi-calendar"
         :active-value="yearLabel"
         :is-active="filters.minYear > 0 || (filters.maxYear ?? 0) > 0"
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('year', $event)"
         @clear="clearYears"
       />
@@ -83,6 +86,7 @@
         :is-active="
           filters.minVotes > 0 || ((filters.maxVotes ?? 0) > 0 && (filters.maxVotes ?? 0) < 1000000)
         "
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('votes', $event)"
         @clear="clearVotes"
       />
@@ -93,6 +97,7 @@
         icon="i-mdi-movie-filter"
         :active-value="filters.genres.length > 0 ? filters.genres.length : ''"
         :is-active="filters.genres.length > 0"
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('genres', $event)"
         @clear="
           () => {
@@ -107,6 +112,7 @@
         icon="i-mdi-earth"
         :active-value="filters.countries.length > 0 ? filters.countries.length : ''"
         :is-active="filters.countries.length > 0"
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('countries', $event)"
         @clear="
           () => {
@@ -121,6 +127,7 @@
         icon="i-mdi-source-branch"
         :active-value="filters.sources.length > 0 ? filters.sources.length : ''"
         :is-active="filters.sources.length > 0"
+        :disabled="filters.searchMode === 'semantic'"
         @click="openPopup('source', $event)"
         @clear="
           () => {
@@ -133,6 +140,8 @@
       <button
         v-if="hasActiveFilters"
         class="text-xs font-bold text-theme-primary hover:bg-theme-primary/10 px-3 py-1.5 rounded-full transition-colors whitespace-nowrap md:ml-auto"
+        :disabled="filters.searchMode === 'semantic'"
+        :class="{ 'opacity-50 cursor-not-allowed': filters.searchMode === 'semantic' }"
         @click="resetAllFilters"
       >
         Clear All
@@ -381,6 +390,11 @@ const resetAllFilters = () => {
 
 // Debounced function to update store (500ms delay)
 const debouncedSetSearchQuery = useDebounceFn((query: string) => {
+  // If query contains keywords, automatically switch to exact mode
+  if (hasKeywords(query)) {
+    filters.value.searchMode = 'exact'
+  }
+
   filters.value.searchQuery = query
 
   if (query && filters.value.sort.field !== 'relevance') {

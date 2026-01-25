@@ -54,6 +54,7 @@
           icon="i-mdi-sort"
           :active-value="currentSortLabel"
           :is-active="!isDefaultSort"
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('sort', $event)"
           @clear="resetSort"
         />
@@ -64,6 +65,7 @@
           icon="i-mdi-star"
           :active-value="filters.minRating > 0 ? `${filters.minRating.toFixed(1)}+` : ''"
           :is-active="filters.minRating > 0"
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('rating', $event)"
           @clear="filters.minRating = 0"
         />
@@ -74,6 +76,7 @@
           icon="i-mdi-calendar"
           :active-value="yearLabel"
           :is-active="filters.minYear > 0 || (filters.maxYear ?? 0) > 0"
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('year', $event)"
           @clear="clearYears"
         />
@@ -87,6 +90,7 @@
             filters.minVotes > 0 ||
             ((filters.maxVotes ?? 0) > 0 && (filters.maxVotes ?? 0) < 1000000)
           "
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('votes', $event)"
           @clear="clearVotes"
         />
@@ -97,6 +101,7 @@
           icon="i-mdi-movie-filter"
           :active-value="filters.genres.length > 0 ? filters.genres.length : ''"
           :is-active="filters.genres.length > 0"
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('genres', $event)"
           @clear="filters.genres = []"
         />
@@ -107,6 +112,7 @@
           icon="i-mdi-earth"
           :active-value="filters.countries.length > 0 ? filters.countries.length : ''"
           :is-active="filters.countries.length > 0"
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('countries', $event)"
           @clear="filters.countries = []"
         />
@@ -117,6 +123,7 @@
           icon="i-mdi-source-branch"
           :active-value="filters.sources.length > 0 ? filters.sources.length : ''"
           :is-active="filters.sources.length > 0"
+          :disabled="filters.searchMode === 'semantic'"
           @click="openPopup('source', $event)"
           @clear="filters.sources = []"
         />
@@ -125,21 +132,9 @@
         <button
           v-if="hasActiveFilters"
           class="text-xs font-bold text-theme-primary hover:bg-theme-primary/10 px-3 py-1.5 rounded-full transition-colors whitespace-nowrap md:ml-auto"
-          @click="
-            Object.assign(filters, {
-              sort: { field: 'year', direction: 'desc' },
-              sources: [],
-              minRating: 0,
-              minYear: 0,
-              maxYear: 0,
-              minVotes: 0,
-              maxVotes: 0,
-              genres: [],
-              countries: [],
-              searchQuery: '',
-              searchMode: 'exact',
-            })
-          "
+          :disabled="filters.searchMode === 'semantic'"
+          :class="{ 'opacity-50 cursor-not-allowed': filters.searchMode === 'semantic' }"
+          @click="movieStore.clearAllFilters()"
         >
           Clear All
         </button>
@@ -362,6 +357,11 @@ onMounted(() => {
 
 // Debounced function to update store (500ms delay)
 const debouncedSetSearchQuery = useDebounceFn((query: string) => {
+  // If query contains keywords, automatically switch to exact mode
+  if (hasKeywords(query)) {
+    filters.value.searchMode = 'exact'
+  }
+
   filters.value.searchQuery = query
 
   // Update URL query parameter (but not on admin pages)
