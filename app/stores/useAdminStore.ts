@@ -67,6 +67,17 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const updateProgress = (update: ProgressUpdate) => {
+    if (import.meta.dev) {
+      // eslint-disable-next-line no-console
+      console.debug(
+        '[Store] Progress update:',
+        update.type,
+        update.status,
+        update.current,
+        '/',
+        update.total
+      )
+    }
     progress.value[update.type] = update
   }
 

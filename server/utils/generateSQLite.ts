@@ -556,12 +556,33 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
 
     // 8. Optimize
     logger.info('Optimizing database...')
-    onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing database' })
+    onProgress?.({
+      current: movies.length,
+      total: movies.length,
+      message: 'Optimizing: FTS movies',
+    })
     sqlite.exec("INSERT INTO fts_movies(fts_movies) VALUES('optimize')")
+    onProgress?.({
+      current: movies.length,
+      total: movies.length,
+      message: 'Optimizing: FTS actors',
+    })
     sqlite.exec("INSERT INTO fts_actors(fts_actors) VALUES('optimize')")
+    onProgress?.({
+      current: movies.length,
+      total: movies.length,
+      message: 'Optimizing: FTS directors',
+    })
     sqlite.exec("INSERT INTO fts_directors(fts_directors) VALUES('optimize')")
+    onProgress?.({
+      current: movies.length,
+      total: movies.length,
+      message: 'Optimizing: FTS writers',
+    })
     sqlite.exec("INSERT INTO fts_writers(fts_writers) VALUES('optimize')")
+    onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing: VACUUM' })
     sqlite.exec('VACUUM')
+    onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing: ANALYZE' })
     sqlite.exec('ANALYZE')
 
     logger.success('SQLite database generated successfully!')
