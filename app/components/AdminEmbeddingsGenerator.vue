@@ -19,14 +19,14 @@
             <AppInputCheckbox
               :checked="selectedModels.includes(model.id)"
               :label="getModelLabel(model)"
-              :disabled="generating || isModelDisabled(model.id)"
+              :disabled="generating"
               @change="toggleModel(model.id, $event)"
             />
             <p
               v-if="model.id === 'nomic'"
               class="text-[10px] text-amber-600 dark:text-amber-400 ml-6 -mt-1"
             >
-              Server-only (requires Ollama). Use CLI: pnpm tsx scripts/generate-embeddings.ts
+              Requires Ollama server running locally (slow)
             </p>
           </div>
         </div>
@@ -49,8 +49,20 @@
         </div>
       </div>
 
-      <!-- Limit Option -->
-      <AppInputNumber v-model="options.limit" label="Limit (0 = no limit)" :disabled="generating" />
+      <!-- Options -->
+      <div class="space-y-3">
+        <AppInputNumber
+          v-model="options.limit"
+          label="Limit (0 = no limit)"
+          :disabled="generating"
+        />
+        <AppInputCheckbox
+          :checked="options.forceRebuild"
+          label="Force rebuild (delete existing databases)"
+          :disabled="generating"
+          @change="options.forceRebuild = $event"
+        />
+      </div>
 
       <!-- Generate Button -->
       <button
@@ -124,6 +136,14 @@
             ETA: {{ formatETA(progress.embeddings.estimatedTimeRemaining) }}
           </div>
         </div>
+
+        <!-- Last Error (shown under progress) -->
+        <div
+          v-if="progress.embeddings.lastError"
+          class="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-600 dark:text-red-400"
+        >
+          <span class="font-mono">{{ progress.embeddings.lastError }}</span>
+        </div>
       </div>
 
       <!-- Success Message -->
@@ -139,7 +159,9 @@
           <div v-for="result in lastResults" :key="result.model" class="flex justify-between">
             <span>{{ getModelName(result.model) }}:</span>
             <span>
-              {{ result.processed }} new, {{ result.skipped }} skipped, {{ result.totalInDb }} total
+              {{ result.processed }} new, {{ result.skipped }} skipped,
+              <span v-if="result.failed > 0" class="text-red-500">{{ result.failed }} failed,</span>
+              {{ result.totalInDb }} total
             </span>
           </div>
         </div>
@@ -184,13 +206,15 @@ interface ModelResult {
 
 const { progress } = storeToRefs(useAdminStore())
 
-const selectedModels = ref<string[]>(['nomic'])
+// Default to faster models (bge-micro and potion), exclude slow nomic
+const selectedModels = ref<string[]>(['bge-micro', 'potion'])
 const generating = ref(false)
 const lastResults = ref<ModelResult[] | null>(null)
 const apiErrors = ref<string[]>([])
 
 const options = reactive({
   limit: 0,
+  forceRebuild: false,
 })
 
 function toggleModel(modelId: string, checked: boolean) {
@@ -203,19 +227,12 @@ function toggleModel(modelId: string, checked: boolean) {
   }
 }
 
-function isModelDisabled(modelId: string): boolean {
-  // nomic requires Ollama server - not available in admin UI
-  return modelId === 'nomic'
-}
-
 function getModelLabel(model: { id: string; name: string; dimensions: number }): string {
-  const suffix = isModelDisabled(model.id) ? ' (CLI only)' : ''
-  return `${model.name} (${model.dimensions}D)${suffix}`
+  return `${model.name} (${model.dimensions}D)`
 }
 
 function selectAll() {
-  // Only select models available in admin UI (exclude nomic which requires Ollama)
-  selectedModels.value = EMBEDDING_MODELS.filter(m => !isModelDisabled(m.id)).map(m => m.id)
+  selectedModels.value = EMBEDDING_MODELS.map(m => m.id)
 }
 
 function selectNone() {
@@ -249,6 +266,7 @@ async function handleGenerate() {
       body: {
         models: selectedModels.value,
         limit: options.limit || undefined,
+        forceRebuild: options.forceRebuild,
       },
     })
 
