@@ -73,10 +73,10 @@ export async function initBgeMicroPipeline(): Promise<FeatureExtractionPipeline>
 
   const { pipeline } = await getTransformersModule()
 
-  embeddingPipeline = await pipeline('feature-extraction', 'bge-micro-v2', {
+  embeddingPipeline = (await pipeline('feature-extraction', 'bge-micro-v2', {
     dtype: 'q8',
     local_files_only: true,
-  })
+  })) as FeatureExtractionPipeline
 
   return embeddingPipeline
 }

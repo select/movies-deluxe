@@ -185,13 +185,19 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
     // L2 normalize
     let norm = 0
     for (let i = 0; i < embedding.length; i++) {
-      norm += embedding[i] * embedding[i]
+      const value = embedding[i]
+      if (value !== undefined) {
+        norm += value * value
+      }
     }
     norm = Math.sqrt(norm)
 
     if (norm > 0) {
       for (let i = 0; i < embedding.length; i++) {
-        embedding[i] /= norm
+        const value = embedding[i]
+        if (value !== undefined) {
+          embedding[i] = value / norm
+        }
       }
     }
 
