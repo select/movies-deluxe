@@ -20,6 +20,7 @@ import type { MovieEntry } from '../../../../shared/types/movie'
 interface GenerateEmbeddingsRequest {
   models: string[] // ['nomic', 'bge-micro', 'potion'] or ['all']
   limit?: number
+  forceRebuild?: boolean
 }
 
 interface ModelResult {
@@ -63,7 +64,7 @@ class RollingAverage {
 
 export default defineEventHandler(async event => {
   const body = await readBody<GenerateEmbeddingsRequest>(event)
-  const { models: requestModels = ['nomic'], limit = 0 } = body || {}
+  const { models: requestModels = ['nomic'], limit = 0, forceRebuild = false } = body || {}
   let models = requestModels
 
   // Handle 'all' option
@@ -151,7 +152,7 @@ export default defineEventHandler(async event => {
     }
 
     // Initialize database
-    const db = await initEmbeddingsDatabase(modelConfig)
+    const db = await initEmbeddingsDatabase(modelConfig, forceRebuild)
     const existingIds = getExistingEmbeddingIds(db)
 
     // Filter movies that need embeddings
@@ -188,6 +189,7 @@ export default defineEventHandler(async event => {
 
     const startTime = Date.now()
     const rollingAvg = new RollingAverage(10)
+    let lastError: string | undefined
 
     for (let i = 0; i < targetMovies.length; i++) {
       const movie = targetMovies[i]!
@@ -221,13 +223,25 @@ export default defineEventHandler(async event => {
           failedCurrent: result.failed,
           embeddingsPerSecond: Math.round(embeddingsPerSecond * 10) / 10,
           estimatedTimeRemaining,
+          lastError,
         })
       } catch (err) {
         result.failed++
-        console.error(
-          `[Embeddings] Failed for ${movie.movieId}:`,
-          err instanceof Error ? err.message : err
-        )
+        const errorMsg = err instanceof Error ? err.message : String(err)
+        lastError = `${movie.movieId}: ${errorMsg}`
+        console.error(`[Embeddings] Failed for ${movie.movieId}:`, errorMsg)
+
+        // Emit progress with error
+        emitProgress({
+          type: 'embeddings',
+          status: 'in_progress',
+          current: i + 1,
+          total: targetMovies.length,
+          message: `${modelConfig.name}: ${movie.title || movie.movieId}`,
+          successCurrent: result.processed,
+          failedCurrent: result.failed,
+          lastError,
+        })
       }
     }
 
