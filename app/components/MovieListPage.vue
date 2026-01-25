@@ -204,7 +204,6 @@ const gridProps = computed(() => {
     }
   } else {
     // Legacy mode is no longer supported - MovieVirtualGrid only accepts movieIds
-    console.warn('[MovieListPage] Legacy movies prop is no longer supported. Use movieIds instead.')
     return {
       movieIds: [],
     }

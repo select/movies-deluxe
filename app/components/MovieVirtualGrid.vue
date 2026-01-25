@@ -174,8 +174,8 @@ const updateVisibleRows = useDebounceFn(() => {
     .filter((id): id is string => id !== null && !!id)
 
   if (visibleIds.length > 0) {
-    fetchMoviesByIds(visibleIds).catch(error => {
-      console.error('[MovieVirtualGrid] Failed to load visible range:', error)
+    fetchMoviesByIds(visibleIds).catch(() => {
+      // Silently handle errors
     })
   }
 }, 80) // 80ms debounce for smooth scrolling
