@@ -205,10 +205,16 @@ interface ModelResult {
 const { progress } = storeToRefs(useAdminStore())
 
 // Default to faster models (bge-micro and potion), exclude slow nomic
-const selectedModels = ref<Record<string, boolean>>({
-  'bge-micro': true,
-  potion: true,
-})
+// Initialize all models to false to avoid undefined values
+const selectedModels = ref<Record<string, boolean>>(
+  EMBEDDING_MODELS.reduce(
+    (acc, model) => {
+      acc[model.id] = model.id === 'bge-micro' || model.id === 'potion'
+      return acc
+    },
+    {} as Record<string, boolean>
+  )
+)
 const generating = ref(false)
 const lastResults = ref<ModelResult[] | null>(null)
 const apiErrors = ref<string[]>([])
@@ -229,7 +235,9 @@ function selectAll() {
 }
 
 function selectNone() {
-  selectedModels.value = {}
+  EMBEDDING_MODELS.forEach(m => {
+    selectedModels.value[m.id] = false
+  })
 }
 
 function getModelName(modelId: string): string {
