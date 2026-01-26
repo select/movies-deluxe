@@ -12,9 +12,10 @@ export interface EmbeddingProvider {
 
   /**
    * Initializes the model (downloads and loads into memory if necessary).
+   * @param baseURL The base URL for loading model files (e.g., '/movies/')
    * @param onProgress Optional callback for loading progress (0-1)
    */
-  init(onProgress?: (progress: number) => void): Promise<void>
+  init(baseURL: string, onProgress?: (progress: number) => void): Promise<void>
 
   /**
    * Returns true if the model is loaded and ready for inference.

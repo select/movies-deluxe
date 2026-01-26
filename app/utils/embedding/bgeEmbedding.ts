@@ -39,7 +39,7 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
   private pipeline: FeatureExtractionPipeline | null = null
   private initializing = false
 
-  async init(onProgress?: (progress: number) => void): Promise<void> {
+  async init(baseURL: string, onProgress?: (progress: number) => void): Promise<void> {
     if (this.pipeline) return
     if (this.initializing) {
       // Wait for initialization to complete if already in progress
@@ -52,7 +52,6 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
     this.initializing = true
     try {
       // Load model from local /models/ directory (served from public/models/)
-      const baseURL = useRuntimeConfig().app.baseURL
       const result = await pipeline('feature-extraction', `${baseURL}models/bge-micro-v2/`, {
         dtype: 'q8',
         local_files_only: true,

@@ -4,12 +4,18 @@ import type { EmbeddingProvider } from '../types/embedding'
 
 let currentProvider: EmbeddingProvider | null = null
 let currentProviderName: 'bge' | 'potion' | null = null
+let cachedBaseURL = '/'
 
 self.onmessage = async (e: MessageEvent) => {
-  const { type, provider, text, id } = e.data
+  const { type, provider, text, id, baseURL } = e.data
 
   try {
     if (type === 'init') {
+      // Cache the baseURL for model loading
+      if (baseURL) {
+        cachedBaseURL = baseURL
+      }
+
       if (currentProviderName === provider && currentProvider?.isReady()) {
         self.postMessage({ type: 'ready', provider })
         return
@@ -29,7 +35,7 @@ self.onmessage = async (e: MessageEvent) => {
       }
 
       currentProviderName = provider
-      await currentProvider.init(progress => {
+      await currentProvider.init(cachedBaseURL, progress => {
         // Report progress back to main thread
         self.postMessage({ type: 'progress', progress, provider })
       })
