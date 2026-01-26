@@ -52,11 +52,13 @@ export interface ScrapeStats {
   posters: {
     totalMovies: number
     withPosterUrl: number
+    withImdbId: number
     downloaded: number
     missing: number
     failed: number
     failureRate: number
     percentOfMoviesWithUrl: number
+    percentOfMoviesWithImdbId: number
     percentOfAllMovies: number
     filesInDirectory: number
     matchedPosters: number
