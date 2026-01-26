@@ -52,7 +52,8 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
     this.initializing = true
     try {
       // Load model from local /models/ directory (served from public/models/)
-      const result = await pipeline('feature-extraction', '/models/bge-micro-v2/', {
+      const baseURL = useRuntimeConfig().app.baseURL
+      const result = await pipeline('feature-extraction', `${baseURL}models/bge-micro-v2/`, {
         dtype: 'q8',
         local_files_only: true,
         progress_callback: (info: { status: string; progress?: number }) => {

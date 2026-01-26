@@ -55,7 +55,8 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
       if (onProgress) onProgress(0.1)
 
       // Fetch tokenizer from local /models/ directory (served from public/models/)
-      const tokenizerUrl = '/models/potion-base-2M/tokenizer.json'
+      const baseURL = useRuntimeConfig().app.baseURL
+      const tokenizerUrl = `${baseURL}models/potion-base-2M/tokenizer.json`
       const tokenizerResp = await fetch(tokenizerUrl)
       if (!tokenizerResp.ok) {
         throw new Error(`Failed to fetch tokenizer from ${tokenizerUrl}`)
@@ -66,7 +67,7 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
       if (onProgress) onProgress(0.3)
 
       // Initialize ONNX runtime session with local model
-      const modelUrl = '/models/potion-base-2M/onnx/model.onnx'
+      const modelUrl = `${baseURL}models/potion-base-2M/onnx/model.onnx`
 
       // Note: In some browser environments, you might need to specify WASM paths:
       // ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/';
