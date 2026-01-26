@@ -5,9 +5,9 @@
 **CRITICAL**: Before saying "done" or "complete", you MUST run this checklist:
 
 ```
-[ ] 1. git status              (check what changed)
-[ ] 2. git add <files>         (stage code changes)
-[ ] 3. bd sync --from-main     (pull beads updates from main)
+[ ] 1. pnpm typecheck          (check for type errors)
+[ ] 2. git status              (check what changed)
+[ ] 3. git add <files>         (stage code changes)
 [ ] 4. git commit -m "..."     (commit code changes)
 ```
 
@@ -18,7 +18,6 @@ Use the commit-message skill to craft a good commit message
 
 - Track ALL work in beads (no TodoWrite tool, no markdown TODOs)
 - Use `bd create` to create issues, not TodoWrite tool
-- Git workflow: hooks auto-sync, run `bd sync` at session end
 - Session management: check `bd ready` for available work
 
 ## Essential Commands
@@ -54,7 +53,6 @@ Use the commit-message skill to craft a good commit message
 ### Project Health
 
 - `bd stats` - Project statistics (open/closed/blocked counts)
-- `bd doctor` - Check for issues (sync problems, missing hooks)
 
 ## Common Workflows
 
@@ -127,26 +125,47 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 
 ## Nuxt 4 Directory Structure
 
-**IMPORTANT**: This project uses **Nuxt 4** with standard directory conventions. Key features: auto-imports, file-based routing, and type safety.
-
 ### Key Directories
 
-**`app/`** - Frontend code
+**`app/`** - Frontend code (Nuxt 4 application layer)
 
-- `pages/` - File-based routing (`index.vue` → `/`)
-- `components/` - Vue components (auto-imported)
+- `pages/` - File-based routing (`index.vue` → `/`, `movie-detail.vue` → `/movie-detail`)
+- `components/` - Vue components (auto-imported globally)
 - `composables/` - Composables (auto-imported, prefix with `use`)
 - `stores/` - Pinia stores (auto-imported, prefix with `use`)
 - `utils/` - Utility functions (auto-imported)
-- `assets/` - Processed assets (CSS, images)
-- `types/` - Frotnend TypeScript types (`~/types`)
-- `shared/types/` - TypeScript types that are used on server and frontend (`~/types`)
-  **`public/`** - Static files served at root (no processing)
-  **`scripts/`** - Node.js scripts (NOT part of Nuxt build)
-- Run via `pnpm tsx scripts/<name>.ts`
-- Scripts write directly to `public/data/movies.json`
+- `assets/` - Processed assets (CSS, images, fonts)
+- `types/` - Frontend-only TypeScript types (import via `~/types`)
+- `layouts/` - Layout components for pages
+- `plugins/` - Nuxt plugins
+- `workers/` - Web Workers
 
-**`config/`** - Project configuration data
+**`server/`** - Backend code (Nuxt server layer)
+
+- `api/` - API endpoints (file-based routing)
+- `plugins/` - Server plugins
+- `utils/` - Server-side utilities
+
+**`shared/`** - Code shared between frontend and backend
+
+- `types/` - TypeScript types used on both server and frontend (import via `~/shared/types`)
+- `utils/` - Shared utility functions
+
+**`public/`** - Static files served at root (no processing)
+
+- `data/` - Static data files (e.g., `movies.json`)
+- `movies/` - Movie video files
+- `posters/` - Movie poster images
+- Files served directly at root URL
+
+**`scripts/`** - Node.js scripts (NOT part of Nuxt build)
+
+- Run via `pnpm tsx scripts/<name>.ts`
+- Used for data processing, maintenance tasks, etc.
+
+**`config/`** - Project configuration data files
+
+**`data/`** - Source data files (processed by scripts)
 
 **Important Rules:**
 
@@ -165,7 +184,7 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 
 **Auto-imported (no import needed):**
 
-When you see import errors please read @.opencode/command/nuxt-autoimport.md
+When you see import errors please use the nuxt-auto-import skill.
 
 ## Frontend Verification
 
