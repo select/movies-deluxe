@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/select/movies-deluxe/compare/v0.8.2...v0.8.3) (2026-01-26)
+
+
+### Bug Fixes
+
+* **embedding:** add baseURL to model paths for production ([e9e7558](https://github.com/select/movies-deluxe/commit/e9e7558b1c3354072610160cd9cf44b8c8733cb3))
+
 ## [0.8.2](https://github.com/select/movies-deluxe/compare/v0.8.1...v0.8.2) (2026-01-26)
 
 
