@@ -104,7 +104,8 @@ const handlePosterError = (index: number) => {
   )
 
   if (availableIds.length > 0) {
-    selectedMovieIds.value[index] = availableIds[Math.floor(Math.random() * availableIds.length)]
+    selectedMovieIds.value[index] =
+      availableIds[Math.floor(Math.random() * availableIds.length)] ?? null
   } else {
     selectedMovieIds.value[index] = null
   }
