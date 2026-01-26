@@ -41,7 +41,7 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
   private tokenizerData: TokenizerData | null = null
   private initializing = false
 
-  async init(onProgress?: (progress: number) => void): Promise<void> {
+  async init(baseURL: string, onProgress?: (progress: number) => void): Promise<void> {
     if (this.session && this.tokenizerData) return
     if (this.initializing) {
       while (this.initializing) {
@@ -55,7 +55,6 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
       if (onProgress) onProgress(0.1)
 
       // Fetch tokenizer from local /models/ directory (served from public/models/)
-      const baseURL = useRuntimeConfig().app.baseURL
       const tokenizerUrl = `${baseURL}models/potion-base-2M/tokenizer.json`
       const tokenizerResp = await fetch(tokenizerUrl)
       if (!tokenizerResp.ok) {

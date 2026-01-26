@@ -71,7 +71,8 @@ export function useBrowserEmbedding() {
     progress.value = 0
 
     const w = initWorker()
-    w.postMessage({ type: 'init', provider })
+    const baseURL = useRuntimeConfig().app.baseURL
+    w.postMessage({ type: 'init', provider, baseURL })
 
     // Wait for ready state or error
     return new Promise<void>((resolve, reject) => {
