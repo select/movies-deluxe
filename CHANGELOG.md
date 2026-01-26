@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/select/movies-deluxe/compare/v0.8.0...v0.8.1) (2026-01-26)
+
+
+### Bug Fixes
+
+* **ci:** add better-sqlite3 to onlyBuiltDependencies for native compilation ([363034f](https://github.com/select/movies-deluxe/commit/363034ffeeb3943090524b2650d2b96eb4b149ca))
+
 # [0.8.0](https://github.com/select/movies-deluxe/compare/v0.7.2...v0.8.0) (2026-01-26)
 
 
