@@ -74,11 +74,7 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
 
   async generateEmbedding(text: string): Promise<Float32Array> {
     if (!this.pipeline) {
-      await this.init()
-    }
-
-    if (!this.pipeline) {
-      throw new Error('Failed to initialize BGE embedding pipeline')
+      throw new Error('BGE embedding pipeline not initialized. Call init() first.')
     }
 
     // Clean text to remove URLs and problematic characters
