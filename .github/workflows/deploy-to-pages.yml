@@ -49,7 +49,6 @@ jobs:
           rm -rf target-repo/movies/*
           rm -rf target-repo/movies/.[!.]*
           cp -r .output/public/* target-repo/movies/
-          cp .output/public/sqlite-wasm/sqlite3* target-repo/movies/_nuxt/
 
       - name: Extract posters
         run: pnpm tsx scripts/extract-posters.ts target-repo/movies/posters
