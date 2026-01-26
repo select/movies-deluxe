@@ -149,11 +149,7 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
 
   async generateEmbedding(text: string): Promise<Float32Array> {
     if (!this.session || !this.tokenizerData) {
-      await this.init()
-    }
-
-    if (!this.session) {
-      throw new Error('Failed to initialize Potion model session')
+      throw new Error('Potion model not initialized. Call init() first.')
     }
 
     // Clean and truncate text for safety
