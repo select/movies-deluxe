@@ -1,5 +1,46 @@
 # Changelog
 
+# [0.8.0](https://github.com/select/movies-deluxe/compare/v0.7.2...v0.8.0) (2026-01-26)
+
+
+### Bug Fixes
+
+* **admin:** improve SQLite generation progress bar visibility and UX ([913e4d0](https://github.com/select/movies-deluxe/commit/913e4d04b7bc61f4525a6ca85fd0e87ca5aba140))
+* **components:** initialize all model checkboxes to prevent undefined modelValue ([d8f52a6](https://github.com/select/movies-deluxe/commit/d8f52a6d8283bb9260ca4362f09eabffb60c00ba))
+* **db:** update vector search queries for attached embeddings database ([9cbdb80](https://github.com/select/movies-deluxe/commit/9cbdb80098ddf56e128bf43c349aaa46a8f23611))
+* **embeddings:** add type assertion to bge pipeline ([e46dded](https://github.com/select/movies-deluxe/commit/e46dded89294f9458f1493e573c17f5a7fe8ecec))
+* remove console statements from frontend components ([8b29f27](https://github.com/select/movies-deluxe/commit/8b29f275f40a6edade9e037024bdc154983e8bec))
+* **scraper:** improve imdb poster regex flexibility ([7c813ca](https://github.com/select/movies-deluxe/commit/7c813ca2538c40dc9ad24733e098187766489ec6))
+* **search:** fix search mode switching and improve semantic search UX ([d72c809](https://github.com/select/movies-deluxe/commit/d72c809d9a96e5ce51791c19f8dc8dc934ec6e81))
+* **search:** prevent race condition when switching search modes after reload ([71ac55d](https://github.com/select/movies-deluxe/commit/71ac55d51cd44e647b498fa3b54a71177141b258))
+* **search:** switch to exact mode when keywords are detected ([ae33bda](https://github.com/select/movies-deluxe/commit/ae33bda9e0716a3726d1c3836ed977df91067030))
+* **types:** resolve embeddings count type in useDatabase ([e543eb4](https://github.com/select/movies-deluxe/commit/e543eb4b7b826b198e7374205f202bdbf1dc6d60))
+* **types:** resolve remaining TypeScript errors ([c39cbb9](https://github.com/select/movies-deluxe/commit/c39cbb9b64e175f138db8693ff3b5ebd136a9567))
+* **types:** resolve typescript errors in admin components and database worker ([f58adba](https://github.com/select/movies-deluxe/commit/f58adbab47f1a8ee94c31f8a8a9056fa9bd578eb))
+* **ui:** handle undefined array access in CollectionCard poster selection ([20af38c](https://github.com/select/movies-deluxe/commit/20af38c261d5e369c45adff7c4f79b949dfff109))
+* **ui:** rename sidebar component to multi-word name ([0950557](https://github.com/select/movies-deluxe/commit/095055795b4e389c9c8a84a62af84029663f498a))
+* use const for db in embedding scripts and ensure config table is always updated ([d245fe8](https://github.com/select/movies-deluxe/commit/d245fe84ec1840d573d2c7699a071f76df956b00))
+
+
+### Features
+
+* **admin:** enable poster downloads for movies without omdb poster urls ([ad29991](https://github.com/select/movies-deluxe/commit/ad2999107c157b5753999b1bc2ea48802b14bb98))
+* **admin:** replace collection dropdown with button-based selection ([0c614a4](https://github.com/select/movies-deluxe/commit/0c614a4df848515f0ac45c98f933b76f1c9174c3))
+* **admin:** show imdb id count as total for posters ([9df9668](https://github.com/select/movies-deluxe/commit/9df9668470466a9776ed7d781851553ca8554117))
+* **admin:** update poster stats to track imdb id coverage ([0e2ee86](https://github.com/select/movies-deluxe/commit/0e2ee869d1b17c8f2e7a680c199bea5356943992))
+* **ai:** serve embedding models locally instead of from Hugging Face ([4feb369](https://github.com/select/movies-deluxe/commit/4feb36972dea6adad64931b878dc9002cbe34b1f))
+* auto-detect embedding model and support browser-based embeddings ([1699880](https://github.com/select/movies-deluxe/commit/1699880744b534a2c2ab42a6ef21f16be3e4cb7c))
+* **build:** add script to copy embedding DBs to public/data ([94ac8ba](https://github.com/select/movies-deluxe/commit/94ac8ba6298f40891af792adf8123d0f7ebe9f03))
+* **db:** separate embeddings into standalone database architecture ([a8f4484](https://github.com/select/movies-deluxe/commit/a8f4484a9496759a924036b188802da28c014cae))
+* implement multiple embedding models, browser-side embeddings, and auto-detection ([4a6a980](https://github.com/select/movies-deluxe/commit/4a6a980e859fcb58b67ff243a5fde580e95a06b5))
+* **scraper:** add headless browser for IMDB poster scraping ([4391e0e](https://github.com/select/movies-deluxe/commit/4391e0e5862a021337cdfa3972f535c8050c54d0))
+* **scraper:** handle imdb id redirects during poster scraping ([98fd6df](https://github.com/select/movies-deluxe/commit/98fd6dfd865fc58ede42b7ab973b0bbb95c8a874))
+* **search:** add lazy loading of embeddings to useVectorSearch ([865df62](https://github.com/select/movies-deluxe/commit/865df62223c2485f8d5d6b2452787df26eac3334))
+* **search:** auto-load embeddings when selecting semantic search ([ab4b14f](https://github.com/select/movies-deluxe/commit/ab4b14f8331040dbca9b3f27be907576c24ad2af))
+* **ui:** add embeddings loading state to search mode selector ([792a398](https://github.com/select/movies-deluxe/commit/792a39839ed79425d9720f4450860251f1d42bcc))
+* **ui:** make director, writer, and actors clickable search links ([3db13cf](https://github.com/select/movies-deluxe/commit/3db13cf237507903f4a17c0b3a8b644e5528bd3e))
+* update embedding generation scripts to write model metadata ([e7f5b8b](https://github.com/select/movies-deluxe/commit/e7f5b8b93fafc4b22ab81178f89200fe0243f75e))
+
 ## [0.7.2](https://github.com/select/movies-deluxe/compare/v0.7.1...v0.7.2) (2026-01-19)
 
 
