@@ -485,7 +485,6 @@
                 <div class="i-mdi-auto-fix text-theme-accent"></div>
                 Similar Movies
               </h2>
-              <div class="text-sm text-theme-textmuted italic">Powered by vector search</div>
             </div>
 
             <!-- Horizontal scrollable grid -->
