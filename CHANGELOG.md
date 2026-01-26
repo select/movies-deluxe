@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.4](https://github.com/select/movies-deluxe/compare/v0.8.3...v0.8.4) (2026-01-26)
+
+
+### Bug Fixes
+
+* **ci:** remove redundant sqlite3 wasm file copy step ([a6b9951](https://github.com/select/movies-deluxe/commit/a6b9951f39df3aa0dbad4419c503d5e933d0c19e))
+* **embedding:** pass baseURL from composable to worker for model loading ([2b336b6](https://github.com/select/movies-deluxe/commit/2b336b6fdb5b968d40b1909105bf6aa7e432db77))
+* **embedding:** remove auto-init calls without required baseURL parameter ([9444c3d](https://github.com/select/movies-deluxe/commit/9444c3de15776d064f93a023d318a41d6d875f90))
+
 ## [0.8.3](https://github.com/select/movies-deluxe/compare/v0.8.2...v0.8.3) (2026-01-26)
 
 
