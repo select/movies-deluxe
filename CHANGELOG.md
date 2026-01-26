@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/select/movies-deluxe/compare/v0.8.1...v0.8.2) (2026-01-26)
+
+
+### Bug Fixes
+
+* **db:** add baseURL to embeddings database path ([dcb3b25](https://github.com/select/movies-deluxe/commit/dcb3b254a88594ce892c08ebb5bdf202a19ba083))
+
 ## [0.8.1](https://github.com/select/movies-deluxe/compare/v0.8.0...v0.8.1) (2026-01-26)
 
 
