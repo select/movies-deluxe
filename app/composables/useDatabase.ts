@@ -278,7 +278,8 @@ function createDatabase() {
 
     embeddingsLoading.value = true
 
-    const url = `/data/embeddings-${modelId}-movies.db`
+    const baseURL = useRuntimeConfig().app.baseURL
+    const url = `${baseURL}data/embeddings-${modelId}-movies.db`
     const id = Math.random().toString(36).substring(7)
 
     return new Promise((resolve, reject) => {
