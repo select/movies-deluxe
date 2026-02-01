@@ -73,6 +73,8 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const aiOptions = reactive({
+    provider: 'ollama' as const,
+    model: 'gemma3:4b',
     limit: 100,
     onlyUnmatched: true,
     forceReExtract: false,

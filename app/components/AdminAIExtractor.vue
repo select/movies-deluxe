@@ -6,6 +6,34 @@
     </h2>
 
     <div class="space-y-6">
+      <!-- Provider Selection -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-theme-text">Provider</label>
+        <select
+          v-model="options.provider"
+          class="w-full px-4 py-2.5 rounded-xl border border-theme-border bg-theme-surface text-theme-text focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          <option v-for="provider in providers" :key="provider.id" :value="provider.id">
+            {{ provider.name }}
+          </option>
+        </select>
+        <p class="text-xs text-theme-textmuted">{{ selectedProvider?.description }}</p>
+      </div>
+
+      <!-- Model Selection -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-theme-text">Model</label>
+        <select
+          v-model="options.model"
+          class="w-full px-4 py-2.5 rounded-xl border border-theme-border bg-theme-surface text-theme-text focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          <option v-for="model in availableModels" :key="model.id" :value="model.id">
+            {{ model.name }}{{ model.recommended ? ' (Recommended)' : '' }}
+          </option>
+        </select>
+        <p class="text-xs text-theme-textmuted">{{ selectedModel?.description }}</p>
+      </div>
+
       <AppInputNumber v-model="options.limit" label="Extraction limit" />
 
       <div class="flex flex-col gap-3">
@@ -78,7 +106,11 @@
 </template>
 
 <script setup lang="ts">
+import type { AIProviderType } from '~/types/ai-providers'
+
 interface AIOptions {
+  provider: AIProviderType
+  model: string
   limit: number
   onlyUnmatched: boolean
   forceReExtract: boolean
@@ -96,4 +128,24 @@ defineEmits<{
 
 const adminStore = useAdminStore()
 const { progress } = storeToRefs(adminStore)
+
+// Provider data from composable
+const { providers } = useAIProviders()
+
+const selectedProvider = computed(() => providers.find(p => p.id === options.value.provider))
+
+const availableModels = computed(() => selectedProvider.value?.models || [])
+
+const selectedModel = computed(() => availableModels.value.find(m => m.id === options.value.model))
+
+// When provider changes, reset model to default
+watch(
+  () => options.value.provider,
+  newProvider => {
+    const provider = providers.find(p => p.id === newProvider)
+    if (provider) {
+      options.value.model = provider.defaultModel
+    }
+  }
+)
 </script>

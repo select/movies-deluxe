@@ -49,6 +49,7 @@
   "dependencies": {
     "@huggingface/transformers": "3.8.1",
     "@opencode-ai/sdk": "1.0.160",
+    "@openrouter/sdk": "0.5.1",
     "@pinia/nuxt": "0.11.3",
     "@types/tar": "6.1.13",
     "@vueuse/core": "14.1.0",

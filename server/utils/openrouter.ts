@@ -1,29 +1,20 @@
 /**
  * OpenRouter AI Integration Utilities
  *
- * Provides utilities for extracting movie metadata using OpenRouter API.
- * Compatible with OpenAI chat completions API format.
+ * Provides utilities for extracting movie metadata using OpenRouter SDK.
+ * Uses Groq as the preferred provider for fast inference.
  */
 
+import { OpenRouter } from '@openrouter/sdk'
 import { loadPrompt, parseMetadataResponse, type ExtractedMetadata } from './ollama'
-
-/**
- * OpenRouter API response structure (OpenAI-compatible)
- */
-interface OpenRouterResponse {
-  choices: Array<{
-    message: {
-      content: string
-    }
-  }>
-}
 
 /**
  * OpenRouter configuration
  */
 interface OpenRouterConfig {
-  apiKey: string
-  model: string
+  apiKey?: string
+  model?: string
+  provider?: string // Provider slug (e.g., 'Groq')
 }
 
 /**
@@ -31,65 +22,33 @@ interface OpenRouterConfig {
  */
 const DEFAULT_CONFIG = {
   model: 'qwen/qwen3-32b',
-  apiEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+  provider: 'Groq', // Use Groq for fast inference
 }
 
 /**
- * Get OpenRouter API key from environment
- *
- * @returns string | undefined - API key or undefined if not set
+ * Get OpenRouter API key from runtime config
  */
 export function getOpenRouterApiKey(): string | undefined {
-  return process.env.OPENROUTER_API_KEY
+  const config = useRuntimeConfig()
+  return config.openrouterApiKey
 }
 
 /**
  * Check if OpenRouter is available (API key is set)
- *
- * @returns boolean - True if API key is configured
  */
 export function isOpenRouterAvailable(): boolean {
   return !!getOpenRouterApiKey()
 }
 
 /**
- * Make OpenRouter chat request
- *
- * @param model - Model name to use (e.g., 'openai/gpt-4o-mini')
- * @param messages - Chat messages array
- * @param apiKey - OpenRouter API key
- * @returns Promise<OpenRouterResponse> - OpenRouter response
+ * Create OpenRouter client instance
  */
-export async function openrouterChat(
-  model: string,
-  messages: Array<{ role: string; content: string }>,
-  apiKey: string
-): Promise<OpenRouterResponse> {
-  const response = await fetch(DEFAULT_CONFIG.apiEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-      'HTTP-Referer': 'https://movies-deluxe.local', // Required by OpenRouter
-      'X-Title': 'Movies Deluxe', // Optional: app name for OpenRouter dashboard
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      response_format: { type: 'json_object' }, // Request JSON response
-      temperature: 0.1, // Low temperature for consistent extraction
-      max_tokens: 256, // Metadata responses are small
-    }),
+function createClient(apiKey: string): OpenRouter {
+  return new OpenRouter({
+    apiKey,
+    httpReferer: 'https://movies-deluxe.local',
+    xTitle: 'Movies Deluxe',
   })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(
-      `OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`
-    )
-  }
-
-  return await response.json()
 }
 
 /**
@@ -101,13 +60,14 @@ export async function openrouterChat(
  * @param config - Optional OpenRouter configuration override
  * @returns Promise<ExtractedMetadata | null> - Extracted metadata or null if failed
  */
-export async function extractMovieMetadata(
+export async function extractMovieMetadataOpenRouter(
   title: string,
   description?: string,
-  config: Partial<OpenRouterConfig> = {}
+  config: OpenRouterConfig = {}
 ): Promise<ExtractedMetadata | null> {
   const apiKey = config.apiKey || getOpenRouterApiKey()
   const model = config.model || DEFAULT_CONFIG.model
+  const provider = config.provider || DEFAULT_CONFIG.provider
 
   if (!apiKey) {
     console.warn('OpenRouter API key not configured (OPENROUTER_API_KEY)')
@@ -123,13 +83,23 @@ export async function extractMovieMetadata(
       .replace('{title}', title)
       .replace('{description}', description || 'No description available')
 
-    // Make AI request
-    const response = await openrouterChat(model, [{ role: 'user', content: prompt }], apiKey)
+    // Create client and make request
+    const client = createClient(apiKey)
+    const completion = await client.chat.send({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      provider: {
+        only: [provider], // Route to specific provider (e.g., Groq)
+        allowFallbacks: false,
+      },
+      stream: false,
+    })
 
-    // Extract content from OpenAI-compatible response
-    const content = response.choices?.[0]?.message?.content
+    // Extract content from response
+    const rawContent = completion.choices?.[0]?.message?.content
+    const content = typeof rawContent === 'string' ? rawContent : null
     if (!content) {
-      console.warn('Empty response from OpenRouter')
+      console.warn('Empty or non-string response from OpenRouter')
       return null
     }
 
@@ -148,19 +118,13 @@ export async function extractMovieMetadata(
 
 /**
  * Validate OpenRouter API key by making a test request
- *
- * @param apiKey - API key to validate
- * @returns Promise<boolean> - True if API key is valid
  */
 export async function validateApiKey(apiKey: string): Promise<boolean> {
   try {
-    // Make a minimal request to check API key validity
-    const response = await fetch('https://openrouter.ai/api/v1/models', {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    })
-    return response.ok
+    const client = createClient(apiKey)
+    // List models to verify API key
+    await client.models.list()
+    return true
   } catch {
     return false
   }
@@ -168,24 +132,12 @@ export async function validateApiKey(apiKey: string): Promise<boolean> {
 
 /**
  * Get available models from OpenRouter
- *
- * @param apiKey - OpenRouter API key
- * @returns Promise<string[]> - List of available model IDs
  */
 export async function getAvailableModels(apiKey: string): Promise<string[]> {
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/models', {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    })
-
-    if (!response.ok) {
-      return []
-    }
-
-    const data = (await response.json()) as { data?: Array<{ id: string }> }
-    return data.data?.map(m => m.id) || []
+    const client = createClient(apiKey)
+    const response = await client.models.list()
+    return response.data?.map(m => m.id).filter((id): id is string => typeof id === 'string') || []
   } catch {
     return []
   }

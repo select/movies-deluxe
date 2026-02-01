@@ -207,5 +207,6 @@ export default defineNuxtConfig({
     googleApiKey: process.env.GOOGLE_API_KEY || process.env.YOUTUBE_API_KEY,
     googleSearchCx: process.env.GOOGLE_SEARCH_CX,
     ollamaHost: process.env.OLLAMA_HOST || 'http://localhost:11434',
+    openrouterApiKey: process.env.OPENROUTER_API_KEY,
   },
 })
