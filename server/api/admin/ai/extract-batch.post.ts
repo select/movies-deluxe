@@ -164,6 +164,19 @@ export default defineEventHandler(async event => {
                 : undefined
             )
           }
+
+          // Emit progress for each movie processed
+          emitProgress({
+            type: 'ai',
+            status: 'in_progress',
+            message: extracted?.title
+              ? `Extracted: ${extracted.title}${extracted.year ? ` (${extracted.year})` : ''}`
+              : `Failed: ${title.substring(0, 40)}...`,
+            current,
+            total,
+            successCurrent: successCount,
+            failedCurrent: failedCount,
+          })
         }
 
         // Save after each batch to prevent data loss
