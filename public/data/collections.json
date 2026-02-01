@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-02-01T17:44:06.199Z"
+    "lastUpdated": "2026-02-01T22:30:36.380Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -2224,8 +2224,8 @@
       "youtube-rEduLaA5Vcc",
       "archive-dracula-s-daughter-1936.",
       "archive-draculas-daughter-colorized-1936-720p",
-      "archive-horror-of-dracula-1958_202406",
-      "archive-house-of-dracula",
+      "tt0051554",
+      "tt0037793",
       "tt0445212",
       "archive-saga-of-dracula-1972",
       "tt0067713",
@@ -2238,7 +2238,7 @@
       "tt0040068"
     ],
     "createdAt": "2026-01-18T20:56:00.000Z",
-    "updatedAt": "2026-01-21T02:47:08.303Z",
+    "updatedAt": "2026-02-01T22:30:36.380Z",
     "savedQueries": [
       {
         "searchQuery": "vampire",
@@ -2747,7 +2747,7 @@
       "archive-charolot-gargon-de-theater-1914",
       "archive-getting-acquainted-1914-directed-by-charlie-chaplin-colorized",
       "archive-his-favorite-pasttime-1914",
-      "archive-his-trysting-places-1914-directed-by-charles-chaplin",
+      "tt0004108",
       "archive-laffing-gas-1914",
       "archive-musical-tramps-1914",
       "archive-one-a.-m.-1916-directed-by-charlie-chaplin",
@@ -2781,7 +2781,7 @@
       "tt0004637"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-05T23:47:01.907Z",
+    "updatedAt": "2026-02-01T22:29:45.833Z",
     "savedQueries": [
       {
         "searchQuery": "Charlie Chaplin",
