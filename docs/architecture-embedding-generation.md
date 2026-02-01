@@ -4,6 +4,8 @@
 
 Movies Deluxe provides **semantic search** capabilities using embedding models that run directly in the browser. Two models are supported: **BGE-micro-v2** (384 dimensions) and **Potion-base-2M** (64 dimensions).
 
+For model comparisons, dimensions, and database generation options, see **[Embedding Models](./embedding-models.md)**.
+
 ## Key Components
 
 ### 1. Embedding Worker

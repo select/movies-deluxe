@@ -90,6 +90,8 @@ The SQLite database schema is automatically adjusted to match the dimensions of 
 
 ## Architecture
 
+For detailed technical documentation on how embeddings are generated and used for vector search, see **[Embedding Generation & Vector Search Architecture](./architecture-embedding-generation.md)**.
+
 The embedding model configuration is centralized in `config/embedding-models.ts`. This file defines the metadata for all supported models and is used by both the CLI scripts and the Admin UI.
 
 ```typescript
