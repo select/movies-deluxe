@@ -1,11 +1,11 @@
 {
   "database": {
-    "total": 30045,
-    "matched": 14966,
-    "unmatched": 15079,
+    "total": 29842,
+    "matched": 15013,
+    "unmatched": 14829,
     "archiveOrgSources": 26115,
     "youtubeSources": 11196,
-    "curatedCount": 14966,
+    "curatedCount": 15013,
     "qualityMarkedCount": 0,
     "qualityBreakdown": {},
     "collections": {
@@ -161,23 +161,23 @@
     }
   },
   "curation": {
-    "total": 30045,
-    "curated": 14966,
-    "percent": 49.81194874355134
+    "total": 29842,
+    "curated": 15013,
+    "percent": 50.308290329066416
   },
   "omdb": {
-    "total": 30045,
-    "matched": 14966,
-    "unmatched": 15079,
-    "percent": 49.81194874355134,
-    "failed": 3853,
-    "failureRate": 20.473989053616027
+    "total": 29842,
+    "matched": 15013,
+    "unmatched": 14829,
+    "percent": 50.308290329066416,
+    "failed": 4109,
+    "failureRate": 21.48833803995398
   },
   "ai": {
-    "totalUnmatched": 15079,
-    "withAiData": 14516,
+    "totalUnmatched": 14829,
+    "withAiData": 14266,
     "withoutAiData": 563,
-    "percent": 96.26633065853173
+    "percent": 96.20338525861487
   },
   "quality": {
     "totalMarked": 0,
@@ -185,18 +185,18 @@
     "percent": 0
   },
   "posters": {
-    "totalMovies": 30045,
-    "withPosterUrl": 13368,
-    "withImdbId": 14966,
+    "totalMovies": 29842,
+    "withPosterUrl": 13414,
+    "withImdbId": 15013,
     "downloaded": 13798,
-    "missing": 1168,
+    "missing": 1215,
     "failed": 1180,
     "failureRate": 7.878221391374016,
-    "percentOfMoviesWithUrl": 103.2166367444644,
-    "percentOfMoviesWithImdbId": 92.19564345850596,
-    "percentOfAllMovies": 45.92444666333832,
+    "percentOfMoviesWithUrl": 102.8626807812733,
+    "percentOfMoviesWithImdbId": 91.90701392126823,
+    "percentOfAllMovies": 46.23684739628711,
     "filesInDirectory": 14009,
     "matchedPosters": 13798
   },
-  "lastUpdated": "2026-02-01T22:49:49.002Z"
+  "lastUpdated": "2026-02-01T23:10:49.834Z"
 }
