@@ -431,16 +431,16 @@ export async function migrateMovieId(
   // Update the movieId in the entry
   oldEntry.movieId = newId
 
-  // Clear the source ID index before upsert to prevent stale lookups
-  // Without this, upsertMovie might find the old entry via source ID lookup
-  // and update db[oldId] instead of db[newId], which we then delete below
+  // IMPORTANT: Delete old entry BEFORE clearing index and calling upsertMovie
+  // This prevents upsertMovie from finding the old entry via source ID lookup
+  // when it rebuilds the index (getSourceIdIndex rebuilds if cleared)
+  delete db[oldId]
+
+  // Clear the source ID index so it gets rebuilt without the old entry
   clearSourceIdIndex()
 
   // Add/merge to new ID
   upsertMovie(db, newId, oldEntry)
-
-  // Remove old entry
-  delete db[oldId]
 
   // Update collections.json
   await updateMovieIdInCollections(oldId, newId)
