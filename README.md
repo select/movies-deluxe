@@ -122,6 +122,11 @@ flowchart TB
     VS -->|"Display"| UIComp
 ```
 
+For detailed architecture documentation, see:
+
+- **[SQLite Browser Architecture](./docs/architecture-sqlite-browser.md)** - WebAssembly initialization, database worker, embeddings attach/detach pattern, and caching strategy
+- **[Embedding Generation & Vector Search](./docs/architecture-embedding-generation.md)** - Text preprocessing, model inference, BGE and Potion providers, and vector similarity search
+
 Data is collected via multiple APIs
 
 - [Archive.org](https://archive.org/),
