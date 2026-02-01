@@ -65,6 +65,10 @@ export default defineEventHandler(async event => {
     let successCount = 0
     let failedCount = 0
 
+    console.log(
+      `[AI Extraction] Starting batch extraction: ${total} movies, batch size: ${batchSize}, provider: ${provider}, model: ${model || 'default'}`
+    )
+
     emitProgress({
       type: 'ai',
       status: 'starting',
@@ -92,6 +96,10 @@ export default defineEventHandler(async event => {
         }
       })
 
+      console.log(
+        `[AI Extraction] Processing batch ${batchNumber}/${totalBatches} (${batch.length} movies)`
+      )
+
       emitProgress({
         type: 'ai',
         status: 'in_progress',
@@ -109,6 +117,8 @@ export default defineEventHandler(async event => {
             ? await extractMovieMetadataBatchOpenRouter(batchInput, { model })
             : await extractMovieMetadataBatch(batchInput, { model })
 
+        console.log(`[AI Extraction] Batch ${batchNumber} returned ${extractedMap.size} results`)
+
         // Process results for each movie in the batch
         for (const [id, movie] of batch) {
           current++
@@ -122,11 +132,17 @@ export default defineEventHandler(async event => {
           if (extracted?.title) {
             movieEntry.ai = extracted
             successCount++
+            console.log(
+              `[AI Extraction]   + ${id}: "${extracted.title}"${extracted.year ? ` (${extracted.year})` : ''}`
+            )
 
             // Remove from failed list if it was there (successful retry)
             removeFailedAIExtraction(id)
           } else {
             failedCount++
+            console.log(
+              `[AI Extraction]   - ${id}: No result (source: "${title.substring(0, 50)}...")`
+            )
 
             // Track the failed extraction attempt
             saveFailedAIExtraction(
@@ -195,6 +211,10 @@ export default defineEventHandler(async event => {
         successCurrent: successCount,
         failedCurrent: failedCount,
       })
+
+      console.log(
+        `[AI Extraction] Batch ${batchNumber}/${totalBatches} complete: ${successCount} success, ${failedCount} failed (total: ${current}/${total})`
+      )
     }
 
     // Final save
@@ -210,6 +230,10 @@ export default defineEventHandler(async event => {
       successCurrent: successCount,
       failedCurrent: failedCount,
     })
+
+    console.log(
+      `[AI Extraction] Completed: ${successCount} successful, ${failedCount} failed out of ${total} movies`
+    )
 
     return {
       success: true,
