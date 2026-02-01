@@ -16,11 +16,11 @@ The challenge is to find a good model that is small enough
 
 We support multiple embedding models with different trade-offs between search quality, database size, and generation speed. Each model contains approximately **30,600 movie embeddings**.
 
-| Model                | ID               | Dimensions | DB File                          | File Size |
-| -------------------- | ---------------- | ---------- | -------------------------------- | --------- |
-| **Nomic Embed Text** | `nomic`          | 768        | `embeddings-nomic-movies.db`     | 122 MB    |
-| **BGE Micro v2**     | `bge-micro`      | 384        | `embeddings-bge-micro-movies.db` | 62 MB     |
-| **Potion Base 2M**   | `potion-base-2M` | 64         | `embeddings-potion-movies.db`    | 12 MB     |
+| Model                | Base Technology | Dimensions | DB File                          | File Size |
+| -------------------- | --------------- | ---------- | -------------------------------- | --------- |
+| **Nomic Embed Text** | Ollama          | 768        | `embeddings-nomic-movies.db`     | 122 MB    |
+| **BGE Micro v2**     | Transformers.js | 384        | `embeddings-bge-micro-movies.db` | 62 MB     |
+| **Potion Base 2M**   | ONNX            | 64         | `embeddings-potion-movies.db`    | 12 MB     |
 
 ### Model Details
 
