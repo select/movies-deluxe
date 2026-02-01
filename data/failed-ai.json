@@ -778,5 +778,65 @@
       "titleLength": 63,
       "descriptionLength": 399
     }
+  },
+  {
+    "identifier": "archive-putin-a-russian-spy-story-episode-1-the-rise-of-putin",
+    "originalTitle": "Putin A Russian Spy Story 2020",
+    "attempts": [
+      {
+        "title": "Putin A Russian Spy Story 2020",
+        "description": "Putin A Russian Spy Story Putin: A Russian Spy Story 2020 Putin: A Russian Spy Story is a 3 part documentary miniseries that reveals how Vladimir Putin managed to make his way from being an unremarkable KGB recruit to one of the most powerful men in the world. Over the course of these three episodes, we witness first hand how the Russian leader snuck his way into Moscow’s halls of power and ultimately made them his own. Episode 1: The Rise of Putin Straight away we are exposed to a character from a 1973 Soviet TV series, Seventeen Moments of Spring, essentially the Russian version of James Bond. Stierlitz. This character on TV is said to have inspired a 21-year-old Putin so much that two years later he would join the infamous KGB . Many years later, the rising political star would recreate a scene from this series using the very same music, making it very clear how he saw himself. His presidency itself reads very much like a spy thriller. Episode 2: Enemies and Traitors In the second episode, we examine how Vladimir Putin arrived in the Kremlin as a vulnerable and relatively unknown president, whom the Russian oligarchs expected to be able to manipulate and control. This film reveals how Putin asserted his hold on power and ultimately surrounded himself with his KGB peers, as well as his philosophy in regards to traitors and enemies. The episode also examines the stories of businessman Boris Berezovsky and defector Alexander Litvinenko, who both stood up to Putin and wound up dead on British soil under suspicious circumstances. Episode 3: Putin Forever In the final episode of this miniseries, we find ourselves in Salisbury, United Kingdom, with the poisoning of Sergei Skripal and his daughter, before tracking back to see how Vladimir Putin’s return to the presidency in 2012 after a four-year absence was greeted by furious protests and accusations of corruption, as well as American sanctions. The film also examines Putin’s decision to annex Crimea and launch a war in eastern Ukraine and Russia’s interference in politics on both sides of the Atlantic and in the Middle East. Directed by : Nick Green",
+        "timestamp": "2026-02-01T20:45:28.828Z"
+      }
+    ],
+    "failedAt": "2026-02-01T20:45:28.829Z",
+    "lastAttempt": "2026-02-01T20:45:28.829Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 30,
+      "descriptionLength": 2133
+    }
+  },
+  {
+    "identifier": "archive-pyaar-diwana-hota-hai-2002-dv-drip-x-264-esubs-ddr",
+    "originalTitle": "Pyaar Diwana Hota Hai 2002 Dv DRip X 264 Esubs DDR",
+    "attempts": [
+      {
+        "title": "Pyaar Diwana Hota Hai 2002 Dv DRip X 264 Esubs DDR",
+        "description": "Pyaar Diwana Hota Hai",
+        "timestamp": "2026-02-01T20:45:28.830Z"
+      }
+    ],
+    "failedAt": "2026-02-01T20:45:28.831Z",
+    "lastAttempt": "2026-02-01T20:45:28.831Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 50,
+      "descriptionLength": 21
+    }
+  },
+  {
+    "identifier": "archive-pyaar-diwana-hota-hai-2002-dvdrip-tikris",
+    "originalTitle": "Pyaar Diwana Hota Hai 2002 DVDRip Tikris",
+    "attempts": [
+      {
+        "title": "Pyaar Diwana Hota Hai 2002 DVDRip Tikris",
+        "description": "Pyaar Diwana Hota Hai  ",
+        "timestamp": "2026-02-01T20:45:28.832Z"
+      }
+    ],
+    "failedAt": "2026-02-01T20:45:28.833Z",
+    "lastAttempt": "2026-02-01T20:45:28.833Z",
+    "reason": "AI extraction returned no title",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 40,
+      "descriptionLength": 23
+    }
   }
 ]
