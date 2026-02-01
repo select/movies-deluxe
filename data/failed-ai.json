@@ -838,5 +838,25 @@
       "titleLength": 40,
       "descriptionLength": 23
     }
+  },
+  {
+    "identifier": "archive-ruzgar-zehra_movie",
+    "originalTitle": "Rüzgar Zehra, Turkish Movie",
+    "attempts": [
+      {
+        "title": "Rüzgar Zehra, Turkish Movie",
+        "description": "Rüzgar Zehra, Turkish Movie",
+        "timestamp": "2026-02-01T21:29:03.196Z"
+      }
+    ],
+    "failedAt": "2026-02-01T21:29:03.206Z",
+    "lastAttempt": "2026-02-01T21:29:03.206Z",
+    "reason": "AI extraction returned no result for this item in batch",
+    "sourceInfo": {
+      "type": "archive.org",
+      "hasDescription": true,
+      "titleLength": 27,
+      "descriptionLength": 27
+    }
   }
 ]
