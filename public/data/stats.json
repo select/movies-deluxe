@@ -1,22 +1,22 @@
 {
   "database": {
-    "total": 30565,
+    "total": 30371,
     "matched": 14966,
-    "unmatched": 15599,
-    "archiveOrgSources": 26516,
+    "unmatched": 15405,
+    "archiveOrgSources": 26371,
     "youtubeSources": 11196,
     "curatedCount": 14966,
     "qualityMarkedCount": 0,
     "qualityBreakdown": {},
     "collections": {
-      "feature_films": 26516
+      "feature_films": 26371
     }
   },
   "external": {
     "archiveOrg": {
       "total": 27290,
-      "scraped": 26516,
-      "percent": 97.16379626236716,
+      "scraped": 26371,
+      "percent": 96.6324661048003,
       "failed": 0,
       "failureRate": 0
     },
@@ -161,23 +161,23 @@
     }
   },
   "curation": {
-    "total": 30565,
+    "total": 30371,
     "curated": 14966,
-    "percent": 48.964501881236714
+    "percent": 49.2772710809654
   },
   "omdb": {
-    "total": 30565,
+    "total": 30371,
     "matched": 14966,
-    "unmatched": 15599,
-    "percent": 48.964501881236714,
-    "failed": 3494,
-    "failureRate": 18.927410617551462
+    "unmatched": 15405,
+    "percent": 49.2772710809654,
+    "failed": 3674,
+    "failureRate": 19.71030042918455
   },
   "ai": {
-    "totalUnmatched": 15599,
-    "withAiData": 9423,
-    "withoutAiData": 6176,
-    "percent": 60.40771844348997
+    "totalUnmatched": 15405,
+    "withAiData": 9233,
+    "withoutAiData": 6172,
+    "percent": 59.935086011035374
   },
   "quality": {
     "totalMarked": 0,
@@ -185,18 +185,18 @@
     "percent": 0
   },
   "posters": {
-    "totalMovies": 30565,
+    "totalMovies": 30371,
     "withPosterUrl": 13368,
     "withImdbId": 14966,
-    "downloaded": 13577,
-    "missing": 1389,
-    "failed": 757,
-    "failureRate": 5.2811497139667924,
-    "percentOfMoviesWithUrl": 101.56343506882106,
-    "percentOfMoviesWithImdbId": 90.71896298276091,
-    "percentOfAllMovies": 44.420088336332405,
-    "filesInDirectory": 13788,
-    "matchedPosters": 13577
+    "downloaded": 13798,
+    "missing": 1168,
+    "failed": 1180,
+    "failureRate": 7.878221391374016,
+    "percentOfMoviesWithUrl": 103.2166367444644,
+    "percentOfMoviesWithImdbId": 92.19564345850596,
+    "percentOfAllMovies": 45.431497151888315,
+    "filesInDirectory": 14009,
+    "matchedPosters": 13798
   },
-  "lastUpdated": "2026-02-01T16:58:09.529Z"
+  "lastUpdated": "2026-02-01T18:42:35.805Z"
 }

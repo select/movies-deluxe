@@ -1,9 +1,7 @@
 <template>
   <div
-    v-show="shouldShowSearch"
     ref="searchContainer"
     class="fixed top-0 left-0 right-0 z-50 bg-theme-surface border-b border-theme-border shadow-xl transition-all duration-300"
-    :class="shouldShowSearch ? 'translate-y-0' : '-translate-y-full'"
   >
     <div class="max-w-4xl mx-auto px-4 py-4 space-y-4">
       <!-- Search Input Row -->
@@ -22,7 +20,6 @@
             class="block w-full pl-32 md:pl-36 pr-12 py-3 md:py-4 bg-theme-background border-2 border-transparent focus:border-theme-primary rounded-2xl text-xl md:text-2xl text-theme-text placeholder-theme-text-muted focus:outline-none transition-all shadow-inner"
             :placeholder="searchPlaceholder"
             @keydown.esc="handleEscape"
-            @keydown.enter="handleEnter"
           />
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 z-10">
             <button
@@ -257,14 +254,10 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, useDebounceFn } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const { filters, hasActiveFilters, isFiltering } = storeToRefs(movieStore)
-
-const uiStore = useUiStore()
-const { isSearchOpen } = storeToRefs(uiStore)
-const { setSearchOpen } = uiStore
 
 const searchInput = ref<HTMLInputElement | null>(null)
 const searchContainer = ref<HTMLElement | null>(null)
@@ -351,7 +344,6 @@ onMounted(() => {
   const urlQuery = route.query.q as string
   if (urlQuery && urlQuery !== localQuery.value) {
     localQuery.value = urlQuery
-    setSearchOpen(true)
   }
 
   // Trigger search when on search page (handles navigation from other pages)
@@ -404,84 +396,36 @@ watch(
   }
 )
 
-// Track if we should show search based on route and state
-const shouldShowSearch = computed(() => {
-  // Always show search on search page
-  if (route.path === '/search') {
-    return true
-  }
-
-  // Show if search is open OR if there's an active query
-  return isSearchOpen.value || localQuery.value !== ''
-})
-
-// Auto-focus input when opened or on search page
+// Auto-focus input on mount and when navigating to search page
 watch(
-  [isSearchOpen, () => route.path],
-  ([isOpen, path]) => {
-    if (isOpen || path === '/search') {
+  () => route.path,
+  newPath => {
+    if (newPath === '/search') {
       nextTick(() => {
         searchInput.value?.focus()
       })
+      // Trigger search update when navigating to search page
+      // This handles the case where filters were loaded from localStorage
+      // but the search wasn't executed because we weren't on /search initially
+      movieStore.triggerSearchUpdate()
     }
   },
   { immediate: true }
 )
 
-// Restore search visibility when returning to home or search page with active query
-// Also trigger search when navigating to search page
-watch(
-  () => route.path,
-  newPath => {
-    if (newPath === '/search') {
-      setSearchOpen(true)
-      // Trigger search update when navigating to search page
-      // This handles the case where filters were loaded from localStorage
-      // but the search wasn't executed because we weren't on /search initially
-      movieStore.triggerSearchUpdate()
-    } else if (newPath === '/' && localQuery.value) {
-      setSearchOpen(true)
-    }
-  }
-)
-
-// Click outside to close (only when query is empty, no popup open, and NOT on search page)
-onClickOutside(searchContainer, () => {
-  if (route.path === '/search') return
-
-  if (!localQuery.value && !activePopup.value) {
-    closeSearch()
-  }
-})
+// Search is always visible, no click-outside handler needed
 
 // Clear search query
 const clearSearch = () => {
   localQuery.value = ''
 }
 
-// Close search overlay
-const closeSearch = () => {
-  if (route.path === '/search') return
-  setSearchOpen(false)
-}
-
-// Handle ESC key: first press closes popup, second clears query, third closes (if not on search page)
+// Handle ESC key: first press closes popup, second clears query
 const handleEscape = () => {
   if (activePopup.value) {
     closePopup()
   } else if (localQuery.value) {
-    // First ESC: clear the query
     clearSearch()
-  } else if (route.path !== '/search') {
-    // Second ESC: close the search (only if query is empty and not on search page)
-    closeSearch()
-  }
-}
-
-// Handle Enter key
-const handleEnter = () => {
-  if (!activePopup.value && route.path !== '/search') {
-    closeSearch()
   }
 }
 </script>
