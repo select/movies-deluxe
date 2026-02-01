@@ -22,10 +22,10 @@
     },
     "youtube": {
       "totalScraped": 11196,
-      "totalAvailable": 18115,
+      "totalAvailable": 18097,
       "totalFailed": 6022,
       "failureRate": 34.975026135439656,
-      "percent": 61.80513386696108,
+      "percent": 61.866607725037305,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -143,7 +143,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2041,
-          "total": 5297,
+          "total": 5279,
           "failed": 2499,
           "failureRate": 55.04405286343612
         },
@@ -175,9 +175,9 @@
   },
   "ai": {
     "totalUnmatched": 15405,
-    "withAiData": 9743,
-    "withoutAiData": 5662,
-    "percent": 63.24569944823109
+    "withAiData": 12567,
+    "withoutAiData": 2838,
+    "percent": 81.57740993184032
   },
   "quality": {
     "totalMarked": 0,
@@ -198,5 +198,5 @@
     "filesInDirectory": 14009,
     "matchedPosters": 13798
   },
-  "lastUpdated": "2026-02-01T21:36:37.838Z"
+  "lastUpdated": "2026-02-01T22:12:16.908Z"
 }
