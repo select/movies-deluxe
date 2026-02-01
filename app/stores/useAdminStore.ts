@@ -11,6 +11,7 @@ import type {
   CollectionCleanupResult,
   GenerateDatabaseRequest,
 } from '~/types/admin'
+import { useStorage } from '@vueuse/core'
 
 export interface ProgressUpdate {
   type:
@@ -72,8 +73,9 @@ export const useAdminStore = defineStore('admin', () => {
     forceRetryFailed: false,
   })
 
-  const aiOptions = reactive({
-    provider: 'ollama' as const,
+  // AI options with localStorage persistence
+  const aiOptions = useStorage('movies-deluxe-ai-options', {
+    provider: 'ollama' as 'ollama' | 'openrouter',
     model: 'gemma3:4b',
     limit: 100,
     batchSize: 5,
