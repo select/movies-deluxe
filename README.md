@@ -29,6 +29,8 @@ This project is built with
 
 The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an [in-browser SQLite database](https://github.com/sql-js/sql.js) via WebAssembly, enabling offline-capable search functionality directly in the user's browser, next to static files.
 
+**[Embedding Models](./docs/embedding-models.md)**: Learn about the different semantic search models available (Nomic, BGE Micro, Potion) with detailed comparisons of dimensions, file sizes, and performance trade-offs.
+
 ### Architecture Diagrams
 
 - **[SQLite Browser Architecture](./docs/architecture-sqlite-browser.md)**: Detailed architecture of the in-browser SQLite database including WebAssembly initialization, database worker with message queue, embeddings attach/detach pattern, query execution flow, and caching strategy.
@@ -122,10 +124,7 @@ flowchart TB
     VS -->|"Display"| UIComp
 ```
 
-For detailed architecture documentation, see:
-
-- **[SQLite Browser Architecture](./docs/architecture-sqlite-browser.md)** - WebAssembly initialization, database worker, embeddings attach/detach pattern, and caching strategy
-- **[Embedding Generation & Vector Search](./docs/architecture-embedding-generation.md)** - Text preprocessing, model inference, BGE and Potion providers, and vector similarity search
+### Data Sources
 
 Data is collected via multiple APIs
 
@@ -134,8 +133,6 @@ Data is collected via multiple APIs
 - [OMDB](https://www.omdbapi.com/)
 
 as well as with the help of a local LLM (using [Ollama](https://ollama.com/)). The curation of the data is done with various regexes, small algorithms and manually via the admin UI of this project.
-
-**[Embedding Models](./docs/embedding-models.md)**: Learn about the different semantic search models available (Nomic, BGE Micro, Potion) with detailed comparisons of dimensions, file sizes, and performance trade-offs.
 
 ## Setup
 
