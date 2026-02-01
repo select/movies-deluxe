@@ -34,6 +34,22 @@ export interface ExtractedMetadata {
 }
 
 /**
+ * Input for batch movie extraction
+ */
+export interface BatchMovieInput {
+  id: string
+  title: string
+  description?: string
+}
+
+/**
+ * Extracted metadata with ID for batch processing
+ */
+export interface BatchExtractedMetadata extends ExtractedMetadata {
+  id: string
+}
+
+/**
  * Default Ollama configuration
  */
 const DEFAULT_CONFIG: OllamaConfig = {
@@ -219,6 +235,143 @@ export async function extractMovieMetadata(
   } catch (error) {
     console.error(`Error extracting metadata for "${title}":`, error)
     return null
+  }
+}
+
+/**
+ * Extract JSON array from response content
+ * Handles cases where AI includes extra text around JSON array
+ *
+ * @param content - Response content from AI
+ * @returns string | null - Extracted JSON array string or null if not found
+ */
+export function extractJsonArrayFromResponse(content: string): string | null {
+  const jsonMatch = content.match(/\[[\s\S]*\]/)
+  return jsonMatch?.[0] ?? null
+}
+
+/**
+ * Parse batch metadata response from AI
+ * Validates structure and year range for each item
+ *
+ * @param content - Response content from AI
+ * @returns BatchExtractedMetadata[] - Array of parsed metadata (may be partial)
+ */
+export function parseBatchMetadataResponse(content: string): BatchExtractedMetadata[] {
+  const jsonString = extractJsonArrayFromResponse(content.trim())
+  if (!jsonString) {
+    console.warn('No JSON array found in batch response')
+    return []
+  }
+
+  try {
+    const extracted = JSON.parse(jsonString)
+
+    if (!Array.isArray(extracted)) {
+      console.warn('Batch response is not an array')
+      return []
+    }
+
+    const currentYear = new Date().getFullYear()
+    const results: BatchExtractedMetadata[] = []
+
+    for (const item of extracted) {
+      // Validate structure - must have id and title
+      if (!item?.id || typeof item.id !== 'string') {
+        console.warn('Batch item missing id, skipping')
+        continue
+      }
+
+      if (!item?.title || typeof item.title !== 'string') {
+        console.warn(`Batch item ${item.id} missing title, skipping`)
+        continue
+      }
+
+      const result: BatchExtractedMetadata = {
+        id: item.id,
+        title: item.title.trim(),
+      }
+
+      // Validate year if present
+      if (item.year !== undefined) {
+        const year = Number(item.year)
+        // Year must be between 1800 and current year + 5
+        if (!Number.isNaN(year) && year >= 1800 && year <= currentYear + 5) {
+          result.year = year
+        }
+      }
+
+      results.push(result)
+    }
+
+    return results
+  } catch (error) {
+    console.error('Error parsing JSON array from batch response:', error)
+    return []
+  }
+}
+
+/**
+ * Extract movie metadata for multiple movies in a single AI call
+ *
+ * @param movies - Array of movies to process
+ * @param config - Optional Ollama configuration override
+ * @returns Promise<Map<string, ExtractedMetadata>> - Map of id to extracted metadata
+ */
+export async function extractMovieMetadataBatch(
+  movies: BatchMovieInput[],
+  config: Partial<OllamaConfig> = {}
+): Promise<Map<string, ExtractedMetadata>> {
+  const { host, model } = { ...DEFAULT_CONFIG, ...config }
+  const results = new Map<string, ExtractedMetadata>()
+
+  if (movies.length === 0) {
+    return results
+  }
+
+  try {
+    // Check if model is available
+    const modelAvailable = await isOllamaModelAvailable(model, host)
+    if (!modelAvailable) {
+      console.warn(`Ollama model ${model} not available`)
+      return results
+    }
+
+    // Load batch prompt template
+    const promptTemplate = await loadPrompt('extract-movie-metadata-batch')
+
+    // Format movies as JSON for the prompt
+    const moviesJson = JSON.stringify(
+      movies.map(m => ({
+        id: m.id,
+        title: m.title,
+        description: m.description || '',
+      })),
+      null,
+      2
+    )
+
+    // Replace placeholder in prompt
+    const prompt = promptTemplate.replace('{movies}', moviesJson)
+
+    // Make AI request
+    const response = await ollamaChat(model, [{ role: 'user', content: prompt }], host)
+
+    // Parse batch response
+    const extracted = parseBatchMetadataResponse(response.message.content)
+
+    // Convert to Map
+    for (const item of extracted) {
+      results.set(item.id, {
+        title: item.title,
+        year: item.year,
+      })
+    }
+
+    return results
+  } catch (error) {
+    console.error('Error in batch metadata extraction:', error)
+    return results
   }
 }
 

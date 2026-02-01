@@ -4,13 +4,14 @@ import { join } from 'path'
 // Note: The following functions are auto-imported from server/utils/:
 // - loadFailedAIExtractions, saveFailedAIExtraction, clearFailedAIExtractions, removeFailedAIExtraction, hasFailedAIExtraction (from failedAI.ts)
 // - emitProgress (from progress.ts)
-// - extractMovieMetadata (from ollama.ts)
-// - extractMovieMetadataOpenRouter (from openrouter.ts)
+// - extractMovieMetadata, extractMovieMetadataBatch (from ollama.ts)
+// - extractMovieMetadataOpenRouter, extractMovieMetadataBatchOpenRouter (from openrouter.ts)
 
 interface BatchOptions {
   provider?: 'ollama' | 'openrouter'
   model?: string
   limit?: number
+  batchSize?: number
   onlyUnmatched?: boolean
   forceReExtract?: boolean
   forceRetryFailed?: boolean
@@ -22,6 +23,7 @@ export default defineEventHandler(async event => {
     provider = 'ollama',
     model,
     limit = 100,
+    batchSize = 5,
     onlyUnmatched = true,
     forceReExtract = false,
     forceRetryFailed = false,
@@ -66,106 +68,133 @@ export default defineEventHandler(async event => {
     emitProgress({
       type: 'ai',
       status: 'starting',
-      message: 'Starting AI extraction...',
+      message: `Starting AI extraction (batch size: ${batchSize})...`,
       current: 0,
       total,
       successCurrent: 0,
       failedCurrent: 0,
     })
 
-    for (const [id, movie] of movies) {
-      current++
+    // Process movies in batches
+    for (let i = 0; i < movies.length; i += batchSize) {
+      const batch = movies.slice(i, i + batchSize)
+      const batchNumber = Math.floor(i / batchSize) + 1
+      const totalBatches = Math.ceil(movies.length / batchSize)
+
+      // Prepare batch input
+      const batchInput = batch.map(([id, movie]) => {
+        const movieEntry = movie as MovieEntry
+        const source = movieEntry.sources[0]
+        return {
+          id,
+          title: source?.title || movieEntry.title,
+          description: source?.description || '',
+        }
+      })
+
+      emitProgress({
+        type: 'ai',
+        status: 'in_progress',
+        message: `Processing batch ${batchNumber}/${totalBatches} (${batch.length} movies)...`,
+        current,
+        total,
+        successCurrent: successCount,
+        failedCurrent: failedCount,
+      })
 
       try {
-        // Get first source for extraction
-        const source = (movie as MovieEntry).sources[0]
-        if (!source) {
-          failedCount++
-          saveFailedAIExtraction(
-            id,
-            (movie as MovieEntry).title as string,
-            'No source available for extraction'
-          )
-          continue
+        // Call the appropriate batch extraction function based on provider
+        const extractedMap =
+          provider === 'openrouter'
+            ? await extractMovieMetadataBatchOpenRouter(batchInput, { model })
+            : await extractMovieMetadataBatch(batchInput, { model })
+
+        // Process results for each movie in the batch
+        for (const [id, movie] of batch) {
+          current++
+          const movieEntry = movie as MovieEntry
+          const source = movieEntry.sources[0]
+          const title = source?.title || movieEntry.title
+          const description = source?.description || ''
+
+          const extracted = extractedMap.get(id)
+
+          if (extracted?.title) {
+            movieEntry.ai = extracted
+            successCount++
+
+            // Remove from failed list if it was there (successful retry)
+            removeFailedAIExtraction(id)
+          } else {
+            failedCount++
+
+            // Track the failed extraction attempt
+            saveFailedAIExtraction(
+              id,
+              title,
+              'AI extraction returned no result for this item in batch',
+              {
+                title,
+                description,
+                timestamp: new Date().toISOString(),
+              },
+              source
+                ? {
+                    type: source.type,
+                    hasDescription: Boolean(description),
+                    titleLength: title.length,
+                    descriptionLength: description.length,
+                  }
+                : undefined
+            )
+          }
         }
 
-        const title = source.title || (movie as MovieEntry).title
-        const description = source.description || ''
+        // Save after each batch to prevent data loss
+        await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
+      } catch (error) {
+        // Batch failed entirely - mark all items in batch as failed
+        console.error(`Batch ${batchNumber} failed:`, error)
 
-        emitProgress({
-          type: 'ai',
-          status: 'in_progress',
-          message: `Extracting: ${title.substring(0, 50)}...`,
-          current,
-          total,
-          successCurrent: successCount,
-          failedCurrent: failedCount,
-        })
-
-        // Call the appropriate extraction function based on provider
-        const extracted =
-          provider === 'openrouter'
-            ? await extractMovieMetadataOpenRouter(title, description, { model })
-            : await extractMovieMetadata(title, description, { model })
-
-        if (extracted?.title) {
-          ;(movie as MovieEntry).ai = extracted
-          successCount++
-
-          // Remove from failed list if it was there (successful retry)
-          removeFailedAIExtraction(id)
-
-          // Save immediately after each successful extraction to prevent data loss
-          await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
-        } else {
+        for (const [id, movie] of batch) {
+          current++
           failedCount++
 
-          // Track the failed extraction attempt
+          const movieEntry = movie as MovieEntry
+          const source = movieEntry.sources[0]
+          const title = source?.title || movieEntry.title
+          const description = source?.description || ''
+
           saveFailedAIExtraction(
             id,
             title,
-            'AI extraction returned no title',
+            `Batch extraction error: ${error instanceof Error ? error.message : 'Unknown error'}`,
             {
               title,
               description,
               timestamp: new Date().toISOString(),
             },
-            {
-              type: source.type,
-              hasDescription: Boolean(description),
-              titleLength: title.length,
-              descriptionLength: description.length,
-            }
+            source
+              ? {
+                  type: source.type,
+                  hasDescription: Boolean(description),
+                  titleLength: title.length,
+                  descriptionLength: description.length,
+                }
+              : undefined
           )
         }
-      } catch (error) {
-        console.error(`AI extraction failed for ${id}:`, error)
-        failedCount++
-
-        // Track the failed extraction attempt with error details
-        const source = (movie as MovieEntry).sources[0]
-        const title = source?.title || (movie as MovieEntry).title
-        const description = source?.description || ''
-
-        saveFailedAIExtraction(
-          id,
-          title,
-          `Extraction error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          {
-            title,
-            description,
-            timestamp: new Date().toISOString(),
-          },
-          source
-            ? {
-                type: source.type,
-                hasDescription: Boolean(description),
-                titleLength: title.length,
-                descriptionLength: description.length,
-              }
-            : undefined
-        )
       }
+
+      emitProgress({
+        type: 'ai',
+        status: 'in_progress',
+        message: `Completed batch ${batchNumber}/${totalBatches}`,
+        current,
+        total,
+        successCurrent: successCount,
+        failedCurrent: failedCount,
+      })
     }
 
     // Final save

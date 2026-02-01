@@ -76,6 +76,7 @@ export const useAdminStore = defineStore('admin', () => {
     provider: 'ollama' as const,
     model: 'gemma3:4b',
     limit: 100,
+    batchSize: 5,
     onlyUnmatched: true,
     forceReExtract: false,
   })

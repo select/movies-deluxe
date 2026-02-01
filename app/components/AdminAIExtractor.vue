@@ -36,6 +36,11 @@
 
       <AppInputNumber v-model="options.limit" label="Extraction limit" />
 
+      <AppInputNumber v-model="options.batchSize" label="Batch size" :min="1" :max="20" />
+      <p class="text-xs text-theme-textmuted -mt-4">
+        Movies processed per AI call. Higher = faster but may reduce accuracy.
+      </p>
+
       <div class="flex flex-col gap-3">
         <AppInputSwitch
           :checked="options.onlyUnmatched"
@@ -112,6 +117,7 @@ interface AIOptions {
   provider: AIProviderType
   model: string
   limit: number
+  batchSize: number
   onlyUnmatched: boolean
   forceReExtract: boolean
 }

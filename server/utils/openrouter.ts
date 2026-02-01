@@ -6,7 +6,13 @@
  */
 
 import { OpenRouter } from '@openrouter/sdk'
-import { loadPrompt, parseMetadataResponse, type ExtractedMetadata } from './ollama'
+import {
+  loadPrompt,
+  parseMetadataResponse,
+  parseBatchMetadataResponse,
+  type ExtractedMetadata,
+  type BatchMovieInput,
+} from './ollama'
 
 /**
  * OpenRouter configuration
@@ -127,6 +133,87 @@ export async function validateApiKey(apiKey: string): Promise<boolean> {
     return true
   } catch {
     return false
+  }
+}
+
+/**
+ * Extract movie metadata for multiple movies in a single AI call via OpenRouter
+ *
+ * @param movies - Array of movies to process
+ * @param config - Optional OpenRouter configuration override
+ * @returns Promise<Map<string, ExtractedMetadata>> - Map of id to extracted metadata
+ */
+export async function extractMovieMetadataBatchOpenRouter(
+  movies: BatchMovieInput[],
+  config: OpenRouterConfig = {}
+): Promise<Map<string, ExtractedMetadata>> {
+  const apiKey = config.apiKey || getOpenRouterApiKey()
+  const model = config.model || DEFAULT_CONFIG.model
+  const provider = config.provider || DEFAULT_CONFIG.provider
+  const results = new Map<string, ExtractedMetadata>()
+
+  if (movies.length === 0) {
+    return results
+  }
+
+  if (!apiKey) {
+    console.warn('OpenRouter API key not configured (OPENROUTER_API_KEY)')
+    return results
+  }
+
+  try {
+    // Load batch prompt template
+    const promptTemplate = await loadPrompt('extract-movie-metadata-batch')
+
+    // Format movies as JSON for the prompt
+    const moviesJson = JSON.stringify(
+      movies.map(m => ({
+        id: m.id,
+        title: m.title,
+        description: m.description || '',
+      })),
+      null,
+      2
+    )
+
+    // Replace placeholder in prompt
+    const prompt = promptTemplate.replace('{movies}', moviesJson)
+
+    // Create client and make request
+    const client = createClient(apiKey)
+    const completion = await client.chat.send({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      provider: {
+        only: [provider],
+        allowFallbacks: false,
+      },
+      stream: false,
+    })
+
+    // Extract content from response
+    const rawContent = completion.choices?.[0]?.message?.content
+    const content = typeof rawContent === 'string' ? rawContent : null
+    if (!content) {
+      console.warn('Empty or non-string response from OpenRouter batch')
+      return results
+    }
+
+    // Parse batch response
+    const extracted = parseBatchMetadataResponse(content)
+
+    // Convert to Map
+    for (const item of extracted) {
+      results.set(item.id, {
+        title: item.title,
+        year: item.year,
+      })
+    }
+
+    return results
+  } catch (error) {
+    console.error('Error in batch metadata extraction via OpenRouter:', error)
+    return results
   }
 }
 
