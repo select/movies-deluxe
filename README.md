@@ -35,6 +35,93 @@ The server API is exclusively used for local administration tasks for data colle
 
 - **[Embedding Generation & Vector Search](./docs/architecture-embedding-generation.md)**: Complete architecture for semantic search including embedding worker, BGE and Potion providers, text preprocessing, model inference, and vector search with sqlite-vec.
 
+#### SQLite Browser Architecture Flow
+
+```mermaid
+flowchart TB
+    subgraph UI["Main Thread"]
+        UIComp["UI Components"]
+        Comp["useDatabase Composable"]
+    end
+
+    subgraph Worker["Web Worker"]
+        Queue["Message Queue"]
+        Handler["handleMessage()"]
+        Cache["Movie Cache"]
+        subgraph SQLite["SQLite Core"]
+            WASM["SQLite WASM"]
+            MainDB["Main DB<br/>:memory:"]
+            EmbDB["Embeddings DB"]
+            Vec["sqlite-vec"]
+        end
+    end
+
+    subgraph Storage["Storage"]
+        MoviesDB["movies.db"]
+        EmbeddingsDB["embeddings-{model}.db"]
+    end
+
+    UIComp -->|"init / query / attach"| Comp
+    Comp -->|"postMessage()"| Queue
+    Queue -->|"FIFO"| Handler
+
+    Handler -->|"Load"| MoviesDB
+    Handler -->|"Deserialize"| MainDB
+    Handler -->|"Attach"| EmbeddingsDB
+    Handler -->|"ATTACH"| EmbDB
+
+    WASM -->|"Extension"| Vec
+    MainDB <-->|"JOIN"| EmbDB
+    Handler -->|"Cache"| Cache
+    Handler -->|"Return"| Comp
+```
+
+#### Embedding Generation & Vector Search Flow
+
+```mermaid
+flowchart TB
+    subgraph UI["Main Thread"]
+        UIComp["UI Components"]
+        VS["useVectorSearch"]
+        BE["useBrowserEmbedding"]
+    end
+
+    subgraph Worker["Embedding Worker"]
+        Handler["Message Handler"]
+        subgraph Providers["Providers"]
+            BGE["BGE<br/>(transformers.js)"]
+            Potion["Potion<br/>(onnxruntime-web)"]
+        end
+    end
+
+    subgraph Models["Models"]
+        BGE2["BGE-micro-v2<br/>384d"]
+        Potion2["Potion-base-2M<br/>64d"]
+    end
+
+    subgraph DB["SQLite Database"]
+        Vec["sqlite-vec"]
+        Table["vec_movies"]
+    end
+
+    UIComp -->|"search(query)"| VS
+    VS -->|"init / embed"| BE
+    BE -->|"postMessage()"| Handler
+
+    Handler -->|"Load"| BGE
+    Handler -->|"Load"| Potion
+    BGE -->|"Fetch"| BGE2
+    Potion -->|"Fetch"| Potion2
+
+    Handler -->|"Generate Embedding"| Providers
+    Providers -->|"Return"| BE
+
+    VS -->|"vectorSearch"| Vec
+    Vec -->|"Similarity"| Table
+    Table -->|"Results"| VS
+    VS -->|"Display"| UIComp
+```
+
 Data is collected via multiple APIs
 
 - [Archive.org](https://archive.org/),
