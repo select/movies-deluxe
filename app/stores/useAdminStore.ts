@@ -217,7 +217,7 @@ export const useAdminStore = defineStore('admin', () => {
     try {
       const response = await $fetch<{ success: boolean }>('/api/admin/ai/extract-batch', {
         method: 'POST',
-        body: aiOptions,
+        body: aiOptions.value,
       })
 
       if (response.success) {
