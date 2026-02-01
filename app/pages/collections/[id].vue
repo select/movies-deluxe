@@ -8,8 +8,8 @@
       parentLabel: 'Collections',
       currentLabel: collection?.name || 'Loading...',
     }"
-    :movie-ids="collection?.movieIds || []"
-    :movie-count="collection?.movieIds?.length || 0"
+    :movie-ids="validMovieIds"
+    :movie-count="validMovieIds.length"
     :is-loading="isLoading"
     search-placeholder="Search in collection..."
     empty-state-icon="i-mdi-movie-open-outline"
@@ -23,10 +23,12 @@
 <script setup lang="ts">
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
+const db = useDatabase()
 
 const { getCollectionById } = collectionsStore
 
 const collection = ref<Collection | null>(null)
+const validMovieIds = ref<string[]>([])
 const isLoading = ref(true)
 
 onMounted(async () => {
@@ -37,6 +39,14 @@ onMounted(async () => {
   try {
     // Get collection from cache (loads if not loaded yet)
     collection.value = await getCollectionById(id)
+
+    // Filter out invalid movie IDs (movies that no longer exist)
+    if (collection.value?.movieIds?.length) {
+      await db.init()
+      const existingMovies = await db.queryByIds(collection.value.movieIds)
+      const existingIds = new Set(existingMovies.map(m => m.movieId))
+      validMovieIds.value = collection.value.movieIds.filter(id => existingIds.has(id))
+    }
   } catch {
     // Error loading collection - handled silently
   } finally {

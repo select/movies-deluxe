@@ -353,6 +353,11 @@ onMounted(() => {
     localQuery.value = urlQuery
     setSearchOpen(true)
   }
+
+  // Trigger search when on search page (handles navigation from other pages)
+  if (route.path === '/search') {
+    movieStore.triggerSearchUpdate()
+  }
 })
 
 // Debounced function to update store (500ms delay)
@@ -424,11 +429,16 @@ watch(
 )
 
 // Restore search visibility when returning to home or search page with active query
+// Also trigger search when navigating to search page
 watch(
   () => route.path,
   newPath => {
     if (newPath === '/search') {
       setSearchOpen(true)
+      // Trigger search update when navigating to search page
+      // This handles the case where filters were loaded from localStorage
+      // but the search wasn't executed because we weren't on /search initially
+      movieStore.triggerSearchUpdate()
     } else if (newPath === '/' && localQuery.value) {
       setSearchOpen(true)
     }
