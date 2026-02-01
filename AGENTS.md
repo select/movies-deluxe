@@ -102,25 +102,6 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 
 **Formatting**: No semicolons, single quotes, 2 spaces, 100 char width, LF line endings
 
-**Linting**:
-
-- Unused vars start with `_`
-- `console.log` warning in frontend, allowed in `scripts/`, `server/`
-- Prefer `const` over `let`
-
-**Auto-imports**: use the nuxt-auto-import skill if needed
-
-**Naming**:
-
-- Components: `PascalCase.vue`
-- Pages: `kebab-case.vue`
-- Composables/Stores: `useCamelCase.ts`
-- Utils: `camelCase.ts`
-- Types: `PascalCase`
-- Constants: `UPPER_SNAKE_CASE`
-
-**Error Handling**: Always use try/catch for async operations, return fallback values
-
 **Vue**: Use `<script setup lang="ts">`, `ref()` for reactivity
 
 ## Nuxt 4 Directory Structure
@@ -172,13 +153,6 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 - ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files
 - ✅ Leverage auto-imports
 - ✅ Use file-based routing in `app/pages/`
-
-### Naming Conventions
-
-- Components: `PascalCase.vue` (e.g., `MovieCard.vue`)
-- Pages: `kebab-case.vue` (e.g., `movie-detail.vue`)
-- Composables/Stores: `useCamelCase.ts` (e.g., `useMovieStore.ts`)
-- Utils: `camelCase.ts` (e.g., `formatDate.ts`)
 
 ### Auto-Import Rules
 

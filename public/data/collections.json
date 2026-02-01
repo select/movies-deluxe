@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-01-25T20:37:07.921Z"
+    "lastUpdated": "2026-02-01T17:04:01.995Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -1762,10 +1762,163 @@
       "tt0147509",
       "tt0153104",
       "tt0153387",
-      "tt0153658"
+      "tt0153658",
+      "tt0033496",
+      "tt0035754",
+      "tt0035414",
+      "tt0032190",
+      "tt0023830",
+      "tt0147968",
+      "tt0031153",
+      "tt0035743",
+      "tt0148001",
+      "tt0034693",
+      "tt0035861",
+      "tt0033589",
+      "tt0141087",
+      "tt0148160",
+      "tt0028925",
+      "tt0031506",
+      "tt0031713",
+      "tt0032895",
+      "tt0031799",
+      "tt0031805",
+      "tt0030607",
+      "tt0029428",
+      "tt0031813",
+      "tt0032932",
+      "tt0031814",
+      "tt0030609",
+      "tt0030610",
+      "tt0031815",
+      "tt0034049",
+      "tt0032933",
+      "tt0030612",
+      "tt0031816",
+      "tt0032941",
+      "tt0029502",
+      "tt0031899",
+      "tt0033061",
+      "tt0149221",
+      "tt0032331",
+      "tt0030033",
+      "tt0031308",
+      "tt0033707",
+      "tt0031588",
+      "tt0033081",
+      "tt0033166",
+      "tt0036441",
+      "tt0293957",
+      "tt0029764",
+      "tt0032134",
+      "tt0148382",
+      "tt0148342",
+      "tt0036603",
+      "tt0048172",
+      "tt0154347",
+      "tt0031202",
+      "tt0035889",
+      "tt0154524",
+      "tt0051701",
+      "tt0034752",
+      "tt0036905",
+      "tt0036041",
+      "tt0154659",
+      "tt0033773",
+      "tt0148419",
+      "tt0154956",
+      "tt0154985",
+      "tt0155026",
+      "tt0034046",
+      "tt0035202",
+      "tt0034048",
+      "tt0034051",
+      "tt0031822",
+      "tt0155053",
+      "tt0031869",
+      "tt0040741",
+      "tt0041891",
+      "tt0034675",
+      "tt0430147",
+      "tt0154641",
+      "tt0043082",
+      "tt0036508",
+      "tt0147924",
+      "tt0147841",
+      "tt0147903",
+      "tt0148216",
+      "tt0148298",
+      "tt0148366",
+      "tt0148429",
+      "tt0148447",
+      "tt0148586",
+      "tt0152003",
+      "tt0148630",
+      "tt0152540",
+      "tt0149096",
+      "tt0149220",
+      "tt0147907",
+      "tt0150769",
+      "tt0148254",
+      "tt0153638",
+      "tt0029708",
+      "tt4135826",
+      "tt0032298",
+      "tt0028724",
+      "tt0034756",
+      "tt0036874",
+      "tt0154549",
+      "tt0030215",
+      "tt0038608",
+      "tt0154616",
+      "tt0030300",
+      "tt0033962",
+      "tt0154979",
+      "tt0036264",
+      "tt0032931",
+      "tt0035203",
+      "tt0155126",
+      "tt0155242",
+      "tt0154327",
+      "tt0035314",
+      "tt0035527",
+      "tt0155269",
+      "tt0045258",
+      "tt0036546",
+      "tt0033282",
+      "tt0148592",
+      "tt0150568",
+      "tt0150830",
+      "tt0151011",
+      "tt0151478",
+      "tt0148496",
+      "tt0148579",
+      "tt0149736",
+      "tt0150557",
+      "tt0148411",
+      "tt0151539",
+      "tt0151640",
+      "tt0148628",
+      "archive-little-lambkins-1940",
+      "archive-the-little-theatre-1941",
+      "tt0168221",
+      "tt0151537",
+      "tt0152560",
+      "tt0152309",
+      "tt0152130",
+      "tt0151910",
+      "tt0141654",
+      "tt0026851",
+      "tt0026726",
+      "tt0151610",
+      "tt0026118",
+      "tt0027123",
+      "tt0023852",
+      "tt0142387",
+      "tt0151967"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-25T20:37:07.921Z",
+    "updatedAt": "2026-01-26T03:03:11.761Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -1821,6 +1974,76 @@
         "searchQuery": "Dave Tendlar",
         "filterState": {
           "searchQuery": "Dave Tendlar",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Robert Clampett",
+        "filterState": {
+          "searchQuery": "Robert Clampett",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Chuck Jones",
+        "filterState": {
+          "searchQuery": "Chuck Jones",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Ben Harrison",
+        "filterState": {
+          "searchQuery": "Ben Harrison",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Lou Lilly",
+        "filterState": {
+          "searchQuery": "Lou Lilly",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Friz Freleng",
+        "filterState": {
+          "searchQuery": "Friz Freleng",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Allen Rose",
+        "filterState": {
+          "searchQuery": "Allen Rose",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Burt Gillett",
+        "filterState": {
+          "searchQuery": "Burt Gillett",
           "sort": {
             "field": "relevance",
             "direction": "desc"
@@ -2408,7 +2631,7 @@
       "youtube-TwcGiBaQVk4",
       "tt0047034",
       "tt1543211",
-      "archive-godzilla-1954-colorization-2020",
+      "tt11908300",
       "tt0048127",
       "tt0197521",
       "tt0059346",
@@ -2440,7 +2663,7 @@
       "tt0048215"
     ],
     "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-01-24T17:18:08.690Z",
+    "updatedAt": "2026-02-01T17:04:01.995Z",
     "savedQueries": [
       {
         "searchQuery": "Godzilla",
@@ -5774,5 +5997,78 @@
       "adventure"
     ],
     "enabled": false
+  },
+  "frankenstein": {
+    "id": "frankenstein",
+    "name": "frankenstein",
+    "description": "",
+    "movieIds": [
+      "tt0040068",
+      "archive-AssignmentTerror1970",
+      "tt0149769",
+      "tt0184276",
+      "archive-jjfrankbtkdrac",
+      "tt29418698",
+      "tt0067017",
+      "archive-DraculaVs.FrankensteinakaAssignmentTerrorPaulNaschy",
+      "tt0071508",
+      "tt0001223",
+      "tt0021884",
+      "tt0021884",
+      "tt0021884",
+      "tt0021884",
+      "youtube-OaJftrcR8IM",
+      "youtube-Ko8jBzUXsTE",
+      "youtube-POV-1sxVrac",
+      "tt28063527",
+      "tt0061683",
+      "youtube-3LFzp5_GXPo",
+      "tt0035899",
+      "tt0035899",
+      "tt0069851",
+      "tt0150632",
+      "tt0051631",
+      "tt0148198",
+      "youtube-uFL5GK7qzy4",
+      "youtube-kor6ghJ344I",
+      "youtube-171tNN5CuqE",
+      "youtube-1MlbLcd_TWs",
+      "archive-young-frankenstein.-bw.-720p.-test",
+      "tt0026481",
+      "tt31824373",
+      "tt0060558",
+      "archive-lp-473-pl",
+      "tt0067321",
+      "youtube-_HYinw0IW-w",
+      "archive-LadyFrankensteinGermanExtendedCut_Silent_",
+      "archive-LadyFrankensteinUltimix",
+      "archive-MarioMancinisFrankenstein801972",
+      "archive-PschotronicCinema1-FrankensteinsCastleOfFreaks",
+      "tt0031951",
+      "tt0026138",
+      "tt0026138",
+      "tt0026138",
+      "archive-the-curse-of-frankenstein-1957_202406",
+      "tt0058073",
+      "tt0050894",
+      "archive-the-revenge-of-frankenstein-1958_202406",
+      "tt0090196",
+      "tt0072431",
+      "archive-young-frankenstein-colorized-1974-720p"
+    ],
+    "createdAt": "2026-02-01T16:28:06.301Z",
+    "updatedAt": "2026-02-01T17:02:08.004Z",
+    "savedQueries": [
+      {
+        "searchQuery": "frankenstein",
+        "filterState": {
+          "searchQuery": "frankenstein",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ]
   }
 }

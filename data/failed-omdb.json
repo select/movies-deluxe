@@ -87816,5 +87816,4465 @@
       "hasAIYear": false,
       "aiTitleUsed": true
     }
+  },
+  {
+    "identifier": "archive-eleven-p.-m.-1928",
+    "originalTitle": "Eleven P. M. (1928)",
+    "year": 1928,
+    "attempts": [
+      {
+        "query": "Eleven P. M.",
+        "year": 1928
+      },
+      {
+        "query": "Eleven P. M",
+        "year": 1928
+      },
+      {
+        "query": "Eleven P. M.",
+        "year": 1928
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:19.815Z",
+    "lastAttempt": "2026-02-01T16:58:19.815Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-elie-wiesels-night-auschwitz-holohoax-looney-tunes-eric-hunt",
+    "originalTitle": "Elie Wiesel's Night Auschwitz Holohoax Looney Tunes Eric Hunt",
+    "attempts": [
+      {
+        "query": "Elie Wiesels Night Auschwitz Holohoax Looney Tunes Eric Hunt"
+      },
+      {
+        "query": "Elie Wiesel's Night Auschwitz Holohoax Looney Tunes Eric Hunt"
+      },
+      {
+        "query": "Elie Wiesel's Night Auschwitz Holohoax Looney Tunes Eric Hunt"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:20.521Z",
+    "lastAttempt": "2026-02-01T16:58:20.521Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ellis-island-full-documentary-by-rick-audio-1080p-s-ai-1900-1920",
+    "originalTitle": "Ellis Island, Landing point of hopes and dreams",
+    "year": 1930,
+    "attempts": [
+      {
+        "query": "Ellis Island",
+        "year": 1930
+      },
+      {
+        "query": "Ellis Island, Landing point of hopes and dreams",
+        "year": 1930
+      },
+      {
+        "query": "Ellis Island, Landing point of hopes and dreams",
+        "year": 1930
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:22.527Z",
+    "lastAttempt": "2026-02-01T16:58:22.527Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-elvira-fernandez-vendedora-de-tienda-1942",
+    "originalTitle": "Elvira Fernandez, Vendedora De Tienda (1942)",
+    "year": 1942,
+    "attempts": [
+      {
+        "query": "Elvira Fernandez Vendedora De Tienda",
+        "year": 1942
+      },
+      {
+        "query": "Elvira Fernandez, Vendedora De Tienda",
+        "year": 1942
+      },
+      {
+        "query": "Elvira Fernandez, Vendedora De Tienda",
+        "year": 1942
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:25.692Z",
+    "lastAttempt": "2026-02-01T16:58:25.692Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-emperor-jonas-4-k",
+    "originalTitle": "The emperor jones 1933[Colorized, 4k, 60fps]",
+    "attempts": [
+      {
+        "query": "Emperor Jonas"
+      },
+      {
+        "query": "The emperor jones 1933[Colorized, 4k, 60fps]"
+      },
+      {
+        "query": "The emperor jones 1933[Colorized, 4k, 60fps]"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:27.583Z",
+    "lastAttempt": "2026-02-01T16:58:27.583Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-empresswu",
+    "originalTitle": "Empress Wu Zetian - 武则天",
+    "year": 1939,
+    "attempts": [
+      {
+        "query": "Empresswu",
+        "year": 1939
+      },
+      {
+        "query": "Empress Wu Zetian - 武则天",
+        "year": 1939
+      },
+      {
+        "query": "Empress Wu Zetian - 武则天",
+        "year": 1939
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:30.970Z",
+    "lastAttempt": "2026-02-01T16:58:30.970Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-en-ar1",
+    "originalTitle": "1",
+    "attempts": [
+      {
+        "query": "En Ar1"
+      },
+      {
+        "query": "1"
+      },
+      {
+        "query": "1"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:31.693Z",
+    "lastAttempt": "2026-02-01T16:58:31.693Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-en-tierras-nuevas-donde-el-oro-abunda-1924",
+    "originalTitle": "En Tierras Nuevas Donde El Oro Abunda (1924)",
+    "year": 1924,
+    "attempts": [
+      {
+        "query": "En Tierras Nuevas Donde El Oro Abunda",
+        "year": 1924
+      },
+      {
+        "query": "En Tierras Nuevas Donde El Oro Abunda",
+        "year": 1924
+      },
+      {
+        "query": "En Tierras Nuevas Donde El Oro Abunda",
+        "year": 1924
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:33.835Z",
+    "lastAttempt": "2026-02-01T16:58:33.835Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1967-ep-01-cecile-est-morte",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 01 - Cécile Est Morte",
+    "year": 1967,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard 1967 Ep 01 Cecile Est Morte",
+        "year": 1967
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 01 - Cécile Est Morte",
+        "year": 1967
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 01 - Cécile Est Morte",
+        "year": 1967
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:36.907Z",
+    "lastAttempt": "2026-02-01T16:58:36.907Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1967-ep-02-la-tete-dun-homme-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - ep 02 - La Tête D'un Homme",
+    "year": 1967,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1967
+      },
+      {
+        "query": "Les Enquêtes De Maigret",
+        "year": 1967
+      },
+      {
+        "query": "Les Enquêtes De Maigret - ep 02 - La Tête D'un Homme",
+        "year": 1967
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:38.438Z",
+    "lastAttempt": "2026-02-01T16:58:38.438Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1968-ep-03-le-chien-jaune-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 03 - Le Chien Jaune",
+    "year": 1968,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 03 - Le Chien Jaune",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 03 - Le Chien Jaune",
+        "year": 1968
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:39.955Z",
+    "lastAttempt": "2026-02-01T16:58:39.955Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1968-ep-04-signe-picpus-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 04 - Signé Picpus",
+    "year": 1968,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 04 - Signé Picpus",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 04 - Signé Picpus",
+        "year": 1968
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:41.457Z",
+    "lastAttempt": "2026-02-01T16:58:41.457Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1968-ep-05-linspecteur-cadavre-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 05 - L'inspecteur Cadavre",
+    "year": 1968,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 05 - L'inspecteur Cadavre",
+        "year": 1968
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:42.968Z",
+    "lastAttempt": "2026-02-01T16:58:42.968Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1968-ep-06-felicie-est-la-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 06 - Félicie Est Là",
+    "year": 1968,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 06 - Félicie Est Là",
+        "year": 1968
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 06 - Félicie Est Là",
+        "year": 1968
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:44.461Z",
+    "lastAttempt": "2026-02-01T16:58:44.461Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1969-ep-07-la-maison-du-juge-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 07 - La Maison Du Juge",
+    "year": 1969,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1969
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 07 - La Maison Du Juge",
+        "year": 1969
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 07 - La Maison Du Juge",
+        "year": 1969
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:45.964Z",
+    "lastAttempt": "2026-02-01T16:58:45.964Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1969-ep-08-l-ombre-chinoise-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 08 - L'Ombre Chinoise",
+    "year": 1969,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1969
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 08 - L'Ombre Chinoise",
+        "year": 1969
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 08 - L'Ombre Chinoise",
+        "year": 1969
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:47.480Z",
+    "lastAttempt": "2026-02-01T16:58:47.480Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1969-ep-09-la-nuit-du-carrefour-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 09 - La Nuit Du Carrefour",
+    "year": 1969,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1969
+      },
+      {
+        "query": "Les Enquêtes De Maigret",
+        "year": 1969
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 09 - La Nuit Du Carrefour",
+        "year": 1969
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:48.995Z",
+    "lastAttempt": "2026-02-01T16:58:48.995Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-enquetes-de-maigret-les-jean-richard-1970-ep-10-lecluse-1-dvd",
+    "originalTitle": "Les Enquêtes De Maigret - Ep 10 - L'Écluse 1",
+    "year": 1970,
+    "attempts": [
+      {
+        "query": "Enquetes De Maigret Les Jean Richard",
+        "year": 1970
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 10 - L'Écluse 1",
+        "year": 1970
+      },
+      {
+        "query": "Les Enquêtes De Maigret - Ep 10 - L'Écluse 1",
+        "year": 1970
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:50.495Z",
+    "lastAttempt": "2026-02-01T16:58:50.495Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-03-bola-de-meia",
+    "originalTitle": "Episódio 03 - Bola De Meia",
+    "attempts": [
+      {
+        "query": "Bola De Meia"
+      },
+      {
+        "query": "Episódio 03 - Bola De Meia"
+      },
+      {
+        "query": "Episódio 03 - Bola De Meia"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:51.785Z",
+    "lastAttempt": "2026-02-01T16:58:51.785Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-04-o-ventriloquo",
+    "originalTitle": "Episódio 04 - O Ventríloquo",
+    "attempts": [
+      {
+        "query": "O Ventríloquo"
+      },
+      {
+        "query": "Episódio 04 - O Ventríloquo"
+      },
+      {
+        "query": "Episódio 04 - O Ventríloquo"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:52.516Z",
+    "lastAttempt": "2026-02-01T16:58:52.516Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-05-extorsao",
+    "originalTitle": "Episódio 05 - Extorsão",
+    "attempts": [
+      {
+        "query": "Episodio 05 Extorsao"
+      },
+      {
+        "query": "Episódio 05 - Extorsão"
+      },
+      {
+        "query": "Episódio 05 - Extorsão"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:53.265Z",
+    "lastAttempt": "2026-02-01T16:58:53.265Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-06-jogo-decisivo",
+    "originalTitle": "Episódio 06 - Jogo Decisivo",
+    "attempts": [
+      {
+        "query": "Jogo Decisivo"
+      },
+      {
+        "query": "Episódio 06 - Jogo Decisivo"
+      },
+      {
+        "query": "Episódio 06 - Jogo Decisivo"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:54.017Z",
+    "lastAttempt": "2026-02-01T16:58:54.017Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-07-panico-no-ringue",
+    "originalTitle": "Episódio 07 - Pânico No Ringue",
+    "attempts": [
+      {
+        "query": "Panico No Ringue"
+      },
+      {
+        "query": "Episódio 07 - Pânico No Ringue"
+      },
+      {
+        "query": "Episódio 07 - Pânico No Ringue"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:54.772Z",
+    "lastAttempt": "2026-02-01T16:58:54.772Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-08-zuni-o-potrinho",
+    "originalTitle": "Episódio 08 - Zuni, O Potrinho",
+    "attempts": [
+      {
+        "query": "Episódio 08 Zuni O Potrinho"
+      },
+      {
+        "query": "Episódio 08 - Zuni, O Potrinho"
+      },
+      {
+        "query": "Episódio 08 - Zuni, O Potrinho"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:55.545Z",
+    "lastAttempt": "2026-02-01T16:58:55.545Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-episodio-09-remedios-falsificados",
+    "originalTitle": "Episódio 09 - Remédios Falsificados",
+    "attempts": [
+      {
+        "query": "Episódio 09 Remedios Falsificados"
+      },
+      {
+        "query": "Episódio 09 - Remédios Falsificados"
+      },
+      {
+        "query": "Episódio 09 - Remédios Falsificados"
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:56.268Z",
+    "lastAttempt": "2026-02-01T16:58:56.268Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ercole-alla-conquista-di-atlantide-1961",
+    "originalTitle": "Ercole alla conquista di Atlantide (1961)",
+    "year": 1961,
+    "attempts": [
+      {
+        "query": "Ercole Alla Conquista Di Atlantide",
+        "year": 1961
+      },
+      {
+        "query": "Ercole alla conquista di Atlantide",
+        "year": 1961
+      },
+      {
+        "query": "Ercole alla conquista di Atlantide",
+        "year": 1961
+      }
+    ],
+    "failedAt": "2026-02-01T16:58:58.782Z",
+    "lastAttempt": "2026-02-01T16:58:58.782Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ercole-contro-i-tiranni-di-babilonia-1964_202504",
+    "originalTitle": "Ercole contro i tiranni di Babilonia (1964)",
+    "year": 1964,
+    "attempts": [
+      {
+        "query": "Ercole Contro I Tiranni Di Babilonia",
+        "year": 1964
+      },
+      {
+        "query": "Ercole contro i tiranni di Babilonia",
+        "year": 1964
+      },
+      {
+        "query": "Ercole contro i tiranni di Babilonia",
+        "year": 1964
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:00.274Z",
+    "lastAttempt": "2026-02-01T16:59:00.274Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ercole-e-la-regina-di-lidia-1959",
+    "originalTitle": "Ercole e la regina di Lidia (1959)",
+    "year": 1959,
+    "attempts": [
+      {
+        "query": "Ercole E La Regina Di Lidia",
+        "year": 1959
+      },
+      {
+        "query": "Ercole e la regina di Lidia",
+        "year": 1959
+      },
+      {
+        "query": "Ercole e la regina di Lidia",
+        "year": 1959
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:01.787Z",
+    "lastAttempt": "2026-02-01T16:59:01.787Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ercole-linvincibile-1964",
+    "originalTitle": "Ercole l'invincibile (1964)",
+    "year": 1964,
+    "attempts": [
+      {
+        "query": "Ercole Linvincibile",
+        "year": 1964
+      },
+      {
+        "query": "Ercole l'invincibile",
+        "year": 1964
+      },
+      {
+        "query": "Ercole l'invincibile",
+        "year": 1964
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:03.285Z",
+    "lastAttempt": "2026-02-01T16:59:03.285Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-erfundenes-slawentum-horbuch-chembuster-33",
+    "originalTitle": "Erfundenes Slawentum ( Hörbuch Chembuster 33)",
+    "attempts": [
+      {
+        "query": "Erfundenes Slawentum"
+      },
+      {
+        "query": "Hörbuch Chembuster 33"
+      },
+      {
+        "query": "Erfundenes Slawentum ( Hörbuch Chembuster 33)"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:04.033Z",
+    "lastAttempt": "2026-02-01T16:59:04.033Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ernst-zuendel-der-zweite-leuchter-report",
+    "originalTitle": "Ernst Zuendel Der Zweite Leuchter Report",
+    "attempts": [
+      {
+        "query": "Der Zweite Leuchter Report"
+      },
+      {
+        "query": "Ernst Zuendel Der Zweite Leuchter Report"
+      },
+      {
+        "query": "Ernst Zuendel Der Zweite Leuchter Report"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:05.290Z",
+    "lastAttempt": "2026-02-01T16:59:05.290Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ernst-zuendel-ein-kampf-fuer-deutschland-1984",
+    "originalTitle": "Ernst Zuendel Ein Kampf Fuer Deutschland 1984",
+    "year": 1984,
+    "attempts": [
+      {
+        "query": "Ernst Zuendel",
+        "year": 1984
+      },
+      {
+        "query": "Ernst Zuendel Ein Kampf Fuer Deutschland 1984",
+        "year": 1984
+      },
+      {
+        "query": "Ernst Zuendel Ein Kampf Fuer Deutschland 1984",
+        "year": 1984
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:06.840Z",
+    "lastAttempt": "2026-02-01T16:59:06.840Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ernst-zuendel-und-david-cole-untersuchen-auschwitz",
+    "originalTitle": "Ernst Zuendel Und David Cole Untersuchen Auschwitz",
+    "attempts": [
+      {
+        "query": "Ernst Zuendel Und David Cole Untersuchen Auschwitz"
+      },
+      {
+        "query": "Ernst Zuendel Und David Cole Untersuchen Auschwitz"
+      },
+      {
+        "query": "Ernst Zuendel Und David Cole Untersuchen Auschwitz"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:07.596Z",
+    "lastAttempt": "2026-02-01T16:59:07.596Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ernst-zuendel-vergasungsoefen-1988",
+    "originalTitle": "Ernst Zuendel Vergasungsoefen ( 1988)",
+    "year": 1988,
+    "attempts": [
+      {
+        "query": "Ernst Zündel Vergasungsofen",
+        "year": 1988
+      },
+      {
+        "query": "Ernst Zuendel Vergasungsoefen ( 1988)",
+        "year": 1988
+      },
+      {
+        "query": "Ernst Zuendel Vergasungsoefen ( 1988)",
+        "year": 1988
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:09.099Z",
+    "lastAttempt": "2026-02-01T16:59:09.099Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-erotiko-pathos-1981",
+    "originalTitle": "Erotiko Pathos 1981",
+    "year": 1981,
+    "attempts": [
+      {
+        "query": "Erotiko Pathos",
+        "year": 1981
+      },
+      {
+        "query": "Erotiko Pathos 1981",
+        "year": 1981
+      },
+      {
+        "query": "Erotiko Pathos 1981",
+        "year": 1981
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:14.471Z",
+    "lastAttempt": "2026-02-01T16:59:14.471Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-es-war-einmal-in-pommern-teil-1-1997",
+    "originalTitle": "Es War Einmal In Pommern, Teil 1, 1997",
+    "year": 1997,
+    "attempts": [
+      {
+        "query": "Es War Einmal In Pommern Teil 1",
+        "year": 1997
+      },
+      {
+        "query": "Pommern, Teil 1, 1997",
+        "year": 1997
+      },
+      {
+        "query": "Es War Einmal In Pommern, Teil 1, 1997",
+        "year": 1997
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:15.971Z",
+    "lastAttempt": "2026-02-01T16:59:15.971Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-esmerim_movie",
+    "originalTitle": "Esmerim, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Esmerim Movie"
+      },
+      {
+        "query": "Esmerim, Turkish Movie"
+      },
+      {
+        "query": "Esmerim, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:21.920Z",
+    "lastAttempt": "2026-02-01T16:59:21.920Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-esperame-mucho-1983",
+    "originalTitle": "Esperame Mucho (1983)",
+    "year": 1983,
+    "attempts": [
+      {
+        "query": "Espérame Mucho",
+        "year": 1983
+      },
+      {
+        "query": "Esperame Mucho",
+        "year": 1983
+      },
+      {
+        "query": "Esperame Mucho",
+        "year": 1983
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:26.236Z",
+    "lastAttempt": "2026-02-01T16:59:26.236Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-esperando-la-carroza-1985",
+    "originalTitle": "Esperando La Carroza (1985)",
+    "year": 1985,
+    "attempts": [
+      {
+        "query": "Esperando La Carroza",
+        "year": 1985
+      },
+      {
+        "query": "Esperando La Carroza",
+        "year": 1985
+      },
+      {
+        "query": "Esperando La Carroza",
+        "year": 1985
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:27.804Z",
+    "lastAttempt": "2026-02-01T16:59:27.804Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-esther-and-the-king-bible-story-full-classic-movie-joan-collins",
+    "originalTitle": "Esther And The King ｜ Bible Story ｜ Classic Movie ｜ Joan Collins",
+    "attempts": [
+      {
+        "query": "Esther And The King Bible Story"
+      },
+      {
+        "query": "Esther And The King ｜ Bible Story ｜ Classic Movie ｜ Joan Collins"
+      },
+      {
+        "query": "Esther And The King ｜ Bible Story ｜ Classic Movie ｜ Joan Collins"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:29.252Z",
+    "lastAttempt": "2026-02-01T16:59:29.252Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ethnic-germans-a-forgotten-genocide_202303",
+    "originalTitle": "Ethnic Germans A Forgotten Genocide",
+    "attempts": [
+      {
+        "query": "Ethnic Germans"
+      },
+      {
+        "query": "Ethnic Germans A Forgotten Genocide"
+      },
+      {
+        "query": "Ethnic Germans A Forgotten Genocide"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:30.571Z",
+    "lastAttempt": "2026-02-01T16:59:30.571Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-eva-la-venere-selvaggia-1968",
+    "originalTitle": "Eva, la Venere selvaggia (1968)",
+    "year": 1968,
+    "attempts": [
+      {
+        "query": "Eva La Venere Selvaggia",
+        "year": 1968
+      },
+      {
+        "query": "Eva, la Venere selvaggia",
+        "year": 1968
+      },
+      {
+        "query": "Eva, la Venere selvaggia",
+        "year": 1968
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:32.611Z",
+    "lastAttempt": "2026-02-01T16:59:32.611Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-exorcismo-exorcism-1975",
+    "originalTitle": "Exorcismo, Exorcism 1975",
+    "year": 1975,
+    "attempts": [
+      {
+        "query": "Exorcismo",
+        "year": 1975
+      },
+      {
+        "query": "Exorcismo, Exorcism 1975",
+        "year": 1975
+      },
+      {
+        "query": "Exorcismo, Exorcism 1975",
+        "year": 1975
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:41.637Z",
+    "lastAttempt": "2026-02-01T16:59:41.637Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-explosion-of-a-motor-car-1900-directed-by-cecil-m.-hepworth",
+    "originalTitle": "Explosion Of A Motor Car (1900) Directed By Cecil M. Hepworth",
+    "year": 1900,
+    "attempts": [
+      {
+        "query": "Explosion Of A Motor Car",
+        "year": 1900
+      },
+      {
+        "query": "Explosion Of A Motor Car",
+        "year": 1900
+      },
+      {
+        "query": "Explosion Of A Motor Car",
+        "year": 1900
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:44.294Z",
+    "lastAttempt": "2026-02-01T16:59:44.294Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-extasis-tropical-1969",
+    "originalTitle": "Extasis Tropical (1969)",
+    "year": 1969,
+    "attempts": [
+      {
+        "query": "Extasis Tropical",
+        "year": 1969
+      },
+      {
+        "query": "Extasis Tropical",
+        "year": 1969
+      },
+      {
+        "query": "Extasis Tropical",
+        "year": 1969
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:46.338Z",
+    "lastAttempt": "2026-02-01T16:59:46.338Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-extrana-invasion-1965",
+    "originalTitle": "Extraña Invasion (1965)",
+    "year": 1965,
+    "attempts": [
+      {
+        "query": "Extraña Invasión",
+        "year": 1965
+      },
+      {
+        "query": "Extraña Invasion",
+        "year": 1965
+      },
+      {
+        "query": "Extraña Invasion",
+        "year": 1965
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:47.872Z",
+    "lastAttempt": "2026-02-01T16:59:47.872Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ezan_movie",
+    "originalTitle": "Ezan, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Ezan Movie"
+      },
+      {
+        "query": "Ezan, Turkish Movie"
+      },
+      {
+        "query": "Ezan, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:49.165Z",
+    "lastAttempt": "2026-02-01T16:59:49.165Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-f-07813",
+    "originalTitle": "F00000_Pausado",
+    "attempts": [
+      {
+        "query": "F 07813"
+      },
+      {
+        "query": "F00000_Pausado"
+      },
+      {
+        "query": "F00000_Pausado"
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:49.936Z",
+    "lastAttempt": "2026-02-01T16:59:49.936Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-f-2010-bdrip-xvid",
+    "originalTitle": "F (2010)",
+    "year": 2010,
+    "attempts": [
+      {
+        "query": "Defending School",
+        "year": 2010
+      },
+      {
+        "query": "F",
+        "year": 2010
+      },
+      {
+        "query": "F",
+        "year": 2010
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:51.459Z",
+    "lastAttempt": "2026-02-01T16:59:51.459Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-f-svegliati-e-uccidi",
+    "originalTitle": "F Svegliati E Uccidi",
+    "year": 1966,
+    "attempts": [
+      {
+        "query": "F Svegliati E Uccidi",
+        "year": 1966
+      },
+      {
+        "query": "F Svegliati E Uccidi",
+        "year": 1966
+      },
+      {
+        "query": "F Svegliati E Uccidi",
+        "year": 1966
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:52.916Z",
+    "lastAttempt": "2026-02-01T16:59:52.916Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-facundo-la-sombra-del-tigre-1994",
+    "originalTitle": "Facundo, La Sombra Del Tigre (1994)",
+    "year": 1994,
+    "attempts": [
+      {
+        "query": "Facundo La Sombra Del Tigre",
+        "year": 1994
+      },
+      {
+        "query": "Facundo, La Sombra Del Tigre",
+        "year": 1994
+      },
+      {
+        "query": "Facundo, La Sombra Del Tigre",
+        "year": 1994
+      }
+    ],
+    "failedAt": "2026-02-01T16:59:54.533Z",
+    "lastAttempt": "2026-02-01T16:59:54.533Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fanny-p",
+    "originalTitle": "Fanny Pelopaja 1984",
+    "year": 1984,
+    "attempts": [
+      {
+        "query": "Fanny P",
+        "year": 1984
+      },
+      {
+        "query": "Fanny Pelopaja 1984",
+        "year": 1984
+      },
+      {
+        "query": "Fanny Pelopaja 1984",
+        "year": 1984
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:06.605Z",
+    "lastAttempt": "2026-02-01T17:00:06.605Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fareb-1996-dv-drip-charme-leon-silver-rg",
+    "originalTitle": "Fareb 1996 Dv DRip Charme Leon Silver RG",
+    "attempts": [
+      {
+        "query": "Fareb 1996 Dv Drip Charme Leon Silver Rg"
+      },
+      {
+        "query": "Fareb 1996 Dv DRip Charme Leon Silver RG"
+      },
+      {
+        "query": "Fareb 1996 Dv DRip Charme Leon Silver RG"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:07.424Z",
+    "lastAttempt": "2026-02-01T17:00:07.424Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fareb-2005-dvdrip-xvi-d-e-su-b-x-rg",
+    "originalTitle": "Fareb 2005 DVDRip Xvi D E Su B X RG",
+    "attempts": [
+      {
+        "query": "Fareb 2005 Dvdrip Xvi D E Su B X Rg"
+      },
+      {
+        "query": "Fareb 2005 DVDRip Xvi D E Su B X RG"
+      },
+      {
+        "query": "Fareb 2005 DVDRip Xvi D E Su B X RG"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:08.140Z",
+    "lastAttempt": "2026-02-01T17:00:08.140Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-farewelwithshahlaeiahimanoto",
+    "originalTitle": "Farewel With Shahla Riahi ManoTo TV",
+    "attempts": [
+      {
+        "query": "Farewel With Shahla Riahi ManoTo"
+      },
+      {
+        "query": "Farewel With Shahla Riahi ManoTo TV"
+      },
+      {
+        "query": "Farewel With Shahla Riahi ManoTo TV"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:10.396Z",
+    "lastAttempt": "2026-02-01T17:00:10.396Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-farz-2001-dv-drip-x-264-ac-3-5.1...-hon-3y",
+    "originalTitle": "Farz 2001 Dv DRip X 264 AC 3 5.1... Hon 3y",
+    "attempts": [
+      {
+        "query": "Farz 2"
+      },
+      {
+        "query": "Farz 2001 Dv DRip X 264 AC 3 5.1... Hon 3y"
+      },
+      {
+        "query": "Farz 2001 Dv DRip X 264 AC 3 5.1... Hon 3y"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:11.213Z",
+    "lastAttempt": "2026-02-01T17:00:11.213Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-farzanehtaidieighthdayoftheweek",
+    "originalTitle": "Farzaneh Taidi Eighth Day Of The Week",
+    "attempts": [
+      {
+        "query": "Farzanehtaidieighthdayoftheweek"
+      },
+      {
+        "query": "Farzaneh Taidi Eighth Day Of The Week"
+      },
+      {
+        "query": "Farzaneh Taidi Eighth Day Of The Week"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:12.031Z",
+    "lastAttempt": "2026-02-01T17:00:12.031Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fassbinders-first-films-a-city-tramp-a-little-chaos-1966",
+    "originalTitle": "Fassbinder's First Films A City Tramp & A Little Chaos ( 1966)",
+    "year": 1966,
+    "attempts": [
+      {
+        "query": "Fassbinders First Films",
+        "year": 1966
+      },
+      {
+        "query": "Fassbinder's First Films A City Tramp & A Little Chaos ( 1966)",
+        "year": 1966
+      },
+      {
+        "query": "Fassbinder's First Films A City Tramp & A Little Chaos ( 1966)",
+        "year": 1966
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:14.194Z",
+    "lastAttempt": "2026-02-01T17:00:14.194Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-father-brown-the-detective-1954-mys.-detec.-alec-guiness",
+    "originalTitle": "Father Brown The Detective (1954 Mys. Detec. Alec Guiness)",
+    "year": 1954,
+    "attempts": [
+      {
+        "query": "Father Brown The Detective",
+        "year": 1954
+      },
+      {
+        "query": "Father Brown The Detective (1954 Mys. Detec. Alec Guiness)",
+        "year": 1954
+      },
+      {
+        "query": "Father Brown The Detective (1954 Mys. Detec. Alec Guiness)",
+        "year": 1954
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:16.331Z",
+    "lastAttempt": "2026-02-01T17:00:16.331Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-father-frost-morozko-1964-english",
+    "originalTitle": "Father Frost Morozko ( 1964) English",
+    "attempts": [
+      {
+        "query": "Father Frost Morozko"
+      },
+      {
+        "query": "Father Frost Morozko ( 1964) English"
+      },
+      {
+        "query": "Father Frost Morozko ( 1964) English"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:17.151Z",
+    "lastAttempt": "2026-02-01T17:00:17.151Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fatosun-fendi-tayfuru-yendi_movie",
+    "originalTitle": "Fatoş'un Fendi Tayfur'u Yendi, Turkish Movie",
+    "year": 1964,
+    "attempts": [
+      {
+        "query": "Fatosun Fendi Tayfuru Yendi",
+        "year": 1964
+      },
+      {
+        "query": "Fatoş'un Fendi Tayfur'u Yendi, Turkish Movie",
+        "year": 1964
+      },
+      {
+        "query": "Fatoş'un Fendi Tayfur'u Yendi, Turkish Movie",
+        "year": 1964
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:19.100Z",
+    "lastAttempt": "2026-02-01T17:00:19.100Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-felicia-les-mille-et-une-perversions-de-felicia-1975-john-roche-batrice-harnois-",
+    "originalTitle": "Felicia, Les Mille Et Une Perversions De Felicia 1975 John Roche, Batrice Harnois, Eva Khris, Marlene Myller, Mary Mendum, Nicole Daudet + Max Pecas",
+    "year": 1975,
+    "attempts": [
+      {
+        "query": "Felicia Les Mille Et Une Perversions De Felicia",
+        "year": 1975
+      },
+      {
+        "query": "Felicia, Les Mille Et Une Perversions De Felicia 1975 John Roche, Batrice Harnois, Eva Khris, Marlene Myller, Mary Mendum, Nicole Daudet + Max Pecas",
+        "year": 1975
+      },
+      {
+        "query": "Felicia, Les Mille Et Une Perversions De Felicia 1975 John Roche, Batrice Harnois, Eva Khris, Marlene Myller, Mary Mendum, Nicole Daudet + Max Pecas",
+        "year": 1975
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:21.965Z",
+    "lastAttempt": "2026-02-01T17:00:21.965Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-felix-the-cat-bold-king-cole",
+    "originalTitle": "Felix The Cat Bold King Cole",
+    "attempts": [
+      {
+        "query": "Felix The Cat Bold King Cole"
+      },
+      {
+        "query": "Felix The Cat Bold King Cole"
+      },
+      {
+        "query": "Felix The Cat Bold King Cole"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:22.785Z",
+    "lastAttempt": "2026-02-01T17:00:22.785Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-felix-the-cat-in-neptune-nonsense-van-beuren-1936",
+    "originalTitle": "Felix The Cat In Neptune Nonsense ( Van Beuren 1936)",
+    "attempts": [
+      {
+        "query": "Felix The Cat In Neptune Nonsense"
+      },
+      {
+        "query": "Van Beuren 1936"
+      },
+      {
+        "query": "Felix The Cat In Neptune Nonsense ( Van Beuren 1936)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:23.500Z",
+    "lastAttempt": "2026-02-01T17:00:23.500Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-femminefollifoolishwives1921",
+    "originalTitle": "femmine folli (foolish wives, 1921)",
+    "attempts": [
+      {
+        "query": "Femminefollifoolishwives"
+      },
+      {
+        "query": "femmine folli (foolish wives, 1921)"
+      },
+      {
+        "query": "femmine folli (foolish wives, 1921)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:24.832Z",
+    "lastAttempt": "2026-02-01T17:00:24.832Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fereydoun-jeyrani-the-last-supper-shame-akhar-2002",
+    "originalTitle": "Fereydoun Jeyrani The Last Supper Shame Akhar ( 2002) فقشهمثق",
+    "attempts": [
+      {
+        "query": "Fereydoun Jeyrani The Last Supper Shame Akhar"
+      },
+      {
+        "query": "Fereydoun Jeyrani The Last Supper Shame Akhar ( 2002) فقشهمثق"
+      },
+      {
+        "query": "Fereydoun Jeyrani The Last Supper Shame Akhar ( 2002) فقشهمثق"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:25.548Z",
+    "lastAttempt": "2026-02-01T17:00:25.548Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fern-bei-sedan",
+    "originalTitle": "Fern Bei Sedan",
+    "attempts": [
+      {
+        "query": "Fern Bei Sedan"
+      },
+      {
+        "query": "Fern Bei Sedan"
+      },
+      {
+        "query": "Fern Bei Sedan"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:28.686Z",
+    "lastAttempt": "2026-02-01T17:00:28.686Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-feuerspruch-..-wach-auf-du-deutsches-reich.-nacht-des-feuers-und-des-hakenkreuze",
+    "originalTitle": "Feuerspruch .. Wach Auf Du Deutsches Reich. Nacht Des Feuers Und Des Hakenkreuzes.( Heinrich Gutberlet)",
+    "attempts": [
+      {
+        "query": "Feuerspruch"
+      },
+      {
+        "query": "Heinrich Gutberlet"
+      },
+      {
+        "query": "Feuerspruch .. Wach Auf Du Deutsches Reich. Nacht Des Feuers Und Des Hakenkreuzes.( Heinrich Gutberlet)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:30.568Z",
+    "lastAttempt": "2026-02-01T17:00:30.568Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-film-about-early-television-1929",
+    "originalTitle": "Film about Early Television",
+    "year": 1929,
+    "attempts": [
+      {
+        "query": "Film About Early Television",
+        "year": 1929
+      },
+      {
+        "query": "Film about Early Television",
+        "year": 1929
+      },
+      {
+        "query": "Film about Early Television",
+        "year": 1929
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:35.592Z",
+    "lastAttempt": "2026-02-01T17:00:35.592Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-film-by-samuel-becket-w-buster-keaton-sunan-reed-and-james-karen-8-hti-tvn-pu-4",
+    "originalTitle": "FILM (1965)",
+    "year": 1965,
+    "attempts": [
+      {
+        "query": "Film By Samuel Becket W Buster Keaton Sunan Reed And James Karen",
+        "year": 1965
+      },
+      {
+        "query": "FILM",
+        "year": 1965
+      },
+      {
+        "query": "FILM",
+        "year": 1965
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:37.224Z",
+    "lastAttempt": "2026-02-01T17:00:37.224Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-film-jamshidieh-teaser",
+    "originalTitle": "Film Jamshidieh Teaser",
+    "attempts": [
+      {
+        "query": "Jamshidieh Teaser"
+      },
+      {
+        "query": "Film Jamshidieh Teaser"
+      },
+      {
+        "query": "Film Jamshidieh Teaser"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:37.960Z",
+    "lastAttempt": "2026-02-01T17:00:37.960Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-film-noir-7-c-not-wanted-281949-ida-lupino-29-sally-forrest-2-c-keefe-brasselle-",
+    "originalTitle": "Ida Lupino's NOT WANTED",
+    "year": 1949,
+    "attempts": [
+      {
+        "query": "Ida Lupino",
+        "year": 1949
+      },
+      {
+        "query": "Ida Lupino's NOT WANTED",
+        "year": 1949
+      },
+      {
+        "query": "Ida Lupino's NOT WANTED",
+        "year": 1949
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:39.477Z",
+    "lastAttempt": "2026-02-01T17:00:39.477Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-film-portrait-nasrin-sotoudeh-martin-ennals-award-2012",
+    "originalTitle": "Film Portrait Nasrin Sotoudeh Martin Ennals Award 2012",
+    "attempts": [
+      {
+        "query": "Film Portrait Nasrin Sotoudeh"
+      },
+      {
+        "query": "Film Portrait Nasrin Sotoudeh Martin Ennals Award 2012"
+      },
+      {
+        "query": "Film Portrait Nasrin Sotoudeh Martin Ennals Award 2012"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:42.309Z",
+    "lastAttempt": "2026-02-01T17:00:42.309Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-film-restoring-1967-2-videofred",
+    "originalTitle": "Film Restoring 1967 2 Videofred",
+    "year": 2017,
+    "attempts": [
+      {
+        "query": "Film Restoring 1967 2 Videofred",
+        "year": 2017
+      },
+      {
+        "query": "Film Restoring 1967 2 Videofred",
+        "year": 2017
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:43.369Z",
+    "lastAttempt": "2026-02-01T17:00:43.369Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-022",
+    "originalTitle": "Wij modelkinderen",
+    "year": 1962,
+    "attempts": [
+      {
+        "query": "Geluidloze film over een echtpaar met 3 kinderen die een avondje weggaan",
+        "year": 1962
+      },
+      {
+        "query": "Wij modelkinderen",
+        "year": 1962
+      },
+      {
+        "query": "Wij modelkinderen",
+        "year": 1962
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:47.258Z",
+    "lastAttempt": "2026-02-01T17:00:47.258Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-023",
+    "originalTitle": "Kanotocht op De Swalm",
+    "year": 1962,
+    "attempts": [
+      {
+        "query": "Kanotocht op De Swalm",
+        "year": 1962
+      },
+      {
+        "query": "Kanotocht op De Swalm",
+        "year": 1962
+      },
+      {
+        "query": "Kanotocht op De Swalm",
+        "year": 1962
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:48.793Z",
+    "lastAttempt": "2026-02-01T17:00:48.793Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-105",
+    "originalTitle": "filmcollectief-00-105",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-105"
+      },
+      {
+        "query": "filmcollectief-00-105"
+      },
+      {
+        "query": "filmcollectief-00-105"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:49.511Z",
+    "lastAttempt": "2026-02-01T17:00:49.511Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-106-1",
+    "originalTitle": "filmcollectief-00-106-1",
+    "attempts": [
+      {
+        "query": "Filmcollectief 00 106"
+      },
+      {
+        "query": "filmcollectief-00-106-1"
+      },
+      {
+        "query": "filmcollectief-00-106-1"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:50.331Z",
+    "lastAttempt": "2026-02-01T17:00:50.331Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-106-2",
+    "originalTitle": "filmcollectief-00-106-2",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-106-2"
+      },
+      {
+        "query": "filmcollectief-00-106-2"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:50.843Z",
+    "lastAttempt": "2026-02-01T17:00:50.843Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-107",
+    "originalTitle": "filmcollectief-00-107",
+    "attempts": [
+      {
+        "query": "Filmcollectief 00"
+      },
+      {
+        "query": "filmcollectief-00-107"
+      },
+      {
+        "query": "filmcollectief-00-107"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:51.559Z",
+    "lastAttempt": "2026-02-01T17:00:51.559Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-108",
+    "originalTitle": "filmcollectief-00-108",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-108"
+      },
+      {
+        "query": "filmcollectief-00-108"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:52.071Z",
+    "lastAttempt": "2026-02-01T17:00:52.071Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-109",
+    "originalTitle": "filmcollectief-00-109",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-109"
+      },
+      {
+        "query": "filmcollectief-00-109"
+      },
+      {
+        "query": "filmcollectief-00-109"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:52.787Z",
+    "lastAttempt": "2026-02-01T17:00:52.787Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-110",
+    "originalTitle": "filmcollectief-00-110",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-110"
+      },
+      {
+        "query": "filmcollectief-00-110"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:53.300Z",
+    "lastAttempt": "2026-02-01T17:00:53.300Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-111",
+    "originalTitle": "filmcollectief-00-111",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-111"
+      },
+      {
+        "query": "filmcollectief-00-111"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:53.812Z",
+    "lastAttempt": "2026-02-01T17:00:53.812Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-112",
+    "originalTitle": "filmcollectief-00-112",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-112"
+      },
+      {
+        "query": "filmcollectief-00-112"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:54.325Z",
+    "lastAttempt": "2026-02-01T17:00:54.325Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-113",
+    "originalTitle": "filmcollectief-00-113",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-113"
+      },
+      {
+        "query": "filmcollectief-00-113"
+      },
+      {
+        "query": "filmcollectief-00-113"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:55.027Z",
+    "lastAttempt": "2026-02-01T17:00:55.027Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-114",
+    "originalTitle": "filmcollectief-00-114",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-114"
+      },
+      {
+        "query": "filmcollectief-00-114"
+      },
+      {
+        "query": "filmcollectief-00-114"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:55.778Z",
+    "lastAttempt": "2026-02-01T17:00:55.778Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-115",
+    "originalTitle": "filmcollectief-00-115",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-115"
+      },
+      {
+        "query": "filmcollectief-00-115"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:56.476Z",
+    "lastAttempt": "2026-02-01T17:00:56.476Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-116",
+    "originalTitle": "filmcollectief-00-116",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-116"
+      },
+      {
+        "query": "filmcollectief-00-116"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:56.909Z",
+    "lastAttempt": "2026-02-01T17:00:56.909Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-117",
+    "originalTitle": "filmcollectief-00-117",
+    "attempts": [
+      {
+        "query": "filmcollectief-00-117"
+      },
+      {
+        "query": "filmcollectief-00-117"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:57.498Z",
+    "lastAttempt": "2026-02-01T17:00:57.498Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": false,
+      "hasAIYear": false,
+      "aiTitleUsed": false
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-151",
+    "originalTitle": "De Stoel - Moeder en dochter Zwijnsbergen op vakantie in Frankrijk",
+    "attempts": [
+      {
+        "query": "Moeder en dochter Zwijnsbergen"
+      },
+      {
+        "query": "De Stoel"
+      },
+      {
+        "query": "De Stoel - Moeder en dochter Zwijnsbergen op vakantie in Frankrijk"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:58.214Z",
+    "lastAttempt": "2026-02-01T17:00:58.214Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-152",
+    "originalTitle": "De Stoel - Bruno Mertens, de indiaan uit Bergen op Zoom",
+    "attempts": [
+      {
+        "query": "De Stoel"
+      },
+      {
+        "query": "De Stoel"
+      },
+      {
+        "query": "De Stoel - Bruno Mertens, de indiaan uit Bergen op Zoom"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:59.034Z",
+    "lastAttempt": "2026-02-01T17:00:59.034Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-153",
+    "originalTitle": "De stoel - Hotel Ozinga in Sneek",
+    "attempts": [
+      {
+        "query": "De stoel"
+      },
+      {
+        "query": "De stoel - Hotel Ozinga in Sneek"
+      },
+      {
+        "query": "De stoel - Hotel Ozinga in Sneek"
+      }
+    ],
+    "failedAt": "2026-02-01T17:00:59.720Z",
+    "lastAttempt": "2026-02-01T17:00:59.720Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-154",
+    "originalTitle": "De stoel - Liefhebbers van teddyberen",
+    "attempts": [
+      {
+        "query": "De Stoel"
+      },
+      {
+        "query": "De stoel"
+      },
+      {
+        "query": "De stoel - Liefhebbers van teddyberen"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:00.579Z",
+    "lastAttempt": "2026-02-01T17:01:00.579Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-156",
+    "originalTitle": "Compilatie van Terschellinger filmbeelden",
+    "attempts": [
+      {
+        "query": "Compilatie van Terschellinger filmbeelden"
+      },
+      {
+        "query": "Compilatie van Terschellinger filmbeelden"
+      },
+      {
+        "query": "Compilatie van Terschellinger filmbeelden"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:01.290Z",
+    "lastAttempt": "2026-02-01T17:01:01.290Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-157",
+    "originalTitle": "Laatste uitzending van Zandvoortse Zaken",
+    "year": 1992,
+    "attempts": [
+      {
+        "query": "Laatste uitzending van Zandvoortse Zaken",
+        "year": 1992
+      },
+      {
+        "query": "Laatste uitzending van Zandvoortse Zaken",
+        "year": 1992
+      },
+      {
+        "query": "Laatste uitzending van Zandvoortse Zaken",
+        "year": 1992
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:02.823Z",
+    "lastAttempt": "2026-02-01T17:01:02.823Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-163",
+    "originalTitle": "ZOO - Bert Haanstra",
+    "year": 1962,
+    "attempts": [
+      {
+        "query": "Filmcollectief 00 163",
+        "year": 1962
+      },
+      {
+        "query": "ZOO - Bert Haanstra",
+        "year": 1962
+      },
+      {
+        "query": "ZOO - Bert Haanstra",
+        "year": 1962
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:04.376Z",
+    "lastAttempt": "2026-02-01T17:01:04.376Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-165",
+    "originalTitle": "Viagrafix - Using Word for Windows, Beginners",
+    "year": 1992,
+    "attempts": [
+      {
+        "query": "Using Word for Windows, Beginners",
+        "year": 1992
+      },
+      {
+        "query": "Viagrafix - Using Word for Windows, Beginners",
+        "year": 1992
+      },
+      {
+        "query": "Viagrafix - Using Word for Windows, Beginners",
+        "year": 1992
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:05.898Z",
+    "lastAttempt": "2026-02-01T17:01:05.898Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-168",
+    "originalTitle": "Daan Modderman, een mooi portret!",
+    "attempts": [
+      {
+        "query": "Daan Modderman, een mooi portret!"
+      },
+      {
+        "query": "Daan Modderman, een mooi portret"
+      },
+      {
+        "query": "Daan Modderman, een mooi portret!"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:08.261Z",
+    "lastAttempt": "2026-02-01T17:01:08.261Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-169",
+    "originalTitle": "Reporter Kerstspecial over André Hazes",
+    "attempts": [
+      {
+        "query": "Reporter Kerstspecial"
+      },
+      {
+        "query": "Reporter Kerstspecial over André Hazes"
+      },
+      {
+        "query": "Reporter Kerstspecial over André Hazes"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:09.076Z",
+    "lastAttempt": "2026-02-01T17:01:09.076Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-170",
+    "originalTitle": "De Amsterdamse Jordaan",
+    "attempts": [
+      {
+        "query": "Filmcollectief 00 170"
+      },
+      {
+        "query": "De Amsterdamse Jordaan"
+      },
+      {
+        "query": "De Amsterdamse Jordaan"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:09.789Z",
+    "lastAttempt": "2026-02-01T17:01:09.789Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-171",
+    "originalTitle": "Herinneringen aan Johnny Jordaan (Johnny Meijer)",
+    "year": 1993,
+    "attempts": [
+      {
+        "query": "Herinneringen aan Johnny Jordaan",
+        "year": 1993
+      },
+      {
+        "query": "Johnny Meijer",
+        "year": 1993
+      },
+      {
+        "query": "Herinneringen aan Johnny Jordaan (Johnny Meijer)",
+        "year": 1993
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:11.268Z",
+    "lastAttempt": "2026-02-01T17:01:11.268Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmcollectief-00-172",
+    "originalTitle": "Johnny Jordaan (Johnny Meijer), de beste accordeonist van de wereld",
+    "year": 1994,
+    "attempts": [
+      {
+        "query": "Johnny Jordaan",
+        "year": 1994
+      },
+      {
+        "query": "Johnny Jordaan (Johnny Meijer), de beste accordeonist van de wereld",
+        "year": 1994
+      },
+      {
+        "query": "Johnny Jordaan (Johnny Meijer), de beste accordeonist van de wereld",
+        "year": 1994
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:12.861Z",
+    "lastAttempt": "2026-02-01T17:01:12.861Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-filmography-woody-allen",
+    "originalTitle": "Filmography: Woody Allen",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Midnight in Paris",
+        "year": 1935
+      },
+      {
+        "query": "Filmography: Woody Allen",
+        "year": 1935
+      },
+      {
+        "query": "Filmography: Woody Allen",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:14.908Z",
+    "lastAttempt": "2026-02-01T17:01:14.908Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fin-de-fiesta-1960",
+    "originalTitle": "Fin De Fiesta (1960)",
+    "year": 1960,
+    "attempts": [
+      {
+        "query": "Fin De Fiesta",
+        "year": 1960
+      },
+      {
+        "query": "Fin De Fiesta",
+        "year": 1960
+      },
+      {
+        "query": "Fin De Fiesta",
+        "year": 1960
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:16.451Z",
+    "lastAttempt": "2026-02-01T17:01:16.451Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fire-and-ice-the-dragon-chronicles-2008-dvdrip",
+    "originalTitle": "Fire And Ice The Dragon Chronicles 2008 Dvdrip",
+    "year": 2008,
+    "attempts": [
+      {
+        "query": "Fire And Ice The Dragon Chronicles",
+        "year": 2008
+      },
+      {
+        "query": "Fire And Ice The Dragon Chronicles 2008 Dvdrip",
+        "year": 2008
+      },
+      {
+        "query": "Fire And Ice The Dragon Chronicles 2008 Dvdrip",
+        "year": 2008
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:20.541Z",
+    "lastAttempt": "2026-02-01T17:01:20.541Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fire-monsters-against-the-son-of-hercules-1962",
+    "originalTitle": "Fire Monsters Against the Son of Hercules (1962)",
+    "year": 1962,
+    "attempts": [
+      {
+        "query": "Fire Monsters Against The Son Of Hercules",
+        "year": 1962
+      },
+      {
+        "query": "Fire Monsters Against the Son of Hercules",
+        "year": 1962
+      },
+      {
+        "query": "Fire Monsters Against the Son of Hercules",
+        "year": 1962
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:22.584Z",
+    "lastAttempt": "2026-02-01T17:01:22.584Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-firemonstersagainstthesonofhercules1962",
+    "originalTitle": "Fire Monsters Against The Son Of Hercules (1962)",
+    "year": 1962,
+    "attempts": [
+      {
+        "query": "Firemonstersagainstthesonofhercules1962",
+        "year": 1962
+      },
+      {
+        "query": "Fire Monsters Against The Son Of Hercules",
+        "year": 1962
+      },
+      {
+        "query": "Fire Monsters Against The Son Of Hercules",
+        "year": 1962
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:26.378Z",
+    "lastAttempt": "2026-02-01T17:01:26.378Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-firuze_movie",
+    "originalTitle": "Firuze, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Firuze Movie"
+      },
+      {
+        "query": "Firuze, Turkish Movie"
+      },
+      {
+        "query": "Firuze, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:32.522Z",
+    "lastAttempt": "2026-02-01T17:01:32.522Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-five-card-stud-1968",
+    "originalTitle": "Five Card Stud (1968) Dean Martin · Robert Mitchum",
+    "year": 1968,
+    "attempts": [
+      {
+        "query": "Five Card Stud",
+        "year": 1968
+      },
+      {
+        "query": "Five Card Stud",
+        "year": 1968
+      },
+      {
+        "query": "Five Card Stud",
+        "year": 1968
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:34.564Z",
+    "lastAttempt": "2026-02-01T17:01:34.564Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-flaxy-martin",
+    "originalTitle": "Flaxy Martin (1949)",
+    "year": 2025,
+    "attempts": [
+      {
+        "query": "Flaxy Martin",
+        "year": 2025
+      },
+      {
+        "query": "Flaxy Martin",
+        "year": 2025
+      },
+      {
+        "query": "Flaxy Martin",
+        "year": 2025
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:39.480Z",
+    "lastAttempt": "2026-02-01T17:01:39.480Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-flemmingBamseJrgensen1947-2011",
+    "originalTitle": "ÙFlemming Bamse JÃ¸rgensen (1947 - 2011)",
+    "attempts": [
+      {
+        "query": "Flemming Bamse Jørgensen"
+      },
+      {
+        "query": "ÙFlemming Bamse JÃ¸rgensen (1947 - 2011)"
+      },
+      {
+        "query": "ÙFlemming Bamse JÃ¸rgensen (1947 - 2011)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:40.199Z",
+    "lastAttempt": "2026-02-01T17:01:40.199Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fleur-de-lame-1900-directed-by-marguerite-vrignault",
+    "originalTitle": "Fleur De L’ame (1900) Directed By Marguerite Vrignault",
+    "year": 1900,
+    "attempts": [
+      {
+        "query": "Fleur De Lame",
+        "year": 1900
+      },
+      {
+        "query": "Fleur De L’ame",
+        "year": 1900
+      },
+      {
+        "query": "Fleur De L’ame",
+        "year": 1900
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:41.733Z",
+    "lastAttempt": "2026-02-01T17:01:41.733Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-flopgoestheweasel1943english",
+    "originalTitle": "Flop Goes The Weasel [ 1943]",
+    "attempts": [
+      {
+        "query": "Flopgoestheweasel"
+      },
+      {
+        "query": "Flop Goes The Weasel [ 1943]"
+      },
+      {
+        "query": "Flop Goes The Weasel [ 1943]"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:43.481Z",
+    "lastAttempt": "2026-02-01T17:01:43.481Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-flucht-aus-goldap-ostpreussen-zeitzeugenfilm-dokumentarfilm",
+    "originalTitle": "Flucht Aus Goldap Ostpreussen Zeitzeugenfilm Dokumentarfilm",
+    "attempts": [
+      {
+        "query": "Flucht Aus Goldap Ostpreussen"
+      },
+      {
+        "query": "Flucht Aus Goldap Ostpreussen Zeitzeugenfilm Dokumentarfilm"
+      },
+      {
+        "query": "Flucht Aus Goldap Ostpreussen Zeitzeugenfilm Dokumentarfilm"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:46.186Z",
+    "lastAttempt": "2026-02-01T17:01:46.186Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-flucht-und-vertreibung-teil-3-zwischen-fremde-und-heimat",
+    "originalTitle": "Flucht Und Vertreibung Teil 3 Zwischen Fremde Und Heimat",
+    "attempts": [
+      {
+        "query": "Flucht Und Vertreibung Teil 3 Zwischen Fremde Und Heimat"
+      },
+      {
+        "query": "Flucht Und Vertreibung Teil 3 Zwischen Fremde Und Heimat"
+      },
+      {
+        "query": "Flucht Und Vertreibung Teil 3 Zwischen Fremde Und Heimat"
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:46.958Z",
+    "lastAttempt": "2026-02-01T17:01:46.958Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-follow-me-quietly-1949_202505",
+    "originalTitle": "Follow Me Quietly (1949)",
+    "year": 2025,
+    "attempts": [
+      {
+        "query": "Follow Me Quietly",
+        "year": 2025
+      },
+      {
+        "query": "Follow Me Quietly",
+        "year": 2025
+      },
+      {
+        "query": "Follow Me Quietly",
+        "year": 2025
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:49.722Z",
+    "lastAttempt": "2026-02-01T17:01:49.722Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fontane-effi-brest",
+    "originalTitle": "Fontane Effi Brest (1974)",
+    "year": 1974,
+    "attempts": [
+      {
+        "query": "Fontane Effi Brest",
+        "year": 1974
+      },
+      {
+        "query": "Fontane Effi Brest",
+        "year": 1974
+      },
+      {
+        "query": "Fontane Effi Brest",
+        "year": 1974
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:51.268Z",
+    "lastAttempt": "2026-02-01T17:01:51.268Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-for-the-love-of-a-queen",
+    "originalTitle": "For the Love of a Queen",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "The Love Of A Queen",
+        "year": 1935
+      },
+      {
+        "query": "For the Love of a Queen",
+        "year": 1935
+      },
+      {
+        "query": "For the Love of a Queen",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:56.001Z",
+    "lastAttempt": "2026-02-01T17:01:56.001Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-forbidden-area-1956",
+    "originalTitle": "\"Playhouse 90\" Forbidden Area",
+    "year": 1956,
+    "attempts": [
+      {
+        "query": "Forbidden Area",
+        "year": 1956
+      },
+      {
+        "query": "Playhouse 90 Forbidden Area",
+        "year": 1956
+      },
+      {
+        "query": "\"Playhouse 90\" Forbidden Area",
+        "year": 1956
+      }
+    ],
+    "failedAt": "2026-02-01T17:01:57.506Z",
+    "lastAttempt": "2026-02-01T17:01:57.506Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fotoescultura-1936",
+    "originalTitle": "Fotoescultura (1936)",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Fotoescultura",
+        "year": 1936
+      },
+      {
+        "query": "Fotoescultura",
+        "year": 1936
+      },
+      {
+        "query": "Fotoescultura",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:03.446Z",
+    "lastAttempt": "2026-02-01T17:02:03.446Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-foxy-lady-spiando-marina-the-smile-of-the-fox-1994-debora-caprioglio-steve-bond-",
+    "originalTitle": "Foxy Lady, Spiando Marina, The Smile Of The Fox 1994",
+    "year": 1992,
+    "attempts": [
+      {
+        "query": "Foxy Lady Spiando Marina The Smile Of The Fox",
+        "year": 1992
+      },
+      {
+        "query": "Foxy Lady, Spiando Marina, The Smile Of The Fox 1994",
+        "year": 1992
+      },
+      {
+        "query": "Foxy Lady, Spiando Marina, The Smile Of The Fox 1994",
+        "year": 1992
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:06.316Z",
+    "lastAttempt": "2026-02-01T17:02:06.316Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-frankreichfeldzug-1940-auszug-aus-d.-wise-tgsnt",
+    "originalTitle": "Frankreichfeldzug 1940 ( Auszug Aus D. Wise TGSNT)",
+    "attempts": [
+      {
+        "query": "Frankreichfeldzug 1940 Auszug"
+      },
+      {
+        "query": "Auszug Aus D. Wise TGSNT"
+      },
+      {
+        "query": "Frankreichfeldzug 1940 ( Auszug Aus D. Wise TGSNT)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:08.678Z",
+    "lastAttempt": "2026-02-01T17:02:08.678Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-frankreichlied-version-1-und-2-frankreichfeldzug",
+    "originalTitle": "Frankreichlied Version 1 Und 2 ( Frankreichfeldzug)",
+    "attempts": [
+      {
+        "query": "Frankreichlied"
+      },
+      {
+        "query": "Frankreichfeldzug"
+      },
+      {
+        "query": "Frankreichlied Version 1 Und 2 ( Frankreichfeldzug)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:09.479Z",
+    "lastAttempt": "2026-02-01T17:02:09.479Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-freezer-burn-2007-dvdripxvid",
+    "originalTitle": "Freezer Burn 2007 Dvdripxvid",
+    "year": 2001,
+    "attempts": [
+      {
+        "query": "Freezer Burn 2007",
+        "year": 2001
+      },
+      {
+        "query": "Freezer Burn 2007 Dvdripxvid",
+        "year": 2001
+      },
+      {
+        "query": "Freezer Burn 2007 Dvdripxvid",
+        "year": 2001
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:13.887Z",
+    "lastAttempt": "2026-02-01T17:02:13.887Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-freshFromParis",
+    "originalTitle": "Fresh From Paris",
+    "year": 1955,
+    "attempts": [
+      {
+        "query": "FreshFromParis",
+        "year": 1955
+      },
+      {
+        "query": "Fresh From Paris",
+        "year": 1955
+      },
+      {
+        "query": "Fresh From Paris",
+        "year": 1955
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:15.424Z",
+    "lastAttempt": "2026-02-01T17:02:15.424Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fresh_from_paris",
+    "originalTitle": "Fresh From Paris",
+    "year": 1955,
+    "attempts": [
+      {
+        "query": "Fresh From Paris",
+        "year": 1955
+      },
+      {
+        "query": "Fresh From Paris",
+        "year": 1955
+      },
+      {
+        "query": "Fresh From Paris",
+        "year": 1955
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:16.962Z",
+    "lastAttempt": "2026-02-01T17:02:16.962Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-friedrich-der-grosse-worte-grosser-ketzer-3",
+    "originalTitle": "Friedrich Der Große ( Worte Großer Ketzer) ( 3)",
+    "attempts": [
+      {
+        "query": "Friedrich Der Grosse Worte Grosser Ketzer"
+      },
+      {
+        "query": "Friedrich Der Große ( Worte Großer Ketzer) ( 3)"
+      },
+      {
+        "query": "Friedrich Der Große ( Worte Großer Ketzer) ( 3)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:17.677Z",
+    "lastAttempt": "2026-02-01T17:02:17.677Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fritz-langs-m-1931-restored-movie-720p-hd",
+    "originalTitle": "M – A City Searches for a Murderer (restored) (1931, German Expressionism, imdb score: 8.3)",
+    "attempts": [
+      {
+        "query": "M"
+      },
+      {
+        "query": "M – A City Searches for a Murderer (restored)"
+      },
+      {
+        "query": "M – A City Searches for a Murderer (restored) (1931, German Expressionism, imdb score: 8.3)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:18.510Z",
+    "lastAttempt": "2026-02-01T17:02:18.510Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-frolics_on_ice",
+    "originalTitle": "Frolics On Ice",
+    "year": 1939,
+    "attempts": [
+      {
+        "query": "Frolics On Ice",
+        "year": 1939
+      },
+      {
+        "query": "Frolics On Ice",
+        "year": 1939
+      },
+      {
+        "query": "Frolics On Ice",
+        "year": 1939
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:21.073Z",
+    "lastAttempt": "2026-02-01T17:02:21.073Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-from-morn-to-midnight-1920-restored-720p-hd",
+    "originalTitle": "From Morn to Midnight (restored) (1920, German Expressionism, imdb score: 6.9)",
+    "attempts": [
+      {
+        "query": "From Morn To Midnight"
+      },
+      {
+        "query": "From Morn to Midnight (restored)"
+      },
+      {
+        "query": "From Morn to Midnight (restored) (1920, German Expressionism, imdb score: 6.9)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:25.372Z",
+    "lastAttempt": "2026-02-01T17:02:25.372Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fruit-is-ripe-the-griechische-feigen-1977-olivia-pascal-betty-verges-jessica-dub",
+    "originalTitle": "The Fruit Is Ripe, Griechische Feigen, 1977",
+    "year": 1977,
+    "attempts": [
+      {
+        "query": "Fruit Is Ripe The Griechische Feigen",
+        "year": 1977
+      },
+      {
+        "query": "Ripe, Griechische Feigen, 1977",
+        "year": 1977
+      },
+      {
+        "query": "The Fruit Is Ripe, Griechische Feigen, 1977",
+        "year": 1977
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:30.330Z",
+    "lastAttempt": "2026-02-01T17:02:30.330Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fuera-de-la-ley-1937",
+    "originalTitle": "Fuera De La Ley (1937)",
+    "year": 1937,
+    "attempts": [
+      {
+        "query": "Fuera De La Ley",
+        "year": 1937
+      },
+      {
+        "query": "Fuera De La Ley",
+        "year": 1937
+      },
+      {
+        "query": "Fuera De La Ley",
+        "year": 1937
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:31.838Z",
+    "lastAttempt": "2026-02-01T17:02:31.838Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fukkatsu-no-hi-1980",
+    "originalTitle": "Fukkatsu no hi (1980)",
+    "year": 1980,
+    "attempts": [
+      {
+        "query": "Fukkatsu No Hi",
+        "year": 1980
+      },
+      {
+        "query": "Fukkatsu no hi",
+        "year": 1980
+      },
+      {
+        "query": "Fukkatsu no hi",
+        "year": 1980
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:33.444Z",
+    "lastAttempt": "2026-02-01T17:02:33.444Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-fun-2shh-2003-dv-drip-x-264-ac-3-team-ddh-rg",
+    "originalTitle": "Fun 2shh 2003 Dv DRip X 264 AC 3 Team DDH~ RG",
+    "attempts": [
+      {
+        "query": "Fun 2shh"
+      },
+      {
+        "query": "Fun 2shh 2003 Dv DRip X 264 AC 3 Team DDH~ RG"
+      },
+      {
+        "query": "Fun 2shh 2003 Dv DRip X 264 AC 3 Team DDH~ RG"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:34.774Z",
+    "lastAttempt": "2026-02-01T17:02:34.774Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-funda_movie",
+    "originalTitle": "Funda, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Funda Movie"
+      },
+      {
+        "query": "Funda, Turkish Movie"
+      },
+      {
+        "query": "Funda, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:35.491Z",
+    "lastAttempt": "2026-02-01T17:02:35.491Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-futatsuno-sekai_1929",
+    "originalTitle": "Futatsuno sekai",
+    "year": 1929,
+    "attempts": [
+      {
+        "query": "Futatsuno Sekai",
+        "year": 1929
+      },
+      {
+        "query": "Futatsuno sekai",
+        "year": 1929
+      },
+      {
+        "query": "Futatsuno sekai",
+        "year": 1929
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:37.540Z",
+    "lastAttempt": "2026-02-01T17:02:37.540Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-g.-d.-o-karakedi_movie",
+    "originalTitle": "G. D. O Karakedi, Turkish Movie",
+    "attempts": [
+      {
+        "query": "G. D. O Karakedi Movie"
+      },
+      {
+        "query": "G. D. O Karakedi, Turkish Movie"
+      },
+      {
+        "query": "G. D. O Karakedi, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:38.875Z",
+    "lastAttempt": "2026-02-01T17:02:38.875Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gadar-2001-dv-drip-x-264-aac-5.1...-hon-3y",
+    "originalTitle": "Gadar 2001 Dv DRip X 264 AAC 5.1... Hon 3y",
+    "attempts": [
+      {
+        "query": "Gadar 2001"
+      },
+      {
+        "query": "Gadar 2001 Dv DRip X 264 AAC 5.1... Hon 3y"
+      },
+      {
+        "query": "Gadar 2001 Dv DRip X 264 AAC 5.1... Hon 3y"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:40.087Z",
+    "lastAttempt": "2026-02-01T17:02:40.087Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gamblers-choice",
+    "originalTitle": "Gamblers Choice",
+    "year": 1944,
+    "attempts": [
+      {
+        "query": "Gamblers Choice",
+        "year": 1944
+      },
+      {
+        "query": "Gamblers Choice",
+        "year": 1944
+      },
+      {
+        "query": "Gamblers Choice",
+        "year": 1944
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:47.062Z",
+    "lastAttempt": "2026-02-01T17:02:47.062Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gamblers-choice-1944-colorized-movie-576p-sd",
+    "originalTitle": "Gambler's Choice (restored) (1944, crime, imdb score: 6)",
+    "attempts": [
+      {
+        "query": "Gamblers Choice"
+      },
+      {
+        "query": "Gambler's Choice (restored) (1944, crime, imdb score: 6)"
+      },
+      {
+        "query": "Gambler's Choice (restored) (1944, crime, imdb score: 6)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:47.882Z",
+    "lastAttempt": "2026-02-01T17:02:47.882Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-games-girls-play-the-bunny-caper-1974-christina-hart-eunice-black-harry-towb-bob",
+    "originalTitle": "Games Girls Play, The Bunny Caper 1974 Christina Hart, Eunice Black, Harry Towb, Bobby Sparrow, Jill Damas, Oliver Gilbert, Ric Young, Sarah Brackett, Erin Geraghty + Jack Arnold",
+    "year": 1974,
+    "attempts": [
+      {
+        "query": "Games Girls Play The Bunny Caper",
+        "year": 1974
+      },
+      {
+        "query": "Games Girls Play, The Bunny Caper 1974 Christina Hart, Eunice Black, Harry Towb, Bobby Sparrow, Jill Damas, Oliver Gilbert, Ric Young, Sarah Brackett, Erin Geraghty + Jack Arnold",
+        "year": 1974
+      },
+      {
+        "query": "Games Girls Play, The Bunny Caper 1974 Christina Hart, Eunice Black, Harry Towb, Bobby Sparrow, Jill Damas, Oliver Gilbert, Ric Young, Sarah Brackett, Erin Geraghty + Jack Arnold",
+        "year": 1974
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:48.906Z",
+    "lastAttempt": "2026-02-01T17:02:48.906Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ganja.and.-hess.-1973.1080p.-blu-ray.-h-264.-aac-rarbg",
+    "originalTitle": "Ganja and Hess (1973)1080p",
+    "year": 1973,
+    "attempts": [
+      {
+        "query": "Ganja.And.Hess",
+        "year": 1973
+      },
+      {
+        "query": "Ganja and Hess",
+        "year": 1973
+      },
+      {
+        "query": "Ganja and Hess",
+        "year": 1973
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:56.191Z",
+    "lastAttempt": "2026-02-01T17:02:56.191Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-garden-gaieties-1935",
+    "originalTitle": "Garden Gaieties (1935)",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Garden Gaieties",
+        "year": 1935
+      },
+      {
+        "query": "Garden Gaieties",
+        "year": 1935
+      },
+      {
+        "query": "Garden Gaieties",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:58.786Z",
+    "lastAttempt": "2026-02-01T17:02:58.786Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-garip_movie",
+    "originalTitle": "Garip, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Garip Movie"
+      },
+      {
+        "query": "Garip, Turkish Movie"
+      },
+      {
+        "query": "Garip, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:02:59.535Z",
+    "lastAttempt": "2026-02-01T17:02:59.535Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gary-phils-tri-state-gospel-show",
+    "originalTitle": "Gary & Phil's Tri State Gospel Show",
+    "attempts": [
+      {
+        "query": "Gary Phils Tri State Gospel Show"
+      },
+      {
+        "query": "Gary & Phil's Tri State Gospel Show"
+      },
+      {
+        "query": "Gary & Phil's Tri State Gospel Show"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:00.892Z",
+    "lastAttempt": "2026-02-01T17:03:00.892Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gayab-2004-cd-dv-drip-xvi-d",
+    "originalTitle": "Gayab 2004 CD Dv DRip Xvi D",
+    "attempts": [
+      {
+        "query": "Gayab 2004 Cd Dv Drip Xvi D"
+      },
+      {
+        "query": "Gayab 2004 CD Dv DRip Xvi D"
+      },
+      {
+        "query": "Gayab 2004 CD Dv DRip Xvi D"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:04.784Z",
+    "lastAttempt": "2026-02-01T17:03:04.784Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gayab-2004-dv-drip-x-264-ac-3-5.1...-hon-3y",
+    "originalTitle": "Gayab 2004 Dv DRip X 264 AC 3 5.1... Hon 3y",
+    "attempts": [
+      {
+        "query": "Gayab 2004"
+      },
+      {
+        "query": "Gayab 2004 Dv DRip X 264 AC 3 5.1... Hon 3y"
+      },
+      {
+        "query": "Gayab 2004 Dv DRip X 264 AC 3 5.1... Hon 3y"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:05.501Z",
+    "lastAttempt": "2026-02-01T17:03:05.501Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gaze-from-farnoosh-samadi-540p",
+    "originalTitle": "GAZE From Farnoosh Samadi ( 540p) short film",
+    "attempts": [
+      {
+        "query": "Gaze From Farnoosh Samadi"
+      },
+      {
+        "query": "GAZE From Farnoosh Samadi ( 540p) short film"
+      },
+      {
+        "query": "GAZE From Farnoosh Samadi ( 540p) short film"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:07.039Z",
+    "lastAttempt": "2026-02-01T17:03:07.039Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gebrandmarkt-mit-hakenkreuz",
+    "originalTitle": "Gebrandmarkt Mit Hakenkreuz",
+    "attempts": [
+      {
+        "query": "Gebrandmarkt Mit Hakenkreuz"
+      },
+      {
+        "query": "Gebrandmarkt Mit Hakenkreuz"
+      },
+      {
+        "query": "Gebrandmarkt Mit Hakenkreuz"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:07.794Z",
+    "lastAttempt": "2026-02-01T17:03:07.794Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gecem-gunduzum_movie",
+    "originalTitle": "Gecem Gündüzüm, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Gecem Gunduzum Movie"
+      },
+      {
+        "query": "Gecem Gündüzüm, Turkish Movie"
+      },
+      {
+        "query": "Gecem Gündüzüm, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:09.539Z",
+    "lastAttempt": "2026-02-01T17:03:09.539Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gekitotsu-satsujin-ken-1974",
+    "originalTitle": "Gekitotsu! Satsujin ken (1974)",
+    "year": 1974,
+    "attempts": [
+      {
+        "query": "Gekitotsu Satsujin Ken",
+        "year": 1974
+      },
+      {
+        "query": "Gekitotsu! Satsujin ken",
+        "year": 1974
+      },
+      {
+        "query": "Gekitotsu! Satsujin ken",
+        "year": 1974
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:13.623Z",
+    "lastAttempt": "2026-02-01T17:03:13.623Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gente-decente-1989",
+    "originalTitle": "Gente Decente (1989)",
+    "year": 1989,
+    "attempts": [
+      {
+        "query": "Gente Decente",
+        "year": 1989
+      },
+      {
+        "query": "Gente Decente",
+        "year": 1989
+      },
+      {
+        "query": "Gente Decente",
+        "year": 1989
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:18.318Z",
+    "lastAttempt": "2026-02-01T17:03:18.318Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-georg-herwegh",
+    "originalTitle": "Georg Herwegh",
+    "attempts": [
+      {
+        "query": "Zitate von Georg Herwegh"
+      },
+      {
+        "query": "Georg Herwegh"
+      },
+      {
+        "query": "Georg Herwegh"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:19.121Z",
+    "lastAttempt": "2026-02-01T17:03:19.121Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gerald-mohr-explains-psychorama-1959",
+    "originalTitle": "Gerald Mohr Explains Psychorama (1959)",
+    "year": 1959,
+    "attempts": [
+      {
+        "query": "Gerald Mohr Explains Psychorama",
+        "year": 1959
+      },
+      {
+        "query": "Gerald Mohr Explains Psychorama",
+        "year": 1959
+      },
+      {
+        "query": "Gerald Mohr Explains Psychorama",
+        "year": 1959
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:21.977Z",
+    "lastAttempt": "2026-02-01T17:03:21.977Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-germanische-wesen",
+    "originalTitle": "Germanische Wesen",
+    "attempts": [
+      {
+        "query": "Germanische Wesen"
+      },
+      {
+        "query": "Germanische Wesen"
+      },
+      {
+        "query": "Germanische Wesen"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:23.316Z",
+    "lastAttempt": "2026-02-01T17:03:23.316Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-germansnipers",
+    "originalTitle": "German snipers - der deutsche scharfschutze",
+    "attempts": [
+      {
+        "query": "German Snipers"
+      },
+      {
+        "query": "German snipers"
+      },
+      {
+        "query": "German snipers - der deutsche scharfschutze"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:24.215Z",
+    "lastAttempt": "2026-02-01T17:03:24.215Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-germany-must-perish-audiobook-deutschland-muss-untergehen-theodor-kaufmannread-by-alex-lindner",
+    "originalTitle": "Germany Must Perish Audiobook( Deutschland Muss Untergehen Theodor Kaufmann)read By Alex Lindner",
+    "attempts": [
+      {
+        "query": "Germany Must Perish"
+      },
+      {
+        "query": "Germany Must Perish Audiobook( Deutschland Muss Untergehen Theodor Kaufmann)read By Alex Lindner"
+      },
+      {
+        "query": "Germany Must Perish Audiobook( Deutschland Muss Untergehen Theodor Kaufmann)read By Alex Lindner"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:24.964Z",
+    "lastAttempt": "2026-02-01T17:03:24.964Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-germany-reborn-deutschlands-wiedergeburt-by-hermann-goring-read-by-alex-linder",
+    "originalTitle": "Germany Reborn( Deutschlands Wiedergeburt) By Hermann Göring Read By Alex Linder",
+    "attempts": [
+      {
+        "query": "Deutschland Reborn Deutschlands Wiedergeburt"
+      },
+      {
+        "query": "Germany Reborn( Deutschlands Wiedergeburt) By Hermann Göring Read By Alex Linder"
+      },
+      {
+        "query": "Germany Reborn( Deutschlands Wiedergeburt) By Hermann Göring Read By Alex Linder"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:25.712Z",
+    "lastAttempt": "2026-02-01T17:03:25.712Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-germanyiranianfilmwinstwoindiejuryawardsatberlinale",
+    "originalTitle": "Germany Iranian Film Wins Two Indie Jury Awards At Berlinale",
+    "attempts": [
+      {
+        "query": "Germany Iranian Film Wins Two Indie Jury Awards At Berlinale"
+      },
+      {
+        "query": "Germany Iranian Film Wins Two Indie Jury Awards At Berlinale"
+      },
+      {
+        "query": "Germany Iranian Film Wins Two Indie Jury Awards At Berlinale"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:26.458Z",
+    "lastAttempt": "2026-02-01T17:03:26.458Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gestern-gluckund-heute-not...-...-morgen-freiheit-oder-tod-das-herz-der-konigin",
+    "originalTitle": "Gestern Glück,und Heute Not... ... Morgen, Freiheit Oder Tod ( Das Herz Der Königin)",
+    "attempts": [
+      {
+        "query": "Das Herz Der Konigin"
+      },
+      {
+        "query": "Das Herz Der Königin"
+      },
+      {
+        "query": "Gestern Glück,und Heute Not... ... Morgen, Freiheit Oder Tod ( Das Herz Der Königin)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:27.720Z",
+    "lastAttempt": "2026-02-01T17:03:27.720Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-getting-acquainted-1914-directed-by-charlie-chaplin-colorized",
+    "originalTitle": "Getting Acquainted (1914) Directed By Charlie Chaplin",
+    "year": 1914,
+    "attempts": [
+      {
+        "query": "Getting Acquainted",
+        "year": 1914
+      },
+      {
+        "query": "Getting Acquainted",
+        "year": 1914
+      },
+      {
+        "query": "Getting Acquainted",
+        "year": 1914
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:30.492Z",
+    "lastAttempt": "2026-02-01T17:03:30.492Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gettingcaughtfilmingundercoverinkazakhstandictatorland",
+    "originalTitle": "Getting Caught Filming Undercover In Kazakhstan Dictatorland",
+    "attempts": [
+      {
+        "query": "Gettingcaughtfilmingundercoverinkazakhstandictatorland"
+      },
+      {
+        "query": "Kazakhstan Dictatorland"
+      },
+      {
+        "query": "Getting Caught Filming Undercover In Kazakhstan Dictatorland"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:31.304Z",
+    "lastAttempt": "2026-02-01T17:03:31.304Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ghayal-1990-dv-drip-x-264-ac-3-5.1...-hon-3y",
+    "originalTitle": "Ghayal 1990 Dv DRip X 264 AC 3 5.1... Hon 3y",
+    "attempts": [
+      {
+        "query": "Ghayal 1990"
+      },
+      {
+        "query": "Ghayal 1990 Dv DRip X 264 AC 3 5.1... Hon 3y"
+      },
+      {
+        "query": "Ghayal 1990 Dv DRip X 264 AC 3 5.1... Hon 3y"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:35.853Z",
+    "lastAttempt": "2026-02-01T17:03:35.853Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ghayal-1990-dvdrip-x-264-mp-3www.mastitorrents.com",
+    "originalTitle": "Ghayal 1990 DVDRip X 264 MP 3(www.mastitorrents.com)",
+    "attempts": [
+      {
+        "query": "Ghayal 1990"
+      },
+      {
+        "query": "Ghayal 1990 DVDRip X 264 MP 3(www.mastitorrents.com)"
+      },
+      {
+        "query": "Ghayal 1990 DVDRip X 264 MP 3(www.mastitorrents.com)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:37.244Z",
+    "lastAttempt": "2026-02-01T17:03:37.244Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-ghosts-dont-exist-2010-dvdrip-ma",
+    "originalTitle": "Ghosts Don't Exist 2010 Dvdrip ( MA)",
+    "year": 2010,
+    "attempts": [
+      {
+        "query": "Ghosts Dont Exist",
+        "year": 2010
+      },
+      {
+        "query": "MA",
+        "year": 2010
+      },
+      {
+        "query": "Ghosts Don't Exist 2010 Dvdrip ( MA)",
+        "year": 2010
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:38.676Z",
+    "lastAttempt": "2026-02-01T17:03:38.676Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gia-dimanche",
+    "originalTitle": "Già dimanche",
+    "year": 1935,
+    "attempts": [
+      {
+        "query": "Già dimanche",
+        "year": 1935
+      },
+      {
+        "query": "Già dimanche",
+        "year": 1935
+      },
+      {
+        "query": "Già dimanche",
+        "year": 1935
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:40.731Z",
+    "lastAttempt": "2026-02-01T17:03:40.731Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gilan-qizi-aka-doch-gilyana-aka-gilans-daughter_1928",
+    "originalTitle": "Gilan qizi aka Doch Gilyana aka Gilan's Daughter",
+    "year": 1928,
+    "attempts": [
+      {
+        "query": "Gilan Qizi Aka Doch Gilyana Aka Gilans Daughter",
+        "year": 1928
+      },
+      {
+        "query": "Gilan qizi aka Doch Gilyana aka Gilan's Daughter",
+        "year": 1928
+      },
+      {
+        "query": "Gilan qizi aka Doch Gilyana aka Gilan's Daughter",
+        "year": 1928
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:42.744Z",
+    "lastAttempt": "2026-02-01T17:03:42.744Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-girl-from-scotland-yard-1934",
+    "originalTitle": "Girl From Scotland Yard (1934)",
+    "year": 1934,
+    "attempts": [
+      {
+        "query": "Girl From Scotland Yard",
+        "year": 1934
+      },
+      {
+        "query": "Girl From Scotland Yard",
+        "year": 1934
+      },
+      {
+        "query": "Girl From Scotland Yard",
+        "year": 1934
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:46.285Z",
+    "lastAttempt": "2026-02-01T17:03:46.285Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-girl_from_monterey",
+    "originalTitle": "Girl From Monterey",
+    "year": 1943,
+    "attempts": [
+      {
+        "query": "Girl From Monterey",
+        "year": 1943
+      },
+      {
+        "query": "Girl From Monterey",
+        "year": 1943
+      },
+      {
+        "query": "Girl From Monterey",
+        "year": 1943
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:48.405Z",
+    "lastAttempt": "2026-02-01T17:03:48.405Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-girlfreind-2004-xvid-ac-3-team-ddh-rg",
+    "originalTitle": "Girlfreind 2004 Xvid AC 3 Team DDH~ RG",
+    "attempts": [
+      {
+        "query": "Girlfreind"
+      },
+      {
+        "query": "Girlfreind 2004 Xvid AC 3 Team DDH~ RG"
+      },
+      {
+        "query": "Girlfreind 2004 Xvid AC 3 Team DDH~ RG"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:49.121Z",
+    "lastAttempt": "2026-02-01T17:03:49.121Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-giulio-cesare-il-conquistatore-delle-gallie-1962",
+    "originalTitle": "Giulio Cesare, il conquistatore delle Gallie (1962)",
+    "year": 1962,
+    "attempts": [
+      {
+        "query": "Giulio Cesare Il Conquistatore Delle Gallie",
+        "year": 1962
+      },
+      {
+        "query": "Giulio Cesare, il conquistatore delle Gallie",
+        "year": 1962
+      },
+      {
+        "query": "Giulio Cesare, il conquistatore delle Gallie",
+        "year": 1962
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:51.175Z",
+    "lastAttempt": "2026-02-01T17:03:51.175Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gizli-yuz_movie",
+    "originalTitle": "Gizli Yüz, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Gizli Yüz"
+      },
+      {
+        "query": "Gizli Yüz, Turkish Movie"
+      },
+      {
+        "query": "Gizli Yüz, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:52.408Z",
+    "lastAttempt": "2026-02-01T17:03:52.408Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-go-2007-dvdrip-sub-drakor-kita",
+    "originalTitle": "Go 2007 DVDRip Sub Drakor Kita",
+    "attempts": [
+      {
+        "query": "Go 2007 Dvdrip Sub Drakor Kita"
+      },
+      {
+        "query": "Go 2007 DVDRip Sub Drakor Kita"
+      },
+      {
+        "query": "Go 2007 DVDRip Sub Drakor Kita"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:56.695Z",
+    "lastAttempt": "2026-02-01T17:03:56.695Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-go-for-broke-with-van-johnson-1951-1080p-hd-film",
+    "originalTitle": "Go For Broke Van Johnson 1951",
+    "attempts": [
+      {
+        "query": "Go For Broke With Van Johnson"
+      },
+      {
+        "query": "Go For Broke Van Johnson 1951"
+      },
+      {
+        "query": "Go For Broke Van Johnson 1951"
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:57.526Z",
+    "lastAttempt": "2026-02-01T17:03:57.526Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-go_getem_haines",
+    "originalTitle": "Go Get'em Haines",
+    "year": 1936,
+    "attempts": [
+      {
+        "query": "Go Getem Haines",
+        "year": 1936
+      },
+      {
+        "query": "Go Get'em Haines",
+        "year": 1936
+      },
+      {
+        "query": "Go Get'em Haines",
+        "year": 1936
+      }
+    ],
+    "failedAt": "2026-02-01T17:03:59.060Z",
+    "lastAttempt": "2026-02-01T17:03:59.060Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-goethe-schiller-worte-grosser-ketzer-1",
+    "originalTitle": "Goethe & Schiller ( Worte Großer Ketzer) ( 1)",
+    "attempts": [
+      {
+        "query": "Goethe Schiller Worte Grosser Ketzer"
+      },
+      {
+        "query": "Goethe & Schiller ( Worte Großer Ketzer) ( 1)"
+      },
+      {
+        "query": "Goethe & Schiller ( Worte Großer Ketzer) ( 1)"
+      }
+    ],
+    "failedAt": "2026-02-01T17:04:02.747Z",
+    "lastAttempt": "2026-02-01T17:04:02.747Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-gol_movie",
+    "originalTitle": "Göl, Turkish Movie",
+    "attempts": [
+      {
+        "query": "Gol Movie"
+      },
+      {
+        "query": "Göl, Turkish Movie"
+      },
+      {
+        "query": "Göl, Turkish Movie"
+      }
+    ],
+    "failedAt": "2026-02-01T17:04:05.616Z",
+    "lastAttempt": "2026-02-01T17:04:05.616Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-golia-e-il-cavaliere-mascherato-1963",
+    "originalTitle": "Golia e il cavaliere mascherato (1963)",
+    "year": 1963,
+    "attempts": [
+      {
+        "query": "Golia E Il Cavaliere Mascherato",
+        "year": 1963
+      },
+      {
+        "query": "Golia e il cavaliere mascherato",
+        "year": 1963
+      },
+      {
+        "query": "Golia e il cavaliere mascherato",
+        "year": 1963
+      }
+    ],
+    "failedAt": "2026-02-01T17:04:09.176Z",
+    "lastAttempt": "2026-02-01T17:04:09.176Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-goliath-der-panzerzerstorer",
+    "originalTitle": "Goliath Der Panzerzerstörer",
+    "attempts": [
+      {
+        "query": "Goliath Der Panzerzerstorer"
+      },
+      {
+        "query": "Goliath Der Panzerzerstörer"
+      },
+      {
+        "query": "Goliath Der Panzerzerstörer"
+      }
+    ],
+    "failedAt": "2026-02-01T17:04:10.032Z",
+    "lastAttempt": "2026-02-01T17:04:10.032Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": false,
+      "aiTitleUsed": true
+    }
   }
 ]
