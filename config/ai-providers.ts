@@ -67,58 +67,26 @@ const ollamaProvider: AIProviderConfig = {
 
 /**
  * OpenRouter provider configuration
- * Cloud AI models - requires API key, pay-per-use
+ * Cloud AI models via Groq - requires API key, pay-per-use
  */
 const openrouterProvider: AIProviderConfig = {
   id: 'openrouter',
   name: 'OpenRouter',
-  description: 'Cloud AI models - requires API key, pay-per-use',
+  description: 'Cloud AI models via Groq - requires API key, pay-per-use',
   requiresApiKey: true,
   envVar: 'OPENROUTER_API_KEY',
-  defaultModel: 'openai/gpt-4o-mini',
+  defaultModel: 'qwen/qwen3-32b',
   models: [
     {
-      id: 'openai/gpt-4o-mini',
-      name: 'GPT-4o Mini',
-      description: 'Best value - fast, accurate, very affordable',
-      costPerMillion: 0.15, // $0.15 per million input tokens
+      id: 'qwen/qwen3-32b',
+      name: 'Qwen 3 32B',
+      description: 'Powerful reasoning model via Groq, excellent for metadata extraction',
       recommended: true,
     },
     {
-      id: 'anthropic/claude-3-haiku',
-      name: 'Claude 3 Haiku',
-      description: 'Fast and efficient, good for structured extraction',
-      costPerMillion: 0.25,
-    },
-    {
-      id: 'google/gemini-flash-1.5',
-      name: 'Gemini Flash 1.5',
-      description: 'Very fast, good for batch operations',
-      costPerMillion: 0.075,
-    },
-    {
-      id: 'meta-llama/llama-3.1-8b-instruct',
-      name: 'Llama 3.1 8B',
-      description: 'Open source, cost-effective',
-      costPerMillion: 0.055,
-    },
-    {
-      id: 'mistralai/mistral-7b-instruct',
-      name: 'Mistral 7B Instruct',
-      description: 'Efficient open source model',
-      costPerMillion: 0.055,
-    },
-    {
-      id: 'openai/gpt-4o',
-      name: 'GPT-4o',
-      description: 'Highest quality, more expensive',
-      costPerMillion: 2.5,
-    },
-    {
-      id: 'anthropic/claude-3.5-sonnet',
-      name: 'Claude 3.5 Sonnet',
-      description: 'Excellent reasoning, higher cost',
-      costPerMillion: 3.0,
+      id: 'openai/gpt-oss-20b',
+      name: 'GPT OSS 20B',
+      description: 'Open source GPT model via Groq, fast inference',
     },
   ],
 }

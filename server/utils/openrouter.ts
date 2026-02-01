@@ -30,7 +30,7 @@ interface OpenRouterConfig {
  * Default OpenRouter configuration
  */
 const DEFAULT_CONFIG = {
-  model: 'openai/gpt-4o-mini',
+  model: 'qwen/qwen3-32b',
   apiEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
 }
 
