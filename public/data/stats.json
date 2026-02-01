@@ -1,22 +1,22 @@
 {
   "database": {
-    "total": 30048,
+    "total": 30045,
     "matched": 14966,
-    "unmatched": 15082,
-    "archiveOrgSources": 26116,
+    "unmatched": 15079,
+    "archiveOrgSources": 26115,
     "youtubeSources": 11196,
     "curatedCount": 14966,
     "qualityMarkedCount": 0,
     "qualityBreakdown": {},
     "collections": {
-      "feature_films": 26116
+      "feature_films": 26115
     }
   },
   "external": {
     "archiveOrg": {
       "total": 27290,
-      "scraped": 26116,
-      "percent": 95.69805789666545,
+      "scraped": 26115,
+      "percent": 95.69439355075119,
       "failed": 0,
       "failureRate": 0
     },
@@ -161,23 +161,23 @@
     }
   },
   "curation": {
-    "total": 30048,
+    "total": 30045,
     "curated": 14966,
-    "percent": 49.806975505857295
+    "percent": 49.81194874355134
   },
   "omdb": {
-    "total": 30048,
+    "total": 30045,
     "matched": 14966,
-    "unmatched": 15082,
-    "percent": 49.806975505857295,
-    "failed": 3851,
-    "failureRate": 20.46553648296753
+    "unmatched": 15079,
+    "percent": 49.81194874355134,
+    "failed": 3853,
+    "failureRate": 20.473989053616027
   },
   "ai": {
-    "totalUnmatched": 15082,
-    "withAiData": 14519,
+    "totalUnmatched": 15079,
+    "withAiData": 14516,
     "withoutAiData": 563,
-    "percent": 96.26707333244929
+    "percent": 96.26633065853173
   },
   "quality": {
     "totalMarked": 0,
@@ -185,7 +185,7 @@
     "percent": 0
   },
   "posters": {
-    "totalMovies": 30048,
+    "totalMovies": 30045,
     "withPosterUrl": 13368,
     "withImdbId": 14966,
     "downloaded": 13798,
@@ -194,9 +194,9 @@
     "failureRate": 7.878221391374016,
     "percentOfMoviesWithUrl": 103.2166367444644,
     "percentOfMoviesWithImdbId": 92.19564345850596,
-    "percentOfAllMovies": 45.91986155484558,
+    "percentOfAllMovies": 45.92444666333832,
     "filesInDirectory": 14009,
     "matchedPosters": 13798
   },
-  "lastUpdated": "2026-02-01T22:34:06.278Z"
+  "lastUpdated": "2026-02-01T22:49:49.002Z"
 }

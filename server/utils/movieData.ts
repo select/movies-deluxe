@@ -264,8 +264,14 @@ export function upsertMovie(
     }
 
     // Update entry at the final key
+    // Important: entry fields take priority over existing (for enrichment scenarios)
     db[existingKey] = {
       ...existing,
+      // Copy enriched fields from entry (title, year, movieId) - these take priority
+      movieId: entry.movieId || existing.movieId,
+      title: entry.title || existing.title,
+      year: entry.year ?? existing.year,
+      // Merge sources and metadata
       sources: mergedSources,
       metadata: entry.metadata || existing.metadata,
       lastUpdated: new Date().toISOString(),
@@ -424,6 +430,11 @@ export async function migrateMovieId(
 
   // Update the movieId in the entry
   oldEntry.movieId = newId
+
+  // Clear the source ID index before upsert to prevent stale lookups
+  // Without this, upsertMovie might find the old entry via source ID lookup
+  // and update db[oldId] instead of db[newId], which we then delete below
+  clearSourceIdIndex()
 
   // Add/merge to new ID
   upsertMovie(db, newId, oldEntry)

@@ -96751,5 +96751,59 @@
       "hasAIYear": true,
       "aiTitleUsed": true
     }
+  },
+  {
+    "identifier": "archive-invasion-of-the-girl-snatchers-hidan-of-maukbeiangjow-1973",
+    "originalTitle": "Invasion Of The Girl Snatchers, Hidan Of Maukbeiangjow 1973",
+    "year": 1973,
+    "attempts": [
+      {
+        "query": "Invasion Of The Girl Snatchers",
+        "year": 1973
+      },
+      {
+        "query": "Invasion Of The Girl Snatchers, Hidan Of Maukbeiangjow 1973",
+        "year": 1973
+      },
+      {
+        "query": "Invasion Of The Girl Snatchers, Hidan Of Maukbeiangjow 1973",
+        "year": 1973
+      }
+    ],
+    "failedAt": "2026-02-01T22:49:32.735Z",
+    "lastAttempt": "2026-02-01T22:49:32.735Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
+  },
+  {
+    "identifier": "archive-invasion-u.-s.-a.-1952",
+    "originalTitle": "Invasion U. S. A. (1952)",
+    "year": 1952,
+    "attempts": [
+      {
+        "query": "Invasion U. S. A.",
+        "year": 1952
+      },
+      {
+        "query": "Invasion U. S. A",
+        "year": 1952
+      },
+      {
+        "query": "Invasion U. S. A.",
+        "year": 1952
+      }
+    ],
+    "failedAt": "2026-02-01T22:49:34.293Z",
+    "lastAttempt": "2026-02-01T22:49:34.293Z",
+    "reason": "No OMDB match found",
+    "ai": {
+      "hasAITitle": true,
+      "hasAIYear": true,
+      "aiTitleUsed": true
+    }
   }
 ]
