@@ -40,7 +40,7 @@ export async function fetchChannelVideos(
   ) => Promise<void>,
   onPageComplete: () => Promise<void>,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
-) {
+): Promise<void> {
   // Get YouTube Data API key from environment
   const youtubeApiKey = process.env.YOUTUBE_API_KEY
 

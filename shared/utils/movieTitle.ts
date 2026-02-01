@@ -26,7 +26,7 @@ export function cleanTitleForSearch(title: string): string {
   return title
     .replace(/\(.*?\)/g, '') // Remove (braces)
     .replace(/\[.*?\]/g, '') // Remove [brackets]
-    .replace(/["'“”‘’]/g, '') // Remove quotes
+    .replace(/["'""''']/g, '') // Remove quotes
     .replace(/[*]/g, '') // Remove stars
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim()

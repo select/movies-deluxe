@@ -2,7 +2,7 @@
  * Utility to detect if the application is running on localhost
  * Used for developer-only features
  */
-export const isLocalhost = () => {
+export const isLocalhost = (): boolean => {
   if (typeof window === 'undefined') return false
 
   const hostname = window.location.hostname

@@ -1,11 +1,27 @@
 import { useDatabase } from './useDatabase'
 import { useBrowserEmbedding } from './useBrowserEmbedding'
+import type { VectorSearchResult } from '~/types/database'
 
 // Default to bge-micro - runs in browser, good quality
 // Options: 'bge-micro' (384d) or 'potion' (64d)
 const DEFAULT_EMBEDDING_MODEL = 'bge-micro'
 
-export function useVectorSearch() {
+export interface UseVectorSearchReturn {
+  search: (
+    query: string,
+    limit?: number,
+    where?: string,
+    params?: (string | number)[]
+  ) => Promise<VectorSearchResult[]>
+  findSimilar: (movieId: string, limit?: number) => Promise<VectorSearchResult[]>
+  isSearching: Ref<boolean>
+  isLoadingEmbeddings: Ref<boolean>
+  error: Ref<string | null>
+  embeddingProgress: Ref<number>
+  isEmbeddingLoading: Ref<boolean>
+}
+
+export function useVectorSearch(): UseVectorSearchReturn {
   const db = useDatabase()
   const browserEmbedding = useBrowserEmbedding()
   const movieStore = useMovieStore()
@@ -62,7 +78,7 @@ export function useVectorSearch() {
     limit: number = 20,
     where?: string,
     params?: (string | number)[]
-  ) => {
+  ): Promise<VectorSearchResult[]> => {
     if (!query.trim()) return []
 
     isSearching.value = true
@@ -109,7 +125,10 @@ export function useVectorSearch() {
    * @param limit - Maximum number of results to return
    * @returns Promise of movie entries with their similarity distance
    */
-  const findSimilar = async (movieId: string, limit: number = 10) => {
+  const findSimilar = async (
+    movieId: string,
+    limit: number = 10
+  ): Promise<VectorSearchResult[]> => {
     if (!movieId) return []
 
     isSearching.value = true

@@ -3,7 +3,7 @@ import { join } from 'path'
 
 let db: Database.Database | null = null
 
-export function getSqliteDatabase() {
+export function getSqliteDatabase(): Database.Database {
   if (!db) {
     const dbPath = join(process.cwd(), 'public/data/movies.db')
     db = new Database(dbPath, { readonly: true })

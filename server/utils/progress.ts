@@ -27,6 +27,6 @@ export interface ProgressUpdate {
   lastError?: string
 }
 
-export const emitProgress = (update: ProgressUpdate) => {
+export const emitProgress = (update: ProgressUpdate): void => {
   progressEmitter.emit('progress', update)
 }

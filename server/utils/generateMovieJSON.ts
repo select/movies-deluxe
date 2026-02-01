@@ -16,7 +16,7 @@ import type { Collection } from '../../shared/types/collections'
 const logger = createLogger('MovieJSONGen')
 const MOVIES_DIR = join(process.cwd(), 'public/movies')
 
-export async function generateMovieJSON() {
+export async function generateMovieJSON(): Promise<void> {
   logger.info('Starting individual movie JSON generation...')
 
   // 1. Ensure directory exists

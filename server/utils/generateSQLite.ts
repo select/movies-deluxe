@@ -28,7 +28,7 @@ export interface GenerateSQLiteOptions {
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 }
 
-export async function generateSQLite(options: GenerateSQLiteOptions = {}) {
+export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promise<void> {
   const { skipJsonGeneration = false, onProgress } = options
 
   logger.info('Starting SQLite database generation...')

@@ -76,13 +76,15 @@ export async function getCollectionById(id: string): Promise<Collection | undefi
 /**
  * Create or update a collection
  */
-export async function upsertCollection(collection: Collection): Promise<void> {
+export async function upsertCollection(collection: Collection): Promise<Collection> {
   const db = await loadCollectionsDatabase()
-  db[collection.id] = {
+  const updatedCollection: Collection = {
     ...collection,
     updatedAt: new Date().toISOString(),
   }
+  db[collection.id] = updatedCollection
   await saveCollectionsDatabase(db)
+  return updatedCollection
 }
 
 /**
@@ -189,7 +191,10 @@ export async function removeQueryFromCollection(
 /**
  * Update collection tags
  */
-export async function updateCollectionTags(collectionId: string, tags: string[]): Promise<boolean> {
+export async function updateCollectionTags(
+  collectionId: string,
+  tags: string[]
+): Promise<Collection | undefined> {
   const db = await loadCollectionsDatabase()
   const collection = db[collectionId] as Collection | undefined
 
@@ -197,16 +202,16 @@ export async function updateCollectionTags(collectionId: string, tags: string[])
     collection.tags = tags
     collection.updatedAt = new Date().toISOString()
     await saveCollectionsDatabase(db)
-    return true
+    return collection
   }
-  return false
+  return undefined
 }
 
 /**
  * Update a movie ID across all collections that reference it
  * Used when a movie's ID changes (e.g., from temp ID to IMDB ID)
  */
-export async function updateMovieIdInCollections(oldId: string, newId: string): Promise<number> {
+export async function updateMovieIdInCollections(oldId: string, newId: string): Promise<void> {
   const db = await loadCollectionsDatabase()
   let updatedCount = 0
 
@@ -227,14 +232,12 @@ export async function updateMovieIdInCollections(oldId: string, newId: string): 
   if (updatedCount > 0) {
     await saveCollectionsDatabase(db)
   }
-
-  return updatedCount
 }
 
 /**
  * Remove a movie ID from all collections that reference it
  */
-export async function removeMovieFromAllCollections(movieId: string): Promise<number> {
+export async function removeMovieFromAllCollections(movieId: string): Promise<void> {
   const db = await loadCollectionsDatabase()
   let updatedCount = 0
 
@@ -255,6 +258,4 @@ export async function removeMovieFromAllCollections(movieId: string): Promise<nu
   if (updatedCount > 0) {
     await saveCollectionsDatabase(db)
   }
-
-  return updatedCount
 }

@@ -1,11 +1,34 @@
 import type { WorkerResponse, FilterOptionsResponse, VectorSearchResult } from '~/types/database'
-import type { Collection } from '~/types'
+import type { Collection, LightweightMovie } from '~/types'
 import { getModelConfig, type EmbeddingModelConfig } from '~~/config/embedding-models'
 
-// Singleton instance
-let dbInstance: ReturnType<typeof createDatabase> | null = null
+export interface UseDatabaseReturn {
+  init: (url?: string, baseURL?: string) => Promise<number>
+  query: <T = Record<string, unknown>>(sql: string, params?: (string | number)[]) => Promise<T[]>
+  queryByIds: (movieIds: string[]) => Promise<LightweightMovie[]>
+  getCollectionsForMovie: (movieId: string) => Promise<Collection[]>
+  getFilterOptions: () => Promise<FilterOptionsResponse>
+  vectorSearch: (
+    embedding: Float32Array | number[],
+    limit?: number,
+    where?: string,
+    whereParams?: (string | number)[]
+  ) => Promise<VectorSearchResult[]>
+  getConfig: () => Promise<Record<string, string>>
+  getEmbeddingModelInfo: () => Promise<EmbeddingModelConfig | null>
+  isReady: Ref<boolean>
+  waitForReady: () => Promise<void>
+  attachEmbeddings: (modelId: string) => Promise<number>
+  detachEmbeddings: () => Promise<void>
+  isEmbeddingsLoaded: ComputedRef<boolean>
+  currentEmbeddingsModelId: ComputedRef<string | null>
+  isEmbeddingsLoading: ComputedRef<boolean>
+}
 
-function createDatabase() {
+// Singleton instance
+let dbInstance: UseDatabaseReturn | null = null
+
+function createDatabase(): UseDatabaseReturn {
   const worker = ref<Worker | null>(null)
   const isReady = ref(false)
   const embeddingsLoaded = ref(false)
@@ -362,7 +385,7 @@ function createDatabase() {
   }
 }
 
-export function useDatabase() {
+export function useDatabase(): UseDatabaseReturn {
   if (!dbInstance) {
     dbInstance = createDatabase()
   }

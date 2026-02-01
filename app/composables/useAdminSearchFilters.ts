@@ -1,6 +1,13 @@
 import type { FilterState } from '~/types'
 
-export const useAdminSearchFilters = () => {
+export interface UseAdminSearchFiltersReturn {
+  filters: Ref<FilterState>
+  activeFiltersCount: ComputedRef<number>
+  hasActiveFilters: ComputedRef<boolean>
+  resetFilters: () => void
+}
+
+export const useAdminSearchFilters = (): UseAdminSearchFiltersReturn => {
   const DEFAULT_FILTERS: FilterState = {
     sort: { field: 'year', direction: 'desc' },
     sources: [],

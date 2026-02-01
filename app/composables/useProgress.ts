@@ -1,4 +1,11 @@
-export const useProgress = () => {
+export interface UseProgressReturn {
+  connect: () => void
+  disconnect: () => void
+  isConnected: Ref<boolean>
+  isReconnecting: Ref<boolean>
+}
+
+export const useProgress = (): UseProgressReturn => {
   const adminStore = useAdminStore()
   const eventSource = useState<EventSource | null>('eventSource', () => null)
   const isConnected = useState<boolean>('eventSourceConnected', () => false)

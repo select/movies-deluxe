@@ -48,7 +48,9 @@ export interface GenerationProgress {
   message: string
 }
 
-export async function generateHomePages(onProgress?: (progress: GenerationProgress) => void) {
+export async function generateHomePages(
+  onProgress?: (progress: GenerationProgress) => void
+): Promise<void> {
   if (!fs.existsSync(COLLECTIONS_PATH)) {
     throw new Error(`Collections file not found: ${COLLECTIONS_PATH}`)
   }

@@ -1,6 +1,17 @@
 import EmbeddingWorker from '~/workers/embedding.worker?worker'
 
-export function useBrowserEmbedding() {
+export interface UseBrowserEmbeddingReturn {
+  isLoading: Ref<boolean>
+  isReady: Ref<boolean>
+  error: Ref<string | null>
+  progress: Ref<number>
+  currentProvider: Ref<'bge' | 'potion' | null>
+  init: (provider: 'bge' | 'potion') => Promise<void>
+  embed: (text: string) => Promise<Float32Array>
+  dispose: () => Promise<void>
+}
+
+export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
   const isLoading = ref(false)
   const isReady = ref(false)
   const error = ref<string | null>(null)

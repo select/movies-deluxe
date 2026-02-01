@@ -1,4 +1,6 @@
 import type { MoviesDatabase } from '../../shared/types/movie'
+import { fetchArchiveOrgMovies, processArchiveMovie } from './archive'
+import { buildSourceIdIndex, upsertMovie } from './movieData'
 
 export interface ScrapeOptions {
   collections?: string[]
