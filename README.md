@@ -29,6 +29,12 @@ This project is built with
 
 The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an [in-browser SQLite database](https://github.com/sql-js/sql.js) via WebAssembly, enabling offline-capable search functionality directly in the user's browser, next to static files.
 
+### Architecture Diagrams
+
+- **[SQLite Browser Architecture](./docs/architecture-sqlite-browser.md)**: Detailed architecture of the in-browser SQLite database including WebAssembly initialization, database worker with message queue, embeddings attach/detach pattern, query execution flow, and caching strategy.
+
+- **[Embedding Generation & Vector Search](./docs/architecture-embedding-generation.md)**: Complete architecture for semantic search including embedding worker, BGE and Potion providers, text preprocessing, model inference, and vector search with sqlite-vec.
+
 Data is collected via multiple APIs
 
 - [Archive.org](https://archive.org/),
