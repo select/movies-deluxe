@@ -4,9 +4,12 @@ import { join } from 'path'
 // Note: The following functions are auto-imported from server/utils/:
 // - loadFailedAIExtractions, saveFailedAIExtraction, clearFailedAIExtractions, removeFailedAIExtraction, hasFailedAIExtraction (from failedAI.ts)
 // - emitProgress (from progress.ts)
-// - extractMovieMetadata (from ai.ts)
+// - extractMovieMetadata (from ollama.ts)
+// - extractMovieMetadataOpenRouter (from openrouter.ts)
 
 interface BatchOptions {
+  provider?: 'ollama' | 'openrouter'
+  model?: string
   limit?: number
   onlyUnmatched?: boolean
   forceReExtract?: boolean
@@ -16,6 +19,8 @@ interface BatchOptions {
 export default defineEventHandler(async event => {
   const body = await readBody<BatchOptions>(event)
   const {
+    provider = 'ollama',
+    model,
     limit = 100,
     onlyUnmatched = true,
     forceReExtract = false,
@@ -97,7 +102,11 @@ export default defineEventHandler(async event => {
           failedCurrent: failedCount,
         })
 
-        const extracted = await extractMovieMetadata(title, description)
+        // Call the appropriate extraction function based on provider
+        const extracted =
+          provider === 'openrouter'
+            ? await extractMovieMetadataOpenRouter(title, description, { model })
+            : await extractMovieMetadata(title, description, { model })
 
         if (extracted?.title) {
           ;(movie as MovieEntry).ai = extracted
