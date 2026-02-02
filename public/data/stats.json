@@ -1,11 +1,11 @@
 {
   "database": {
-    "total": 28696,
-    "matched": 15013,
-    "unmatched": 13683,
+    "total": 27456,
+    "matched": 16913,
+    "unmatched": 10543,
     "archiveOrgSources": 26115,
-    "youtubeSources": 11196,
-    "curatedCount": 15013,
+    "youtubeSources": 11195,
+    "curatedCount": 16913,
     "qualityMarkedCount": 0,
     "qualityBreakdown": {},
     "collections": {
@@ -21,11 +21,11 @@
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11196,
+      "totalScraped": 11195,
       "totalAvailable": 18067,
       "totalFailed": 6022,
-      "failureRate": 34.975026135439656,
-      "percent": 61.969336359107764,
+      "failureRate": 34.977057559388975,
+      "percent": 61.963801405878115,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -42,10 +42,10 @@
           "name": "FilmRise Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 327,
+          "scraped": 326,
           "total": 445,
           "failed": 138,
-          "failureRate": 29.677419354838708
+          "failureRate": 29.74137931034483
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -161,23 +161,23 @@
     }
   },
   "curation": {
-    "total": 28696,
-    "curated": 15013,
-    "percent": 52.31739615277391
+    "total": 27456,
+    "curated": 16913,
+    "percent": 61.60037878787878
   },
   "omdb": {
-    "total": 28696,
-    "matched": 15013,
-    "unmatched": 13683,
-    "percent": 52.31739615277391,
-    "failed": 4236,
-    "failureRate": 22.00633799158398
+    "total": 27456,
+    "matched": 16913,
+    "unmatched": 10543,
+    "percent": 61.60037878787878,
+    "failed": 7116,
+    "failureRate": 29.614216155478797
   },
   "ai": {
-    "totalUnmatched": 13683,
-    "withAiData": 13120,
+    "totalUnmatched": 10543,
+    "withAiData": 9980,
     "withoutAiData": 563,
-    "percent": 95.88540524738727
+    "percent": 94.65996395712796
   },
   "quality": {
     "totalMarked": 0,
@@ -185,18 +185,18 @@
     "percent": 0
   },
   "posters": {
-    "totalMovies": 28696,
-    "withPosterUrl": 13414,
-    "withImdbId": 15013,
-    "downloaded": 13798,
-    "missing": 1215,
+    "totalMovies": 27456,
+    "withPosterUrl": 15188,
+    "withImdbId": 16913,
+    "downloaded": 13814,
+    "missing": 3099,
     "failed": 1180,
-    "failureRate": 7.878221391374016,
-    "percentOfMoviesWithUrl": 102.8626807812733,
-    "percentOfMoviesWithImdbId": 91.90701392126823,
-    "percentOfAllMovies": 48.08335656537496,
+    "failureRate": 7.869814592503668,
+    "percentOfMoviesWithUrl": 90.95338425072426,
+    "percentOfMoviesWithImdbId": 81.67681664991426,
+    "percentOfAllMovies": 50.31322843822844,
     "filesInDirectory": 14009,
-    "matchedPosters": 13798
+    "matchedPosters": 13814
   },
-  "lastUpdated": "2026-02-01T23:20:56.964Z"
+  "lastUpdated": "2026-02-02T01:12:50.262Z"
 }

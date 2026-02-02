@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-02-01T22:30:36.380Z"
+    "lastUpdated": "2026-02-02T01:16:56.339Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -60,7 +60,7 @@
       "tt0077711",
       "tt0052600",
       "tt0037558",
-      "tt0100234",
+      "tt0040237",
       "tt0036506",
       "tt0015175",
       "tt0043313",
@@ -131,7 +131,7 @@
       "tt1332128"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-24T17:46:19.276Z",
+    "updatedAt": "2026-02-02T01:16:56.339Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -443,7 +443,7 @@
       "tt0094336",
       "tt0095403",
       "tt0095497",
-      "tt0100234",
+      "tt0040237",
       "tt0103285",
       "tt0103905",
       "tt0112631",
@@ -467,7 +467,7 @@
       "tt6777170"
     ],
     "createdAt": "2025-12-31T02:45:00.000Z",
-    "updatedAt": "2026-01-21T03:51:45.924Z",
+    "updatedAt": "2026-02-02T01:16:56.339Z",
     "savedQueries": [],
     "tags": [
       "classics",
@@ -839,7 +839,7 @@
       "tt0014664",
       "tt0013823",
       "archive-oswald-the-lucky-rabbit-neck-n-neck-1928",
-      "archive-steamboat-willie-1928-colorized-animation-720p-hd",
+      "tt0019422",
       "tt0019422",
       "tt0020414",
       "tt0019278",
@@ -1634,7 +1634,7 @@
       "tt0161945",
       "tt0161951",
       "tt0161963",
-      "youtube-u92t2pNOoqM",
+      "tt5950044",
       "tt0150031",
       "tt0153753",
       "tt0153339",
@@ -1723,7 +1723,7 @@
       "tt0153985",
       "tt1020989",
       "tt0014560",
-      "archive-max-fleischers-gabby-the-complete-collection-1940-41",
+      "tt3386954",
       "tt0019881",
       "tt0152446",
       "tt0151637",
@@ -1918,7 +1918,7 @@
       "tt0151967"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-01-26T03:03:11.761Z",
+    "updatedAt": "2026-02-02T00:52:54.357Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -2104,11 +2104,11 @@
       "tt0023469",
       "tt0037303",
       "tt0027136",
-      "youtube-toZblGsqNt0",
+      "tt0038259",
       "tt0406934"
     ],
     "createdAt": "2026-01-11T19:30:00.000Z",
-    "updatedAt": "2026-02-01T17:44:06.199Z",
+    "updatedAt": "2026-02-02T00:10:10.218Z",
     "savedQueries": [
       {
         "searchQuery": "Sherlock Holmes",
@@ -2139,7 +2139,7 @@
       "youtube-AptpRjLrK60",
       "tt24733392",
       "youtube-M-AxNOJCUHo",
-      "youtube-_dWZzsy-MNo",
+      "tt29980350",
       "tt0207145",
       "tt0054285",
       "youtube-ZjQWYUlNSAA",
@@ -2169,10 +2169,10 @@
       "tt0006206",
       "tt0067341",
       "tt0018097",
-      "youtube-jfaFNpb-35M",
+      "tt0235606",
       "archive-lust-for-a-vampire-1971_202405",
       "tt0081107",
-      "archive-mark-of-the-vampire-1935_202507",
+      "tt0026685",
       "tt6554976",
       "tt0087796",
       "tt0787495",
@@ -2185,21 +2185,21 @@
       "tt10523424",
       "tt10873438",
       "tt0046802",
-      "youtube-Y7jL_eMVRqg",
+      "tt0032390",
       "tt0057156",
       "tt0065854",
       "tt4537888",
       "tt0067490",
       "tt0056633",
-      "archive-the-vampire-and-the-ballerina-1960-full-movie-english-dub-1080p-hd-blu-ray",
+      "tt0052555",
       "tt0024727",
       "youtube-5ZwKV-ST7NE",
       "tt0065762",
-      "archive-the-vampires-night-orgy-1974",
+      "tt0069047",
       "archive-the-werewolf-vs-the-vampire-woman-1971",
       "tt0090196",
       "tt0053340",
-      "archive-vampire-circus-1972_202406",
+      "tt0067924",
       "archive-vampire-ecstasy-1973",
       "youtube-wKO6n8KiKvc",
       "tt0044925",
@@ -2219,9 +2219,9 @@
       "tt29418698",
       "tt0067017",
       "archive-DraculaVs.FrankensteinakaAssignmentTerrorPaulNaschy",
-      "youtube-iVAk7bkNMqE",
-      "youtube-noTRODcPm50",
-      "youtube-rEduLaA5Vcc",
+      "tt0103874",
+      "tt2320030",
+      "tt2320030",
       "archive-dracula-s-daughter-1936.",
       "archive-draculas-daughter-colorized-1936-720p",
       "tt0051554",
@@ -2229,16 +2229,16 @@
       "tt0445212",
       "archive-saga-of-dracula-1972",
       "tt0067713",
-      "archive-son-of-dracula-1943_202406",
+      "tt0036376",
       "tt0031796",
       "tt0070634",
-      "archive-the-satanic-rites-of-dracula-1973",
+      "tt0070634",
       "archive-zoltan-hound-of-dracula-1977",
-      "archive-lake-of-dracula-1971",
+      "tt0067503",
       "tt0040068"
     ],
     "createdAt": "2026-01-18T20:56:00.000Z",
-    "updatedAt": "2026-02-01T22:30:36.380Z",
+    "updatedAt": "2026-02-02T01:09:50.700Z",
     "savedQueries": [
       {
         "searchQuery": "vampire",
@@ -2280,7 +2280,7 @@
       "tt1977681",
       "tt15711350",
       "tt0031619",
-      "youtube-d28LWwGYNHg",
+      "tt0008309",
       "tt0246544",
       "tt0008309",
       "tt0153019",
@@ -2290,7 +2290,7 @@
       "tt0194584",
       "tt0027007",
       "tt0011439",
-      "archive-mark-of-zorro-1940",
+      "tt0032762",
       "tt0029818",
       "youtube-a8RSKsl3sXc",
       "archive-zorro-s-black-whip-1944-colorized",
@@ -2320,7 +2320,7 @@
       "tt0013674"
     ],
     "createdAt": "2026-01-24T00:00:00.000Z",
-    "updatedAt": "2026-01-24T17:14:55.090Z",
+    "updatedAt": "2026-02-02T00:08:43.383Z",
     "savedQueries": [
       {
         "searchQuery": "Three Musketeers",
@@ -2489,7 +2489,7 @@
     "name": "Samurai",
     "description": "Epic samurai films showcasing the way of the warrior, honor, and legendary swordsmen from feudal Japan.",
     "movieIds": [
-      "archive-le-samurai-vose-sellada",
+      "tt0062229",
       "tt0076024",
       "tt0045935",
       "tt1165285",
@@ -2511,7 +2511,7 @@
       "tt0059303",
       "tt0056443",
       "tt0033654",
-      "youtube-qKKMBy4aB5k",
+      "tt1674778",
       "tt0036034",
       "tt0004838",
       "tt0046478",
@@ -2519,7 +2519,7 @@
       "tt0055630"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-24T17:20:38.539Z",
+    "updatedAt": "2026-02-01T23:56:27.753Z",
     "savedQueries": [
       {
         "searchQuery": "samurai",
@@ -2548,7 +2548,7 @@
     "movieIds": [
       "tt8444480",
       "tt0047365",
-      "archive-tarkan-viking-kani_movie",
+      "tt0274932",
       "tt8284860",
       "tt0529758",
       "tt0019532",
@@ -2568,7 +2568,7 @@
       "tt0001857",
       "archive-lancelot-and-guinevere-1963",
       "youtube-x38I1bWOxb8",
-      "youtube-JUzf0L8I98c",
+      "tt0338806",
       "tt0053861",
       "tt13117446",
       "youtube-_Ku-49beN1U",
@@ -2579,7 +2579,7 @@
       "tt0056211"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-24T16:47:40.337Z",
+    "updatedAt": "2026-02-02T00:54:40.790Z",
     "savedQueries": [
       {
         "searchQuery": "knight",
@@ -2650,7 +2650,7 @@
       "youtube-171tNN5CuqE",
       "youtube-yI0Qkiv8fVQ",
       "tt0024216",
-      "archive-king-kong-1933-espanol_202401",
+      "tt0024216",
       "tt0158780",
       "archive-Fire_Monsters_Against_The_Son_of_Hercules",
       "archive-MonsterA.k.a.Monstroid",
@@ -2663,7 +2663,7 @@
       "tt0048215"
     ],
     "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-02-01T17:04:01.995Z",
+    "updatedAt": "2026-02-01T23:29:51.191Z",
     "savedQueries": [
       {
         "searchQuery": "Godzilla",
@@ -2750,7 +2750,7 @@
       "tt0004108",
       "archive-laffing-gas-1914",
       "archive-musical-tramps-1914",
-      "archive-one-a.-m.-1916-directed-by-charlie-chaplin",
+      "tt0007145",
       "tt0003758",
       "tt0004936",
       "tt9459600",
@@ -2781,7 +2781,7 @@
       "tt0004637"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-01T22:29:45.833Z",
+    "updatedAt": "2026-02-01T23:48:16.063Z",
     "savedQueries": [
       {
         "searchQuery": "Charlie Chaplin",
@@ -2815,11 +2815,11 @@
       "archive-buster-in-paris-dvd-keaton-plus",
       "archive-gowest4k",
       "archive-nils-petter-sundgren-intervjuar-buster-keaton-1960talet-f-b-3-unqm-g",
-      "archive-ptp_our-hospitality_john-g-blystone_m2ts_bd50_1080i_219697",
-      "archive-ptp_the-love-nest_buster-keaton_edward-f-cline_blu-ray_h264_mkv_1080p_430833",
-      "archive-ptp_the-love-nest_buster-keaton_edward-f-cline_blu-ray_x264_mkv_1080p_359482",
-      "archive-ptp_the-love-nest_buster-keaton_edward-f-cline_blu-ray_x264_mkv_720p_218635",
-      "archive-ptp_three-ages_edward-f-cline_mkv_x264_720p_77746",
+      "tt0014341",
+      "tt0014218",
+      "tt0014218",
+      "tt0014218",
+      "tt0014538",
       "archive-thethreeagesbusterkeaton",
       "tt0007761",
       "tt0007819",
@@ -2878,18 +2878,18 @@
       "tt8020616",
       "youtube-CfgvbK5x8J8",
       "youtube-H4s8EGY7cmg",
-      "youtube-Ksz-SZWmeGk",
-      "youtube-OLnNmQy4oT0",
-      "youtube-UXuVE_U-0lc",
+      "tt0017925",
+      "tt0249555",
+      "tt0032536",
       "youtube-Y5Hfrf4LUTI",
-      "youtube-_ueDrcZhjbs",
+      "tt0014538",
       "youtube-ir8hnlOTgec",
       "youtube-kXLe11zlukw",
-      "youtube-pf8298KRhpQ",
+      "tt0019421",
       "youtube-uSrRnk1Tc1I"
     ],
     "createdAt": "2025-12-30T00:00:00.000Z",
-    "updatedAt": "2026-01-02T20:52:21.165Z",
+    "updatedAt": "2026-02-02T00:22:23.169Z",
     "savedQueries": [],
     "tags": [
       "comedy",
@@ -2911,13 +2911,13 @@
       "tt0043255",
       "tt0047794",
       "tt0047795",
-      "youtube-0pY7ZTFkuBE",
+      "tt0044762",
       "youtube-5myY1ILoN8E",
       "youtube-F89AU80mkQM",
-      "youtube-u95Au5SqU10"
+      "tt0041098"
     ],
     "createdAt": "2026-01-03T19:00:00.000Z",
-    "updatedAt": "2026-01-03T19:00:00.000Z",
+    "updatedAt": "2026-02-02T00:10:24.981Z",
     "savedQueries": [],
     "tags": [
       "comedy",
@@ -2998,16 +2998,16 @@
       "youtube-RmSdum4BMqI",
       "youtube-gDt2qK_ZNQk",
       "youtube-9aJ5j8HH46w",
-      "archive-secretagentfullmoviealfredhitchcockthriller1936englishsubtitle",
-      "archive-the-39-steps-colorized-movie-720p-hd",
+      "tt0028231",
+      "tt0026029",
       "youtube-tEsehhPMO68",
-      "archive-the-lady-vanishes-colorized-movie-720p-hd_202403",
+      "tt0030341",
       "youtube-jQ9ICZjQaLM",
-      "archive-the-man-who-knew-too-much-colorized-movie-720p-hd",
+      "tt0049470",
       "youtube-cFU5esmgOds"
     ],
     "createdAt": "2026-01-10T17:18:00.000Z",
-    "updatedAt": "2026-01-10T16:39:55.543Z",
+    "updatedAt": "2026-02-02T01:00:59.417Z",
     "savedQueries": [
       {
         "searchQuery": "Alfred Hitchcock",
@@ -3129,7 +3129,7 @@
       "tt4687848",
       "youtube-izJVVBjIN3Q",
       "youtube-PdVMOvOzZNw",
-      "youtube-PofsGjGYfUs",
+      "tt0223024",
       "youtube-xU9eLFJ6ZJ4",
       "archive-LADYWHIRLWIND1973_1",
       "tt0095937",
@@ -3145,12 +3145,12 @@
       "tt0913968",
       "tt1686784",
       "tt2644714",
-      "youtube-iGGk97eT384",
+      "tt0113153",
       "youtube-bmHFoKFsxjQ",
       "youtube-ZjKwt3FgkvY",
       "youtube-2u-Le5E7v6U",
       "tt0133226",
-      "archive-le-samurai-vose-sellada",
+      "tt0062229",
       "tt0076024",
       "tt0045935",
       "tt1165285",
@@ -3170,7 +3170,7 @@
       "tt0059303",
       "tt0056443",
       "tt0033654",
-      "youtube-qKKMBy4aB5k",
+      "tt1674778",
       "tt0036034",
       "tt0004838",
       "tt0046478",
@@ -3178,7 +3178,7 @@
       "tt0055630"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-01-24T17:20:37.056Z",
+    "updatedAt": "2026-02-02T00:05:11.300Z",
     "savedQueries": [],
     "tags": [
       "action",
@@ -3302,10 +3302,10 @@
     "movieIds": [
       "tt1620449",
       "tt1272051",
-      "youtube-xat8ZmhrG5o"
+      "tt1272051"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-24T18:01:33.320Z",
+    "updatedAt": "2026-02-02T00:04:41.883Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -5601,7 +5601,7 @@
       "tt0109279",
       "tt0101465",
       "tt0109444",
-      "tt0100234",
+      "tt0040237",
       "tt0118883",
       "tt0118892",
       "tt0120907",
@@ -5640,7 +5640,7 @@
       "tt0111800"
     ],
     "createdAt": "2026-01-07T02:00:00.000Z",
-    "updatedAt": "2026-01-11T22:55:35.072Z",
+    "updatedAt": "2026-02-02T01:16:56.339Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -6017,8 +6017,8 @@
       "tt0021884",
       "tt0021884",
       "tt0021884",
-      "youtube-OaJftrcR8IM",
-      "youtube-Ko8jBzUXsTE",
+      "tt1312221",
+      "tt1312221",
       "youtube-POV-1sxVrac",
       "tt28063527",
       "tt0061683",
@@ -6048,16 +6048,16 @@
       "tt0026138",
       "tt0026138",
       "tt0026138",
-      "archive-the-curse-of-frankenstein-1957_202406",
+      "tt0050280",
       "tt0058073",
       "tt0050894",
-      "archive-the-revenge-of-frankenstein-1958_202406",
+      "tt0050894",
       "tt0090196",
       "tt0072431",
       "archive-young-frankenstein-colorized-1974-720p"
     ],
     "createdAt": "2026-02-01T16:28:06.301Z",
-    "updatedAt": "2026-02-01T17:02:08.004Z",
+    "updatedAt": "2026-02-02T01:02:41.943Z",
     "savedQueries": [
       {
         "searchQuery": "frankenstein",
