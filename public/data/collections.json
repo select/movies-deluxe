@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-02-02T01:16:56.339Z"
+    "lastUpdated": "2026-02-02T01:47:26.744Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -128,10 +128,15 @@
       "tt0054144",
       "tt0057358",
       "tt1166827",
-      "tt1332128"
+      "tt1332128",
+      "tt0085743",
+      "tt0104561",
+      "tt0466460",
+      "tt0169102",
+      "tt0055601"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-02T01:16:56.339Z",
+    "updatedAt": "2026-02-02T01:39:02.141Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1915,10 +1920,78 @@
       "tt0027123",
       "tt0023852",
       "tt0142387",
-      "tt0151967"
+      "tt0151967",
+      "tt0148270",
+      "tt0151932",
+      "tt0149709",
+      "tt0149747",
+      "tt0032238",
+      "tt0147949",
+      "tt0148090",
+      "tt0025260",
+      "tt0150932",
+      "tt0148310",
+      "tt0148357",
+      "tt0162424",
+      "tt0151652",
+      "tt0148665",
+      "tt0152280",
+      "tt0152290",
+      "tt0152321",
+      "tt0152327",
+      "tt0152334",
+      "tt0152335",
+      "tt0152338",
+      "tt0152339",
+      "tt0152340",
+      "tt0152341",
+      "tt0152941",
+      "tt0150235",
+      "tt0150744",
+      "tt0148315",
+      "tt0151506",
+      "tt0153937",
+      "tt0149270",
+      "tt0153189",
+      "tt0149382",
+      "tt0149826",
+      "tt0147909",
+      "tt0147915",
+      "tt0147934",
+      "tt0147961",
+      "tt0148056",
+      "tt0150104",
+      "tt0150258",
+      "tt0148087",
+      "tt0148187",
+      "tt0148278",
+      "tt0150991",
+      "tt0151015",
+      "tt0148323",
+      "tt0151084",
+      "tt0148406",
+      "tt0151388",
+      "tt0151407",
+      "tt0151411",
+      "tt0151445",
+      "tt0148591",
+      "tt0148594",
+      "tt0152188",
+      "tt0149083",
+      "tt0149087",
+      "tt0149368",
+      "tt0149942",
+      "tt0147913",
+      "tt0147962",
+      "tt0147914",
+      "tt0149100",
+      "tt0148267",
+      "tt0148666",
+      "tt0152688",
+      "tt0147687"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-02T00:52:54.357Z",
+    "updatedAt": "2026-02-02T01:47:26.744Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -2044,6 +2117,46 @@
         "searchQuery": "Burt Gillett",
         "filterState": {
           "searchQuery": "Burt Gillett",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Sid Marcus",
+        "filterState": {
+          "searchQuery": "Sid Marcus",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Seymour Kneitel",
+        "filterState": {
+          "searchQuery": "Seymour Kneitel",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Myron Waldman",
+        "filterState": {
+          "searchQuery": "Myron Waldman",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "Larz Bourne",
+        "filterState": {
+          "searchQuery": "Larz Bourne",
           "sort": {
             "field": "relevance",
             "direction": "desc"
