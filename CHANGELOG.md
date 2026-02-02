@@ -1,5 +1,27 @@
 # Changelog
 
+# [0.9.0](https://github.com/select/movies-deluxe/compare/v0.8.4...v0.9.0) (2026-02-02)
+
+
+### Bug Fixes
+
+* **admin:** unwrap aiOptions ref when sending to API ([219516f](https://github.com/select/movies-deluxe/commit/219516f00a1dd385947b9834b1e0f0c856ff02de))
+* **ai:** emit progress for each movie in batch loop ([46226de](https://github.com/select/movies-deluxe/commit/46226de56410d1ec532da318079f2a392bbe4c04))
+* **ai:** wire up provider selection in AI extraction API ([a1fa9e7](https://github.com/select/movies-deluxe/commit/a1fa9e74721b9a13013c3b4aa7c297a8a9c5e224))
+* **collections:** filter orphaned movie IDs from collection display ([5a98ca4](https://github.com/select/movies-deluxe/commit/5a98ca4392a7b28bc24c2c7b8b072c084f62d17b))
+* **ui:** remove unused enter key handler from search ([83207f3](https://github.com/select/movies-deluxe/commit/83207f3a56052cd57e5186f4795c77d116dc50bc))
+
+
+### Features
+
+* **admin:** persist AI extraction settings to localStorage ([b9a7853](https://github.com/select/movies-deluxe/commit/b9a785324c4221c202cb8c8319cedf2ab32a8844))
+* **ai:** add batch metadata extraction with configurable batch size ([524dbf5](https://github.com/select/movies-deluxe/commit/524dbf520b537ed8c42a362202e38cfbc3a7bf1f))
+* **ai:** add OpenRouter provider support for metadata extraction ([34fd9ef](https://github.com/select/movies-deluxe/commit/34fd9ef1ff8885436e68a48bfd66ea63523c5223))
+* **ai:** add OpenRouter SDK integration with Groq provider ([693b236](https://github.com/select/movies-deluxe/commit/693b236021fcd85bdf6dfb5d989373def8d64ad9))
+* **ai:** add server-side logging for batch extraction progress ([fa792f4](https://github.com/select/movies-deluxe/commit/fa792f4f93fab7da1dcfd3c2d2f6f1fc8bf0bfae))
+* **data:** consolidate JESUS Film language variants into single entry ([3b9dd0f](https://github.com/select/movies-deluxe/commit/3b9dd0f561f65db49bc10b75380c17e9739ffbec))
+* **types:** add explicit return types to composables, utils, and server functions ([1916399](https://github.com/select/movies-deluxe/commit/1916399203bea6d85eacfc3ed907fa483b6919ce))
+
 ## [0.8.4](https://github.com/select/movies-deluxe/compare/v0.8.3...v0.8.4) (2026-01-26)
 
 
