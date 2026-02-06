@@ -131,19 +131,6 @@ export interface OMDBOptions {
   forceRetryFailed: boolean
 }
 
-export interface DeduplicationResult {
-  totalSources: number
-  sourcesWithDescriptions: number
-  boilerplateRemoved: number
-  sourcesProcessed: number
-  descriptionsRemoved: number
-  patterns: Array<{
-    pattern: string
-    count: number
-    description: string
-  }>
-}
-
 export interface CollectionCleanupResult {
   success: boolean
   stats: {

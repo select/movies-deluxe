@@ -7,7 +7,6 @@ import type {
   YouTubeOptions,
   PosterOptions,
   OMDBOptions,
-  DeduplicationResult,
   CollectionCleanupResult,
   GenerateDatabaseRequest,
 } from '~/types/admin'
@@ -42,12 +41,10 @@ export const useAdminStore = defineStore('admin', () => {
   const scraping = ref(false)
   const generatingSqlite = ref(false)
   const generatingHomePages = ref(false)
-  const deduplicating = ref(false)
   const cleaningCollections = ref(false)
   const stats = ref<ScrapeStats | null>(null)
   const results = ref<ScrapeResults | null>(null)
   const posterResults = ref<PosterResults | null>(null)
-  const deduplicationResults = ref<DeduplicationResult | null>(null)
   const collectionCleanupResults = ref<CollectionCleanupResult | null>(null)
   const youtubeChannels = ref<YouTubeChannelConfig[]>([])
   const progress = ref<Record<string, ProgressUpdate>>({})
@@ -304,32 +301,6 @@ export const useAdminStore = defineStore('admin', () => {
     return (failed / stats.value.posters.withPosterUrl) * 100
   })
 
-  const deduplicateDescriptions = async () => {
-    deduplicating.value = true
-    deduplicationResults.value = null
-    try {
-      deduplicationResults.value = await $fetch<DeduplicationResult>(
-        '/api/admin/data/deduplicate-descriptions',
-        {
-          method: 'POST',
-        }
-      )
-      await refreshStats()
-    } catch (e: unknown) {
-      window.console.error('Description deduplication failed', e)
-      deduplicationResults.value = {
-        totalSources: 0,
-        sourcesWithDescriptions: 0,
-        boilerplateRemoved: 0,
-        sourcesProcessed: 0,
-        descriptionsRemoved: 0,
-        patterns: [],
-      }
-    } finally {
-      deduplicating.value = false
-    }
-  }
-
   const cleanupCollections = async () => {
     cleaningCollections.value = true
     collectionCleanupResults.value = null
@@ -363,12 +334,10 @@ export const useAdminStore = defineStore('admin', () => {
     scraping,
     generatingSqlite,
     generatingHomePages,
-    deduplicating,
     cleaningCollections,
     stats,
     results,
     posterResults,
-    deduplicationResults,
     collectionCleanupResults,
     youtubeChannels,
     progress,
@@ -388,7 +357,6 @@ export const useAdminStore = defineStore('admin', () => {
     startAIExtraction,
     generateSqlite,
     generateHomePages,
-    deduplicateDescriptions,
     cleanupCollections,
     totalExternalVideos,
     youtubeTotalScraped,

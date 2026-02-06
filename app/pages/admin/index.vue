@@ -278,21 +278,19 @@
       </section>
 
       <!-- Scrape Controls -->
-      <div class="space-y-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         <!-- Data Collection Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             <div class="i-mdi-database-import text-amber-600"></div>
             Data Collection
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-              <AdminArchiveScraper
-                v-model="archiveOptions"
-                :loading="scraping"
-                @start="adminStore.startArchiveScrape"
-              />
-            </div>
+          <div class="flex flex-col gap-8">
+            <AdminArchiveScraper
+              v-model="archiveOptions"
+              :loading="scraping"
+              @start="adminStore.startArchiveScrape"
+            />
 
             <AdminYouTubeScraper
               v-model="youtubeOptions"
@@ -303,13 +301,32 @@
           </div>
         </section>
 
-        <!-- Data Enrichment Section -->
+        <!-- Data Management Section -->
         <section>
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <div class="i-mdi-database-cog text-blue-600"></div>
+            Data Management
+          </h2>
+          <div class="flex flex-col gap-8">
+            <AdminDatabaseGenerator />
+
+            <AdminEmbeddingsGenerator />
+
+            <AdminCollectionCleanup
+              :loading="cleaningCollections"
+              :results="collectionCleanupResults"
+              @start="adminStore.cleanupCollections"
+            />
+          </div>
+        </section>
+
+        <!-- Data Enrichment Section -->
+        <section class="md:col-span-2">
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             <div class="i-mdi-database-sync text-green-600"></div>
             Data Enrichment
           </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <AdminOMDBEnrichment
               v-model="omdbOptions"
               :loading="scraping"
@@ -329,35 +346,6 @@
             />
 
             <AdminPosterArchiver />
-          </div>
-        </section>
-
-        <!-- Database Management Section -->
-        <section>
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <div class="i-mdi-database-cog text-blue-600"></div>
-            Database Management
-          </h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <AdminDatabaseGenerator />
-
-            <AdminEmbeddingsGenerator />
-
-            <!-- Data Cleanup Section -->
-            <div>
-              <div class="space-y-8">
-                <AdminDataDeduplication
-                  :loading="deduplicating"
-                  :results="deduplicationResults"
-                  @start="adminStore.deduplicateDescriptions"
-                />
-                <AdminCollectionCleanup
-                  :loading="cleaningCollections"
-                  :results="collectionCleanupResults"
-                  @start="adminStore.cleanupCollections"
-                />
-              </div>
-            </div>
           </div>
         </section>
       </div>
@@ -398,8 +386,6 @@ const {
   omdbOptions,
   aiOptions,
   posterOptions,
-  deduplicating,
-  deduplicationResults,
   cleaningCollections,
   collectionCleanupResults,
   results,
@@ -424,7 +410,6 @@ const refreshingStats = computed(() => {
 const clearResults = () => {
   adminStore.results = null
   adminStore.posterResults = null
-  adminStore.deduplicationResults = null
   adminStore.collectionCleanupResults = null
 }
 
