@@ -65,6 +65,7 @@ export function getAdminDatabase(): Database.Database {
       adminDb = new Database(DB_PATH, {
         // Enable verbose mode in development for debugging
         verbose: process.env.NODE_ENV === 'development' ? console.log : undefined,
+        timeout: 10000, // Wait up to 10 seconds if database is busy
       })
 
       // Configure pragmas for optimal performance
@@ -171,20 +172,29 @@ export async function withTransaction<T>(
 ): Promise<T> {
   const db = getAdminDatabase()
 
-  // better-sqlite3 transactions are synchronous, so we wrap the user's function
-  const transaction = db.transaction(() => {
-    return fn(db)
-  })
-
+  // better-sqlite3 transactions must be synchronous
+  // For async functions, we need to handle BEGIN/COMMIT/ROLLBACK manually
   try {
-    const result = transaction()
-    // If the result is a promise, await it
+    db.prepare('BEGIN').run()
+    const result = fn(db)
+
+    // If the result is a promise, await it before committing
     if (result instanceof Promise) {
-      return await result
+      const awaitedResult = await result
+      db.prepare('COMMIT').run()
+      return awaitedResult
     }
+
+    // Synchronous result - commit immediately
+    db.prepare('COMMIT').run()
     return result
   } catch (error) {
-    // Transaction automatically rolled back by better-sqlite3
+    // Rollback on error
+    try {
+      db.prepare('ROLLBACK').run()
+    } catch {
+      // Ignore rollback errors (transaction might not be active)
+    }
     throw new Error(`Transaction failed: ${error}`)
   }
 }

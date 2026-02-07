@@ -15,13 +15,13 @@
  * - movies (primary table)
  * - sources
  * - metadata
- * - ratings
  * - ai_metadata
  * - movie_quality_labels
  * - collection_movies
  * - related_movies (both directions)
  *
  * Note: source_quality_marks is updated via CASCADE from sources table
+ * Note: ratings table removed - imdbRating in metadata is sufficient
  */
 
 import type { Database } from 'better-sqlite3'
@@ -39,7 +39,6 @@ export interface MigrationResult {
     movies: number
     sources: number
     metadata: number
-    ratings: number
     aiMetadata: number
     movieQualityLabels: number
     collectionMovies: number
@@ -131,7 +130,6 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
         movies: 0,
         sources: 0,
         metadata: 0,
-        ratings: 0,
         aiMetadata: 0,
         movieQualityLabels: 0,
         collectionMovies: 0,
@@ -171,10 +169,7 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
       const aiMetadataResult = aiMetadataStmt.run(newId, oldId)
       tablesUpdated.aiMetadata = aiMetadataResult.changes
 
-      // Update ratings
-      const ratingsStmt = db.prepare('UPDATE ratings SET movieId = ? WHERE movieId = ?')
-      const ratingsResult = ratingsStmt.run(newId, oldId)
-      tablesUpdated.ratings = ratingsResult.changes
+      // Ratings table removed - imdbRating is sufficient
 
       // Update metadata
       const metadataStmt = db.prepare('UPDATE metadata SET movieId = ? WHERE movieId = ?')

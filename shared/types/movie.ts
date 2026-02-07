@@ -83,10 +83,7 @@ export interface MovieMetadata {
   Language?: string
   Country?: string
   Awards?: string
-  Ratings?: Array<{
-    Source: string
-    Value: string
-  }>
+  // Ratings field removed - imdbRating is sufficient
   imdbRating?: number
   imdbVotes?: number
   imdbID?: string

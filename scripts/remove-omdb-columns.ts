@@ -143,10 +143,23 @@ async function migrateDatabase(): Promise<void> {
 
       log('Creating new metadata table without unused columns...')
 
-      // Step 1: Rename old table
+      // Step 1: Drop existing indexes
+      log('Dropping existing indexes...')
+      db.exec(`
+        DROP INDEX IF EXISTS idx_metadata_imdbRating;
+        DROP INDEX IF EXISTS idx_metadata_imdbVotes;
+        DROP INDEX IF EXISTS idx_metadata_Genre;
+        DROP INDEX IF EXISTS idx_metadata_Country;
+        DROP INDEX IF EXISTS idx_metadata_Director;
+        DROP INDEX IF EXISTS idx_metadata_Year;
+        DROP INDEX IF EXISTS idx_metadata_year_rating;
+        DROP INDEX IF EXISTS idx_metadata_genre_rating;
+      `)
+
+      // Step 2: Rename old table
       db.exec('ALTER TABLE metadata RENAME TO metadata_old')
 
-      // Step 2: Create new table with correct schema (without DVD, BoxOffice, Production, Website, Released, Poster, Metascore, Response)
+      // Step 3: Create new table with correct schema (without DVD, BoxOffice, Production, Website, Released, Poster, Metascore, Response)
       db.exec(`
         CREATE TABLE metadata (
           movieId TEXT PRIMARY KEY,
@@ -171,7 +184,7 @@ async function migrateDatabase(): Promise<void> {
         )
       `)
 
-      // Step 3: Copy data from old table to new table (excluding removed columns)
+      // Step 4: Copy data from old table to new table (excluding removed columns)
       log('Copying data to new table...')
       db.exec(`
         INSERT INTO metadata (
@@ -186,7 +199,7 @@ async function migrateDatabase(): Promise<void> {
         FROM metadata_old
       `)
 
-      // Step 4: Recreate indexes
+      // Step 5: Recreate indexes
       log('Recreating indexes...')
       db.exec(`
         CREATE INDEX idx_metadata_imdbRating ON metadata(imdbRating);
@@ -199,11 +212,11 @@ async function migrateDatabase(): Promise<void> {
         CREATE INDEX idx_metadata_genre_rating ON metadata(Genre, imdbRating);
       `)
 
-      // Step 5: Drop old table
+      // Step 6: Drop old table
       log('Dropping old table...')
       db.exec('DROP TABLE metadata_old')
 
-      // Step 6: Verify migration
+      // Step 7: Verify migration
       const finalRowCount = countMetadataRows(db)
       log(`Final metadata rows: ${finalRowCount}`)
 

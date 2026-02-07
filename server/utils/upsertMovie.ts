@@ -142,12 +142,7 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
     | undefined
 
   if (metadata) {
-    // Load ratings
-    const ratings = db
-      .prepare('SELECT Source, Value FROM ratings WHERE movieId = ?')
-      .all(movieId) as { Source: string; Value: string }[]
-
-    metadata.Ratings = ratings.length > 0 ? ratings : undefined
+    // No need to load ratings - imdbRating is already in metadata table
   }
 
   // Load AI metadata
@@ -183,7 +178,6 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       Language: metadata.Language ?? undefined,
       Country: metadata.Country ?? undefined,
       Awards: metadata.Awards ?? undefined,
-      Ratings: metadata.Ratings,
       imdbRating: metadata.imdbRating ?? undefined,
       imdbVotes: metadata.imdbVotes ?? undefined,
       imdbID: metadata.imdbID ?? undefined,
@@ -424,18 +418,7 @@ export async function upsertMovie(
           entry.metadata.Type
         )
 
-        // Handle ratings: DELETE old + INSERT new
-        if (entry.metadata.Ratings && entry.metadata.Ratings.length > 0) {
-          db.prepare('DELETE FROM ratings WHERE movieId = ?').run(existingMovieId)
-
-          const insertRating = db.prepare(`
-            INSERT OR IGNORE INTO ratings (movieId, Source, Value)
-            VALUES (?, ?, ?)
-          `)
-          for (const rating of entry.metadata.Ratings) {
-            insertRating.run(existingMovieId, rating.Source, rating.Value)
-          }
-        }
+        // Ratings table removed - imdbRating is sufficient
       }
 
       // Handle AI metadata: INSERT OR REPLACE
@@ -546,16 +529,7 @@ export async function upsertMovie(
           entry.metadata.Type
         )
 
-        // Insert ratings
-        if (entry.metadata.Ratings && entry.metadata.Ratings.length > 0) {
-          const insertRating = db.prepare(`
-            INSERT OR IGNORE INTO ratings (movieId, Source, Value)
-            VALUES (?, ?, ?)
-          `)
-          for (const rating of entry.metadata.Ratings) {
-            insertRating.run(movieId, rating.Source, rating.Value)
-          }
-        }
+        // Ratings table removed - imdbRating is sufficient
       }
 
       // Insert AI metadata if provided

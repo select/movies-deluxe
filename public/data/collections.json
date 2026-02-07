@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-02-07T03:35:38.911Z"
+    "lastUpdated": "2026-02-07T20:41:08.551Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -133,10 +133,11 @@
       "tt0104561",
       "tt0466460",
       "tt0169102",
-      "tt0055601"
+      "tt0055601",
+      "tt0109117"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-07T03:35:38.910Z",
+    "updatedAt": "2026-02-07T04:19:26.766Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -1639,7 +1640,7 @@
       "tt0161945",
       "tt0161951",
       "tt0161963",
-      "tt5950044",
+      "tt0034247",
       "tt0150031",
       "tt0153753",
       "tt0153339",
@@ -1991,7 +1992,7 @@
       "tt0147687"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-02T02:11:34.436Z",
+    "updatedAt": "2026-02-07T19:46:28.002Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -2218,10 +2219,13 @@
       "tt0037303",
       "tt0027136",
       "tt0038259",
-      "tt0406934"
+      "tt0406934",
+      "tt35892221",
+      "tt0052905",
+      "tt0141820"
     ],
     "createdAt": "2026-01-11T19:30:00.000Z",
-    "updatedAt": "2026-02-06T20:40:06.846Z",
+    "updatedAt": "2026-02-07T04:23:05.816Z",
     "savedQueries": [
       {
         "searchQuery": "Sherlock Holmes",
@@ -2773,10 +2777,12 @@
       "tt18937574",
       "tt0471561",
       "tt0221905",
-      "tt0048215"
+      "tt0048215",
+      "tt14516188",
+      "tt13862974"
     ],
     "createdAt": "2026-01-19T00:50:00.000Z",
-    "updatedAt": "2026-02-01T23:29:51.191Z",
+    "updatedAt": "2026-02-07T19:56:27.745Z",
     "savedQueries": [
       {
         "searchQuery": "Godzilla",
@@ -2816,6 +2822,262 @@
       "japanese-cinema",
       "sci-fi",
       "action"
+    ]
+  },
+  "dangerous-dinosaurs": {
+    "id": "dangerous-dinosaurs",
+    "name": "Dangerous Dinosaurs",
+    "description": "A collection of dinosaur-themed movies featuring prehistoric creatures, from classic monster films to modern adventures.",
+    "movieIds": [
+      "tt1136683",
+      "tt0147923",
+      "tt2518926",
+      "tt1920846",
+      "tt0112466",
+      "tt0031202",
+      "tt13296032",
+      "tt0126926",
+      "tt0004008",
+      "tt0047034",
+      "youtube-5HoLOPqk2eU",
+      "tt3038708",
+      "youtube-PL_u-UFK3Hw",
+      "tt8783146",
+      "youtube-bLLFRSuYx5M",
+      "tt10270416",
+      "tt5001456",
+      "tt6131386",
+      "tt21844572",
+      "tt0048256",
+      "archive-mountain-of-dinosaurs-masters-of-russian-animation",
+      "tt0152059",
+      "tt0032941",
+      "archive-RecurringDinosaurInfestationFilms",
+      "tt0058601",
+      "tt0045546",
+      "tt0150052",
+      "tt0005198",
+      "tt0166609",
+      "tt0009105",
+      "tt0403144",
+      "tt6710826",
+      "tt0073260",
+      "tt0050622",
+      "tt0076294",
+      "archive-the-last-dinosaur",
+      "tt0151672",
+      "tt0265468",
+      "youtube-3vVh9xrXoj0",
+      "youtube-dW4kueaM5IA",
+      "tt13399406",
+      "tt8128866",
+      "tt0045282",
+      "tt13877410",
+      "archive-WillisHObriensTheDinosaurAndTheMissingLink-APrehistoricTragedy",
+      "tt24732422",
+      "youtube-P-BAYbGcwGM",
+      "tt14873410",
+      "tt27036477",
+      "youtube-IvVcNpkJTag",
+      "tt11760236",
+      "tt0032871",
+      "tt12680102",
+      "tt2690160",
+      "tt0111361",
+      "tt0460912",
+      "youtube-bRVhdL8LKgA"
+    ],
+    "createdAt": "2026-02-07T00:00:00.000Z",
+    "updatedAt": "2026-02-07T20:02:59.422Z",
+    "savedQueries": [
+      {
+        "searchQuery": "dinosaur",
+        "filterState": {
+          "searchQuery": "dinosaur",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "jurassic",
+        "filterState": {
+          "searchQuery": "jurassic",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "prehistoric",
+        "filterState": {
+          "searchQuery": "prehistoric",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "t-rex",
+        "filterState": {
+          "searchQuery": "t-rex",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "raptor",
+        "filterState": {
+          "searchQuery": "raptor",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "dinosaurs",
+      "prehistoric",
+      "monsters",
+      "adventure",
+      "science-fiction"
+    ]
+  },
+  "fin-flicks": {
+    "id": "fin-flicks",
+    "name": "Fin Flicks",
+    "description": "Thrilling shark movies from deep-sea terror to beach nightmares. Dive into the ultimate predator collection.",
+    "movieIds": [
+      "youtube-DJbkDOpa85g",
+      "tt14912006",
+      "tt0112747",
+      "tt1507563",
+      "youtube-gGGmR6KkLNg",
+      "tt0164702",
+      "youtube-RlgPpNDN5J0",
+      "tt27036477",
+      "tt14873410",
+      "tt0074845",
+      "tt1478325",
+      "tt1264098",
+      "youtube-P-KWxEAbCi8",
+      "tt1705773",
+      "tt1350498",
+      "tt4566574",
+      "tt3152098",
+      "tt8235660",
+      "tt6581990",
+      "tt0047244",
+      "tt0100273",
+      "tt0151794",
+      "tt0041715",
+      "tt0426556",
+      "tt0030609",
+      "tt0066365",
+      "tt0222355",
+      "tt0329589",
+      "tt1087474",
+      "tt4025594",
+      "tt4416518",
+      "tt12906784",
+      "youtube-8JxT-p4pU9w",
+      "tt0339236",
+      "tt2724064",
+      "tt3062074",
+      "tt3899796",
+      "tt5110282",
+      "youtube-uS4gepa8q8w",
+      "tt13862974",
+      "tt33078577",
+      "tt3743126",
+      "tt3292154",
+      "tt0052188",
+      "youtube-w4DVsp7zLh8",
+      "tt1684927",
+      "tt0052587",
+      "youtube-lO2r7S5AU6k",
+      "youtube-v1i7_kamip8",
+      "youtube-_3EqD0pznaw",
+      "youtube-lejRPtua940",
+      "youtube-rn3D1pfAqS0",
+      "youtube-ov5LrTDI6xs",
+      "youtube-K0x5bFhhwag",
+      "tt0036534",
+      "tt17978800",
+      "tt15295912",
+      "tt27572862",
+      "tt11404762",
+      "tt8332772",
+      "youtube-McKrgRHoI-A",
+      "youtube-LcpIbBr1-1U"
+    ],
+    "createdAt": "2026-02-07T00:00:00.000Z",
+    "updatedAt": "2026-02-07T20:41:08.551Z",
+    "savedQueries": [
+      {
+        "searchQuery": "shark",
+        "filterState": {
+          "searchQuery": "shark",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "jaws",
+        "filterState": {
+          "searchQuery": "jaws",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "megalodon",
+        "filterState": {
+          "searchQuery": "megalodon",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "shark attack",
+        "filterState": {
+          "searchQuery": "shark attack",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      },
+      {
+        "searchQuery": "sharknado",
+        "filterState": {
+          "searchQuery": "sharknado",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "sharks",
+      "ocean",
+      "thriller",
+      "horror",
+      "action",
+      "creature-feature"
     ]
   },
   "charlie-chaplin": {
@@ -6130,7 +6392,7 @@
       "tt0021884",
       "tt0021884",
       "tt0021884",
-      "tt1312221",
+      "tt0397430",
       "tt1312221",
       "youtube-POV-1sxVrac",
       "tt28063527",
@@ -6170,7 +6432,7 @@
       "tt0072431"
     ],
     "createdAt": "2026-02-01T16:28:06.301Z",
-    "updatedAt": "2026-02-02T01:53:05.535Z",
+    "updatedAt": "2026-02-07T19:47:24.366Z",
     "savedQueries": [
       {
         "searchQuery": "frankenstein",

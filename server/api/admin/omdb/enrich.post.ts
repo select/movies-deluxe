@@ -135,10 +135,7 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
 
   let convertedMetadata: MovieEntry['metadata'] = undefined
   if (metadata) {
-    // Load ratings
-    const ratings = db
-      .prepare('SELECT Source, Value FROM ratings WHERE movieId = ?')
-      .all(movieId) as { Source: string; Value: string }[]
+    // Ratings table removed - imdbRating is sufficient
 
     convertedMetadata = {
       Title: metadata.Title ?? undefined,
@@ -153,7 +150,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       Language: metadata.Language ?? undefined,
       Country: metadata.Country ?? undefined,
       Awards: metadata.Awards ?? undefined,
-      Ratings: ratings.length > 0 ? ratings : undefined,
       imdbRating: metadata.imdbRating ?? undefined,
       imdbVotes: metadata.imdbVotes ?? undefined,
       imdbID: metadata.imdbID ?? undefined,

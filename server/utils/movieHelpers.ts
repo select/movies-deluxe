@@ -153,10 +153,7 @@ function sourceRowToMovieSource(source: SourceRow, marks: { mark: string }[]): M
 /**
  * Convert metadata row to MovieMetadata object
  */
-function metadataRowToMovieMetadata(
-  metadata: MetadataRow,
-  ratings: { Source: string; Value: string }[]
-): MovieMetadata {
+function metadataRowToMovieMetadata(metadata: MetadataRow): MovieMetadata {
   return {
     Title: metadata.Title ?? undefined,
     Year: metadata.Year ?? undefined,
@@ -170,7 +167,6 @@ function metadataRowToMovieMetadata(
     Language: metadata.Language ?? undefined,
     Country: metadata.Country ?? undefined,
     Awards: metadata.Awards ?? undefined,
-    Ratings: ratings.length > 0 ? ratings : undefined,
     imdbRating: metadata.imdbRating ?? undefined,
     imdbVotes: metadata.imdbVotes ?? undefined,
     imdbID: metadata.imdbID ?? undefined,
@@ -194,7 +190,7 @@ function loadSourcesForMovie(db: Database.Database, movieId: string): MovieSourc
 }
 
 /**
- * Load metadata for a movie with ratings
+ * Load metadata for a movie
  */
 function loadMetadataForMovie(db: Database.Database, movieId: string): MovieMetadata | undefined {
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
@@ -203,11 +199,7 @@ function loadMetadataForMovie(db: Database.Database, movieId: string): MovieMeta
 
   if (!metadata) return undefined
 
-  const ratings = db
-    .prepare('SELECT Source, Value FROM ratings WHERE movieId = ?')
-    .all(movieId) as { Source: string; Value: string }[]
-
-  return metadataRowToMovieMetadata(metadata, ratings)
+  return metadataRowToMovieMetadata(metadata)
 }
 
 /**
@@ -677,18 +669,7 @@ export async function updateMetadata(movieId: string, metadata: MovieMetadata): 
         metadata.Type
       )
 
-      // Handle ratings: delete old + insert new
-      if (metadata.Ratings && metadata.Ratings.length > 0) {
-        db.prepare('DELETE FROM ratings WHERE movieId = ?').run(movieId)
-
-        const insertRating = db.prepare(`
-          INSERT INTO ratings (movieId, Source, Value)
-          VALUES (?, ?, ?)
-        `)
-        for (const rating of metadata.Ratings) {
-          insertRating.run(movieId, rating.Source, rating.Value)
-        }
-      }
+      // Ratings table removed - imdbRating is sufficient
 
       // Update movie's lastUpdated timestamp
       db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movieId)

@@ -9,7 +9,7 @@
 -- - All movie entries with metadata
 -- - All sources (Archive.org, YouTube) with full details
 -- - Quality marks for sources
--- - OMDB metadata and ratings
+-- - OMDB metadata (imdbRating is sufficient)
 -- - AI-extracted metadata
 -- - Collections and relationships
 -- - Schema versioning
@@ -175,24 +175,7 @@ CREATE INDEX idx_metadata_Country ON metadata(Country);
 CREATE INDEX idx_metadata_Director ON metadata(Director);
 CREATE INDEX idx_metadata_Year ON metadata(Year);
 
--- ============================================================================
--- RATINGS TABLE
--- ============================================================================
--- Stores OMDB ratings from various sources
--- Corresponds to Ratings array in MovieMetadata
 
-CREATE TABLE ratings (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  movieId TEXT NOT NULL,                 -- Foreign key to movies table
-  Source TEXT NOT NULL,                  -- Rating source (e.g., "Internet Movie Database", "Rotten Tomatoes")
-  Value TEXT NOT NULL,                   -- Rating value (e.g., "7.5/10", "85%")
-  
-  FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE
-);
-
-CREATE INDEX idx_ratings_movieId ON ratings(movieId);
-CREATE INDEX idx_ratings_Source ON ratings(Source);
-CREATE UNIQUE INDEX idx_ratings_unique ON ratings(movieId, Source);
 
 -- ============================================================================
 -- AI METADATA TABLE

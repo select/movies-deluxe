@@ -388,25 +388,7 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     Response: string | null
   }>
 
-  // Load all ratings in one query
-  const allRatings = db
-    .prepare(
-      `
-    SELECT movieId, Source, Value
-    FROM ratings
-    ORDER BY movieId
-  `
-    )
-    .all() as Array<{ movieId: string; Source: string; Value: string }>
-
-  // Build ratings map
-  const ratingsMap = new Map<string, Array<{ Source: string; Value: string }>>()
-  for (const rating of allRatings) {
-    if (!ratingsMap.has(rating.movieId)) {
-      ratingsMap.set(rating.movieId, [])
-    }
-    ratingsMap.get(rating.movieId)!.push({ Source: rating.Source, Value: rating.Value })
-  }
+  // Ratings table removed - imdbRating is already loaded from metadata table
 
   // Process metadata
   for (const metadata of allMetadata) {
@@ -429,12 +411,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     if (metadata.imdbVotes !== null) result.imdbVotes = metadata.imdbVotes
     if (metadata.imdbID) result.imdbID = metadata.imdbID
     if (metadata.Type) result.Type = metadata.Type
-
-    // Add ratings if any
-    const ratings = ratingsMap.get(metadata.movieId)
-    if (ratings && ratings.length > 0) {
-      result.Ratings = ratings
-    }
 
     metadataMap.set(metadata.movieId, result)
   }

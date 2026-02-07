@@ -7,7 +7,8 @@
  * Features:
  * - Reads data/movies.json (~77MB, 10k+ movies)
  * - Creates data/movies.db with full schema from data/schema.sql
- * - Migrates all movies, sources, metadata, ratings, AI data, quality marks, collections
+ * - Migrates all movies, sources, metadata, AI data, quality marks, collections
+ * - Does not migrate ratings (imdbRating in metadata is sufficient)
  * - Progress reporting
  * - Transaction safety with rollback on error
  * - Validation (compare counts before/after)
@@ -93,7 +94,6 @@ interface MigrationStats {
   sources: number
   sourceQualityMarks: number
   metadata: number
-  ratings: number
   aiMetadata: number
   collections: number
   collectionMovies: number
@@ -191,7 +191,6 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
     sources: 0,
     sourceQualityMarks: 0,
     metadata: 0,
-    ratings: 0,
     aiMetadata: 0,
     collections: 0,
     collectionMovies: 0,
@@ -227,10 +226,7 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
 
-  const insertRating = db.prepare(`
-    INSERT INTO ratings (movieId, Source, Value)
-    VALUES (?, ?, ?)
-  `)
+  // Ratings table removed - imdbRating is sufficient
 
   const insertAIMetadata = db.prepare(`
     INSERT INTO ai_metadata (movieId, title, year, extractedAt)
@@ -393,13 +389,7 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
           m.Genre || ''
         )
 
-        // Insert ratings
-        if (m.Ratings && m.Ratings.length > 0) {
-          for (const rating of m.Ratings) {
-            insertRating.run(movie.movieId, rating.Source, rating.Value)
-            stats.ratings++
-          }
-        }
+        // Ratings table removed - imdbRating is sufficient
       }
 
       // Insert AI metadata
@@ -489,53 +479,11 @@ function validateMigration(
   logVerbose(`Movies in DB: ${dbMovieCount.count.toLocaleString()}`)
 
   if (dbMovieCount.count !== jsonMovieCount) {
-    logError(`Movie count mismatch! JSON: ${jsonMovieCount}, DB: ${dbMovieCount.count}`)
+    logError(`Movie count mismatch! Expected: ${jsonMovieCount}, DB: ${dbMovieCount.count}`)
     allValid = false
-  } else {
-    logSuccess(`Movies: ${dbMovieCount.count.toLocaleString()} ✓`)
   }
 
-  // Count sources
-  const dbSourceCount = db.prepare('SELECT COUNT(*) as count FROM sources').get() as {
-    count: number
-  }
-  logVerbose(`Sources in JSON: ${stats.sources.toLocaleString()}`)
-  logVerbose(`Sources in DB: ${dbSourceCount.count.toLocaleString()}`)
-
-  if (dbSourceCount.count !== stats.sources) {
-    logError(`Source count mismatch! Expected: ${stats.sources}, DB: ${dbSourceCount.count}`)
-    allValid = false
-  } else {
-    logSuccess(`Sources: ${dbSourceCount.count.toLocaleString()} ✓`)
-  }
-
-  // Count metadata records
-  const dbMetadataCount = db.prepare('SELECT COUNT(*) as count FROM metadata').get() as {
-    count: number
-  }
-  logVerbose(`Metadata in JSON: ${stats.metadata.toLocaleString()}`)
-  logVerbose(`Metadata in DB: ${dbMetadataCount.count.toLocaleString()}`)
-
-  if (dbMetadataCount.count !== stats.metadata) {
-    logError(`Metadata count mismatch! Expected: ${stats.metadata}, DB: ${dbMetadataCount.count}`)
-    allValid = false
-  } else {
-    logSuccess(`Metadata: ${dbMetadataCount.count.toLocaleString()} ✓`)
-  }
-
-  // Count ratings
-  const dbRatingCount = db.prepare('SELECT COUNT(*) as count FROM ratings').get() as {
-    count: number
-  }
-  logVerbose(`Ratings in JSON: ${stats.ratings.toLocaleString()}`)
-  logVerbose(`Ratings in DB: ${dbRatingCount.count.toLocaleString()}`)
-
-  if (dbRatingCount.count !== stats.ratings) {
-    logError(`Rating count mismatch! Expected: ${stats.ratings}, DB: ${dbRatingCount.count}`)
-    allValid = false
-  } else {
-    logSuccess(`Ratings: ${dbRatingCount.count.toLocaleString()} ✓`)
-  }
+  // No longer verifying ratings - table removed
 
   // Count AI metadata
   const dbAIMetadataCount = db.prepare('SELECT COUNT(*) as count FROM ai_metadata').get() as {
@@ -587,6 +535,7 @@ function printSummary(stats: MigrationStats, durationMs: number) {
   log(`Collections:         ${stats.collections.toLocaleString()}`)
   log(`Collection Movies:   ${stats.collectionMovies.toLocaleString()}`)
   log(`Related Movies:      ${stats.relatedMovies.toLocaleString()}`)
+  log(`Movie Quality Labels: ${stats.movieQualityLabels.toLocaleString()}`)
   log('═══════════════════════════════════════')
   log(`Duration:            ${(durationMs / 1000).toFixed(2)}s`)
   log('')
