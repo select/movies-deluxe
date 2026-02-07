@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { normalizeTitleForComparison } from '../../shared/utils/movieTitle'
@@ -99,20 +99,13 @@ export async function extractMatchedMovieKeys(): Promise<string[]> {
 }
 
 /**
- * Load the movies database from disk
+ * Load the movies database from SQLite
+ * @deprecated This function now delegates to loadMoviesDatabase from loadMoviesDatabase.ts
  */
 export async function loadMoviesDatabase(): Promise<MoviesDatabase> {
-  try {
-    if (!existsSync(MOVIES_FILE)) {
-      return createEmptyDatabase()
-    }
-
-    const content = await readFile(MOVIES_FILE, 'utf-8')
-    return JSON.parse(content) as MoviesDatabase
-  } catch (error) {
-    console.error('Failed to load movies database:', error)
-    throw error
-  }
+  // Import dynamically to avoid circular dependency issues
+  const { loadMoviesDatabase: loadFromSQLite } = await import('./loadMoviesDatabase')
+  return loadFromSQLite()
 }
 
 /**
@@ -136,7 +129,7 @@ export async function saveMoviesDatabase(db: MoviesDatabase): Promise<void> {
   }
 }
 
-function createEmptyDatabase(): MoviesDatabase {
+function _createEmptyDatabase(): MoviesDatabase {
   return {
     _schema: {
       version: '1.0.0',
@@ -193,10 +186,12 @@ export function clearSourceIdIndex(): void {
 }
 
 /**
- * Upserts a movie entry into the database
- * If the movie exists, merges sources and updates metadata
- * Also checks if any source already exists in another entry (e.g., after OMDB enrichment)
- * @returns The existing movie entry if it existed, undefined otherwise
+ * DEPRECATED: Use upsertMovieToSQLite instead
+ *
+ * Upserts a movie entry into the JSON database (in-memory)
+ * This function is deprecated and will be removed in a future version
+ *
+ * @deprecated Use upsertMovieToSQLite for new code
  */
 export function upsertMovie(
   db: MoviesDatabase,
@@ -285,6 +280,29 @@ export function upsertMovie(
     }
     return undefined
   }
+}
+
+/**
+ * Upserts a movie entry into the SQLite database using transactions
+ * If the movie exists, merges sources and updates metadata
+ * Also checks if any source already exists in another entry (e.g., after OMDB enrichment)
+ * @returns The existing movie entry if it existed, undefined otherwise
+ *
+ * @example
+ * const existing = await upsertMovieToSQLite(movieId, entry)
+ * if (existing) {
+ *   console.log('Updated existing movie')
+ * } else {
+ *   console.log('Added new movie')
+ * }
+ */
+export async function upsertMovieToSQLite(
+  movieId: string,
+  entry: MovieEntry
+): Promise<MovieEntry | undefined> {
+  // Import dynamically to avoid circular dependency issues
+  const { upsertMovie: upsertToSQLite } = await import('./upsertMovie')
+  return upsertToSQLite(movieId, entry)
 }
 
 export interface ChannelStats {
