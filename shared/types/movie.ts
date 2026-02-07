@@ -27,11 +27,8 @@ export interface MovieSource {
   id: string // Archive.org identifier or YouTube video ID
   title: string // Original title from the source (before cleaning/processing)
   description?: string // Original source description (e.g., YouTube description)
-  label?: string // Custom label for this source (e.g. "Director's Cut")
-  quality?: string // Quality info (e.g. "1080p", "SD")
   qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")
-  fileSize?: number // File size in bytes
-  size?: number // Legacy Archive.org file size (alias for fileSize)
+  size?: number // File size in bytes (Archive.org only)
   addedAt: string // ISO 8601 timestamp
   thumbnail?: string
   duration?: number // Duration in seconds

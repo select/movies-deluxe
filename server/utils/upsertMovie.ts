@@ -17,9 +17,6 @@ interface SourceRow {
   url: string
   title: string
   description: string | null
-  label: string | null
-  quality: string | null
-  fileSize: number | null
   size: number | null
   addedAt: string
   thumbnail: string | null
@@ -115,10 +112,7 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       id: source.sourceId,
       title: source.title,
       description: source.description || undefined,
-      label: source.label || undefined,
-      quality: source.quality || undefined,
       qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
-      fileSize: source.fileSize || undefined,
       size: source.size || undefined,
       addedAt: source.addedAt,
       thumbnail: source.thumbnail || undefined,
@@ -265,18 +259,17 @@ export async function upsertMovie(
       // Handle sources: INSERT OR IGNORE (due to unique constraint), then UPDATE if exists
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
-          movieId, type, url, sourceId, title, description, label, quality,
-          fileSize, size, addedAt, thumbnail, duration, language, year, releaseYear,
+          movieId, type, url, sourceId, title, description,
+          size, addedAt, thumbnail, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       const updateSource = db.prepare(`
         UPDATE sources
         SET url = ?, title = ?, description = COALESCE(?, description), 
-            label = COALESCE(?, label), quality = COALESCE(?, quality),
-            fileSize = COALESCE(?, fileSize), size = COALESCE(?, size),
+            size = COALESCE(?, size),
             thumbnail = COALESCE(?, thumbnail), duration = COALESCE(?, duration),
             language = COALESCE(?, language), year = COALESCE(?, year), 
             releaseYear = COALESCE(?, releaseYear), collection = COALESCE(?, collection),
@@ -303,9 +296,6 @@ export async function upsertMovie(
             source.url,
             source.title,
             source.description,
-            source.label,
-            source.quality,
-            source.fileSize,
             source.size,
             source.thumbnail,
             source.duration,
@@ -351,9 +341,6 @@ export async function upsertMovie(
             source.id,
             source.title,
             source.description,
-            source.label,
-            source.quality,
-            source.fileSize,
             source.size,
             source.addedAt || now,
             source.thumbnail,
@@ -446,11 +433,11 @@ export async function upsertMovie(
       // Insert sources
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
-          movieId, type, url, sourceId, title, description, label, quality,
-          fileSize, size, addedAt, thumbnail, duration, language, year, releaseYear,
+          movieId, type, url, sourceId, title, description,
+          size, addedAt, thumbnail, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       for (const source of entry.sources || []) {
@@ -463,9 +450,6 @@ export async function upsertMovie(
           source.id,
           source.title,
           source.description,
-          source.label,
-          source.quality,
-          source.fileSize,
           source.size,
           source.addedAt || now,
           source.thumbnail,

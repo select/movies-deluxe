@@ -76,10 +76,7 @@ CREATE TABLE sources (
   sourceId TEXT NOT NULL,                -- Archive.org identifier or YouTube video ID
   title TEXT NOT NULL,                   -- Original title from the source
   description TEXT,                      -- Original source description
-  label TEXT,                            -- Custom label (e.g., "Director's Cut")
-  quality TEXT,                          -- Quality info (e.g., "1080p", "SD")
-  fileSize INTEGER,                      -- File size in bytes
-  size INTEGER,                          -- Legacy Archive.org file size (alias)
+  size INTEGER,                          -- File size in bytes (Archive.org only)
   addedAt TEXT NOT NULL,                 -- ISO 8601 timestamp
   thumbnail TEXT,                        -- Thumbnail URL
   duration INTEGER,                      -- Duration in seconds
