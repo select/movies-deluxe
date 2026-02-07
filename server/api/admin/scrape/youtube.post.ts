@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 import { getChannelVideoCount as getChannelVideoCountDataApi } from '../../../utils/youtubeDataApi'
+import { getAdminDatabase } from '../../../utils/adminDb'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
@@ -26,7 +27,7 @@ export default defineEventHandler(async event => {
     }>,
   }
 
-  const db = await loadMoviesDatabase()
+  const db = getAdminDatabase()
   const youtube = await Innertube.create()
 
   // Load previous failures for stats
@@ -73,57 +74,45 @@ export default defineEventHandler(async event => {
 
       const totalVideos = await getChannelVideoCountDataApi(youtubeApiKey, channelId)
 
-      await fetchChannelVideos(
-        youtube,
-        channelId,
-        db,
-        channelConfig,
-        async (video, result) => {
-          // Process callback - called for each video after page is fetched
-          if (result === 'added') {
-            results.added++
-            channelResult.added++
-          } else if (result === 'updated') {
-            results.updated++
-            channelResult.updated++
-          } else if (result === 'already_scraped') {
-            results.skipped++
-            channelResult.skipped++
-          } else {
-            // It's a failure reason
-            results.failed++
-            channelResult.failed++
-            results.failureReasons[result] = (results.failureReasons[result] || 0) + 1
-          }
-
-          results.processed++
-          channelResult.processed++
-
-          emitProgress({
-            type: 'youtube',
-            status: 'in_progress',
-            message: `[${channelName}] ${video.title}`,
-            current: results.processed,
-            total: totalVideos || results.processed,
-            successCurrent: results.added + results.updated,
-            successPrevious: 0, // We don't track this globally yet
-            failedCurrent: results.failed,
-            failedPrevious: channelPreviousFailures,
-          })
-        },
-        async () => {
-          // Save callback - called after each page
-          await saveMoviesDatabase(db)
+      await fetchChannelVideos(youtube, channelId, db, channelConfig, async (video, result) => {
+        // Process callback - called for each video after page is fetched
+        if (result === 'added') {
+          results.added++
+          channelResult.added++
+        } else if (result === 'updated') {
+          results.updated++
+          channelResult.updated++
+        } else if (result === 'already_scraped') {
+          results.skipped++
+          channelResult.skipped++
+        } else {
+          // It's a failure reason
+          results.failed++
+          channelResult.failed++
+          results.failureReasons[result] = (results.failureReasons[result] || 0) + 1
         }
-      )
+
+        results.processed++
+        channelResult.processed++
+
+        emitProgress({
+          type: 'youtube',
+          status: 'in_progress',
+          message: `[${channelName}] ${video.title}`,
+          current: results.processed,
+          total: totalVideos || results.processed,
+          successCurrent: results.added + results.updated,
+          successPrevious: 0, // We don't track this globally yet
+          failedCurrent: results.failed,
+          failedPrevious: channelPreviousFailures,
+        })
+      })
     } catch (e: unknown) {
       results.errors.push(
         `Failed to process channel ${channelId}: ${e instanceof Error ? e.message : String(e)}`
       )
     }
   }
-
-  await saveMoviesDatabase(db)
 
   emitProgress({
     type: 'youtube',

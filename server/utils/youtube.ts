@@ -1,15 +1,11 @@
 import type { Innertube } from 'youtubei.js'
-import {
-  generateYouTubeId,
-  type MoviesDatabase,
-  type YouTubeSource,
-  type MovieEntry,
-} from '../../shared/types/movie'
+import { generateYouTubeId, type MovieEntry } from '../../shared/types/movie'
 import {
   saveFailedYouTubeVideo,
   removeFailedYouTubeVideo,
   type FailureReason,
 } from './failedYoutube'
+import type Database from 'better-sqlite3'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   const yearPatterns = [/\((\d{4})\)/, /\[(\d{4})\]/, /\|\s*(\d{4})/, /-\s*(\d{4})/, /\s+(\d{4})$/]
@@ -32,13 +28,12 @@ export function parseMovieTitle(title: string): { title: string; year?: number }
 export async function fetchChannelVideos(
   youtube: Innertube,
   channelIdentifier: string,
-  db: MoviesDatabase,
+  db: Database.Database,
   channelConfig: { id: string; language?: string; name?: string } | undefined,
   onVideoProcessed: (
     video: { id: string; title: string },
     result: 'added' | 'updated' | 'skipped' | 'already_scraped' | FailureReason
   ) => Promise<void>,
-  onPageComplete: () => Promise<void>,
   onProgress?: (progress: { current: number; total: number; message: string }) => void
 ): Promise<void> {
   // Get YouTube Data API key from environment
@@ -72,14 +67,18 @@ export async function fetchChannelVideos(
 
   // Build set of already scraped video IDs for this channel
   const existingVideoIds = new Set<string>()
-  for (const [key, entry] of Object.entries(db)) {
-    if (key.startsWith('_')) continue
-    const movieEntry = entry as MovieEntry
-    for (const source of movieEntry.sources || []) {
-      if (source.type === 'youtube' && source.channelId === channelIdentifier) {
-        existingVideoIds.add(source.id)
-      }
-    }
+  const existingVideos = db
+    .prepare(
+      `
+    SELECT s.sourceId 
+    FROM sources s
+    WHERE s.type = 'youtube' AND s.channelId = ?
+  `
+    )
+    .all(channelIdentifier) as Array<{ sourceId: string }>
+
+  for (const video of existingVideos) {
+    existingVideoIds.add(video.sourceId)
   }
 
   console.log(`Found ${existingVideoIds.size} already scraped videos from this channel`)
@@ -210,11 +209,15 @@ export async function fetchChannelVideos(
       // Process video into movie entry
       const movieEntry = await processYouTubeVideo(videoData, channelConfig)
       if (movieEntry) {
-        const existing = db[movieEntry.movieId]
-        const { upsertMovie } = await import('./movieData')
-        upsertMovie(db, movieEntry.movieId, movieEntry)
+        // Check if movie exists
+        const existingMovie = db
+          .prepare('SELECT movieId FROM movies WHERE movieId = ?')
+          .get(movieEntry.movieId) as { movieId: string } | undefined
 
-        const result = existing ? 'updated' : 'added'
+        const { upsertMovie } = await import('./upsertMovie')
+        await upsertMovie(movieEntry.movieId, movieEntry)
+
+        const result = existingMovie ? 'updated' : 'added'
         await onVideoProcessed({ id: videoId, title }, result)
         existingVideoIds.add(videoId)
 
@@ -237,15 +240,9 @@ export async function fetchChannelVideos(
 
     // Rate limiting
     await new Promise(resolve => setTimeout(resolve, 200))
-
-    // Save progress every 10 videos
-    if (count % 10 === 0) {
-      await onPageComplete()
-    }
   }
 
-  // Final save
-  await onPageComplete()
+  // Final save not needed - all writes are immediate with SQLite
 
   console.log(`Finished scraping channel. Total processed: ${count}`)
 }
@@ -268,8 +265,8 @@ export async function processYouTubeVideo(
   const originalTitle = video.title
   const { year: parsedYear } = parseMovieTitle(originalTitle)
 
-  const source: YouTubeSource = {
-    type: 'youtube',
+  const source = {
+    type: 'youtube' as const,
     id: video.id,
     url: `https://www.youtube.com/watch?v=${video.id}`,
     title: originalTitle, // Store original title in source
