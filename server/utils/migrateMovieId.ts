@@ -121,7 +121,12 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
         }
       }
 
-      // Step 3: Update all tables in order (child tables first, then parent)
+      // Step 3: Defer foreign key constraint checking until commit
+      // This allows us to update child tables to reference the new ID before updating the parent
+      // SQLite will validate all constraints at commit time
+      db.prepare('PRAGMA defer_foreign_keys = ON').run()
+
+      // Step 4: Update all tables in order (child tables first, then parent)
       const tablesUpdated = {
         movies: 0,
         sources: 0,
