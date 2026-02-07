@@ -29,6 +29,52 @@ export default defineEventHandler(async event => {
     forceRetryFailed = false,
   } = body
 
+  // Validate provider
+  if (provider !== 'ollama' && provider !== 'openrouter') {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Invalid provider: ${provider}. Must be 'ollama' or 'openrouter'.`,
+    })
+  }
+
+  // Get runtime config for provider validation
+  const config = useRuntimeConfig()
+
+  // Validate provider configuration
+  if (provider === 'openrouter') {
+    if (!config.openrouterApiKey) {
+      throw createError({
+        statusCode: 400,
+        statusMessage:
+          'OpenRouter is not configured. Please set OPENROUTER_API_KEY environment variable.',
+      })
+    }
+  }
+
+  if (provider === 'ollama') {
+    const ollamaHost = config.ollamaHost
+    try {
+      // Check if Ollama is reachable
+      const response = await fetch(`${ollamaHost}/api/tags`, {
+        signal: AbortSignal.timeout(5000),
+      })
+      if (!response.ok) {
+        throw createError({
+          statusCode: 503,
+          statusMessage: `Ollama service is not responding correctly at ${ollamaHost}. Status: ${response.status}`,
+        })
+      }
+    } catch (error) {
+      if (error && typeof error === 'object' && 'statusCode' in error) {
+        throw error
+      }
+      throw createError({
+        statusCode: 503,
+        statusMessage: `Cannot reach Ollama service at ${ollamaHost}. Please ensure Ollama is running.`,
+      })
+    }
+  }
+
   try {
     const filePath = join(process.cwd(), 'data/movies.json')
     const content = await readFile(filePath, 'utf-8')

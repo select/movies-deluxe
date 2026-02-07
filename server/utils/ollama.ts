@@ -3,10 +3,17 @@
  *
  * Provides utilities for extracting movie metadata using Ollama AI (gemma3:4b model).
  * Reuses patterns from scripts/ollama-augment.ts for consistency.
+ * Implements the AIProvider interface for abstraction.
  */
 
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import type {
+  AIProvider,
+  ExtractedMetadata,
+  BatchMovieInput,
+  OllamaConfig as OllamaProviderConfig,
+} from '../../shared/types/ai-provider'
 
 /**
  * Ollama API response structure
@@ -18,29 +25,15 @@ interface OllamaResponse {
 }
 
 /**
- * Ollama configuration
+ * Internal Ollama configuration
  */
 interface OllamaConfig {
   host: string
   model: string
 }
 
-/**
- * Extracted movie metadata from AI
- */
-export interface ExtractedMetadata {
-  title?: string
-  year?: number
-}
-
-/**
- * Input for batch movie extraction
- */
-export interface BatchMovieInput {
-  id: string
-  title: string
-  description?: string
-}
+// Re-export types for backward compatibility
+export type { ExtractedMetadata, BatchMovieInput }
 
 /**
  * Extracted metadata with ID for batch processing
@@ -405,4 +398,47 @@ export async function generateEmbedding(
 
   const data = (await response.json()) as { embedding: number[] }
   return data.embedding
+}
+
+/**
+ * Ollama Provider Implementation
+ * Implements AIProvider interface for Ollama
+ */
+export class OllamaProvider implements AIProvider {
+  private config: OllamaConfig
+
+  constructor(config: Partial<OllamaProviderConfig> = {}) {
+    this.config = {
+      host: config.host || DEFAULT_CONFIG.host,
+      model: config.model || DEFAULT_CONFIG.model,
+    }
+  }
+
+  async isAvailable(): Promise<boolean> {
+    return await isOllamaModelAvailable(this.config.model, this.config.host)
+  }
+
+  async extractMovieMetadata(
+    title: string,
+    description?: string,
+    config?: OllamaProviderConfig
+  ): Promise<ExtractedMetadata | null> {
+    const mergedConfig = { ...this.config, ...config }
+    return await extractMovieMetadata(title, description, mergedConfig)
+  }
+
+  async extractMovieMetadataBatch(
+    movies: BatchMovieInput[],
+    config?: OllamaProviderConfig
+  ): Promise<Map<string, ExtractedMetadata>> {
+    const mergedConfig = { ...this.config, ...config }
+    return await extractMovieMetadataBatch(movies, mergedConfig)
+  }
+}
+
+/**
+ * Create a default Ollama provider instance
+ */
+export function createOllamaProvider(config?: Partial<OllamaProviderConfig>): AIProvider {
+  return new OllamaProvider(config)
 }

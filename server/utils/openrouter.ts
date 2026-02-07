@@ -3,6 +3,7 @@
  *
  * Provides utilities for extracting movie metadata using OpenRouter SDK.
  * Uses Groq as the preferred provider for fast inference.
+ * Implements the AIProvider interface for abstraction.
  */
 
 import { OpenRouter } from '@openrouter/sdk'
@@ -13,6 +14,10 @@ import {
   type ExtractedMetadata,
   type BatchMovieInput,
 } from './ollama'
+import type {
+  AIProvider,
+  OpenRouterConfig as OpenRouterProviderConfig,
+} from '../../shared/types/ai-provider'
 
 /**
  * OpenRouter configuration
@@ -228,4 +233,56 @@ export async function getAvailableModels(apiKey: string): Promise<string[]> {
   } catch {
     return []
   }
+}
+
+/**
+ * OpenRouter Provider Implementation
+ * Implements AIProvider interface for OpenRouter
+ */
+export class OpenRouterProvider implements AIProvider {
+  private apiKey?: string
+  private model: string
+  private provider: string
+
+  constructor(config: OpenRouterProviderConfig = {}) {
+    this.apiKey = config.apiKey || getOpenRouterApiKey()
+    this.model = config.model || DEFAULT_CONFIG.model
+    this.provider = config.provider || DEFAULT_CONFIG.provider
+  }
+
+  async isAvailable(): Promise<boolean> {
+    return isOpenRouterAvailable() && !!this.apiKey
+  }
+
+  async extractMovieMetadata(
+    title: string,
+    description?: string,
+    config?: OpenRouterProviderConfig
+  ): Promise<ExtractedMetadata | null> {
+    const mergedConfig = {
+      apiKey: this.apiKey,
+      model: config?.model || this.model,
+      provider: config?.provider || this.provider,
+    }
+    return await extractMovieMetadataOpenRouter(title, description, mergedConfig)
+  }
+
+  async extractMovieMetadataBatch(
+    movies: BatchMovieInput[],
+    config?: OpenRouterProviderConfig
+  ): Promise<Map<string, ExtractedMetadata>> {
+    const mergedConfig = {
+      apiKey: this.apiKey,
+      model: config?.model || this.model,
+      provider: config?.provider || this.provider,
+    }
+    return await extractMovieMetadataBatchOpenRouter(movies, mergedConfig)
+  }
+}
+
+/**
+ * Create a default OpenRouter provider instance
+ */
+export function createOpenRouterProvider(config?: OpenRouterProviderConfig): AIProvider {
+  return new OpenRouterProvider(config)
 }
