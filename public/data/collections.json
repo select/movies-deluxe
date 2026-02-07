@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-02-02T01:47:26.744Z"
+    "lastUpdated": "2026-02-07T03:35:38.911Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -95,7 +95,7 @@
       "tt6725014",
       "tt0015324",
       "tt0018455",
-      "tt0084747",
+      "tt0074390",
       "tt0051036",
       "tt0075404",
       "tt0036868",
@@ -136,7 +136,7 @@
       "tt0055601"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-02T01:39:02.141Z",
+    "updatedAt": "2026-02-07T03:35:38.910Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -510,11 +510,11 @@
       "archive-moonlight-moovies-10-sex-n-drugs-n-rock-n-roll",
       "archive-popeye-colorized-collection",
       "archive-what-no-spinach",
-      "archive-y-2-mate.is-felix-the-cat-the-movie-1988-x-bgwf-av-gqky-1080p-1640523499322",
+      "tt0259308",
       "youtube-sikgAPoh6Mw",
       "youtube-IBPnnL5MxT4",
       "youtube-HBK_Ky5OfrA",
-      "youtube-fQzZzVzkcNs",
+      "tt0259308",
       "youtube-TTZzoYiztOY",
       "youtube-JOQhlCaT40s",
       "tt0027448",
@@ -1991,7 +1991,7 @@
       "tt0147687"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-02T01:47:26.744Z",
+    "updatedAt": "2026-02-02T02:11:34.436Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -2190,7 +2190,7 @@
       "tt0038494",
       "tt0038494",
       "tt0039017",
-      "archive-Sherlock_Holmes_1954",
+      "tt0988045",
       "tt0035317",
       "tt0035318",
       "tt0291476",
@@ -2203,8 +2203,8 @@
       "archive-svtplay-8YwYpvJ",
       "archive-sherlock-holmes-och-kvinnan-i-gront",
       "tt0039017",
-      "archive-SherlockHolmes-TheWomanInGreenVost-fr",
-      "youtube-UsoGpbn3GKM",
+      "tt0988045",
+      "tt0102115",
       "tt34381727",
       "tt0022373",
       "archive-sherlock-holmes-fatal-hour-with-arthur-wontner-1931-1080p-hd-film",
@@ -2221,7 +2221,7 @@
       "tt0406934"
     ],
     "createdAt": "2026-01-11T19:30:00.000Z",
-    "updatedAt": "2026-02-02T00:10:10.218Z",
+    "updatedAt": "2026-02-06T20:40:06.846Z",
     "savedQueries": [
       {
         "searchQuery": "Sherlock Holmes",
@@ -2283,7 +2283,7 @@
       "tt0067341",
       "tt0018097",
       "tt0235606",
-      "archive-lust-for-a-vampire-1971_202405",
+      "tt0067367",
       "tt0081107",
       "tt0026685",
       "tt6554976",
@@ -2306,7 +2306,7 @@
       "tt0056633",
       "tt0052555",
       "tt0024727",
-      "youtube-5ZwKV-ST7NE",
+      "tt0024727",
       "tt0065762",
       "tt0069047",
       "archive-the-werewolf-vs-the-vampire-woman-1971",
@@ -2351,7 +2351,7 @@
       "tt0040068"
     ],
     "createdAt": "2026-01-18T20:56:00.000Z",
-    "updatedAt": "2026-02-02T01:09:50.700Z",
+    "updatedAt": "2026-02-06T20:21:09.194Z",
     "savedQueries": [
       {
         "searchQuery": "vampire",
@@ -2406,7 +2406,7 @@
       "tt0032762",
       "tt0029818",
       "youtube-a8RSKsl3sXc",
-      "archive-zorro-s-black-whip-1944-colorized",
+      "tt0037481",
       "tt0032164",
       "tt0037481",
       "tt0027377",
@@ -2433,7 +2433,7 @@
       "tt0013674"
     ],
     "createdAt": "2026-01-24T00:00:00.000Z",
-    "updatedAt": "2026-02-02T00:08:43.383Z",
+    "updatedAt": "2026-02-02T01:53:58.147Z",
     "savedQueries": [
       {
         "searchQuery": "Three Musketeers",
@@ -2558,10 +2558,10 @@
       "tt0082332",
       "tt0488015",
       "tt0164635",
-      "youtube-85UxL-AJdpQ",
+      "tt1291150",
       "youtube-4qibUC40OCo",
       "youtube-SXUbp1Nn4dw",
-      "youtube-pabciQ-MJD0",
+      "tt1291150",
       "archive-ninja-assassins-1979",
       "tt0199814",
       "archive-NinjaDeathTrilogy",
@@ -2576,7 +2576,7 @@
       "archive-shoguns-ninja-sonny-chiba"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-01-21T02:45:26.765Z",
+    "updatedAt": "2026-02-06T20:41:25.566Z",
     "savedQueries": [
       {
         "searchQuery": "ninja",
@@ -2666,7 +2666,7 @@
       "tt0529758",
       "tt0019532",
       "tt0052365",
-      "archive-AwesomePower",
+      "tt4805732",
       "tt7718636",
       "tt3451956",
       "tt1785669",
@@ -2676,7 +2676,7 @@
       "tt0073244",
       "tt0057547",
       "tt0225797",
-      "archive-the-vagabond-king_1930",
+      "tt0021511",
       "archive-silent-the-life-and-death-of-king-richard-iii",
       "tt0001857",
       "archive-lancelot-and-guinevere-1963",
@@ -2692,7 +2692,7 @@
       "tt0056211"
     ],
     "createdAt": "2026-01-21T00:00:00.000Z",
-    "updatedAt": "2026-02-02T00:54:40.790Z",
+    "updatedAt": "2026-02-06T20:41:52.852Z",
     "savedQueries": [
       {
         "searchQuery": "knight",
@@ -2867,7 +2867,7 @@
       "tt0003758",
       "tt0004936",
       "tt9459600",
-      "youtube-N9lDRiNJz3k",
+      "tt0284688",
       "youtube-HKjr9MSZnPo",
       "tt0004282",
       "tt0004284",
@@ -2894,7 +2894,7 @@
       "tt0004637"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-02-01T23:48:16.063Z",
+    "updatedAt": "2026-02-02T02:21:08.239Z",
     "savedQueries": [
       {
         "searchQuery": "Charlie Chaplin",
@@ -2989,20 +2989,20 @@
       "tt0323263",
       "tt1029374",
       "tt8020616",
-      "youtube-CfgvbK5x8J8",
-      "youtube-H4s8EGY7cmg",
+      "tt0033224",
+      "tt0019421",
       "tt0017925",
       "tt0249555",
       "tt0032536",
-      "youtube-Y5Hfrf4LUTI",
+      "tt0015163",
       "tt0014538",
       "youtube-ir8hnlOTgec",
-      "youtube-kXLe11zlukw",
+      "tt0033224",
       "tt0019421",
       "youtube-uSrRnk1Tc1I"
     ],
     "createdAt": "2025-12-30T00:00:00.000Z",
-    "updatedAt": "2026-02-02T00:22:23.169Z",
+    "updatedAt": "2026-02-06T20:02:45.110Z",
     "savedQueries": [],
     "tags": [
       "comedy",
@@ -3025,12 +3025,12 @@
       "tt0047794",
       "tt0047795",
       "tt0044762",
-      "youtube-5myY1ILoN8E",
-      "youtube-F89AU80mkQM",
+      "tt0041098",
+      "tt0044762",
       "tt0041098"
     ],
     "createdAt": "2026-01-03T19:00:00.000Z",
-    "updatedAt": "2026-02-02T00:10:24.981Z",
+    "updatedAt": "2026-02-06T20:05:00.132Z",
     "savedQueries": [],
     "tags": [
       "comedy",
@@ -3107,20 +3107,20 @@
       "archive-i-confess-1950",
       "archive-1940rebecaalfredhitchcock",
       "archive-1946-notorious-encadenados-alfred-hitchcock-vose",
-      "youtube-mOcG8ZEfvCE",
-      "youtube-RmSdum4BMqI",
-      "youtube-gDt2qK_ZNQk",
-      "youtube-9aJ5j8HH46w",
+      "tt0028212",
+      "tt0026029",
+      "tt0025452",
+      "tt1742334",
       "tt0028231",
       "tt0026029",
       "youtube-tEsehhPMO68",
       "tt0030341",
-      "youtube-jQ9ICZjQaLM",
+      "tt1819577",
       "tt0049470",
-      "youtube-cFU5esmgOds"
+      "tt0029811"
     ],
     "createdAt": "2026-01-10T17:18:00.000Z",
-    "updatedAt": "2026-02-02T01:00:59.417Z",
+    "updatedAt": "2026-02-06T20:05:10.160Z",
     "savedQueries": [
       {
         "searchQuery": "Alfred Hitchcock",
@@ -3248,7 +3248,7 @@
       "tt0095937",
       "tt1442571",
       "tt6083388",
-      "youtube-Fm229Xcte1A",
+      "tt0108624",
       "tt0079891",
       "tt0099818",
       "tt0103285",
@@ -3291,7 +3291,7 @@
       "tt0055630"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-02-02T00:05:11.300Z",
+    "updatedAt": "2026-02-06T20:08:31.549Z",
     "savedQueries": [],
     "tags": [
       "action",
@@ -3486,7 +3486,7 @@
       "tt0031951",
       "tt0003424",
       "tt0076786",
-      "tt0084747",
+      "tt0074390",
       "tt0066740",
       "tt0065143",
       "tt0037549",
@@ -3539,7 +3539,7 @@
       "tt0019563"
     ],
     "createdAt": "2026-01-07T01:00:00.000Z",
-    "updatedAt": "2026-01-11T21:21:09.744Z",
+    "updatedAt": "2026-02-07T03:35:38.911Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -6146,7 +6146,7 @@
       "youtube-kor6ghJ344I",
       "youtube-171tNN5CuqE",
       "youtube-1MlbLcd_TWs",
-      "archive-young-frankenstein.-bw.-720p.-test",
+      "tt0072431",
       "tt0026481",
       "tt31824373",
       "tt0060558",
@@ -6167,10 +6167,10 @@
       "tt0050894",
       "tt0090196",
       "tt0072431",
-      "archive-young-frankenstein-colorized-1974-720p"
+      "tt0072431"
     ],
     "createdAt": "2026-02-01T16:28:06.301Z",
-    "updatedAt": "2026-02-02T01:02:41.943Z",
+    "updatedAt": "2026-02-02T01:53:05.535Z",
     "savedQueries": [
       {
         "searchQuery": "frankenstein",
