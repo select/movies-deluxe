@@ -785,27 +785,23 @@ export async function findOrphanedPosters(db: MoviesDatabase): Promise<string[]>
     try {
       const files = await readdir(postersDir)
 
-      // Get all poster filenames referenced in database
-      const referencedPosters = new Set<string>()
+      // Get all movie IDs that should have posters (IMDB IDs)
+      const expectedPosters = new Set<string>()
       const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
 
       for (const [_, entry] of entries) {
         const movieEntry = entry as MovieEntry
-        if (movieEntry.metadata?.Poster) {
-          // Extract filename from poster URL
-          const posterUrl = movieEntry.metadata.Poster
-          if (posterUrl.startsWith('/posters/')) {
-            const filename = posterUrl.replace('/posters/', '')
-            referencedPosters.add(filename)
-          }
+        // All movies with IMDB IDs should have posters
+        if (movieEntry.movieId.startsWith('tt')) {
+          expectedPosters.add(`${movieEntry.movieId}.jpg`)
         }
       }
 
-      // Find files not referenced
+      // Find files not expected (orphaned posters)
       const orphaned: string[] = []
       for (const file of files) {
         if (file === '.gitkeep') continue
-        if (!referencedPosters.has(file)) {
+        if (!expectedPosters.has(file)) {
           orphaned.push(file)
         }
       }

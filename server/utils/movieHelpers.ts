@@ -61,7 +61,6 @@ interface MetadataRow {
   Title: string | null
   Year: string | null
   Rated: string | null
-  Released: string | null
   Runtime: string | null
   Genre: string | null
   Director: string | null
@@ -71,13 +70,10 @@ interface MetadataRow {
   Language: string | null
   Country: string | null
   Awards: string | null
-  Poster: string | null
-  Metascore: string | null
   imdbRating: number | null
   imdbVotes: number | null
   imdbID: string | null
   Type: string | null
-  Response: string | null
 }
 
 interface MovieRow {
@@ -165,7 +161,6 @@ function metadataRowToMovieMetadata(
     Title: metadata.Title ?? undefined,
     Year: metadata.Year ?? undefined,
     Rated: metadata.Rated ?? undefined,
-    Released: metadata.Released ?? undefined,
     Runtime: metadata.Runtime ?? undefined,
     Genre: metadata.Genre ?? undefined,
     Director: metadata.Director ?? undefined,
@@ -175,14 +170,11 @@ function metadataRowToMovieMetadata(
     Language: metadata.Language ?? undefined,
     Country: metadata.Country ?? undefined,
     Awards: metadata.Awards ?? undefined,
-    Poster: metadata.Poster ?? undefined,
     Ratings: ratings.length > 0 ? ratings : undefined,
-    Metascore: metadata.Metascore ?? undefined,
     imdbRating: metadata.imdbRating ?? undefined,
     imdbVotes: metadata.imdbVotes ?? undefined,
     imdbID: metadata.imdbID ?? undefined,
     Type: metadata.Type ?? undefined,
-    Response: metadata.Response ?? undefined,
   }
 }
 
@@ -660,17 +652,16 @@ export async function updateMetadata(movieId: string, metadata: MovieMetadata): 
       db.prepare(
         `
         INSERT OR REPLACE INTO metadata (
-          movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
-          Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-          imdbVotes, imdbID, Type, Response
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          movieId, Title, Year, Rated, Runtime, Genre, Director, Writer,
+          Actors, Plot, Language, Country, Awards, imdbRating,
+          imdbVotes, imdbID, Type
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       ).run(
         movieId,
         metadata.Title,
         metadata.Year,
         metadata.Rated,
-        metadata.Released,
         metadata.Runtime,
         metadata.Genre,
         metadata.Director,
@@ -680,13 +671,10 @@ export async function updateMetadata(movieId: string, metadata: MovieMetadata): 
         metadata.Language,
         metadata.Country,
         metadata.Awards,
-        metadata.Poster,
-        metadata.Metascore,
         metadata.imdbRating,
         metadata.imdbVotes,
         metadata.imdbID,
-        metadata.Type,
-        metadata.Response
+        metadata.Type
       )
 
       // Handle ratings: delete old + insert new

@@ -416,7 +416,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     if (metadata.Title) result.Title = metadata.Title
     if (metadata.Year) result.Year = metadata.Year
     if (metadata.Rated) result.Rated = metadata.Rated
-    if (metadata.Released) result.Released = metadata.Released
     if (metadata.Runtime) result.Runtime = metadata.Runtime
     if (metadata.Genre) result.Genre = metadata.Genre
     if (metadata.Director) result.Director = metadata.Director
@@ -426,13 +425,10 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     if (metadata.Language) result.Language = metadata.Language
     if (metadata.Country) result.Country = metadata.Country
     if (metadata.Awards) result.Awards = metadata.Awards
-    if (metadata.Poster) result.Poster = metadata.Poster
-    if (metadata.Metascore) result.Metascore = metadata.Metascore
     if (metadata.imdbRating !== null) result.imdbRating = metadata.imdbRating
     if (metadata.imdbVotes !== null) result.imdbVotes = metadata.imdbVotes
     if (metadata.imdbID) result.imdbID = metadata.imdbID
     if (metadata.Type) result.Type = metadata.Type
-    if (metadata.Response) result.Response = metadata.Response
 
     // Add ratings if any
     const ratings = ratingsMap.get(metadata.movieId)

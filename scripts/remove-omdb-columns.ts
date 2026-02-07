@@ -28,7 +28,16 @@ const ADMIN_DB_PATH = join(process.cwd(), 'data', 'movies.db')
 const BACKUP_DB_PATH = join(process.cwd(), 'data', 'movies.db.backup-before-column-removal')
 
 // Columns to remove
-const COLUMNS_TO_REMOVE = ['DVD', 'BoxOffice', 'Production', 'Website']
+const COLUMNS_TO_REMOVE = [
+  'DVD',
+  'BoxOffice',
+  'Production',
+  'Website',
+  'Released',
+  'Poster',
+  'Metascore',
+  'Response',
+]
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -137,14 +146,13 @@ async function migrateDatabase(): Promise<void> {
       // Step 1: Rename old table
       db.exec('ALTER TABLE metadata RENAME TO metadata_old')
 
-      // Step 2: Create new table with correct schema (without DVD, BoxOffice, Production, Website)
+      // Step 2: Create new table with correct schema (without DVD, BoxOffice, Production, Website, Released, Poster, Metascore, Response)
       db.exec(`
         CREATE TABLE metadata (
           movieId TEXT PRIMARY KEY,
           Title TEXT,
           Year TEXT,
           Rated TEXT,
-          Released TEXT,
           Runtime TEXT,
           Genre TEXT,
           Director TEXT,
@@ -154,13 +162,10 @@ async function migrateDatabase(): Promise<void> {
           Language TEXT,
           Country TEXT,
           Awards TEXT,
-          Poster TEXT,
-          Metascore TEXT,
           imdbRating REAL,
           imdbVotes INTEGER,
           imdbID TEXT,
           Type TEXT,
-          Response TEXT,
           
           FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE
         )
@@ -170,14 +175,14 @@ async function migrateDatabase(): Promise<void> {
       log('Copying data to new table...')
       db.exec(`
         INSERT INTO metadata (
-          movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
-          Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-          imdbVotes, imdbID, Type, Response
+          movieId, Title, Year, Rated, Runtime, Genre, Director, Writer,
+          Actors, Plot, Language, Country, Awards, imdbRating,
+          imdbVotes, imdbID, Type
         )
         SELECT 
-          movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
-          Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-          imdbVotes, imdbID, Type, Response
+          movieId, Title, Year, Rated, Runtime, Genre, Director, Writer,
+          Actors, Plot, Language, Country, Awards, imdbRating,
+          imdbVotes, imdbID, Type
         FROM metadata_old
       `)
 

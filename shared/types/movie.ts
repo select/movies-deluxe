@@ -74,7 +74,6 @@ export interface MovieMetadata {
   Title?: string
   Year?: string
   Rated?: string
-  Released?: string
   Runtime?: string
   Genre?: string
   Director?: string
@@ -84,17 +83,14 @@ export interface MovieMetadata {
   Language?: string
   Country?: string
   Awards?: string
-  Poster?: string
   Ratings?: Array<{
     Source: string
     Value: string
   }>
-  Metascore?: string
   imdbRating?: number
   imdbVotes?: number
   imdbID?: string
   Type?: string
-  Response?: string
 }
 
 /**

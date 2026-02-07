@@ -114,7 +114,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     Title: string | null
     Year: string | null
     Rated: string | null
-    Released: string | null
     Runtime: string | null
     Genre: string | null
     Director: string | null
@@ -124,12 +123,10 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     Language: string | null
     Country: string | null
     Awards: string | null
-    Poster: string | null
-    Metascore: string | null
     imdbRating: number | null
     imdbVotes: number | null
+    imdbID: string | null
     Type: string | null
-    Response: string | null
   }
 
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
@@ -147,7 +144,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       Title: metadata.Title ?? undefined,
       Year: metadata.Year ?? undefined,
       Rated: metadata.Rated ?? undefined,
-      Released: metadata.Released ?? undefined,
       Runtime: metadata.Runtime ?? undefined,
       Genre: metadata.Genre ?? undefined,
       Director: metadata.Director ?? undefined,
@@ -157,13 +153,11 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       Language: metadata.Language ?? undefined,
       Country: metadata.Country ?? undefined,
       Awards: metadata.Awards ?? undefined,
-      Poster: metadata.Poster ?? undefined,
       Ratings: ratings.length > 0 ? ratings : undefined,
-      Metascore: metadata.Metascore ?? undefined,
       imdbRating: metadata.imdbRating ?? undefined,
       imdbVotes: metadata.imdbVotes ?? undefined,
+      imdbID: metadata.imdbID ?? undefined,
       Type: metadata.Type ?? undefined,
-      Response: metadata.Response ?? undefined,
     }
   }
 

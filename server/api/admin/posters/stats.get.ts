@@ -23,19 +23,16 @@ export default defineEventHandler(async _event => {
   const matchedPosters = Array.from(posterImdbIds).filter(id => movieImdbIds.has(id))
   const orphanedPosters = Array.from(posterImdbIds).filter(id => !movieImdbIds.has(id))
 
-  let totalWithPosterUrl = 0
+  const totalWithPosterUrl = 0 // Deprecated - we no longer store poster URLs
   let totalWithImdbId = 0
   let totalDownloaded = 0
   const missingPosters: string[] = []
 
   entries.forEach(movie => {
-    const posterUrl = movie.metadata?.Poster
     const hasImdbId = movie.movieId.startsWith('tt')
 
-    if (posterUrl && posterUrl !== 'N/A') {
-      totalWithPosterUrl++
-    }
-
+    // We no longer check for poster URLs in metadata since we don't store them
+    // Just track if we have the poster file downloaded locally
     if (hasImdbId) {
       totalWithImdbId++
       if (posterImdbIds.has(movie.movieId)) {

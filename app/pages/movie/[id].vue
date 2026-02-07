@@ -1007,7 +1007,7 @@ const handleMovieUpdated = async (newId: string) => {
 const updateMetaTags = (movie: MovieEntry) => {
   const title = movie.title + (movie.year ? ` (${movie.year})` : '')
   const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
-  const poster = movie.metadata?.Poster || '/favicon.ico'
+  const poster = `/posters/${movie.movieId}.jpg` // Use local poster path
   const url = `https://movies-deluxe.app/movie/${movie.movieId}`
 
   useHead({
@@ -1049,7 +1049,7 @@ const updateMetaTags = (movie: MovieEntry) => {
           name: movie.title,
           ...(movie.year && { datePublished: movie.year.toString() }),
           ...(movie.metadata?.Plot && { description: movie.metadata.Plot }),
-          ...(movie.metadata?.Poster && { image: poster }),
+          image: poster, // Always include poster image
           ...(movie.metadata?.Director && {
             director: { '@type': 'Person', name: movie.metadata.Director },
           }),

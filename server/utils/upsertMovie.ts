@@ -42,7 +42,6 @@ interface MetadataRow {
   Title: string | null
   Year: string | null
   Rated: string | null
-  Released: string | null
   Runtime: string | null
   Genre: string | null
   Director: string | null
@@ -52,12 +51,10 @@ interface MetadataRow {
   Language: string | null
   Country: string | null
   Awards: string | null
-  Poster: string | null
-  Metascore: string | null
   imdbRating: number | null
   imdbVotes: number | null
+  imdbID: string | null
   Type: string | null
-  Response: string | null
   Ratings?: Array<{ Source: string; Value: string }>
 }
 
@@ -177,7 +174,6 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       Title: metadata.Title ?? undefined,
       Year: metadata.Year ?? undefined,
       Rated: metadata.Rated ?? undefined,
-      Released: metadata.Released ?? undefined,
       Runtime: metadata.Runtime ?? undefined,
       Genre: metadata.Genre ?? undefined,
       Director: metadata.Director ?? undefined,
@@ -187,13 +183,11 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       Language: metadata.Language ?? undefined,
       Country: metadata.Country ?? undefined,
       Awards: metadata.Awards ?? undefined,
-      Poster: metadata.Poster ?? undefined,
       Ratings: metadata.Ratings,
-      Metascore: metadata.Metascore ?? undefined,
       imdbRating: metadata.imdbRating ?? undefined,
       imdbVotes: metadata.imdbVotes ?? undefined,
+      imdbID: metadata.imdbID ?? undefined,
       Type: metadata.Type ?? undefined,
-      Response: metadata.Response ?? undefined,
     }
   }
 
@@ -405,17 +399,16 @@ export async function upsertMovie(
         db.prepare(
           `
           INSERT OR REPLACE INTO metadata (
-            movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
-            Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-            imdbVotes, imdbID, Type, Response
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            movieId, Title, Year, Rated, Runtime, Genre, Director, Writer,
+            Actors, Plot, Language, Country, Awards, imdbRating,
+            imdbVotes, imdbID, Type
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
         ).run(
           existingMovieId,
           entry.metadata.Title,
           entry.metadata.Year,
           entry.metadata.Rated,
-          entry.metadata.Released,
           entry.metadata.Runtime,
           entry.metadata.Genre,
           entry.metadata.Director,
@@ -425,13 +418,10 @@ export async function upsertMovie(
           entry.metadata.Language,
           entry.metadata.Country,
           entry.metadata.Awards,
-          entry.metadata.Poster,
-          entry.metadata.Metascore,
           entry.metadata.imdbRating,
           entry.metadata.imdbVotes,
           entry.metadata.imdbID,
-          entry.metadata.Type,
-          entry.metadata.Response
+          entry.metadata.Type
         )
 
         // Handle ratings: DELETE old + INSERT new
@@ -531,17 +521,16 @@ export async function upsertMovie(
         db.prepare(
           `
           INSERT OR REPLACE INTO metadata (
-            movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
-            Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-            imdbVotes, imdbID, Type, Response
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            movieId, Title, Year, Rated, Runtime, Genre, Director, Writer,
+            Actors, Plot, Language, Country, Awards, imdbRating,
+            imdbVotes, imdbID, Type
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
         ).run(
           movieId,
           entry.metadata.Title,
           entry.metadata.Year,
           entry.metadata.Rated,
-          entry.metadata.Released,
           entry.metadata.Runtime,
           entry.metadata.Genre,
           entry.metadata.Director,
@@ -551,13 +540,10 @@ export async function upsertMovie(
           entry.metadata.Language,
           entry.metadata.Country,
           entry.metadata.Awards,
-          entry.metadata.Poster,
-          entry.metadata.Metascore,
           entry.metadata.imdbRating,
           entry.metadata.imdbVotes,
           entry.metadata.imdbID,
-          entry.metadata.Type,
-          entry.metadata.Response
+          entry.metadata.Type
         )
 
         // Insert ratings

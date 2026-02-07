@@ -151,7 +151,6 @@ CREATE TABLE metadata (
   Title TEXT,
   Year TEXT,
   Rated TEXT,
-  Released TEXT,
   Runtime TEXT,
   Genre TEXT,
   Director TEXT,
@@ -161,13 +160,10 @@ CREATE TABLE metadata (
   Language TEXT,
   Country TEXT,
   Awards TEXT,
-  Poster TEXT,
-  Metascore TEXT,
   imdbRating REAL,
   imdbVotes INTEGER,
   imdbID TEXT,
   Type TEXT,
-  Response TEXT,
   
   FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE
 );
