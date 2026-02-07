@@ -337,7 +337,7 @@
                 </div>
               </div>
               <a
-                :href="source.url"
+                :href="getSourceUrl(source)"
                 target="_blank"
                 rel="noopener noreferrer"
                 :title="
@@ -750,6 +750,15 @@ const getFileSizeBarWidth = (bytes?: number) => {
   const maxBytes = 4 * 1024 * 1024 * 1024 // 4GB
   const percentage = Math.min((bytes / maxBytes) * 100, 100)
   return `${percentage}%`
+}
+
+// Generate URL for a source
+const getSourceUrl = (source: MovieSource): string => {
+  if (source.type === 'youtube') {
+    return `https://www.youtube.com/watch?v=${source.sourceId}`
+  }
+  // archive.org
+  return `https://archive.org/details/${source.sourceId}`
 }
 
 // Liked computed

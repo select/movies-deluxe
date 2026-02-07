@@ -113,18 +113,6 @@ function validateTitle(movieId: string, movie: MovieEntry): ValidationIssue | nu
 }
 
 /**
- * Validate URL format
- */
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
-/**
  * Validate sources array
  */
 function validateSources(movieId: string, movie: MovieEntry): ValidationIssue[] {
@@ -176,20 +164,12 @@ function validateSources(movieId: string, movie: MovieEntry): ValidationIssue[] 
       return
     }
 
-    if (!source.url) {
+    if (!source.sourceId) {
       issues.push({
         severity: 'error',
         category: 'sources',
         movieId,
-        message: `Source ${index}: Missing URL`,
-        fixable: false,
-      })
-    } else if (!isValidUrl(source.url)) {
-      issues.push({
-        severity: 'error',
-        category: 'sources',
-        movieId,
-        message: `Source ${index}: Invalid URL format`,
+        message: `Source ${index}: Missing sourceId`,
         fixable: false,
       })
     }
@@ -217,15 +197,15 @@ function validateSources(movieId: string, movie: MovieEntry): ValidationIssue[] 
     }
   })
 
-  // Check for duplicate sources
-  const urls = movie.sources.map(s => s.url)
-  const uniqueUrls = new Set(urls)
-  if (urls.length !== uniqueUrls.size) {
+  // Check for duplicate sources (by type + sourceId)
+  const sourceKeys = movie.sources.map(s => `${s.type}:${s.sourceId}`)
+  const uniqueKeys = new Set(sourceKeys)
+  if (sourceKeys.length !== uniqueKeys.size) {
     issues.push({
       severity: 'warning',
       category: 'sources',
       movieId,
-      message: 'Duplicate source URLs detected',
+      message: 'Duplicate sources detected (same type + sourceId)',
       fixable: true,
     })
   }
@@ -441,8 +421,10 @@ async function fixIssue(db: MoviesDatabase, issue: ValidationIssue): Promise<boo
     }
 
     // Fix duplicate sources
-    if (issue.category === 'sources' && issue.message.includes('Duplicate source URLs')) {
-      const uniqueSources = Array.from(new Map(movie.sources.map(s => [s.url, s])).values())
+    if (issue.category === 'sources' && issue.message.includes('Duplicate sources')) {
+      const uniqueSources = Array.from(
+        new Map(movie.sources.map(s => [`${s.type}:${s.sourceId}`, s])).values()
+      )
       movie.sources = uniqueSources
       issue.fixed = true
       return true

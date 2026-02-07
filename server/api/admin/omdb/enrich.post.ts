@@ -37,7 +37,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     movieId: string
     sourceId: string
     type: string
-    url: string
     title: string
     description: string | null
     size: number | null
@@ -79,8 +78,8 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
 
     return {
       type: source.type as 'archive.org' | 'youtube',
-      url: source.url,
-      id: source.sourceId,
+      sourceId: source.sourceId,
+      id: source.sourceId, // Alias for backward compatibility
       title: source.title,
       description: source.description ?? undefined,
       qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,

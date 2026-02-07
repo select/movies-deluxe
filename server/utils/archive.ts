@@ -76,7 +76,7 @@ export async function processArchiveMovie(
   const source: ArchiveOrgSource = {
     type: 'archive.org',
     id: movie.identifier,
-    url: `https://archive.org/details/${movie.identifier}`,
+    sourceId: movie.identifier,
     title: movie.title, // Original title from Archive.org
     collection,
     downloads: movie.downloads,

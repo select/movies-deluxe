@@ -78,7 +78,9 @@ export default defineEventHandler(async event => {
               ...(existing.sources || []),
               ...(movie.sources || []).filter(
                 (s: MovieSource) =>
-                  !(existing.sources || []).some((es: MovieSource) => es.url === s.url)
+                  !(existing.sources || []).some(
+                    (es: MovieSource) => es.type === s.type && es.sourceId === s.sourceId
+                  )
               ),
             ]
             existing.lastUpdated = new Date().toISOString()
@@ -172,7 +174,10 @@ export default defineEventHandler(async event => {
         existing.sources = [
           ...existing.sources,
           ...movie.sources.filter(
-            (s: MovieSource) => !existing.sources.some((es: MovieSource) => es.url === s.url)
+            (s: MovieSource) =>
+              !existing.sources.some(
+                (es: MovieSource) => es.type === s.type && es.sourceId === s.sourceId
+              )
           ),
         ]
         existing.metadata = movie.metadata || existing.metadata

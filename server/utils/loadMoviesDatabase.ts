@@ -171,7 +171,6 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
       id,
       movieId,
       type,
-      url,
       sourceId,
       title,
       description,
@@ -197,7 +196,6 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
     id: number
     movieId: string
     type: 'archive.org' | 'youtube'
-    url: string
     sourceId: string
     title: string
     description: string | null
@@ -242,8 +240,8 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
     // Build the source object
     const movieSource: MovieSource = {
       type: source.type,
-      url: source.url,
-      id: source.sourceId,
+      sourceId: source.sourceId,
+      id: source.sourceId, // Alias for backward compatibility
       title: source.title,
       addedAt: source.addedAt,
     }

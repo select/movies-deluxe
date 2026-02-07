@@ -72,7 +72,6 @@ CREATE TABLE sources (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   movieId TEXT NOT NULL,                 -- Foreign key to movies table
   type TEXT NOT NULL,                    -- 'archive.org' or 'youtube'
-  url TEXT NOT NULL,                     -- Full URL to the source
   sourceId TEXT NOT NULL,                -- Archive.org identifier or YouTube video ID
   title TEXT NOT NULL,                   -- Original title from the source
   description TEXT,                      -- Original source description

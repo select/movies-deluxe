@@ -20,11 +20,13 @@ export interface YouTubeRegionRestriction {
 
 /**
  * Base interface for all movie sources
+ * Note: url field is constructed dynamically from type and id using getSourceUrl()
  */
 export interface MovieSource {
   type: MovieSourceType
-  url: string
-  id: string // Archive.org identifier or YouTube video ID
+  // url is constructed dynamically from type and sourceId using getSourceUrl()
+  sourceId: string // Archive.org identifier or YouTube video ID
+  id: string // Alias for sourceId (kept for backward compatibility)
   title: string // Original title from the source (before cleaning/processing)
   description?: string // Original source description (e.g., YouTube description)
   qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")

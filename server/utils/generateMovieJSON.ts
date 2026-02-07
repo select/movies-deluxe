@@ -180,7 +180,7 @@ export async function generateMovieJSON(): Promise<void> {
         sources: movie.sources.map(s => {
           const mapped: MovieSource = {
             type: s.type,
-            url: s.url,
+            sourceId: s.sourceId,
             id: s.id,
             title: s.title,
             description: s.description,

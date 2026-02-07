@@ -260,8 +260,8 @@ export async function processYouTubeVideo(
 
   const source = {
     type: 'youtube' as const,
-    id: video.id,
-    url: `https://www.youtube.com/watch?v=${video.id}`,
+    sourceId: video.id,
+    id: video.id, // Alias for backward compatibility
     title: originalTitle, // Store original title in source
     channelName: video.channelName,
     channelId: video.channelId,

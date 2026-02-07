@@ -14,7 +14,6 @@ interface SourceRow {
   movieId: string
   sourceId: string
   type: string
-  url: string
   title: string
   description: string | null
   size: number | null
@@ -107,8 +106,8 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
 
     return {
       type: source.type as MovieSourceType,
-      url: source.url,
-      id: source.sourceId,
+      sourceId: source.sourceId,
+      id: source.sourceId, // Alias for backward compatibility
       title: source.title,
       description: source.description || undefined,
       qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
@@ -257,16 +256,16 @@ export async function upsertMovie(
       // Handle sources: INSERT OR IGNORE (due to unique constraint), then UPDATE if exists
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
-          movieId, type, url, sourceId, title, description,
+          movieId, type, sourceId, title, description,
           size, addedAt, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       const updateSource = db.prepare(`
         UPDATE sources
-        SET url = ?, title = ?, description = COALESCE(?, description), 
+        SET title = ?, description = COALESCE(?, description), 
             size = COALESCE(?, size),
             duration = COALESCE(?, duration),
             language = COALESCE(?, language), year = COALESCE(?, year), 
@@ -291,7 +290,6 @@ export async function upsertMovie(
         if (existingSource) {
           // Update existing source (preferring non-empty values)
           updateSource.run(
-            source.url,
             source.title,
             source.description,
             source.size,
@@ -334,7 +332,6 @@ export async function upsertMovie(
           const result = insertSource.run(
             existingMovieId,
             source.type,
-            source.url,
             source.id,
             source.title,
             source.description,
@@ -429,11 +426,11 @@ export async function upsertMovie(
       // Insert sources
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
-          movieId, type, url, sourceId, title, description,
+          movieId, type, sourceId, title, description,
           size, addedAt, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       for (const source of entry.sources || []) {
@@ -442,7 +439,6 @@ export async function upsertMovie(
         const result = insertSource.run(
           movieId,
           source.type,
-          source.url,
           source.id,
           source.title,
           source.description,
