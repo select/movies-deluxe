@@ -308,25 +308,21 @@
                       "
                     ></div>
                     <span>{{
-                      source.label ||
-                      (source.type === 'youtube' ? source.channelName || 'YouTube' : 'Archive.org')
+                      source.type === 'youtube' ? source.channelName || 'YouTube' : 'Archive.org'
                     }}</span>
-                    <span v-if="source.quality" class="text-xs opacity-75"
-                      >({{ source.quality }})</span
-                    >
                   </div>
                   <!-- File size indicator bar for Archive.org -->
                   <div
-                    v-if="source.type === 'archive.org' && (source.fileSize || source.size)"
+                    v-if="source.type === 'archive.org' && source.size"
                     class="group/size absolute bottom-0 left-0 h-[2px] transition-all duration-500 rounded-b-lg"
                     :class="selectedSourceIndex === index ? 'bg-white/40' : 'bg-theme-primary/40'"
-                    :style="{ width: getFileSizeBarWidth(source.fileSize || source.size) }"
+                    :style="{ width: getFileSizeBarWidth(source.size) }"
                   >
                     <!-- Tooltip -->
                     <div
                       class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap opacity-0 group-hover/size:opacity-100 transition-opacity pointer-events-none glass z-10"
                     >
-                      {{ formatFileSize(source.fileSize || source.size) }}
+                      {{ formatFileSize(source.size) }}
                     </div>
                   </div>
                 </button>
@@ -733,8 +729,8 @@ const sortedSources = computed(() => {
 
     // 2. If both are Archive.org, sort by file size (descending)
     if (a.type === 'archive.org' && b.type === 'archive.org') {
-      const sizeA = a.fileSize || a.size || 0
-      const sizeB = b.fileSize || b.size || 0
+      const sizeA = a.size || 0
+      const sizeB = b.size || 0
       return sizeB - sizeA
     }
 

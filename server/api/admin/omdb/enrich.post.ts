@@ -40,9 +40,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     url: string
     title: string
     description: string | null
-    label: string | null
-    quality: string | null
-    fileSize: number | null
     size: number | null
     addedAt: string
     thumbnail: string | null
@@ -87,10 +84,7 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       id: source.sourceId,
       title: source.title,
       description: source.description ?? undefined,
-      label: source.label ?? undefined,
-      quality: source.quality ?? undefined,
       qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
-      fileSize: source.fileSize ?? undefined,
       size: source.size ?? undefined,
       addedAt: source.addedAt,
       thumbnail: source.thumbnail ?? undefined,

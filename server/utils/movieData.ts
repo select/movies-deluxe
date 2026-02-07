@@ -237,8 +237,6 @@ export function upsertMovie(
         const updatedSource = {
           ...existingSource,
           ...newSource,
-          label: newSource.label || existingSource.label,
-          quality: newSource.quality || existingSource.quality,
           description: newSource.description || existingSource.description,
         }
 
@@ -565,8 +563,6 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
       const updatedSource = {
         ...existingSource,
         ...secondarySource,
-        label: secondarySource.label || existingSource.label,
-        quality: secondarySource.quality || existingSource.quality,
         description: secondarySource.description || existingSource.description,
       }
 
