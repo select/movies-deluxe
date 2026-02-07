@@ -223,8 +223,8 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
     INSERT INTO metadata (
       movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
       Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-      imdbVotes, imdbID, Type, DVD, BoxOffice, Production, Website, Response
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      imdbVotes, imdbID, Type, Response
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
 
   const insertRating = db.prepare(`
@@ -384,10 +384,6 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
           m.imdbVotes || null,
           m.imdbID || null,
           m.Type || null,
-          m.DVD || null,
-          m.BoxOffice || null,
-          m.Production || null,
-          m.Website || null,
           m.Response || null
         )
         stats.metadata++

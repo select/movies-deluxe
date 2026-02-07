@@ -77,10 +77,6 @@ interface MetadataRow {
   imdbVotes: number | null
   imdbID: string | null
   Type: string | null
-  DVD: string | null
-  BoxOffice: string | null
-  Production: string | null
-  Website: string | null
   Response: string | null
 }
 
@@ -186,10 +182,6 @@ function metadataRowToMovieMetadata(
     imdbVotes: metadata.imdbVotes ?? undefined,
     imdbID: metadata.imdbID ?? undefined,
     Type: metadata.Type ?? undefined,
-    DVD: metadata.DVD ?? undefined,
-    BoxOffice: metadata.BoxOffice ?? undefined,
-    Production: metadata.Production ?? undefined,
-    Website: metadata.Website ?? undefined,
     Response: metadata.Response ?? undefined,
   }
 }
@@ -670,8 +662,8 @@ export async function updateMetadata(movieId: string, metadata: MovieMetadata): 
         INSERT OR REPLACE INTO metadata (
           movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
           Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-          imdbVotes, imdbID, Type, DVD, BoxOffice, Production, Website, Response
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          imdbVotes, imdbID, Type, Response
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       ).run(
         movieId,
@@ -694,10 +686,6 @@ export async function updateMetadata(movieId: string, metadata: MovieMetadata): 
         metadata.imdbVotes,
         metadata.imdbID,
         metadata.Type,
-        metadata.DVD,
-        metadata.BoxOffice,
-        metadata.Production,
-        metadata.Website,
         metadata.Response
       )
 

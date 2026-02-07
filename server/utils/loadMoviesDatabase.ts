@@ -360,10 +360,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
       imdbVotes,
       imdbID,
       Type,
-      DVD,
-      BoxOffice,
-      Production,
-      Website,
       Response
     FROM metadata
   `
@@ -389,10 +385,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     imdbVotes: number | null
     imdbID: string | null
     Type: string | null
-    DVD: string | null
-    BoxOffice: string | null
-    Production: string | null
-    Website: string | null
     Response: string | null
   }>
 
@@ -440,10 +432,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     if (metadata.imdbVotes !== null) result.imdbVotes = metadata.imdbVotes
     if (metadata.imdbID) result.imdbID = metadata.imdbID
     if (metadata.Type) result.Type = metadata.Type
-    if (metadata.DVD) result.DVD = metadata.DVD
-    if (metadata.BoxOffice) result.BoxOffice = metadata.BoxOffice
-    if (metadata.Production) result.Production = metadata.Production
-    if (metadata.Website) result.Website = metadata.Website
     if (metadata.Response) result.Response = metadata.Response
 
     // Add ratings if any

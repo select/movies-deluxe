@@ -94,10 +94,6 @@ export interface MovieMetadata {
   imdbVotes?: number
   imdbID?: string
   Type?: string
-  DVD?: string
-  BoxOffice?: string
-  Production?: string
-  Website?: string
   Response?: string
 }
 

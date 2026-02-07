@@ -129,10 +129,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     imdbRating: number | null
     imdbVotes: number | null
     Type: string | null
-    DVD: string | null
-    BoxOffice: string | null
-    Production: string | null
-    Website: string | null
     Response: string | null
   }
 
@@ -167,10 +163,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       imdbRating: metadata.imdbRating ?? undefined,
       imdbVotes: metadata.imdbVotes ?? undefined,
       Type: metadata.Type ?? undefined,
-      DVD: metadata.DVD ?? undefined,
-      BoxOffice: metadata.BoxOffice ?? undefined,
-      Production: metadata.Production ?? undefined,
-      Website: metadata.Website ?? undefined,
       Response: metadata.Response ?? undefined,
     }
   }

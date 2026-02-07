@@ -717,10 +717,6 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
       imdbVotes,
       imdbID,
       Type,
-      DVD,
-      BoxOffice,
-      Production,
-      Website,
       Response
     FROM metadata
   `
@@ -746,10 +742,6 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
     imdbVotes: number | null
     imdbID: string | null
     Type: string | null
-    DVD: string | null
-    BoxOffice: string | null
-    Production: string | null
-    Website: string | null
     Response: string | null
   }>
 
@@ -797,10 +789,6 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
     if (metadata.imdbVotes !== null) result.imdbVotes = metadata.imdbVotes
     if (metadata.imdbID) result.imdbID = metadata.imdbID
     if (metadata.Type) result.Type = metadata.Type
-    if (metadata.DVD) result.DVD = metadata.DVD
-    if (metadata.BoxOffice) result.BoxOffice = metadata.BoxOffice
-    if (metadata.Production) result.Production = metadata.Production
-    if (metadata.Website) result.Website = metadata.Website
     if (metadata.Response) result.Response = metadata.Response
 
     // Add ratings if any

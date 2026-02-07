@@ -57,10 +57,6 @@ interface MetadataRow {
   imdbRating: number | null
   imdbVotes: number | null
   Type: string | null
-  DVD: string | null
-  BoxOffice: string | null
-  Production: string | null
-  Website: string | null
   Response: string | null
   Ratings?: Array<{ Source: string; Value: string }>
 }
@@ -197,10 +193,6 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       imdbRating: metadata.imdbRating ?? undefined,
       imdbVotes: metadata.imdbVotes ?? undefined,
       Type: metadata.Type ?? undefined,
-      DVD: metadata.DVD ?? undefined,
-      BoxOffice: metadata.BoxOffice ?? undefined,
-      Production: metadata.Production ?? undefined,
-      Website: metadata.Website ?? undefined,
       Response: metadata.Response ?? undefined,
     }
   }
@@ -415,8 +407,8 @@ export async function upsertMovie(
           INSERT OR REPLACE INTO metadata (
             movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
             Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-            imdbVotes, imdbID, Type, DVD, BoxOffice, Production, Website, Response
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            imdbVotes, imdbID, Type, Response
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
         ).run(
           existingMovieId,
@@ -439,10 +431,6 @@ export async function upsertMovie(
           entry.metadata.imdbVotes,
           entry.metadata.imdbID,
           entry.metadata.Type,
-          entry.metadata.DVD,
-          entry.metadata.BoxOffice,
-          entry.metadata.Production,
-          entry.metadata.Website,
           entry.metadata.Response
         )
 
@@ -545,8 +533,8 @@ export async function upsertMovie(
           INSERT OR REPLACE INTO metadata (
             movieId, Title, Year, Rated, Released, Runtime, Genre, Director, Writer,
             Actors, Plot, Language, Country, Awards, Poster, Metascore, imdbRating,
-            imdbVotes, imdbID, Type, DVD, BoxOffice, Production, Website, Response
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            imdbVotes, imdbID, Type, Response
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
         ).run(
           movieId,
@@ -569,10 +557,6 @@ export async function upsertMovie(
           entry.metadata.imdbVotes,
           entry.metadata.imdbID,
           entry.metadata.Type,
-          entry.metadata.DVD,
-          entry.metadata.BoxOffice,
-          entry.metadata.Production,
-          entry.metadata.Website,
           entry.metadata.Response
         )
 

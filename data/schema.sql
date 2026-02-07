@@ -167,10 +167,6 @@ CREATE TABLE metadata (
   imdbVotes INTEGER,
   imdbID TEXT,
   Type TEXT,
-  DVD TEXT,
-  BoxOffice TEXT,
-  Production TEXT,
-  Website TEXT,
   Response TEXT,
   
   FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE
