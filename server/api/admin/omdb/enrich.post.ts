@@ -2,15 +2,208 @@
  * OMDB Enrichment API Endpoint
  *
  * Enriches movies with OMDB metadata by matching unmatched movies
- * or re-enriching existing movies.
+ * or re-enriching existing movies. Uses SQLite for direct database access.
  */
 
 // Note: The following functions are auto-imported from server/utils/:
-// - loadMoviesDatabase, saveMoviesDatabase, getUnmatchedMovies, migrateMovieId (from movieData.ts)
-// - hasFailedOmdbMatch, saveFailedOmdbMatch, clearFailedOmdbMatches, removeFailedOmdbMatch (from failedOmdb.ts)
+// - extractMovieKeys (from movieData.ts)
+// - loadFailedOmdbMatches, saveFailedOmdbMatch, clearFailedOmdbMatches, removeFailedOmdbMatch (from failedOmdb.ts)
 // - matchMovie (from omdb.ts)
 // - emitProgress (from progress.ts)
 // - cleanTitleGeneral, extractYearAndCleanTitle (from titleCleaner.ts)
+
+// Explicitly import SQLite-based functions to avoid auto-import conflicts
+import { migrateMovieId } from '../../../utils/migrateMovieId'
+import { upsertMovie } from '../../../utils/upsertMovie'
+import { getAdminDatabase } from '../../../utils/adminDb'
+import type Database from 'better-sqlite3'
+
+/**
+ * Load a complete movie entry from the SQLite database
+ */
+async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<MovieEntry | null> {
+  // Load movie record
+  const movie = db.prepare('SELECT * FROM movies WHERE movieId = ?').get(movieId) as
+    | { movieId: string; title: string; year: number; verified: number; lastUpdated: string }
+    | undefined
+
+  if (!movie) {
+    return null
+  }
+
+  // Load sources
+  interface SourceRow {
+    id: number
+    movieId: string
+    sourceId: string
+    type: string
+    url: string
+    title: string
+    description: string | null
+    label: string | null
+    quality: string | null
+    fileSize: number | null
+    size: number | null
+    addedAt: string
+    thumbnail: string | null
+    duration: number | null
+    language: string | null
+    year: number | null
+    releaseYear: number | null
+    collection: string | null
+    downloads: number | null
+    channelName: string | null
+    channelId: string | null
+    publishedAt: string | null
+    viewCount: number | null
+    regionRestrictionAllowed: string | null
+    regionRestrictionBlocked: string | null
+  }
+
+  const sources = db.prepare('SELECT * FROM sources WHERE movieId = ?').all(movieId) as SourceRow[]
+
+  // Load quality marks for each source
+  const sourcesWithMarks: MovieSource[] = sources.map(source => {
+    const marks = db
+      .prepare('SELECT mark FROM source_quality_marks WHERE sourceId = ?')
+      .all(source.id) as { mark: string }[]
+
+    // Parse JSON fields
+    let regionRestriction: { allowed?: string[]; blocked?: string[] } | undefined = undefined
+    if (source.regionRestrictionAllowed || source.regionRestrictionBlocked) {
+      regionRestriction = {
+        allowed: source.regionRestrictionAllowed
+          ? JSON.parse(source.regionRestrictionAllowed)
+          : undefined,
+        blocked: source.regionRestrictionBlocked
+          ? JSON.parse(source.regionRestrictionBlocked)
+          : undefined,
+      }
+    }
+
+    return {
+      type: source.type as 'archive.org' | 'youtube',
+      url: source.url,
+      id: source.sourceId,
+      title: source.title,
+      description: source.description ?? undefined,
+      label: source.label ?? undefined,
+      quality: source.quality ?? undefined,
+      qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
+      fileSize: source.fileSize ?? undefined,
+      size: source.size ?? undefined,
+      addedAt: source.addedAt,
+      thumbnail: source.thumbnail ?? undefined,
+      duration: source.duration ?? undefined,
+      language: source.language ?? undefined,
+      year: source.year ?? undefined,
+      releaseYear: source.releaseYear ?? undefined,
+      collection: source.collection ?? undefined,
+      downloads: source.downloads ?? undefined,
+      channelName: source.channelName ?? undefined,
+      channelId: source.channelId ?? undefined,
+      publishedAt: source.publishedAt ?? undefined,
+      viewCount: source.viewCount ?? undefined,
+      regionRestriction: regionRestriction ?? undefined,
+    }
+  })
+
+  // Load metadata
+  interface MetadataRow {
+    movieId: string
+    Title: string | null
+    Year: string | null
+    Rated: string | null
+    Released: string | null
+    Runtime: string | null
+    Genre: string | null
+    Director: string | null
+    Writer: string | null
+    Actors: string | null
+    Plot: string | null
+    Language: string | null
+    Country: string | null
+    Awards: string | null
+    Poster: string | null
+    Metascore: string | null
+    imdbRating: number | null
+    imdbVotes: number | null
+    Type: string | null
+    DVD: string | null
+    BoxOffice: string | null
+    Production: string | null
+    Website: string | null
+    Response: string | null
+  }
+
+  const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
+    | MetadataRow
+    | undefined
+
+  let convertedMetadata: MovieEntry['metadata'] = undefined
+  if (metadata) {
+    // Load ratings
+    const ratings = db
+      .prepare('SELECT Source, Value FROM ratings WHERE movieId = ?')
+      .all(movieId) as { Source: string; Value: string }[]
+
+    convertedMetadata = {
+      Title: metadata.Title ?? undefined,
+      Year: metadata.Year ?? undefined,
+      Rated: metadata.Rated ?? undefined,
+      Released: metadata.Released ?? undefined,
+      Runtime: metadata.Runtime ?? undefined,
+      Genre: metadata.Genre ?? undefined,
+      Director: metadata.Director ?? undefined,
+      Writer: metadata.Writer ?? undefined,
+      Actors: metadata.Actors ?? undefined,
+      Plot: metadata.Plot ?? undefined,
+      Language: metadata.Language ?? undefined,
+      Country: metadata.Country ?? undefined,
+      Awards: metadata.Awards ?? undefined,
+      Poster: metadata.Poster ?? undefined,
+      Ratings: ratings.length > 0 ? ratings : undefined,
+      Metascore: metadata.Metascore ?? undefined,
+      imdbRating: metadata.imdbRating ?? undefined,
+      imdbVotes: metadata.imdbVotes ?? undefined,
+      Type: metadata.Type ?? undefined,
+      DVD: metadata.DVD ?? undefined,
+      BoxOffice: metadata.BoxOffice ?? undefined,
+      Production: metadata.Production ?? undefined,
+      Website: metadata.Website ?? undefined,
+      Response: metadata.Response ?? undefined,
+    }
+  }
+
+  // Load AI metadata
+  const aiMetadata = db
+    .prepare('SELECT title, year FROM ai_metadata WHERE movieId = ?')
+    .get(movieId) as { title: string; year: number } | undefined
+
+  // Load collections
+  const collections = db
+    .prepare(
+      `
+      SELECT c.id, c.name 
+      FROM collections c
+      JOIN collection_movies cm ON c.id = cm.collectionId
+      WHERE cm.movieId = ?
+    `
+    )
+    .all(movieId) as { id: string; name: string }[]
+
+  return {
+    movieId: movie.movieId,
+    title: movie.title,
+    year: movie.year || undefined,
+    sources: sourcesWithMarks,
+    metadata: convertedMetadata,
+    verified: movie.verified === 1,
+    ai: aiMetadata || undefined,
+    lastUpdated: movie.lastUpdated,
+    collections: collections.length > 0 ? collections : undefined,
+  }
+}
 
 interface EnrichmentOptions {
   limit?: number
@@ -45,22 +238,24 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    console.log('Loading database...')
+    console.log('Getting movie keys from database...')
     emitProgress({
       type: 'omdb',
       status: 'starting',
-      message: 'Loading database...',
+      message: 'Getting movie keys...',
       current: 0,
       total: 0,
       successCurrent: 0,
       failedCurrent: 0,
     })
-    // Load movies database
-    const db = await loadMoviesDatabase()
 
     if (forceRetryFailed) {
       clearFailedOmdbMatches()
     }
+
+    // Get database connection for reading movie data
+    const db = getAdminDatabase()
+
     console.log('Getting unmatched...')
     emitProgress({
       type: 'omdb',
@@ -72,39 +267,47 @@ export default defineEventHandler(async event => {
       failedCurrent: 0,
     })
 
-    // Get movies to process - optimized to stop early when limit is reached
+    // Get movies to process directly from SQLite
     const moviesToProcess: MovieEntry[] = []
     const targetLimit = limit || Infinity
 
     let count = 0
     const failed = loadFailedOmdbMatches()
 
+    // Get movie IDs from extractMovieKeys (still uses JSON for now)
     const keys = onlyUnmatched
       ? await extractMovieKeys('unmatched', key => !failed.has(key))
       : await extractMovieKeys()
+
     const processingTotal = targetLimit || keys.length
+
+    // Load movie entries from SQLite
     for (const key of keys) {
-      const value = db[key] as MovieEntry
       emitProgress({
         type: 'omdb',
         status: 'starting',
-        message: `Processing ${key}`,
+        message: `Loading ${key}`,
         current: count++,
         total: processingTotal,
         successCurrent: 0,
         failedCurrent: 0,
       })
-      console.log(`Processing ${key}`)
+      console.log(`Loading ${key}`)
 
       // Check if we've reached the limit
       if (moviesToProcess.length >= targetLimit) break
 
-      // Validate it's a movie entry
-      if (typeof value !== 'object' || value === null || !('movieId' in value)) continue
-
-      const entry = value as MovieEntry
-
-      moviesToProcess.push(entry)
+      // Load movie from SQLite
+      try {
+        const movie = await loadMovieFromDb(db, key)
+        if (movie) {
+          moviesToProcess.push(movie)
+        }
+      } catch (error) {
+        console.error(`Error loading movie ${key}:`, error)
+        // Skip this movie if we can't load it
+        continue
+      }
     }
 
     const total = moviesToProcess.length
@@ -232,31 +435,29 @@ export default defineEventHandler(async event => {
           removeFailedOmdbMatch(newId)
         }
 
-        // Update the movie entry
+        // Update the movie entry in SQLite
         movie.movieId = newId
         movie.title = matchResult.title!
         movie.year = matchResult.year ? parseInt(matchResult.year, 10) : undefined
         movie.metadata = matchResult.metadata
 
-        // Migrate if ID changed
+        // Migrate if ID changed, then upsert the updated entry
         if (oldId !== newId) {
-          await migrateMovieId(db, oldId, newId)
+          const migrationResult = await migrateMovieId(oldId, newId)
+          if (!migrationResult.success) {
+            throw new Error(`Migration failed: ${migrationResult.message}`)
+          }
         }
+
+        // Upsert the updated movie entry to SQLite
+        await upsertMovie(newId, movie)
       } catch (error) {
         result.failed++
         result.errors.push(
           `Error processing ${movie.title}: ${error instanceof Error ? error.message : 'Unknown error'}`
         )
       }
-
-      // Save progress after every 5 steps
-      if (result.processed % 5 === 0) {
-        await saveMoviesDatabase(db)
-      }
     }
-
-    // Save at the very end
-    await saveMoviesDatabase(db)
 
     emitProgress({
       type: 'omdb',
