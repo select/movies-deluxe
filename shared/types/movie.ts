@@ -138,6 +138,7 @@ export enum SourceQualityMark {
   VIDEO_ISSUES = 'video-issues',
   INCOMPLETE = 'incomplete',
   WRONG_ASPECT_RATIO = 'wrong-aspect-ratio',
+  POOR_METADATA = 'poor-metadata', // Numeric-only titles, title === description, etc.
 }
 
 /**
