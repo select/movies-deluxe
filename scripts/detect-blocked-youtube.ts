@@ -14,20 +14,16 @@
  * Run with: pnpm youtube:detect-blocked
  */
 
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
 import { config } from 'dotenv'
 import { google, type youtube_v3 } from 'googleapis'
-import { QualityLabel, type MovieEntry } from '../shared/types/movie'
+import { QualityLabel } from '../shared/types/movie'
 import { createLogger } from '../server/utils/logger'
+import { getAdminDatabase } from '../server/utils/adminDb'
 
 // Load environment variables
 config()
 
 const logger = createLogger('BlockedYouTubeDetector')
-
-// File paths
-const MOVIES_FILE = join(process.cwd(), 'data/movies.json')
 
 interface YouTubeRegionRestriction {
   allowed?: string[]
@@ -261,26 +257,29 @@ class BlockedYouTubeDetector {
   async processAllVideos(): Promise<void> {
     logger.info('Loading movies database...')
 
-    const moviesData = JSON.parse(readFileSync(MOVIES_FILE, 'utf-8'))
-    const movies = Object.values(moviesData) as MovieEntry[]
+    const db = getAdminDatabase()
 
     // Extract all YouTube video IDs
+    const sources = db
+      .prepare(
+        `
+      SELECT s.sourceId, s.movieId
+      FROM sources s
+      WHERE s.type = 'youtube'
+    `
+      )
+      .all() as Array<{ sourceId: string; movieId: string }>
+
     const youtubeVideoIds: string[] = []
     const videoToMovieMap = new Map<string, string[]>() // videoId -> [movieIds]
 
-    for (const movie of movies) {
-      if (typeof movie === 'object' && movie.sources) {
-        for (const source of movie.sources) {
-          if (source.type === 'youtube' && source.id) {
-            youtubeVideoIds.push(source.id)
+    for (const source of sources) {
+      youtubeVideoIds.push(source.sourceId)
 
-            if (!videoToMovieMap.has(source.id)) {
-              videoToMovieMap.set(source.id, [])
-            }
-            videoToMovieMap.get(source.id)!.push(movie.movieId)
-          }
-        }
+      if (!videoToMovieMap.has(source.sourceId)) {
+        videoToMovieMap.set(source.sourceId, [])
       }
+      videoToMovieMap.get(source.sourceId)!.push(source.movieId)
     }
 
     const uniqueVideoIds = [...new Set(youtubeVideoIds)]
@@ -318,86 +317,86 @@ class BlockedYouTubeDetector {
       videoStatusMap.set(status.videoId, status)
     }
 
-    for (const movie of movies) {
-      if (typeof movie === 'object' && movie.sources) {
-        let hasBlockedSource = false
-        let hasUpdatedRegionRestriction = false
+    // Prepare statements outside transaction
+    const updateSourceStmt = db.prepare(`
+      UPDATE sources 
+      SET 
+        regionRestrictionAllowed = ?,
+        regionRestrictionBlocked = ?
+      WHERE sourceId = ? AND type = 'youtube'
+    `)
 
-        for (const source of movie.sources) {
-          if (source.type === 'youtube' && source.id) {
-            // Check if video is blocked
-            if (blockedVideoIds.has(source.id)) {
-              hasBlockedSource = true
-            }
+    const getSourceStmt = db.prepare(
+      "SELECT regionRestrictionAllowed, regionRestrictionBlocked FROM sources WHERE sourceId = ? AND type = 'youtube'"
+    )
 
-            // Update region restriction data
-            const videoStatus = videoStatusMap.get(source.id)
-            if (videoStatus?.regionRestriction) {
-              const existingRestriction = source.regionRestriction
-              const newRestriction = videoStatus.regionRestriction
+    const getLabelsStmt = db.prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
 
-              // Only update if data has changed
-              const hasChanged =
-                JSON.stringify(existingRestriction) !== JSON.stringify(newRestriction)
+    const insertLabelStmt = db.prepare(`
+      INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt)
+      VALUES (?, ?, ?)
+    `)
 
-              if (hasChanged) {
-                source.regionRestriction = newRestriction
-                hasUpdatedRegionRestriction = true
-              }
-            } else if (source.regionRestriction) {
-              // Remove region restriction if it no longer exists
-              delete source.regionRestriction
-              hasUpdatedRegionRestriction = true
-            }
-          }
-        }
+    const updateMovieStmt = db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
 
-        if (hasBlockedSource) {
-          // Add BLOCKED quality label if not already present
-          if (!movie.qualityLabels) {
-            movie.qualityLabels = []
-          }
+    // Process updates in a transaction for better performance
+    const updateDatabase = db.transaction(() => {
+      const now = new Date().toISOString()
 
-          if (!movie.qualityLabels.includes(QualityLabel.BLOCKED)) {
-            movie.qualityLabels.push(QualityLabel.BLOCKED)
-            movie.qualityMarkedAt = new Date().toISOString()
-            movie.qualityMarkedBy = 'system'
-            movie.qualityNotes = movie.qualityNotes
-              ? `${movie.qualityNotes}; YouTube video blocked/unavailable`
-              : 'YouTube video blocked/unavailable'
+      for (const videoId of uniqueVideoIds) {
+        const movieIds = videoToMovieMap.get(videoId) || []
+        const videoStatus = videoStatusMap.get(videoId)
 
-            updatedMovies++
-            logger.info(`Marked movie ${movie.movieId} (${movie.title}) as BLOCKED`)
-          }
-        }
+        if (!videoStatus) continue
 
-        if (hasUpdatedRegionRestriction) {
+        // Update region restrictions
+        if (videoStatus.regionRestriction) {
+          updateSourceStmt.run(
+            videoStatus.regionRestriction.allowed
+              ? JSON.stringify(videoStatus.regionRestriction.allowed)
+              : null,
+            videoStatus.regionRestriction.blocked
+              ? JSON.stringify(videoStatus.regionRestriction.blocked)
+              : null,
+            videoId
+          )
           updatedRegionRestrictions++
+        } else {
+          // Clear region restrictions if they no longer exist
+          const source = getSourceStmt.get(videoId) as
+            | { regionRestrictionAllowed: string | null; regionRestrictionBlocked: string | null }
+            | undefined
+
+          if (source?.regionRestrictionAllowed || source?.regionRestrictionBlocked) {
+            updateSourceStmt.run(null, null, videoId)
+            updatedRegionRestrictions++
+          }
+        }
+
+        // Add BLOCKED quality label if video is blocked
+        if (blockedVideoIds.has(videoId)) {
+          for (const movieId of movieIds) {
+            // Check if movie already has BLOCKED label
+            const existingLabels = (getLabelsStmt.all(movieId) as Array<{ label: string }>).map(
+              row => row.label as QualityLabel
+            )
+            if (!existingLabels.includes(QualityLabel.BLOCKED)) {
+              insertLabelStmt.run(movieId, QualityLabel.BLOCKED, now)
+              updateMovieStmt.run(now, movieId)
+              updatedMovies++
+              logger.info(
+                `Marked movie ${movieId} as BLOCKED (YouTube video ${videoId} unavailable)`
+              )
+            }
+          }
         }
       }
-    }
+    })
+
+    // Execute transaction
+    updateDatabase()
 
     if (updatedMovies > 0 || updatedRegionRestrictions > 0) {
-      // Save updated database
-      logger.info(
-        `Updating database: ${updatedMovies} movies marked as BLOCKED, ${updatedRegionRestrictions} region restrictions updated...`
-      )
-
-      // Convert back to object format
-      const updatedData: Record<string, MovieEntry> = {}
-      for (const movie of movies) {
-        if (typeof movie === 'object' && movie.movieId) {
-          updatedData[movie.movieId] = movie
-        }
-      }
-
-      // Preserve schema and other metadata
-      const originalData = JSON.parse(readFileSync(MOVIES_FILE, 'utf-8'))
-      if (originalData._schema) {
-        updatedData._schema = originalData._schema
-      }
-
-      writeFileSync(MOVIES_FILE, JSON.stringify(updatedData, null, 2))
       logger.success(
         `Updated movies database: ${updatedMovies} BLOCKED movies, ${updatedRegionRestrictions} region restrictions`
       )

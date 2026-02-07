@@ -1,15 +1,5 @@
-import { loadMoviesDatabase, saveMoviesDatabase } from '../server/utils/movieData'
-import { QualityLabel, type MovieEntry } from '../shared/types/movie'
-
-/**
- * Extended MovieEntry type with quality tracking fields
- */
-interface MovieEntryWithQuality extends MovieEntry {
-  qualityLabels?: QualityLabel[]
-  qualityMarkedAt?: string
-  qualityMarkedBy?: string
-  qualityNotes?: string
-}
+import { getAdminDatabase } from '../server/utils/adminDb'
+import { QualityLabel } from '../shared/types/movie'
 
 /**
  * Mark movies as 'clip' based on file size and genre criteria
@@ -19,22 +9,61 @@ interface MovieEntryWithQuality extends MovieEntry {
  * 2. Do NOT have the 'short' genre
  * 3. Have a file size below 100MB
  */
-async function markClips() {
+function markClips() {
   const dryRun = process.argv.includes('--dry-run')
   const verbose = process.argv.includes('--verbose')
 
   console.log(`Loading database...${dryRun ? ' (DRY RUN)' : ''}`)
-  const db = await loadMoviesDatabase()
-  const entries = Object.entries(db).filter(([key]) => key.startsWith('tt'))
+  const db = getAdminDatabase()
+
+  // Get all movies with tt IDs (IMDb IDs)
+  const movies = db
+    .prepare(
+      `
+      SELECT m.movieId, m.title, md.Genre
+      FROM movies m
+      LEFT JOIN metadata md ON m.movieId = md.movieId
+      WHERE m.movieId LIKE 'tt%'
+    `
+    )
+    .all() as Array<{
+    movieId: string
+    title: string
+    Genre: string | null
+  }>
 
   let markedCount = 0
   const SIZE_THRESHOLD = 100 * 1024 * 1024 // 100MB in bytes
+  const COMMIT_BATCH_SIZE = 100
 
-  for (const [id, entry] of entries) {
-    const movie = entry as MovieEntryWithQuality
+  console.log(`Processing ${movies.length} movies...`)
+
+  // Prepare statements for reuse
+  const getLabelsStmt = db.prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
+  const getSmallFilesStmt = db.prepare(`
+    SELECT sourceId, fileSize, size
+    FROM sources
+    WHERE movieId = ? AND (fileSize < ? OR size < ?)
+    LIMIT 1
+  `)
+  const insertLabelStmt = db.prepare(`
+    INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt)
+    VALUES (?, ?, ?)
+  `)
+  const updateMovieStmt = db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
+
+  // Create transaction for batch inserts
+  const insertClipLabel = db.transaction((movieId: string) => {
+    const now = new Date().toISOString()
+    insertLabelStmt.run(movieId, QualityLabel.CLIP, now)
+    updateMovieStmt.run(now, movieId)
+  })
+
+  for (let i = 0; i < movies.length; i++) {
+    const movie = movies[i]
 
     // Check if movie has 'short' genre
-    const hasShortGenre = movie.metadata?.Genre?.toLowerCase().includes('short') ?? false
+    const hasShortGenre = movie.Genre?.toLowerCase().includes('short') ?? false
 
     // Skip if it has 'short' genre
     if (hasShortGenre) {
@@ -42,22 +71,19 @@ async function markClips() {
     }
 
     // Check if any source has file size below threshold
-    let hasSmallFile = false
-    for (const source of movie.sources) {
-      const fileSize = source.size || source.fileSize
-      if (fileSize && fileSize < SIZE_THRESHOLD) {
-        hasSmallFile = true
-        break
-      }
-    }
+    const smallFiles = getSmallFilesStmt.get(movie.movieId, SIZE_THRESHOLD, SIZE_THRESHOLD) as
+      | { sourceId: string; fileSize: number | null; size: number | null }
+      | undefined
 
     // Skip if no small files found
-    if (!hasSmallFile) {
+    if (!smallFiles) {
       continue
     }
 
-    // Initialize qualityLabels if not present
-    const qualityLabels = movie.qualityLabels || []
+    // Check existing quality labels
+    const qualityLabels = (getLabelsStmt.all(movie.movieId) as Array<{ label: string }>).map(
+      row => row.label as QualityLabel
+    )
 
     // Skip if already marked as clip
     if (qualityLabels.includes(QualityLabel.CLIP)) {
@@ -65,38 +91,33 @@ async function markClips() {
     }
 
     if (verbose) {
-      const smallestSize = Math.min(
-        ...movie.sources.map(s => s.size || s.fileSize || Infinity).filter(s => s !== Infinity)
+      const fileSize = smallFiles.fileSize || smallFiles.size || 0
+      const sizeMB = (fileSize / (1024 * 1024)).toFixed(2)
+      console.log(
+        `Marking ${movie.movieId} ("${movie.title}") as clip - smallest file: ${sizeMB}MB`
       )
-      const sizeMB = (smallestSize / (1024 * 1024)).toFixed(2)
-      console.log(`Marking ${id} ("${movie.title}") as clip - smallest file: ${sizeMB}MB`)
     }
 
     if (!dryRun) {
-      // Add clip label
-      movie.qualityLabels = [...qualityLabels, QualityLabel.CLIP]
-      movie.qualityMarkedAt = new Date().toISOString()
-      movie.qualityMarkedBy = 'clip-detector'
-      const existingNotes = movie.qualityNotes || ''
-      movie.qualityNotes =
-        (existingNotes ? existingNotes + '; ' : '') + 'Auto-detected: file size below 100MB'
+      insertClipLabel(movie.movieId)
     }
 
     markedCount++
+
+    // Progress reporting
+    if ((i + 1) % COMMIT_BATCH_SIZE === 0) {
+      console.log(`Progress: ${i + 1}/${movies.length} movies processed`)
+    }
   }
 
   console.log(`\nDetection complete.`)
-  console.log(`Movies checked: ${entries.length}`)
+  console.log(`Movies checked: ${movies.length}`)
   console.log(`Movies marked as clips: ${markedCount}`)
-
-  if (!dryRun && markedCount > 0) {
-    console.log('Saving database...')
-    await saveMoviesDatabase(db)
-    console.log('Database saved.')
-  }
 }
 
-markClips().catch(err => {
+try {
+  markClips()
+} catch (err) {
   console.error('Error during clip detection:', err)
   process.exit(1)
-})
+}

@@ -1,16 +1,22 @@
-import { loadMoviesDatabase, saveMoviesDatabase } from '../server/utils/movieData'
-import { QualityLabel, type MovieEntry } from '../shared/types/movie'
+import { getAdminDatabase } from '../server/utils/adminDb'
+import { QualityLabel } from '../shared/types/movie'
 
-async function detectQualityIssues() {
+function detectQualityIssues() {
   const dryRun = process.argv.includes('--dry-run')
   const verbose = process.argv.includes('--verbose')
 
   console.log(`Loading database...${dryRun ? ' (DRY RUN)' : ''}`)
-  const db = await loadMoviesDatabase()
-  const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
+  const db = getAdminDatabase()
+
+  // Get all movies with their sources
+  const movies = db.prepare('SELECT movieId, title FROM movies').all() as Array<{
+    movieId: string
+    title: string
+  }>
 
   let markedCount = 0
   let totalIssues = 0
+  const COMMIT_BATCH_SIZE = 100
 
   const keywords = [
     { label: QualityLabel.TRAILER, terms: ['trailer', 'official trailer'] },
@@ -24,12 +30,43 @@ async function detectQualityIssues() {
     { label: QualityLabel.PROMO, terms: ['promo', 'tv spot', 'sneak peek'] },
   ]
 
-  for (const [id, entry] of entries) {
-    const movie = entry as MovieEntry
-    const newLabels = new Set<QualityLabel>(movie.qualityLabels || [])
+  console.log(`Processing ${movies.length} movies...`)
+
+  // Prepare statements for reuse
+  const getLabelsStmt = db.prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
+  const getSourcesStmt = db.prepare('SELECT title, duration FROM sources WHERE movieId = ?')
+  const insertLabelStmt = db.prepare(`
+    INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt)
+    VALUES (?, ?, ?)
+  `)
+  const updateMovieStmt = db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
+
+  // Create a transaction for batch inserts
+  const insertLabels = db.transaction((movieId: string, labels: QualityLabel[]) => {
+    const now = new Date().toISOString()
+    for (const label of labels) {
+      insertLabelStmt.run(movieId, label, now)
+    }
+    updateMovieStmt.run(now, movieId)
+  })
+
+  for (let i = 0; i < movies.length; i++) {
+    const movie = movies[i]
+
+    // Get existing quality labels
+    const existingLabels = (getLabelsStmt.all(movie.movieId) as Array<{ label: string }>).map(
+      row => row.label as QualityLabel
+    )
+    const newLabels = new Set<QualityLabel>(existingLabels)
     const initialLabelCount = newLabels.size
 
-    for (const source of movie.sources) {
+    // Get sources for this movie
+    const sources = getSourcesStmt.all(movie.movieId) as Array<{
+      title: string
+      duration: number | null
+    }>
+
+    for (const source of sources) {
       const title = source.title.toLowerCase()
       const movieTitleLower = movie.title.toLowerCase()
 
@@ -75,39 +112,36 @@ async function detectQualityIssues() {
     }
 
     if (newLabels.size > initialLabelCount) {
-      const addedLabels = Array.from(newLabels).filter(l => !movie.qualityLabels?.includes(l))
+      const addedLabels = Array.from(newLabels).filter(l => !existingLabels.includes(l))
 
       if (verbose) {
-        console.log(`Marking ${id} ("${movie.title}"): ${addedLabels.join(', ')}`)
+        console.log(`Marking ${movie.movieId} ("${movie.title}"): ${addedLabels.join(', ')}`)
       }
 
       if (!dryRun) {
-        movie.qualityLabels = Array.from(newLabels)
-        movie.qualityMarkedAt = new Date().toISOString()
-        movie.qualityMarkedBy = 'auto-detector'
-        movie.qualityNotes =
-          (movie.qualityNotes ? movie.qualityNotes + '; ' : '') +
-          `Auto-detected issues: ${addedLabels.join(', ')}`
+        // Add new quality labels using transaction
+        insertLabels(movie.movieId, addedLabels)
       }
 
       markedCount++
       totalIssues += addedLabels.length
     }
+
+    // Progress reporting
+    if ((i + 1) % COMMIT_BATCH_SIZE === 0) {
+      console.log(`Progress: ${i + 1}/${movies.length} movies processed`)
+    }
   }
 
   console.log(`\nDetection complete.`)
-  console.log(`Movies checked: ${entries.length}`)
+  console.log(`Movies checked: ${movies.length}`)
   console.log(`Movies with new issues: ${markedCount}`)
   console.log(`Total new labels: ${totalIssues}`)
-
-  if (!dryRun && markedCount > 0) {
-    console.log('Saving database...')
-    await saveMoviesDatabase(db)
-    console.log('Database saved.')
-  }
 }
 
-detectQualityIssues().catch(err => {
+try {
+  detectQualityIssues()
+} catch (err) {
   console.error('Error during quality detection:', err)
   process.exit(1)
-})
+}

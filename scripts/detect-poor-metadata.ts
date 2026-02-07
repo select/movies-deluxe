@@ -1,5 +1,5 @@
-import { loadMoviesDatabase, saveMoviesDatabase } from '../server/utils/movieData'
-import { SourceQualityMark, type MovieEntry, type MovieSource } from '../shared/types/movie'
+import { getAdminDatabase } from '../server/utils/adminDb'
+import { SourceQualityMark } from '../shared/types/movie'
 
 /**
  * Detection criteria for poor metadata
@@ -29,7 +29,10 @@ function normalizeString(value: string | string[] | undefined): string {
 /**
  * Detect poor metadata in a source
  */
-function detectPoorMetadata(source: MovieSource): DetectionResult {
+function detectPoorMetadata(source: {
+  title: string
+  description: string | null
+}): DetectionResult {
   const reasons: string[] = []
   const title = normalizeString(source.title as string | string[]).trim()
   const description = normalizeString(source.description as string | string[]).trim()
@@ -57,65 +60,107 @@ function detectPoorMetadata(source: MovieSource): DetectionResult {
 /**
  * Main function to detect and mark sources with poor metadata
  */
-async function detectPoorMetadataMain() {
+function detectPoorMetadataMain() {
   const dryRun = process.argv.includes('--dry-run')
   const verbose = process.argv.includes('--verbose')
 
   console.log(`Loading database...${dryRun ? ' (DRY RUN)' : ''}`)
-  const db = await loadMoviesDatabase()
-  const entries = Object.entries(db).filter(([key]) => !key.startsWith('_'))
+  const db = getAdminDatabase()
+
+  // Get all sources with their quality marks
+  const sources = db
+    .prepare(
+      `
+      SELECT 
+        s.id,
+        s.movieId,
+        s.sourceId,
+        s.title,
+        s.description,
+        s.type,
+        m.title as movieTitle,
+        GROUP_CONCAT(sqm.mark, '|') as marks
+      FROM sources s
+      JOIN movies m ON s.movieId = m.movieId
+      LEFT JOIN source_quality_marks sqm ON s.id = sqm.sourceId
+      GROUP BY s.id
+    `
+    )
+    .all() as Array<{
+    id: number
+    movieId: string
+    sourceId: string
+    title: string
+    description: string | null
+    type: string
+    movieTitle: string
+    marks: string | null
+  }>
 
   let sourcesChecked = 0
   let sourcesMarked = 0
   let sourcesAlreadyMarked = 0
-  let moviesAffected = 0
+  const moviesAffected = new Set<string>()
+  const COMMIT_BATCH_SIZE = 100
 
   const stats = {
     numericTitleNoDesc: 0,
     numericBoth: 0,
   }
 
-  for (const [id, entry] of entries) {
-    const movie = entry as MovieEntry
-    let movieModified = false
+  console.log(`Processing ${sources.length} sources...`)
 
-    for (const source of movie.sources) {
-      sourcesChecked++
+  // Prepare statements for reuse
+  const insertMarkStmt = db.prepare(`
+    INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt)
+    VALUES (?, ?, ?)
+  `)
+  const updateMovieStmt = db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
 
-      // Check if already marked with poor-metadata
-      const existingMarks = source.qualityMarks || []
-      if (existingMarks.includes(SourceQualityMark.POOR_METADATA)) {
-        sourcesAlreadyMarked++
-        continue
-      }
+  // Create transaction for batch inserts
+  const insertMark = db.transaction((sourceId: number, movieId: string) => {
+    const now = new Date().toISOString()
+    insertMarkStmt.run(sourceId, SourceQualityMark.POOR_METADATA, now)
+    updateMovieStmt.run(now, movieId)
+  })
 
-      const detection = detectPoorMetadata(source)
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i]
+    sourcesChecked++
 
-      if (detection.hasIssue) {
-        // Update stats
-        for (const reason of detection.reasons) {
-          if (reason.includes('no description')) stats.numericTitleNoDesc++
-          if (reason.includes('both title and description')) stats.numericBoth++
-        }
-
-        if (verbose) {
-          console.log(`\n[${id}] "${movie.title}"`)
-          console.log(`  Source: "${source.title}" (${source.type})`)
-          console.log(`  Reasons: ${detection.reasons.join(', ')}`)
-        }
-
-        if (!dryRun) {
-          source.qualityMarks = [...existingMarks, SourceQualityMark.POOR_METADATA]
-          movieModified = true
-        }
-
-        sourcesMarked++
-      }
+    // Check if already marked with poor-metadata
+    const existingMarks = source.marks ? source.marks.split('|') : []
+    if (existingMarks.includes(SourceQualityMark.POOR_METADATA)) {
+      sourcesAlreadyMarked++
+      continue
     }
 
-    if (movieModified) {
-      movie.lastUpdated = new Date().toISOString()
-      moviesAffected++
+    const detection = detectPoorMetadata(source)
+
+    if (detection.hasIssue) {
+      // Update stats
+      for (const reason of detection.reasons) {
+        if (reason.includes('no description')) stats.numericTitleNoDesc++
+        if (reason.includes('both title and description')) stats.numericBoth++
+      }
+
+      if (verbose) {
+        console.log(`\n[${source.movieId}] "${source.movieTitle}"`)
+        console.log(`  Source: "${source.title}" (${source.type})`)
+        console.log(`  Reasons: ${detection.reasons.join(', ')}`)
+      }
+
+      if (!dryRun) {
+        insertMark(source.id, source.movieId)
+        moviesAffected.add(source.movieId)
+      }
+
+      sourcesMarked++
+    }
+
+    // Progress reporting
+    if ((i + 1) % COMMIT_BATCH_SIZE === 0) {
+      console.log(`Progress: ${i + 1}/${sources.length} sources processed`)
     }
   }
 
@@ -125,21 +170,19 @@ async function detectPoorMetadataMain() {
   console.log(`\nSources checked: ${sourcesChecked}`)
   console.log(`Sources marked: ${sourcesMarked}`)
   console.log(`Sources already marked: ${sourcesAlreadyMarked}`)
-  console.log(`Movies affected: ${moviesAffected}`)
+  console.log(`Movies affected: ${moviesAffected.size}`)
   console.log(`\nBreakdown by issue type:`)
   console.log(`  - Numeric-only title with no description: ${stats.numericTitleNoDesc}`)
   console.log(`  - Numeric-only in both title and description: ${stats.numericBoth}`)
 
-  if (!dryRun && sourcesMarked > 0) {
-    console.log('\nSaving database...')
-    await saveMoviesDatabase(db)
-    console.log('Database saved.')
-  } else if (dryRun) {
+  if (dryRun) {
     console.log('\n(DRY RUN - no changes saved)')
   }
 }
 
-detectPoorMetadataMain().catch(err => {
+try {
+  detectPoorMetadataMain()
+} catch (err) {
   console.error('Error during poor metadata detection:', err)
   process.exit(1)
-})
+}
