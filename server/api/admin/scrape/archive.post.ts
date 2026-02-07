@@ -3,8 +3,7 @@ export default defineEventHandler(async event => {
   const { collections = ['feature_films'] } = body
 
   try {
-    const db = await loadMoviesDatabase()
-    const results = await scrapeArchiveOrg(db, {
+    const results = await scrapeArchiveOrg({
       collections,
       onProgress: progress => {
         emitProgress({
@@ -14,7 +13,6 @@ export default defineEventHandler(async event => {
         })
       },
     })
-    await saveMoviesDatabase(db)
 
     emitProgress({
       type: 'archive',
