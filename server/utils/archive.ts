@@ -69,22 +69,22 @@ export function extractYear(date?: string): number | undefined {
  */
 export async function processArchiveMovie(
   movie: ArchiveOrgMovie,
-  collection: string
+  _collection: string
 ): Promise<MovieEntry | null> {
   const year = extractYear(movie.date || movie.year)
 
   const source: ArchiveOrgSource = {
     type: 'archive.org',
+    channelId: 'archive.org',
     id: movie.identifier,
     sourceId: movie.identifier,
     title: movie.title, // Original title from Archive.org
-    collection,
     downloads: movie.downloads,
     description: movie.description,
     year, // Extracted year from Archive.org metadata
     language: movie.language, // 2-letter language code from Archive.org metadata
     size: movie.item_size, // File size in bytes
-    addedAt: new Date().toISOString(),
+    addedAt: Math.floor(Date.now() / 1000), // Unix timestamp
   }
 
   // Always use generated Archive ID - OMDB enrichment is done separately

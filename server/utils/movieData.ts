@@ -375,12 +375,6 @@ export async function getDatabaseStatsWithChannels(db: MoviesDatabase): Promise<
     movieEntry.sources?.forEach((source: MovieSource) => {
       if (source.type === 'archive.org') {
         stats.archiveOrgSources++
-        if (source.collection) {
-          const collection = Array.isArray(source.collection)
-            ? source.collection[0]
-            : source.collection
-          stats.collections[collection] = (stats.collections[collection] || 0) + 1
-        }
       }
       if (source.type === 'youtube') {
         stats.youtubeSources++

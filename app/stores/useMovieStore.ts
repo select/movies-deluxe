@@ -202,7 +202,7 @@ export const useMovieStore = defineStore('movie', () => {
       readonly Country?: string
     }
     readonly sources?: readonly {
-      readonly type: MovieSourceType
+      readonly type?: MovieSourceType
       readonly language?: string | readonly string[]
       readonly channelName?: string
     }[]

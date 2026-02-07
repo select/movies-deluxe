@@ -13,23 +13,17 @@ interface SourceRow {
   id: number
   movieId: string
   sourceId: string
-  type: string
+  channelId: string
   title: string
   description: string | null
   size: number | null
-  addedAt: string
+  addedAt: number
   duration: number | null
   language: string | null
   year: number | null
-  releaseYear: number | null
-  collection: string | null
   downloads: number | null
-  channelName: string | null
-  channelId: string | null
-  publishedAt: string | null
   viewCount: number | null
-  regionRestrictionAllowed: string | null
-  regionRestrictionBlocked: string | null
+  regionRestriction: string | null
 }
 
 interface MetadataRow {
@@ -82,8 +76,17 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
     throw new Error(`Movie not found: ${movieId}`)
   }
 
-  // Load sources
-  const sources = db.prepare('SELECT * FROM sources WHERE movieId = ?').all(movieId) as SourceRow[]
+  // Load sources with channel data
+  const sources = db
+    .prepare(
+      `
+      SELECT s.*, c.platform as type, c.name as channelName
+      FROM sources s
+      JOIN channels c ON s.channelId = c.id
+      WHERE s.movieId = ?
+    `
+    )
+    .all(movieId) as (SourceRow & { type: string; channelName: string })[]
 
   // Load quality marks for each source
   const sourcesWithMarks: MovieSource[] = sources.map(source => {
@@ -91,21 +94,18 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       .prepare('SELECT mark FROM source_quality_marks WHERE sourceId = ?')
       .all(source.id) as { mark: string }[]
 
-    // Parse JSON fields
+    // Parse JSON regionRestriction field
     let regionRestriction: RegionRestriction | undefined = undefined
-    if (source.regionRestrictionAllowed || source.regionRestrictionBlocked) {
-      regionRestriction = {
-        allowed: source.regionRestrictionAllowed
-          ? JSON.parse(source.regionRestrictionAllowed)
-          : undefined,
-        blocked: source.regionRestrictionBlocked
-          ? JSON.parse(source.regionRestrictionBlocked)
-          : undefined,
+    if (source.regionRestriction) {
+      try {
+        regionRestriction = JSON.parse(source.regionRestriction)
+      } catch {
+        // Invalid JSON, ignore
       }
     }
 
     return {
-      type: source.type as MovieSourceType,
+      channelId: source.channelId,
       sourceId: source.sourceId,
       id: source.sourceId, // Alias for backward compatibility
       title: source.title,
@@ -116,14 +116,12 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       duration: source.duration || undefined,
       language: source.language || undefined,
       year: source.year || undefined,
-      releaseYear: source.releaseYear || undefined,
-      collection: source.collection || undefined,
       downloads: source.downloads || undefined,
-      channelName: source.channelName || undefined,
-      channelId: source.channelId || undefined,
-      publishedAt: source.publishedAt || undefined,
       viewCount: source.viewCount || undefined,
       regionRestriction: regionRestriction || undefined,
+      // Runtime fields from join
+      type: source.type as MovieSourceType,
+      channelName: source.channelName,
     }
   })
 
@@ -213,8 +211,8 @@ export async function upsertMovie(
     if (!existing && entry.sources && entry.sources.length > 0) {
       for (const source of entry.sources) {
         const foundMovie = db
-          .prepare('SELECT movieId FROM sources WHERE sourceId = ? AND type = ?')
-          .get(source.id, source.type) as { movieId: string } | undefined
+          .prepare('SELECT movieId FROM sources WHERE sourceId = ? AND channelId = ?')
+          .get(source.id, source.channelId) as { movieId: string } | undefined
 
         if (foundMovie) {
           existingMovieId = foundMovie.movieId
@@ -256,11 +254,10 @@ export async function upsertMovie(
       // Handle sources: INSERT OR IGNORE (due to unique constraint), then UPDATE if exists
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
-          movieId, type, sourceId, title, description,
-          size, addedAt, duration, language, year, releaseYear,
-          collection, downloads, channelName, channelId, publishedAt, viewCount,
-          regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          movieId, channelId, sourceId, title, description,
+          size, addedAt, duration, language, year,
+          downloads, viewCount, regionRestriction
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       const updateSource = db.prepare(`
@@ -269,13 +266,10 @@ export async function upsertMovie(
             size = COALESCE(?, size),
             duration = COALESCE(?, duration),
             language = COALESCE(?, language), year = COALESCE(?, year), 
-            releaseYear = COALESCE(?, releaseYear), collection = COALESCE(?, collection),
-            downloads = COALESCE(?, downloads), channelName = COALESCE(?, channelName),
-            channelId = COALESCE(?, channelId), publishedAt = COALESCE(?, publishedAt),
+            downloads = COALESCE(?, downloads),
             viewCount = COALESCE(?, viewCount), 
-            regionRestrictionAllowed = COALESCE(?, regionRestrictionAllowed),
-            regionRestrictionBlocked = COALESCE(?, regionRestrictionBlocked)
-        WHERE movieId = ? AND type = ? AND sourceId = ?
+            regionRestriction = COALESCE(?, regionRestriction)
+        WHERE movieId = ? AND channelId = ? AND sourceId = ?
       `)
 
       for (const source of entry.sources || []) {
@@ -284,8 +278,19 @@ export async function upsertMovie(
 
         // Check if source exists
         const existingSource = db
-          .prepare('SELECT id FROM sources WHERE movieId = ? AND type = ? AND sourceId = ?')
-          .get(existingMovieId, source.type, source.id) as { id: number } | undefined
+          .prepare('SELECT id FROM sources WHERE movieId = ? AND channelId = ? AND sourceId = ?')
+          .get(existingMovieId, source.channelId, source.id) as { id: number } | undefined
+
+        // Convert addedAt to Unix timestamp if it's a string
+        const addedAt =
+          typeof source.addedAt === 'string'
+            ? Math.floor(new Date(source.addedAt).getTime() / 1000)
+            : source.addedAt || Math.floor(Date.now() / 1000)
+
+        // Serialize regionRestriction to JSON
+        const regionRestrictionJson = source.regionRestriction
+          ? JSON.stringify(source.regionRestriction)
+          : null
 
         if (existingSource) {
           // Update existing source (preferring non-empty values)
@@ -296,21 +301,11 @@ export async function upsertMovie(
             source.duration,
             lang,
             source.year,
-            source.releaseYear,
-            source.collection,
             source.downloads,
-            source.channelName,
-            source.channelId,
-            source.publishedAt,
             source.viewCount,
-            source.regionRestriction?.allowed
-              ? JSON.stringify(source.regionRestriction.allowed)
-              : null,
-            source.regionRestriction?.blocked
-              ? JSON.stringify(source.regionRestriction.blocked)
-              : null,
+            regionRestrictionJson,
             existingMovieId,
-            source.type,
+            source.channelId,
             source.id
           )
 
@@ -331,28 +326,18 @@ export async function upsertMovie(
           // Insert new source
           const result = insertSource.run(
             existingMovieId,
-            source.type,
+            source.channelId,
             source.id,
             source.title,
             source.description,
             source.size,
-            source.addedAt || now,
+            addedAt,
             source.duration,
             lang,
             source.year,
-            source.releaseYear,
-            source.collection,
             source.downloads,
-            source.channelName,
-            source.channelId,
-            source.publishedAt,
             source.viewCount,
-            source.regionRestriction?.allowed
-              ? JSON.stringify(source.regionRestriction.allowed)
-              : null,
-            source.regionRestriction?.blocked
-              ? JSON.stringify(source.regionRestriction.blocked)
-              : null
+            regionRestrictionJson
           )
 
           // Handle quality marks for new source
@@ -426,40 +411,40 @@ export async function upsertMovie(
       // Insert sources
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
-          movieId, type, sourceId, title, description,
-          size, addedAt, duration, language, year, releaseYear,
-          collection, downloads, channelName, channelId, publishedAt, viewCount,
-          regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          movieId, channelId, sourceId, title, description,
+          size, addedAt, duration, language, year,
+          downloads, viewCount, regionRestriction
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       for (const source of entry.sources || []) {
         const lang = normalizeLanguage(source.language)
 
+        // Convert addedAt to Unix timestamp if it's a string
+        const addedAt =
+          typeof source.addedAt === 'string'
+            ? Math.floor(new Date(source.addedAt).getTime() / 1000)
+            : source.addedAt || Math.floor(Date.now() / 1000)
+
+        // Serialize regionRestriction to JSON
+        const regionRestrictionJson = source.regionRestriction
+          ? JSON.stringify(source.regionRestriction)
+          : null
+
         const result = insertSource.run(
           movieId,
-          source.type,
+          source.channelId,
           source.id,
           source.title,
           source.description,
           source.size,
-          source.addedAt || now,
+          addedAt,
           source.duration,
           lang,
           source.year,
-          source.releaseYear,
-          source.collection,
           source.downloads,
-          source.channelName,
-          source.channelId,
-          source.publishedAt,
           source.viewCount,
-          source.regionRestriction?.allowed
-            ? JSON.stringify(source.regionRestriction.allowed)
-            : null,
-          source.regionRestriction?.blocked
-            ? JSON.stringify(source.regionRestriction.blocked)
-            : null
+          regionRestrictionJson
         )
 
         // Handle quality marks

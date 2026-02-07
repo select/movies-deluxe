@@ -179,7 +179,7 @@ export async function generateMovieJSON(): Promise<void> {
         year: movie.year,
         sources: movie.sources.map(s => {
           const mapped: MovieSource = {
-            type: s.type,
+            channelId: s.channelId,
             sourceId: s.sourceId,
             id: s.id,
             title: s.title,
@@ -189,24 +189,16 @@ export async function generateMovieJSON(): Promise<void> {
             addedAt: s.addedAt,
             duration: s.duration,
             language: s.language,
-            year: s.year || s.releaseYear,
+            year: s.year,
+            downloads: s.downloads,
+            viewCount: s.viewCount,
+            regionRestriction: s.regionRestriction,
+            // Runtime fields
+            type: s.type,
+            channelName: s.channelName,
           }
 
-          if (s.type === 'youtube') {
-            mapped.channelName = s.channelName
-            mapped.channelId = s.channelId
-            mapped.regionRestriction = s.regionRestriction
-          }
-
-          if (s.type === 'archive.org') {
-            mapped.collection = s.collection
-            mapped.downloads = s.downloads
-          }
-
-          // Remove undefined fields to keep JSON clean
-          return Object.fromEntries(
-            Object.entries(mapped).filter(([_, v]) => v !== undefined)
-          ) as unknown as MovieSource
+          return mapped
         }),
         // Only include metadata fields that are used in the UI
         metadata: movie.metadata

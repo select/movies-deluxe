@@ -56,23 +56,13 @@ export default defineEventHandler(async event => {
         // Create new entry
         const newEntry: MovieEntry = {
           movieId: removedSourceTempId,
-          title: removedSource.title,
+          title: removedSource.title || 'Untitled',
           sources: [removedSource],
           lastUpdated: new Date().toISOString(),
         }
 
         // Try to preserve year if available
-        if (
-          removedSource.type === 'youtube' &&
-          'releaseYear' in removedSource &&
-          removedSource.releaseYear
-        ) {
-          newEntry.year = removedSource.releaseYear
-        } else if (
-          removedSource.type === 'archive.org' &&
-          'year' in removedSource &&
-          removedSource.year
-        ) {
+        if (removedSource.year) {
           newEntry.year = removedSource.year
         }
 

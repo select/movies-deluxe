@@ -202,7 +202,7 @@ export default defineEventHandler(async event => {
               },
               source
                 ? {
-                    type: source.type,
+                    type: source.type || 'unknown',
                     hasDescription: Boolean(description),
                     titleLength: title.length,
                     descriptionLength: description.length,
@@ -251,7 +251,7 @@ export default defineEventHandler(async event => {
             },
             source
               ? {
-                  type: source.type,
+                  type: source.type || 'unknown',
                   hasDescription: Boolean(description),
                   titleLength: title.length,
                   descriptionLength: description.length,

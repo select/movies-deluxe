@@ -36,26 +36,29 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     id: number
     movieId: string
     sourceId: string
-    type: string
+    channelId: string
     title: string
     description: string | null
     size: number | null
-    addedAt: string
+    addedAt: number
     duration: number | null
     language: string | null
     year: number | null
-    releaseYear: number | null
-    collection: string | null
     downloads: number | null
-    channelName: string | null
-    channelId: string | null
-    publishedAt: string | null
     viewCount: number | null
-    regionRestrictionAllowed: string | null
-    regionRestrictionBlocked: string | null
+    regionRestriction: string | null
   }
 
-  const sources = db.prepare('SELECT * FROM sources WHERE movieId = ?').all(movieId) as SourceRow[]
+  const sources = db
+    .prepare(
+      `
+    SELECT s.*, c.platform as type, c.name as channelName
+    FROM sources s
+    JOIN channels c ON s.channelId = c.id
+    WHERE s.movieId = ?
+  `
+    )
+    .all(movieId) as (SourceRow & { type: string; channelName: string })[]
 
   // Load quality marks for each source
   const sourcesWithMarks: MovieSource[] = sources.map(source => {
@@ -63,21 +66,18 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       .prepare('SELECT mark FROM source_quality_marks WHERE sourceId = ?')
       .all(source.id) as { mark: string }[]
 
-    // Parse JSON fields
+    // Parse JSON regionRestriction field
     let regionRestriction: { allowed?: string[]; blocked?: string[] } | undefined = undefined
-    if (source.regionRestrictionAllowed || source.regionRestrictionBlocked) {
-      regionRestriction = {
-        allowed: source.regionRestrictionAllowed
-          ? JSON.parse(source.regionRestrictionAllowed)
-          : undefined,
-        blocked: source.regionRestrictionBlocked
-          ? JSON.parse(source.regionRestrictionBlocked)
-          : undefined,
+    if (source.regionRestriction) {
+      try {
+        regionRestriction = JSON.parse(source.regionRestriction)
+      } catch {
+        // Invalid JSON, ignore
       }
     }
 
     return {
-      type: source.type as 'archive.org' | 'youtube',
+      channelId: source.channelId,
       sourceId: source.sourceId,
       id: source.sourceId, // Alias for backward compatibility
       title: source.title,
@@ -88,14 +88,12 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       duration: source.duration ?? undefined,
       language: source.language ?? undefined,
       year: source.year ?? undefined,
-      releaseYear: source.releaseYear ?? undefined,
-      collection: source.collection ?? undefined,
       downloads: source.downloads ?? undefined,
-      channelName: source.channelName ?? undefined,
-      channelId: source.channelId ?? undefined,
-      publishedAt: source.publishedAt ?? undefined,
       viewCount: source.viewCount ?? undefined,
       regionRestriction: regionRestriction ?? undefined,
+      // Runtime fields from join
+      type: source.type as 'archive.org' | 'youtube',
+      channelName: source.channelName,
     }
   })
 
@@ -338,8 +336,8 @@ export default defineEventHandler(async event => {
       }
 
       // Extract year from sources
-      const sourceWithYear = movie.sources.find(s => s.year || s.releaseYear)
-      const sourceYear = sourceWithYear?.year || sourceWithYear?.releaseYear
+      const sourceWithYear = movie.sources.find(s => s.year)
+      const sourceYear = sourceWithYear?.year
 
       // Parse title and extract year
       const { title: name, year: titleYear } = extractYearAndCleanTitle(primaryTitle)

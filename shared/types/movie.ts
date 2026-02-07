@@ -11,6 +11,16 @@
 export type MovieSourceType = 'archive.org' | 'youtube'
 
 /**
+ * Channel/collection information
+ */
+export interface Channel {
+  id: string // channelId for YouTube, 'archive.org' for Archive
+  name: string // Channel/collection name
+  platform: MovieSourceType // 'youtube' or 'archive.org'
+  created_at?: number // Unix timestamp
+}
+
+/**
  * YouTube region restriction data
  */
 export interface YouTubeRegionRestriction {
@@ -23,30 +33,25 @@ export interface YouTubeRegionRestriction {
  * Note: url field is constructed dynamically from type and id using getSourceUrl()
  */
 export interface MovieSource {
-  type: MovieSourceType
-  // url is constructed dynamically from type and sourceId using getSourceUrl()
+  // url is constructed dynamically from channel.platform and sourceId using getSourceUrl()
+  channelId: string // Foreign key to channels table
   sourceId: string // Archive.org identifier or YouTube video ID
   id: string // Alias for sourceId (kept for backward compatibility)
-  title: string // Original title from the source (before cleaning/processing)
+  title?: string // Original title from the source (before cleaning/processing)
   description?: string // Original source description (e.g., YouTube description)
   qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")
   size?: number // File size in bytes (Archive.org only)
-  addedAt: string // ISO 8601 timestamp
+  addedAt?: number // Unix timestamp
   duration?: number // Duration in seconds
   language?: string | string[] // Language code(s) (e.g., 'en', 'es')
-  year?: number // Unified release year
-  releaseYear?: number // Legacy YouTube release year (alias for year)
+  year?: number // Consolidated release year
+  downloads?: number // Download count (Archive.org)
+  viewCount?: number // View count (YouTube)
+  regionRestriction?: YouTubeRegionRestriction // Geographic restrictions (YouTube)
 
-  // Archive.org specific
-  collection?: string // e.g., 'feature_films'
-  downloads?: number
-
-  // YouTube specific
-  channelName?: string
-  channelId?: string
-  publishedAt?: string
-  viewCount?: number
-  regionRestriction?: YouTubeRegionRestriction // Geographic restrictions
+  // Runtime fields (not stored in DB, computed from channel join)
+  type?: MovieSourceType // Computed from channel.platform
+  channelName?: string // Computed from channel.name
 }
 
 /**
@@ -54,6 +59,7 @@ export interface MovieSource {
  */
 export interface ArchiveOrgSource extends MovieSource {
   type: 'archive.org'
+  channelId: 'archive.org'
 }
 
 /**
@@ -62,6 +68,7 @@ export interface ArchiveOrgSource extends MovieSource {
 export interface YouTubeSource extends MovieSource {
   type: 'youtube'
   channelName: string // Required for YouTube
+  channelId: string // YouTube channel ID
 }
 
 /**

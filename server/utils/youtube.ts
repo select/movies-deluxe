@@ -258,21 +258,17 @@ export async function processYouTubeVideo(
   const originalTitle = video.title
   const { year: parsedYear } = parseMovieTitle(originalTitle)
 
-  const source = {
-    type: 'youtube' as const,
+  const source: MovieSource = {
+    channelId: video.channelId,
     sourceId: video.id,
     id: video.id, // Alias for backward compatibility
     title: originalTitle, // Store original title in source
-    channelName: video.channelName,
-    channelId: video.channelId,
     description: video.description,
     year: parsedYear,
-    releaseYear: parsedYear, // Legacy field
     language: channelConfig?.language,
-    publishedAt: video.publishedAt,
     duration: video.duration,
     viewCount: video.viewCount,
-    addedAt: new Date().toISOString(),
+    addedAt: Math.floor(Date.now() / 1000), // Unix timestamp
   }
 
   // Always use generated YouTube ID - OMDB enrichment is done separately

@@ -32,23 +32,17 @@ interface SourceRow {
   id: number
   movieId: string
   sourceId: string
-  type: string
+  channelId: string
   title: string
   description: string | null
   size: number | null
-  addedAt: string
+  addedAt: number
   duration: number | null
   language: string | null
   year: number | null
-  releaseYear: number | null
-  collection: string | null
   downloads: number | null
-  channelName: string | null
-  channelId: string | null
-  publishedAt: string | null
   viewCount: number | null
-  regionRestrictionAllowed: string | null
-  regionRestrictionBlocked: string | null
+  regionRestriction: string | null
 }
 
 interface MetadataRow {
@@ -105,21 +99,23 @@ interface SearchOptions {
 /**
  * Convert a database source row to a MovieSource object
  */
-function sourceRowToMovieSource(source: SourceRow, marks: { mark: string }[]): MovieSource {
+function sourceRowToMovieSource(
+  source: SourceRow,
+  marks: { mark: string }[],
+  type: MovieSourceType,
+  channelName: string
+): MovieSource {
   let regionRestriction: RegionRestriction | undefined = undefined
-  if (source.regionRestrictionAllowed || source.regionRestrictionBlocked) {
-    regionRestriction = {
-      allowed: source.regionRestrictionAllowed
-        ? JSON.parse(source.regionRestrictionAllowed)
-        : undefined,
-      blocked: source.regionRestrictionBlocked
-        ? JSON.parse(source.regionRestrictionBlocked)
-        : undefined,
+  if (source.regionRestriction) {
+    try {
+      regionRestriction = JSON.parse(source.regionRestriction)
+    } catch {
+      // Invalid JSON, ignore
     }
   }
 
   return {
-    type: source.type as MovieSourceType,
+    channelId: source.channelId,
     sourceId: source.sourceId,
     id: source.sourceId, // Alias for backward compatibility
     title: source.title,
@@ -130,14 +126,12 @@ function sourceRowToMovieSource(source: SourceRow, marks: { mark: string }[]): M
     duration: source.duration || undefined,
     language: source.language || undefined,
     year: source.year || undefined,
-    releaseYear: source.releaseYear || undefined,
-    collection: source.collection || undefined,
     downloads: source.downloads || undefined,
-    channelName: source.channelName || undefined,
-    channelId: source.channelId || undefined,
-    publishedAt: source.publishedAt || undefined,
     viewCount: source.viewCount || undefined,
     regionRestriction: regionRestriction || undefined,
+    // Runtime fields
+    type,
+    channelName,
   }
 }
 
@@ -169,14 +163,23 @@ function metadataRowToMovieMetadata(metadata: MetadataRow): MovieMetadata {
  * Load sources for a movie with quality marks
  */
 function loadSourcesForMovie(db: Database.Database, movieId: string): MovieSource[] {
-  const sources = db.prepare('SELECT * FROM sources WHERE movieId = ?').all(movieId) as SourceRow[]
+  const sources = db
+    .prepare(
+      `
+      SELECT s.*, c.platform as type, c.name as channelName
+      FROM sources s
+      JOIN channels c ON s.channelId = c.id
+      WHERE s.movieId = ?
+    `
+    )
+    .all(movieId) as (SourceRow & { type: string; channelName: string })[]
 
   return sources.map(source => {
     const marks = db
       .prepare('SELECT mark FROM source_quality_marks WHERE sourceId = ?')
       .all(source.id) as { mark: string }[]
 
-    return sourceRowToMovieSource(source, marks)
+    return sourceRowToMovieSource(source, marks, source.type as MovieSourceType, source.channelName)
   })
 }
 
@@ -451,48 +454,48 @@ export async function addSource(movieId: string, source: MovieSource): Promise<v
 
       // Check if source already exists
       const existing = db
-        .prepare('SELECT id FROM sources WHERE movieId = ? AND type = ? AND sourceId = ?')
-        .get(movieId, source.type, source.id)
+        .prepare('SELECT id FROM sources WHERE movieId = ? AND channelId = ? AND sourceId = ?')
+        .get(movieId, source.channelId, source.id)
       if (existing) {
         throw new Error(`Source ${source.id} already exists for movie ${movieId}`)
       }
+
+      // Convert addedAt to Unix timestamp if it's a string
+      const addedAt =
+        typeof source.addedAt === 'string'
+          ? Math.floor(new Date(source.addedAt).getTime() / 1000)
+          : source.addedAt || Math.floor(Date.now() / 1000)
+
+      // Serialize regionRestriction to JSON
+      const regionRestrictionJson = source.regionRestriction
+        ? JSON.stringify(source.regionRestriction)
+        : null
 
       // Insert source
       const result = db
         .prepare(
           `
         INSERT INTO sources (
-          movieId, type, sourceId, title, description,
-          size, addedAt, duration, language, year, releaseYear,
-          collection, downloads, channelName, channelId, publishedAt, viewCount,
-          regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          movieId, channelId, sourceId, title, description,
+          size, addedAt, duration, language, year,
+          downloads, viewCount, regionRestriction
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
         )
         .run(
           movieId,
-          source.type,
+          source.channelId,
           source.id,
           source.title,
           source.description,
           source.size,
-          source.addedAt || now,
+          addedAt,
           source.duration,
           source.language,
           source.year,
-          source.releaseYear,
-          source.collection,
           source.downloads,
-          source.channelName,
-          source.channelId,
-          source.publishedAt,
           source.viewCount,
-          source.regionRestriction?.allowed
-            ? JSON.stringify(source.regionRestriction.allowed)
-            : null,
-          source.regionRestriction?.blocked
-            ? JSON.stringify(source.regionRestriction.blocked)
-            : null
+          regionRestrictionJson
         )
 
       // Add quality marks if provided
