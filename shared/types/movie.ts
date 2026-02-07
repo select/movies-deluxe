@@ -30,7 +30,6 @@ export interface MovieSource {
   qualityMarks?: string[] // Quality marks for this source (e.g., "low-quality", "cam-rip", "hardcoded-subs")
   size?: number // File size in bytes (Archive.org only)
   addedAt: string // ISO 8601 timestamp
-  thumbnail?: string
   duration?: number // Duration in seconds
   language?: string | string[] // Language code(s) (e.g., 'en', 'es')
   year?: number // Unified release year

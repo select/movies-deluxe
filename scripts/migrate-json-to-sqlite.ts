@@ -207,10 +207,10 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
   const insertSource = db.prepare(`
     INSERT OR IGNORE INTO sources (
       movieId, type, url, sourceId, title, description, label, quality,
-      fileSize, size, addedAt, thumbnail, duration, language, year, releaseYear,
+      fileSize, size, addedAt, duration, language, year, releaseYear,
       collection, downloads, channelName, channelId, publishedAt, viewCount,
       regionRestrictionAllowed, regionRestrictionBlocked
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
 
   const insertSourceQualityMark = db.prepare(`
@@ -304,7 +304,6 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
               source.fileSize || null,
               source.size || null,
               source.addedAt,
-              source.thumbnail || null,
               source.duration || null,
               normalizeLanguage(source.language),
               source.year || null,

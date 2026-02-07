@@ -187,7 +187,6 @@ export async function generateMovieJSON(): Promise<void> {
             qualityMarks: s.qualityMarks,
             size: s.size,
             addedAt: s.addedAt,
-            thumbnail: s.thumbnail,
             duration: s.duration,
             language: s.language,
             year: s.year || s.releaseYear,

@@ -78,7 +78,6 @@ CREATE TABLE sources (
   description TEXT,                      -- Original source description
   size INTEGER,                          -- File size in bytes (Archive.org only)
   addedAt TEXT NOT NULL,                 -- ISO 8601 timestamp
-  thumbnail TEXT,                        -- Thumbnail URL
   duration INTEGER,                      -- Duration in seconds
   language TEXT,                         -- Language code(s) - stored as JSON for arrays
   year INTEGER,                          -- Unified release year

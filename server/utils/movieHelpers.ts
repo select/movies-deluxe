@@ -38,7 +38,6 @@ interface SourceRow {
   description: string | null
   size: number | null
   addedAt: string
-  thumbnail: string | null
   duration: number | null
   language: string | null
   year: number | null
@@ -129,7 +128,6 @@ function sourceRowToMovieSource(source: SourceRow, marks: { mark: string }[]): M
     qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
     size: source.size || undefined,
     addedAt: source.addedAt,
-    thumbnail: source.thumbnail || undefined,
     duration: source.duration || undefined,
     language: source.language || undefined,
     year: source.year || undefined,
@@ -466,10 +464,10 @@ export async function addSource(movieId: string, source: MovieSource): Promise<v
           `
         INSERT INTO sources (
           movieId, type, url, sourceId, title, description,
-          size, addedAt, thumbnail, duration, language, year, releaseYear,
+          size, addedAt, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
         )
         .run(
@@ -481,7 +479,6 @@ export async function addSource(movieId: string, source: MovieSource): Promise<v
           source.description,
           source.size,
           source.addedAt || now,
-          source.thumbnail,
           source.duration,
           source.language,
           source.year,

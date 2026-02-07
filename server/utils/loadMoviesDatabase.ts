@@ -177,7 +177,6 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
       description,
       size,
       addedAt,
-      thumbnail,
       duration,
       language,
       year,
@@ -204,7 +203,6 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
     description: string | null
     size: number | null
     addedAt: string
-    thumbnail: string | null
     duration: number | null
     language: string | null
     year: number | null
@@ -253,7 +251,6 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
     // Add optional fields
     if (source.description) movieSource.description = source.description
     if (source.size) movieSource.size = source.size
-    if (source.thumbnail) movieSource.thumbnail = source.thumbnail
     if (source.duration) movieSource.duration = source.duration
 
     // Handle language field (stored as JSON for arrays)

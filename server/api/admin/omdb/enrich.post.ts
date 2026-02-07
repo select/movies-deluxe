@@ -42,7 +42,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     description: string | null
     size: number | null
     addedAt: string
-    thumbnail: string | null
     duration: number | null
     language: string | null
     year: number | null
@@ -87,7 +86,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
       qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
       size: source.size ?? undefined,
       addedAt: source.addedAt,
-      thumbnail: source.thumbnail ?? undefined,
       duration: source.duration ?? undefined,
       language: source.language ?? undefined,
       year: source.year ?? undefined,

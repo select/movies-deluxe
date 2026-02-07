@@ -81,7 +81,6 @@ export async function processArchiveMovie(
     collection,
     downloads: movie.downloads,
     description: movie.description,
-    thumbnail: `https://archive.org/services/img/${movie.identifier}`,
     year, // Extracted year from Archive.org metadata
     language: movie.language, // 2-letter language code from Archive.org metadata
     size: movie.item_size, // File size in bytes

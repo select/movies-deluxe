@@ -19,7 +19,6 @@ interface SourceRow {
   description: string | null
   size: number | null
   addedAt: string
-  thumbnail: string | null
   duration: number | null
   language: string | null
   year: number | null
@@ -115,7 +114,6 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       qualityMarks: marks.length > 0 ? marks.map(m => m.mark) : undefined,
       size: source.size || undefined,
       addedAt: source.addedAt,
-      thumbnail: source.thumbnail || undefined,
       duration: source.duration || undefined,
       language: source.language || undefined,
       year: source.year || undefined,
@@ -260,17 +258,17 @@ export async function upsertMovie(
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
           movieId, type, url, sourceId, title, description,
-          size, addedAt, thumbnail, duration, language, year, releaseYear,
+          size, addedAt, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       const updateSource = db.prepare(`
         UPDATE sources
         SET url = ?, title = ?, description = COALESCE(?, description), 
             size = COALESCE(?, size),
-            thumbnail = COALESCE(?, thumbnail), duration = COALESCE(?, duration),
+            duration = COALESCE(?, duration),
             language = COALESCE(?, language), year = COALESCE(?, year), 
             releaseYear = COALESCE(?, releaseYear), collection = COALESCE(?, collection),
             downloads = COALESCE(?, downloads), channelName = COALESCE(?, channelName),
@@ -297,7 +295,6 @@ export async function upsertMovie(
             source.title,
             source.description,
             source.size,
-            source.thumbnail,
             source.duration,
             lang,
             source.year,
@@ -343,7 +340,6 @@ export async function upsertMovie(
             source.description,
             source.size,
             source.addedAt || now,
-            source.thumbnail,
             source.duration,
             lang,
             source.year,
@@ -434,10 +430,10 @@ export async function upsertMovie(
       const insertSource = db.prepare(`
         INSERT OR IGNORE INTO sources (
           movieId, type, url, sourceId, title, description,
-          size, addedAt, thumbnail, duration, language, year, releaseYear,
+          size, addedAt, duration, language, year, releaseYear,
           collection, downloads, channelName, channelId, publishedAt, viewCount,
           regionRestrictionAllowed, regionRestrictionBlocked
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       for (const source of entry.sources || []) {
@@ -452,7 +448,6 @@ export async function upsertMovie(
           source.description,
           source.size,
           source.addedAt || now,
-          source.thumbnail,
           source.duration,
           lang,
           source.year,

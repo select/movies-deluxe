@@ -175,9 +175,6 @@ export async function fetchChannelVideos(
         continue
       }
 
-      // Extract thumbnail URL
-      const thumbnailUrl = fullVideo.basic_info.thumbnail?.[0]?.url
-
       const videoData = {
         id: videoId,
         title,
@@ -199,9 +196,6 @@ export async function fetchChannelVideos(
             : undefined) ||
           '',
         channelId: fullVideo.basic_info.channel_id || channelIdentifier,
-        thumbnails: {
-          high: thumbnailUrl,
-        },
         duration,
         viewCount: fullVideo.basic_info.view_count || 0,
       }
@@ -255,7 +249,6 @@ export async function processYouTubeVideo(
     publishedAt?: string
     channelName: string
     channelId: string
-    thumbnails?: { high?: string }
     duration?: number
     viewCount?: number
   },
@@ -279,7 +272,6 @@ export async function processYouTubeVideo(
     publishedAt: video.publishedAt,
     duration: video.duration,
     viewCount: video.viewCount,
-    thumbnail: video.thumbnails?.high,
     addedAt: new Date().toISOString(),
   }
 
