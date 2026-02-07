@@ -1,6 +1,25 @@
-import { defineEventHandler, getQuery } from 'h3'
-import { loadMoviesDatabase } from '../../../utils/movieData'
-import type { MovieEntry, MovieSource } from '../../../../shared/types/movie'
+import { defineEventHandler, getQuery, createError } from 'h3'
+import { getAdminDatabase } from '../../../utils/adminDb'
+
+interface MovieRow {
+  movieId: string
+  title: string
+  year: number | null
+  verified: number
+  lastUpdated: string
+}
+
+interface MetadataRow {
+  Poster: string | null
+  Director: string | null
+  Writer: string | null
+  Actors: string | null
+  Plot: string | null
+  Genre: string | null
+  Country: string | null
+  imdbRating: number | null
+  imdbVotes: number | null
+}
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
@@ -31,111 +50,210 @@ export default defineEventHandler(async event => {
     return []
   }
 
-  const db = await loadMoviesDatabase()
-  const results: Array<{
-    movieId: string
-    title: string
-    year?: number
-    metadata?: {
-      Poster?: string
-      Director?: string
-      Writer?: string
-      Plot?: string
-      imdbRating?: string
-      imdbVotes?: number
-    }
-  }> = []
+  try {
+    const db = getAdminDatabase()
 
-  for (const [key, value] of Object.entries(db)) {
-    if (key.startsWith('_')) continue
-    const entry = value as MovieEntry
+    // Build SQL query dynamically
+    const conditions: string[] = []
+    const params: (string | number)[] = []
 
-    // Apply search query filter (if provided)
+    // Full-text search on title and metadata fields
     if (q) {
-      const searchFields = [
-        entry.title,
-        entry.metadata?.Director,
-        entry.metadata?.Writer,
-        entry.metadata?.Actors,
-        entry.metadata?.Plot,
-        entry.movieId,
-      ].filter(Boolean) as string[]
-
-      const matches = searchFields.some(field => field.toLowerCase().includes(q))
-      if (!matches) continue
+      // Search in movies table (title) and metadata (Director, Writer, Actors, Plot)
+      conditions.push(
+        `(
+          movieId IN (SELECT movieId FROM fts_movies WHERE fts_movies MATCH ?)
+          OR movieId IN (
+            SELECT movieId FROM metadata 
+            WHERE LOWER(Director) LIKE ?
+            OR LOWER(Writer) LIKE ?
+            OR LOWER(Actors) LIKE ?
+            OR LOWER(Plot) LIKE ?
+          )
+          OR LOWER(movieId) LIKE ?
+        )`
+      )
+      const searchPattern = `%${q}%`
+      params.push(q, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern)
     }
 
-    // Apply rating filter - exclude movies without ratings when rating criteria is specified
-    if (minRating > 0) {
-      const rating = entry.metadata?.imdbRating
-      if (typeof rating !== 'number' || isNaN(rating) || rating < minRating) continue
-    }
-
-    // Apply year filter
+    // Year filters
     if (minYear > 0) {
-      if (!entry.year || entry.year < minYear) continue
+      conditions.push('year >= ?')
+      params.push(minYear)
     }
     if (maxYear > 0) {
-      if (!entry.year || entry.year > maxYear) continue
+      conditions.push('year <= ?')
+      params.push(maxYear)
     }
 
-    // Apply votes filter - exclude movies without votes when vote criteria is specified
+    // Rating filter - only include movies with ratings >= minRating
+    if (minRating > 0) {
+      conditions.push(
+        `movieId IN (
+          SELECT movieId FROM metadata 
+          WHERE imdbRating IS NOT NULL AND imdbRating >= ?
+        )`
+      )
+      params.push(minRating)
+    }
+
+    // Votes filter - only include movies with votes in range
     if (minVotes > 0) {
-      const votes = entry.metadata?.imdbVotes
-      if (!votes || votes < minVotes) continue
+      conditions.push(
+        `movieId IN (
+          SELECT movieId FROM metadata 
+          WHERE imdbVotes IS NOT NULL AND imdbVotes >= ?
+        )`
+      )
+      params.push(minVotes)
     }
     if (maxVotes > 0) {
-      const votes = entry.metadata?.imdbVotes
-      if (!votes || votes > maxVotes) continue
+      conditions.push(
+        `movieId IN (
+          SELECT movieId FROM metadata 
+          WHERE imdbVotes IS NOT NULL AND imdbVotes <= ?
+        )`
+      )
+      params.push(maxVotes)
     }
 
-    // Apply genre filter
+    // Genre filter - support multiple genres (any match)
     if (genres.length > 0) {
-      const movieGenres = entry.metadata?.Genre?.split(', ').map((g: string) => g.trim()) || []
-      const hasGenre = genres.some(selectedGenre => movieGenres.includes(selectedGenre))
-      if (!hasGenre) continue
+      const genreConditions = genres.map(() => 'Genre LIKE ?').join(' OR ')
+      conditions.push(
+        `movieId IN (
+          SELECT movieId FROM metadata 
+          WHERE ${genreConditions}
+        )`
+      )
+      genres.forEach(genre => params.push(`%${genre}%`))
     }
 
-    // Apply country filter
+    // Country filter - support multiple countries (any match)
     if (countries.length > 0) {
-      const movieCountries = entry.metadata?.Country?.split(', ').map((c: string) => c.trim()) || []
-      const hasCountry = countries.some(selectedCountry => movieCountries.includes(selectedCountry))
-      if (!hasCountry) continue
+      const countryConditions = countries.map(() => 'Country LIKE ?').join(' OR ')
+      conditions.push(
+        `movieId IN (
+          SELECT movieId FROM metadata 
+          WHERE ${countryConditions}
+        )`
+      )
+      countries.forEach(country => params.push(`%${country}%`))
     }
 
-    // Apply source filter
+    // Source filter - support archive.org and specific YouTube channels
     if (sources.length > 0) {
-      const hasSources = entry.sources?.some((source: MovieSource) => {
-        if (source.type === 'archive.org') {
-          return sources.includes('archive.org')
-        }
-        if (source.type === 'youtube') {
-          return source.channelName ? sources.includes(source.channelName) : false
-        }
-        return false
-      })
-      if (!hasSources) continue
+      const sourceConditions: string[] = []
+      const sourceParams: (string | number)[] = []
+
+      // Check for archive.org sources
+      if (sources.includes('archive.org')) {
+        sourceConditions.push(`type = 'archive.org'`)
+      }
+
+      // Check for YouTube channels
+      const youtubeChannels = sources.filter(s => s !== 'archive.org')
+      if (youtubeChannels.length > 0) {
+        const channelPlaceholders = youtubeChannels.map(() => '?').join(',')
+        sourceConditions.push(`(type = 'youtube' AND channelName IN (${channelPlaceholders}))`)
+        sourceParams.push(...youtubeChannels)
+      }
+
+      if (sourceConditions.length > 0) {
+        conditions.push(
+          `movieId IN (
+            SELECT DISTINCT movieId FROM sources 
+            WHERE ${sourceConditions.join(' OR ')}
+          )`
+        )
+        params.push(...sourceParams)
+      }
     }
 
-    // Return only necessary fields for the search result list
-    results.push({
-      movieId: entry.movieId,
-      title: entry.title,
-      year: entry.year,
-      metadata: {
-        Poster: entry.metadata?.Poster,
-        Director: entry.metadata?.Director,
-        Writer: entry.metadata?.Writer,
-        Plot: entry.metadata?.Plot,
-        imdbRating:
-          typeof entry.metadata?.imdbRating === 'number'
-            ? entry.metadata.imdbRating.toString()
-            : undefined,
-        imdbVotes: entry.metadata?.imdbVotes,
-      },
+    // Exclude movies that have ONLY sources with quality marks
+    // (i.e., require at least one clean source)
+    conditions.push(
+      `movieId IN (
+        SELECT DISTINCT s.movieId 
+        FROM sources s
+        LEFT JOIN source_quality_marks sqm ON s.id = sqm.sourceId
+        GROUP BY s.movieId, s.id
+        HAVING COUNT(sqm.mark) = 0
+      )`
+    )
+
+    // Build final query
+    let sql = `
+      SELECT m.movieId, m.title, m.year
+      FROM movies m
+    `
+
+    if (conditions.length > 0) {
+      sql += ' WHERE ' + conditions.join(' AND ')
+    }
+
+    // Sort by title and limit to 300 results
+    sql += ' ORDER BY m.title COLLATE NOCASE LIMIT 300'
+
+    // Execute query to get movie IDs
+    const movies = db.prepare(sql).all(...params) as MovieRow[]
+
+    // Batch fetch metadata for all movies
+    const movieIds = movies.map(m => m.movieId)
+    const metadataMap = new Map<string, MetadataRow>()
+
+    if (movieIds.length > 0) {
+      const placeholders = movieIds.map(() => '?').join(',')
+      const metadataQuery = `
+        SELECT 
+          movieId,
+          Poster,
+          Director,
+          Writer,
+          Plot,
+          imdbRating,
+          imdbVotes
+        FROM metadata
+        WHERE movieId IN (${placeholders})
+      `
+      const metadataRows = db.prepare(metadataQuery).all(...movieIds) as (MetadataRow & {
+        movieId: string
+      })[]
+      metadataRows.forEach(row => {
+        metadataMap.set(row.movieId, row)
+      })
+    }
+
+    // Build results
+    const results = movies.map(movie => {
+      const metadata = metadataMap.get(movie.movieId)
+      return {
+        movieId: movie.movieId,
+        title: movie.title,
+        year: movie.year ?? undefined,
+        metadata: metadata
+          ? {
+              Poster: metadata.Poster ?? undefined,
+              Director: metadata.Director ?? undefined,
+              Writer: metadata.Writer ?? undefined,
+              Plot: metadata.Plot ?? undefined,
+              imdbRating:
+                typeof metadata.imdbRating === 'number'
+                  ? metadata.imdbRating.toString()
+                  : undefined,
+              imdbVotes: metadata.imdbVotes ?? undefined,
+            }
+          : undefined,
+      }
+    })
+
+    return results
+  } catch (error) {
+    console.error('[admin/movies/search] Error searching movies:', error)
+    throw createError({
+      statusCode: 500,
+      message: `Failed to search movies: ${error}`,
     })
   }
-
-  // Sort by title and limit to 300 results
-  return results.sort((a, b) => a.title.localeCompare(b.title)).slice(0, 300)
 })
