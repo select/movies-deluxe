@@ -54,6 +54,10 @@ public/sqlite-wasm/
 # SQLite temporary files
 *.db-journal
 
+# Database backup files (uncompressed)
+data/*.db.backup*
+data/*.db.before-*
+
 # Generated movie metadata JSONs
 public/movies/
 
