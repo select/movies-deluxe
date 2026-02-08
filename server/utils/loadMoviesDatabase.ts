@@ -163,56 +163,49 @@ async function loadSchema(db: Database.Database): Promise<DatabaseSchema> {
 async function loadAllSources(db: Database.Database): Promise<Map<string, MovieSource[]>> {
   const sourcesMap = new Map<string, MovieSource[]>()
 
-  // Load all sources in one query
+  // Load all sources in one query with channel data
   const allSources = db
     .prepare(
       `
     SELECT 
-      id,
-      movieId,
-      type,
-      sourceId,
-      title,
-      description,
-      size,
-      addedAt,
-      duration,
-      language,
-      year,
-      releaseYear,
-      collection,
-      downloads,
-      channelName,
-      channelId,
-      publishedAt,
-      viewCount,
-      regionRestrictionAllowed,
-      regionRestrictionBlocked
-    FROM sources
-    ORDER BY movieId, addedAt
+      s.id,
+      s.movieId,
+      s.channelId,
+      s.sourceId,
+      s.title,
+      s.description,
+      s.size,
+      s.addedAt,
+      s.duration,
+      s.language,
+      s.year,
+      s.downloads,
+      s.viewCount,
+      s.regionRestriction,
+      c.platform as type,
+      c.name as channelName
+    FROM sources s
+    JOIN channels c ON s.channelId = c.id
+    ORDER BY s.movieId, s.addedAt
   `
     )
     .all() as Array<{
     id: number
     movieId: string
+    channelId: string
     type: 'archive.org' | 'youtube'
     sourceId: string
-    title: string
+    title: string | null
     description: string | null
     size: number | null
-    addedAt: string
+    addedAt: number
     duration: number | null
     language: string | null
     year: number | null
-    releaseYear: number | null
-    collection: string | null
     downloads: number | null
-    channelName: string | null
-    channelId: string | null
-    publishedAt: string | null
     viewCount: number | null
-    regionRestrictionAllowed: string | null
-    regionRestrictionBlocked: string | null
+    regionRestriction: string | null
+    channelName: string
   }>
 
   // Load all quality marks in one query
@@ -239,11 +232,14 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
   for (const source of allSources) {
     // Build the source object
     const movieSource: MovieSource = {
-      type: source.type,
+      channelId: source.channelId,
       sourceId: source.sourceId,
       id: source.sourceId, // Alias for backward compatibility
-      title: source.title,
+      title: source.title || undefined,
       addedAt: source.addedAt,
+      // Runtime fields (computed from channel join)
+      type: source.type,
+      channelName: source.channelName,
     }
 
     // Add optional fields
@@ -263,37 +259,22 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
     }
 
     if (source.year) movieSource.year = source.year
-    if (source.releaseYear) movieSource.releaseYear = source.releaseYear
 
     // Archive.org specific fields
     if (source.type === 'archive.org') {
-      if (source.collection) movieSource.collection = source.collection
       if (source.downloads) movieSource.downloads = source.downloads
     }
 
     // YouTube specific fields
     if (source.type === 'youtube') {
-      if (source.channelName) movieSource.channelName = source.channelName
-      if (source.channelId) movieSource.channelId = source.channelId
-      if (source.publishedAt) movieSource.publishedAt = source.publishedAt
       if (source.viewCount) movieSource.viewCount = source.viewCount
 
       // Handle region restrictions
-      if (source.regionRestrictionAllowed || source.regionRestrictionBlocked) {
-        movieSource.regionRestriction = {}
-        if (source.regionRestrictionAllowed) {
-          try {
-            movieSource.regionRestriction.allowed = JSON.parse(source.regionRestrictionAllowed)
-          } catch {
-            // Ignore parsing errors
-          }
-        }
-        if (source.regionRestrictionBlocked) {
-          try {
-            movieSource.regionRestriction.blocked = JSON.parse(source.regionRestrictionBlocked)
-          } catch {
-            // Ignore parsing errors
-          }
+      if (source.regionRestriction) {
+        try {
+          movieSource.regionRestriction = JSON.parse(source.regionRestriction)
+        } catch {
+          // Ignore parsing errors
         }
       }
     }

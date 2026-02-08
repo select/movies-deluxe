@@ -63,6 +63,24 @@ CREATE INDEX idx_movies_verified ON movies(verified);
 CREATE INDEX idx_movies_lastUpdated ON movies(lastUpdated);
 
 -- ============================================================================
+-- CHANNELS TABLE
+-- ============================================================================
+-- Stores channel/collection information normalized from sources
+-- YouTube channels and Archive.org collection
+
+CREATE TABLE channels (
+  id TEXT PRIMARY KEY,                   -- channelId for YouTube, 'archive.org' for Archive
+  name TEXT NOT NULL,                    -- Channel/collection name
+  platform TEXT NOT NULL,                -- 'youtube' or 'archive.org'
+  created_at INTEGER DEFAULT (unixepoch()),
+  
+  CHECK (platform IN ('youtube', 'archive.org'))
+);
+
+CREATE INDEX idx_channels_platform ON channels(platform);
+CREATE INDEX idx_channels_name ON channels(name);
+
+-- ============================================================================
 -- SOURCES TABLE
 -- ============================================================================
 -- Stores all movie sources (Archive.org, YouTube) with complete details
@@ -71,40 +89,29 @@ CREATE INDEX idx_movies_lastUpdated ON movies(lastUpdated);
 CREATE TABLE sources (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   movieId TEXT NOT NULL,                 -- Foreign key to movies table
-  type TEXT NOT NULL,                    -- 'archive.org' or 'youtube'
+  channelId TEXT NOT NULL,               -- Foreign key to channels table
   sourceId TEXT NOT NULL,                -- Archive.org identifier or YouTube video ID
-  title TEXT NOT NULL,                   -- Original title from the source
+  title TEXT,                            -- Original title from the source
   description TEXT,                      -- Original source description
   size INTEGER,                          -- File size in bytes (Archive.org only)
-  addedAt TEXT NOT NULL,                 -- ISO 8601 timestamp
+  addedAt INTEGER,                       -- Unix timestamp
   duration INTEGER,                      -- Duration in seconds
   language TEXT,                         -- Language code(s) - stored as JSON for arrays
-  year INTEGER,                          -- Unified release year
-  releaseYear INTEGER,                   -- Legacy YouTube release year
-  
-  -- Archive.org specific fields
-  collection TEXT,                       -- e.g., 'feature_films'
-  downloads INTEGER,                     -- Download count
-  
-  -- YouTube specific fields
-  channelName TEXT,                      -- Channel name
-  channelId TEXT,                        -- Channel ID
-  publishedAt TEXT,                      -- ISO 8601 timestamp
-  viewCount INTEGER,                     -- View count
-  regionRestrictionAllowed TEXT,         -- JSON array of allowed region codes
-  regionRestrictionBlocked TEXT,         -- JSON array of blocked region codes
+  year INTEGER,                          -- Consolidated release year
+  downloads INTEGER,                     -- Download count (Archive.org)
+  viewCount INTEGER,                     -- View count (YouTube)
+  regionRestriction TEXT,                -- JSON object with allowed/blocked regions
   
   FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE,
-  CHECK (type IN ('archive.org', 'youtube'))
+  FOREIGN KEY (channelId) REFERENCES channels(id),
+  UNIQUE(movieId, channelId, sourceId)
 );
 
 CREATE INDEX idx_sources_movieId ON sources(movieId);
-CREATE INDEX idx_sources_type ON sources(type);
+CREATE INDEX idx_sources_channelId ON sources(channelId);
 CREATE INDEX idx_sources_sourceId ON sources(sourceId);
-CREATE INDEX idx_sources_channelName ON sources(channelName);
 CREATE INDEX idx_sources_year ON sources(year);
 CREATE INDEX idx_sources_addedAt ON sources(addedAt);
-CREATE UNIQUE INDEX idx_sources_unique ON sources(movieId, type, sourceId);
 
 -- ============================================================================
 -- SOURCE QUALITY MARKS TABLE
@@ -320,8 +327,8 @@ SELECT
   md.Genre as genre,
   md.Country as country,
   md.Language as language,
-  (SELECT type FROM sources WHERE movieId = m.movieId ORDER BY addedAt LIMIT 1) as primarySourceType,
-  (SELECT channelName FROM sources WHERE movieId = m.movieId AND type = 'youtube' ORDER BY addedAt LIMIT 1) as primaryChannelName,
+  (SELECT c.platform FROM sources s JOIN channels c ON s.channelId = c.id WHERE s.movieId = m.movieId ORDER BY s.addedAt LIMIT 1) as primarySourceType,
+  (SELECT c.name FROM sources s JOIN channels c ON s.channelId = c.id WHERE s.movieId = m.movieId AND c.platform = 'youtube' ORDER BY s.addedAt LIMIT 1) as primaryChannelName,
   (SELECT COUNT(*) FROM sources WHERE movieId = m.movieId) as sourceCount,
   (SELECT COUNT(*) FROM source_quality_marks sqm 
    JOIN sources s ON sqm.sourceId = s.id 
@@ -349,14 +356,15 @@ WHERE EXISTS (SELECT 1 FROM movie_quality_labels WHERE movieId = m.movieId)
 -- Source statistics by type
 CREATE VIEW v_source_stats AS
 SELECT 
-  type,
+  c.platform as type,
   COUNT(*) as totalSources,
-  COUNT(DISTINCT movieId) as uniqueMovies,
-  AVG(duration) as avgDuration,
-  SUM(fileSize) as totalSize,
-  AVG(fileSize) as avgSize
-FROM sources
-GROUP BY type;
+  COUNT(DISTINCT s.movieId) as uniqueMovies,
+  AVG(s.duration) as avgDuration,
+  SUM(s.size) as totalSize,
+  AVG(s.size) as avgSize
+FROM sources s
+JOIN channels c ON s.channelId = c.id
+GROUP BY c.platform;
 
 -- Collection statistics
 CREATE VIEW v_collection_stats AS
@@ -402,7 +410,7 @@ CREATE INDEX idx_metadata_year_rating ON metadata(Year, imdbRating);
 CREATE INDEX idx_metadata_genre_rating ON metadata(Genre, imdbRating);
 
 -- Source type + quality marks (for filtering clean sources)
-CREATE INDEX idx_sources_type_movieId ON sources(type, movieId);
+CREATE INDEX idx_sources_channelId_movieId ON sources(channelId, movieId);
 
 -- ============================================================================
 -- STATISTICS AND OPTIMIZATION
