@@ -71,3 +71,4 @@ public/movies/
 # Archive files (for git storage of large files in <50MB chunks)
 !data/*.tar.gz
 !data/movies-db-part*.tar.gz
+data/movies.db
