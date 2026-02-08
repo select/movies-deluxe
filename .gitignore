@@ -63,3 +63,7 @@ public/movies/
 # Public model files are tracked in git (~26MB total)
 # These are served to the browser for local embedding generation
 !public/models/
+
+# Archive files (for git storage of large files in <50MB chunks)
+!data/*.tar.gz
+!data/movies-db-part*.tar.gz

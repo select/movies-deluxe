@@ -345,7 +345,7 @@
               @start="adminStore.startPosterDownload"
             />
 
-            <AdminPosterArchiver />
+            <AdminArchiver />
           </div>
         </section>
       </div>

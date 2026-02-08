@@ -11,6 +11,7 @@ export interface ProgressUpdate {
     | 'sqlite'
     | 'ai'
     | 'posterArchive'
+    | 'databaseArchive'
     | 'stats'
     | 'home'
     | 'embeddings'
