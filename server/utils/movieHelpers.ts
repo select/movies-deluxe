@@ -18,7 +18,6 @@ import type {
   MovieSource,
   MovieMetadata,
   AIMetadata,
-  QualityLabel,
   MovieSourceType,
 } from '../../shared/types/movie'
 import { getAdminDatabase, withTransaction } from './adminDb'
@@ -721,100 +720,10 @@ export async function hasMetadata(movieId: string): Promise<boolean> {
 }
 
 // ============================================================================
-// QUALITY OPERATIONS
+// QUALITY OPERATIONS - REMOVED
 // ============================================================================
-
-/**
- * Add a quality label to a movie
- * @throws Error if movie doesn't exist or label already exists
- */
-export async function addQualityLabel(movieId: string, label: QualityLabel): Promise<void> {
-  try {
-    await withTransaction(async db => {
-      const now = new Date().toISOString()
-
-      // Check if movie exists
-      const movie = db.prepare('SELECT movieId FROM movies WHERE movieId = ?').get(movieId)
-      if (!movie) {
-        throw new Error(`Movie ${movieId} not found`)
-      }
-
-      // Insert quality label (will fail if duplicate due to unique constraint)
-      try {
-        db.prepare(
-          `
-          INSERT INTO movie_quality_labels (movieId, label, addedAt)
-          VALUES (?, ?, ?)
-        `
-        ).run(movieId, label, now)
-      } catch (error: unknown) {
-        const err = error as { code?: string }
-        if (err.code === 'SQLITE_CONSTRAINT') {
-          throw new Error(`Quality label ${label} already exists for movie ${movieId}`)
-        }
-        throw error
-      }
-
-      // Update movie's lastUpdated timestamp
-      db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movieId)
-    })
-  } catch (error) {
-    console.error(`[movieHelpers] Error adding quality label to movie ${movieId}:`, error)
-    throw new Error(`Failed to add quality label: ${error}`)
-  }
-}
-
-/**
- * Remove a quality label from a movie
- * @throws Error if movie or label doesn't exist
- */
-export async function removeQualityLabel(movieId: string, label: QualityLabel): Promise<void> {
-  try {
-    await withTransaction(async db => {
-      const now = new Date().toISOString()
-
-      // Check if label exists
-      const existing = db
-        .prepare('SELECT id FROM movie_quality_labels WHERE movieId = ? AND label = ?')
-        .get(movieId, label)
-
-      if (!existing) {
-        throw new Error(`Quality label ${label} not found for movie ${movieId}`)
-      }
-
-      // Delete quality label
-      db.prepare('DELETE FROM movie_quality_labels WHERE movieId = ? AND label = ?').run(
-        movieId,
-        label
-      )
-
-      // Update movie's lastUpdated timestamp
-      db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movieId)
-    })
-  } catch (error) {
-    console.error(`[movieHelpers] Error removing quality label from movie ${movieId}:`, error)
-    throw new Error(`Failed to remove quality label: ${error}`)
-  }
-}
-
-/**
- * Get all quality labels for a movie
- * @returns Array of QualityLabel values
- */
-export async function getQualityLabels(movieId: string): Promise<QualityLabel[]> {
-  try {
-    const db = getAdminDatabase()
-
-    const labels = db
-      .prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
-      .all(movieId) as { label: string }[]
-
-    return labels.map(l => l.label as QualityLabel)
-  } catch (error) {
-    console.error(`[movieHelpers] Error getting quality labels for movie ${movieId}:`, error)
-    throw new Error(`Failed to get quality labels: ${error}`)
-  }
-}
+// Movie-level quality labels have been removed.
+// Use source quality marks instead (addSourceQualityMark, removeSourceQualityMark)
 
 // ============================================================================
 // COLLECTION OPERATIONS

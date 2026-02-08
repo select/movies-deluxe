@@ -106,6 +106,9 @@ export interface AIMetadata {
 
 /**
  * Quality labels for marking low-quality or problematic content
+ * NOTE: These labels are deprecated and no longer stored in the database.
+ * Use SourceQualityMark for marking individual sources instead.
+ * This enum is kept for backward compatibility with existing scripts.
  */
 export enum QualityLabel {
   CLIP = 'clip',

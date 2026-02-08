@@ -279,36 +279,10 @@ CREATE VIRTUAL TABLE fts_metadata USING fts5(
 );
 
 -- ============================================================================
--- QUALITY LABELS TABLE (for movie-level quality issues)
+-- MOVIE QUALITY LABELS REMOVED
 -- ============================================================================
--- Stores quality labels for entire movie entries
--- These are different from source_quality_marks which apply to individual sources
-
-CREATE TABLE movie_quality_labels (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  movieId TEXT NOT NULL,                 -- Foreign key to movies table
-  label TEXT NOT NULL,                   -- Quality label
-  addedAt TEXT NOT NULL DEFAULT (datetime('now')),
-  
-  FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE,
-  CHECK (label IN (
-    'clip',
-    'teaser',
-    'trailer',
-    'promo',
-    'behind-the-scenes',
-    'interview',
-    'duplicate',
-    'incorrect',
-    'incomplete',
-    'adult',
-    'blocked'
-  ))
-);
-
-CREATE INDEX idx_movie_quality_labels_movieId ON movie_quality_labels(movieId);
-CREATE INDEX idx_movie_quality_labels_label ON movie_quality_labels(label);
-CREATE UNIQUE INDEX idx_movie_quality_labels_unique ON movie_quality_labels(movieId, label);
+-- Movie-level quality labels have been removed from the schema.
+-- Use source_quality_marks table for marking individual sources instead.
 
 -- ============================================================================
 -- VIEWS FOR COMMON QUERIES
@@ -336,20 +310,18 @@ SELECT
 FROM movies m
 LEFT JOIN metadata md ON m.movieId = md.movieId;
 
--- Movies with quality issues (have quality labels or quality-marked sources)
+-- Movies with quality issues (have quality-marked sources)
 CREATE VIEW v_movies_quality_issues AS
 SELECT DISTINCT
   m.movieId,
   m.title,
   m.year,
-  (SELECT GROUP_CONCAT(label, ', ') FROM movie_quality_labels WHERE movieId = m.movieId) as movieLabels,
   (SELECT GROUP_CONCAT(DISTINCT mark, ', ') 
    FROM source_quality_marks sqm 
    JOIN sources s ON sqm.sourceId = s.id 
    WHERE s.movieId = m.movieId) as sourceMarks
 FROM movies m
-WHERE EXISTS (SELECT 1 FROM movie_quality_labels WHERE movieId = m.movieId)
-   OR EXISTS (SELECT 1 FROM source_quality_marks sqm 
+WHERE EXISTS (SELECT 1 FROM source_quality_marks sqm 
               JOIN sources s ON sqm.sourceId = s.id 
               WHERE s.movieId = m.movieId);
 

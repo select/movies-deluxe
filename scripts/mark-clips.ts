@@ -2,7 +2,12 @@ import { getAdminDatabase } from '../server/utils/adminDb'
 import { QualityLabel } from '../shared/types/movie'
 
 /**
- * Mark movies as 'clip' based on file size and genre criteria
+ * DEPRECATED: Mark movies as 'clip' based on file size and genre criteria
+ *
+ * This script is deprecated as movie_quality_labels table has been removed.
+ * Use source quality marks instead (mark individual sources, not entire movies).
+ *
+ * Kept for reference only - will not work with current schema.
  *
  * Criteria:
  * 1. Have a tt (IMDb) ID

@@ -98,7 +98,6 @@ interface MigrationStats {
   collections: number
   collectionMovies: number
   relatedMovies: number
-  movieQualityLabels: number
 }
 
 /**
@@ -195,7 +194,6 @@ function migrateData(db: Database.Database, movies: MovieEntry[]): MigrationStat
     collections: 0,
     collectionMovies: 0,
     relatedMovies: 0,
-    movieQualityLabels: 0,
   }
 
   // Prepare statements
@@ -534,7 +532,6 @@ function printSummary(stats: MigrationStats, durationMs: number) {
   log(`Collections:         ${stats.collections.toLocaleString()}`)
   log(`Collection Movies:   ${stats.collectionMovies.toLocaleString()}`)
   log(`Related Movies:      ${stats.relatedMovies.toLocaleString()}`)
-  log(`Movie Quality Labels: ${stats.movieQualityLabels.toLocaleString()}`)
   log('═══════════════════════════════════════')
   log(`Duration:            ${(durationMs / 1000).toFixed(2)}s`)
   log('')

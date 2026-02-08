@@ -17,9 +17,6 @@ import {
   updateMetadata,
   updateAIMetadata,
   hasMetadata,
-  addQualityLabel,
-  removeQualityLabel,
-  getQualityLabels,
 } from './movieHelpers'
 import { getAdminDatabase } from './adminDb'
 import type Database from 'better-sqlite3'
@@ -551,87 +548,6 @@ describe('movieHelpers', () => {
 
         const result = await hasMetadata(movieId)
         expect(result).toBe(false)
-      })
-    })
-  })
-
-  describe('Quality Label Operations', () => {
-    describe('addQualityLabel', () => {
-      it('should add quality label to movie', async () => {
-        const movieId = 'test-helper-label-1'
-        const now = new Date().toISOString()
-
-        db.prepare(
-          'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, ?, ?)'
-        ).run(movieId, 'Test Movie', 2023, 0, now)
-
-        await addQualityLabel(movieId, QualityLabel.CLIP)
-
-        const labels = db
-          .prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
-          .all(movieId)
-
-        expect(labels.length).toBe(1)
-      })
-
-      it('should throw error if label already exists', async () => {
-        const movieId = 'test-helper-label-2'
-        const now = new Date().toISOString()
-
-        db.prepare(
-          'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, ?, ?)'
-        ).run(movieId, 'Test Movie', 2023, 0, now)
-
-        await addQualityLabel(movieId, QualityLabel.CLIP)
-
-        await expect(addQualityLabel(movieId, QualityLabel.CLIP)).rejects.toThrow('already exists')
-      })
-    })
-
-    describe('removeQualityLabel', () => {
-      it('should remove quality label from movie', async () => {
-        const movieId = 'test-helper-removelabel-1'
-        const now = new Date().toISOString()
-
-        db.prepare(
-          'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, ?, ?)'
-        ).run(movieId, 'Test Movie', 2023, 0, now)
-
-        db.prepare(
-          'INSERT INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
-        ).run(movieId, 'clip', now)
-
-        await removeQualityLabel(movieId, QualityLabel.CLIP)
-
-        const labels = db
-          .prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
-          .all(movieId)
-
-        expect(labels.length).toBe(0)
-      })
-    })
-
-    describe('getQualityLabels', () => {
-      it('should get all quality labels for a movie', async () => {
-        const movieId = 'test-helper-getlabels-1'
-        const now = new Date().toISOString()
-
-        db.prepare(
-          'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, ?, ?)'
-        ).run(movieId, 'Test Movie', 2023, 0, now)
-
-        db.prepare(
-          'INSERT INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
-        ).run(movieId, 'clip', now)
-        db.prepare(
-          'INSERT INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
-        ).run(movieId, 'trailer', now)
-
-        const labels = await getQualityLabels(movieId)
-
-        expect(labels.length).toBe(2)
-        expect(labels).toContain(QualityLabel.CLIP)
-        expect(labels).toContain(QualityLabel.TRAILER)
       })
     })
   })

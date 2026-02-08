@@ -16,7 +16,6 @@
 
 import { config } from 'dotenv'
 import { google, type youtube_v3 } from 'googleapis'
-import { QualityLabel } from '../shared/types/movie'
 import { createLogger } from '../server/utils/logger'
 import { getAdminDatabase } from '../server/utils/adminDb'
 
@@ -309,7 +308,7 @@ class BlockedYouTubeDetector {
     }
 
     // Update movies with BLOCKED quality label and region restrictions
-    let updatedMovies = 0
+    const updatedMovies = 0
     let updatedRegionRestrictions = 0
     const blockedVideoIds = new Set(blockedVideos.map(v => v.videoId))
     const videoStatusMap = new Map<string, YouTubeVideoStatus>()
@@ -330,21 +329,12 @@ class BlockedYouTubeDetector {
       "SELECT regionRestrictionAllowed, regionRestrictionBlocked FROM sources WHERE sourceId = ? AND type = 'youtube'"
     )
 
-    const getLabelsStmt = db.prepare('SELECT label FROM movie_quality_labels WHERE movieId = ?')
-
-    const insertLabelStmt = db.prepare(`
-      INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt)
-      VALUES (?, ?, ?)
-    `)
-
-    const updateMovieStmt = db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
+    // movie_quality_labels table removed - marking blocked videos at movie level is deprecated
+    // Videos should be marked at the source level using source_quality_marks instead
 
     // Process updates in a transaction for better performance
     const updateDatabase = db.transaction(() => {
-      const now = new Date().toISOString()
-
       for (const videoId of uniqueVideoIds) {
-        const movieIds = videoToMovieMap.get(videoId) || []
         const videoStatus = videoStatusMap.get(videoId)
 
         if (!videoStatus) continue
@@ -373,22 +363,15 @@ class BlockedYouTubeDetector {
           }
         }
 
-        // Add BLOCKED quality label if video is blocked
+        // DEPRECATED: movie_quality_labels table removed
+        // Previously marked movies as BLOCKED, now use source quality marks instead
+        // Videos should be marked at the source level, not at the movie level
         if (blockedVideoIds.has(videoId)) {
-          for (const movieId of movieIds) {
-            // Check if movie already has BLOCKED label
-            const existingLabels = (getLabelsStmt.all(movieId) as Array<{ label: string }>).map(
-              row => row.label as QualityLabel
-            )
-            if (!existingLabels.includes(QualityLabel.BLOCKED)) {
-              insertLabelStmt.run(movieId, QualityLabel.BLOCKED, now)
-              updateMovieStmt.run(now, movieId)
-              updatedMovies++
-              logger.info(
-                `Marked movie ${movieId} as BLOCKED (YouTube video ${videoId} unavailable)`
-              )
-            }
-          }
+          // TODO: Optionally mark sources with quality marks instead
+          // This functionality is deprecated and should use source_quality_marks table
+          logger.debug(
+            `Video ${videoId} is blocked but movie-level BLOCKED labels are deprecated - use source quality marks instead`
+          )
         }
       }
     })

@@ -223,36 +223,6 @@ describe('migrateMovieId', () => {
       expect(aiMetadata?.movieId).toBe(newId)
     })
 
-    it('should update movie_quality_labels table', async () => {
-      const oldId = 'test-migrate-008'
-      const newId = 'tt99990009'
-      const now = new Date().toISOString()
-
-      // Insert movie with quality label
-      db.prepare(
-        'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, ?, ?)'
-      ).run(oldId, 'Test Movie', 2023, 0, now)
-
-      db.prepare('INSERT INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)').run(
-        oldId,
-        'clip',
-        now
-      )
-
-      // Migrate
-      const result = await migrateMovieId(oldId, newId)
-
-      expect(result.success).toBe(true)
-      expect(result.tablesUpdated?.movieQualityLabels).toBe(1)
-
-      // Verify quality label was updated
-      const label = db
-        .prepare('SELECT movieId FROM movie_quality_labels WHERE label = ?')
-        .get('clip') as { movieId: string } | undefined
-
-      expect(label?.movieId).toBe(newId)
-    })
-
     it('should update collection_movies table', async () => {
       const oldId = 'test-migrate-009'
       const newId = 'tt99990010'

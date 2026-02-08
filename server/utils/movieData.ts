@@ -203,8 +203,6 @@ export interface DatabaseStats {
   archiveOrgSources: number
   youtubeSources: number
   curatedCount: number
-  qualityMarkedCount: number
-  qualityBreakdown: Record<string, number>
   collections: Record<string, number>
 }
 
@@ -234,8 +232,6 @@ export async function getDatabaseStatsWithChannels(db: MoviesDatabase): Promise<
     archiveOrgSources: 0,
     youtubeSources: 0,
     curatedCount: 0,
-    qualityMarkedCount: 0,
-    qualityBreakdown: {} as Record<string, number>,
     collections: {} as Record<string, number>,
   }
 

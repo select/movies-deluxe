@@ -1,6 +1,14 @@
 import { getAdminDatabase } from '../server/utils/adminDb'
 import { QualityLabel } from '../shared/types/movie'
 
+/**
+ * DEPRECATED: Detect quality issues in movies based on title keywords
+ *
+ * This script is deprecated as movie_quality_labels table has been removed.
+ * Use source quality marks instead (mark individual sources, not entire movies).
+ *
+ * Kept for reference only - will not work with current schema.
+ */
 function detectQualityIssues() {
   const dryRun = process.argv.includes('--dry-run')
   const verbose = process.argv.includes('--verbose')
