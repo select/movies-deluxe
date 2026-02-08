@@ -701,7 +701,6 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
       Title,
       Year,
       Rated,
-      Released,
       Runtime,
       Genre,
       Director,
@@ -711,13 +710,10 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
       Language,
       Country,
       Awards,
-      Poster,
-      Metascore,
       imdbRating,
       imdbVotes,
       imdbID,
-      Type,
-      Response
+      Type
     FROM metadata
   `
     )
@@ -726,7 +722,6 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
     Title: string | null
     Year: string | null
     Rated: string | null
-    Released: string | null
     Runtime: string | null
     Genre: string | null
     Director: string | null
@@ -736,13 +731,10 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
     Language: string | null
     Country: string | null
     Awards: string | null
-    Poster: string | null
-    Metascore: string | null
     imdbRating: number | null
     imdbVotes: number | null
     imdbID: string | null
     Type: string | null
-    Response: string | null
   }>
 
   // Ratings table removed - imdbRating is already loaded from metadata table
