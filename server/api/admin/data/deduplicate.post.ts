@@ -7,6 +7,9 @@
 
 import { defineEventHandler, readBody, createError } from 'h3'
 import { normalizeTitleForComparison } from '../../../../shared/utils/movieTitle'
+import { getAdminDatabase, withTransaction } from '../../../utils/adminDb'
+import type { MovieEntry, MovieSource } from '../../../../shared/types/movie'
+import type Database from 'better-sqlite3'
 
 interface DeduplicateOptions {
   dryRun?: boolean
@@ -66,37 +69,94 @@ function similarityRatio(str1: string, str2: string): number {
 }
 
 /**
+ * Load movie entry from database
+ */
+function loadMovieEntry(db: Database.Database, movieId: string): MovieEntry | null {
+  const movie = db.prepare('SELECT * FROM movies WHERE movieId = ?').get(movieId) as
+    | { movieId: string; title: string; year: number | null; verified: number; lastUpdated: string }
+    | undefined
+
+  if (!movie) return null
+
+  // Load sources
+  const sources = db
+    .prepare(
+      `
+      SELECT s.*, c.platform as type, c.name as channelName
+      FROM sources s
+      JOIN channels c ON s.channelId = c.id
+      WHERE s.movieId = ?
+    `
+    )
+    .all(movieId) as Array<{
+    id: number
+    sourceId: string
+    channelId: string
+    type: string
+    channelName: string
+  }>
+
+  // Load metadata
+  const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
+    | Record<string, unknown>
+    | undefined
+
+  return {
+    movieId: movie.movieId,
+    title: movie.title,
+    year: movie.year || undefined,
+    sources: sources.map(s => ({
+      id: s.sourceId,
+      sourceId: s.sourceId,
+      channelId: s.channelId,
+      type: s.type as 'archive.org' | 'youtube',
+      channelName: s.channelName,
+      addedAt: 0,
+    })),
+    metadata: metadata || undefined,
+    verified: movie.verified === 1,
+    lastUpdated: movie.lastUpdated,
+  }
+}
+
+/**
  * Find duplicate groups by title similarity
  */
 function findDuplicateGroups(
-  entries: Array<[string, MovieEntry]>,
+  db: Database.Database,
+  entries: Array<{ movieId: string; title: string }>,
   threshold: number
-): Array<Array<[string, MovieEntry]>> {
-  const groups: Array<Array<[string, MovieEntry]>> = []
+): Array<Array<{ movieId: string; entry: MovieEntry }>> {
+  const groups: Array<Array<{ movieId: string; entry: MovieEntry }>> = []
   const processed = new Set<string>()
 
   for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i]
-    if (!entry) continue
-    const [key1, entry1] = entry
-    if (processed.has(key1)) continue
+    const entry1 = entries[i]
+    if (!entry1) continue
+    if (processed.has(entry1.movieId)) continue
 
-    const group: Array<[string, MovieEntry]> = [[key1, entry1]]
-    processed.add(key1)
+    const group: Array<{ movieId: string; entry: MovieEntry }> = []
+    const entry1Data = loadMovieEntry(db, entry1.movieId)
+    if (!entry1Data) continue
+
+    group.push({ movieId: entry1.movieId, entry: entry1Data })
+    processed.add(entry1.movieId)
     const normalized1 = normalizeTitleForComparison(entry1.title)
 
     for (let j = i + 1; j < entries.length; j++) {
       const entry2 = entries[j]
       if (!entry2) continue
-      const [key2, entry2Data] = entry2
-      if (processed.has(key2)) continue
+      if (processed.has(entry2.movieId)) continue
 
-      const normalized2 = normalizeTitleForComparison(entry2Data.title)
+      const normalized2 = normalizeTitleForComparison(entry2.title)
       const similarity = similarityRatio(normalized1, normalized2)
 
       if (similarity >= threshold) {
-        group.push([key2, entry2Data])
-        processed.add(key2)
+        const entry2Data = loadMovieEntry(db, entry2.movieId)
+        if (entry2Data) {
+          group.push({ movieId: entry2.movieId, entry: entry2Data })
+          processed.add(entry2.movieId)
+        }
       }
     }
 
@@ -112,29 +172,45 @@ function findDuplicateGroups(
  * Find entries with same IMDB ID but different keys
  */
 function findSameImdbIdGroups(
-  entries: Array<[string, MovieEntry]>
-): Array<Array<[string, MovieEntry]>> {
-  const movieIdMap = new Map<string, Array<[string, MovieEntry]>>()
+  db: Database.Database
+): Array<Array<{ movieId: string; entry: MovieEntry }>> {
+  // Find movieIds that appear more than once
+  const duplicates = db
+    .prepare(
+      `
+      SELECT movieId, COUNT(*) as count
+      FROM movies
+      WHERE movieId LIKE 'tt%'
+      GROUP BY movieId
+      HAVING count > 1
+    `
+    )
+    .all() as Array<{ movieId: string; count: number }>
 
-  for (const [key, entry] of entries) {
-    if (entry.movieId.startsWith('tt')) {
-      const existing = movieIdMap.get(entry.movieId) || []
-      existing.push([key, entry])
-      movieIdMap.set(entry.movieId, existing)
+  const groups: Array<Array<{ movieId: string; entry: MovieEntry }>> = []
+
+  for (const dup of duplicates) {
+    const entries: Array<{ movieId: string; entry: MovieEntry }> = []
+    const entry = loadMovieEntry(db, dup.movieId)
+    if (entry) {
+      entries.push({ movieId: dup.movieId, entry })
+    }
+    if (entries.length > 1) {
+      groups.push(entries)
     }
   }
 
-  return Array.from(movieIdMap.values()).filter(group => group.length > 1)
+  return groups
 }
 
 /**
  * Merge sources from multiple entries
  */
-function mergeSources(entries: Array<[string, MovieEntry]>): MovieSource[] {
+function mergeSources(entries: Array<{ movieId: string; entry: MovieEntry }>): MovieSource[] {
   const sources: MovieSource[] = []
   const seen = new Set<string>()
 
-  for (const [_, entry] of entries) {
+  for (const { entry } of entries) {
     for (const source of entry.sources) {
       const key = source.type === 'archive.org' ? `archive:${source.id}` : `youtube:${source.id}`
 
@@ -151,7 +227,9 @@ function mergeSources(entries: Array<[string, MovieEntry]>): MovieSource[] {
 /**
  * Choose the best entry from a group
  */
-function chooseBestEntry(entries: Array<[string, MovieEntry]>): [string, MovieEntry] {
+function chooseBestEntry(
+  entries: Array<{ movieId: string; entry: MovieEntry }>
+): { movieId: string; entry: MovieEntry } {
   if (entries.length === 0) {
     throw new Error('Cannot choose best entry from empty array')
   }
@@ -165,13 +243,12 @@ function chooseBestEntry(entries: Array<[string, MovieEntry]>): [string, MovieEn
   let bestScore = 0
 
   for (const entry of entries) {
-    const [_, movieEntry] = entry
     let score = 0
 
-    if (movieEntry.movieId.startsWith('tt')) score += 100
-    if (movieEntry.metadata) score += 50
-    score += movieEntry.sources.length * 5
-    if (movieEntry.year) score += 10
+    if (entry.entry.movieId.startsWith('tt')) score += 100
+    if (entry.entry.metadata) score += 50
+    score += entry.entry.sources.length * 5
+    if (entry.entry.year) score += 10
 
     if (score > bestScore) {
       bestScore = score
@@ -185,8 +262,8 @@ function chooseBestEntry(entries: Array<[string, MovieEntry]>): [string, MovieEn
 /**
  * Merge a group of duplicate entries
  */
-function mergeGroup(group: Array<[string, MovieEntry]>): {
-  key: string
+function mergeGroup(group: Array<{ movieId: string; entry: MovieEntry }>): {
+  movieId: string
   entry: MovieEntry
   merged: string[]
 } {
@@ -194,9 +271,10 @@ function mergeGroup(group: Array<[string, MovieEntry]>): {
   if (!bestResult) {
     throw new Error('chooseBestEntry returned undefined')
   }
-  const [bestKey, bestEntry] = bestResult
+  const bestKey = bestResult.movieId
+  const bestEntry = bestResult.entry
   const mergedSources = mergeSources(group)
-  const merged = group.map(([key]) => key).filter(key => key !== bestKey)
+  const merged = group.map(g => g.movieId).filter(id => id !== bestKey)
 
   const mergedEntry: MovieEntry = {
     ...bestEntry,
@@ -204,31 +282,69 @@ function mergeGroup(group: Array<[string, MovieEntry]>): {
     lastUpdated: new Date().toISOString(),
   }
 
-  return { key: bestKey, entry: mergedEntry, merged }
+  return { movieId: bestKey, entry: mergedEntry, merged }
 }
 
 /**
- * Apply deduplication to database
+ * Delete a movie from the database
  */
-function applyDeduplication(
-  database: MoviesDatabase,
-  allGroups: Array<Array<[string, MovieEntry]>>
-): { database: MoviesDatabase; mergedCount: number; removedCount: number } {
+function deleteMovie(db: Database.Database, movieId: string): void {
+  // Delete from collection_movies
+  db.prepare('DELETE FROM collection_movies WHERE movieId = ?').run(movieId)
+
+  // Delete quality marks for all sources
+  db.prepare(
+    `
+    DELETE FROM source_quality_marks 
+    WHERE sourceId IN (SELECT id FROM sources WHERE movieId = ?)
+  `
+  ).run(movieId)
+
+  // Delete sources
+  db.prepare('DELETE FROM sources WHERE movieId = ?').run(movieId)
+
+  // Delete metadata
+  db.prepare('DELETE FROM metadata WHERE movieId = ?').run(movieId)
+
+  // Delete AI metadata
+  db.prepare('DELETE FROM ai_metadata WHERE movieId = ?').run(movieId)
+
+  // Delete related movies
+  db.prepare('DELETE FROM related_movies WHERE movieId = ? OR relatedMovieId = ?').run(
+    movieId,
+    movieId
+  )
+
+  // Delete movie
+  db.prepare('DELETE FROM movies WHERE movieId = ?').run(movieId)
+}
+
+/**
+ * Apply deduplication to database using SQL
+ */
+async function applyDeduplication(
+  db: Database.Database,
+  allGroups: Array<Array<{ movieId: string; entry: MovieEntry }>>
+): Promise<{ mergedCount: number; removedCount: number }> {
   let mergedCount = 0
   let removedCount = 0
 
   for (const group of allGroups) {
-    const { key, entry, merged } = mergeGroup(group)
-    database[key] = entry
+    const { movieId, entry, merged } = mergeGroup(group)
+
+    // Update the best movie with merged sources
+    const { upsertMovie } = await import('../../../utils/upsertMovie')
+    await upsertMovie(movieId, entry)
     mergedCount++
 
-    for (const removedKey of merged) {
-      delete database[removedKey]
+    // Delete merged movies
+    for (const removedId of merged) {
+      deleteMovie(db, removedId)
       removedCount++
     }
   }
 
-  return { database, mergedCount, removedCount }
+  return { mergedCount, removedCount }
 }
 
 export default defineEventHandler(async event => {
@@ -236,13 +352,15 @@ export default defineEventHandler(async event => {
   const { dryRun = false, threshold = 0.85, reportOnly = false } = body || {}
 
   try {
-    const database = await loadMoviesDatabase()
-    const entries = Object.entries(database)
-      .filter(([key]) => !key.startsWith('_'))
-      .map(([key, value]) => [key, value as MovieEntry] as [string, MovieEntry])
+    const db = getAdminDatabase()
 
-    const movieIdGroups = findSameImdbIdGroups(entries)
-    const titleGroups = findDuplicateGroups(entries, threshold)
+    // Get all movies
+    const movies = db
+      .prepare('SELECT movieId, title FROM movies ORDER BY movieId')
+      .all() as Array<{ movieId: string; title: string }>
+
+    const movieIdGroups = findSameImdbIdGroups(db)
+    const titleGroups = findDuplicateGroups(db, movies, threshold)
     const allGroups = [...movieIdGroups, ...titleGroups]
 
     const result: DeduplicateResult = {
@@ -250,16 +368,16 @@ export default defineEventHandler(async event => {
       movieIdGroups: movieIdGroups.length,
       mergedCount: 0,
       removedCount: 0,
-      totalMovies: entries.length,
+      totalMovies: movies.length,
     }
 
     if (reportOnly) {
       result.groups = allGroups.map(group => ({
         type: movieIdGroups.includes(group) ? 'movieId' : 'title',
-        entries: group.map(([id, entry]) => ({
-          id,
-          title: entry.title,
-          sources: entry.sources.length,
+        entries: group.map(g => ({
+          id: g.movieId,
+          title: g.entry.title,
+          sources: g.entry.sources.length,
         })),
       }))
       return result
@@ -270,12 +388,9 @@ export default defineEventHandler(async event => {
     }
 
     if (!dryRun) {
-      const {
-        database: updatedDatabase,
-        mergedCount,
-        removedCount,
-      } = applyDeduplication(database, allGroups)
-      await saveMoviesDatabase(updatedDatabase)
+      const { mergedCount, removedCount } = await withTransaction(async txDb => {
+        return await applyDeduplication(txDb, allGroups)
+      })
       result.mergedCount = mergedCount
       result.removedCount = removedCount
     } else {

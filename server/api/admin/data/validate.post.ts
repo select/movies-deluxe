@@ -1,18 +1,17 @@
 /**
  * Data Validation API Endpoint
  *
- * Validates movies.json integrity and generates a detailed report of issues.
+ * Validates database integrity and generates a detailed report of issues.
  * Can auto-fix certain problems when fix=true is passed.
  */
 
 import { defineEventHandler, readBody, createError } from 'h3'
-import { unlink } from 'fs/promises'
+import { unlink, readdir } from 'fs/promises'
 import { join } from 'path'
-import type { MovieEntry, MoviesDatabase } from '../../../../shared/types/movie'
+import type { MovieEntry, MovieSource } from '../../../../shared/types/movie'
 import { isImdbId, isTemporaryId } from '../../../../shared/types/movie'
-import { updateMovieIdInCollections } from '../../../utils/collections'
-
-// Note: loadMoviesDatabase, saveMoviesDatabase, findOrphanedPosters are auto-imported
+import { getAdminDatabase, withTransaction } from '../../../utils/adminDb'
+import type Database from 'better-sqlite3'
 
 interface ValidationOptions {
   fix?: boolean
@@ -294,16 +293,17 @@ function validateTimestamp(movieId: string, movie: MovieEntry): ValidationIssue 
 /**
  * Find duplicate movies by title similarity
  */
-function findDuplicates(db: MoviesDatabase): ValidationIssue[] {
+function findDuplicates(db: Database.Database): ValidationIssue[] {
   const issues: ValidationIssue[] = []
-  const movies = Object.entries(db).filter(([key]) => !key.startsWith('_')) as [
-    string,
-    MovieEntry,
-  ][]
 
-  const titleGroups = new Map<string, string[]>()
+  // Load all movies
+  const movies = db
+    .prepare('SELECT movieId, title, year FROM movies ORDER BY movieId')
+    .all() as Array<{ movieId: string; title: string; year: number | null }>
 
-  for (const [id, movie] of movies) {
+  const titleGroups = new Map<string, Array<{ id: string; year: number | null }>>()
+
+  for (const movie of movies) {
     if (!movie.title || typeof movie.title !== 'string') {
       continue
     }
@@ -315,25 +315,25 @@ function findDuplicates(db: MoviesDatabase): ValidationIssue[] {
     if (!titleGroups.has(normalizedTitle)) {
       titleGroups.set(normalizedTitle, [])
     }
-    titleGroups.get(normalizedTitle)!.push(id)
+    titleGroups.get(normalizedTitle)!.push({ id: movie.movieId, year: movie.year })
   }
 
-  for (const [title, ids] of titleGroups) {
-    if (ids.length > 1) {
-      const movies = ids.map(id => db[id] as MovieEntry)
-      const years = new Set(movies.map(m => m.year).filter(Boolean))
+  for (const [title, entries] of titleGroups) {
+    if (entries.length > 1) {
+      const years = new Set(entries.map(e => e.year).filter(Boolean))
+      const ids = entries.map(e => e.id)
 
       if (years.size === 1 || years.size === 0) {
-        const firstId = ids[0]
-        const firstMovie = firstId ? db[firstId] : undefined
-        const firstTitle =
-          firstMovie && typeof firstMovie === 'object' && 'title' in firstMovie
-            ? firstMovie.title
-            : title
+        const firstEntry = entries[0]
+        const firstMovie = db
+          .prepare('SELECT title FROM movies WHERE movieId = ?')
+          .get(firstEntry?.id) as { title: string } | undefined
+        const firstTitle = firstMovie?.title || title
+
         issues.push({
           severity: 'warning',
           category: 'duplicates',
-          movieId: firstId || '',
+          movieId: firstEntry?.id || '',
           message: `Potential duplicate movies: ${ids.join(', ')} (title: "${firstTitle}")`,
           fixable: false,
         })
@@ -356,15 +356,15 @@ function findDuplicates(db: MoviesDatabase): ValidationIssue[] {
 /**
  * Find orphaned temporary IDs
  */
-function findOrphanedTempIds(db: MoviesDatabase): ValidationIssue[] {
+function findOrphanedTempIds(db: Database.Database): ValidationIssue[] {
   const issues: ValidationIssue[] = []
-  const movies = Object.entries(db).filter(([key]) => !key.startsWith('_')) as [
-    string,
-    MovieEntry,
-  ][]
 
-  for (const [id, movie] of movies) {
-    if (isTemporaryId(id)) {
+  const movies = db
+    .prepare('SELECT movieId, lastUpdated FROM movies WHERE movieId NOT LIKE "tt%"')
+    .all() as Array<{ movieId: string; lastUpdated: string }>
+
+  for (const movie of movies) {
+    if (isTemporaryId(movie.movieId)) {
       const lastUpdated = new Date(movie.lastUpdated)
       const daysSinceUpdate = Math.floor(
         (Date.now() - lastUpdated.getTime()) / (1000 * 60 * 60 * 24)
@@ -374,7 +374,7 @@ function findOrphanedTempIds(db: MoviesDatabase): ValidationIssue[] {
         issues.push({
           severity: 'warning',
           category: 'orphaned',
-          movieId: id,
+          movieId: movie.movieId,
           message: `Temporary ID not matched for ${daysSinceUpdate} days (consider manual review)`,
           fixable: false,
         })
@@ -382,7 +382,7 @@ function findOrphanedTempIds(db: MoviesDatabase): ValidationIssue[] {
         issues.push({
           severity: 'info',
           category: 'orphaned',
-          movieId: id,
+          movieId: movie.movieId,
           message: `Temporary ID not matched for ${daysSinceUpdate} days`,
           fixable: false,
         })
@@ -396,36 +396,78 @@ function findOrphanedTempIds(db: MoviesDatabase): ValidationIssue[] {
 /**
  * Fix issues where possible
  */
-async function fixIssue(db: MoviesDatabase, issue: ValidationIssue): Promise<boolean> {
-  const movie = db[issue.movieId] as MovieEntry
+async function fixIssue(db: Database.Database, issue: ValidationIssue): Promise<boolean> {
+  const movie = db.prepare('SELECT * FROM movies WHERE movieId = ?').get(issue.movieId) as
+    | { movieId: string; title: string; year: number | null; verified: number; lastUpdated: string }
+    | undefined
+
   if (!movie) return false
 
   try {
     // Fix ID mismatch
     if (issue.category === 'movieId' && issue.message.includes('ID mismatch')) {
       const oldId = movie.movieId
-      movie.movieId = issue.movieId
-      // Ensure collections are updated if the internal ID was being used
-      if (oldId !== issue.movieId) {
-        await updateMovieIdInCollections(oldId, issue.movieId)
-      }
+      // Update the movie record
+      db.prepare('UPDATE movies SET movieId = ? WHERE movieId = ?').run(issue.movieId, oldId)
+      // Update all related tables
+      db.prepare('UPDATE sources SET movieId = ? WHERE movieId = ?').run(issue.movieId, oldId)
+      db.prepare('UPDATE metadata SET movieId = ? WHERE movieId = ?').run(issue.movieId, oldId)
+      db.prepare('UPDATE ai_metadata SET movieId = ? WHERE movieId = ?').run(issue.movieId, oldId)
+      db.prepare('UPDATE related_movies SET movieId = ? WHERE movieId = ?').run(
+        issue.movieId,
+        oldId
+      )
+      db.prepare('UPDATE related_movies SET relatedMovieId = ? WHERE relatedMovieId = ?').run(
+        issue.movieId,
+        oldId
+      )
+      // Update collections
+      db.prepare('UPDATE collection_movies SET movieId = ? WHERE movieId = ?').run(
+        issue.movieId,
+        oldId
+      )
       issue.fixed = true
       return true
     }
 
     // Fix missing timestamp
     if (issue.category === 'schema' && issue.message.includes('lastUpdated')) {
-      movie.lastUpdated = new Date().toISOString()
+      db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(
+        new Date().toISOString(),
+        issue.movieId
+      )
       issue.fixed = true
       return true
     }
 
     // Fix duplicate sources
     if (issue.category === 'sources' && issue.message.includes('Duplicate sources')) {
-      const uniqueSources = Array.from(
-        new Map(movie.sources.map(s => [`${s.type}:${s.sourceId}`, s])).values()
-      )
-      movie.sources = uniqueSources
+      // Get all sources for this movie
+      const sources = db
+        .prepare('SELECT id, sourceId, channelId FROM sources WHERE movieId = ?')
+        .all(issue.movieId) as Array<{ id: number; sourceId: string; channelId: string }>
+
+      // Track unique sources by channelId:sourceId
+      const seen = new Set<string>()
+      const toDelete: number[] = []
+
+      for (const source of sources) {
+        const key = `${source.channelId}:${source.sourceId}`
+        if (seen.has(key)) {
+          toDelete.push(source.id)
+        } else {
+          seen.add(key)
+        }
+      }
+
+      // Delete duplicate sources
+      for (const id of toDelete) {
+        // Delete quality marks first
+        db.prepare('DELETE FROM source_quality_marks WHERE sourceId = ?').run(id)
+        // Delete source
+        db.prepare('DELETE FROM sources WHERE id = ?').run(id)
+      }
+
       issue.fixed = true
       return true
     }
@@ -437,12 +479,110 @@ async function fixIssue(db: MoviesDatabase, issue: ValidationIssue): Promise<boo
   }
 }
 
+/**
+ * Find orphaned poster files (files not referenced by any movie)
+ */
+async function findOrphanedPosters(db: Database.Database): Promise<string[]> {
+  try {
+    const postersDir = join(process.cwd(), 'public/posters')
+
+    // Get all poster files
+    const files = await readdir(postersDir)
+
+    // Get all movie IDs that should have posters (IMDB IDs)
+    const expectedPosters = new Set<string>()
+    const movies = db
+      .prepare('SELECT movieId FROM movies WHERE movieId LIKE "tt%"')
+      .all() as Array<{ movieId: string }>
+
+    for (const movie of movies) {
+      expectedPosters.add(`${movie.movieId}.jpg`)
+    }
+
+    // Find files not expected (orphaned posters)
+    const orphaned: string[] = []
+    for (const file of files) {
+      if (file === '.gitkeep') continue
+      if (!expectedPosters.has(file)) {
+        orphaned.push(file)
+      }
+    }
+
+    return orphaned
+  } catch (error: unknown) {
+    // Directory doesn't exist or can't be read
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return []
+    }
+    console.error('Failed to find orphaned posters:', error)
+    return []
+  }
+}
+
+/**
+ * Load movie entry from database for validation
+ */
+function loadMovieForValidation(
+  db: Database.Database,
+  movieId: string
+): { movie: MovieEntry; sources: MovieSource[] } | null {
+  const movie = db.prepare('SELECT * FROM movies WHERE movieId = ?').get(movieId) as
+    | { movieId: string; title: string; year: number | null; verified: number; lastUpdated: string }
+    | undefined
+
+  if (!movie) return null
+
+  // Load sources
+  const sources = db
+    .prepare(
+      `
+      SELECT s.*, c.platform as type
+      FROM sources s
+      JOIN channels c ON s.channelId = c.id
+      WHERE s.movieId = ?
+    `
+    )
+    .all(movieId) as Array<{
+    id: number
+    sourceId: string
+    channelId: string
+    type: string
+    title: string | null
+    addedAt: number
+  }>
+
+  const movieEntry: MovieEntry = {
+    movieId: movie.movieId,
+    title: movie.title,
+    year: movie.year || undefined,
+    sources: sources.map(s => ({
+      id: s.sourceId,
+      sourceId: s.sourceId,
+      channelId: s.channelId,
+      type: s.type as 'archive.org' | 'youtube',
+      title: s.title || undefined,
+      addedAt: s.addedAt,
+      channelName: '',
+    })),
+    verified: movie.verified === 1,
+    lastUpdated: movie.lastUpdated,
+  }
+
+  // Load metadata if exists
+  const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId)
+  if (metadata) {
+    movieEntry.metadata = metadata as MovieEntry['metadata']
+  }
+
+  return { movie: movieEntry, sources: movieEntry.sources }
+}
+
 export default defineEventHandler(async event => {
   const body = await readBody<ValidationOptions>(event)
   const { fix = false, verbose = false } = body || {}
 
   try {
-    const db = await loadMoviesDatabase()
+    const db = getAdminDatabase()
 
     const result: ValidationResult = {
       totalMovies: 0,
@@ -454,36 +594,39 @@ export default defineEventHandler(async event => {
       fixed: 0,
     }
 
-    // Get all movie entries
-    const movies = Object.entries(db).filter(([key]) => !key.startsWith('_')) as [
-      string,
-      MovieEntry,
-    ][]
+    // Get all movie IDs
+    const movieIds = db
+      .prepare('SELECT movieId FROM movies ORDER BY movieId')
+      .all() as Array<{ movieId: string }>
 
-    result.totalMovies = movies.length
+    result.totalMovies = movieIds.length
 
     // Validate each movie
-    for (const [id, movie] of movies) {
+    for (const { movieId } of movieIds) {
+      const movieData = loadMovieForValidation(db, movieId)
+      if (!movieData) continue
+
+      const { movie } = movieData
       const movieIssues: ValidationIssue[] = []
 
       // Validate IMDB ID
-      const idIssue = validateImdbId(id, movie)
+      const idIssue = validateImdbId(movieId, movie)
       if (idIssue) movieIssues.push(idIssue)
 
       // Validate title
-      const titleIssue = validateTitle(id, movie)
+      const titleIssue = validateTitle(movieId, movie)
       if (titleIssue) movieIssues.push(titleIssue)
 
       // Validate sources
-      movieIssues.push(...validateSources(id, movie))
+      movieIssues.push(...validateSources(movieId, movie))
 
       // Validate metadata
       if (verbose) {
-        movieIssues.push(...validateMetadata(id, movie))
+        movieIssues.push(...validateMetadata(movieId, movie))
       }
 
       // Validate timestamp
-      const timestampIssue = validateTimestamp(id, movie)
+      const timestampIssue = validateTimestamp(movieId, movie)
       if (timestampIssue) movieIssues.push(timestampIssue)
 
       result.issues.push(...movieIssues)
@@ -520,28 +663,27 @@ export default defineEventHandler(async event => {
 
     // Fix issues if requested
     if (fix) {
-      for (const issue of result.issues) {
-        if (issue.fixable) {
-          // Handle orphaned posters
-          if (issue.category === 'orphaned' && issue.message.includes('Orphaned poster')) {
-            try {
-              const filename = issue.message.replace('Orphaned poster file: ', '')
-              const posterPath = join(process.cwd(), 'public/posters', filename)
-              await unlink(posterPath)
-              issue.fixed = true
+      // Use transaction for fixing issues
+      await withTransaction(async txDb => {
+        for (const issue of result.issues) {
+          if (issue.fixable) {
+            // Handle orphaned posters
+            if (issue.category === 'orphaned' && issue.message.includes('Orphaned poster')) {
+              try {
+                const filename = issue.message.replace('Orphaned poster file: ', '')
+                const posterPath = join(process.cwd(), 'public/posters', filename)
+                await unlink(posterPath)
+                issue.fixed = true
+                result.fixed++
+              } catch (error) {
+                console.error(`Failed to delete orphaned poster: ${error}`)
+              }
+            } else if (await fixIssue(txDb, issue)) {
               result.fixed++
-            } catch (error) {
-              console.error(`Failed to delete orphaned poster: ${error}`)
             }
-          } else if (await fixIssue(db, issue)) {
-            result.fixed++
           }
         }
-      }
-
-      if (result.fixed > 0) {
-        await saveMoviesDatabase(db)
-      }
+      })
     }
 
     return result

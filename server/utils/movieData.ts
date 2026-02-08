@@ -102,8 +102,16 @@ export async function extractMatchedMovieKeys(): Promise<string[]> {
 
 /**
  * Save the movies database to disk
+ *
+ * @deprecated This function is deprecated and should not be used.
+ * All movie data is now stored in SQLite (data/movies.db).
+ * Use upsertMovie() from server/utils/upsertMovie.ts for writing movie data.
+ * This function is kept only for backward compatibility and may be removed in the future.
  */
 export async function saveMoviesDatabase(db: MoviesDatabase): Promise<void> {
+  console.warn(
+    '[DEPRECATED] saveMoviesDatabase() is deprecated. Use SQLite operations instead (upsertMovie).'
+  )
   try {
     if (!existsSync(DATA_DIR)) {
       await mkdir(DATA_DIR, { recursive: true })
