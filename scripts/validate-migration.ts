@@ -489,19 +489,8 @@ function validateForeignKeyIntegrity(db: Database.Database): ValidationResult {
     result.errors.push(`${orphanedMetadata.count} orphaned metadata records`)
   }
 
-  // Check orphaned ratings
-  const orphanedRatings = db
-    .prepare(
-      `SELECT COUNT(*) as count 
-       FROM ratings r 
-       WHERE NOT EXISTS (SELECT 1 FROM movies m WHERE m.movieId = r.movieId)`
-    )
-    .get() as { count: number }
-
-  if (orphanedRatings.count > 0) {
-    result.passed = false
-    result.errors.push(`${orphanedRatings.count} orphaned ratings`)
-  }
+  // NOTE: Ratings table check removed - the ratings table was removed from schema
+  // as imdbRating in metadata table is sufficient for our needs
 
   // Check orphaned AI metadata
   const orphanedAI = db
