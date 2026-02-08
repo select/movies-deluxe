@@ -2,7 +2,7 @@ import * as fs from 'node:fs'
 import * as https from 'node:https'
 import * as http from 'node:http'
 import { join } from 'node:path'
-import { loadMoviesDatabase, saveMoviesDatabase, migrateMovieId } from './movieData'
+import { migrateMovieId } from './migrateMovieId'
 
 const FAILED_DOWNLOADS_FILE = join(process.cwd(), 'data/failed-posters.json')
 
@@ -272,10 +272,8 @@ export async function downloadPoster(movieId: string, force: boolean = false): P
       if (newImdbId && newImdbId !== movieId) {
         console.log(`Migrating movie ID from ${movieId} to ${newImdbId}`)
 
-        // Load database and migrate
-        const db = await loadMoviesDatabase()
-        await migrateMovieId(db, movieId, newImdbId)
-        await saveMoviesDatabase(db)
+        // Migrate movie ID in database
+        await migrateMovieId(movieId, newImdbId)
 
         // Rename poster file if it exists
         const oldPosterPath = join(postersDir, `${movieId}.jpg`)

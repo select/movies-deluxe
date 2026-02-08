@@ -3,7 +3,6 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 import { normalizeTitleForComparison } from '../../shared/utils/movieTitle'
 import type { MoviesDatabase, MovieEntry, MovieSource } from '../../shared/types/movie'
-import { updateMovieIdInCollections } from './collections'
 
 const DATA_DIR = join(process.cwd(), 'data')
 const MOVIES_FILE = join(DATA_DIR, 'movies.json')
@@ -98,15 +97,8 @@ export async function extractMatchedMovieKeys(): Promise<string[]> {
   return extractMovieKeys('matched')
 }
 
-/**
- * Load the movies database from SQLite
- * @deprecated This function now delegates to loadMoviesDatabase from loadMoviesDatabase.ts
- */
-export async function loadMoviesDatabase(): Promise<MoviesDatabase> {
-  // Import dynamically to avoid circular dependency issues
-  const { loadMoviesDatabase: loadFromSQLite } = await import('./loadMoviesDatabase')
-  return loadFromSQLite()
-}
+// loadMoviesDatabase has been moved to loadMoviesDatabase.ts
+// Import directly from there instead of using this deprecated wrapper
 
 /**
  * Save the movies database to disk
@@ -185,123 +177,8 @@ export function clearSourceIdIndex(): void {
   sourceIdIndex = undefined
 }
 
-/**
- * DEPRECATED: Use upsertMovieToSQLite instead
- *
- * Upserts a movie entry into the JSON database (in-memory)
- * This function is deprecated and will be removed in a future version
- *
- * @deprecated Use upsertMovieToSQLite for new code
- */
-export function upsertMovie(
-  db: MoviesDatabase,
-  movieId: string,
-  entry: MovieEntry
-): MovieEntry | undefined {
-  // First, check if this exact movieId exists
-  let existing = db[movieId] as MovieEntry | undefined
-  let existingKey = movieId
-
-  // If not found by movieId, check if any of the sources already exist in the database
-  // This handles the case where a movie was enriched and got a new IMDb ID
-  if (!existing && entry.sources && entry.sources.length > 0) {
-    const index = getSourceIdIndex(db)
-    for (const source of entry.sources) {
-      const foundMovieId = index.get(source.id)
-      if (foundMovieId) {
-        const foundEntry = db[foundMovieId] as MovieEntry | undefined
-        if (foundEntry) {
-          existingKey = foundMovieId
-          existing = foundEntry
-          break
-        }
-      }
-    }
-  }
-
-  if (existing) {
-    // Movie exists - merge sources and update metadata
-    const existingSources = existing.sources || []
-    const newSources = entry.sources || []
-
-    const mergedSources = [...existingSources]
-
-    for (const newSource of newSources) {
-      const existingIndex = mergedSources.findIndex(
-        s => s.type === newSource.type && s.id === newSource.id
-      )
-
-      const existingSource = mergedSources[existingIndex]
-      if (existingSource) {
-        // Update existing source with new data (preferring non-empty values)
-        const updatedSource = {
-          ...existingSource,
-          ...newSource,
-          description: newSource.description || existingSource.description,
-        }
-
-        // Normalize language field for type compatibility
-        if ('language' in updatedSource && updatedSource.language) {
-          updatedSource.language = normalizeLanguage(updatedSource.language)
-        }
-
-        mergedSources[existingIndex] = updatedSource as MovieSource
-      } else {
-        // Add new source with normalized language
-        const normalizedSource = { ...newSource }
-        if ('language' in normalizedSource && normalizedSource.language) {
-          normalizedSource.language = normalizeLanguage(normalizedSource.language)
-        }
-        mergedSources.push(normalizedSource as MovieSource)
-      }
-    }
-
-    // Update entry at the final key
-    // Important: entry fields take priority over existing (for enrichment scenarios)
-    db[existingKey] = {
-      ...existing,
-      // Copy enriched fields from entry (title, year, movieId) - these take priority
-      movieId: entry.movieId || existing.movieId,
-      title: entry.title || existing.title,
-      year: entry.year ?? existing.year,
-      // Merge sources and metadata
-      sources: mergedSources,
-      metadata: entry.metadata || existing.metadata,
-      lastUpdated: new Date().toISOString(),
-    }
-    return existing
-  } else {
-    // New movie - add it
-    db[movieId] = {
-      ...entry,
-      lastUpdated: new Date().toISOString(),
-    }
-    return undefined
-  }
-}
-
-/**
- * Upserts a movie entry into the SQLite database using transactions
- * If the movie exists, merges sources and updates metadata
- * Also checks if any source already exists in another entry (e.g., after OMDB enrichment)
- * @returns The existing movie entry if it existed, undefined otherwise
- *
- * @example
- * const existing = await upsertMovieToSQLite(movieId, entry)
- * if (existing) {
- *   console.log('Updated existing movie')
- * } else {
- *   console.log('Added new movie')
- * }
- */
-export async function upsertMovieToSQLite(
-  movieId: string,
-  entry: MovieEntry
-): Promise<MovieEntry | undefined> {
-  // Import dynamically to avoid circular dependency issues
-  const { upsertMovie: upsertToSQLite } = await import('./upsertMovie')
-  return upsertToSQLite(movieId, entry)
-}
+// upsertMovie has been moved to upsertMovie.ts for SQLite operations
+// The JSON-based version has been removed - use upsertMovieToSQLite instead
 
 export interface ChannelStats {
   id: string
@@ -420,41 +297,8 @@ async function loadYouTubeChannels(): Promise<
   }
 }
 
-/**
- * Migrate a movie from a temporary ID to an IMDB ID
- * Merges data if the IMDB ID already exists
- */
-export async function migrateMovieId(
-  db: MoviesDatabase,
-  oldId: string,
-  newId: string
-): Promise<void> {
-  const oldEntry = db[oldId] as MovieEntry | undefined
-
-  if (!oldEntry) {
-    console.warn(`Cannot migrate: movie ${oldId} not found`)
-    return
-  }
-
-  console.log(`Migrating movie from ${oldId} to ${newId}`)
-
-  // Update the movieId in the entry
-  oldEntry.movieId = newId
-
-  // IMPORTANT: Delete old entry BEFORE clearing index and calling upsertMovie
-  // This prevents upsertMovie from finding the old entry via source ID lookup
-  // when it rebuilds the index (getSourceIdIndex rebuilds if cleared)
-  delete db[oldId]
-
-  // Clear the source ID index so it gets rebuilt without the old entry
-  clearSourceIdIndex()
-
-  // Add/merge to new ID
-  upsertMovie(db, newId, oldEntry)
-
-  // Update collections.json
-  await updateMovieIdInCollections(oldId, newId)
-}
+// migrateMovieId has been moved to migrateMovieId.ts for SQLite operations
+// This JSON-based version is deprecated and should not be used
 
 /**
  * Find potential duplicate movies by title similarity

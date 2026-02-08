@@ -7,7 +7,7 @@
 
 import { join } from 'path'
 import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'fs'
-import { loadMoviesDatabase } from './movieData'
+import { loadMoviesDatabase } from './loadMoviesDatabase'
 import { loadCollectionsDatabase } from './collections'
 import { createLogger } from './logger'
 import type { MovieEntry, MovieSource } from '../../shared/types/movie'

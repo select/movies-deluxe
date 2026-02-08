@@ -727,7 +727,7 @@ describe('movieHelpers', () => {
           'INSERT INTO collection_movies (collectionId, movieId, addedAt) VALUES (?, ?, ?)'
         ).run(collectionId2, movieId, now)
 
-        const collections = await getCollections(movieId)
+        const collections = await getMovieCollections(movieId)
 
         expect(collections.length).toBe(2)
         expect(collections.map(c => c.id)).toContain(collectionId1)

@@ -909,7 +909,7 @@ export async function removeFromCollection(movieId: string, collectionId: string
  * Get all collections a movie belongs to
  * @returns Array of collection objects with id and name
  */
-export async function getCollections(
+export async function getMovieCollections(
   movieId: string
 ): Promise<Array<{ id: string; name: string }>> {
   try {

@@ -7,16 +7,12 @@
  */
 
 import { OpenRouter } from '@openrouter/sdk'
-import {
-  loadPrompt,
-  parseMetadataResponse,
-  parseBatchMetadataResponse,
-  type ExtractedMetadata,
-  type BatchMovieInput,
-} from './ollama'
+import { loadPrompt, parseMetadataResponse, parseBatchMetadataResponse } from './ollama'
 import type {
   AIProvider,
   OpenRouterConfig as OpenRouterProviderConfig,
+  ExtractedMetadata,
+  BatchMovieInput,
 } from '../../shared/types/ai-provider'
 
 /**

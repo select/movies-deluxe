@@ -32,8 +32,8 @@ interface OllamaConfig {
   model: string
 }
 
-// Re-export types for backward compatibility
-export type { ExtractedMetadata, BatchMovieInput }
+// ExtractedMetadata and BatchMovieInput are imported from shared/types/ai-provider.ts
+// Import them directly from there instead of using these re-exports
 
 /**
  * Extracted metadata with ID for batch processing

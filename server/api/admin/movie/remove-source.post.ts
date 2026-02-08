@@ -5,7 +5,9 @@ import {
   generateYouTubeId,
   type MovieEntry,
 } from '../../../../shared/types/movie'
-import { loadMoviesDatabase, saveMoviesDatabase, migrateMovieId } from '../../../utils/movieData'
+import { loadMoviesDatabase } from '../../../utils/loadMoviesDatabase'
+import { saveMoviesDatabase } from '../../../utils/movieData'
+import { migrateMovieId } from '../../../utils/migrateMovieId'
 import { removeMovieFromAllCollections } from '../../../utils/collections'
 
 export default defineEventHandler(async event => {
@@ -105,7 +107,7 @@ export default defineEventHandler(async event => {
 
         if (newTempId !== movieId) {
           // Use migrateMovieId to handle both key renaming/merging and collections update
-          await migrateMovieId(db, movieId, newTempId)
+          await migrateMovieId(movieId, newTempId)
           finalMovieId = newTempId
         }
       }
