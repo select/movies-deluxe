@@ -392,15 +392,16 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
         const sources = adminDb
           .prepare(
             `
-            SELECT s.type, s.language, s.channelName
+            SELECT c.platform as type, s.language, c.name as channelName
             FROM sources s
+            JOIN channels c ON s.channelId = c.id
             WHERE s.movieId = ?
             AND NOT EXISTS (
               SELECT 1 FROM source_quality_marks sqm
               WHERE sqm.sourceId = s.id
             )
             ORDER BY 
-              CASE s.type 
+              CASE c.platform 
                 WHEN 'archive.org' THEN 1 
                 WHEN 'youtube' THEN 2 
                 ELSE 3 
