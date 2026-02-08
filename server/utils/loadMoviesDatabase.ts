@@ -311,7 +311,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
       Title,
       Year,
       Rated,
-      Released,
       Runtime,
       Genre,
       Director,
@@ -321,13 +320,10 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
       Language,
       Country,
       Awards,
-      Poster,
-      Metascore,
       imdbRating,
       imdbVotes,
       imdbID,
-      Type,
-      Response
+      Type
     FROM metadata
   `
     )
@@ -336,7 +332,6 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     Title: string | null
     Year: string | null
     Rated: string | null
-    Released: string | null
     Runtime: string | null
     Genre: string | null
     Director: string | null
@@ -346,13 +341,10 @@ async function loadAllMetadata(db: Database.Database): Promise<Map<string, Movie
     Language: string | null
     Country: string | null
     Awards: string | null
-    Poster: string | null
-    Metascore: string | null
     imdbRating: number | null
     imdbVotes: number | null
     imdbID: string | null
     Type: string | null
-    Response: string | null
   }>
 
   // Ratings table removed - imdbRating is already loaded from metadata table
