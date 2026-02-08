@@ -272,7 +272,15 @@ export async function upsertMovie(
         WHERE movieId = ? AND channelId = ? AND sourceId = ?
       `)
 
+      // Ensure channels exist before inserting sources
+      const insertChannel = db.prepare(`
+        INSERT OR IGNORE INTO channels (id, name, platform)
+        VALUES (?, ?, ?)
+      `)
+
       for (const source of entry.sources || []) {
+        // Ensure the channel exists before inserting the source
+        insertChannel.run(source.channelId, source.channelName || '', source.type || 'archive.org')
         // Normalize language to string
         const lang = normalizeLanguage(source.language)
 
@@ -417,7 +425,15 @@ export async function upsertMovie(
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
+      // Ensure channels exist before inserting sources
+      const insertChannel = db.prepare(`
+        INSERT OR IGNORE INTO channels (id, name, platform)
+        VALUES (?, ?, ?)
+      `)
+
       for (const source of entry.sources || []) {
+        // Ensure the channel exists before inserting the source
+        insertChannel.run(source.channelId, source.channelName || '', source.type || 'archive.org')
         const lang = normalizeLanguage(source.language)
 
         // Convert addedAt to Unix timestamp if it's a string
