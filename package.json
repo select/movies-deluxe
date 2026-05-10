@@ -6,11 +6,10 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "dev:baseurl": "NUXT_APP_BASE_URL=/movies/ nuxt dev",
-    "build:prod": "NUXT_APP_BASE_URL=/movies/ nuxt generate --preset github_pages",
+    "build:prod": "nuxt generate",
     "generate": "nuxt generate",
+    "deploy": "nuxt generate && pnpm tsx scripts/extract-posters.ts .output/public/posters && wrangler pages deploy .output/public --project-name=movies-deluxe",
     "preview": "nuxt preview",
-    "preview:baseurl": "NUXT_APP_BASE_URL=/movies/ nuxt preview",
     "postinstall": "nuxt prepare && tsx scripts/copy-sqlite-wasm.ts",
     "prepare": "simple-git-hooks",
     "commitlint": "commitlint --edit",
