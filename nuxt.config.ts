@@ -208,5 +208,8 @@ export default defineNuxtConfig({
     googleSearchCx: process.env.GOOGLE_SEARCH_CX,
     ollamaHost: process.env.OLLAMA_HOST || 'http://localhost:11434',
     openrouterApiKey: process.env.OPENROUTER_API_KEY,
+    public: {
+      enableSemanticSearch: process.env.NUXT_PUBLIC_ENABLE_SEMANTIC_SEARCH !== 'false',
+    },
   },
 })

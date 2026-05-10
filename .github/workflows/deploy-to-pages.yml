@@ -37,9 +37,14 @@ jobs:
 
       - name: Generate static site
         run: pnpm build:prod
+        env:
+          NUXT_PUBLIC_ENABLE_SEMANTIC_SEARCH: 'false'
 
       - name: Extract posters
         run: pnpm tsx scripts/extract-posters.ts .output/public/posters
+
+      - name: Remove large embeddings files (Cloudflare Pages 25MB limit)
+        run: rm -f .output/public/data/embeddings-*.db
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

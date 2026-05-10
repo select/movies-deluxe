@@ -104,6 +104,8 @@ const modelInfo = ref<EmbeddingModelConfig | null>(null)
 const injectedFilters = inject(FILTER_STATE_KEY, null)
 const filters = injectedFilters || storeFilters
 
+const config = useRuntimeConfig()
+
 const modes = [
   {
     id: 'exact' as SearchMode,
@@ -111,12 +113,17 @@ const modes = [
     icon: 'i-mdi-alphabetical',
     description: 'Traditional search. Matches exact words in titles, actors, or descriptions.',
   },
-  {
-    id: 'semantic' as SearchMode,
-    label: 'Semantic',
-    icon: 'i-mdi-sparkles',
-    description: 'AI-powered search. Understands meaning and concepts (e.g., "space travel").',
-  },
+  ...(config.public.enableSemanticSearch
+    ? [
+        {
+          id: 'semantic' as SearchMode,
+          label: 'Semantic',
+          icon: 'i-mdi-sparkles',
+          description:
+            'AI-powered search. Understands meaning and concepts (e.g., "space travel").',
+        },
+      ]
+    : []),
 ]
 
 const modeButtons = ref<HTMLButtonElement[]>([])
