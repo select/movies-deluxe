@@ -1,5 +1,35 @@
 # Changelog
 
+# [0.10.0](https://github.com/select/movies-deluxe/compare/v0.9.0...v0.10.0) (2026-05-10)
+
+
+### Bug Fixes
+
+* **admin:** filter movies with only quality-marked sources from search ([63b6d38](https://github.com/select/movies-deluxe/commit/63b6d38d795db42da9c3387f952dc5ddbb12eab1))
+* **db:** defer foreign key checks in movie id migration ([3ad2d65](https://github.com/select/movies-deluxe/commit/3ad2d65deb02c77ac12e38396f3881e97d1483b3))
+* **db:** join channels table to get source type and channel name ([412ec9e](https://github.com/select/movies-deluxe/commit/412ec9e15e59552d6d9f5d6b1121ce7418547b0a))
+* **db:** remove deleted columns from metadata query ([adc2326](https://github.com/select/movies-deluxe/commit/adc2326f136f2d0663b04621a6b68e7ff4f1e0cd))
+* ensure channels exist before inserting sources in upsertMovie ([65dee9c](https://github.com/select/movies-deluxe/commit/65dee9cd619d3b84d8dbf32b2c0795ac1fb5a2ba))
+* remove non-existent columns from metadata query ([c3f8e25](https://github.com/select/movies-deluxe/commit/c3f8e253bc6e0ca160031158a531d28be4525c5a))
+* **types:** update types after channels normalization and schema refactoring ([128651c](https://github.com/select/movies-deluxe/commit/128651c1f5756d2c6cb3947332ea7fdf897a3cb7))
+* **validation:** restore missing quality marks and remove ratings table check ([26a5193](https://github.com/select/movies-deluxe/commit/26a51933f0db26544b570cb7ba0fca437c69868e))
+
+
+### Features
+
+* **admin:** add database archiver to admin ui ([1acac29](https://github.com/select/movies-deluxe/commit/1acac29cd7141f783be6f3ae19d37496a7750c58))
+* **ai:** add provider abstraction layer for ai metadata extraction ([2b54866](https://github.com/select/movies-deluxe/commit/2b54866a990826b1cb051d10663bc94dae3e6704))
+* **ai:** improve title extraction to remove version suffixes and promotional patterns ([3e33a62](https://github.com/select/movies-deluxe/commit/3e33a62fe35db80b6e13daeefa0ccc28e0cb666e))
+* **db:** add comprehensive sqlite schema for admin database ([f20001a](https://github.com/select/movies-deluxe/commit/f20001a6d3ce81975498d4417c4b1eedeada29d1))
+* **db:** add helper functions for common movie operations ([9112f3b](https://github.com/select/movies-deluxe/commit/9112f3ba89f385348bab6122dda7a51b9aa7b05e))
+* **db:** add migrateMovieId() for sqlite foreign key updates ([c93eb66](https://github.com/select/movies-deluxe/commit/c93eb661b212f6d15528d40d77c699c75bd77c3e))
+* **db:** add sqlite-based upsertmovie with transaction safety ([6a8aa39](https://github.com/select/movies-deluxe/commit/6a8aa397f6ddf716bfc7ac6fb9bc5b772da6a0e5))
+* **db:** rewrite loadMoviesDatabase() to use sqlite ([6019184](https://github.com/select/movies-deluxe/commit/6019184b6e020c8862001f88e550251bd5b4871f))
+* migrate deployment from GitHub Pages to Cloudflare Pages ([7927706](https://github.com/select/movies-deluxe/commit/7927706040830259d63378b01dceb19cb8448512))
+* **omdb:** update enrichment endpoint to use sqlite ([217beed](https://github.com/select/movies-deluxe/commit/217beed2910c0995eb69dc5ef3e306d0290a87c1))
+* **scripts:** add detect-poor-metadata script for source quality marking ([38ca5af](https://github.com/select/movies-deluxe/commit/38ca5af4470c5bfa3646f4fc3d29e5479f53c8c8))
+* **scripts:** add migration validation script ([569b045](https://github.com/select/movies-deluxe/commit/569b045e4fb58b044eff487d04e05fc4b573b996))
+
 # [0.9.0](https://github.com/select/movies-deluxe/compare/v0.8.4...v0.9.0) (2026-02-02)
 
 
