@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Extract admin database
+        run: tar -xzf data/movies-db.tar.gz -C data/
+
       - name: Generate database
         run: pnpm db:generate
 
