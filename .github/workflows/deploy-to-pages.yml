@@ -1,13 +1,25 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -37,19 +49,21 @@ jobs:
 
       - name: Generate static site
         run: pnpm build:prod
-        env:
-          NUXT_PUBLIC_ENABLE_SEMANTIC_SEARCH: 'false'
 
       - name: Extract posters
         run: pnpm tsx scripts/extract-posters.ts .output/public/posters
 
-      - name: Remove large embeddings files (Cloudflare Pages 25MB limit)
-        run: rm -f .output/public/data/embeddings-*.db
+      - name: Add CNAME file
+        run: echo "mdlx.org" > .output/public/CNAME
 
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: '4'
-          command: pages deploy .output/public --project-name=movies-deluxe
+          path: .output/public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

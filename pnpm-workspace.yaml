@@ -10,5 +10,4 @@ allowBuilds:
   simple-git-hooks: true
   typeslayer: true
   unrs-resolver: true
-  workerd: true
 onlyBuiltDependencies: onnxruntime-node
