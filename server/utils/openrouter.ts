@@ -54,7 +54,7 @@ function createClient(apiKey: string): OpenRouter {
   return new OpenRouter({
     apiKey,
     httpReferer: 'https://movies-deluxe.local',
-    xTitle: 'Movies Deluxe',
+    appTitle: 'Movies Deluxe',
   })
 }
 
@@ -93,13 +93,15 @@ export async function extractMovieMetadataOpenRouter(
     // Create client and make request
     const client = createClient(apiKey)
     const completion = await client.chat.send({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      provider: {
-        only: [provider], // Route to specific provider (e.g., Groq)
-        allowFallbacks: false,
+      chatRequest: {
+        model,
+        messages: [{ role: 'user', content: prompt }],
+        provider: {
+          only: [provider], // Route to specific provider (e.g., Groq)
+          allowFallbacks: false,
+        },
+        stream: false,
       },
-      stream: false,
     })
 
     // Extract content from response
@@ -183,13 +185,15 @@ export async function extractMovieMetadataBatchOpenRouter(
     // Create client and make request
     const client = createClient(apiKey)
     const completion = await client.chat.send({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      provider: {
-        only: [provider],
-        allowFallbacks: false,
+      chatRequest: {
+        model,
+        messages: [{ role: 'user', content: prompt }],
+        provider: {
+          only: [provider],
+          allowFallbacks: false,
+        },
+        stream: false,
       },
-      stream: false,
     })
 
     // Extract content from response
