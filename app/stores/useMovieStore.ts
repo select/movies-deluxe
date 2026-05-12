@@ -761,7 +761,11 @@ export const useMovieStore = defineStore('movie', () => {
       console.log('[watchFilters] Filter change detected')
 
       // Only apply filters on the search page
-      if (useRoute().path !== '/search') return
+      try {
+        if (useRoute().path !== '/search') return
+      } catch {
+        return
+      }
 
       // Increment session ID to cancel any pending requests from previous filter state
       currentSearchSessionId.value++
@@ -805,7 +809,11 @@ export const useMovieStore = defineStore('movie', () => {
    */
   const triggerSearchUpdate = async () => {
     // Only trigger on search page
-    if (useRoute().path !== '/search') return
+    try {
+      if (useRoute().path !== '/search') return
+    } catch {
+      return
+    }
 
     // Set filtering state
     isFiltering.value = true

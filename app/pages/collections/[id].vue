@@ -35,8 +35,13 @@ const isLoading = ref(true)
 const { data: seoCollection } = await useAsyncData(
   `collection-seo-${route.params.id}`,
   async () => {
-    const data = await $fetch<Record<string, Collection>>('/data/collections.json')
-    return data[route.params.id as string] || null
+    if (import.meta.server) {
+      const { readFileSync } = await import('fs')
+      const { resolve } = await import('path')
+      const data = JSON.parse(readFileSync(resolve('public/data/collections.json'), 'utf-8'))
+      return (data[route.params.id as string] as Collection) || null
+    }
+    return null
   },
   { server: true, lazy: false }
 )

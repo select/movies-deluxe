@@ -175,7 +175,7 @@ const {
   pending,
   error,
   refresh,
-} = await useFetch<HomeData>(`/data/home/day-${day}.json`)
+} = await useFetch<HomeData>(`/data/home/day-${day}.json`, { server: false })
 
 const movieStore = useMovieStore()
 const { totalMovies } = storeToRefs(movieStore)
