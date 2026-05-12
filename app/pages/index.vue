@@ -140,13 +140,24 @@ useHead({
       content:
         'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more - all legally available to watch online.',
     },
+    // Open Graph
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Movies Deluxe' },
     { property: 'og:title', content: 'Movies Deluxe - Free Public Domain Movies' },
     {
       property: 'og:description',
       content:
         'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
-    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: 'https://mdlx.org/' },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Movies Deluxe - Free Public Domain Movies' },
+    {
+      name: 'twitter:description',
+      content:
+        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
+    },
   ],
 })
 

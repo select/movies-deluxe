@@ -61,6 +61,31 @@ useHead({
       name: 'description',
       content: computed(() => collection.value?.description || 'Movie collection.'),
     },
+    // Open Graph
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Movies Deluxe' },
+    {
+      property: 'og:title',
+      content: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
+    },
+    {
+      property: 'og:description',
+      content: computed(() => collection.value?.description || 'Movie collection.'),
+    },
+    {
+      property: 'og:url',
+      content: computed(() => `https://mdlx.org/collections/${route.params.id}`),
+    },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    {
+      name: 'twitter:title',
+      content: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
+    },
+    {
+      name: 'twitter:description',
+      content: computed(() => collection.value?.description || 'Movie collection.'),
+    },
   ],
 })
 </script>

@@ -113,6 +113,18 @@ onMounted(() => {
 
 useHead({
   title: 'Collections - Movies Deluxe',
-  meta: [{ name: 'description', content: 'Curated movie collections from Movies Deluxe.' }],
+  meta: [
+    { name: 'description', content: 'Curated movie collections from Movies Deluxe.' },
+    // Open Graph
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Movies Deluxe' },
+    { property: 'og:title', content: 'Collections - Movies Deluxe' },
+    { property: 'og:description', content: 'Curated movie collections from Movies Deluxe.' },
+    { property: 'og:url', content: 'https://mdlx.org/collections' },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Collections - Movies Deluxe' },
+    { name: 'twitter:description', content: 'Curated movie collections from Movies Deluxe.' },
+  ],
 })
 </script>

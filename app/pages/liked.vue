@@ -25,9 +25,20 @@ useHead({
       name: 'description',
       content: 'Your personal collection of favorite movies from Movies Deluxe.',
     },
+    // Open Graph
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Movies Deluxe' },
     { property: 'og:title', content: 'Liked Movies - Movies Deluxe' },
     {
       property: 'og:description',
+      content: 'Your personal collection of favorite movies from Movies Deluxe.',
+    },
+    { property: 'og:url', content: 'https://mdlx.org/liked' },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Liked Movies - Movies Deluxe' },
+    {
+      name: 'twitter:description',
       content: 'Your personal collection of favorite movies from Movies Deluxe.',
     },
   ],
