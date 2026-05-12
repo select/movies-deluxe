@@ -1,5 +1,23 @@
 # Changelog
 
+# [0.11.0](https://github.com/select/movies-deluxe/compare/v0.10.5...v0.11.0) (2026-05-12)
+
+
+### Bug Fixes
+
+* ssr compatibility for home and collection pages ([0e4f41a](https://github.com/select/movies-deluxe/commit/0e4f41aa9aea076a7ed2a8cb178e602d06513ea5))
+
+
+### Features
+
+* add social card meta tags to all pages ([bfc205b](https://github.com/select/movies-deluxe/commit/bfc205b9ab88c40fec2d47e23642656fb015832c))
+* prerender movie, collection & home pages for social cards ([452ec98](https://github.com/select/movies-deluxe/commit/452ec98dbe1ed60bb99f2ebe175e563404ca2fd6)), closes [#shared](https://github.com/select/movies-deluxe/issues/shared)
+
+
+### Performance Improvements
+
+* don't block first render on database initialization ([1c26216](https://github.com/select/movies-deluxe/commit/1c26216492c5980e258029b15529fc3b9fe8ef60))
+
 # [0.10.0](https://github.com/select/movies-deluxe/compare/v0.9.0...v0.10.0) (2026-05-10)
 
 
