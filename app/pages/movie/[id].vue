@@ -634,11 +634,100 @@ const movieStore = useMovieStore()
 const {
   public: { siteUrl },
 } = useRuntimeConfig()
+const route = useRoute()
+
+// SSR-compatible data fetch for prerendering social card meta tags
+const { data: seoMovie } = await useAsyncData(
+  `movie-seo-${route.params.id}`,
+  () => $fetch<MovieEntry>(`/api/movie/${route.params.id}`),
+  { server: true, lazy: false }
+)
+
+// Reactive SEO head — renders into HTML during prerender
+useHead({
+  title: computed(
+    () =>
+      seoMovie.value?.title + (seoMovie.value?.year ? ` (${seoMovie.value.year})` : '') ||
+      'Movie - Movies Deluxe'
+  ),
+  meta: computed(() => {
+    const m = seoMovie.value
+    if (!m) return []
+    const title = m.title + (m.year ? ` (${m.year})` : '')
+    const description = m.metadata?.Plot || `Watch ${m.title} for free on Movies Deluxe`
+    const poster = `${siteUrl}/posters/${m.movieId}.jpg`
+    const url = `${siteUrl}/movie/${m.movieId}`
+    return [
+      { name: 'description', content: description },
+      // Open Graph
+      { property: 'og:type', content: 'video.movie' },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:image', content: poster },
+      { property: 'og:url', content: url },
+      { property: 'og:site_name', content: 'Movies Deluxe' },
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: title },
+      { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: poster },
+      // Additional movie metadata
+      ...(m.metadata?.Director
+        ? [{ property: 'video:director', content: m.metadata.Director }]
+        : []),
+      ...(m.metadata?.Actors ? [{ property: 'video:actor', content: m.metadata.Actors }] : []),
+      ...(m.year ? [{ property: 'video:release_date', content: m.year.toString() }] : []),
+    ]
+  }),
+  script: computed(() => {
+    const m = seoMovie.value
+    if (!m) return []
+    const title = m.title + (m.year ? ` (${m.year})` : '')
+    const poster = `${siteUrl}/posters/${m.movieId}.jpg`
+    return [
+      {
+        type: 'application/ld+json',
+        textContent: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Movie',
+          name: title,
+          ...(m.year && { datePublished: m.year.toString() }),
+          ...(m.metadata?.Plot && { description: m.metadata.Plot }),
+          image: poster,
+          ...(m.metadata?.Director && {
+            director: { '@type': 'Person', name: m.metadata.Director },
+          }),
+          ...(m.metadata?.Actors && {
+            actor: m.metadata.Actors.split(',').map((name: string) => ({
+              '@type': 'Person',
+              name: name.trim(),
+            })),
+          }),
+          ...(m.metadata?.Genre && {
+            genre: m.metadata.Genre.split(',').map((g: string) => g.trim()),
+          }),
+          ...(m.metadata?.imdbRating && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: m.metadata.imdbRating,
+              ...(m.metadata.imdbVotes && {
+                ratingCount: String(m.metadata.imdbVotes),
+              }),
+            },
+          }),
+          ...(m.movieId?.startsWith('tt') && {
+            sameAs: `https://www.imdb.com/title/${m.movieId}/`,
+          }),
+        }),
+      },
+    ]
+  }),
+})
+
 const { likedMovieIds, searchResultMovies } = storeToRefs(movieStore)
 const { lightweightMovieCache } = storeToRefs(movieStore)
 const { getMovieById, fetchMoviesByIds, getSimilarMovies, loadFromFile, toggleLike } = movieStore
 const { showToast } = useToastStore()
-const route = useRoute()
 
 // Window scroll control
 const { y: scrollY } = useWindowScroll()
@@ -882,7 +971,7 @@ const loadMovieData = async (movieId: string) => {
     }
 
     movie.value = foundMovie
-    updateMetaTags(foundMovie)
+    seoMovie.value = foundMovie
 
     isLoading.value = false
   } catch (err) {
@@ -1007,85 +1096,8 @@ const handleMovieUpdated = async (newId: string) => {
   const foundMovie = await getMovieById(newId)
   if (foundMovie) {
     movie.value = foundMovie
-    updateMetaTags(foundMovie)
+    seoMovie.value = foundMovie
   }
-}
-
-// Update meta tags for SEO and social sharing
-const updateMetaTags = (movie: MovieEntry) => {
-  const title = movie.title + (movie.year ? ` (${movie.year})` : '')
-  const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
-  const poster = `${siteUrl}/posters/${movie.movieId}.jpg`
-  const url = `${siteUrl}/movie/${movie.movieId}`
-
-  useHead({
-    title,
-    meta: [
-      // Basic meta tags
-      { name: 'description', content: description },
-
-      // Open Graph (Facebook, LinkedIn)
-      { property: 'og:type', content: 'video.movie' },
-      { property: 'og:title', content: title },
-      { property: 'og:description', content: description },
-      { property: 'og:image', content: poster },
-      { property: 'og:url', content: url },
-      { property: 'og:site_name', content: 'Movies Deluxe' },
-
-      // Twitter Card
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: title },
-      { name: 'twitter:description', content: description },
-      { name: 'twitter:image', content: poster },
-
-      // Additional movie metadata
-      ...(movie.metadata?.Director
-        ? [{ property: 'video:director', content: movie.metadata.Director }]
-        : []),
-      ...(movie.metadata?.Actors
-        ? [{ property: 'video:actor', content: movie.metadata.Actors }]
-        : []),
-      ...(movie.year ? [{ property: 'video:release_date', content: movie.year.toString() }] : []),
-    ],
-    script: [
-      // JSON-LD structured data for search engines
-      {
-        type: 'application/ld+json',
-        textContent: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Movie',
-          name: movie.title,
-          ...(movie.year && { datePublished: movie.year.toString() }),
-          ...(movie.metadata?.Plot && { description: movie.metadata.Plot }),
-          image: poster, // Always include poster image
-          ...(movie.metadata?.Director && {
-            director: { '@type': 'Person', name: movie.metadata.Director },
-          }),
-          ...(movie.metadata?.Actors && {
-            actor: movie.metadata.Actors.split(',').map((name: string) => ({
-              '@type': 'Person',
-              name: name.trim(),
-            })),
-          }),
-          ...(movie.metadata?.Genre && {
-            genre: movie.metadata.Genre.split(',').map((g: string) => g.trim()),
-          }),
-          ...(movie.metadata?.imdbRating && {
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: movie.metadata.imdbRating,
-              ...(movie.metadata.imdbVotes && {
-                ratingCount: String(movie.metadata.imdbVotes),
-              }),
-            },
-          }),
-          ...(movie.movieId?.startsWith('tt') && {
-            sameAs: `https://www.imdb.com/title/${movie.movieId}/`,
-          }),
-        }),
-      },
-    ],
-  })
 }
 
 // Helper functions to generate search URLs

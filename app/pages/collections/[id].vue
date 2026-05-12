@@ -31,6 +31,16 @@ const collection = ref<Collection | null>(null)
 const validMovieIds = ref<string[]>([])
 const isLoading = ref(true)
 
+// SSR-compatible fetch for prerendering social card meta tags
+const { data: seoCollection } = await useAsyncData(
+  `collection-seo-${route.params.id}`,
+  async () => {
+    const data = await $fetch<Record<string, Collection>>('/data/collections.json')
+    return data[route.params.id as string] || null
+  },
+  { server: true, lazy: false }
+)
+
 onMounted(async () => {
   const id = route.params.id as string
   if (!id) return
@@ -58,23 +68,26 @@ const {
   public: { siteUrl },
 } = useRuntimeConfig()
 
+// Use seoCollection for SSR, falls back to client-loaded collection
+const metaCollection = computed(() => collection.value || seoCollection.value)
+
 useHead({
-  title: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
+  title: computed(() => `${metaCollection.value?.name || 'Collection'} - Movies Deluxe`),
   meta: [
     {
       name: 'description',
-      content: computed(() => collection.value?.description || 'Movie collection.'),
+      content: computed(() => metaCollection.value?.description || 'Movie collection.'),
     },
     // Open Graph
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: 'Movies Deluxe' },
     {
       property: 'og:title',
-      content: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
+      content: computed(() => `${metaCollection.value?.name || 'Collection'} - Movies Deluxe`),
     },
     {
       property: 'og:description',
-      content: computed(() => collection.value?.description || 'Movie collection.'),
+      content: computed(() => metaCollection.value?.description || 'Movie collection.'),
     },
     {
       property: 'og:url',
@@ -84,11 +97,11 @@ useHead({
     { name: 'twitter:card', content: 'summary_large_image' },
     {
       name: 'twitter:title',
-      content: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
+      content: computed(() => `${metaCollection.value?.name || 'Collection'} - Movies Deluxe`),
     },
     {
       name: 'twitter:description',
-      content: computed(() => collection.value?.description || 'Movie collection.'),
+      content: computed(() => metaCollection.value?.description || 'Movie collection.'),
     },
   ],
 })

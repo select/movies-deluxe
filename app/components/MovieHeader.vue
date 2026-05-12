@@ -7,14 +7,16 @@
         'py-3': !isHeroPage,
       }"
     >
-      <NuxtLink to="/" class="grow">
-        <div
-          class="w-full i-app-logo text-theme-text transition-all duration-300"
+      <NuxtLink to="" class="grow">
+        <img
+          src="/logo.svg"
+          alt="Movies Deluxe"
+          class="w-full transition-all duration-300 dark:invert"
           :class="{
-            ' max-w-md h-16': isHeroPage,
+            'max-w-md h-16': isHeroPage,
             'max-w-xs h-12': !isHeroPage,
           }"
-        ></div>
+        />
       </NuxtLink>
       <p
         v-if="isHeroPage && route.path !== '/'"

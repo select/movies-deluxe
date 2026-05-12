@@ -6,7 +6,7 @@ import {
   extractIdentifier,
   QualityLabel,
   SourceQualityMark,
-} from '../../shared/types/movie'
+} from '#shared/types/movie'
 import type {
   MovieEntry,
   LightweightMovie,
@@ -23,8 +23,8 @@ import type {
   MatchResult,
   MatchConfidence,
   TemporaryId,
-} from '../../shared/types/movie'
-import type { Collection, CollectionsDatabase, SavedQuery } from '../../shared/types/collections'
+} from '#shared/types/movie'
+import type { Collection, CollectionsDatabase, SavedQuery } from '#shared/types/collections'
 import type {
   Genre,
   Country,
@@ -41,7 +41,7 @@ import type {
   SortState,
   FilterState,
   SearchMode,
-} from '../../shared/types/filters'
+} from '#shared/types/filters'
 
 /**
  * Frontend Type Definitions

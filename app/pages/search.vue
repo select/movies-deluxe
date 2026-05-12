@@ -42,7 +42,7 @@ useHead({
     {
       name: 'description',
       content:
-        'Search and filter thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
+        'Search and filter thousands of free and public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
     // Open Graph
     { property: 'og:type', content: 'website' },
@@ -51,7 +51,7 @@ useHead({
     {
       property: 'og:description',
       content:
-        'Search and filter thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
+        'Search and filter thousands of free and public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
     { property: 'og:url', content: `${siteUrl}/search` },
     // Twitter Card
@@ -60,7 +60,7 @@ useHead({
     {
       name: 'twitter:description',
       content:
-        'Search and filter thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
+        'Search and filter thousands of free and public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
   ],
 })

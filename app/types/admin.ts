@@ -140,4 +140,4 @@ export interface CollectionCleanupResult {
   }>
 }
 
-export * from '../../shared/types/admin'
+export * from '#shared/types/admin'

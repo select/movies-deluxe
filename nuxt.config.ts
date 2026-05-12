@@ -2,7 +2,15 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  ssr: false,
+  ssr: true,
+
+  // Prerender pages with social card meta tags
+  // Pages that don't need SSR stay as SPA (client-side only)
+  routeRules: {
+    '/search': { ssr: false },
+    '/liked': { ssr: false },
+    '/admin/**': { ssr: false },
+  },
   // Set dev server port to 3003 (3001 is used by Open WebUI)
   devServer: {
     port: 3003,
@@ -166,6 +174,23 @@ export default defineNuxtConfig({
     worker: {
       format: 'es',
     },
+    plugins: [
+      // Stub ?worker imports during SSR build (workers only run client-side)
+      {
+        name: 'stub-workers-ssr',
+        enforce: 'pre',
+        resolveId(id, _importer, options) {
+          if (options?.ssr && id.includes('?worker')) {
+            return '\0worker-stub'
+          }
+        },
+        load(id) {
+          if (id === '\0worker-stub') {
+            return 'export default class WorkerStub {}'
+          }
+        },
+      },
+    ],
   },
 
   // Nitro configuration for serving WASM files with correct MIME type
@@ -175,6 +200,33 @@ export default defineNuxtConfig({
     externals: {
       inline: [],
       external: ['onnxruntime-node', '@huggingface/transformers'],
+    },
+    hooks: {
+      async 'prerender:routes'(routes) {
+        // Read all movie IDs from SQLite and register as prerender routes
+        const Database = (await import('better-sqlite3')).default
+        const { resolve } = await import('path')
+        const dbPath = resolve('public/data/movies.db')
+        const db = new Database(dbPath, { readonly: true })
+        const rows = db.prepare('SELECT movieId FROM movies').all() as { movieId: string }[]
+        db.close()
+        for (const row of rows) {
+          routes.add(`/movie/${row.movieId}`)
+        }
+        console.log(`[prerender] Registered ${rows.length} movie routes`)
+
+        // Register collection routes
+        const { readFileSync } = await import('fs')
+        const collectionsPath = resolve('public/data/collections.json')
+        const collections = JSON.parse(readFileSync(collectionsPath, 'utf-8'))
+        const collectionIds = Object.keys(collections).filter(k => k !== '_schema')
+        for (const id of collectionIds) {
+          routes.add(`/collections/${id}`)
+        }
+        routes.add('/collections')
+        routes.add('/')
+        console.log(`[prerender] Registered ${collectionIds.length} collection routes + home`)
+      },
     },
     routeRules: {
       '/**/*.wasm': {

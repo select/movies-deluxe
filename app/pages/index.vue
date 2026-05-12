@@ -23,8 +23,8 @@
               thousands of
             </span>
           </span>
-          free movies from Archive.org and YouTube. Classic films, documentaries, and more - all
-          legally available to watch online.
+          free and public domain movies from Archive.org and YouTube. Classic films, documentaries,
+          and more - all legally available to watch online.
         </p>
       </header>
 
@@ -137,30 +137,30 @@ const {
 } = useRuntimeConfig()
 
 useHead({
-  title: 'Movies Deluxe - Free Public Domain Movies',
+  title: 'Movies Deluxe - Free & Public Domain Movies',
   meta: [
     {
       name: 'description',
       content:
-        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more - all legally available to watch online.',
+        'Discover thousands of free and public domain movies from Archive.org and YouTube. Classic films, documentaries, and more - all legally available to watch online.',
     },
     // Open Graph
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: 'Movies Deluxe' },
-    { property: 'og:title', content: 'Movies Deluxe - Free Public Domain Movies' },
+    { property: 'og:title', content: 'Movies Deluxe - Free & Public Domain Movies' },
     {
       property: 'og:description',
       content:
-        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
+        'Discover thousands of free and public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
     { property: 'og:url', content: `${siteUrl}/` },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Movies Deluxe - Free Public Domain Movies' },
+    { name: 'twitter:title', content: 'Movies Deluxe - Free & Public Domain Movies' },
     {
       name: 'twitter:description',
       content:
-        'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
+        'Discover thousands of free and public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
   ],
 })
