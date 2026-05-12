@@ -111,6 +111,10 @@ onMounted(() => {
   loadCollections()
 })
 
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
+
 useHead({
   title: 'Collections - Movies Deluxe',
   meta: [
@@ -120,7 +124,7 @@ useHead({
     { property: 'og:site_name', content: 'Movies Deluxe' },
     { property: 'og:title', content: 'Collections - Movies Deluxe' },
     { property: 'og:description', content: 'Curated movie collections from Movies Deluxe.' },
-    { property: 'og:url', content: 'https://mdlx.org/collections' },
+    { property: 'og:url', content: `${siteUrl}/collections` },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: 'Collections - Movies Deluxe' },

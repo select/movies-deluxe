@@ -202,6 +202,10 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Public (exposed to client)
+    public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://mdlx.org',
+    },
     // Server-side only
     minMovieDurationMinutes: 40,
     googleApiKey: process.env.GOOGLE_API_KEY || process.env.YOUTUBE_API_KEY,

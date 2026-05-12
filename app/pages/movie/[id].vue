@@ -631,6 +631,9 @@ import type { MovieEntry, LightweightMovie } from '~/types'
 
 // Stores - get reactive state and methods once
 const movieStore = useMovieStore()
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
 const { likedMovieIds, searchResultMovies } = storeToRefs(movieStore)
 const { lightweightMovieCache } = storeToRefs(movieStore)
 const { getMovieById, fetchMoviesByIds, getSimilarMovies, loadFromFile, toggleLike } = movieStore
@@ -1012,8 +1015,8 @@ const handleMovieUpdated = async (newId: string) => {
 const updateMetaTags = (movie: MovieEntry) => {
   const title = movie.title + (movie.year ? ` (${movie.year})` : '')
   const description = movie.metadata?.Plot || `Watch ${movie.title} for free on Movies Deluxe`
-  const poster = `https://mdlx.org/posters/${movie.movieId}.jpg`
-  const url = `https://mdlx.org/movie/${movie.movieId}`
+  const poster = `${siteUrl}/posters/${movie.movieId}.jpg`
+  const url = `${siteUrl}/movie/${movie.movieId}`
 
   useHead({
     title,

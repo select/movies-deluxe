@@ -31,6 +31,10 @@
 </template>
 
 <script setup lang="ts">
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
+
 // Set page title and meta
 useHead({
   title: 'Search Movies - Movies Deluxe',
@@ -49,7 +53,7 @@ useHead({
       content:
         'Search and filter thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
-    { property: 'og:url', content: 'https://mdlx.org/search' },
+    { property: 'og:url', content: `${siteUrl}/search` },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: 'Search Movies - Movies Deluxe' },

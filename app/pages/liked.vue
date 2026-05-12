@@ -17,6 +17,10 @@
 </template>
 
 <script setup lang="ts">
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
+
 // Set page title and meta
 useHead({
   title: 'Liked Movies - Movies Deluxe',
@@ -33,7 +37,7 @@ useHead({
       property: 'og:description',
       content: 'Your personal collection of favorite movies from Movies Deluxe.',
     },
-    { property: 'og:url', content: 'https://mdlx.org/liked' },
+    { property: 'og:url', content: `${siteUrl}/liked` },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: 'Liked Movies - Movies Deluxe' },

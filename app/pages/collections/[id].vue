@@ -54,6 +54,10 @@ onMounted(async () => {
   }
 })
 
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
+
 useHead({
   title: computed(() => `${collection.value?.name || 'Collection'} - Movies Deluxe`),
   meta: [
@@ -74,7 +78,7 @@ useHead({
     },
     {
       property: 'og:url',
-      content: computed(() => `https://mdlx.org/collections/${route.params.id}`),
+      content: computed(() => `${siteUrl}/collections/${route.params.id}`),
     },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' },

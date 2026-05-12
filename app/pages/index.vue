@@ -132,6 +132,10 @@ interface HomeData {
 }
 
 // Set page title and meta
+const {
+  public: { siteUrl },
+} = useRuntimeConfig()
+
 useHead({
   title: 'Movies Deluxe - Free Public Domain Movies',
   meta: [
@@ -149,7 +153,7 @@ useHead({
       content:
         'Discover thousands of free public domain movies from Archive.org and YouTube. Classic films, documentaries, and more.',
     },
-    { property: 'og:url', content: 'https://mdlx.org/' },
+    { property: 'og:url', content: `${siteUrl}/` },
     // Twitter Card
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: 'Movies Deluxe - Free Public Domain Movies' },
