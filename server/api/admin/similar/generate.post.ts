@@ -58,6 +58,8 @@ export default defineEventHandler(async event => {
 
     const totalMovies = embeddingRows.length
 
+    console.log(`[Similar] Starting generation: ${totalMovies} movies, model=${modelId}, limit=${limit}`)
+
     emitProgress({
       type: 'similar',
       status: 'in_progress',
@@ -113,6 +115,7 @@ export default defineEventHandler(async event => {
     outDb.exec('BEGIN TRANSACTION')
 
     let processedCount = 0
+    const startTime = Date.now()
 
     for (const row of embeddingRows) {
       const movieId = row.id
@@ -140,13 +143,20 @@ export default defineEventHandler(async event => {
 
       processedCount++
       if (processedCount % 500 === 0) {
+        const elapsed = (Date.now() - startTime) / 1000
+        const rate = Math.round(processedCount / elapsed)
+        const remaining = Math.round((totalMovies - processedCount) / rate)
+        const msg = `Processing ${processedCount}/${totalMovies} (${rate}/s, ~${remaining}s left)`
+        console.log(`[Similar] ${msg}`)
         emitProgress({
           type: 'similar',
           status: 'in_progress',
-          message: `Processing ${processedCount}/${totalMovies} movies...`,
+          message: msg,
           current: processedCount,
           total: totalMovies,
         })
+        // Yield event loop so SSE progress events can flush to client
+        await new Promise(resolve => setTimeout(resolve, 0))
       }
     }
 
@@ -162,6 +172,8 @@ export default defineEventHandler(async event => {
 
     outDb.close()
     vecDb.close()
+
+    console.log(`[Similar] Completed: ${processedCount} movies processed`)
 
     emitProgress({
       type: 'similar',
