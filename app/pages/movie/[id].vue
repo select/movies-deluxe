@@ -726,7 +726,7 @@ useHead({
 
 const { likedMovieIds, searchResultMovies } = storeToRefs(movieStore)
 const { lightweightMovieCache } = storeToRefs(movieStore)
-const { getMovieById, fetchMoviesByIds, getSimilarMovies, loadFromFile, toggleLike } = movieStore
+const { getMovieById, fetchMoviesByIds, loadFromFile, toggleLike } = movieStore
 const { showToast } = useToastStore()
 
 // Window scroll control
@@ -884,15 +884,25 @@ const loadRelatedMovies = async () => {
   }
 }
 
-// Load similar movies using vector search
+// Load similar movies from precalculated data in movie JSON
 const loadSimilarMovies = async () => {
   if (hasLoadedSimilar.value || !movie.value?.movieId) return
+  if (!movie.value.similarMovies?.length) return
   isSimilarLoading.value = true
   try {
-    const results = await getSimilarMovies(movie.value.movieId)
-    similarMovies.value = results
+    const similarIds = movie.value.similarMovies.map(s => s.movieId)
+    await fetchMoviesByIds(similarIds)
+
+    // Build lightweight movie list with distance info
+    similarMovies.value = movie.value.similarMovies
+      .map(s => {
+        const cached = lightweightMovieCache.value.get(s.movieId)
+        if (!cached) return null
+        return { ...cached, distance: s.distance } as LightweightMovie
+      })
+      .filter((m): m is LightweightMovie => !!m)
+
     hasLoadedSimilar.value = true
-    // Ensure scroll state is updated after loading
     nextTick(() => {
       updateSimilarScrollState()
     })

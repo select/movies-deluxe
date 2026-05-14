@@ -171,6 +171,7 @@ export interface MovieEntry {
   ai?: AIMetadata // AI-extracted metadata from Ollama (for unmatched movies with promotional titles)
   lastUpdated: string // ISO 8601 timestamp
   relatedMovies?: string[]
+  similarMovies?: Array<{ movieId: string; distance: number }>
   collections?: Array<{
     id: string
     name: string

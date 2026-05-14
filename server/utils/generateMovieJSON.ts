@@ -5,6 +5,8 @@
  * in public/movies/[movieId].json for on-demand loading.
  */
 
+import Database from 'better-sqlite3'
+import * as sqliteVec from 'sqlite-vec'
 import { join } from 'path'
 import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'fs'
 import { loadMoviesDatabase } from './loadMoviesDatabase'
@@ -167,7 +169,76 @@ export async function generateMovieJSON(): Promise<void> {
     }
   }
 
-  // 5. Write individual files
+  // 5. Calculate Similar Movies from vector embeddings
+  logger.info('Calculating similar movies from embeddings...')
+  const similarMap = new Map<string, Array<{ movieId: string; distance: number }>>()
+  const embeddingsDbPath = join(process.cwd(), 'public/data/embeddings-bge-micro-movies.db')
+
+  if (existsSync(embeddingsDbPath)) {
+    const vecDb = new Database(embeddingsDbPath, { readonly: true })
+    sqliteVec.load(vecDb)
+
+    // Attach movies.db to filter results to valid movies only
+    const moviesDbPath = join(process.cwd(), 'public/data/movies.db')
+    if (existsSync(moviesDbPath)) {
+      vecDb.exec(`ATTACH DATABASE '${moviesDbPath}' AS moviesdb`)
+    }
+
+    const validIds = new Set(movies.map(m => m.movieId))
+
+    // Get all movie IDs that have embeddings
+    const embeddingRows = vecDb
+      .prepare('SELECT id FROM vec_movies_rowids ORDER BY id')
+      .all() as Array<{ id: string }>
+
+    logger.info(`Found ${embeddingRows.length} movies with embeddings`)
+
+    const findSimilarStmt = vecDb.prepare(`
+      SELECT v.movieId, v.distance
+      FROM vec_movies v
+      WHERE v.embedding MATCH ?
+        AND k = 15
+      ORDER BY v.distance ASC
+    `)
+
+    const getEmbeddingStmt = vecDb.prepare('SELECT embedding FROM vec_movies WHERE movieId = ?')
+
+    let similarCount = 0
+    for (const row of embeddingRows) {
+      const movieId = row.id
+      if (!validIds.has(movieId)) continue
+
+      const embRow = getEmbeddingStmt.get(movieId) as { embedding: Buffer } | undefined
+      if (!embRow) continue
+
+      const results = findSimilarStmt.all(embRow.embedding) as Array<{
+        movieId: string
+        distance: number
+      }>
+
+      // Filter out self and invalid movies, keep top 10
+      const similar = results
+        .filter(r => r.movieId !== movieId && validIds.has(r.movieId))
+        .slice(0, 10)
+        .map(r => ({ movieId: r.movieId, distance: Math.round(r.distance * 1000) / 1000 }))
+
+      if (similar.length > 0) {
+        similarMap.set(movieId, similar)
+      }
+
+      similarCount++
+      if (similarCount % 5000 === 0) {
+        logger.info(`Calculated similar movies for ${similarCount} movies...`)
+      }
+    }
+
+    vecDb.close()
+    logger.info(`Calculated similar movies for ${similarCount} movies total`)
+  } else {
+    logger.warn('Embeddings database not found, skipping similar movies calculation')
+  }
+
+  // 6. Write individual files
   let count = 0
   for (const movie of movies) {
     const filePath = join(MOVIES_DIR, `${movie.movieId}.json`)
@@ -218,6 +289,7 @@ export async function generateMovieJSON(): Promise<void> {
             }
           : undefined,
         relatedMovies: relatedMap.get(movie.movieId) || [],
+        similarMovies: similarMap.get(movie.movieId) || [],
         collections: movieToCollectionsMap.get(movie.movieId) || [],
         // Admin fields (localhost only)
         is_curated: !!movie.metadata,
