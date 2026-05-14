@@ -2,7 +2,7 @@
  * Generate Similar Movies Database
  *
  * Precalculates movie-to-movie similarity using vector embeddings (KNN search)
- * and stores results in a lightweight lookup database (public/data/similar-movies.db).
+ * and stores results in a lightweight lookup database (data/similar-movies.db).
  *
  * This is an expensive operation (~19 min for bge-micro 384d, ~2 min for potion 64d)
  * and should be run locally whenever embeddings are updated.
@@ -41,7 +41,7 @@ Options:
   -h, --help     Show this help message
 
 Output:
-  public/data/similar-movies.db - SQLite DB with precomputed similarities
+  data/similar-movies.db - SQLite DB with precomputed similarities
 
 This DB is read by generateMovieJSON during build to embed similar movies
 into each movie's JSON file without running expensive vector search.
@@ -53,7 +53,7 @@ const modelId = (values.model as string) || 'bge-micro'
 const limit = parseInt((values.limit as string) || '10', 10)
 
 const EMBEDDINGS_DB_PATH = join(process.cwd(), `public/data/embeddings-${modelId}-movies.db`)
-const OUTPUT_DB_PATH = join(process.cwd(), 'public/data/similar-movies.db')
+const OUTPUT_DB_PATH = join(process.cwd(), 'data/similar-movies.db')
 
 async function main() {
   console.log(`\n🔍 Generating similar movies database`)

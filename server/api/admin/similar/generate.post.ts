@@ -29,7 +29,7 @@ export default defineEventHandler(async event => {
   const limit = body?.limit || 10
 
   const embeddingsDbPath = join(process.cwd(), `public/data/embeddings-${modelId}-movies.db`)
-  const outputDbPath = join(process.cwd(), 'public/data/similar-movies.db')
+  const outputDbPath = join(process.cwd(), 'data/similar-movies.db')
 
   if (!existsSync(embeddingsDbPath)) {
     throw createError({

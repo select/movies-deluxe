@@ -171,7 +171,7 @@ export async function generateMovieJSON(): Promise<void> {
   // 5. Load precomputed similar movies from lookup DB
   logger.info('Loading precomputed similar movies...')
   const similarMap = new Map<string, Array<{ movieId: string; distance: number }>>()
-  const similarDbPath = join(process.cwd(), 'public/data/similar-movies.db')
+  const similarDbPath = join(process.cwd(), 'data/similar-movies.db')
 
   if (existsSync(similarDbPath)) {
     const similarDb = new Database(similarDbPath, { readonly: true })
@@ -197,7 +197,7 @@ export async function generateMovieJSON(): Promise<void> {
     logger.info(`Loaded similar movies for ${similarMap.size} movies`)
   } else {
     logger.warn(
-      'Similar movies DB not found (public/data/similar-movies.db). ' +
+      'Similar movies DB not found (data/similar-movies.db). ' +
         'Run "pnpm similar:generate" to create it.',
     )
   }
