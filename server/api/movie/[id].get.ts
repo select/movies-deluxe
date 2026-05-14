@@ -53,7 +53,9 @@ async function getMovieFromAdminDb(movieId: string) {
   // Get movie base data
   const movie = db
     .prepare('SELECT movieId, title, year, verified, lastUpdated FROM movies WHERE movieId = ?')
-    .get(movieId) as { movieId: string; title: string; year: number | null; verified: number; lastUpdated: string } | undefined
+    .get(movieId) as
+    | { movieId: string; title: string; year: number | null; verified: number; lastUpdated: string }
+    | undefined
 
   if (!movie) {
     throw createError({
@@ -80,7 +82,7 @@ async function getMovieFromAdminDb(movieId: string) {
       ORDER BY
         CASE c.platform WHEN 'archive.org' THEN 1 WHEN 'youtube' THEN 2 ELSE 3 END,
         s.addedAt
-    `,
+    `
     )
     .all(movieId) as Array<Record<string, unknown>>
 
@@ -104,9 +106,7 @@ async function getMovieFromAdminDb(movieId: string) {
     year: s.year as number | undefined,
     downloads: s.downloads as number | undefined,
     viewCount: s.viewCount as number | undefined,
-    regionRestriction: s.regionRestriction
-      ? JSON.parse(s.regionRestriction as string)
-      : undefined,
+    regionRestriction: s.regionRestriction ? JSON.parse(s.regionRestriction as string) : undefined,
     type: s.type as MovieSourceType,
     channelName: s.channelName as string,
   }))
@@ -118,7 +118,7 @@ async function getMovieFromAdminDb(movieId: string) {
       SELECT Rated, Runtime, Genre, Director, Writer, Actors, Plot,
              Language, Country, Awards, imdbRating, imdbVotes
       FROM metadata WHERE movieId = ?
-    `,
+    `
     )
     .get(movieId) as Record<string, unknown> | undefined
 
@@ -152,7 +152,7 @@ async function getMovieFromAdminDb(movieId: string) {
       FROM collections c
       JOIN collection_movies cm ON cm.collectionId = c.id
       WHERE cm.movieId = ?
-    `,
+    `
     )
     .all(movieId) as Array<{ id: string; name: string }>
 
@@ -163,7 +163,9 @@ async function getMovieFromAdminDb(movieId: string) {
     const Database = (await import('better-sqlite3')).default
     const similarDb = new Database(similarDbPath, { readonly: true })
     similarMovies = similarDb
-      .prepare('SELECT similarMovieId as movieId, distance FROM similar_movies WHERE movieId = ? ORDER BY rank')
+      .prepare(
+        'SELECT similarMovieId as movieId, distance FROM similar_movies WHERE movieId = ? ORDER BY rank'
+      )
       .all(movieId) as Array<{ movieId: string; distance: number }>
     similarDb.close()
   }

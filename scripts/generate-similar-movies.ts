@@ -151,7 +151,7 @@ async function main() {
           movieId,
           similar[i].movieId,
           Math.round(similar[i].distance * 10000) / 10000,
-          i + 1,
+          i + 1
         )
         totalSimilarities++
       }
@@ -163,7 +163,7 @@ async function main() {
         const remaining = (embeddingRows.length - processedCount) / rate
         console.log(
           `   ⏳ ${processedCount}/${embeddingRows.length} movies ` +
-            `(${Math.round(rate)} movies/sec, ~${Math.round(remaining)}s remaining)`,
+            `(${Math.round(rate)} movies/sec, ~${Math.round(remaining)}s remaining)`
         )
       }
     }

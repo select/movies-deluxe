@@ -178,7 +178,9 @@ export async function generateMovieJSON(): Promise<void> {
     const validIds = new Set(movies.map(m => m.movieId))
 
     const rows = similarDb
-      .prepare('SELECT movieId, similarMovieId, distance FROM similar_movies ORDER BY movieId, rank')
+      .prepare(
+        'SELECT movieId, similarMovieId, distance FROM similar_movies ORDER BY movieId, rank'
+      )
       .all() as Array<{ movieId: string; similarMovieId: string; distance: number }>
 
     for (const row of rows) {
@@ -198,7 +200,7 @@ export async function generateMovieJSON(): Promise<void> {
   } else {
     logger.warn(
       'Similar movies DB not found (data/similar-movies.db). ' +
-        'Run "pnpm similar:generate" to create it.',
+        'Run "pnpm similar:generate" to create it.'
     )
   }
 

@@ -58,7 +58,9 @@ export default defineEventHandler(async event => {
 
     const totalMovies = embeddingRows.length
 
-    console.log(`[Similar] Starting generation: ${totalMovies} movies, model=${modelId}, limit=${limit}`)
+    console.log(
+      `[Similar] Starting generation: ${totalMovies} movies, model=${modelId}, limit=${limit}`
+    )
 
     emitProgress({
       type: 'similar',
@@ -133,12 +135,7 @@ export default defineEventHandler(async event => {
 
       for (let i = 0; i < similar.length; i++) {
         const s = similar[i]!
-        insertSimilar.run(
-          movieId,
-          s.movieId,
-          Math.round(s.distance * 10000) / 10000,
-          i + 1,
-        )
+        insertSimilar.run(movieId, s.movieId, Math.round(s.distance * 10000) / 10000, i + 1)
       }
 
       processedCount++
