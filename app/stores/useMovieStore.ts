@@ -343,18 +343,12 @@ export const useMovieStore = defineStore('movie', () => {
   const getMovieById = async (movieId: string): Promise<MovieEntry | undefined> => {
     console.log('[getMovieById] Getting movie:', movieId)
 
-    // Fetch full details from JSON file (static deployment)
-    console.log('[getMovieById] Fetching from JSON file')
     try {
-      const movie = await $fetch<MovieEntry>(
-        `${useRuntimeConfig().app.baseURL}movies/${movieId}.json`
-      )
-      // Validate that we got a proper movie object (not HTML or malformed data)
+      const movie = await $fetch<MovieEntry>(`/api/movie/${movieId}`)
       if (movie && typeof movie === 'object' && movie.movieId && movie.title) {
-        console.log('[getMovieById] Successfully fetched movie from JSON')
+        console.log('[getMovieById] Successfully fetched movie')
         return movie
       }
-      // If we got invalid data, treat it as not found
       console.warn('[getMovieById] Invalid movie data received')
       return undefined
     } catch (err) {
