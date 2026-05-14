@@ -343,8 +343,14 @@ export const useMovieStore = defineStore('movie', () => {
   const getMovieById = async (movieId: string): Promise<MovieEntry | undefined> => {
     console.log('[getMovieById] Getting movie:', movieId)
 
+    // In production (static hosting): fetch pre-generated JSON files
+    // In dev: use API endpoint which queries admin DB directly
+    const url = import.meta.dev
+      ? `/api/movie/${movieId}`
+      : `${useRuntimeConfig().app.baseURL}movies/${movieId}.json`
+
     try {
-      const movie = await $fetch<MovieEntry>(`/api/movie/${movieId}`)
+      const movie = await $fetch<MovieEntry>(url)
       if (movie && typeof movie === 'object' && movie.movieId && movie.title) {
         console.log('[getMovieById] Successfully fetched movie')
         return movie
