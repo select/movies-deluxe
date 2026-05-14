@@ -1,5 +1,27 @@
 # Changelog
 
+# [0.12.0](https://github.com/select/movies-deluxe/compare/v0.11.0...v0.12.0) (2026-05-14)
+
+
+### Bug Fixes
+
+* add console logging and event loop yield for similar movies progress ([3d0f511](https://github.com/select/movies-deluxe/commit/3d0f511e2a80448431dd3e1c24d93055b1339c3e))
+* downgrade prettier to 3.3.3 to fix Vue file parsing crash ([e51f7c2](https://github.com/select/movies-deluxe/commit/e51f7c2f76777d182bdc5569c97eccfa51e289dd))
+* use /api/movie endpoint in store instead of static JSON path ([2998118](https://github.com/select/movies-deluxe/commit/2998118fa385aed8913d6a6185830408d491b797))
+
+
+### Features
+
+* add CNAME for mdlx.org custom domain on GitHub Pages ([e796571](https://github.com/select/movies-deluxe/commit/e796571c778d1f575551be8b9902eeed0f0d7dcf))
+* movie API endpoint falls back to admin DB in dev mode ([a823619](https://github.com/select/movies-deluxe/commit/a82361990b087993d3180f7d9cca3a3432886ac1))
+* precalculate similar movies at build time instead of client-side vector search ([235d38e](https://github.com/select/movies-deluxe/commit/235d38ec690a6730239a53440a57abdae343d922))
+* separate similar movies precalculation into dedicated script and admin endpoint ([916e57d](https://github.com/select/movies-deluxe/commit/916e57d44db9dc5a3c1b16e0b2759d4b72206bad))
+
+
+### Reverts
+
+* Revert "feat: add CNAME for mdlx.org custom domain on GitHub Pages" ([9587822](https://github.com/select/movies-deluxe/commit/95878225b6ddece879344021f6cfaba9e515ccbc))
+
 # [0.11.0](https://github.com/select/movies-deluxe/compare/v0.10.5...v0.11.0) (2026-05-12)
 
 
