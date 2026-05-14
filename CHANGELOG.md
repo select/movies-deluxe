@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/select/movies-deluxe/compare/v0.12.0...v0.12.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* use static JSON in production, API endpoint in dev for getMovieById ([f55d9e6](https://github.com/select/movies-deluxe/commit/f55d9e6eaba36c5f469343c4b9a009ad647ddb8d))
+
 # [0.12.0](https://github.com/select/movies-deluxe/compare/v0.11.0...v0.12.0) (2026-05-14)
 
 
