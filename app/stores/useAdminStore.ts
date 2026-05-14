@@ -23,6 +23,7 @@ export interface ProgressUpdate {
     | 'stats'
     | 'home'
     | 'embeddings'
+    | 'similar'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number
@@ -41,6 +42,7 @@ export const useAdminStore = defineStore('admin', () => {
   const scraping = ref(false)
   const generatingSqlite = ref(false)
   const generatingHomePages = ref(false)
+  const generatingSimilar = ref(false)
   const cleaningCollections = ref(false)
   const stats = ref<ScrapeStats | null>(null)
   const results = ref<ScrapeResults | null>(null)
@@ -254,6 +256,20 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  const generateSimilarMovies = async (model = 'bge-micro', limit = 10) => {
+    generatingSimilar.value = true
+    try {
+      await $fetch('/api/admin/similar/generate', {
+        method: 'POST',
+        body: { model, limit },
+      })
+    } catch (e) {
+      window.console.error('Similar movies generation failed', e)
+    } finally {
+      generatingSimilar.value = false
+    }
+  }
+
   // Computed properties
   const totalExternalVideos = computed(() => {
     if (!stats.value) return 0
@@ -334,6 +350,7 @@ export const useAdminStore = defineStore('admin', () => {
     scraping,
     generatingSqlite,
     generatingHomePages,
+    generatingSimilar,
     cleaningCollections,
     stats,
     results,
@@ -357,6 +374,7 @@ export const useAdminStore = defineStore('admin', () => {
     startAIExtraction,
     generateSqlite,
     generateHomePages,
+    generateSimilarMovies,
     cleanupCollections,
     totalExternalVideos,
     youtubeTotalScraped,

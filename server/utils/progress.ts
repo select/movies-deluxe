@@ -15,6 +15,7 @@ export interface ProgressUpdate {
     | 'stats'
     | 'home'
     | 'embeddings'
+    | 'similar'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number

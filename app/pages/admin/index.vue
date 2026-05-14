@@ -75,6 +75,14 @@
               Generate Home Pages
             </button>
             <button
+              class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+              :disabled="loading || generatingSimilar"
+              @click="adminStore.generateSimilarMovies()"
+            >
+              <div class="i-mdi-vector-link" :class="{ 'animate-spin': generatingSimilar }"></div>
+              Generate Similar Movies
+            </button>
+            <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
@@ -98,6 +106,24 @@
               <div
                 class="h-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${(progress.home.current / progress.home.total) * 100}%` }"
+              ></div>
+            </div>
+          </div>
+          <!-- Stats Refresh Progress -->
+          <div
+            v-if="progress.similar && progress.similar.status === 'in_progress'"
+            class="w-full max-w-md space-y-2"
+          >
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-theme-textmuted truncate mr-2">{{ progress.similar.message }}</span>
+              <span class="font-mono text-nowrap"
+                >{{ progress.similar.current }} / {{ progress.similar.total }}</span
+              >
+            </div>
+            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
+              <div
+                class="h-full bg-purple-500 transition-all duration-300"
+                :style="{ width: `${(progress.similar.current / progress.similar.total) * 100}%` }"
               ></div>
             </div>
           </div>
@@ -343,6 +369,7 @@ const { connect: connectProgress, isConnected, isReconnecting } = useProgress()
 const {
   loading,
   generatingHomePages,
+  generatingSimilar,
   stats,
   archiveOptions,
   scraping,
