@@ -72,3 +72,4 @@ public/movies/
 !data/*.tar.gz
 !data/movies-db-part*.tar.gz
 data/movies.db
+docs/reddit-sideproject-post.md
