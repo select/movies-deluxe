@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/select/movies-deluxe/compare/v0.12.1...v0.12.2) (2026-05-21)
+
+
+### Bug Fixes
+
+* **seo:** add canonical URLs and sitemap for Google Search Console ([a034e44](https://github.com/select/movies-deluxe/commit/a034e44337ff2e796334486b51250437ab1850f7))
+
 ## [0.12.1](https://github.com/select/movies-deluxe/compare/v0.12.0...v0.12.1) (2026-05-14)
 
 
