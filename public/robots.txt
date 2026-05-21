@@ -1,2 +1,5 @@
 User-Agent: *
 Disallow:
+
+Host: https://mdlx.org
+Sitemap: https://mdlx.org/sitemap.xml

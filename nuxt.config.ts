@@ -225,7 +225,10 @@ export default defineNuxtConfig({
         }
         routes.add('/collections')
         routes.add('/')
-        console.log(`[prerender] Registered ${collectionIds.length} collection routes + home`)
+        routes.add('/sitemap.xml')
+        console.log(
+          `[prerender] Registered ${collectionIds.length} collection routes + home + sitemap`
+        )
       },
     },
     routeRules: {
