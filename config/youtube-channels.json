@@ -129,6 +129,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Licensed classic, rare, colorized, and arthouse movies curated by Amogo Networx"
+    },
+    {
+      "id": "UCCsrRTpVLRuMV2t3s1SQxfA",
+      "handle": "@gem-filmlibrary",
+      "name": "GEM: Film Library",
+      "language": "en",
+      "enabled": true,
+      "notes": "Curated collection of licensed Hollywood classics, independent releases, dramas, and thrillers"
     }
   ]
 }
