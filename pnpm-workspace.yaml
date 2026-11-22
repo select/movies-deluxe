@@ -1,3 +1,5 @@
+minimumReleaseAge: 4320
+blockExoticSubdeps: true
 allowBuilds:
   '@openrouter/sdk': true
   '@parcel/watcher': true
@@ -10,4 +12,3 @@ allowBuilds:
   simple-git-hooks: true
   typeslayer: true
   unrs-resolver: true
-onlyBuiltDependencies: onnxruntime-node

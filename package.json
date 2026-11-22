@@ -34,7 +34,7 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "upcheck": "ncu -i"
+    "upcheck": "ncu -i --cooldown 3d"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
@@ -117,15 +117,5 @@
     "vitest": "4.1.6",
     "vue-tsc": "3.2.8",
     "youtubei.js": "16.0.1"
-  },
-  "pnpm": {
-    "overrides": {
-      "prettier": "3.3.3",
-      "onnxruntime-node": "1.23.2"
-    },
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "puppeteer"
-    ]
   }
 }
