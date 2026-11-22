@@ -3,7 +3,13 @@ import { readFile } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { getAdminDatabase } from '../../utils/adminDb'
-import type { MovieSource, MovieMetadata, MovieSourceType } from '../../../shared/types/movie'
+import type {
+  MovieSource,
+  MovieMetadata,
+  MovieSourceType,
+  SourceStatus,
+  SourceUnavailableReason,
+} from '../../../shared/types/movie'
 
 /**
  * Get movie by ID.
@@ -71,11 +77,15 @@ async function getMovieFromAdminDb(movieId: string) {
       SELECT
         s.id, s.sourceId, s.title, s.description, s.size, s.addedAt,
         s.duration, s.language, s.year, s.downloads, s.viewCount,
-        s.regionRestriction,
+        s.regionRestriction, s.status, s.unavailableReason,
         c.id as channelId, c.name as channelName, c.platform as type
       FROM sources s
       JOIN channels c ON s.channelId = c.id
       WHERE s.movieId = ?
+        AND (
+          s.status IN ('active', 'unlisted')
+          OR (s.status = 'unavailable' AND s.unavailableReason IN ('not_embeddable', 'age_restricted'))
+        )
         AND NOT EXISTS (
           SELECT 1 FROM source_quality_marks sqm WHERE sqm.sourceId = s.id
         )
@@ -107,6 +117,8 @@ async function getMovieFromAdminDb(movieId: string) {
     downloads: s.downloads as number | undefined,
     viewCount: s.viewCount as number | undefined,
     regionRestriction: s.regionRestriction ? JSON.parse(s.regionRestriction as string) : undefined,
+    status: (s.status as SourceStatus) || undefined,
+    unavailableReason: (s.unavailableReason as SourceUnavailableReason) || undefined,
     type: s.type as MovieSourceType,
     channelName: s.channelName as string,
   }))

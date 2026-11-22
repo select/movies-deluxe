@@ -268,6 +268,9 @@
         />
       </section>
 
+      <!-- Channel Sync & Diff -->
+      <AdminChannelSync />
+
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         <!-- Data Collection Section -->
@@ -365,6 +368,7 @@ import AdminStatsCard from '~/components/AdminStatsCard.vue'
 import AdminYouTubeChannelStats from '~/components/AdminYouTubeChannelStats.vue'
 import AdminArchiveScraper from '~/components/AdminArchiveScraper.vue'
 import AdminYouTubeScraper from '~/components/AdminYouTubeScraper.vue'
+import AdminChannelSync from '~/components/AdminChannelSync.vue'
 import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
 import AdminEmbeddingsGenerator from '~/components/AdminEmbeddingsGenerator.vue'
 import AdminCollectionCleanup from '~/components/AdminCollectionCleanup.vue'

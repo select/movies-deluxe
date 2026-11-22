@@ -3,6 +3,7 @@ import { generateYouTubeId, type MovieEntry } from '../../shared/types/movie'
 import {
   saveFailedYouTubeVideo,
   removeFailedYouTubeVideo,
+  loadFailedYouTubeVideos,
   type FailureReason,
 } from './failedYoutube'
 import type Database from 'better-sqlite3'
@@ -36,7 +37,8 @@ export async function fetchChannelVideos(
     video: { id: string; title: string },
     result: 'added' | 'updated' | 'skipped' | 'already_scraped' | FailureReason
   ) => Promise<void>,
-  onProgress?: (progress: { current: number; total: number; message: string }) => void
+  onProgress?: (progress: { current: number; total: number; message: string }) => void,
+  options?: { retryFailed?: boolean }
 ): Promise<void> {
   // Get YouTube Data API key from environment
   const youtubeApiKey = process.env.YOUTUBE_API_KEY
@@ -74,13 +76,24 @@ export async function fetchChannelVideos(
       `
     SELECT s.sourceId 
     FROM sources s
-    WHERE s.type = 'youtube' AND s.channelId = ?
+    JOIN channels c ON s.channelId = c.id
+    WHERE c.platform = 'youtube' AND s.channelId = ?
   `
     )
     .all(channelIdentifier) as Array<{ sourceId: string }>
 
   for (const video of existingVideos) {
     existingVideoIds.add(video.sourceId)
+  }
+
+  // Build set of known failed video IDs (unless retryFailed is enabled)
+  const failedVideoIds = new Set<string>()
+  if (!options?.retryFailed) {
+    for (const failed of loadFailedYouTubeVideos()) {
+      if (failed.channelId === channelIdentifier) {
+        failedVideoIds.add(failed.videoId)
+      }
+    }
   }
 
   console.log(`Found ${existingVideoIds.size} already scraped videos from this channel`)
@@ -107,6 +120,13 @@ export async function fetchChannelVideos(
     // Skip if already scraped
     if (existingVideoIds.has(videoId)) {
       await onVideoProcessed({ id: videoId, title: 'Already scraped' }, 'already_scraped')
+      count++
+      continue
+    }
+
+    // Skip if previously failed (unless retryFailed is enabled)
+    if (failedVideoIds.has(videoId)) {
+      await onVideoProcessed({ id: videoId, title: 'Previously failed' }, 'skipped')
       count++
       continue
     }

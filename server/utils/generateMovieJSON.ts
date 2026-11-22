@@ -47,7 +47,18 @@ export async function generateMovieJSON(): Promise<void> {
     )
     .map(movie => ({
       ...movie,
-      sources: movie.sources.filter(s => !s.qualityMarks || s.qualityMarks.length === 0),
+      sources: movie.sources.filter(s => {
+        if (s.qualityMarks && s.qualityMarks.length > 0) return false
+        const status = s.status || 'active'
+        if (status === 'active' || status === 'unlisted') return true
+        if (
+          status === 'unavailable' &&
+          (s.unavailableReason === 'not_embeddable' || s.unavailableReason === 'age_restricted')
+        ) {
+          return true
+        }
+        return false
+      }),
     }))
     .filter(movie => movie.sources.length > 0)
 
@@ -230,6 +241,8 @@ export async function generateMovieJSON(): Promise<void> {
             downloads: s.downloads,
             viewCount: s.viewCount,
             regionRestriction: s.regionRestriction,
+            status: s.status,
+            unavailableReason: s.unavailableReason,
             // Runtime fields
             type: s.type,
             channelName: s.channelName,

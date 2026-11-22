@@ -101,10 +101,32 @@ CREATE TABLE sources (
   downloads INTEGER,                     -- Download count (Archive.org)
   viewCount INTEGER,                     -- View count (YouTube)
   regionRestriction TEXT,                -- JSON object with allowed/blocked regions
+  status TEXT NOT NULL DEFAULT 'active', -- Source availability status
+  unavailableReason TEXT,                -- Normalized reason if not active
+  unavailableDetail TEXT,                -- Raw YouTube/Archive reason text
+  lastSeenAt INTEGER,                    -- Unix timestamp when last seen in remote listing
+  lastCheckedAt INTEGER,                 -- Unix timestamp when last probed
+  statusChangedAt INTEGER,               -- Unix timestamp when status last changed
   
   FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE,
   FOREIGN KEY (channelId) REFERENCES channels(id),
-  UNIQUE(movieId, channelId, sourceId)
+  UNIQUE(movieId, channelId, sourceId),
+  CHECK (status IN ('active', 'unlisted', 'unavailable', 'removed_from_channel')),
+  CHECK (unavailableReason IS NULL OR unavailableReason IN (
+    'deleted',
+    'private',
+    'unlisted',
+    'copyright_takedown',
+    'tos_violation',
+    'channel_terminated',
+    'members_only',
+    'age_restricted',
+    'not_embeddable',
+    'geo_blocked_all',
+    'archive_dark',
+    'delisted_from_collection',
+    'unavailable_unknown'
+  ))
 );
 
 CREATE INDEX idx_sources_movieId ON sources(movieId);
@@ -112,6 +134,48 @@ CREATE INDEX idx_sources_channelId ON sources(channelId);
 CREATE INDEX idx_sources_sourceId ON sources(sourceId);
 CREATE INDEX idx_sources_year ON sources(year);
 CREATE INDEX idx_sources_addedAt ON sources(addedAt);
+CREATE INDEX idx_sources_status ON sources(status);
+CREATE INDEX idx_sources_channelId_status ON sources(channelId, status);
+
+-- ============================================================================
+-- CHANNEL SYNC TABLES
+-- ============================================================================
+
+CREATE TABLE channel_sync_runs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  channelId TEXT NOT NULL,
+  startedAt INTEGER NOT NULL,
+  completedAt INTEGER,
+  status TEXT NOT NULL CHECK (status IN ('running', 'completed', 'failed')),
+  totalRemote INTEGER DEFAULT 0,
+  addedCount INTEGER DEFAULT 0,
+  removedCount INTEGER DEFAULT 0,
+  restoredCount INTEGER DEFAULT 0,
+  skippedFailedCount INTEGER DEFAULT 0,
+  probedCount INTEGER DEFAULT 0,
+  error TEXT
+);
+
+CREATE INDEX idx_channel_sync_runs_channelId ON channel_sync_runs(channelId);
+CREATE INDEX idx_channel_sync_runs_startedAt ON channel_sync_runs(startedAt DESC);
+
+CREATE TABLE channel_sync_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  runId INTEGER NOT NULL,
+  channelId TEXT NOT NULL,
+  sourceId TEXT NOT NULL,
+  movieId TEXT,
+  eventType TEXT NOT NULL CHECK (eventType IN ('added', 'removed', 'restored', 'status_changed')),
+  reason TEXT,
+  detail TEXT,
+  createdAt INTEGER NOT NULL,
+  FOREIGN KEY (runId) REFERENCES channel_sync_runs(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_channel_sync_events_runId ON channel_sync_events(runId);
+CREATE INDEX idx_channel_sync_events_channelId ON channel_sync_events(channelId);
+CREATE INDEX idx_channel_sync_events_sourceId ON channel_sync_events(sourceId);
+CREATE INDEX idx_channel_sync_events_eventType ON channel_sync_events(eventType);
 
 -- ============================================================================
 -- SOURCE QUALITY MARKS TABLE

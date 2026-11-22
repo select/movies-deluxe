@@ -34,6 +34,8 @@ export type {
 
   // Utility types
   TemporaryId,
+  SourceStatus,
+  SourceUnavailableReason,
 } from '#shared/types/movie'
 
 export type { Collection, CollectionsDatabase, SavedQuery } from '#shared/types/collections'
