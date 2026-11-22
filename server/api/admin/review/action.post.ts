@@ -262,29 +262,27 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
     }
 
     if (action === 'mark_preview') {
+      let markedSources = 0
+
       await withTransaction(async txDb => {
+        const insertMarkStmt = txDb.prepare(
+          "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
+        )
+        const findSourceBySourceIdStmt = txDb.prepare(
+          'SELECT id FROM sources WHERE movieId = ? AND sourceId = ? LIMIT 1'
+        )
+
         const sourceRow = item.sourceId
-          ? (txDb
-              .prepare('SELECT id FROM sources WHERE movieId = ? AND sourceId = ? LIMIT 1')
-              .get(item.movieId, item.sourceId) as { id: number } | undefined)
+          ? (findSourceBySourceIdStmt.get(item.movieId, item.sourceId) as
+              | { id: number }
+              | undefined)
           : (txDb
               .prepare('SELECT id FROM sources WHERE movieId = ? ORDER BY id ASC LIMIT 1')
               .get(item.movieId) as { id: number } | undefined)
 
         if (sourceRow) {
-          const existingMark = txDb
-            .prepare(
-              "SELECT id FROM source_quality_marks WHERE sourceId = ? AND mark = 'incomplete' LIMIT 1"
-            )
-            .get(sourceRow.id) as { id: number } | undefined
-
-          if (!existingMark) {
-            txDb
-              .prepare(
-                "INSERT INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
-              )
-              .run(sourceRow.id, now)
-          }
+          const res = insertMarkStmt.run(sourceRow.id, now)
+          markedSources += res.changes
         } else {
           const existingLabel = txDb
             .prepare(
@@ -301,12 +299,29 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
           }
         }
 
+        const otherPreviewItems = txDb
+          .prepare(
+            "SELECT id, sourceId FROM match_review_queue WHERE movieId = ? AND kind = 'archive_preview' AND status = 'pending' AND id != ?"
+          )
+          .all(item.movieId, id) as Array<{ id: number; sourceId: string | null }>
+
+        for (const other of otherPreviewItems) {
+          if (!other.sourceId) continue
+          const otherSource = findSourceBySourceIdStmt.get(item.movieId, other.sourceId) as
+            | { id: number }
+            | undefined
+          if (otherSource) {
+            const res = insertMarkStmt.run(otherSource.id, now)
+            markedSources += res.changes
+          }
+        }
+
         txDb.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, item.movieId)
         txDb
           .prepare(
-            "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+            "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ? OR (movieId = ? AND kind = 'archive_preview' AND status = 'pending')"
           )
-          .run(id)
+          .run(id, item.movieId)
       })
 
       return {
@@ -315,7 +330,7 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
         action,
         status: 'approved',
         movieId: item.movieId,
-        message: 'Marked source as incomplete/preview',
+        message: `Marked ${markedSources} source${markedSources === 1 ? '' : 's'} as incomplete/preview`,
       }
     }
 

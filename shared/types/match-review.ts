@@ -104,6 +104,18 @@ export interface MatchReviewActionResponse {
   message?: string
 }
 
+export interface MatchReviewBulkActionRequest {
+  action: 'mark_all_previews'
+  kind?: 'archive_preview'
+}
+
+export interface MatchReviewBulkActionResponse {
+  success: boolean
+  processedItems: number
+  markedSources: number
+  message: string
+}
+
 export interface AuditMatchesRequest {
   dryRun?: boolean
   useLlm?: boolean

@@ -363,20 +363,32 @@
         </button>
       </div>
 
-      <div class="flex items-center gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
-          Status:
-        </span>
-        <select
-          v-model="selectedStatus"
-          class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
-          @change="onStatusChange"
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          v-if="selectedStatus === 'pending' && counts.byKind.archive_preview > 0"
+          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+          :disabled="bulkActing || loading"
+          @click="markAllPendingPreviews"
         >
-          <option value="pending">Pending ({{ counts.byStatus.pending }})</option>
-          <option value="approved">Approved ({{ counts.byStatus.approved }})</option>
-          <option value="rejected">Rejected ({{ counts.byStatus.rejected }})</option>
-          <option value="resolved">Resolved ({{ counts.byStatus.resolved }})</option>
-        </select>
+          <div class="i-mdi-filmstrip-off" :class="{ 'animate-spin': bulkActing }"></div>
+          Mark All Pending Previews Incomplete ({{ counts.byKind.archive_preview }})
+        </button>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
+            Status:
+          </span>
+          <select
+            v-model="selectedStatus"
+            class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
+            @change="onStatusChange"
+          >
+            <option value="pending">Pending ({{ counts.byStatus.pending }})</option>
+            <option value="approved">Approved ({{ counts.byStatus.approved }})</option>
+            <option value="rejected">Rejected ({{ counts.byStatus.rejected }})</option>
+            <option value="resolved">Resolved ({{ counts.byStatus.resolved }})</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -800,6 +812,7 @@ import type {
   LlmVerdict,
   MatchReviewActionResponse,
   MatchReviewActionType,
+  MatchReviewBulkActionResponse,
   MatchReviewCounts,
   MatchReviewListResponse,
   MatchReviewQueueItem,
@@ -908,6 +921,7 @@ const selectedStatus = ref<ReviewItemStatus>('pending')
 
 const loading = ref(false)
 const actingId = ref<number | null>(null)
+const bulkActing = ref(false)
 const errorMessage = ref<string | null>(null)
 
 const autoTask = ref<AutoTaskType>('clean_previews')
@@ -1028,6 +1042,26 @@ async function performAction(id: number, action: MatchReviewActionType, customIm
   }
 }
 
+async function markAllPendingPreviews() {
+  bulkActing.value = true
+  errorMessage.value = null
+  try {
+    await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
+      method: 'POST',
+      body: {
+        action: 'mark_all_previews',
+      },
+    })
+    offset.value = 0
+    await fetchQueue()
+  } catch (err) {
+    errorMessage.value =
+      err instanceof Error ? err.message : 'Failed to mark all pending previews incomplete'
+  } finally {
+    bulkActing.value = false
+  }
+}
+
 function isValidImdbInput(val: string | undefined): boolean {
   if (!val) return false
   return /^tt\d{7,}$/.test(val.trim())
@@ -1121,9 +1155,21 @@ function recommendedFix(item: MatchReviewQueueItem): {
   }
 
   if (item.kind === 'archive_preview') {
+    const lowRatioArchiveCount = item.sources.filter(
+      s =>
+        s.platform === 'archive.org' &&
+        s.mbPerMin !== null &&
+        s.mbPerMin < 1.2 &&
+        !s.qualityMarks.includes('incomplete')
+    ).length
+    const label =
+      lowRatioArchiveCount > 1
+        ? `Fix: Mark All ${lowRatioArchiveCount} Previews/Incomplete`
+        : 'Fix: Mark Preview/Incomplete'
+
     return {
       action: 'mark_preview',
-      label: 'Fix: Mark Preview/Incomplete',
+      label,
       icon: 'i-mdi-filmstrip-off',
       buttonClass: 'bg-purple-600 hover:bg-purple-700',
     }

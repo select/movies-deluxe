@@ -190,6 +190,26 @@ export default defineEventHandler((event): MatchReviewListResponse => {
     const db = getAdminDatabase()
     db.exec(CREATE_QUEUE_TABLE_SQL)
 
+    if (status === 'pending' || status === 'all') {
+      db.prepare(
+        `
+        UPDATE match_review_queue
+        SET status = 'resolved', resolvedAt = datetime('now')
+        WHERE status = 'pending'
+          AND kind = 'archive_preview'
+          AND sourceId IS NOT NULL
+          AND EXISTS (
+            SELECT 1
+            FROM sources s
+            JOIN source_quality_marks sqm ON sqm.sourceId = s.id
+            WHERE s.movieId = match_review_queue.movieId
+              AND s.sourceId = match_review_queue.sourceId
+              AND sqm.mark = 'incomplete'
+          )
+        `
+      ).run()
+    }
+
     const whereClauses: string[] = []
     const params: unknown[] = []
 
