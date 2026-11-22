@@ -94,6 +94,13 @@
 <script setup lang="ts">
 import type { SearchMode } from '~/types'
 import type { EmbeddingModelConfig } from '~~/config/embedding-models'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { useDatabase } from '~/composables/useDatabase'
+import { ref, inject, onMounted, watch } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import { hasKeywords } from '~/utils/searchQueryParser'
+import { useWindowSize } from '@vueuse/core'
 
 const movieStore = useMovieStore()
 const { filters: storeFilters, isEmbeddingsLoaded, isEmbeddingsLoading } = storeToRefs(movieStore)

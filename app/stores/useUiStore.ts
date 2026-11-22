@@ -1,5 +1,8 @@
 import { useStorage } from '@vueuse/core'
 import type { ThemeDefinition } from '~/types/theme'
+import { defineStore, acceptHMRUpdate } from '#imports'
+import { DEFAULT_DARK_THEME_ID, getThemeWithFallback, DEFAULT_LIGHT_THEME_ID } from '~/utils/themes'
+import { ref, computed } from 'vue'
 
 /**
  * UI store with persistent state

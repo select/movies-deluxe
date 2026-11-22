@@ -112,6 +112,19 @@
 <script setup lang="ts">
 import { useDebounceFn, onKeyStroke } from '@vueuse/core'
 import type { FilterState } from '~/types'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { useToastStore } from '~/stores/useToastStore'
+import { inject, computed, ref, watch } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import { useAdminSearchFilters } from '~/composables/useAdminSearchFilters'
+import type { LightweightMovie, MovieEntry } from '#shared/types/movie'
+import { useVectorSearch } from '~/composables/useVectorSearch'
+import { $fetch } from '#build/fetch'
+import { getPosterPath } from '~/utils/posterPath'
+import { formatVotes } from '~/utils/formatVotes'
+import AdminSearchHeader from '~/components/AdminSearchHeader.vue'
+import { NuxtLink } from '#components'
 
 const props = defineProps<{
   collectionId: string

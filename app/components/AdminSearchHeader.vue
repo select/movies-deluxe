@@ -266,6 +266,20 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 import type { FilterState } from '~/types'
+import { inject, toRef, provide, ref, computed, watch } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import { formatCount } from '~/utils/formatCount'
+import { hasKeywords } from '~/utils/searchQueryParser'
+import SearchModeSelector from '~/components/SearchModeSelector.vue'
+import FilterButton from '~/components/FilterButton.vue'
+import FilterSortControl from '~/components/FilterSortControl.vue'
+import FilterPopup from '~/components/FilterPopup.vue'
+import FilterRatingControl from '~/components/FilterRatingControl.vue'
+import FilterYearControl from '~/components/FilterYearControl.vue'
+import FilterVotesControl from '~/components/FilterVotesControl.vue'
+import FilterGenresControl from '~/components/FilterGenresControl.vue'
+import FilterCountriesControl from '~/components/FilterCountriesControl.vue'
+import FilterSourceControl from '~/components/FilterSourceControl.vue'
 
 const props = defineProps<{
   filters: FilterState

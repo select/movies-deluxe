@@ -76,6 +76,12 @@
 
 <script setup lang="ts">
 import Fuse from 'fuse.js'
+import { storeToRefs } from '#imports'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { ref, computed, onMounted } from 'vue'
+import { useRuntimeConfig, useHead } from '#app'
+import CollectionCardSkeleton from '~/components/CollectionCardSkeleton.vue'
+import CollectionCard from '~/components/CollectionCard.vue'
 
 const { isLoading, collections } = storeToRefs(useCollectionsStore())
 const { loadCollections } = useCollectionsStore()

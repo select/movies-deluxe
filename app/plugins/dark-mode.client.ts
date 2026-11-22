@@ -1,3 +1,8 @@
+import { defineNuxtPlugin } from '#app'
+import { useUiStore } from '~/stores/useUiStore'
+import { watch } from 'vue'
+import { generateThemeVariables } from '~/utils/themes'
+
 /**
  * Client-side plugin to sync theme state with document element.
  * This ensures UnoCSS dark mode styles work correctly and injects

@@ -16,6 +16,13 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute, useAsyncData, useRuntimeConfig, useHead } from '#app'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { useDatabase } from '~/composables/useDatabase'
+import { ref, computed, onMounted } from 'vue'
+import type { Collection } from '#shared/types/collections'
+import MovieListPage from '~/components/MovieListPage.vue'
+
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
 const db = useDatabase()

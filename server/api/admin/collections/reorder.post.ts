@@ -1,4 +1,6 @@
 import { defineEventHandler, readBody, createError } from 'h3'
+import { loadCollectionsDatabase, saveCollectionsDatabase } from '#server/utils/collections'
+import type { CollectionsDatabase } from '#shared/types/collections'
 
 interface ReorderPayload {
   collectionIds: string[]

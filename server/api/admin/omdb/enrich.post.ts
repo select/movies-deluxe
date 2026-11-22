@@ -17,6 +17,19 @@ import { migrateMovieId } from '../../../utils/migrateMovieId'
 import { upsertMovie } from '../../../utils/upsertMovie'
 import { getAdminDatabase } from '../../../utils/adminDb'
 import type Database from 'better-sqlite3'
+import { MatchConfidence } from '#shared/types/movie'
+import type { MovieEntry, MovieSource, MatchResult } from '#shared/types/movie'
+import { defineEventHandler, readBody, createError } from 'h3'
+import { emitProgress } from '#server/utils/progress'
+import {
+  clearFailedOmdbMatches,
+  loadFailedOmdbMatches,
+  saveFailedOmdbMatch,
+  removeFailedOmdbMatch,
+} from '#server/utils/failedOmdb'
+import { extractMovieKeys } from '#server/utils/movieData'
+import { extractYearAndCleanTitle, cleanTitleGeneral } from '#server/utils/titleCleaner'
+import { matchMovie } from '#server/utils/omdb'
 
 /**
  * Load a complete movie entry from the SQLite database
@@ -119,8 +132,7 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
   }
 
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
-    | MetadataRow
-    | undefined
+    MetadataRow | undefined
 
   let convertedMetadata: MovieEntry['metadata'] = undefined
   if (metadata) {

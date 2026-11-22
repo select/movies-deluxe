@@ -3,6 +3,8 @@ import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 import path from 'node:path'
 import * as tar from 'tar'
+import { defineEventHandler } from 'h3'
+import { emitProgress } from '#server/utils/progress'
 
 const execAsync = promisify(exec)
 

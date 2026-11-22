@@ -90,6 +90,11 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from '#imports'
+import { useAdminStore } from '~/stores/useAdminStore'
+import AppInputNumber from '~/components/AppInputNumber.vue'
+import AppInputSwitch from '~/components/AppInputSwitch.vue'
+
 interface OMDBOptions {
   limit: number
   onlyUnmatched: boolean

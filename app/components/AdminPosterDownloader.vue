@@ -50,6 +50,10 @@
 
 <script setup lang="ts">
 import type { PosterOptions } from '~/types/admin'
+import { storeToRefs } from '#imports'
+import { useAdminStore } from '~/stores/useAdminStore'
+import AppInputNumber from '~/components/AppInputNumber.vue'
+import AppInputSwitch from '~/components/AppInputSwitch.vue'
 
 const options = defineModel<PosterOptions>({ required: true })
 

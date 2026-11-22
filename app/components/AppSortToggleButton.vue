@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import type { SortOption, SortState } from '~/types'
+import { computed } from 'vue'
 
 interface Props {
   label: string

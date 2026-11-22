@@ -112,6 +112,12 @@
 
 <script setup lang="ts">
 import type { AIProviderType } from '~/types/ai-providers'
+import { useAdminStore } from '~/stores/useAdminStore'
+import { storeToRefs } from '#imports'
+import { useAIProviders } from '~/composables/useAIProviders'
+import { computed, watch } from 'vue'
+import AppInputNumber from '~/components/AppInputNumber.vue'
+import AppInputSwitch from '~/components/AppInputSwitch.vue'
 
 interface AIOptions {
   provider: AIProviderType

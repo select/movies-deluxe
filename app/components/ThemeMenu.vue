@@ -148,6 +148,10 @@
 <script setup lang="ts">
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { onClickOutside, useScrollLock } from '@vueuse/core'
+import { useUiStore } from '~/stores/useUiStore'
+import { storeToRefs } from '#imports'
+import { getAllThemes } from '~/utils/themes'
+import { computed, ref, watch } from 'vue'
 
 interface Props {
   isOpen: boolean

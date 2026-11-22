@@ -191,6 +191,12 @@
 
 <script setup lang="ts">
 import { EMBEDDING_MODELS, getModelConfig } from '../../config/embedding-models'
+import { storeToRefs } from '#imports'
+import { useAdminStore } from '~/stores/useAdminStore'
+import { ref, reactive } from 'vue'
+import { $fetch } from '#build/fetch'
+import AppInputCheckbox from '~/components/AppInputCheckbox.vue'
+import AppInputNumber from '~/components/AppInputNumber.vue'
 
 interface ModelResult {
   model: string

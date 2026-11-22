@@ -222,6 +222,14 @@
 </template>
 
 <script setup lang="ts">
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { useUiStore } from '~/stores/useUiStore'
+import { useRoute, navigateTo } from '#app'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { isLocalhost } from '~/utils/isLocalhost'
+import { NuxtLink } from '#components'
+
 const emit = defineEmits<{
   openThemeSelection: []
 }>()

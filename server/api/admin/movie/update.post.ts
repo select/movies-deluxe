@@ -8,6 +8,7 @@ import {
   type MovieSource,
 } from '../../../../shared/types/movie'
 import { updateMovieIdInCollections } from '../../../utils/collections'
+import { downloadPoster } from '#server/utils/posterDownloader'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)

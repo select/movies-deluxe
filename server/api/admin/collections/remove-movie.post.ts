@@ -1,4 +1,5 @@
 import { defineEventHandler, readBody, createError } from 'h3'
+import { removeMovieFromCollection } from '#server/utils/collections'
 
 interface RemoveMoviePayload {
   collectionId: string

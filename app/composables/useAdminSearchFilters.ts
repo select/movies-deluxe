@@ -1,4 +1,6 @@
 import type { FilterState } from '~/types'
+import type { Ref, ComputedRef } from 'vue'
+import { ref, computed } from 'vue'
 
 export interface UseAdminSearchFiltersReturn {
   filters: Ref<FilterState>

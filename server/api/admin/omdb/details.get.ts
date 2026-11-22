@@ -1,3 +1,5 @@
+import { defineEventHandler, getQuery, createError } from 'h3'
+
 /**
  * Transform OMDB API response to MovieMetadata with proper types
  */

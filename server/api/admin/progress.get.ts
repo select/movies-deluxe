@@ -1,3 +1,6 @@
+import { defineEventHandler } from 'h3'
+import { progressEmitter } from '#server/utils/progress'
+
 interface ProgressData {
   type: string
   message: string

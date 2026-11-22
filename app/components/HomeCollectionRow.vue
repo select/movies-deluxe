@@ -65,8 +65,15 @@
 </template>
 
 <script setup lang="ts">
-import { useIntersectionObserver } from '@vueuse/core'
+import { useIntersectionObserver, useEventListener } from '@vueuse/core'
 import type { LightweightMovie } from '~/types'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { ref, nextTick, onMounted } from 'vue'
+import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
+import MovieCard from '~/components/MovieCard.vue'
+import HomeExploreMoreCard from '~/components/HomeExploreMoreCard.vue'
+import { NuxtLink } from '#components'
 
 interface CollectionData {
   id: string

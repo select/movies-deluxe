@@ -28,7 +28,11 @@ export default defineNuxtConfig({
   },
 
   // Modules
-  modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint'],
+  modules: ['@unocss/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint', 'nuxt-explicit-imports'],
+
+  explicitImports: {
+    mode: 'strict',
+  },
 
   // Apply font-sans class to body element globally
   app: {

@@ -1,6 +1,15 @@
 import type { WorkerResponse, FilterOptionsResponse, VectorSearchResult } from '~/types/database'
 import type { Collection, LightweightMovie } from '~/types'
 import { getModelConfig, type EmbeddingModelConfig } from '~~/config/embedding-models'
+import type { Ref, ComputedRef } from 'vue'
+import { ref, toRaw, computed } from 'vue'
+import {
+  buildQueryByIdsQuery,
+  buildCollectionsForMovieQuery,
+  buildFilterOptionsQueries,
+  buildVectorSearchQuery,
+} from '~/utils/queryBuilders'
+import { useRuntimeConfig } from '#app'
 
 export interface UseDatabaseReturn {
   init: (url?: string, baseURL?: string) => Promise<number>

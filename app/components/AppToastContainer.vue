@@ -29,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import { useToastStore } from '~/stores/useToastStore'
+
 const { toasts, toastQueue, removeToast } = useToastStore()
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'

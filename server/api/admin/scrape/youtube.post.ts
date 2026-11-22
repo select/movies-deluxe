@@ -4,6 +4,9 @@ import { readFileSync } from 'node:fs'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 import { getChannelVideoCount as getChannelVideoCountDataApi } from '../../../utils/youtubeDataApi'
 import { getAdminDatabase } from '../../../utils/adminDb'
+import { defineEventHandler, readBody } from 'h3'
+import { fetchChannelVideos } from '#server/utils/youtube'
+import { emitProgress } from '#server/utils/progress'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)

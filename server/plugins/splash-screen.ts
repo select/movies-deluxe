@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
+import { defineNitroPlugin } from 'nitropack/runtime'
 
 /**
  * Nitro plugin to inject splash screen HTML into rendered pages.

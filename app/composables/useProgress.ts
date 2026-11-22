@@ -1,3 +1,7 @@
+import type { Ref } from 'vue'
+import { useAdminStore } from '~/stores/useAdminStore'
+import { useState } from '#app'
+
 export interface UseProgressReturn {
   connect: () => void
   disconnect: () => void

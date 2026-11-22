@@ -14,6 +14,7 @@ import type {
   ExtractedMetadata,
   BatchMovieInput,
 } from '../../shared/types/ai-provider'
+import { useRuntimeConfig } from 'nitropack/runtime'
 
 /**
  * OpenRouter configuration

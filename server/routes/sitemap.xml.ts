@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import Database from 'better-sqlite3'
+import { defineEventHandler, setResponseHeader } from 'h3'
 
 /**
  * Dynamic sitemap.xml generation for Google Search Console.

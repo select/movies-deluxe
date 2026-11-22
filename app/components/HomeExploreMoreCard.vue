@@ -46,6 +46,8 @@
 </template>
 
 <script setup lang="ts">
+import { NuxtLink } from '#components'
+
 interface Props {
   collectionId: string
   collectionName: string

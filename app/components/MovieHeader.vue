@@ -29,6 +29,10 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute } from '#app'
+import { computed } from 'vue'
+import { NuxtLink } from '#components'
+
 const route = useRoute()
 const isHeroPage = computed(() => {
   return (

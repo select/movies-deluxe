@@ -1,53 +1,9 @@
-import {
-  isTemporaryId,
-  isImdbId,
-  generateArchiveId,
-  generateYouTubeId,
-  extractIdentifier,
-  QualityLabel,
-  SourceQualityMark,
-} from '#shared/types/movie'
-import type {
-  MovieEntry,
-  LightweightMovie,
-  MovieSource,
-  MovieSourceType,
-  ArchiveOrgSource,
-  YouTubeSource,
-  MovieMetadata,
-  AIMetadata,
-  DatabaseSchema,
-  MoviesDatabase,
-  OMDBSearchResult,
-  OMDBSearchResponse,
-  MatchResult,
-  MatchConfidence,
-  TemporaryId,
-} from '#shared/types/movie'
-import type { Collection, CollectionsDatabase, SavedQuery } from '#shared/types/collections'
-import type {
-  Genre,
-  Country,
-  YouTubeChannel,
-  GenreOption,
-  CountryOption,
-  ChannelOption,
-  GenresResponse,
-  CountriesResponse,
-  ChannelsResponse,
-  SortField,
-  SortDirection,
-  SortOption,
-  SortState,
-  FilterState,
-  SearchMode,
-} from '#shared/types/filters'
+import type { LightweightMovie } from '#shared/types/movie'
 
 /**
  * Frontend Type Definitions
  *
  * This module re-exports shared types and adds frontend-specific type utilities.
- * Shared types from shared/types/ are auto-imported by Nuxt.
  *
  * ## Usage in components/stores:
  * ```ts
@@ -55,9 +11,6 @@ import type {
  * ```
  */
 
-// Re-export auto-imported shared types for convenience
-// These types are auto-imported from shared/types/ but we re-export them
-// here so components can import from a single location (~/types)
 export type {
   // Core movie types
   MovieEntry,
@@ -81,13 +34,11 @@ export type {
 
   // Utility types
   TemporaryId,
+} from '#shared/types/movie'
 
-  // Collection types
-  Collection,
-  CollectionsDatabase,
-  SavedQuery,
+export type { Collection, CollectionsDatabase, SavedQuery } from '#shared/types/collections'
 
-  // Filter types
+export type {
   Genre,
   Country,
   YouTubeChannel,
@@ -103,7 +54,7 @@ export type {
   SortState,
   FilterState,
   SearchMode,
-}
+} from '#shared/types/filters'
 
 // Re-export utility functions
 export {
@@ -114,7 +65,7 @@ export {
   extractIdentifier,
   QualityLabel,
   SourceQualityMark,
-}
+} from '#shared/types/movie'
 
 /**
  * Frontend-specific types

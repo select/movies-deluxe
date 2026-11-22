@@ -1,3 +1,6 @@
+import { defineNuxtPlugin, useRoute, useRuntimeConfig, useHead } from '#app'
+import { computed } from 'vue'
+
 /**
  * Sets a canonical URL on every page to tell Google that https://mdlx.org
  * is the preferred domain. Fixes "Duplicate without user-selected canonical"

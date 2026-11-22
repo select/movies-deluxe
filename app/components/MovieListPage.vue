@@ -109,6 +109,11 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import type { LightweightMovie } from '~/types'
+import { ref, computed } from 'vue'
+import AppSearchInput from '~/components/AppSearchInput.vue'
+import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
+import MovieVirtualGrid from '~/components/MovieVirtualGrid.vue'
+import { NuxtLink } from '#components'
 
 interface Breadcrumbs {
   parentPath: string

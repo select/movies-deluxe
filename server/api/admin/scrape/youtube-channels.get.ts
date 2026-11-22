@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { defineEventHandler } from 'h3'
 
 export default defineEventHandler(async () => {
   const configPath = resolve(process.cwd(), 'config/youtube-channels.json')

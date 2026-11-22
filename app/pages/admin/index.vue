@@ -354,6 +354,26 @@
 
 <script setup lang="ts">
 import type { ScrapeStats } from '~/types/admin'
+import { useHead } from '#app'
+import { ref, computed, onMounted } from 'vue'
+import { useAdminStore } from '~/stores/useAdminStore'
+import { useProgress } from '~/composables/useProgress'
+import { storeToRefs } from '#imports'
+import { isLocalhost } from '~/utils/isLocalhost'
+import { $fetch } from '#build/fetch'
+import AdminStatsCard from '~/components/AdminStatsCard.vue'
+import AdminYouTubeChannelStats from '~/components/AdminYouTubeChannelStats.vue'
+import AdminArchiveScraper from '~/components/AdminArchiveScraper.vue'
+import AdminYouTubeScraper from '~/components/AdminYouTubeScraper.vue'
+import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
+import AdminEmbeddingsGenerator from '~/components/AdminEmbeddingsGenerator.vue'
+import AdminCollectionCleanup from '~/components/AdminCollectionCleanup.vue'
+import AdminOMDBEnrichment from '~/components/AdminOMDBEnrichment.vue'
+import AdminAIExtractor from '~/components/AdminAIExtractor.vue'
+import AdminPosterDownloader from '~/components/AdminPosterDownloader.vue'
+import AdminArchiver from '~/components/AdminArchiver.vue'
+import AdminResultsLog from '~/components/AdminResultsLog.vue'
+import { NuxtLink } from '#components'
 
 // Set page title
 useHead({

@@ -39,6 +39,9 @@ import {
   useWindowSize,
   useDebounceFn,
 } from '@vueuse/core'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useMovieStore } from '~/stores/useMovieStore'
+import MovieCard from '~/components/MovieCard.vue'
 
 interface Props {
   // Movie IDs to display

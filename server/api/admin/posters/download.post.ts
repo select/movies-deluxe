@@ -1,5 +1,10 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { defineEventHandler, readBody } from 'h3'
+import { loadMoviesDatabase } from '#server/utils/loadMoviesDatabase'
+import type { MovieEntry } from '#shared/types/movie'
+import { loadFailedPosterIds, downloadPoster } from '#server/utils/posterDownloader'
+import { emitProgress } from '#server/utils/progress'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)

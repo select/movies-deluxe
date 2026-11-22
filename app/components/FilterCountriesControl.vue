@@ -56,6 +56,11 @@
 
 <script setup lang="ts">
 import type { CountryOption } from '~/types'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { inject, ref, onMounted } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import { formatCount } from '~/utils/formatCount'
 
 const movieStore = useMovieStore()
 const { filters: storeFilters } = storeToRefs(movieStore)

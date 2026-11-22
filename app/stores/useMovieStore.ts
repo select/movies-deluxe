@@ -1,6 +1,15 @@
 import type { MovieEntry, MovieSourceType, LightweightMovie, SortOption } from '~/types'
 import type { FilterOptionsResponse } from '~/types/database'
 import { useStorage, watchDebounced } from '@vueuse/core'
+import type { FilterState } from '#shared/types/filters'
+import { defineStore, acceptHMRUpdate } from '#imports'
+import { shallowRef, onMounted, ref, computed } from 'vue'
+import { useDatabase } from '~/composables/useDatabase'
+import { useRuntimeConfig, useRoute } from '#app'
+import { useToastStore } from '~/stores/useToastStore'
+import { $fetch } from '#build/fetch'
+import { parseSearchQuery } from '~/utils/searchQueryParser'
+import { useVectorSearch } from '~/composables/useVectorSearch'
 
 /**
  * Movie Store

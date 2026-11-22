@@ -1,3 +1,7 @@
+import { defineNuxtPlugin, useRouter } from '#app'
+import { useUiStore } from '~/stores/useUiStore'
+import { nextTick } from 'vue'
+
 /**
  * Client-side plugin to handle scroll restoration between page navigations.
  * Uses useUiStore to remember scroll positions for non-excluded routes.

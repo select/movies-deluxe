@@ -90,6 +90,8 @@
 
 <script setup lang="ts">
 import { SourceQualityMark, type MovieEntry, type MovieSource } from '~/types'
+import { ref, watch } from 'vue'
+import { $fetch } from '#build/fetch'
 
 const props = defineProps<{
   modelValue: boolean

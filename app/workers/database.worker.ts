@@ -1,5 +1,6 @@
 import sqlite3InitModule from 'sqlite-wasm-vec'
 import type { SQLite3, SQLiteDatabase } from '~/types/sqlite-wasm'
+import type { LightweightMovie, MovieSourceType } from '#shared/types/movie'
 
 /**
  * Raw database row type from SQLite for lightweight movie queries
@@ -223,12 +224,7 @@ async function loadRemoteDatabase(url: string) {
 // Message queue to ensure sequential processing
 interface QueuedMessage {
   type:
-    | 'init'
-    | 'exec'
-    | 'query-by-ids'
-    | 'vector-search'
-    | 'attach-embeddings'
-    | 'detach-embeddings'
+    'init' | 'exec' | 'query-by-ids' | 'vector-search' | 'attach-embeddings' | 'detach-embeddings'
   id: string
   // For init, attach-embeddings
   url?: string

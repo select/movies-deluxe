@@ -65,6 +65,10 @@
 </template>
 
 <script setup lang="ts">
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { storeToRefs } from '#imports'
+import { ref, computed, watch } from 'vue'
+
 const props = defineProps<{
   collectionId: string
   initialTags?: string[]

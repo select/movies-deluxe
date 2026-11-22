@@ -149,6 +149,14 @@
 <script setup lang="ts">
 import { useIntersectionObserver, useTimeoutFn } from '@vueuse/core'
 import type { Collection } from '~/types'
+import { storeToRefs } from '#imports'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { computed, ref, onUnmounted } from 'vue'
+import { getPosterPath } from '~/utils/posterPath'
+import { formatVotes } from '~/utils/formatVotes'
+import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
+import { NuxtLink } from '#components'
 
 interface Props {
   movieId: string | null

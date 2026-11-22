@@ -1,3 +1,6 @@
+import { defineStore, acceptHMRUpdate } from '#imports'
+import { ref } from 'vue'
+
 /**
  * Toast notification type
  */

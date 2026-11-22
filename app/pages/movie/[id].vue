@@ -362,7 +362,15 @@
               :src="`https://www.youtube.com/embed/${currentSource.id}`"
               class="w-full h-full"
               frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
               allowfullscreen
               title="YouTube video player"
             ></iframe>
@@ -628,6 +636,27 @@
 
 <script setup lang="ts">
 import type { MovieEntry, LightweightMovie } from '~/types'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { useRuntimeConfig, useRoute, useAsyncData, useHead, navigateTo } from '#app'
+import { $fetch } from '#build/fetch'
+import { computed, ref, nextTick, onMounted, watch } from 'vue'
+import { storeToRefs } from '#imports'
+import { useToastStore } from '~/stores/useToastStore'
+import {
+  useWindowScroll,
+  useIntersectionObserver,
+  useMagicKeys,
+  whenever,
+  useEventListener,
+} from '@vueuse/core'
+import type { MovieSource } from '#shared/types/movie'
+import { getPosterPath } from '~/utils/posterPath'
+import { formatVotes } from '~/utils/formatVotes'
+import { formatFileSize } from '~/utils/formatFileSize'
+import MovieCard from '~/components/MovieCard.vue'
+import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
+import AdminCurationPanel from '~/components/AdminCurationPanel.vue'
+import { NuxtLink } from '#components'
 
 // Stores - get reactive state and methods once
 const movieStore = useMovieStore()

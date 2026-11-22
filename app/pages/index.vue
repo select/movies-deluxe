@@ -122,6 +122,15 @@
 </template>
 
 <script setup lang="ts">
+import { useRuntimeConfig, useHead, useFetch } from '#app'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { ref, onMounted } from 'vue'
+import { setInterval } from '#app/compat/interval'
+import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
+import HomeCollectionRow from '~/components/HomeCollectionRow.vue'
+import { NuxtLink } from '#components'
+
 interface HomeData {
   day: number
   collections: Array<{

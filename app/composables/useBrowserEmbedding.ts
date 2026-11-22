@@ -1,4 +1,7 @@
 import EmbeddingWorker from '~/workers/embedding.worker?worker'
+import type { Ref } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
+import { useRuntimeConfig } from '#app'
 
 export interface UseBrowserEmbeddingReturn {
   isLoading: Ref<boolean>

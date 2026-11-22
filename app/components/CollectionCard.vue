@@ -64,6 +64,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Collection } from '#shared/types/collections'
+import { ref, watch, computed } from 'vue'
+import { getPosterPath } from '~/utils/posterPath'
+import { NuxtLink } from '#components'
+
 const props = defineProps<{
   collection: Collection
 }>()

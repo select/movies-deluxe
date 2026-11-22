@@ -31,6 +31,15 @@
 </template>
 
 <script setup lang="ts">
+import { useRuntimeConfig, useHead } from '#app'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { computed } from 'vue'
+import SearchHeader from '~/components/SearchHeader.vue'
+import MovieStats from '~/components/MovieStats.vue'
+import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
+import MovieVirtualGrid from '~/components/MovieVirtualGrid.vue'
+
 const {
   public: { siteUrl },
 } = useRuntimeConfig()

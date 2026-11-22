@@ -1,4 +1,6 @@
 import { generateSQLite } from '../../../utils/generateSQLite'
+import { defineEventHandler, getRequestHeader, createError, readBody } from 'h3'
+import { emitProgress } from '#server/utils/progress'
 
 export default defineEventHandler(async event => {
   // Only allow from localhost

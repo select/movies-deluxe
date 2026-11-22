@@ -15,6 +15,12 @@
 </template>
 
 <script setup lang="ts">
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { inject, computed } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import AppSortButtonGroup from '~/components/AppSortButtonGroup.vue'
+
 const movieStore = useMovieStore()
 const { filters: storeFilters } = storeToRefs(movieStore)
 

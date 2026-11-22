@@ -1,3 +1,5 @@
+import { useRuntimeConfig } from '#app'
+
 /**
  * Get the full poster path with base URL
  * Handles GitHub Pages deployment where base URL might be '/movies/'

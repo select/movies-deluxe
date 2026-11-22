@@ -1,5 +1,17 @@
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
+import { defineEventHandler, readBody, createError } from 'h3'
+import { useRuntimeConfig } from 'nitropack/runtime'
+import {
+  clearFailedAIExtractions,
+  loadFailedAIExtractions,
+  removeFailedAIExtraction,
+  saveFailedAIExtraction,
+} from '#server/utils/failedAI'
+import type { MoviesDatabase, MovieEntry } from '#shared/types/movie'
+import { emitProgress } from '#server/utils/progress'
+import { extractMovieMetadataBatchOpenRouter } from '#server/utils/openrouter'
+import { extractMovieMetadataBatch } from '#server/utils/ollama'
 
 // Note: The following functions are auto-imported from server/utils/:
 // - loadFailedAIExtractions, saveFailedAIExtraction, clearFailedAIExtractions, removeFailedAIExtraction, hasFailedAIExtraction (from failedAI.ts)

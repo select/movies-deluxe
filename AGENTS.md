@@ -151,14 +151,12 @@ pnpm typecheck              # TypeScript checking (slow, may timeout)
 **Important Rules:**
 
 - ✅ Use `app/` for frontend, `server/` for backend, `public/` for static files
-- ✅ Leverage auto-imports
+- ✅ Use explicit imports (enforced in strict mode by `nuxt-explicit-imports`)
 - ✅ Use file-based routing in `app/pages/`
 
-### Auto-Import Rules
+### Explicit Import Rules
 
-**Auto-imported (no import needed):**
-
-When you see import errors please use the nuxt-auto-import skill.
+Auto-imports are disabled (`explicitImports: { mode: 'strict' }` in `nuxt.config.ts`). Always import Vue APIs (`vue`), Nuxt composables (`#app`), components (`~/components/...` or `#components`), Pinia helpers (`#imports`), stores (`~/stores/...`), composables (`~/composables/...`), utils (`~/utils/...`), shared types/utils (`#shared/...`), and server utils (`#server/...`, `h3`, `nitropack/runtime`) explicitly. Run `pnpm exec nuxt-explicit-imports check` to verify.
 
 ## Frontend Verification
 

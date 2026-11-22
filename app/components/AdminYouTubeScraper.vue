@@ -97,6 +97,8 @@
 
 <script setup lang="ts">
 import type { YouTubeOptions, YouTubeChannelConfig } from '~/types/admin'
+import { storeToRefs } from '#imports'
+import { useAdminStore } from '~/stores/useAdminStore'
 
 const options = defineModel<YouTubeOptions>({ required: true })
 

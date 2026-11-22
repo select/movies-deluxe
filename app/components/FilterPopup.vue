@@ -66,6 +66,7 @@ import {
   onKeyStroke,
   useScrollLock,
 } from '@vueuse/core'
+import { ref, watch, nextTick, computed } from 'vue'
 
 interface Props {
   isOpen: boolean

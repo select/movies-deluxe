@@ -17,6 +17,12 @@
 </template>
 
 <script setup lang="ts">
+import { useRuntimeConfig, useHead } from '#app'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { ref } from 'vue'
+import MovieListPage from '~/components/MovieListPage.vue'
+
 const {
   public: { siteUrl },
 } = useRuntimeConfig()

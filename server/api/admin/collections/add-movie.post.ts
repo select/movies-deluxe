@@ -1,4 +1,5 @@
 import { defineEventHandler, readBody, createError } from 'h3'
+import { addMovieToCollection } from '#server/utils/collections'
 
 interface AddMoviePayload {
   collectionId: string

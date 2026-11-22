@@ -1,3 +1,7 @@
+import { defineEventHandler, readBody, createError } from 'h3'
+import { scrapeArchiveOrg } from '#server/utils/archiveScraper'
+import { emitProgress } from '#server/utils/progress'
+
 export default defineEventHandler(async event => {
   const body = await readBody(event)
   const { collections = ['feature_films'] } = body

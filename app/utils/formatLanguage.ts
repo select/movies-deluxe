@@ -1,3 +1,5 @@
+import { normalizeLanguageCode } from '#shared/utils/languageNormalizer'
+
 /**
  * Convert language name to 2-letter code for display (uppercase)
  * @param language - Language name or comma-separated list (e.g., "English", "German, English")

@@ -10,6 +10,10 @@ import type {
   CollectionCleanupResult,
 } from '~/types/admin'
 import { useStorage } from '@vueuse/core'
+import { defineStore, acceptHMRUpdate } from '#imports'
+import { ref, reactive, computed } from 'vue'
+import { $fetch } from '#build/fetch'
+import type { GenerateDatabaseRequest } from '#shared/types/admin'
 
 export interface ProgressUpdate {
   type:

@@ -1,4 +1,6 @@
 import { defineEventHandler, readBody, createError } from 'h3'
+import type { Collection } from '#shared/types/collections'
+import { upsertCollection } from '#server/utils/collections'
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)

@@ -1,4 +1,6 @@
 import { generateHomePages } from '../../../utils/generateHomePages'
+import { defineEventHandler } from 'h3'
+import { emitProgress } from '#server/utils/progress'
 
 export default defineEventHandler(async () => {
   try {

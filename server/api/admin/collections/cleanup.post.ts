@@ -1,5 +1,7 @@
 import { defineEventHandler, createError } from 'h3'
 import { extractMovieKeys } from '../../../utils/movieData'
+import { loadCollectionsDatabase, saveCollectionsDatabase } from '#server/utils/collections'
+import type { Collection } from '#shared/types/collections'
 
 interface CleanupResult {
   success: boolean

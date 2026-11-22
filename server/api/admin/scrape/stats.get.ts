@@ -4,6 +4,11 @@ import { getChannelVideoCount } from '../../../utils/youtubeDataApi'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
 import { getFailedOmdbMatches } from '../../../utils/failedOmdb'
 import { getFailedPosterDownloads } from '../../../utils/posterDownloader'
+import { defineEventHandler } from 'h3'
+import { emitProgress } from '#server/utils/progress'
+import { loadMoviesDatabase } from '#server/utils/loadMoviesDatabase'
+import { getDatabaseStatsWithChannels } from '#server/utils/movieData'
+import type { MovieEntry } from '#shared/types/movie'
 
 export default defineEventHandler(async _event => {
   const totalSteps = 7

@@ -16,6 +16,10 @@ import {
   getEmbeddingsCount,
 } from '../../../utils/embeddings/database'
 import type { MovieEntry } from '../../../../shared/types/movie'
+import { defineEventHandler, readBody } from 'h3'
+import { loadMoviesDatabase } from '#server/utils/loadMoviesDatabase'
+import { emitProgress } from '#server/utils/progress'
+import { movieToMarkdown } from '#server/utils/movieEmbeddings'
 
 interface GenerateEmbeddingsRequest {
   models: string[] // ['nomic', 'bge-micro', 'potion'] or ['all']

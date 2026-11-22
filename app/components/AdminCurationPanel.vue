@@ -402,6 +402,13 @@ import type {
   MovieMetadata,
   Collection,
 } from '~/types'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
+import { cleanTitleForSearch } from '#shared/utils/movieTitle'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { storeToRefs } from '#imports'
+import { $fetch } from '#build/fetch'
+import { formatFileSize } from '~/utils/formatFileSize'
+import AdminSourceQualityDialog from '~/components/AdminSourceQualityDialog.vue'
 
 interface UpdateResponse {
   success: boolean

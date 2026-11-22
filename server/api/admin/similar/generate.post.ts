@@ -11,6 +11,8 @@ import { join } from 'path'
 import { existsSync, unlinkSync } from 'fs'
 import Database from 'better-sqlite3'
 import * as sqliteVec from 'sqlite-vec'
+import { defineEventHandler, getRequestHeader, createError, readBody } from 'h3'
+import { emitProgress } from '#server/utils/progress'
 
 interface GenerateSimilarRequest {
   model?: string // Embedding model to use (default: bge-micro)

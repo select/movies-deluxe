@@ -1,6 +1,9 @@
 import { useDatabase } from './useDatabase'
 import { useBrowserEmbedding } from './useBrowserEmbedding'
 import type { VectorSearchResult } from '~/types/database'
+import type { Ref } from 'vue'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { ref } from 'vue'
 
 // Default to bge-micro - runs in browser, good quality
 // Options: 'bge-micro' (384d) or 'potion' (64d)

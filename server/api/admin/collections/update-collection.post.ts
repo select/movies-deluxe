@@ -1,4 +1,6 @@
 import { defineEventHandler, readBody, createError } from 'h3'
+import type { SavedQuery, Collection } from '#shared/types/collections'
+import { loadCollectionsDatabase, saveCollectionsDatabase } from '#server/utils/collections'
 
 interface UpdatePayload {
   collectionId: string

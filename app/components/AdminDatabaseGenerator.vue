@@ -56,6 +56,11 @@
 </template>
 
 <script setup lang="ts">
+import { useAdminStore } from '~/stores/useAdminStore'
+import { storeToRefs } from '#imports'
+import { ref } from 'vue'
+import AppInputCheckbox from '~/components/AppInputCheckbox.vue'
+
 const adminStore = useAdminStore()
 const { progress, generatingSqlite: generating } = storeToRefs(adminStore)
 

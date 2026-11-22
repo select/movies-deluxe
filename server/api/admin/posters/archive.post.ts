@@ -1,6 +1,8 @@
 import { existsSync, statSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import * as tar from 'tar'
+import { defineEventHandler } from 'h3'
+import { emitProgress } from '#server/utils/progress'
 
 const MAX_ARCHIVE_SIZE = 50 * 1024 * 1024 // 50MB in bytes
 

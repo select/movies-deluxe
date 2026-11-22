@@ -6,6 +6,8 @@ import {
   type FailureReason,
 } from './failedYoutube'
 import type Database from 'better-sqlite3'
+import { useRuntimeConfig } from 'nitropack/runtime'
+import type { MovieSource } from '#shared/types/movie'
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   const yearPatterns = [/\((\d{4})\)/, /\[(\d{4})\]/, /\|\s*(\d{4})/, /-\s*(\d{4})/, /\s+(\d{4})$/]

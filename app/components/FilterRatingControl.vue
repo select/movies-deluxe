@@ -43,6 +43,10 @@
 
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { inject, ref, watch } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
 
 const movieStore = useMovieStore()
 const { filters: storeFilters } = storeToRefs(movieStore)

@@ -207,6 +207,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { storeToRefs } from '#imports'
+import { useAdminStore } from '~/stores/useAdminStore'
+import { $fetch } from '#build/fetch'
+
 interface PosterArchiveResult {
   success: boolean
   archivesCreated: number

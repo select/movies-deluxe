@@ -21,6 +21,12 @@
 
 <script setup lang="ts">
 import { useMagicKeys, whenever, onKeyStroke } from '@vueuse/core'
+import { ref } from 'vue'
+import { navigateTo } from '#app'
+import MovieHeader from '~/components/MovieHeader.vue'
+import AppSidebar from '~/components/AppSidebar.vue'
+import ThemeMenu from '~/components/ThemeMenu.vue'
+import AppToastContainer from '~/components/AppToastContainer.vue'
 
 // Menu state
 const isThemeMenuOpen = ref(false)

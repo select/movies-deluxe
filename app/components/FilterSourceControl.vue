@@ -58,6 +58,12 @@
 
 <script setup lang="ts">
 import type { ChannelOption } from '~/types'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { inject, ref, computed, onMounted } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import { formatCount } from '~/utils/formatCount'
+import AppInputCheckbox from '~/components/AppInputCheckbox.vue'
 
 const movieStore = useMovieStore()
 const { filters: storeFilters } = storeToRefs(movieStore)

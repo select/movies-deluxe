@@ -104,6 +104,16 @@
 </template>
 
 <script setup lang="ts">
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { useMovieStore } from '~/stores/useMovieStore'
+import { storeToRefs } from '#imports'
+import { useToastStore } from '~/stores/useToastStore'
+import { ref, toRaw, watch } from 'vue'
+import type { LightweightMovie } from '#shared/types/movie'
+import { getPosterPath } from '~/utils/posterPath'
+import { formatVotes } from '~/utils/formatVotes'
+import { NuxtLink } from '#components'
+
 const props = defineProps<{
   collectionId: string
 }>()

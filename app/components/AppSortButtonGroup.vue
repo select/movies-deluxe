@@ -49,6 +49,8 @@
 
 <script setup lang="ts">
 import type { SortOption, SortState } from '~/types'
+import AppSortButton from '~/components/AppSortButton.vue'
+import AppSortToggleButton from '~/components/AppSortToggleButton.vue'
 
 interface Props {
   currentSort: SortState

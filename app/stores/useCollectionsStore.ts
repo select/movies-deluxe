@@ -1,3 +1,9 @@
+import { defineStore, acceptHMRUpdate } from '#imports'
+import { ref } from 'vue'
+import type { Collection, SavedQuery } from '#shared/types/collections'
+import { $fetch } from '#build/fetch'
+import { useDatabase } from '~/composables/useDatabase'
+
 export const useCollectionsStore = defineStore('collections', () => {
   const collections = ref<Map<string, Collection>>(new Map())
   const isLoading = ref(false)

@@ -133,6 +133,10 @@
 
 <script setup lang="ts">
 import type { FilterState } from '~/types'
+import type { SavedQuery, SavedQueryFilterState } from '#shared/types/collections'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { inject, toRef } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
 // SavedQuery and SavedQueryFilterState are auto-imported from shared/types/
 
 const props = defineProps<{

@@ -172,6 +172,11 @@
 
 <script setup lang="ts">
 import type { Collection } from '~/types'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { storeToRefs } from '#imports'
+import { computed, ref, reactive, onMounted } from 'vue'
+import { useToastStore } from '~/stores/useToastStore'
+import { $fetch } from '#build/fetch'
 
 const collectionsStore = useCollectionsStore()
 const { collections } = storeToRefs(collectionsStore)

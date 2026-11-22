@@ -179,6 +179,21 @@
 
 <script setup lang="ts">
 import type { Collection } from '~/types'
+import { useHead } from '#app'
+import { useAdminSearchFilters } from '~/composables/useAdminSearchFilters'
+import { provide, ref, computed, onMounted, toRaw } from 'vue'
+import { FILTER_STATE_KEY } from '~/utils/injectionKeys'
+import type { LightweightMovie } from '#shared/types/movie'
+import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { storeToRefs } from '#imports'
+import { isLocalhost } from '~/utils/isLocalhost'
+import { useToastStore } from '~/stores/useToastStore'
+import { useDatabase } from '~/composables/useDatabase'
+import AdminCollectionSelector from '~/components/AdminCollectionSelector.vue'
+import AdminMovieSearch from '~/components/AdminMovieSearch.vue'
+import AdminSavedQueryManager from '~/components/AdminSavedQueryManager.vue'
+import AdminCollectionMoviesList from '~/components/AdminCollectionMoviesList.vue'
+import { NuxtLink } from '#components'
 
 // Set page title
 useHead({

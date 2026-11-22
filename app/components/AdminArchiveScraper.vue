@@ -44,6 +44,9 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from '#imports'
+import { useAdminStore } from '~/stores/useAdminStore'
+
 // Options are passed from parent but not used in this simplified UI
 defineModel<{ [key: string]: unknown }>({ required: true })
 

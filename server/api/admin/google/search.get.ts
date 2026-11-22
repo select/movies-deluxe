@@ -1,4 +1,5 @@
 import { defineEventHandler, getQuery, createError } from 'h3'
+import { useRuntimeConfig } from 'nitropack/runtime'
 
 export default defineEventHandler(async event => {
   const { q } = getQuery(event)

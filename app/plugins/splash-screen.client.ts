@@ -1,3 +1,6 @@
+import { defineNuxtPlugin } from '#app'
+import { useMovieStore } from '~/stores/useMovieStore'
+
 /**
  * Client-side plugin to hide splash screen after Vue hydration is complete.
  * Database initialization happens in the background — pages show loading states until ready.
