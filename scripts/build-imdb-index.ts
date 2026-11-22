@@ -10,7 +10,14 @@
  */
 
 import Database from 'better-sqlite3'
-import { createReadStream, createWriteStream, existsSync, mkdirSync } from 'node:fs'
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  renameSync,
+  statSync,
+} from 'node:fs'
 import { dirname, join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { Readable } from 'node:stream'
@@ -30,6 +37,7 @@ const RELEVANT_PRINCIPAL_CATEGORIES = new Set(['director', 'actor', 'actress'])
 
 interface CliOptions {
   skipDownload: boolean
+  forceDownload: boolean
   limit: number | null
   dbPath: string
   cacheDir: string
@@ -37,6 +45,7 @@ interface CliOptions {
 
 function parseArgs(argv: string[]): CliOptions {
   let skipDownload = false
+  let forceDownload = false
   let limit: number | null = null
   let dbPath = join(process.cwd(), 'data', 'imdb-index.db')
   let cacheDir = join(process.cwd(), 'data', 'imdb-datasets')
@@ -46,6 +55,8 @@ function parseArgs(argv: string[]): CliOptions {
     if (!arg) continue
     if (arg === '--skip-download') {
       skipDownload = true
+    } else if (arg === '--force-download') {
+      forceDownload = true
     } else if (arg.startsWith('--limit=')) {
       const val = parseInt(arg.slice('--limit='.length), 10)
       if (!Number.isNaN(val) && val > 0) limit = val
@@ -60,7 +71,7 @@ function parseArgs(argv: string[]): CliOptions {
     }
   }
 
-  return { skipDownload, limit, dbPath, cacheDir }
+  return { skipDownload, forceDownload, limit, dbPath, cacheDir }
 }
 
 function cleanTsvField(val: string | undefined): string | null {
@@ -84,8 +95,10 @@ async function downloadDataset(filename: string, destPath: string): Promise<void
     throw new Error(`Failed to download ${url}: HTTP ${response.status} ${response.statusText}`)
   }
 
+  const tmpPath = `${destPath}.tmp`
   const bodyStream = Readable.fromWeb(response.body as Parameters<typeof Readable.fromWeb>[0])
-  await pipeline(bodyStream, createWriteStream(destPath))
+  await pipeline(bodyStream, createWriteStream(tmpPath))
+  renameSync(tmpPath, destPath)
   console.log(`[IMDb Index] Downloaded ${filename}`)
 }
 
@@ -329,10 +342,18 @@ async function main(): Promise<void> {
 
   for (const dataset of DATASETS) {
     const localPath = join(options.cacheDir, dataset)
-    if (!options.skipDownload) {
+    const hasLocalFile = existsSync(localPath) && statSync(localPath).size > 0
+    if (options.skipDownload) {
+      if (!hasLocalFile) {
+        throw new Error(`Missing local dataset file with --skip-download: ${localPath}`)
+      }
+      console.log(`[IMDb Index] Using cached ${dataset}`)
+    } else if (hasLocalFile && !options.forceDownload) {
+      console.log(
+        `[IMDb Index] Skipping download for ${dataset} (already exists; pass --force-download to refresh)`
+      )
+    } else {
       await downloadDataset(dataset, localPath)
-    } else if (!existsSync(localPath)) {
-      throw new Error(`Missing local dataset file with --skip-download: ${localPath}`)
     }
   }
 

@@ -73,5 +73,6 @@ public/movies/
 !data/movies-db-part*.tar.gz
 data/movies.db
 data/imdb-index.db*
+data/imdb-datasets/
 data/google-cse-quota.json
 docs/reddit-sideproject-post.md
