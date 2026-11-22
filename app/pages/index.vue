@@ -64,7 +64,7 @@
 
         <!-- Discover More Section -->
         <section
-          class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-12 border-t border-theme-border/30"
+          class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 border-t border-theme-border/30"
         >
           <!-- Collections Link -->
           <NuxtLink
@@ -84,7 +84,7 @@
               </p>
             </div>
             <div
-              class="flex items-center text-theme-accent font-medium pt-2 group-hover:translate-x-1 transition-transform"
+              class="flex items-center text-theme-accent font-medium pt-2 mt-auto group-hover:translate-x-1 transition-transform"
             >
               View all collections
               <div class="i-mdi-arrow-right ml-1"></div>
@@ -109,12 +109,39 @@
               </p>
             </div>
             <div
-              class="flex items-center text-theme-accent font-medium pt-2 group-hover:translate-x-1 transition-transform"
+              class="flex items-center text-theme-accent font-medium pt-2 mt-auto group-hover:translate-x-1 transition-transform"
             >
               Start searching
               <div class="i-mdi-arrow-right ml-1"></div>
             </div>
           </NuxtLink>
+
+          <!-- WatchYonder External Link -->
+          <a
+            href="https://watchyonder.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group p-8 rounded-2xl bg-theme-surface border border-theme-border/50 hover:border-theme-accent transition-all duration-300 flex flex-col items-start space-y-4"
+          >
+            <div
+              class="p-3 rounded-xl bg-theme-accent/10 text-theme-accent group-hover:bg-theme-accent group-hover:text-black transition-colors duration-300"
+            >
+              <div class="i-mdi-compass-outline text-2xl"></div>
+            </div>
+            <div class="space-y-2 text-left">
+              <h3 class="text-xl font-bold">WatchYonder</h3>
+              <p class="text-theme-textmuted">
+                Discover even more free movies on YouTube, organized country by country across the
+                world.
+              </p>
+            </div>
+            <div
+              class="flex items-center text-theme-accent font-medium pt-2 mt-auto group-hover:translate-x-1 transition-transform"
+            >
+              Visit WatchYonder
+              <div class="i-mdi-open-in-new ml-1.5 text-sm"></div>
+            </div>
+          </a>
         </section>
       </div>
     </div>
