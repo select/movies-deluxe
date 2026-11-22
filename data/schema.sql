@@ -449,6 +449,21 @@ CREATE INDEX idx_metadata_genre_rating ON metadata(Genre, imdbRating);
 CREATE INDEX idx_sources_channelId_movieId ON sources(channelId, movieId);
 
 -- ============================================================================
+-- MATCH ATTEMPTS TABLE
+-- ============================================================================
+-- Tracks auto-matching attempts so repeated runs progress through all unmatched movies
+
+CREATE TABLE IF NOT EXISTS match_attempts (
+  movieId TEXT PRIMARY KEY,
+  attemptedAt TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  candidateCount INTEGER DEFAULT 0,
+  reason TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_match_attempts_attemptedAt ON match_attempts(attemptedAt);
+
+-- ============================================================================
 -- STATISTICS AND OPTIMIZATION
 -- ============================================================================
 

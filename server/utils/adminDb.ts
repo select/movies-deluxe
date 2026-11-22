@@ -262,6 +262,23 @@ function sleep(ms: number): Promise<void> {
 }
 
 // ============================================================================
+// SCHEMA MIGRATIONS
+// ============================================================================
+
+export function ensureMatchAttemptsTable(db: Database.Database): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS match_attempts (
+      movieId TEXT PRIMARY KEY,
+      attemptedAt TEXT NOT NULL,
+      outcome TEXT NOT NULL,
+      candidateCount INTEGER DEFAULT 0,
+      reason TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_match_attempts_attemptedAt ON match_attempts(attemptedAt);
+  `)
+}
+
+// ============================================================================
 // GRACEFUL SHUTDOWN
 // ============================================================================
 

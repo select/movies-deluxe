@@ -14,7 +14,12 @@
  *  10. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
  */
 
-import { getImdbLocalById, isImdbLocalIndexAvailable, searchImdbLocalIndex } from './imdbLocalIndex'
+import {
+  getImdbLocalById,
+  isImdbLocalIndexAvailable,
+  searchImdbLocalByPeople,
+  searchImdbLocalIndex,
+} from './imdbLocalIndex'
 import { isTmdbAvailable, searchTmdbCandidates } from './tmdb'
 import { searchImdbSuggestions } from './imdbSuggestion'
 import { searchWikidataImdb } from './wikidata'
@@ -43,6 +48,8 @@ export interface CandidateQueryInput {
   year?: number
   description?: string
   language?: string
+  director?: string
+  cast?: string[]
 }
 
 export interface RetrievalOptions {
@@ -201,7 +208,7 @@ export async function retrieveCandidates(
         .map(q => q?.trim())
         .filter((q): q is string => Boolean(q && q.length > 0))
     )
-  ).slice(0, 3)
+  ).slice(0, 5)
 
   // Tier 1: Direct tt* regex in description (or title)
   const directId = extractImdbIdFromText(input.description) || extractImdbIdFromText(input.title)
@@ -274,6 +281,28 @@ export async function retrieveCandidates(
         })
       }
     }
+
+    const people = [
+      ...(input.director ? input.director.split(',').map(d => d.trim()) : []),
+      ...(input.cast || []),
+    ].filter(Boolean)
+    if (people.length > 0 && candidates.size < 3 && input.year) {
+      const peopleHits = searchImdbLocalByPeople(people, input.year, 8)
+      for (const hit of peopleHits) {
+        mergeCandidate(candidates, {
+          imdbId: hit.imdbId,
+          title: hit.title,
+          originalTitle: hit.originalTitle,
+          altTitles: hit.altTitles,
+          year: hit.year,
+          runtimeMinutes: hit.runtimeMinutes,
+          titleType: hit.titleType,
+          directors: hit.directors,
+          cast: hit.cast,
+          source: 'imdb_local',
+        })
+      }
+    }
   }
 
   if (options.skipExternalApis) {
@@ -282,7 +311,7 @@ export async function retrieveCandidates(
 
   // Tier 3: TMDB API
   if (isTmdbAvailable()) {
-    for (const q of searchQueries.slice(0, 2)) {
+    for (const q of searchQueries.slice(0, 3)) {
       try {
         const tmdbHits = await searchTmdbCandidates(q, input.year, 5)
         for (const hit of tmdbHits) {
@@ -309,7 +338,7 @@ export async function retrieveCandidates(
   }
 
   // Tier 4: IMDb Suggestion API
-  for (const q of searchQueries.slice(0, 2)) {
+  for (const q of searchQueries.slice(0, 3)) {
     try {
       const suggestions = await searchImdbSuggestions(q, 8)
       for (const hit of suggestions) {
@@ -330,7 +359,7 @@ export async function retrieveCandidates(
   }
 
   // Tier 5: Wikidata API
-  for (const q of searchQueries.slice(0, 2)) {
+  for (const q of searchQueries.slice(0, 3)) {
     try {
       const wikiHits = await searchWikidataImdb(q, input.language || 'en', 8)
       for (const hit of wikiHits) {

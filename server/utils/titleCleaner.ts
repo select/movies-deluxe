@@ -211,8 +211,12 @@ export const TITLE_CLEANING_RULES: TitleCleaningRule[] = [
  * @param channelId - YouTube channel ID (e.g., "@Netzkino")
  * @returns Cleaned movie title
  */
-export function cleanTitle(title: string, channelId: string): string {
-  const rule = TITLE_CLEANING_RULES.find(r => r.channelId === channelId)
+export function cleanTitle(title: string, channelIdOrName: string): string {
+  const normalizedKey = channelIdOrName.trim().toLowerCase()
+  const rule = TITLE_CLEANING_RULES.find(
+    r =>
+      r.channelId.toLowerCase() === normalizedKey || r.channelName.toLowerCase() === normalizedKey
+  )
 
   // No rule for this channel - return original title
   if (!rule) {

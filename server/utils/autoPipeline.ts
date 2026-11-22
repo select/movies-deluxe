@@ -7,7 +7,7 @@
 
 import 'dotenv/config'
 import type Database from 'better-sqlite3'
-import { getAdminDatabase, withTransaction } from './adminDb'
+import { ensureMatchAttemptsTable, getAdminDatabase, withTransaction } from './adminDb'
 import { analyzeArchiveSourceSize } from './archivePreviewDetector'
 import { extractImdbIdFromText, retrieveCandidates } from './candidateRetriever'
 import { enqueueReviewItem } from './matchReviewQueue'
@@ -16,6 +16,7 @@ import { adjudicateCandidates, verifyMatchCandidate } from './matchVerifier'
 import { migrateMovieId } from './migrateMovieId'
 import { getMovieByImdbId } from './omdb'
 import { emitProgress } from './progress'
+import { extractSourceMetadata } from './sourceMetadataExtractor'
 import { generateArchiveId, generateYouTubeId, isImdbId } from '../../shared/types/movie'
 import type { MovieMetadata } from '../../shared/types/movie'
 
@@ -84,6 +85,8 @@ export interface AutoMatchUnmatchedOptions {
   minConfidence?: number
   allowGoogle?: boolean
   model?: string
+  skipAttempted?: boolean
+  retryAfterDays?: number
 }
 
 export interface AutoMatchUnmatchedResult {
@@ -644,13 +647,30 @@ export async function runAutoAuditFalseHits(
         let replacementMeta: MovieMetadata | null = null
 
         if (rematch) {
-          const queryTitle = rawSourceTitle
-          const queryYear = primarySource.year ?? extractYearFromTitle(rawSourceTitle) ?? undefined
+          const extracted = extractSourceMetadata({
+            rawTitle: rawSourceTitle,
+            description: primarySource.description,
+            sourceId: primarySource.sourceId,
+            platform: primarySource.platform,
+            channelId: primarySource.channelId,
+            channelName: primarySource.channelName,
+          })
+          const queryTitle = extracted.cleanTitle || rawSourceTitle
+          const queryYear =
+            extracted.year ??
+            primarySource.year ??
+            (primarySource.platform === 'archive.org' && movie.movieYear && movie.movieYear < 2020
+              ? movie.movieYear
+              : undefined)
           const candidates = await retrieveCandidates(
             {
               title: queryTitle,
+              originalTitle: extracted.originalTitle,
+              altTitles: extracted.altTitles,
               year: queryYear,
               description: primarySource.description || undefined,
+              director: extracted.director,
+              cast: extracted.cast,
             },
             { limit: 6, omdbApiKey, allowGoogleFallback: allowGoogle }
           )
@@ -660,8 +680,12 @@ export async function runAutoAuditFalseHits(
               {
                 movieId: movie.movieId,
                 title: rawSourceTitle,
+                originalTitle: extracted.originalTitle ?? null,
+                altTitles: extracted.altTitles,
                 year: queryYear ?? null,
                 durationMin: sourceDurationMin,
+                director: extracted.director ?? null,
+                cast: extracted.cast,
                 description: primarySource.description,
                 channelName: primarySource.channelName,
               },
@@ -684,7 +708,16 @@ export async function runAutoAuditFalseHits(
                 : null
               const newRuntimeMin = parseRuntimeMinutes(meta?.Runtime)
               const runtimeCheck = scoreMatchCandidate(
-                { title: rawSourceTitle, sourceDurationMin },
+                {
+                  title: queryTitle,
+                  originalTitle: extracted.originalTitle ?? null,
+                  altTitles: extracted.altTitles,
+                  sourceYear: queryYear ?? null,
+                  titleYear: extracted.year ?? null,
+                  sourceDurationMin,
+                  director: extracted.director ?? null,
+                  cast: extracted.cast,
+                },
                 {
                   imdbId: adj.chosenImdbId,
                   title: meta?.Title || adj.chosenImdbId,
@@ -830,11 +863,20 @@ export async function runAutoMatchUnmatched(
   const omdbApiKey = process.env.OMDB_API_KEY
 
   const db = getAdminDatabase()
+  ensureMatchAttemptsTable(db)
+
   const params: unknown[] = []
   let channelClause = ''
   if (options.channel && options.channel.trim()) {
     channelClause = 'AND (c.id = ? OR lower(c.name) = lower(?))'
     params.push(options.channel.trim(), options.channel.trim())
+  }
+  let attemptClause = ''
+  if (options.skipAttempted) {
+    attemptClause = 'AND ma.movieId IS NULL'
+  } else if (options.retryAfterDays && options.retryAfterDays > 0) {
+    attemptClause = "AND (ma.attemptedAt IS NULL OR ma.attemptedAt < datetime('now', ?))"
+    params.push(`-${Math.floor(options.retryAfterDays)} days`)
   }
   params.push(safeLimit)
 
@@ -844,14 +886,16 @@ export async function runAutoMatchUnmatched(
         m.movieId, m.title as movieTitle, m.year as movieYear,
         s.sourceId, s.title as sourceTitle, s.description as sourceDescription,
         s.duration as sourceDuration, s.year as sourceYear,
-        c.name as channelName, c.platform
+        c.id as channelId, c.name as channelName, c.platform
       FROM movies m
       JOIN sources s ON m.movieId = s.movieId
       JOIN channels c ON s.channelId = c.id
+      LEFT JOIN match_attempts ma ON m.movieId = ma.movieId
       WHERE m.movieId NOT LIKE 'tt%'
         ${channelClause}
+        ${attemptClause}
       GROUP BY m.movieId
-      ORDER BY m.lastUpdated DESC
+      ORDER BY ma.attemptedAt IS NOT NULL ASC, ma.attemptedAt ASC, m.lastUpdated DESC
       LIMIT ?`
     )
     .all(...params) as Array<{
@@ -863,9 +907,35 @@ export async function runAutoMatchUnmatched(
     sourceDescription: string | null
     sourceDuration: number | null
     sourceYear: number | null
+    channelId: string
     channelName: string
     platform: string
   }>
+
+  const recordAttemptStmt = db.prepare(
+    `INSERT INTO match_attempts (movieId, attemptedAt, outcome, candidateCount, reason)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(movieId) DO UPDATE SET
+       attemptedAt = excluded.attemptedAt,
+       outcome = excluded.outcome,
+       candidateCount = excluded.candidateCount,
+       reason = excluded.reason`
+  )
+  const recordAttempt = (
+    movieId: string,
+    outcome: 'matched' | 'queued' | 'no_match' | 'error',
+    candidateCount: number,
+    reason?: string
+  ) => {
+    if (dryRun) return
+    recordAttemptStmt.run(
+      movieId,
+      new Date().toISOString(),
+      outcome,
+      candidateCount,
+      reason ?? null
+    )
+  }
 
   const total = movies.length
   let scanned = 0
@@ -891,9 +961,21 @@ export async function runAutoMatchUnmatched(
     for (const movie of movies) {
       scanned++
       const rawTitle = movie.sourceTitle || movie.movieTitle
-      const queryTitle = rawTitle
+      const extracted = extractSourceMetadata({
+        rawTitle,
+        description: movie.sourceDescription,
+        sourceId: movie.sourceId,
+        platform: movie.platform,
+        channelId: movie.channelId,
+        channelName: movie.channelName,
+      })
+      const queryTitle = extracted.cleanTitle || rawTitle
       const queryYear =
-        movie.sourceYear ?? movie.movieYear ?? extractYearFromTitle(rawTitle) ?? undefined
+        extracted.year ??
+        movie.sourceYear ??
+        (movie.platform === 'archive.org' && movie.movieYear && movie.movieYear < 2020
+          ? movie.movieYear
+          : undefined)
       const sourceDurationMin =
         movie.sourceDuration && movie.sourceDuration > 0
           ? Math.round(movie.sourceDuration / 60)
@@ -922,6 +1004,7 @@ export async function runAutoMatchUnmatched(
               upsertMetadataAndMovie(db, directId, meta)
             }
           }
+          recordAttempt(movie.movieId, 'matched', 1, `Direct IMDb ID ${directId}`)
           directUrlMatches++
           if (samples.length < 30) {
             samples.push({
@@ -941,8 +1024,12 @@ export async function runAutoMatchUnmatched(
         const candidates = await retrieveCandidates(
           {
             title: queryTitle,
+            originalTitle: extracted.originalTitle,
+            altTitles: extracted.altTitles,
             year: queryYear,
             description: movie.sourceDescription || undefined,
+            director: extracted.director,
+            cast: extracted.cast,
           },
           {
             limit: 6,
@@ -952,6 +1039,7 @@ export async function runAutoMatchUnmatched(
         )
 
         if (candidates.length === 0) {
+          recordAttempt(movie.movieId, 'no_match', 0, 'No candidates retrieved')
           noMatch++
           continue
         }
@@ -962,10 +1050,14 @@ export async function runAutoMatchUnmatched(
             cand,
             result: scoreMatchCandidate(
               {
-                title: rawTitle,
-                sourceYear: movie.sourceYear,
-                titleYear: extractYearFromTitle(rawTitle),
+                title: queryTitle,
+                originalTitle: extracted.originalTitle ?? null,
+                altTitles: extracted.altTitles,
+                sourceYear: queryYear ?? null,
+                titleYear: extracted.year ?? null,
                 sourceDurationMin,
+                director: extracted.director ?? null,
+                cast: extracted.cast,
               },
               {
                 imdbId: cand.imdbId,
@@ -999,6 +1091,12 @@ export async function runAutoMatchUnmatched(
               upsertMetadataAndMovie(db, top.cand.imdbId, meta)
             }
           }
+          recordAttempt(
+            movie.movieId,
+            'matched',
+            candidates.length,
+            `Deterministic auto-accept (${top.cand.imdbId}, score ${top.result.score})`
+          )
           deterministicMatches++
           if (samples.length < 30) {
             samples.push({
@@ -1014,9 +1112,29 @@ export async function runAutoMatchUnmatched(
           continue
         }
 
-        // Ambiguous -> LLM adjudicator
+        // Ambiguous -> LLM adjudicator (include non-hard-disqualified candidates if nonRejected < 3)
         const nonRejected = scored.filter(s => s.result.tier !== 'reject').slice(0, 5)
-        if (nonRejected.length === 0) {
+        const adjudicateList = [...nonRejected]
+        if (adjudicateList.length < 3) {
+          const existingIds = new Set(adjudicateList.map(s => s.cand.imdbId))
+          const fallbackCandidates = scored.filter(
+            s =>
+              !existingIds.has(s.cand.imdbId) &&
+              !s.result.flags.includes('runtime_feature_short_mismatch') &&
+              !s.result.flags.includes('non_movie_candidate')
+          )
+          for (const fc of fallbackCandidates) {
+            if (adjudicateList.length >= 5) break
+            adjudicateList.push(fc)
+          }
+        }
+        if (adjudicateList.length === 0) {
+          recordAttempt(
+            movie.movieId,
+            'no_match',
+            candidates.length,
+            'All candidates had hard disqualifiers'
+          )
           noMatch++
           continue
         }
@@ -1025,12 +1143,16 @@ export async function runAutoMatchUnmatched(
           {
             movieId: movie.movieId,
             title: rawTitle,
+            originalTitle: extracted.originalTitle ?? null,
+            altTitles: extracted.altTitles,
             year: queryYear ?? null,
             durationMin: sourceDurationMin,
+            director: extracted.director ?? null,
+            cast: extracted.cast,
             description: movie.sourceDescription,
             channelName: movie.channelName,
           },
-          nonRejected.map(s => ({
+          adjudicateList.map(s => ({
             imdbId: s.cand.imdbId,
             title: s.cand.title,
             year: s.cand.year ?? null,
@@ -1048,7 +1170,7 @@ export async function runAutoMatchUnmatched(
             ? await getMovieByImdbId(adj.chosenImdbId, omdbApiKey).catch(() => null)
             : null
           const finalRuntimeCheck = scoreMatchCandidate(
-            { title: rawTitle, sourceDurationMin },
+            { title: queryTitle, sourceDurationMin },
             {
               imdbId: adj.chosenImdbId,
               title: meta?.Title || adj.chosenImdbId,
@@ -1065,6 +1187,12 @@ export async function runAutoMatchUnmatched(
                 upsertMetadataAndMovie(db, adj.chosenImdbId, meta)
               }
             }
+            recordAttempt(
+              movie.movieId,
+              'matched',
+              candidates.length,
+              `LLM match (${adj.chosenImdbId}, conf ${adj.confidence})`
+            )
             llmMatches++
             if (samples.length < 30) {
               samples.push({
@@ -1105,6 +1233,7 @@ export async function runAutoMatchUnmatched(
               },
             })
           }
+          recordAttempt(movie.movieId, 'queued', candidates.length, adj.reason)
           if (samples.length < 30) {
             samples.push({
               oldMovieId: movie.movieId,
@@ -1117,10 +1246,12 @@ export async function runAutoMatchUnmatched(
             })
           }
         } else {
+          recordAttempt(movie.movieId, 'no_match', candidates.length, adj.reason)
           noMatch++
         }
       } catch (err) {
         errors++
+        recordAttempt(movie.movieId, 'error', 0, err instanceof Error ? err.message : String(err))
         console.error(`[AutoMatch] Error processing ${movie.movieId}:`, err)
       }
     }

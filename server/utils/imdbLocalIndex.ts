@@ -75,21 +75,87 @@ export function isImdbLocalIndexAvailable(): boolean {
   return getIndexDatabase() !== null
 }
 
-/**
- * Sanitize free-form title text into a safe FTS5 query string
- */
-function buildFtsQuery(query: string): string | null {
-  const tokens = query
+const FTS_STOP_TOKENS = new Set([
+  'the',
+  'a',
+  'an',
+  'of',
+  'in',
+  'on',
+  'at',
+  'to',
+  'for',
+  'and',
+  'or',
+  'by',
+  'with',
+  'from',
+  'der',
+  'die',
+  'das',
+  'ein',
+  'eine',
+  'und',
+  'mit',
+  'von',
+  'auf',
+  'im',
+  'le',
+  'la',
+  'les',
+  'de',
+  'du',
+  'et',
+  'el',
+  'los',
+  'las',
+  'un',
+  'una',
+  'il',
+  'lo',
+  'film',
+  'movie',
+  'full',
+  'hd',
+  '4k',
+  'deutsch',
+])
+
+const FTS_NOISE_RE =
+  /\b(?:full\s*movie|turkish\s*movie|free\s*movie|ganzer\s*film|dvdrip|brrip|bdrip|webrip|hdrip|x264|h264|xvid|vose|hd|4k)\b/gi
+
+function sanitizeTitleForFts(query: string): string[] {
+  // Strip parenthetical and bracketed years/tags (e.g. "(1957)", "[Film Noir]")
+  const cleaned = query
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]*\]/g, ' ')
+    .replace(FTS_NOISE_RE, ' ')
     .trim()
+
+  let tokens = cleaned
     .split(/[^\p{L}\p{N}]+/u)
     .map(t => t.trim())
     .filter(t => t.length > 0)
 
+  // Strip standalone 4-digit years if there are non-year tokens remaining (preserve "1917", "1984", "2001")
+  const nonYearTokens = tokens.filter(t => !/^(?:18\d{2}|19\d{2}|20[0-3]\d)$/.test(t))
+  if (nonYearTokens.length > 0) {
+    tokens = nonYearTokens
+  }
+
+  return tokens
+}
+
+/**
+ * Sanitize free-form title text into a safe FTS5 query string
+ */
+function buildFtsQueryFromTokens(tokens: string[], operator: 'AND' | 'OR' = 'AND'): string | null {
   if (tokens.length === 0) {
     return null
   }
 
-  return tokens.map(token => `"${token.replace(/"/g, '""')}"`).join(' ')
+  const escaped = tokens.map(token => `"${token.replace(/"/g, '""')}"`)
+  return operator === 'OR' ? escaped.join(' OR ') : escaped.join(' ')
 }
 
 interface TitleRow {
@@ -190,6 +256,60 @@ export function getImdbLocalById(imdbId: string): ImdbLocalMovie | null {
   }
 }
 
+function runFtsQuery(
+  db: Database.Database,
+  ftsQuery: string,
+  year: number | undefined,
+  fetchLimit: number
+): TitleRow[] {
+  return year
+    ? (db
+        .prepare(
+          `
+          SELECT DISTINCT
+            t.tconst,
+            t.titleType,
+            t.primaryTitle,
+            t.originalTitle,
+            t.startYear,
+            t.runtimeMinutes
+          FROM titles_fts f
+          JOIN titles t ON t.tconst = f.tconst
+          WHERE titles_fts MATCH ?
+          ORDER BY
+            CASE
+              WHEN t.startYear = ? THEN 0
+              WHEN t.startYear IS NOT NULL AND ABS(t.startYear - ?) <= 2 THEN 1
+              ELSE 2
+            END,
+            CASE WHEN t.titleType = 'movie' THEN 0 ELSE 1 END,
+            bm25(titles_fts)
+          LIMIT ?
+        `
+        )
+        .all(ftsQuery, year, year, fetchLimit) as TitleRow[])
+    : (db
+        .prepare(
+          `
+          SELECT DISTINCT
+            t.tconst,
+            t.titleType,
+            t.primaryTitle,
+            t.originalTitle,
+            t.startYear,
+            t.runtimeMinutes
+          FROM titles_fts f
+          JOIN titles t ON t.tconst = f.tconst
+          WHERE titles_fts MATCH ?
+          ORDER BY
+            CASE WHEN t.titleType = 'movie' THEN 0 ELSE 1 END,
+            bm25(titles_fts)
+          LIMIT ?
+        `
+        )
+        .all(ftsQuery, fetchLimit) as TitleRow[])
+}
+
 /**
  * Search the local IMDb FTS5 index by title and optional year
  */
@@ -201,59 +321,33 @@ export function searchImdbLocalIndex(
   const db = getIndexDatabase()
   if (!db) return []
 
-  const ftsQuery = buildFtsQuery(query)
+  const tokens = sanitizeTitleForFts(query)
+  const ftsQuery = buildFtsQueryFromTokens(tokens, 'AND')
   if (!ftsQuery) return []
 
   const maxResults = Math.max(1, Math.min(limit, 50))
   const fetchLimit = maxResults * 4
 
   try {
-    const rows = year
-      ? (db
-          .prepare(
-            `
-            SELECT DISTINCT
-              t.tconst,
-              t.titleType,
-              t.primaryTitle,
-              t.originalTitle,
-              t.startYear,
-              t.runtimeMinutes
-            FROM titles_fts f
-            JOIN titles t ON t.tconst = f.tconst
-            WHERE titles_fts MATCH ?
-            ORDER BY
-              CASE
-                WHEN t.startYear = ? THEN 0
-                WHEN t.startYear IS NOT NULL AND ABS(t.startYear - ?) <= 2 THEN 1
-                ELSE 2
-              END,
-              CASE WHEN t.titleType = 'movie' THEN 0 ELSE 1 END,
-              bm25(titles_fts)
-            LIMIT ?
-          `
-          )
-          .all(ftsQuery, year, year, fetchLimit) as TitleRow[])
-      : (db
-          .prepare(
-            `
-            SELECT DISTINCT
-              t.tconst,
-              t.titleType,
-              t.primaryTitle,
-              t.originalTitle,
-              t.startYear,
-              t.runtimeMinutes
-            FROM titles_fts f
-            JOIN titles t ON t.tconst = f.tconst
-            WHERE titles_fts MATCH ?
-            ORDER BY
-              CASE WHEN t.titleType = 'movie' THEN 0 ELSE 1 END,
-              bm25(titles_fts)
-            LIMIT ?
-          `
-          )
-          .all(ftsQuery, fetchLimit) as TitleRow[])
+    let rows = runFtsQuery(db, ftsQuery, year, fetchLimit)
+
+    // Relaxed fallback when strict AND returns 0 hits and there are >= 3 tokens
+    if (rows.length === 0 && tokens.length >= 3) {
+      const coreTokens = tokens.filter(t => t.length > 2 && !FTS_STOP_TOKENS.has(t.toLowerCase()))
+      if (coreTokens.length >= 2 && coreTokens.length < tokens.length) {
+        const coreAndQuery = buildFtsQueryFromTokens(coreTokens, 'AND')
+        if (coreAndQuery) {
+          rows = runFtsQuery(db, coreAndQuery, year, fetchLimit)
+        }
+      }
+      if (rows.length === 0) {
+        const orTokens = coreTokens.length >= 2 ? coreTokens : tokens
+        const orQuery = buildFtsQueryFromTokens(orTokens.slice(0, 5), 'OR')
+        if (orQuery) {
+          rows = runFtsQuery(db, orQuery, year, fetchLimit)
+        }
+      }
+    }
 
     const seen = new Set<string>()
     const results: ImdbLocalCandidate[] = []
@@ -268,6 +362,62 @@ export function searchImdbLocalIndex(
     return results
   } catch (error) {
     console.warn(`[ImdbLocalIndex] FTS search error for "${query}":`, error)
+    return []
+  }
+}
+
+/**
+ * Search the local IMDb index by director/cast names (requires year for fast indexed lookup).
+ */
+export function searchImdbLocalByPeople(
+  people: string[],
+  year?: number,
+  limit = 10
+): ImdbLocalCandidate[] {
+  const db = getIndexDatabase()
+  if (!db || !year) return []
+
+  const cleanedPeople = Array.from(
+    new Set(people.map(p => p.trim().toLowerCase()).filter(p => p.length >= 3))
+  ).slice(0, 8)
+
+  if (cleanedPeople.length === 0) return []
+
+  const maxResults = Math.max(1, Math.min(limit, 25))
+  const placeholders = cleanedPeople.map(() => '?').join(', ')
+
+  try {
+    const rows = db
+      .prepare(
+        `
+        SELECT
+          t.tconst,
+          t.titleType,
+          t.primaryTitle,
+          t.originalTitle,
+          t.startYear,
+          t.runtimeMinutes,
+          COUNT(DISTINCT p.nconst) as matchCount
+        FROM titles t
+        JOIN principals p ON p.tconst = t.tconst
+        JOIN names n ON n.nconst = p.nconst
+        WHERE t.startYear IN (?, ?, ?)
+          AND t.titleType = 'movie'
+          AND lower(n.primaryName) IN (${placeholders})
+        GROUP BY t.tconst
+        ORDER BY
+          matchCount DESC,
+          CASE WHEN t.startYear = ? THEN 0 ELSE 1 END
+        LIMIT ?
+      `
+      )
+      .all(year - 1, year, year + 1, ...cleanedPeople, year, maxResults) as Array<
+      TitleRow & { matchCount: number }
+    >
+
+    return rows.map(row => hydrateTitleRow(db, row))
+  } catch (error) {
+    console.warn('[ImdbLocalIndex] People search error:', error)
     return []
   }
 }
