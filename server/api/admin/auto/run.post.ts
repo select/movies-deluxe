@@ -3,9 +3,14 @@ import {
   runAutoAuditFalseHits,
   runAutoCleanArchivePreviews,
   runAutoMatchUnmatched,
+  runAutoResolveFalseHitQueue,
 } from '#server/utils/autoPipeline'
 
-type AutoTask = 'clean_previews' | 'audit_false_hits' | 'match_unmatched'
+type AutoTask =
+  | 'clean_previews'
+  | 'audit_false_hits'
+  | 'resolve_false_hit_queue'
+  | 'match_unmatched'
 
 interface AutoRunBody {
   task?: string
@@ -19,7 +24,12 @@ interface AutoRunBody {
   model?: string
 }
 
-const VALID_TASKS: AutoTask[] = ['clean_previews', 'audit_false_hits', 'match_unmatched']
+const VALID_TASKS: AutoTask[] = [
+  'clean_previews',
+  'audit_false_hits',
+  'resolve_false_hit_queue',
+  'match_unmatched',
+]
 
 export default defineEventHandler(async event => {
   const body = (await readBody<AutoRunBody>(event).catch(() => ({}) as AutoRunBody)) || {}
@@ -43,6 +53,17 @@ export default defineEventHandler(async event => {
 
   if (task === 'audit_false_hits') {
     return runAutoAuditFalseHits({
+      dryRun: body.dryRun,
+      limit: body.limit,
+      minConfidence: body.minConfidence,
+      rematch: body.rematch,
+      allowGoogle: body.allowGoogle,
+      model: body.model,
+    })
+  }
+
+  if (task === 'resolve_false_hit_queue') {
+    return runAutoResolveFalseHitQueue({
       dryRun: body.dryRun,
       limit: body.limit,
       minConfidence: body.minConfidence,

@@ -131,6 +131,18 @@
               <span class="font-mono">Queued: {{ autoResult.queuedUncertain }}</span>
             </template>
 
+            <template v-else-if="autoResult.task === 'resolve_false_hit_queue'">
+              <span class="font-mono">Scanned: {{ autoResult.scanned }}</span>
+              <span class="font-mono">Auto-Kept: {{ autoResult.autoKept }}</span>
+              <span class="font-mono">Rematched: {{ autoResult.autoRematched }}</span>
+              <span class="font-mono">Unmatched: {{ autoResult.autoUnmatched }}</span>
+              <span class="font-mono">Still Uncertain: {{ autoResult.stillUncertain }}</span>
+              <span class="font-mono">Already Resolved: {{ autoResult.alreadyResolved }}</span>
+              <span v-if="autoResult.errors" class="font-mono text-red-600 dark:text-red-300">
+                Errors: {{ autoResult.errors }}
+              </span>
+            </template>
+
             <template v-else>
               <span class="font-mono">Scanned: {{ autoResult.scanned }}</span>
               <span class="font-mono">Direct: {{ autoResult.directUrlMatches }}</span>
@@ -870,7 +882,11 @@ import type {
 } from '#shared/types/match-review'
 
 type KindFilter = 'all' | ReviewItemKind
-type AutoTaskType = 'clean_previews' | 'audit_false_hits' | 'match_unmatched'
+type AutoTaskType =
+  | 'clean_previews'
+  | 'audit_false_hits'
+  | 'resolve_false_hit_queue'
+  | 'match_unmatched'
 
 interface AutoCleanPreviewsResponse {
   task: 'clean_previews'
@@ -896,6 +912,19 @@ interface AutoAuditFalseHitsResponse {
   samples: Array<{ title: string; action: string }>
 }
 
+interface AutoResolveFalseHitQueueResponse {
+  task: 'resolve_false_hit_queue'
+  dryRun: boolean
+  scanned: number
+  autoKept: number
+  autoRematched: number
+  autoUnmatched: number
+  stillUncertain: number
+  alreadyResolved: number
+  errors: number
+  samples: Array<{ title: string; action: string }>
+}
+
 interface AutoMatchUnmatchedResponse {
   task: 'match_unmatched'
   dryRun: boolean
@@ -912,6 +941,7 @@ interface AutoMatchUnmatchedResponse {
 type AutoPipelineResult =
   | AutoCleanPreviewsResponse
   | AutoAuditFalseHitsResponse
+  | AutoResolveFalseHitQueueResponse
   | AutoMatchUnmatchedResponse
 
 function formatETA(seconds: number): string {
@@ -943,6 +973,14 @@ const autoTaskCards: Array<{
     description: 'LLM-verified auto-rematch/unmatch; only uncertain items go to the review queue.',
     icon: 'i-mdi-shield-search',
     iconClass: 'text-red-500',
+  },
+  {
+    id: 'resolve_false_hit_queue',
+    title: 'Auto-Fix False-Hit Queue',
+    description:
+      'Resolves pending false-hit queue items: auto-keeps confirmed matches and LLM-rematches or unmatches false hits.',
+    icon: 'i-mdi-auto-fix',
+    iconClass: 'text-emerald-500',
   },
   {
     id: 'match_unmatched',
@@ -1000,6 +1038,7 @@ const customImdbIds = reactive<Record<number, string>>({})
 function autoTaskLabel(task: AutoTaskType): string {
   if (task === 'clean_previews') return 'Archive Preview Cleanup'
   if (task === 'audit_false_hits') return 'False-Hit Audit'
+  if (task === 'resolve_false_hit_queue') return 'False-Hit Queue Resolution'
   return 'Unmatched Auto-Match'
 }
 

@@ -3,6 +3,7 @@ import type {
   AutoAuditFalseHitsResult,
   AutoCleanPreviewsResult,
   AutoMatchUnmatchedResult,
+  AutoResolveFalseHitQueueResult,
 } from '../server/utils/autoPipeline'
 
 // Allow running server/utils/*.ts via tsx outside Nitro without failing on `nitropack/runtime`
@@ -25,7 +26,7 @@ registerHooks({
   },
 })
 
-type CliTask = 'clean-previews' | 'audit-false-hits' | 'match-unmatched'
+type CliTask = 'clean-previews' | 'audit-false-hits' | 'resolve-false-hit-queue' | 'match-unmatched'
 
 interface ParsedArgs {
   task: CliTask | null
@@ -45,9 +46,10 @@ function printUsage(): void {
   pnpm tsx scripts/auto-pipeline.ts <task> [options]
 
 Tasks:
-  clean-previews       Clean Archive.org trailers/previews/subtitles (size + runtime aware)
-  audit-false-hits     Audit matched movies, LLM-verify & auto-rematch/unmatch false hits
-  match-unmatched      Match unmatched movies via IMDb index + TMDB + LLM adjudicator
+  clean-previews           Clean Archive.org trailers/previews/subtitles (size + runtime aware)
+  audit-false-hits         Audit matched movies, LLM-verify & auto-rematch/unmatch false hits
+  resolve-false-hit-queue  Resolve pending false_hit items in match_review_queue
+  match-unmatched          Match unmatched movies via IMDb index + TMDB + LLM adjudicator
 
 Options:
   --apply                  Apply changes to the database (default is --dry-run)
@@ -113,7 +115,12 @@ function parseArgs(argv: string[]): ParsedArgs {
     } else if (arg.startsWith('-')) {
       throw new Error(`Unknown option: ${arg}`)
     } else if (!parsed.task) {
-      if (arg === 'clean-previews' || arg === 'audit-false-hits' || arg === 'match-unmatched') {
+      if (
+        arg === 'clean-previews' ||
+        arg === 'audit-false-hits' ||
+        arg === 'resolve-false-hit-queue' ||
+        arg === 'match-unmatched'
+      ) {
         parsed.task = arg
       } else {
         throw new Error(`Unknown task: ${arg}`)
@@ -184,6 +191,34 @@ function printAuditFalseHitsResult(res: AutoAuditFalseHitsResult): void {
   }
 }
 
+function printResolveFalseHitQueueResult(res: AutoResolveFalseHitQueueResult): void {
+  console.log('\n=== False-Hit Queue Resolution Summary ===')
+  console.log(`Mode:             ${res.dryRun ? 'DRY RUN (no DB writes)' : 'APPLIED'}`)
+  console.log(`Scanned:          ${res.scanned}`)
+  console.log(`Auto-Kept:        ${res.autoKept}`)
+  console.log(`Auto-Rematched:   ${res.autoRematched}`)
+  console.log(`Auto-Unmatched:   ${res.autoUnmatched}`)
+  console.log(`Still Uncertain:  ${res.stillUncertain}`)
+  console.log(`Already Resolved: ${res.alreadyResolved}`)
+  console.log(`Errors:           ${res.errors}`)
+
+  if (res.samples.length > 0) {
+    console.log(`\nSample Actions (${res.samples.length}):`)
+    console.table(
+      res.samples.map(s => ({
+        queueId: s.queueId,
+        movieId: s.movieId,
+        title: truncate(s.title, 32),
+        action: s.action,
+        newMovieId: s.newMovieId || '',
+        verdict: s.llmVerdict,
+        conf: Number(s.llmConfidence.toFixed(2)),
+        reason: truncate(s.llmReason, 40),
+      }))
+    )
+  }
+}
+
 function printMatchUnmatchedResult(res: AutoMatchUnmatchedResult): void {
   console.log('\n=== Unmatched Movies Auto-Match Summary ===')
   console.log(`Mode:                  ${res.dryRun ? 'DRY RUN (no DB writes)' : 'APPLIED'}`)
@@ -231,8 +266,12 @@ async function main(): Promise<void> {
       '...'
   )
 
-  const { runAutoAuditFalseHits, runAutoCleanArchivePreviews, runAutoMatchUnmatched } =
-    await import('../server/utils/autoPipeline')
+  const {
+    runAutoAuditFalseHits,
+    runAutoCleanArchivePreviews,
+    runAutoMatchUnmatched,
+    runAutoResolveFalseHitQueue,
+  } = await import('../server/utils/autoPipeline')
 
   if (args.task === 'clean-previews') {
     const result = await runAutoCleanArchivePreviews({
@@ -254,6 +293,19 @@ async function main(): Promise<void> {
       model: args.model,
     })
     printAuditFalseHitsResult(result)
+    return
+  }
+
+  if (args.task === 'resolve-false-hit-queue') {
+    const result = await runAutoResolveFalseHitQueue({
+      dryRun: args.dryRun,
+      limit: args.limit,
+      minConfidence: args.minConfidence,
+      rematch: args.rematch,
+      allowGoogle: args.allowGoogle,
+      model: args.model,
+    })
+    printResolveFalseHitQueueResult(result)
     return
   }
 
