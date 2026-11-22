@@ -26,11 +26,18 @@ CREATE TABLE IF NOT EXISTS match_review_queue (
 );
 `
 
+const TRAILER_KEYWORD_RE = /\b(trailer|tv\s*spot|preview|teaser)\b/i
+const CAMELCASE_PREVIEW_RE = /(?:^|[-_])Preview[A-Z0-9]/
+
 export default defineEventHandler(async (event): Promise<MatchReviewBulkActionResponse> => {
   const body = await readBody<MatchReviewBulkActionRequest>(event)
   const action = body?.action
 
-  if (action !== 'mark_all_previews' && action !== 'keep_all_llm_matches') {
+  if (
+    action !== 'mark_all_previews' &&
+    action !== 'keep_all_llm_matches' &&
+    action !== 'mark_low_ratio_trailers'
+  ) {
     throw createError({
       statusCode: 400,
       message: `Invalid bulk action: ${String(action)}`,
@@ -41,6 +48,118 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
   db.exec(CREATE_QUEUE_TABLE_SQL)
 
   const now = new Date().toISOString()
+
+  if (action === 'mark_low_ratio_trailers') {
+    const maxMbPerMin =
+      typeof body?.maxMbPerMin === 'number' && Number.isFinite(body.maxMbPerMin)
+        ? body.maxMbPerMin
+        : 1.2
+
+    let markedSources = 0
+    let processedItems = 0
+    const touchedMovies = new Set<string>()
+
+    await withTransaction(async txDb => {
+      const candidates = txDb
+        .prepare(
+          `SELECT
+             s.id as sourceRowId,
+             s.movieId,
+             s.sourceId,
+             s.title,
+             s.description,
+             s.size,
+             CAST(REPLACE(md.Runtime, ' min', '') AS INTEGER) as runtimeMin
+           FROM sources s
+           JOIN metadata md ON md.movieId = s.movieId
+           WHERE s.movieId LIKE 'tt%'
+             AND s.channelId = 'archive.org'
+             AND s.size IS NOT NULL
+             AND md.Runtime IS NOT NULL
+             AND md.Runtime LIKE '% min'
+             AND CAST(REPLACE(md.Runtime, ' min', '') AS INTEGER) >= 50
+             AND NOT EXISTS (
+               SELECT 1 FROM source_quality_marks sqm
+               WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
+             )`
+        )
+        .all() as Array<{
+        sourceRowId: number
+        movieId: string
+        sourceId: string
+        title: string | null
+        description: string | null
+        size: number
+        runtimeMin: number
+      }>
+
+      const insertMarkStmt = txDb.prepare(
+        "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
+      )
+      const insertTrailerLabelStmt = txDb.prepare(
+        "INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, 'trailer', ?)"
+      )
+      const countHealthyStmt = txDb.prepare(
+        `SELECT COUNT(*) as cnt FROM sources s
+         WHERE s.movieId = ?
+           AND NOT EXISTS (
+             SELECT 1 FROM source_quality_marks sqm
+             WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
+           )`
+      )
+      const resolveQueueStmt = txDb.prepare(
+        `UPDATE match_review_queue
+         SET status = 'approved', resolvedAt = datetime('now')
+         WHERE status = 'pending'
+           AND movieId = ?
+           AND sourceId = ?`
+      )
+      const updateMovieStmt = txDb.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
+      const hasQualityLabelsTable = Boolean(
+        txDb
+          .prepare(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'movie_quality_labels'"
+          )
+          .get()
+      )
+
+      for (const row of candidates) {
+        const mbPerMin = row.size / (1024 * 1024) / row.runtimeMin
+        if (mbPerMin >= maxMbPerMin) continue
+
+        const combined = `${row.sourceId} ${row.title || ''} ${row.description || ''}`
+        if (!TRAILER_KEYWORD_RE.test(combined) && !CAMELCASE_PREVIEW_RE.test(row.sourceId)) {
+          continue
+        }
+
+        const markRes = insertMarkStmt.run(row.sourceRowId, now)
+        markedSources += markRes.changes
+        const qRes = resolveQueueStmt.run(row.movieId, row.sourceId)
+        processedItems += qRes.changes
+        touchedMovies.add(row.movieId)
+      }
+
+      for (const movieId of touchedMovies) {
+        if (hasQualityLabelsTable) {
+          const healthy = countHealthyStmt.get(movieId) as { cnt: number }
+          if (healthy.cnt === 0) {
+            insertTrailerLabelStmt.run(movieId, now)
+          }
+        }
+        updateMovieStmt.run(now, movieId)
+      }
+    })
+
+    return {
+      success: true,
+      processedItems,
+      markedSources,
+      message:
+        markedSources === 0
+          ? 'No unmarked low-MB/min Archive.org trailers found'
+          : `Marked ${markedSources} low-MB/min trailer source${markedSources === 1 ? '' : 's'} across ${touchedMovies.size} movie${touchedMovies.size === 1 ? '' : 's'}`,
+    }
+  }
 
   if (action === 'keep_all_llm_matches') {
     const minConfidence =

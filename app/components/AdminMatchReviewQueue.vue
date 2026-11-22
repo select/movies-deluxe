@@ -324,6 +324,16 @@
     </div>
 
     <div
+      v-if="bulkMessage"
+      class="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-sm text-emerald-800 dark:text-emerald-200 flex items-center justify-between gap-2"
+    >
+      <span>{{ bulkMessage }}</span>
+      <button class="text-xs underline opacity-80 hover:opacity-100" @click="bulkMessage = null">
+        Dismiss
+      </button>
+    </div>
+
+    <div
       v-if="errorMessage"
       class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300 flex items-center justify-between gap-2"
     >
@@ -364,6 +374,16 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
+        <button
+          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-fuchsia-600 hover:bg-fuchsia-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+          :disabled="bulkActing || loading"
+          title="Scan all Archive.org feature sources (< 1.2 MB/min + trailer/preview keyword) and mark them as trailers/incomplete"
+          @click="markLowRatioTrailers"
+        >
+          <div class="i-mdi-movie-filter-outline" :class="{ 'animate-spin': bulkActing }"></div>
+          Mark Low MB/min Trailers
+        </button>
+
         <button
           v-if="selectedStatus === 'pending' && counts.byKind.false_hit > 0"
           class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
@@ -933,6 +953,7 @@ const loading = ref(false)
 const actingId = ref<number | null>(null)
 const bulkActing = ref(false)
 const errorMessage = ref<string | null>(null)
+const bulkMessage = ref<string | null>(null)
 
 const autoTask = ref<AutoTaskType>('clean_previews')
 const autoLimit = ref(500)
@@ -1049,6 +1070,28 @@ async function performAction(id: number, action: MatchReviewActionType, customIm
     errorMessage.value = err instanceof Error ? err.message : 'Failed to apply review action'
   } finally {
     actingId.value = null
+  }
+}
+
+async function markLowRatioTrailers() {
+  bulkActing.value = true
+  errorMessage.value = null
+  bulkMessage.value = null
+  try {
+    const res = await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
+      method: 'POST',
+      body: {
+        action: 'mark_low_ratio_trailers',
+        maxMbPerMin: 1.2,
+      },
+    })
+    bulkMessage.value = res.message
+    offset.value = 0
+    await fetchQueue()
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to mark low MB/min trailers'
+  } finally {
+    bulkActing.value = false
   }
 }
 
