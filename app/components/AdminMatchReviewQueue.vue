@@ -1,5 +1,183 @@
 <template>
   <section class="bg-theme-surface border border-theme-border rounded-xl p-6 space-y-6">
+    <!-- Automated Pipeline -->
+    <div class="p-4 rounded-xl bg-theme-background border border-theme-border space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-base font-bold flex items-center gap-2 text-theme-text">
+            <div class="i-mdi-robot-outline text-blue-500"></div>
+            Automated Pipeline
+          </h3>
+          <p class="text-xs text-theme-textmuted mt-0.5">
+            Run automated cleanup, false-hit remediation, or unmatched movie matching.
+            High-confidence verdicts auto-apply; only uncertain items are queued below.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-1.5 text-xs">
+            <span class="text-theme-textmuted">Limit:</span>
+            <input
+              v-model.number="autoLimit"
+              type="number"
+              min="1"
+              max="25000"
+              class="w-20 px-2 py-1 text-xs rounded-lg border border-theme-border bg-theme-surface text-theme-text font-mono"
+              :disabled="autoRunning"
+            />
+          </label>
+
+          <label v-if="autoTask !== 'clean_previews'" class="flex items-center gap-1.5 text-xs">
+            <span class="text-theme-textmuted">Min Confidence:</span>
+            <input
+              v-model.number="autoMinConfidence"
+              type="number"
+              min="0.5"
+              max="1"
+              step="0.05"
+              class="w-16 px-2 py-1 text-xs rounded-lg border border-theme-border bg-theme-surface text-theme-text font-mono"
+              :disabled="autoRunning"
+            />
+          </label>
+
+          <label
+            v-if="autoTask !== 'clean_previews'"
+            class="flex items-center gap-1.5 text-xs cursor-pointer select-none"
+          >
+            <input v-model="autoAllowGoogle" type="checkbox" :disabled="autoRunning" />
+            <span>Allow Google (&le;100/day)</span>
+          </label>
+
+          <button
+            class="px-3 py-1.5 text-xs font-semibold bg-theme-surface border border-theme-border hover:bg-theme-selection text-theme-text rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            :disabled="autoRunning || auditing"
+            @click="runAutoPipeline(true)"
+          >
+            <div class="i-mdi-play-outline" :class="{ 'animate-spin': autoRunning }"></div>
+            Dry Run
+          </button>
+
+          <button
+            class="px-3 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            :disabled="autoRunning || auditing"
+            @click="runAutoPipeline(false)"
+          >
+            <div class="i-mdi-auto-fix" :class="{ 'animate-spin': autoRunning }"></div>
+            Run &amp; Auto-Apply
+          </button>
+        </div>
+      </div>
+
+      <!-- Task Selector Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <button
+          v-for="card in autoTaskCards"
+          :key="card.id"
+          type="button"
+          class="text-left p-3 rounded-lg border transition-colors space-y-1"
+          :class="
+            autoTask === card.id
+              ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-900/20'
+              : 'border-theme-border bg-theme-surface hover:bg-theme-selection/50'
+          "
+          :disabled="autoRunning"
+          @click="autoTask = card.id"
+        >
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold text-theme-text flex items-center gap-1.5">
+              <div :class="[card.icon, card.iconClass]"></div>
+              {{ card.title }}
+            </span>
+            <span
+              v-if="autoTask === card.id"
+              class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-blue-600 text-white"
+            >
+              Selected
+            </span>
+          </div>
+          <p class="text-[11px] text-theme-textmuted leading-snug">
+            {{ card.description }}
+          </p>
+        </button>
+      </div>
+
+      <!-- Auto-Pipeline Result Summary Banner -->
+      <div
+        v-if="autoResult"
+        class="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-200 space-y-2"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="font-bold">
+              {{ autoTaskLabel(autoResult.task) }}
+              {{ autoResult.dryRun ? '(Dry Run)' : '(Applied)' }}:
+            </span>
+
+            <template v-if="autoResult.task === 'clean_previews'">
+              <span class="font-mono">Movies: {{ autoResult.scannedMovies }}</span>
+              <span class="font-mono">Sources: {{ autoResult.scannedSources }}</span>
+              <span class="font-mono">Removed: {{ autoResult.removedRedundant }}</span>
+              <span class="font-mono">Marked: {{ autoResult.markedIncomplete }}</span>
+              <span class="font-mono">Cartoons Protected: {{ autoResult.skippedCartoons }}</span>
+              <span class="font-mono">Queued: {{ autoResult.queuedBorderline }}</span>
+            </template>
+
+            <template v-else-if="autoResult.task === 'audit_false_hits'">
+              <span class="font-mono">Scanned: {{ autoResult.scanned }}</span>
+              <span class="font-mono">Flagged: {{ autoResult.deterministicFlagged }}</span>
+              <span class="font-mono">Kept: {{ autoResult.llmKept }}</span>
+              <span class="font-mono">Rematched: {{ autoResult.autoRematched }}</span>
+              <span class="font-mono">Unmatched: {{ autoResult.autoUnmatched }}</span>
+              <span class="font-mono">Queued: {{ autoResult.queuedUncertain }}</span>
+            </template>
+
+            <template v-else>
+              <span class="font-mono">Scanned: {{ autoResult.scanned }}</span>
+              <span class="font-mono">Direct: {{ autoResult.directUrlMatches }}</span>
+              <span class="font-mono">Deterministic: {{ autoResult.deterministicMatches }}</span>
+              <span class="font-mono">LLM: {{ autoResult.llmMatches }}</span>
+              <span class="font-mono">Queued: {{ autoResult.queuedUncertain }}</span>
+              <span class="font-mono">No Match: {{ autoResult.noMatch }}</span>
+              <span v-if="autoResult.errors" class="font-mono text-red-600 dark:text-red-300">
+                Errors: {{ autoResult.errors }}
+              </span>
+            </template>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              v-if="autoResult.samples.length > 0"
+              class="underline font-semibold hover:opacity-80"
+              @click="showAutoSamples = !showAutoSamples"
+            >
+              {{ showAutoSamples ? 'Hide' : 'Show' }} Samples ({{ autoResult.samples.length }})
+            </button>
+            <button class="underline opacity-80 hover:opacity-100" @click="autoResult = null">
+              Dismiss
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-if="showAutoSamples && autoResult.samples.length > 0"
+          class="max-h-56 overflow-y-auto rounded border border-emerald-200 dark:border-emerald-800/70 bg-theme-surface p-2 space-y-1 font-mono text-[11px] text-theme-text"
+        >
+          <div
+            v-for="(sample, idx) in autoResult.samples"
+            :key="idx"
+            class="flex flex-wrap items-center justify-between gap-2 py-1 border-b border-theme-border/40 last:border-b-0"
+          >
+            <span class="truncate max-w-md font-sans font-medium">
+              {{ sample.title }}
+            </span>
+            <span class="px-1.5 py-0.5 rounded bg-theme-background border border-theme-border">
+              {{ sample.action }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Header & Audit Controls -->
     <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
       <div class="space-y-2">
@@ -328,9 +506,21 @@
             <div
               v-for="src in item.sources"
               :key="src.id"
-              class="p-2.5 rounded border border-theme-border/70 bg-theme-background/50 space-y-1.5"
+              class="p-2.5 rounded border space-y-1.5"
+              :class="
+                item.sourceId && src.sourceId === item.sourceId
+                  ? 'border-purple-400 dark:border-purple-600 bg-purple-50/40 dark:bg-purple-900/10 ring-1 ring-purple-400/40'
+                  : 'border-theme-border/70 bg-theme-background/50'
+              "
             >
               <div class="flex flex-wrap items-center gap-2">
+                <span
+                  v-if="item.sourceId && src.sourceId === item.sourceId"
+                  class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300"
+                >
+                  Flagged
+                </span>
+
                 <span
                   class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded bg-theme-surface border border-theme-border"
                 >
@@ -453,9 +643,38 @@
               </div>
             </div>
 
+            <!-- Preview Analysis (for archive_preview) -->
+            <div
+              v-if="item.kind === 'archive_preview' && item.candidate"
+              class="p-2.5 rounded border border-purple-200 dark:border-purple-800/60 bg-purple-50/50 dark:bg-purple-900/10 space-y-1.5 text-xs"
+            >
+              <div class="font-semibold text-purple-800 dark:text-purple-300">Preview Analysis</div>
+              <div class="flex flex-wrap gap-3 text-theme-textmuted font-mono">
+                <span v-if="item.candidate.sizeMB !== null && item.candidate.sizeMB !== undefined">
+                  Size: {{ Number(item.candidate.sizeMB).toFixed(1) }} MB
+                </span>
+                <span
+                  v-if="
+                    item.candidate.runtimeMinutes !== null &&
+                    item.candidate.runtimeMinutes !== undefined
+                  "
+                >
+                  Runtime: {{ item.candidate.runtimeMinutes }} min
+                </span>
+                <span
+                  v-if="item.candidate.mbPerMin !== null && item.candidate.mbPerMin !== undefined"
+                >
+                  Ratio: {{ Number(item.candidate.mbPerMin).toFixed(2) }} MB/min
+                </span>
+              </div>
+              <div v-if="item.candidate.reason" class="text-theme-text">
+                {{ item.candidate.reason }}
+              </div>
+            </div>
+
             <!-- Candidate Info (for new_match or proposed replacement) -->
             <div
-              v-if="item.candidate"
+              v-else-if="item.candidate"
               class="p-2.5 rounded border border-green-200 dark:border-green-800/60 bg-green-50/50 dark:bg-green-900/10 space-y-1 text-xs"
             >
               <div class="font-semibold text-green-800 dark:text-green-300">Proposed Candidate</div>
@@ -606,6 +825,81 @@ import type {
 } from '#shared/types/match-review'
 
 type KindFilter = 'all' | ReviewItemKind
+type AutoTaskType = 'clean_previews' | 'audit_false_hits' | 'match_unmatched'
+
+interface AutoCleanPreviewsResponse {
+  task: 'clean_previews'
+  dryRun: boolean
+  scannedMovies: number
+  scannedSources: number
+  removedRedundant: number
+  markedIncomplete: number
+  skippedCartoons: number
+  queuedBorderline: number
+  samples: Array<{ title: string; action: string }>
+}
+
+interface AutoAuditFalseHitsResponse {
+  task: 'audit_false_hits'
+  dryRun: boolean
+  scanned: number
+  deterministicFlagged: number
+  llmKept: number
+  autoRematched: number
+  autoUnmatched: number
+  queuedUncertain: number
+  samples: Array<{ title: string; action: string }>
+}
+
+interface AutoMatchUnmatchedResponse {
+  task: 'match_unmatched'
+  dryRun: boolean
+  scanned: number
+  directUrlMatches: number
+  deterministicMatches: number
+  llmMatches: number
+  queuedUncertain: number
+  noMatch: number
+  errors: number
+  samples: Array<{ title: string; action: string }>
+}
+
+type AutoPipelineResult =
+  | AutoCleanPreviewsResponse
+  | AutoAuditFalseHitsResponse
+  | AutoMatchUnmatchedResponse
+
+const autoTaskCards: Array<{
+  id: AutoTaskType
+  title: string
+  description: string
+  icon: string
+  iconClass: string
+}> = [
+  {
+    id: 'clean_previews',
+    title: 'Auto-Clean Archive Previews',
+    description:
+      'Uses size + film length, protects cartoons, removes redundant trailers/TV spots, marks single-source previews.',
+    icon: 'i-mdi-filmstrip-off',
+    iconClass: 'text-purple-500',
+  },
+  {
+    id: 'audit_false_hits',
+    title: 'Auto-Audit & Fix False Hits',
+    description: 'LLM-verified auto-rematch/unmatch; only uncertain items go to the review queue.',
+    icon: 'i-mdi-shield-search',
+    iconClass: 'text-red-500',
+  },
+  {
+    id: 'match_unmatched',
+    title: 'Auto-Match Unmatched',
+    description:
+      'Local IMDb index + TMDB + LLM adjudicator; only uncertain items go to the review queue.',
+    icon: 'i-mdi-movie-search',
+    iconClass: 'text-blue-500',
+  },
+]
 
 const kindTabs: Array<{ value: KindFilter; label: string }> = [
   { value: 'all', label: 'All' },
@@ -633,12 +927,57 @@ const loading = ref(false)
 const actingId = ref<number | null>(null)
 const errorMessage = ref<string | null>(null)
 
+const autoTask = ref<AutoTaskType>('clean_previews')
+const autoLimit = ref(500)
+const autoMinConfidence = ref(0.85)
+const autoAllowGoogle = ref(false)
+const autoRunning = ref(false)
+const autoResult = ref<AutoPipelineResult | null>(null)
+const showAutoSamples = ref(false)
+
 const auditing = ref(false)
 const auditUseLlm = ref(true)
 const auditLimit = ref(100)
 const auditResult = ref<AuditMatchesResponse | null>(null)
 
 const customImdbIds = reactive<Record<number, string>>({})
+
+function autoTaskLabel(task: AutoTaskType): string {
+  if (task === 'clean_previews') return 'Archive Preview Cleanup'
+  if (task === 'audit_false_hits') return 'False-Hit Audit'
+  return 'Unmatched Auto-Match'
+}
+
+async function runAutoPipeline(dryRun: boolean) {
+  autoRunning.value = true
+  errorMessage.value = null
+  showAutoSamples.value = false
+  try {
+    const res = await $fetch<AutoPipelineResult>('/api/admin/auto/run', {
+      method: 'POST',
+      body: {
+        task: autoTask.value,
+        dryRun,
+        limit: autoLimit.value,
+        ...(autoTask.value !== 'clean_previews'
+          ? {
+              minConfidence: autoMinConfidence.value,
+              allowGoogle: autoAllowGoogle.value,
+            }
+          : {}),
+      },
+    })
+    autoResult.value = res
+    if (!dryRun) {
+      offset.value = 0
+      await fetchQueue()
+    }
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Automated pipeline request failed'
+  } finally {
+    autoRunning.value = false
+  }
+}
 
 async function fetchQueue() {
   loading.value = true

@@ -33,7 +33,8 @@ export interface ArchiveVideoLengthResult {
 }
 
 const TEN_MB_BYTES = 10 * 1024 * 1024
-const PREVIEW_KEYWORD_REGEX = /\b(preview|trailer|teaser|clip|review|subtitles?|sample)\b/i
+const PREVIEW_KEYWORD_REGEX = /\b(preview|trailer|tv\s*spot|teaser|clip|review|sample)\b/i
+const SUBTITLES_KEYWORD_REGEX = /\bsubtitles?\b/i
 const CAMELCASE_PREVIEW_REGEX = /(?:^|[-_])Preview[A-Z0-9]/
 
 const VIDEO_EXT_REGEX = /\.(mp4|m4v|ogv|mkv|avi|mpeg|mpg|mov|webm|flv|wmv)$/i
@@ -110,18 +111,24 @@ export function analyzeArchiveSourceSize(input: ArchiveSourceSizeInput): Archive
       ? Number((sizeMB / runtimeMinutes).toFixed(2))
       : null
 
-  // 1. Tiny or empty file (< 10 MB or 0 bytes)
-  if (sizeBytes !== null && (sizeBytes === 0 || sizeBytes < TEN_MB_BYTES)) {
+  // 1. Tiny or empty file (< 10 MB or 0 bytes), protecting legitimate ultra-short films (<= 5 min)
+  const isLegitUltraShort =
+    runtimeMinutes !== null && runtimeMinutes <= 5 && mbPerMin !== null && mbPerMin >= 0.8
+  if (sizeBytes !== null && (sizeBytes === 0 || (sizeBytes < TEN_MB_BYTES && !isLegitUltraShort))) {
     flags.push('tiny_or_empty_file')
     reasons.push(`File size is ${sizeMB ?? 0} MB (< 10 MB)`)
   }
 
-  // 2. Preview / trailer / clip / subtitle keyword check
+  // 2. Preview / trailer / clip keyword check (subtitles only flagged when < 10 MB so full movies with subs aren't flagged)
+  const textToScan = `${input.sourceId} ${input.title || ''} ${input.description || ''}`
+  const hasSubtitleOnlyFile =
+    SUBTITLES_KEYWORD_REGEX.test(textToScan) && sizeBytes !== null && sizeBytes < TEN_MB_BYTES
   const hasKeyword =
     PREVIEW_KEYWORD_REGEX.test(input.sourceId) ||
     CAMELCASE_PREVIEW_REGEX.test(input.sourceId) ||
     (input.title ? PREVIEW_KEYWORD_REGEX.test(input.title) : false) ||
-    (input.description ? PREVIEW_KEYWORD_REGEX.test(input.description) : false)
+    (input.description ? PREVIEW_KEYWORD_REGEX.test(input.description) : false) ||
+    hasSubtitleOnlyFile
 
   if (hasKeyword) {
     flags.push('preview_keyword')
