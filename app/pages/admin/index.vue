@@ -308,12 +308,6 @@
               @start="adminStore.startOMDBEnrichment"
             />
 
-            <AdminAIExtractor
-              v-model="aiOptions"
-              :loading="scraping"
-              @start="adminStore.startAIExtraction"
-            />
-
             <AdminPosterDownloader
               v-model="posterOptions"
               :loading="scraping"
@@ -353,7 +347,6 @@ import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
 import AdminEmbeddingsGenerator from '~/components/AdminEmbeddingsGenerator.vue'
 import AdminCollectionCleanup from '~/components/AdminCollectionCleanup.vue'
 import AdminOMDBEnrichment from '~/components/AdminOMDBEnrichment.vue'
-import AdminAIExtractor from '~/components/AdminAIExtractor.vue'
 import AdminPosterDownloader from '~/components/AdminPosterDownloader.vue'
 import AdminArchiver from '~/components/AdminArchiver.vue'
 import AdminResultsLog from '~/components/AdminResultsLog.vue'
@@ -377,7 +370,6 @@ const {
   stats,
   scraping,
   omdbOptions,
-  aiOptions,
   posterOptions,
   cleaningCollections,
   collectionCleanupResults,

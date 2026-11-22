@@ -541,14 +541,6 @@
               </span>
             </div>
 
-            <div
-              v-if="item.movie?.aiTitle || item.movie?.aiYear"
-              class="text-[11px] text-amber-600 dark:text-amber-300"
-            >
-              AI Extracted: {{ item.movie?.aiTitle || '—'
-              }}<span v-if="item.movie?.aiYear"> ({{ item.movie?.aiYear }})</span>
-            </div>
-
             <div v-if="item.sources.length === 0" class="text-xs text-theme-textmuted italic">
               No source records found in database.
             </div>

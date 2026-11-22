@@ -12,8 +12,6 @@ interface BenchMovieRow {
   movieTitle: string
   movieYear: number | null
   verified: number
-  aiTitle: string | null
-  aiYear: number | null
   omdbTitle: string | null
   omdbYear: string | null
   omdbRuntime: string | null
@@ -44,13 +42,11 @@ function main(): void {
     .prepare(
       `SELECT
         m.movieId, m.title as movieTitle, m.year as movieYear, m.verified,
-        ai.title as aiTitle, ai.year as aiYear,
         md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
         md.Director as omdbDirector, md.Actors as omdbActors, md.Type as omdbType,
         s.sourceId, s.title as sourceTitle, s.description as sourceDescription,
         s.size as sourceSize, s.duration as sourceDuration, s.year as sourceYear
       FROM movies m
-      LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
       LEFT JOIN metadata md ON m.movieId = md.movieId
       LEFT JOIN sources s ON m.movieId = s.movieId
       WHERE m.movieId LIKE 'tt%' AND m.verified = 1 AND md.Title IS NOT NULL
@@ -68,8 +64,6 @@ function main(): void {
     const res = scoreMatchCandidate(
       {
         title: rawTitle,
-        aiTitle: row.aiTitle,
-        aiYear: row.aiYear,
         sourceYear: row.sourceYear,
         titleYear: extractYearFromTitle(rawTitle),
         sourceDurationMin: row.sourceDuration ? Math.round(row.sourceDuration / 60) : null,
@@ -108,7 +102,6 @@ function main(): void {
     .prepare(
       `SELECT
         m.movieId, m.title as movieTitle, m.year as movieYear, m.verified,
-        ai.title as aiTitle, ai.year as aiYear,
         md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
         md.Director as omdbDirector, md.Actors as omdbActors, md.Type as omdbType,
         s.sourceId, s.title as sourceTitle, s.description as sourceDescription,
@@ -116,7 +109,6 @@ function main(): void {
       FROM movies m
       JOIN metadata md ON m.movieId = md.movieId
       JOIN sources s ON m.movieId = s.movieId
-      LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
       WHERE m.movieId LIKE 'tt%'
         AND m.verified = 0
         AND s.duration IS NOT NULL AND s.duration > 0
@@ -135,8 +127,6 @@ function main(): void {
     const res = scoreMatchCandidate(
       {
         title: rawTitle,
-        aiTitle: row.aiTitle,
-        aiYear: row.aiYear,
         sourceYear: row.sourceYear,
         titleYear: extractYearFromTitle(rawTitle),
         sourceDurationMin: row.sourceDuration ? Math.round(row.sourceDuration / 60) : null,
@@ -248,10 +238,8 @@ function main(): void {
     .prepare(
       `SELECT
         m.movieId, m.title as movieTitle, m.year as movieYear,
-        ai.title as aiTitle, ai.year as aiYear,
         s.sourceId, s.title as sourceTitle, s.duration as sourceDuration, s.year as sourceYear
       FROM movies m
-      LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
       LEFT JOIN sources s ON m.movieId = s.movieId
       WHERE m.movieId NOT LIKE 'tt%'
       GROUP BY m.movieId
@@ -266,15 +254,13 @@ function main(): void {
     const res = scoreMatchCandidate(
       {
         title: rawTitle,
-        aiTitle: row.aiTitle,
-        aiYear: null,
         sourceYear: null,
         titleYear: null,
         sourceDurationMin: null,
       },
       {
         imdbId: 'tt0000000',
-        title: row.aiTitle || row.movieTitle,
+        title: row.movieTitle,
         year: null,
         runtimeMin: null,
       }

@@ -159,11 +159,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     }
   }
 
-  // Load AI metadata
-  const aiMetadata = db
-    .prepare('SELECT title, year FROM ai_metadata WHERE movieId = ?')
-    .get(movieId) as { title: string; year: number } | undefined
-
   // Load collections
   const collections = db
     .prepare(
@@ -183,7 +178,6 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
     sources: sourcesWithMarks,
     metadata: convertedMetadata,
     verified: movie.verified === 1,
-    ai: aiMetadata || undefined,
     lastUpdated: movie.lastUpdated,
     collections: collections.length > 0 ? collections : undefined,
   }
@@ -338,9 +332,9 @@ export default defineEventHandler(async event => {
 
         // Prepare AI status information for failure tracking
         const aiStatus = {
-          hasAITitle: Boolean(movie.ai?.title),
-          hasAIYear: Boolean(movie.ai?.year),
-          aiTitleUsed: false, // AI title wasn't used due to invalid primary title
+          hasAITitle: false,
+          hasAIYear: false,
+          aiTitleUsed: false,
         }
 
         saveFailedOmdbMatch(
@@ -360,7 +354,7 @@ export default defineEventHandler(async event => {
 
       // Parse title and extract year
       const { title: name, year: titleYear } = extractYearAndCleanTitle(primaryTitle)
-      const yearToUse = movie.ai?.year || sourceYear || titleYear
+      const yearToUse = sourceYear || titleYear
 
       // Track all attempts for enhanced failure tracking
       const attempts: Array<{ query: string; year?: number }> = []
@@ -389,14 +383,7 @@ export default defineEventHandler(async event => {
           }
         }
 
-        // Strategy 1: Try with AI-extracted title if available (using primary source year)
-        if (matchResult.confidence === MatchConfidence.NONE && movie.ai?.title) {
-          console.log(`[OMDB] Using AI-extracted title: "${movie.ai.title}" (year: ${yearToUse})`)
-          attempts.push({ query: movie.ai.title, year: yearToUse })
-          matchResult = await matchMovie(movie.ai.title, yearToUse, apiKey)
-        }
-
-        // Strategy 2: If AI title failed or not available, try with general cleaner
+        // Strategy 1: Try with general cleaner
         if (matchResult.confidence === MatchConfidence.NONE) {
           const cleanedName = cleanTitleGeneral(name)
           console.log(`[OMDB] Using cleaned title: "${cleanedName}" (year: ${yearToUse})`)
@@ -404,7 +391,7 @@ export default defineEventHandler(async event => {
           matchResult = await matchMovie(cleanedName, yearToUse, apiKey)
         }
 
-        // Strategy 3: If cleaned version failed, try original parsed title
+        // Strategy 2: If cleaned version failed, try original parsed title
         if (matchResult.confidence === MatchConfidence.NONE) {
           console.log(`[OMDB] Using original parsed title: "${name}" (year: ${yearToUse})`)
           attempts.push({ query: name, year: yearToUse })
@@ -419,9 +406,9 @@ export default defineEventHandler(async event => {
 
           // Prepare AI status information for failure tracking
           const aiStatus = {
-            hasAITitle: Boolean(movie.ai?.title),
-            hasAIYear: Boolean(movie.ai?.year),
-            aiTitleUsed: Boolean(movie.ai?.title), // AI title was used if it exists
+            hasAITitle: false,
+            hasAIYear: false,
+            aiTitleUsed: false,
           }
 
           saveFailedOmdbMatch(

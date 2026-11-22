@@ -478,11 +478,9 @@ export async function runAutoAuditFalseHits(
     .prepare(
       `SELECT
         m.movieId, m.title as movieTitle, m.year as movieYear,
-        ai.title as aiTitle, ai.year as aiYear,
         md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
         md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
       FROM movies m
-      LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
       LEFT JOIN metadata md ON m.movieId = md.movieId
       WHERE m.movieId LIKE 'tt%'
         ${verifiedFilter}
@@ -493,8 +491,6 @@ export async function runAutoAuditFalseHits(
     movieId: string
     movieTitle: string
     movieYear: number | null
-    aiTitle: string | null
-    aiYear: number | null
     omdbTitle: string | null
     omdbYear: string | null
     omdbRuntime: string | null
@@ -550,8 +546,6 @@ export async function runAutoAuditFalseHits(
       const scoreResult = scoreMatchCandidate(
         {
           title: rawSourceTitle,
-          aiTitle: movie.aiTitle,
-          aiYear: movie.aiYear,
           sourceYear: primarySource.year ?? null,
           titleYear: extractYearFromTitle(rawSourceTitle),
           sourceDurationMin,
@@ -609,8 +603,7 @@ export async function runAutoAuditFalseHits(
         {
           movieId: movie.movieId,
           title: rawSourceTitle,
-          aiTitle: movie.aiTitle,
-          year: movie.aiYear ?? primarySource.year ?? extractYearFromTitle(rawSourceTitle),
+          year: primarySource.year ?? extractYearFromTitle(rawSourceTitle),
           durationMin: sourceDurationMin,
           description: primarySource.description,
           channelName: primarySource.channelName,
@@ -651,9 +644,8 @@ export async function runAutoAuditFalseHits(
         let replacementMeta: MovieMetadata | null = null
 
         if (rematch) {
-          const queryTitle = movie.aiTitle || rawSourceTitle
-          const queryYear =
-            movie.aiYear ?? primarySource.year ?? extractYearFromTitle(rawSourceTitle) ?? undefined
+          const queryTitle = rawSourceTitle
+          const queryYear = primarySource.year ?? extractYearFromTitle(rawSourceTitle) ?? undefined
           const candidates = await retrieveCandidates(
             {
               title: queryTitle,
@@ -668,7 +660,6 @@ export async function runAutoAuditFalseHits(
               {
                 movieId: movie.movieId,
                 title: rawSourceTitle,
-                aiTitle: movie.aiTitle,
                 year: queryYear ?? null,
                 durationMin: sourceDurationMin,
                 description: primarySource.description,
@@ -693,7 +684,7 @@ export async function runAutoAuditFalseHits(
                 : null
               const newRuntimeMin = parseRuntimeMinutes(meta?.Runtime)
               const runtimeCheck = scoreMatchCandidate(
-                { title: rawSourceTitle, aiTitle: movie.aiTitle, sourceDurationMin },
+                { title: rawSourceTitle, sourceDurationMin },
                 {
                   imdbId: adj.chosenImdbId,
                   title: meta?.Title || adj.chosenImdbId,
@@ -851,14 +842,12 @@ export async function runAutoMatchUnmatched(
     .prepare(
       `SELECT
         m.movieId, m.title as movieTitle, m.year as movieYear,
-        ai.title as aiTitle, ai.year as aiYear,
         s.sourceId, s.title as sourceTitle, s.description as sourceDescription,
         s.duration as sourceDuration, s.year as sourceYear,
         c.name as channelName, c.platform
       FROM movies m
       JOIN sources s ON m.movieId = s.movieId
       JOIN channels c ON s.channelId = c.id
-      LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
       WHERE m.movieId NOT LIKE 'tt%'
         ${channelClause}
       GROUP BY m.movieId
@@ -869,8 +858,6 @@ export async function runAutoMatchUnmatched(
     movieId: string
     movieTitle: string
     movieYear: number | null
-    aiTitle: string | null
-    aiYear: number | null
     sourceId: string
     sourceTitle: string | null
     sourceDescription: string | null
@@ -904,13 +891,9 @@ export async function runAutoMatchUnmatched(
     for (const movie of movies) {
       scanned++
       const rawTitle = movie.sourceTitle || movie.movieTitle
-      const queryTitle = movie.aiTitle || rawTitle
+      const queryTitle = rawTitle
       const queryYear =
-        movie.aiYear ??
-        movie.sourceYear ??
-        movie.movieYear ??
-        extractYearFromTitle(rawTitle) ??
-        undefined
+        movie.sourceYear ?? movie.movieYear ?? extractYearFromTitle(rawTitle) ?? undefined
       const sourceDurationMin =
         movie.sourceDuration && movie.sourceDuration > 0
           ? Math.round(movie.sourceDuration / 60)
@@ -980,8 +963,6 @@ export async function runAutoMatchUnmatched(
             result: scoreMatchCandidate(
               {
                 title: rawTitle,
-                aiTitle: movie.aiTitle,
-                aiYear: movie.aiYear,
                 sourceYear: movie.sourceYear,
                 titleYear: extractYearFromTitle(rawTitle),
                 sourceDurationMin,
@@ -1044,7 +1025,6 @@ export async function runAutoMatchUnmatched(
           {
             movieId: movie.movieId,
             title: rawTitle,
-            aiTitle: movie.aiTitle,
             year: queryYear ?? null,
             durationMin: sourceDurationMin,
             description: movie.sourceDescription,
@@ -1068,7 +1048,7 @@ export async function runAutoMatchUnmatched(
             ? await getMovieByImdbId(adj.chosenImdbId, omdbApiKey).catch(() => null)
             : null
           const finalRuntimeCheck = scoreMatchCandidate(
-            { title: rawTitle, aiTitle: movie.aiTitle, sourceDurationMin },
+            { title: rawTitle, sourceDurationMin },
             {
               imdbId: adj.chosenImdbId,
               title: meta?.Title || adj.chosenImdbId,

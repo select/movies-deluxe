@@ -4,7 +4,6 @@ import type { LlmVerdict } from '../../shared/types/match-review'
 export interface VerifierSourceInput {
   movieId?: string
   title: string
-  aiTitle?: string | null
   originalTitle?: string | null
   altTitles?: string[] | null
   year?: number | null
@@ -94,7 +93,6 @@ function normalizeConfidence(val: unknown): number {
 function formatSourceSummary(source: VerifierSourceInput): string {
   const lines = [
     `Raw Title: ${source.title}`,
-    source.aiTitle ? `Cleaned Title: ${source.aiTitle}` : null,
     source.originalTitle ? `Original Title: ${source.originalTitle}` : null,
     source.altTitles?.length ? `Alt Titles: ${source.altTitles.join(', ')}` : null,
     source.year ? `Year: ${source.year}` : null,

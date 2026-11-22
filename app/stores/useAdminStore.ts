@@ -9,7 +9,6 @@ import type {
   OMDBOptions,
   CollectionCleanupResult,
 } from '~/types/admin'
-import { useStorage } from '@vueuse/core'
 import { defineStore, acceptHMRUpdate } from '#imports'
 import { ref, reactive, computed } from 'vue'
 import { $fetch } from '#build/fetch'
@@ -75,16 +74,6 @@ export const useAdminStore = defineStore('admin', () => {
     limit: 50,
     onlyUnmatched: true,
     forceRetryFailed: false,
-  })
-
-  // AI options with localStorage persistence
-  const aiOptions = useStorage('movies-deluxe-ai-options', {
-    provider: 'ollama' as 'ollama' | 'openrouter',
-    model: 'gemma3:4b',
-    limit: 100,
-    batchSize: 5,
-    onlyUnmatched: true,
-    forceReExtract: false,
   })
 
   const updateProgress = (update: ProgressUpdate) => {
@@ -211,24 +200,6 @@ export const useAdminStore = defineStore('admin', () => {
         updated: 0,
         errors: [e instanceof Error ? e.message : String(e)],
       }
-    } finally {
-      scraping.value = false
-    }
-  }
-
-  const startAIExtraction = async () => {
-    scraping.value = true
-    try {
-      const response = await $fetch<{ success: boolean }>('/api/admin/ai/extract-batch', {
-        method: 'POST',
-        body: aiOptions.value,
-      })
-
-      if (response.success) {
-        await refreshStats()
-      }
-    } catch (error) {
-      window.console.error('AI extraction failed:', error)
     } finally {
       scraping.value = false
     }
@@ -367,7 +338,6 @@ export const useAdminStore = defineStore('admin', () => {
     youtubeOptions,
     posterOptions,
     omdbOptions,
-    aiOptions,
     updateProgress,
     clearProgress,
     loadYouTubeChannels,
@@ -376,7 +346,6 @@ export const useAdminStore = defineStore('admin', () => {
     startYouTubeScrape,
     startPosterDownload,
     startOMDBEnrichment,
-    startAIExtraction,
     generateSqlite,
     generateHomePages,
     generateSimilarMovies,

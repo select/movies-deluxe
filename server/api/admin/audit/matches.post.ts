@@ -28,8 +28,6 @@ interface MatchedMovieRow {
   movieTitle: string
   movieYear: number | null
   verified: number
-  aiTitle: string | null
-  aiYear: number | null
   omdbTitle: string | null
   omdbYear: string | null
   omdbRuntime: string | null
@@ -76,8 +74,6 @@ export default defineEventHandler(async event => {
         m.title as movieTitle,
         m.year as movieYear,
         m.verified,
-        ai.title as aiTitle,
-        ai.year as aiYear,
         md.Title as omdbTitle,
         md.Year as omdbYear,
         md.Runtime as omdbRuntime,
@@ -86,7 +82,6 @@ export default defineEventHandler(async event => {
         md.Plot as omdbPlot,
         md.Type as omdbType
       FROM movies m
-      LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
       LEFT JOIN metadata md ON m.movieId = md.movieId
       WHERE m.movieId LIKE 'tt%'
         ${verifiedFilter}
@@ -176,8 +171,6 @@ export default defineEventHandler(async event => {
       const scoreResult = scoreMatchCandidate(
         {
           title: rawSourceTitle,
-          aiTitle: movie.aiTitle,
-          aiYear: movie.aiYear,
           sourceYear: primarySource?.year ?? null,
           titleYear: extractYearFromTitle(rawSourceTitle),
           sourceDurationMin,
@@ -212,8 +205,7 @@ export default defineEventHandler(async event => {
             {
               movieId: movie.movieId,
               title: rawSourceTitle,
-              aiTitle: movie.aiTitle,
-              year: movie.aiYear ?? primarySource?.year ?? null,
+              year: primarySource?.year ?? null,
               durationMin: sourceDurationMin,
               description: primarySource?.description ?? null,
               channelName: primarySource?.channelName ?? null,
@@ -253,8 +245,6 @@ export default defineEventHandler(async event => {
               omdbYear: candidateYear,
               omdbRuntime: movie.omdbRuntime,
               sourceTitle: rawSourceTitle,
-              aiTitle: movie.aiTitle,
-              aiYear: movie.aiYear,
               breakdown: scoreResult.breakdown,
             },
           })

@@ -7,10 +7,8 @@ export type MatchTier = 'auto_accept' | 'needs_review' | 'reject'
 
 export interface ScorerSourceInput {
   title: string
-  aiTitle?: string | null
   originalTitle?: string | null
   altTitles?: string[] | null
-  aiYear?: number | null
   sourceYear?: number | null
   titleYear?: number | null
   sourceDurationMin?: number | null
@@ -285,14 +283,7 @@ export function scoreMatchCandidate(
   const flags: string[] = []
 
   // 1. Title & AKA similarity (0..60 points)
-  const sourceTitles = collectTitles(
-    source.aiTitle || source.title,
-    source.originalTitle,
-    source.altTitles
-  )
-  if (source.aiTitle && source.title && source.aiTitle !== source.title) {
-    sourceTitles.push(source.title)
-  }
+  const sourceTitles = collectTitles(source.title, source.originalTitle, source.altTitles)
   const candidateTitles = collectTitles(
     candidate.title,
     candidate.originalTitle,
@@ -315,9 +306,8 @@ export function scoreMatchCandidate(
   }
 
   // 2. Year score (-35..+15 points)
-  // Prefer explicit source metadata/title year over AI-extracted year (which can be hallucinated)
   const effectiveSourceYear =
-    source.sourceYear ?? source.titleYear ?? extractYearFromTitle(source.title) ?? source.aiYear
+    source.sourceYear ?? source.titleYear ?? extractYearFromTitle(source.title)
   const candidateYear = candidate.year ?? null
 
   let yearScore = 0

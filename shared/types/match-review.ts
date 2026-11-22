@@ -32,8 +32,6 @@ export interface MatchReviewMovieInfo {
   title: string
   year: number | null
   verified: boolean
-  aiTitle?: string | null
-  aiYear?: number | null
 }
 
 export interface MatchReviewMetadataInfo {
