@@ -357,6 +357,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from '#imports'
+import { setInterval } from '#app/compat/interval'
 import { $fetch } from '#build/fetch'
 import { useAdminStore } from '~/stores/useAdminStore'
 import type { SyncChannelsResponse, SyncHistoryResponse } from '#shared/types/admin'
