@@ -145,6 +145,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Free full-length movies from CONtv (Cineverse / Cinedigm) powered by CoPilot Media"
+    },
+    {
+      "id": "UCHgm6IUmnTV2aAMMCSPq8zA",
+      "handle": "@ATouchOfEvil",
+      "name": "A Touch Of Evil",
+      "language": "en",
+      "enabled": true,
+      "notes": "Curated creep, cult, and horror movies"
     }
   ]
 }
