@@ -121,6 +121,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Official channel of Uncork'd Entertainment offering a curated selection of full-length films across horror, thriller, drama, and more"
+    },
+    {
+      "id": "UCNcUc5v0Kt5afE_jcbbZUBQ",
+      "handle": "@ArtflixMovieClassics",
+      "name": "Artflix - Movie Classics",
+      "language": "en",
+      "enabled": true,
+      "notes": "Licensed classic, rare, colorized, and arthouse movies curated by Amogo Networx"
     }
   ]
 }
