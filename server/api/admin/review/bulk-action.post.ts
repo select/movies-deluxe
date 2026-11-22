@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { getAdminDatabase, withTransaction } from '../../../utils/adminDb'
+import { migrateMovieId } from '../../../utils/migrateMovieId'
 import type {
   MatchReviewBulkActionRequest,
   MatchReviewBulkActionResponse,
@@ -36,7 +37,8 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
   if (
     action !== 'mark_all_previews' &&
     action !== 'keep_all_llm_matches' &&
-    action !== 'mark_low_ratio_trailers'
+    action !== 'mark_low_ratio_trailers' &&
+    action !== 'unmatch_low_sim_year_mismatch'
   ) {
     throw createError({
       statusCode: 400,
@@ -48,6 +50,160 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
   db.exec(CREATE_QUEUE_TABLE_SQL)
 
   const now = new Date().toISOString()
+
+  if (action === 'unmatch_low_sim_year_mismatch') {
+    let processedItems = 0
+    let unmatchedMovies = 0
+    let detachedSources = 0
+
+    const items = db
+      .prepare(
+        `SELECT id, movieId, sourceId, flagsJson
+         FROM match_review_queue
+         WHERE status = 'pending'
+           AND kind = 'false_hit'`
+      )
+      .all() as Array<{
+      id: number
+      movieId: string
+      sourceId: string | null
+      flagsJson: string
+    }>
+
+    const matching = items.filter(item => {
+      try {
+        const flags = JSON.parse(item.flagsJson) as unknown
+        return (
+          Array.isArray(flags) &&
+          flags.includes('title_low_similarity') &&
+          flags.includes('year_major_mismatch')
+        )
+      } catch {
+        return false
+      }
+    })
+
+    for (const item of matching) {
+      const movieExists = db
+        .prepare('SELECT movieId, title FROM movies WHERE movieId = ?')
+        .get(item.movieId) as { movieId: string; title: string } | undefined
+
+      if (!movieExists) {
+        db.prepare(
+          "UPDATE match_review_queue SET status = 'resolved', resolvedAt = datetime('now') WHERE id = ?"
+        ).run(item.id)
+        processedItems++
+        continue
+      }
+
+      const sources = db
+        .prepare(
+          `SELECT s.id, s.sourceId, s.title, s.year, c.platform
+           FROM sources s
+           JOIN channels c ON s.channelId = c.id
+           WHERE s.movieId = ?
+           ORDER BY s.addedAt ASC, s.id ASC`
+        )
+        .all(item.movieId) as Array<{
+        id: number
+        sourceId: string
+        title: string | null
+        year: number | null
+        platform: 'youtube' | 'archive.org'
+      }>
+
+      const flaggedSource = item.sourceId
+        ? sources.find(s => s.sourceId === item.sourceId)
+        : undefined
+
+      if (flaggedSource && sources.length > 1) {
+        const baseTempId =
+          flaggedSource.platform === 'archive.org'
+            ? `archive-${flaggedSource.sourceId}`
+            : `youtube-${flaggedSource.sourceId}`
+
+        let detachedMovieId = baseTempId
+        let counter = 1
+        while (db.prepare('SELECT 1 FROM movies WHERE movieId = ?').get(detachedMovieId)) {
+          detachedMovieId = `${baseTempId}-${counter++}`
+        }
+
+        await withTransaction(async txDb => {
+          txDb
+            .prepare(
+              'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, 0, ?)'
+            )
+            .run(
+              detachedMovieId,
+              flaggedSource.title || flaggedSource.sourceId,
+              flaggedSource.year ?? null,
+              now
+            )
+          txDb
+            .prepare('UPDATE sources SET movieId = ? WHERE id = ?')
+            .run(detachedMovieId, flaggedSource.id)
+          txDb.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, item.movieId)
+          txDb
+            .prepare(
+              "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+            )
+            .run(item.id)
+        })
+
+        detachedSources++
+        processedItems++
+        continue
+      }
+
+      const primarySource = flaggedSource ?? sources[0]
+      if (!primarySource) {
+        db.prepare('DELETE FROM metadata WHERE movieId = ?').run(item.movieId)
+        db.prepare(
+          "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+        ).run(item.id)
+        processedItems++
+        continue
+      }
+
+      const baseTempId =
+        primarySource.platform === 'archive.org'
+          ? `archive-${primarySource.sourceId}`
+          : `youtube-${primarySource.sourceId}`
+
+      let tempMovieId = baseTempId
+      let counter = 1
+      while (
+        tempMovieId !== item.movieId &&
+        db.prepare('SELECT 1 FROM movies WHERE movieId = ?').get(tempMovieId)
+      ) {
+        tempMovieId = `${baseTempId}-${counter++}`
+      }
+
+      db.prepare('DELETE FROM metadata WHERE movieId = ?').run(item.movieId)
+      if (tempMovieId !== item.movieId) {
+        await migrateMovieId(item.movieId, tempMovieId)
+      }
+      db.prepare(
+        'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
+      ).run(primarySource.title || primarySource.sourceId, now, tempMovieId)
+      db.prepare(
+        "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE (movieId = ? OR movieId = ?) AND status = 'pending'"
+      ).run(item.movieId, tempMovieId)
+
+      unmatchedMovies++
+      processedItems++
+    }
+
+    return {
+      success: true,
+      processedItems,
+      markedSources: unmatchedMovies + detachedSources,
+      message:
+        processedItems === 0
+          ? 'No pending items with both title_low_similarity and year_major_mismatch found'
+          : `Unmatched ${unmatchedMovies} movie${unmatchedMovies === 1 ? '' : 's'} and detached ${detachedSources} source${detachedSources === 1 ? '' : 's'} (${processedItems} queue item${processedItems === 1 ? '' : 's'} resolved)`,
+    }
+  }
 
   if (action === 'mark_low_ratio_trailers') {
     const maxMbPerMin =

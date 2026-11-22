@@ -105,7 +105,11 @@ export interface MatchReviewActionResponse {
 }
 
 export interface MatchReviewBulkActionRequest {
-  action: 'mark_all_previews' | 'keep_all_llm_matches' | 'mark_low_ratio_trailers'
+  action:
+    | 'mark_all_previews'
+    | 'keep_all_llm_matches'
+    | 'mark_low_ratio_trailers'
+    | 'unmatch_low_sim_year_mismatch'
   kind?: 'archive_preview' | 'false_hit'
   minConfidence?: number
   maxMbPerMin?: number

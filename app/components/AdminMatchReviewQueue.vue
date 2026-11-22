@@ -386,6 +386,17 @@
 
         <button
           v-if="selectedStatus === 'pending' && counts.byKind.false_hit > 0"
+          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+          :disabled="bulkActing || loading"
+          title="Unmatch (or detach on multi-source movies) all pending false hits flagged with both title_low_similarity and year_major_mismatch"
+          @click="unmatchLowSimYearMismatch"
+        >
+          <div class="i-mdi-link-off" :class="{ 'animate-spin': bulkActing }"></div>
+          Unmatch Low-Sim + Year Mismatch
+        </button>
+
+        <button
+          v-if="selectedStatus === 'pending' && counts.byKind.false_hit > 0"
           class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
           :disabled="bulkActing || loading"
           @click="keepAllLlmMatches"
@@ -1070,6 +1081,28 @@ async function performAction(id: number, action: MatchReviewActionType, customIm
     errorMessage.value = err instanceof Error ? err.message : 'Failed to apply review action'
   } finally {
     actingId.value = null
+  }
+}
+
+async function unmatchLowSimYearMismatch() {
+  bulkActing.value = true
+  errorMessage.value = null
+  bulkMessage.value = null
+  try {
+    const res = await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
+      method: 'POST',
+      body: {
+        action: 'unmatch_low_sim_year_mismatch',
+      },
+    })
+    bulkMessage.value = res.message
+    offset.value = 0
+    await fetchQueue()
+  } catch (err) {
+    errorMessage.value =
+      err instanceof Error ? err.message : 'Failed to unmatch low-similarity/year-mismatch items'
+  } finally {
+    bulkActing.value = false
   }
 }
 
