@@ -3,6 +3,7 @@ import type { LlmVerdict } from '../../shared/types/match-review'
 
 export interface VerifierSourceInput {
   movieId?: string
+  sourceId?: string | null
   title: string
   originalTitle?: string | null
   altTitles?: string[] | null
@@ -43,7 +44,21 @@ export interface AdjudicateCandidatesResult {
   reason: string
 }
 
+export interface QueryPlanResult {
+  isMovie: boolean
+  cleanTitle: string | null
+  originalTitle: string | null
+  englishTitle: string | null
+  year: number | null
+  director: string | null
+  cast: string[]
+  searchQueries: string[]
+  webQueries: string[]
+  reason: string
+}
+
 const DEFAULT_MODEL = 'google/gemini-2.5-flash-lite'
+const FALLBACK_MODEL = 'openai/gpt-4o-mini'
 
 function getApiKey(opts?: VerifierOptions): string | undefined {
   return opts?.apiKey || process.env.OPENROUTER_API_KEY
@@ -55,6 +70,41 @@ function createOpenRouterClient(apiKey: string): OpenRouter {
     httpReferer: 'https://movies-deluxe.local',
     appTitle: 'Movies Deluxe',
   })
+}
+
+async function sendPromptWithRetry(
+  apiKey: string,
+  model: string,
+  prompt: string
+): Promise<string | null> {
+  const client = createOpenRouterClient(apiKey)
+  const modelsToTry = model === FALLBACK_MODEL ? [model] : [model, model, FALLBACK_MODEL]
+  const delaysMs = [1500, 2500]
+  let lastError: unknown
+
+  for (let attempt = 0; attempt < modelsToTry.length; attempt++) {
+    const activeModel = modelsToTry[attempt]!
+    try {
+      const completion = await client.chat.send({
+        chatRequest: {
+          model: activeModel,
+          messages: [{ role: 'user', content: prompt }],
+          stream: false,
+        },
+      })
+      const rawContent = completion.choices?.[0]?.message?.content
+      if (typeof rawContent === 'string' && rawContent.trim()) {
+        return rawContent
+      }
+      lastError = new Error('Empty response from LLM')
+    } catch (error) {
+      lastError = error
+    }
+    if (attempt < delaysMs.length) {
+      await new Promise(resolve => setTimeout(resolve, delaysMs[attempt]))
+    }
+  }
+  throw lastError
 }
 
 function extractJsonObject(raw: string): Record<string, unknown> | null {
@@ -90,9 +140,10 @@ function normalizeConfidence(val: unknown): number {
   return Math.max(0, Math.min(1, Number(val.toFixed(3))))
 }
 
-function formatSourceSummary(source: VerifierSourceInput): string {
+function formatSourceSummary(source: VerifierSourceInput, maxDescChars = 800): string {
   const lines = [
     `Raw Title: ${source.title}`,
+    source.sourceId ? `Source ID / Slug: ${source.sourceId}` : null,
     source.originalTitle ? `Original Title: ${source.originalTitle}` : null,
     source.altTitles?.length ? `Alt Titles: ${source.altTitles.join(', ')}` : null,
     source.year ? `Year: ${source.year}` : null,
@@ -100,7 +151,7 @@ function formatSourceSummary(source: VerifierSourceInput): string {
     source.director ? `Director: ${source.director}` : null,
     source.cast?.length ? `Cast: ${source.cast.join(', ')}` : null,
     source.channelName ? `Channel: ${source.channelName}` : null,
-    source.description ? `Description: ${source.description.slice(0, 400)}` : null,
+    source.description ? `Description: ${source.description.slice(0, maxDescChars)}` : null,
   ]
   return lines.filter(Boolean).join('\n')
 }
@@ -154,17 +205,8 @@ export async function verifyMatchCandidate(
   ].join('\n')
 
   try {
-    const client = createOpenRouterClient(apiKey)
-    const completion = await client.chat.send({
-      chatRequest: {
-        model,
-        messages: [{ role: 'user', content: prompt }],
-        stream: false,
-      },
-    })
-
-    const rawContent = completion.choices?.[0]?.message?.content
-    if (typeof rawContent !== 'string' || !rawContent.trim()) {
+    const rawContent = await sendPromptWithRetry(apiKey, model, prompt)
+    if (!rawContent) {
       return { verdict: 'uncertain', confidence: 0, reason: 'Empty response from LLM' }
     }
 
@@ -228,10 +270,13 @@ export async function adjudicateCandidates(
     'Check title (including translations/AKAs), release year, runtime, director/cast, and plot.',
     'Missing source duration/runtime is normal — NEVER reject a candidate solely because source duration is missing or because the IMDb runtime is long (150-240+ min is normal for Bollywood, epic, and classic films).',
     'Ignore release/rip/encoding tags in source titles (e.g., DvDRiP, Dv DRi P, x264, X 264, AAC, Chapters, VOSE, Full Movie).',
-    'If none of the candidates match, set chosenImdbId to null and verdict to "mismatch".',
+    'CRITICAL ANTI-FALSE-POSITIVE RULES:',
+    '1. YouTube channels (especially Movie Central) often put a clickbait hook before the first "|" and the actual film title in another segment (e.g., "Man Wakes Up After Fatal Crash | Suburbanite | Full Thriller Movie" -> the film is "Suburbanite"). NEVER match a candidate solely because a word in the clickbait hook overlaps with the candidate title — the actual film title, plot, cast, or director must match.',
+    '2. When the source has NO release year, require corroborating plot, cast, director, or distinctive title evidence; if the title is generic and plot/cast do not clearly align, return "mismatch" or "uncertain" instead of guessing.',
+    '3. If the source is a TV episode (e.g., Bonanza, Petticoat Junction), newsreel, lecture, interview, or clearly not a match to ANY candidate, set chosenImdbId to null and verdict to "mismatch".',
     '',
     'SOURCE VIDEO:',
-    formatSourceSummary(source),
+    formatSourceSummary(source, 900),
     '',
     'CANDIDATES:',
     candidateBlocks,
@@ -240,17 +285,8 @@ export async function adjudicateCandidates(
   ].join('\n')
 
   try {
-    const client = createOpenRouterClient(apiKey)
-    const completion = await client.chat.send({
-      chatRequest: {
-        model,
-        messages: [{ role: 'user', content: prompt }],
-        stream: false,
-      },
-    })
-
-    const rawContent = completion.choices?.[0]?.message?.content
-    if (typeof rawContent !== 'string' || !rawContent.trim()) {
+    const rawContent = await sendPromptWithRetry(apiKey, model, prompt)
+    if (!rawContent) {
       return {
         chosenImdbId: null,
         verdict: 'uncertain',
@@ -291,5 +327,111 @@ export async function adjudicateCandidates(
       confidence: 0,
       reason: `Adjudication error: ${message}`,
     }
+  }
+}
+
+function normalizeStringArray(val: unknown, maxLen = 6): string[] {
+  if (!Array.isArray(val)) return []
+  return Array.from(
+    new Set(
+      val
+        .filter((v): v is string => typeof v === 'string')
+        .map(v => v.trim())
+        .filter(v => v.length >= 2 && v.length <= 120)
+    )
+  ).slice(0, maxLen)
+}
+
+function normalizeOptionalString(val: unknown): string | null {
+  if (typeof val !== 'string') return null
+  const trimmed = val.trim()
+  return trimmed.length >= 2 && trimmed.toLowerCase() !== 'null' && trimmed.toLowerCase() !== 'n/a'
+    ? trimmed
+    : null
+}
+
+function normalizeOptionalYear(val: unknown): number | null {
+  if (typeof val === 'number' && Number.isFinite(val)) {
+    const y = Math.round(val)
+    return y >= 1888 && y <= 2035 ? y : null
+  }
+  if (typeof val === 'string') {
+    const m = val.match(/\b(18\d{2}|19\d{2}|20[0-3]\d)\b/)
+    if (m?.[1]) {
+      const y = parseInt(m[1], 10)
+      return y >= 1888 && y <= 2035 ? y : null
+    }
+  }
+  return null
+}
+
+/**
+ * Phase 2 LLM Query Planner:
+ * Given a noisy/foreign/hard-to-match source video (and optional rejected Pass-1 candidates),
+ * determine whether it is a real film and generate targeted title, original/English title,
+ * year, director/cast, and web search queries to find the exact IMDb entry.
+ */
+export async function planMatchQueries(
+  source: VerifierSourceInput,
+  rejectedCandidates: Array<{ imdbId: string; title: string; year?: number | null }> = [],
+  opts?: VerifierOptions
+): Promise<QueryPlanResult | null> {
+  const apiKey = getApiKey(opts)
+  if (!apiKey) return null
+
+  const model = opts?.model || DEFAULT_MODEL
+  const rejectedBlock =
+    rejectedCandidates.length > 0
+      ? `\nALREADY REJECTED (DO NOT REPEAT THESE):\n${rejectedCandidates
+          .slice(0, 6)
+          .map(c => `- ${c.imdbId}: ${c.title}${c.year ? ` (${c.year})` : ''}`)
+          .join('\n')}`
+      : ''
+
+  const prompt = [
+    'You are a film identification & search-query specialist. Analyze the uploaded video metadata below to identify the exact film and produce targeted search queries for IMDb / TMDB / Wikidata / web search.',
+    'Instructions:',
+    '1. First decide `isMovie`: set to `false` if this is clearly NOT a film/feature/short movie (e.g. a TV series episode like Bonanza or Petticoat Junction, raw archival newsreel/home footage without an IMDb film title, lecture, interview, audiobook chapter, tax declaration, or gibberish/non-movie upload). Otherwise `true`.',
+    '2. Extract the REAL film title (`cleanTitle`), original-language title (`originalTitle`), and English/international IMDb title (`englishTitle`) from the raw title, description, or slug.',
+    '   - Strip YouTube clickbait hooks (e.g. "Hook | Real Title | Genre" -> "Real Title"), emojis, channel names, and release tags.',
+    '   - If the description mentions the real or original title (e.g. "Blood on the Sun", "Du mou dans la gâchette", "Originaltitel: ..."), use it!',
+    '   - If the title is in German/Spanish/French/Turkish/Japanese/etc., provide the known English/IMDb release title in `englishTitle` and original title in `originalTitle`.',
+    '3. Extract the TRUE release `year` (ignore YouTube upload/promo years like "2025 Movie" or "Kriegsfilme 2026").',
+    '4. Extract `director` and `cast` (up to 4 main actors) if mentioned in the title or description.',
+    '5. Provide `searchQueries` (2 to 4 clean movie title strings without years/tags, e.g. English title, original title, alternate title) for title-index search.',
+    '6. Provide `webQueries` (1 to 2 concise unquoted web search queries WITHOUT any `site:` prefix, combining title + director/actor/year or distinctive plot keywords, e.g. "Mary Higgins Clark Dr. Highley" or "Laughing Times John Woo 1980") for `site:imdb.com/title` web search.',
+    '',
+    'SOURCE VIDEO:',
+    formatSourceSummary(source, 1200),
+    rejectedBlock,
+    '',
+    'Respond ONLY with valid JSON: {"isMovie": true|false, "cleanTitle": string|null, "originalTitle": string|null, "englishTitle": string|null, "year": number|null, "director": string|null, "cast": string[], "searchQueries": string[], "webQueries": string[], "reason": "1-sentence rationale"}',
+  ].join('\n')
+
+  try {
+    const rawContent = await sendPromptWithRetry(apiKey, model, prompt)
+    if (!rawContent) return null
+    const parsed = extractJsonObject(rawContent)
+    if (!parsed) return null
+
+    return {
+      isMovie: parsed.isMovie !== false,
+      cleanTitle: normalizeOptionalString(parsed.cleanTitle),
+      originalTitle: normalizeOptionalString(parsed.originalTitle),
+      englishTitle: normalizeOptionalString(parsed.englishTitle),
+      year: normalizeOptionalYear(parsed.year),
+      director: normalizeOptionalString(parsed.director),
+      cast: normalizeStringArray(parsed.cast, 5),
+      searchQueries: normalizeStringArray(parsed.searchQueries, 4),
+      webQueries: normalizeStringArray(parsed.webQueries, 2),
+      reason:
+        typeof parsed.reason === 'string' && parsed.reason.trim()
+          ? parsed.reason.trim()
+          : 'Query plan generated',
+    }
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error)
+    console.warn(`[MatchVerifier] planMatchQueries failed: ${msg}`)
+    return null
   }
 }

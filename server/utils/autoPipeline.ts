@@ -9,13 +9,24 @@ import 'dotenv/config'
 import type Database from 'better-sqlite3'
 import { ensureMatchAttemptsTable, getAdminDatabase, withTransaction } from './adminDb'
 import { analyzeArchiveSourceSize } from './archivePreviewDetector'
-import { extractImdbIdFromText, retrieveCandidates } from './candidateRetriever'
+import {
+  extractImdbIdFromText,
+  retrieveCandidates,
+  type RetrievedCandidate,
+} from './candidateRetriever'
+import { getImdbLocalById, isImdbLocalIndexAvailable } from './imdbLocalIndex'
 import { enqueueReviewItem } from './matchReviewQueue'
 import { extractYearFromTitle, parseRuntimeMinutes, scoreMatchCandidate } from './matchScorer'
-import { adjudicateCandidates, verifyMatchCandidate } from './matchVerifier'
+import {
+  adjudicateCandidates,
+  planMatchQueries,
+  verifyMatchCandidate,
+  type VerifierCandidateInput,
+} from './matchVerifier'
 import { migrateMovieId } from './migrateMovieId'
 import { getMovieByImdbId } from './omdb'
 import { emitProgress } from './progress'
+import { isSearxngAvailable, searchSearxngRawForImdb } from './searxngSearch'
 import { extractSourceMetadata } from './sourceMetadataExtractor'
 import { generateArchiveId, generateYouTubeId, isImdbId } from '../../shared/types/movie'
 import type { MovieMetadata } from '../../shared/types/movie'
@@ -96,6 +107,8 @@ export interface AutoMatchUnmatchedResult {
   directUrlMatches: number
   deterministicMatches: number
   llmMatches: number
+  plannedLlmMatches?: number
+  notAMovie?: number
   queuedUncertain: number
   noMatch: number
   errors: number
@@ -108,6 +121,96 @@ export interface AutoMatchUnmatchedResult {
     confidence?: number
     reason?: string
   }>
+}
+
+/**
+ * Hydrate top candidates with local IMDb metadata (free) and OMDb plot/director/cast
+ * before sending them to the LLM adjudicator, preventing title-only guessing and false positives.
+ */
+async function hydrateCandidatesForAdjudication(
+  candidates: RetrievedCandidate[],
+  omdbApiKey?: string
+): Promise<VerifierCandidateInput[]> {
+  const localAvailable = isImdbLocalIndexAvailable()
+
+  // Step 1: Fill missing fields from local IMDb index (free, ~1ms)
+  const hydrated = candidates.map(c => {
+    const copy: RetrievedCandidate = {
+      ...c,
+      altTitles: [...c.altTitles],
+      directors: [...c.directors],
+      cast: [...c.cast],
+      sources: [...c.sources],
+    }
+    if (
+      localAvailable &&
+      (!copy.year || !copy.runtimeMinutes || copy.directors.length === 0 || copy.cast.length === 0)
+    ) {
+      const local = getImdbLocalById(copy.imdbId)
+      if (local) {
+        if (!copy.year && local.year) copy.year = local.year
+        if (!copy.runtimeMinutes && local.runtimeMinutes) copy.runtimeMinutes = local.runtimeMinutes
+        if (!copy.titleType && local.titleType) copy.titleType = local.titleType
+        if (copy.directors.length === 0 && local.directors.length > 0) {
+          copy.directors = local.directors
+        }
+        if (copy.cast.length === 0 && local.cast.length > 0) {
+          copy.cast = local.cast
+        }
+      }
+    }
+    return copy
+  })
+
+  // Step 2: Hydrate missing plot/director/actors from OMDb in parallel for top 3 candidates
+  if (omdbApiKey) {
+    const needsOmdb = hydrated
+      .slice(0, 3)
+      .filter(c => !c.overview || c.directors.length === 0 || c.cast.length === 0)
+    if (needsOmdb.length > 0) {
+      await Promise.allSettled(
+        needsOmdb.map(async c => {
+          const meta = await getMovieByImdbId(c.imdbId, omdbApiKey).catch(() => null)
+          if (!meta) return
+          if (!c.overview && meta.Plot && meta.Plot !== 'N/A') {
+            c.overview = meta.Plot
+          }
+          if (!c.runtimeMinutes) {
+            const rt = parseRuntimeMinutes(meta.Runtime)
+            if (rt) c.runtimeMinutes = rt
+          }
+          if (!c.year && meta.Year) {
+            const y = parseInt(meta.Year.slice(0, 4), 10)
+            if (!Number.isNaN(y)) c.year = y
+          }
+          if (c.directors.length === 0 && meta.Director && meta.Director !== 'N/A') {
+            c.directors = meta.Director.split(',')
+              .map(s => s.trim())
+              .filter(Boolean)
+          }
+          if (c.cast.length === 0 && meta.Actors && meta.Actors !== 'N/A') {
+            c.cast = meta.Actors.split(',')
+              .map(s => s.trim())
+              .filter(Boolean)
+          }
+          if (!c.titleType && meta.Type) {
+            c.titleType = meta.Type
+          }
+        })
+      )
+    }
+  }
+
+  return hydrated.map(c => ({
+    imdbId: c.imdbId,
+    title: c.title,
+    year: c.year ?? null,
+    runtimeMin: c.runtimeMinutes ?? null,
+    director: c.directors.join(', ') || null,
+    actors: c.cast.join(', ') || null,
+    plot: c.overview ?? null,
+    type: c.titleType ?? null,
+  }))
 }
 
 interface SourceRow {
@@ -942,6 +1045,8 @@ export async function runAutoMatchUnmatched(
   let directUrlMatches = 0
   let deterministicMatches = 0
   let llmMatches = 0
+  let plannedLlmMatches = 0
+  let notAMovie = 0
   let queuedUncertain = 0
   let noMatch = 0
   let errors = 0
@@ -1038,110 +1143,193 @@ export async function runAutoMatchUnmatched(
           }
         )
 
-        if (candidates.length === 0) {
-          recordAttempt(movie.movieId, 'no_match', 0, 'No candidates retrieved')
-          noMatch++
-          continue
-        }
+        // Pass 3: Deterministic scoring & Pass-1 LLM adjudication (when candidates exist)
+        let pass1Top: {
+          cand: RetrievedCandidate
+          result: ReturnType<typeof scoreMatchCandidate>
+        } | null = null
+        let pass1Adj: Awaited<ReturnType<typeof adjudicateCandidates>> | null = null
+        const rejectedIds = new Set<string>()
+        const rejectedSummaries: Array<{ imdbId: string; title: string; year?: number | null }> = []
 
-        // Pass 3: Deterministic scoring
-        const scored = candidates
-          .map(cand => ({
-            cand,
-            result: scoreMatchCandidate(
-              {
-                title: queryTitle,
-                originalTitle: extracted.originalTitle ?? null,
-                altTitles: extracted.altTitles,
-                sourceYear: queryYear ?? null,
-                titleYear: extracted.year ?? null,
-                sourceDurationMin,
-                director: extracted.director ?? null,
-                cast: extracted.cast,
-              },
-              {
-                imdbId: cand.imdbId,
-                title: cand.title,
-                originalTitle: cand.originalTitle,
-                altTitles: cand.altTitles,
-                year: cand.year ?? null,
-                runtimeMin: cand.runtimeMinutes ?? null,
-                director: cand.directors.join(', ') || null,
-                cast: cand.cast,
-                type: cand.titleType ?? null,
+        if (candidates.length > 0) {
+          const scored = candidates
+            .map(cand => ({
+              cand,
+              result: scoreMatchCandidate(
+                {
+                  title: queryTitle,
+                  originalTitle: extracted.originalTitle ?? null,
+                  altTitles: extracted.altTitles,
+                  sourceYear: queryYear ?? null,
+                  titleYear: extracted.year ?? null,
+                  sourceDurationMin,
+                  director: extracted.director ?? null,
+                  cast: extracted.cast,
+                },
+                {
+                  imdbId: cand.imdbId,
+                  title: cand.title,
+                  originalTitle: cand.originalTitle,
+                  altTitles: cand.altTitles,
+                  year: cand.year ?? null,
+                  runtimeMin: cand.runtimeMinutes ?? null,
+                  director: cand.directors.join(', ') || null,
+                  cast: cand.cast,
+                  type: cand.titleType ?? null,
+                }
+              ),
+            }))
+            .sort((a, b) => b.result.score - a.result.score)
+
+          const top = scored[0]!
+          const second = scored[1]
+          pass1Top = top
+
+          // Auto-accept deterministic high confidence without LLM ONLY when backed by year or people evidence
+          // (never bypass LLM on year-less title + runtime alone, which risks remake/generic-title false positives)
+          const hasYearOrPeopleEvidence =
+            top.result.breakdown.yearScore > 0 || top.result.breakdown.peopleScore > 0
+          if (
+            top.result.tier === 'auto_accept' &&
+            hasYearOrPeopleEvidence &&
+            (!second || top.result.score - second.result.score >= 10)
+          ) {
+            const meta = omdbApiKey
+              ? await getMovieByImdbId(top.cand.imdbId, omdbApiKey).catch(() => null)
+              : null
+            if (!dryRun) {
+              const mig = await migrateMovieId(movie.movieId, top.cand.imdbId)
+              if (mig.success && meta) {
+                upsertMetadataAndMovie(db, top.cand.imdbId, meta)
               }
-            ),
-          }))
-          .sort((a, b) => b.result.score - a.result.score)
+            }
+            recordAttempt(
+              movie.movieId,
+              'matched',
+              candidates.length,
+              `Deterministic auto-accept (${top.cand.imdbId}, score ${top.result.score})`
+            )
+            deterministicMatches++
+            if (samples.length < 30) {
+              samples.push({
+                oldMovieId: movie.movieId,
+                title: rawTitle,
+                action: 'deterministic_match',
+                imdbId: top.cand.imdbId,
+                matchedTitle: meta?.Title || top.cand.title,
+                confidence: Number((top.result.score / 100).toFixed(2)),
+                reason: `Deterministic auto-accept (score ${top.result.score}) via ${top.cand.sources.join('+')}`,
+              })
+            }
+            continue
+          }
 
-        const top = scored[0]!
-        const second = scored[1]
-
-        // Auto-accept deterministic high confidence without LLM call
-        if (
-          top.result.tier === 'auto_accept' &&
-          (!second || top.result.score - second.result.score >= 10)
-        ) {
-          const meta = omdbApiKey
-            ? await getMovieByImdbId(top.cand.imdbId, omdbApiKey).catch(() => null)
-            : null
-          if (!dryRun) {
-            const mig = await migrateMovieId(movie.movieId, top.cand.imdbId)
-            if (mig.success && meta) {
-              upsertMetadataAndMovie(db, top.cand.imdbId, meta)
+          // Ambiguous -> LLM adjudicator (include non-hard-disqualified candidates if nonRejected < 3)
+          const nonRejected = scored.filter(s => s.result.tier !== 'reject').slice(0, 5)
+          const adjudicateList = [...nonRejected]
+          if (adjudicateList.length < 3) {
+            const existingIds = new Set(adjudicateList.map(s => s.cand.imdbId))
+            const fallbackCandidates = scored.filter(
+              s =>
+                !existingIds.has(s.cand.imdbId) &&
+                !s.result.flags.includes('runtime_feature_short_mismatch') &&
+                !s.result.flags.includes('non_movie_candidate')
+            )
+            for (const fc of fallbackCandidates) {
+              if (adjudicateList.length >= 5) break
+              adjudicateList.push(fc)
             }
           }
-          recordAttempt(
-            movie.movieId,
-            'matched',
-            candidates.length,
-            `Deterministic auto-accept (${top.cand.imdbId}, score ${top.result.score})`
-          )
-          deterministicMatches++
-          if (samples.length < 30) {
-            samples.push({
-              oldMovieId: movie.movieId,
-              title: rawTitle,
-              action: 'deterministic_match',
-              imdbId: top.cand.imdbId,
-              matchedTitle: meta?.Title || top.cand.title,
-              confidence: Number((top.result.score / 100).toFixed(2)),
-              reason: `Deterministic auto-accept (score ${top.result.score}) via ${top.cand.sources.join('+')}`,
-            })
+
+          if (adjudicateList.length > 0) {
+            const hydratedInputs = await hydrateCandidatesForAdjudication(
+              adjudicateList.map(s => s.cand),
+              omdbApiKey
+            )
+            const adj = await adjudicateCandidates(
+              {
+                movieId: movie.movieId,
+                sourceId: movie.sourceId,
+                title: rawTitle,
+                originalTitle: extracted.originalTitle ?? null,
+                altTitles: extracted.altTitles,
+                year: queryYear ?? null,
+                durationMin: sourceDurationMin,
+                director: extracted.director ?? null,
+                cast: extracted.cast,
+                description: movie.sourceDescription,
+                channelName: movie.channelName,
+              },
+              hydratedInputs,
+              { model }
+            )
+            pass1Adj = adj
+
+            if (adj.chosenImdbId && adj.verdict === 'match' && adj.confidence >= minConfidence) {
+              const meta = omdbApiKey
+                ? await getMovieByImdbId(adj.chosenImdbId, omdbApiKey).catch(() => null)
+                : null
+              const finalRuntimeCheck = scoreMatchCandidate(
+                { title: queryTitle, sourceDurationMin },
+                {
+                  imdbId: adj.chosenImdbId,
+                  title: meta?.Title || adj.chosenImdbId,
+                  runtimeMin: parseRuntimeMinutes(meta?.Runtime),
+                }
+              )
+              if (
+                !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
+                !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
+              ) {
+                if (!dryRun) {
+                  const mig = await migrateMovieId(movie.movieId, adj.chosenImdbId)
+                  if (mig.success && meta) {
+                    upsertMetadataAndMovie(db, adj.chosenImdbId, meta)
+                  }
+                }
+                recordAttempt(
+                  movie.movieId,
+                  'matched',
+                  candidates.length,
+                  `LLM match (${adj.chosenImdbId}, conf ${adj.confidence})`
+                )
+                llmMatches++
+                if (samples.length < 30) {
+                  samples.push({
+                    oldMovieId: movie.movieId,
+                    title: rawTitle,
+                    action: 'llm_match',
+                    imdbId: adj.chosenImdbId,
+                    matchedTitle: meta?.Title || top.cand.title,
+                    confidence: adj.confidence,
+                    reason: adj.reason,
+                  })
+                }
+                continue
+              }
+            }
+
+            // Only mark Pass-1 candidates as rejected if the LLM actually evaluated them (not on transient API errors)
+            if (!adj.reason.startsWith('Adjudication error:')) {
+              for (const s of adjudicateList) {
+                rejectedIds.add(s.cand.imdbId)
+                rejectedSummaries.push({
+                  imdbId: s.cand.imdbId,
+                  title: s.cand.title,
+                  year: s.cand.year ?? null,
+                })
+              }
+            }
           }
-          continue
         }
 
-        // Ambiguous -> LLM adjudicator (include non-hard-disqualified candidates if nonRejected < 3)
-        const nonRejected = scored.filter(s => s.result.tier !== 'reject').slice(0, 5)
-        const adjudicateList = [...nonRejected]
-        if (adjudicateList.length < 3) {
-          const existingIds = new Set(adjudicateList.map(s => s.cand.imdbId))
-          const fallbackCandidates = scored.filter(
-            s =>
-              !existingIds.has(s.cand.imdbId) &&
-              !s.result.flags.includes('runtime_feature_short_mismatch') &&
-              !s.result.flags.includes('non_movie_candidate')
-          )
-          for (const fc of fallbackCandidates) {
-            if (adjudicateList.length >= 5) break
-            adjudicateList.push(fc)
-          }
-        }
-        if (adjudicateList.length === 0) {
-          recordAttempt(
-            movie.movieId,
-            'no_match',
-            candidates.length,
-            'All candidates had hard disqualifiers'
-          )
-          noMatch++
-          continue
-        }
-
-        const adj = await adjudicateCandidates(
+        // Pass 4 (Phase 2): LLM Query Planner + Multi-Query Fan-out
+        // Runs when Pass 1 returned 0 candidates or failed to reach a confident match.
+        const plan = await planMatchQueries(
           {
             movieId: movie.movieId,
+            sourceId: movie.sourceId,
             title: rawTitle,
             originalTitle: extracted.originalTitle ?? null,
             altTitles: extracted.altTitles,
@@ -1152,65 +1340,206 @@ export async function runAutoMatchUnmatched(
             description: movie.sourceDescription,
             channelName: movie.channelName,
           },
-          adjudicateList.map(s => ({
-            imdbId: s.cand.imdbId,
-            title: s.cand.title,
-            year: s.cand.year ?? null,
-            runtimeMin: s.cand.runtimeMinutes ?? null,
-            director: s.cand.directors.join(', ') || null,
-            actors: s.cand.cast.join(', ') || null,
-            plot: s.cand.overview ?? null,
-            type: s.cand.titleType ?? null,
-          })),
+          rejectedSummaries,
           { model }
         )
 
-        if (adj.chosenImdbId && adj.verdict === 'match' && adj.confidence >= minConfidence) {
-          const meta = omdbApiKey
-            ? await getMovieByImdbId(adj.chosenImdbId, omdbApiKey).catch(() => null)
-            : null
-          const finalRuntimeCheck = scoreMatchCandidate(
-            { title: queryTitle, sourceDurationMin },
+        if (plan && !plan.isMovie) {
+          notAMovie++
+          noMatch++
+          recordAttempt(movie.movieId, 'no_match', candidates.length, `not_a_movie: ${plan.reason}`)
+          continue
+        }
+
+        if (plan) {
+          const plannedYear = plan.year ?? queryYear
+          const plannedTitle =
+            plan.englishTitle || plan.cleanTitle || plan.originalTitle || queryTitle
+          const plannedAlts = Array.from(
+            new Set(
+              [
+                plan.cleanTitle,
+                plan.originalTitle,
+                plan.englishTitle,
+                ...plan.searchQueries,
+              ].filter((t): t is string => Boolean(t && t.trim()))
+            )
+          )
+          const plannedDirector = plan.director || extracted.director
+          const plannedCast = plan.cast.length > 0 ? plan.cast : extracted.cast
+
+          const plannedCandidates = await retrieveCandidates(
             {
-              imdbId: adj.chosenImdbId,
-              title: meta?.Title || adj.chosenImdbId,
-              runtimeMin: parseRuntimeMinutes(meta?.Runtime),
+              title: plannedTitle,
+              originalTitle: plan.originalTitle || extracted.originalTitle,
+              altTitles: plannedAlts,
+              year: plannedYear,
+              description: movie.sourceDescription || undefined,
+              director: plannedDirector,
+              cast: plannedCast,
+            },
+            {
+              limit: 8,
+              omdbApiKey,
+              allowGoogleFallback: allowGoogle,
             }
           )
-          if (
-            !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
-            !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
-          ) {
-            if (!dryRun) {
-              const mig = await migrateMovieId(movie.movieId, adj.chosenImdbId)
-              if (mig.success && meta) {
-                upsertMetadataAndMovie(db, adj.chosenImdbId, meta)
+
+          const freshMap = new Map<string, RetrievedCandidate>()
+          for (const c of plannedCandidates) {
+            if (!rejectedIds.has(c.imdbId)) {
+              freshMap.set(c.imdbId, c)
+            }
+          }
+
+          // Also run LLM webQueries via self-hosted SearXNG (free, great for foreign/obscure titles)
+          if (isSearxngAvailable() && plan.webQueries.length > 0) {
+            for (const wq of plan.webQueries.slice(0, 2)) {
+              const searxHits = await searchSearxngRawForImdb(wq, 4).catch(() => [])
+              for (const hit of searxHits) {
+                if (rejectedIds.has(hit.imdbId) || freshMap.has(hit.imdbId)) continue
+                freshMap.set(hit.imdbId, {
+                  imdbId: hit.imdbId,
+                  title: hit.title,
+                  altTitles: [],
+                  year: hit.year,
+                  directors: [],
+                  cast: [],
+                  overview: hit.snippet,
+                  sources: ['searxng'],
+                })
               }
             }
-            recordAttempt(
-              movie.movieId,
-              'matched',
-              candidates.length,
-              `LLM match (${adj.chosenImdbId}, conf ${adj.confidence})`
-            )
-            llmMatches++
-            if (samples.length < 30) {
-              samples.push({
-                oldMovieId: movie.movieId,
-                title: rawTitle,
-                action: 'llm_match',
-                imdbId: adj.chosenImdbId,
-                matchedTitle: meta?.Title || top.cand.title,
-                confidence: adj.confidence,
-                reason: adj.reason,
-              })
+          }
+
+          const freshList = Array.from(freshMap.values())
+          if (freshList.length > 0) {
+            const scoredFresh = freshList
+              .map(cand => ({
+                cand,
+                result: scoreMatchCandidate(
+                  {
+                    title: plannedTitle,
+                    originalTitle: plan.originalTitle ?? extracted.originalTitle ?? null,
+                    altTitles: plannedAlts,
+                    sourceYear: plannedYear ?? null,
+                    titleYear: plan.year ?? extracted.year ?? null,
+                    sourceDurationMin,
+                    director: plannedDirector ?? null,
+                    cast: plannedCast,
+                  },
+                  {
+                    imdbId: cand.imdbId,
+                    title: cand.title,
+                    originalTitle: cand.originalTitle,
+                    altTitles: cand.altTitles,
+                    year: cand.year ?? null,
+                    runtimeMin: cand.runtimeMinutes ?? null,
+                    director: cand.directors.join(', ') || null,
+                    cast: cand.cast,
+                    type: cand.titleType ?? null,
+                  }
+                ),
+              }))
+              .filter(
+                s =>
+                  !s.result.flags.includes('runtime_feature_short_mismatch') &&
+                  !s.result.flags.includes('non_movie_candidate')
+              )
+              .sort((a, b) => b.result.score - a.result.score)
+              .slice(0, 5)
+
+            if (scoredFresh.length > 0) {
+              const hydratedFresh = await hydrateCandidatesForAdjudication(
+                scoredFresh.map(s => s.cand),
+                omdbApiKey
+              )
+              const adj2 = await adjudicateCandidates(
+                {
+                  movieId: movie.movieId,
+                  sourceId: movie.sourceId,
+                  title: rawTitle,
+                  originalTitle: plan.originalTitle ?? extracted.originalTitle ?? null,
+                  altTitles: plannedAlts,
+                  year: plannedYear ?? null,
+                  durationMin: sourceDurationMin,
+                  director: plannedDirector ?? null,
+                  cast: plannedCast,
+                  description: movie.sourceDescription,
+                  channelName: movie.channelName,
+                },
+                hydratedFresh,
+                { model }
+              )
+
+              if (
+                adj2.chosenImdbId &&
+                adj2.verdict === 'match' &&
+                adj2.confidence >= minConfidence
+              ) {
+                const meta = omdbApiKey
+                  ? await getMovieByImdbId(adj2.chosenImdbId, omdbApiKey).catch(() => null)
+                  : null
+                const finalRuntimeCheck = scoreMatchCandidate(
+                  { title: plannedTitle, sourceDurationMin },
+                  {
+                    imdbId: adj2.chosenImdbId,
+                    title: meta?.Title || adj2.chosenImdbId,
+                    runtimeMin: parseRuntimeMinutes(meta?.Runtime),
+                  }
+                )
+                if (
+                  !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
+                  !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
+                ) {
+                  if (!dryRun) {
+                    const mig = await migrateMovieId(movie.movieId, adj2.chosenImdbId)
+                    if (mig.success && meta) {
+                      upsertMetadataAndMovie(db, adj2.chosenImdbId, meta)
+                    }
+                  }
+                  recordAttempt(
+                    movie.movieId,
+                    'matched',
+                    candidates.length + freshList.length,
+                    `Phase-2 planned LLM match (${adj2.chosenImdbId}, conf ${adj2.confidence})`
+                  )
+                  llmMatches++
+                  plannedLlmMatches++
+                  if (samples.length < 30) {
+                    const chosenCand = scoredFresh.find(
+                      s => s.cand.imdbId === adj2.chosenImdbId
+                    )?.cand
+                    samples.push({
+                      oldMovieId: movie.movieId,
+                      title: rawTitle,
+                      action: 'llm_match',
+                      imdbId: adj2.chosenImdbId,
+                      matchedTitle: meta?.Title || chosenCand?.title || adj2.chosenImdbId,
+                      confidence: adj2.confidence,
+                      reason: `[Planned] ${adj2.reason}`,
+                    })
+                  }
+                  continue
+                }
+              }
+
+              // If Phase 2 was uncertain with decent score, prefer queuing it over Pass 1
+              if (adj2.verdict === 'uncertain' && scoredFresh[0]!.result.score >= 50) {
+                pass1Top = scoredFresh[0]!
+                pass1Adj = adj2
+              }
             }
-            continue
           }
         }
 
         // Queue ONLY uncertain medium-confidence items
-        if (adj.verdict === 'uncertain' && top.result.score >= 50) {
+        if (
+          pass1Adj &&
+          pass1Top &&
+          pass1Adj.verdict === 'uncertain' &&
+          pass1Top.result.score >= 50
+        ) {
           queuedUncertain++
           if (!dryRun) {
             enqueueReviewItem(db, {
@@ -1218,35 +1547,42 @@ export async function runAutoMatchUnmatched(
               kind: 'new_match',
               sourceId: movie.sourceId,
               currentImdbId: null,
-              proposedImdbId: adj.chosenImdbId || top.cand.imdbId,
-              score: top.result.score,
-              llmVerdict: adj.verdict,
-              llmConfidence: adj.confidence,
-              llmReason: adj.reason,
-              flags: top.result.flags,
+              proposedImdbId: pass1Adj.chosenImdbId || pass1Top.cand.imdbId,
+              score: pass1Top.result.score,
+              llmVerdict: pass1Adj.verdict,
+              llmConfidence: pass1Adj.confidence,
+              llmReason: pass1Adj.reason,
+              flags: pass1Top.result.flags,
               candidate: {
-                Title: top.cand.title,
-                Year: top.cand.year,
-                Runtime: top.cand.runtimeMinutes ? `${top.cand.runtimeMinutes} min` : undefined,
-                Director: top.cand.directors.join(', '),
-                Actors: top.cand.cast.join(', '),
+                Title: pass1Top.cand.title,
+                Year: pass1Top.cand.year,
+                Runtime: pass1Top.cand.runtimeMinutes
+                  ? `${pass1Top.cand.runtimeMinutes} min`
+                  : undefined,
+                Director: pass1Top.cand.directors.join(', '),
+                Actors: pass1Top.cand.cast.join(', '),
               },
             })
           }
-          recordAttempt(movie.movieId, 'queued', candidates.length, adj.reason)
+          recordAttempt(movie.movieId, 'queued', candidates.length, pass1Adj.reason)
           if (samples.length < 30) {
             samples.push({
               oldMovieId: movie.movieId,
               title: rawTitle,
               action: 'queued',
-              imdbId: adj.chosenImdbId || top.cand.imdbId,
-              matchedTitle: top.cand.title,
-              confidence: adj.confidence,
-              reason: adj.reason,
+              imdbId: pass1Adj.chosenImdbId || pass1Top.cand.imdbId,
+              matchedTitle: pass1Top.cand.title,
+              confidence: pass1Adj.confidence,
+              reason: pass1Adj.reason,
             })
           }
         } else {
-          recordAttempt(movie.movieId, 'no_match', candidates.length, adj.reason)
+          recordAttempt(
+            movie.movieId,
+            'no_match',
+            candidates.length,
+            pass1Adj?.reason || plan?.reason || 'No match after Phase 2 query planning'
+          )
           noMatch++
         }
       } catch (err) {
@@ -1273,6 +1609,8 @@ export async function runAutoMatchUnmatched(
       directUrlMatches,
       deterministicMatches,
       llmMatches,
+      plannedLlmMatches,
+      notAMovie,
       queuedUncertain,
       noMatch,
       errors,

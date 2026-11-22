@@ -213,15 +213,26 @@ export function extractSourceMetadata(input: SourceMetadataInput): ExtractedSour
   const cast = extractCast(rawTitle, input.description)
 
   const descYear = extractDescriptionYear(input.description)
-  const titleYear = extractYearFromTitle(rawTitle) ?? undefined
+  // Strip promo-tag years (e.g. "2026 Rom Com Movie", "HD 2025 Movie", "Kriegsfilme 2026", "family films 2023 new")
+  const titleWithoutPromoYears = rawTitle
+    .replace(
+      /\b202\d\s+(?:rom\s*com|party|action|horror|thriller|drama|comedy|holiday|christmas|new|free|full|hd|movie|film|movies|films)\b/gi,
+      ' '
+    )
+    .replace(
+      /\b(?:new\s+horror\s+movies|family\s+films|films\s+from\s+germany|action\s+thriller|kriegsfilme|filme|hd)\s+202\d\b/gi,
+      ' '
+    )
+  const titleYear = extractYearFromTitle(titleWithoutPromoYears) ?? undefined
   const archiveInfo = platform === 'archive.org' ? extractArchiveSlugInfo(input.sourceId) : {}
 
   const year = descYear ?? titleYear ?? archiveInfo.slugYear
 
   // Build channel-cleaned and general-cleaned titles
-  const channelKey = input.channelId || input.channelName || ''
   const channelCleaned =
-    platform === 'youtube' && channelKey ? cleanTitle(rawTitle, channelKey) : rawTitle
+    platform === 'youtube' && (input.channelId || input.channelName)
+      ? cleanTitle(rawTitle, input.channelId || '', input.channelName)
+      : rawTitle
   const channelStripped = stripParentheticalAndYearNoise(channelCleaned)
   const generalCleaned = stripParentheticalAndYearNoise(cleanTitleGeneral(rawTitle))
 

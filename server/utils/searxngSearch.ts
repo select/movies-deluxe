@@ -41,6 +41,77 @@ function parseSearxngTitleAndYear(rawTitle: string): { title: string; year?: num
 }
 
 /**
+ * Search local SearXNG instance with a free-form query scoped to `site:imdb.com/title`.
+ * Useful for multi-term queries combining title, director, cast, or plot keywords.
+ */
+export async function searchSearxngRawForImdb(
+  rawQuery: string,
+  maxResults = 5
+): Promise<SearxngImdbHit[]> {
+  const baseUrl = process.env.SEARXNG_URL?.trim().replace(/\/+$/, '')
+  if (!baseUrl) return []
+
+  const trimmed = rawQuery.trim()
+  if (!trimmed) return []
+
+  const elapsed = Date.now() - lastRequestAt
+  if (elapsed < MIN_DELAY_MS) {
+    await sleep(MIN_DELAY_MS - elapsed)
+  }
+  lastRequestAt = Date.now()
+
+  const cleaned = trimmed
+    .replace(/\bsite:\S+/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!cleaned) return []
+
+  const query = `site:imdb.com/title ${cleaned}`
+
+  try {
+    const url = `${baseUrl}/search?q=${encodeURIComponent(query)}&format=json`
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (!res.ok) return []
+
+    const data = (await res.json()) as {
+      results?: Array<{ url?: string; title?: string; content?: string }>
+    }
+
+    const hits: SearxngImdbHit[] = []
+    const seenIds = new Set<string>()
+
+    for (const item of data.results || []) {
+      const itemUrl = item.url || ''
+      const ttMatch = itemUrl.match(/imdb\.com\/title\/(tt\d{7,9})/i)
+      if (!ttMatch?.[1]) continue
+
+      const imdbId = ttMatch[1].toLowerCase()
+      if (seenIds.has(imdbId)) continue
+      seenIds.add(imdbId)
+
+      const parsed = parseSearxngTitleAndYear(item.title || trimmed)
+      hits.push({
+        imdbId,
+        title: parsed.title,
+        year: parsed.year,
+        url: itemUrl,
+        snippet: item.content?.trim() || undefined,
+      })
+
+      if (hits.length >= maxResults) break
+    }
+
+    return hits
+  } catch (error) {
+    console.warn(`[SearXNG] Raw search failed for "${trimmed}":`, error)
+    return []
+  }
+}
+
+/**
  * Search local SearXNG instance for `site:imdb.com/title` matches.
  */
 export async function searchSearxngForImdb(

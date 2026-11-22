@@ -112,6 +112,27 @@ export const TITLE_CLEANING_RULES: TitleCleaningRule[] = [
     channelName: 'Movie Central',
     patterns: [
       {
+        regex: /^[^|]+\|\s*([^|]+?)\s*\|.*$/,
+        extractor: match => {
+          const seg2 = match[1]?.trim() || ''
+          if (
+            seg2 &&
+            !/^(?:full|free|hd|4k|new|\d{4}\s+.*movie|(?:action|drama|comedy|horror|thriller|sci-fi|romance|rom\s*com|christmas|halloween|survival|crime|mystery|adventure|war|epic|powerful)\b.*movie)/i.test(
+              seg2
+            )
+          ) {
+            return seg2
+          }
+          return null
+        },
+        description: 'Extract real movie title from 2nd segment of 3-part pipe title',
+      },
+      {
+        regex: /^([^|]+?)\s*\|\s*(?:Full|Free|HD|4K|\d{4}\s+).*$/i,
+        extractor: match => match[1]?.trim() || null,
+        description: 'Extract real movie title from 1st segment when 2nd segment is promo',
+      },
+      {
         regex: /^[^|]+\|\s*([^|]+?)(?:\s*\|\s*(?:HD|20\d{2}).*)?$/,
         extractor: match => match[1]?.trim() || null,
         description: 'Extract alternate title (second part between pipes)',
@@ -211,11 +232,20 @@ export const TITLE_CLEANING_RULES: TitleCleaningRule[] = [
  * @param channelId - YouTube channel ID (e.g., "@Netzkino")
  * @returns Cleaned movie title
  */
-export function cleanTitle(title: string, channelIdOrName: string): string {
+export function cleanTitle(
+  title: string,
+  channelIdOrName: string,
+  channelName?: string | null
+): string {
   const normalizedKey = channelIdOrName.trim().toLowerCase()
+  const normalizedName = channelName?.trim().toLowerCase() || ''
   const rule = TITLE_CLEANING_RULES.find(
     r =>
-      r.channelId.toLowerCase() === normalizedKey || r.channelName.toLowerCase() === normalizedKey
+      r.channelId.toLowerCase() === normalizedKey ||
+      r.channelName.toLowerCase() === normalizedKey ||
+      (normalizedName &&
+        (r.channelId.toLowerCase() === normalizedName ||
+          r.channelName.toLowerCase() === normalizedName))
   )
 
   // No rule for this channel - return original title
