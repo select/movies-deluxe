@@ -8,7 +8,8 @@
  *   4. IMDb Suggestion API
  *   5. Wikidata API
  *   6. OMDb search (if OMDB_API_KEY available)
- *   7. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
+ *   7. Free DuckDuckGo HTML search fallback (site:imdb.com/title, when candidates empty)
+ *   8. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
  */
 
 import { getImdbLocalById, isImdbLocalIndexAvailable, searchImdbLocalIndex } from './imdbLocalIndex'
@@ -16,6 +17,7 @@ import { isTmdbAvailable, searchTmdbCandidates } from './tmdb'
 import { searchImdbSuggestions } from './imdbSuggestion'
 import { searchWikidataImdb } from './wikidata'
 import { getMovieByImdbId, searchOMDB } from './omdb'
+import { searchDuckDuckGoForImdb } from './duckduckgoSearch'
 import { getGoogleQuotaStatus, searchGoogleForImdb } from './googleSearch'
 
 export type CandidateSourceTag =
@@ -25,6 +27,7 @@ export type CandidateSourceTag =
   | 'imdb_suggestion'
   | 'wikidata'
   | 'omdb'
+  | 'duckduckgo'
   | 'google_cse'
 
 export interface CandidateQueryInput {
@@ -39,6 +42,7 @@ export interface CandidateQueryInput {
 export interface RetrievalOptions {
   limit?: number
   omdbApiKey?: string
+  allowDuckDuckGoFallback?: boolean
   allowGoogleFallback?: boolean
   skipExternalApis?: boolean
 }
@@ -366,7 +370,28 @@ export async function retrieveCandidates(
     }
   }
 
-  // Tier 7: Optional Google CSE tail fallback (strictly under 100/day cap)
+  // Tier 7: Free DuckDuckGo HTML search fallback (when no candidates found yet)
+  if (options.allowDuckDuckGoFallback !== false && candidates.size === 0 && searchQueries[0]) {
+    try {
+      const ddgHits = await searchDuckDuckGoForImdb(searchQueries[0], input.year)
+      for (const hit of ddgHits) {
+        mergeCandidate(candidates, {
+          imdbId: hit.imdbId,
+          title: hit.title,
+          altTitles: [],
+          year: hit.year,
+          directors: [],
+          cast: [],
+          overview: hit.snippet,
+          source: 'duckduckgo',
+        })
+      }
+    } catch (error) {
+      console.warn('[CandidateRetriever] DuckDuckGo fallback failed:', error)
+    }
+  }
+
+  // Tier 8: Optional Google CSE tail fallback (strictly under 100/day cap)
   if (options.allowGoogleFallback && candidates.size === 0 && searchQueries[0]) {
     const quota = getGoogleQuotaStatus()
     if (!quota.exhausted) {
