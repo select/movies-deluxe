@@ -8,8 +8,9 @@
  *   4. IMDb Suggestion API
  *   5. Wikidata API
  *   6. OMDb search (if OMDB_API_KEY available)
- *   7. Free DuckDuckGo HTML search fallback (site:imdb.com/title, when candidates empty)
- *   8. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
+ *   7. Wikipedia MediaWiki API (en.wikipedia.org external IMDb links)
+ *   8. Free DuckDuckGo HTML search fallback (site:imdb.com/title, when candidates empty)
+ *   9. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
  */
 
 import { getImdbLocalById, isImdbLocalIndexAvailable, searchImdbLocalIndex } from './imdbLocalIndex'
@@ -17,6 +18,7 @@ import { isTmdbAvailable, searchTmdbCandidates } from './tmdb'
 import { searchImdbSuggestions } from './imdbSuggestion'
 import { searchWikidataImdb } from './wikidata'
 import { getMovieByImdbId, searchOMDB } from './omdb'
+import { searchWikipediaForImdb } from './wikipediaSearch'
 import { searchDuckDuckGoForImdb } from './duckduckgoSearch'
 import { getGoogleQuotaStatus, searchGoogleForImdb } from './googleSearch'
 
@@ -27,6 +29,7 @@ export type CandidateSourceTag =
   | 'imdb_suggestion'
   | 'wikidata'
   | 'omdb'
+  | 'wikipedia'
   | 'duckduckgo'
   | 'google_cse'
 
@@ -370,7 +373,28 @@ export async function retrieveCandidates(
     }
   }
 
-  // Tier 7: Free DuckDuckGo HTML search fallback (when no candidates found yet)
+  // Tier 7: Wikipedia MediaWiki API (run when few candidates found)
+  if (candidates.size < 3 && searchQueries[0]) {
+    try {
+      const wikiHits = await searchWikipediaForImdb(searchQueries[0], input.year)
+      for (const hit of wikiHits) {
+        mergeCandidate(candidates, {
+          imdbId: hit.imdbId,
+          title: hit.title,
+          altTitles: [],
+          year: hit.year,
+          directors: [],
+          cast: [],
+          overview: hit.overview,
+          source: 'wikipedia',
+        })
+      }
+    } catch (error) {
+      console.warn(`[CandidateRetriever] Wikipedia search failed for "${searchQueries[0]}":`, error)
+    }
+  }
+
+  // Tier 8: Free DuckDuckGo HTML search fallback (when no candidates found yet)
   if (options.allowDuckDuckGoFallback !== false && candidates.size === 0 && searchQueries[0]) {
     try {
       const ddgHits = await searchDuckDuckGoForImdb(searchQueries[0], input.year)
