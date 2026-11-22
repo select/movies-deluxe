@@ -394,7 +394,7 @@
           <!-- YouTube Player -->
           <div v-else-if="currentSource.type === 'youtube'" class="aspect-video">
             <iframe
-              :src="`https://www.youtube.com/embed/${currentSource.id}`"
+              :src="`https://www.youtube.com/embed/${currentSource.sourceId}`"
               class="w-full h-full"
               frameborder="0"
               allow="
@@ -414,7 +414,7 @@
           <!-- Archive.org Player -->
           <div v-else-if="currentSource.type === 'archive.org'" class="aspect-video">
             <iframe
-              :src="`https://archive.org/embed/${currentSource.id}`"
+              :src="`https://archive.org/embed/${currentSource.sourceId}`"
               class="w-full h-full"
               frameborder="0"
               webkitallowfullscreen="true"
