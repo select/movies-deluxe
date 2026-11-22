@@ -264,6 +264,18 @@ interface SourceRow {
   isIncomplete?: number
 }
 
+function ensureAuditAttemptsTable(db: Database.Database): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS audit_attempts (
+      movieId TEXT PRIMARY KEY,
+      auditedAt TEXT NOT NULL,
+      outcome TEXT NOT NULL,
+      detail TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_audit_attempts_auditedAt ON audit_attempts(auditedAt);
+  `)
+}
+
 function computeEtaSeconds(
   startedAtMs: number,
   completed: number,
@@ -991,7 +1003,30 @@ export async function runAutoAuditFalseHits(
 
   const db = getAdminDatabase()
   ensureMatchReviewQueueTable(db)
+  ensureAuditAttemptsTable(db)
   const verifiedFilter = includeVerified ? '' : 'AND m.verified = 0'
+
+  const recordAuditStmt = db.prepare(
+    `INSERT INTO audit_attempts (movieId, auditedAt, outcome, detail)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(movieId) DO UPDATE SET
+       auditedAt = excluded.auditedAt,
+       outcome = excluded.outcome,
+       detail = excluded.detail`
+  )
+  const deleteAuditStmt = db.prepare('DELETE FROM audit_attempts WHERE movieId = ?')
+  const recordAudit = (
+    movieId: string,
+    outcome: 'clean' | 'kept' | 'rematched' | 'uncertain',
+    detail?: string
+  ) => {
+    if (dryRun) return
+    recordAuditStmt.run(movieId, new Date().toISOString(), outcome, detail ?? null)
+  }
+  const deleteAudit = (movieId: string) => {
+    if (dryRun) return
+    deleteAuditStmt.run(movieId)
+  }
 
   // Step 1: Pending false_hit queue items (up to safeLimit)
   const queueRows = db
@@ -1026,9 +1061,10 @@ export async function runAutoAuditFalseHits(
               md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
             FROM movies m
             LEFT JOIN metadata md ON m.movieId = md.movieId
+            LEFT JOIN audit_attempts aa ON m.movieId = aa.movieId
             WHERE m.movieId LIKE 'tt%'
               ${verifiedFilter}
-            ORDER BY m.lastUpdated DESC
+            ORDER BY aa.auditedAt IS NOT NULL ASC, aa.auditedAt ASC, m.lastUpdated DESC
             LIMIT ?`
           )
           .all(remaining + queueMovieIds.size) as Array<{
@@ -1175,6 +1211,7 @@ export async function runAutoAuditFalseHits(
           llmKept++
           if (!dryRun) {
             resolveReviewItem(db, row.id, 'resolved')
+            recordAudit(movie.movieId, 'kept', verdict.reason)
           }
           if (samples.length < 30) {
             samples.push({
@@ -1230,6 +1267,8 @@ export async function runAutoAuditFalseHits(
                 upsertMetadataAndMovie(db, replacementId, replacementMeta)
               }
               resolveReviewItem(db, row.id, 'resolved')
+              deleteAudit(movie.movieId)
+              recordAudit(replacementId, 'rematched', `Rematched from ${movie.movieId}`)
             }
             if (samples.length < 30) {
               samples.push({
@@ -1256,6 +1295,7 @@ export async function runAutoAuditFalseHits(
                 'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
               ).run(rawSourceTitle, new Date().toISOString(), tempId)
               resolveReviewItem(db, row.id, 'resolved')
+              deleteAudit(movie.movieId)
             }
             if (samples.length < 30) {
               samples.push({
@@ -1341,6 +1381,7 @@ export async function runAutoAuditFalseHits(
         )
 
       if (!isSuspicious) {
+        recordAudit(movie.movieId, 'clean', `Score ${scoreResult.score}`)
         if (scanned % 50 === 0 || scanned === total) {
           emitProgress({
             type: 'audit',
@@ -1393,6 +1434,7 @@ export async function runAutoAuditFalseHits(
       // High-confidence KEEP
       if (verdict.verdict === 'match' && verdict.confidence >= minConfidence) {
         llmKept++
+        recordAudit(movie.movieId, 'kept', verdict.reason)
         if (samples.length < 30) {
           samples.push({
             movieId: movie.movieId,
@@ -1452,6 +1494,8 @@ export async function runAutoAuditFalseHits(
                SET status = 'resolved', resolvedAt = datetime('now')
                WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
             ).run(movie.movieId)
+            deleteAudit(movie.movieId)
+            recordAudit(replacementId, 'rematched', `Rematched from ${movie.movieId}`)
           }
           if (samples.length < 30) {
             samples.push({
@@ -1482,6 +1526,7 @@ export async function runAutoAuditFalseHits(
                SET status = 'resolved', resolvedAt = datetime('now')
                WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
             ).run(movie.movieId)
+            deleteAudit(movie.movieId)
           }
           if (samples.length < 30) {
             samples.push({
@@ -1502,6 +1547,9 @@ export async function runAutoAuditFalseHits(
       // Uncertain -> enqueue ONLY these for human review
       queuedUncertain++
       if (!dryRun) {
+        if (!verdict.reason.startsWith('Verification error:')) {
+          recordAudit(movie.movieId, 'uncertain', verdict.reason)
+        }
         enqueueReviewItem(db, {
           movieId: movie.movieId,
           kind: 'false_hit',

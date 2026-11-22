@@ -464,6 +464,20 @@ CREATE TABLE IF NOT EXISTS match_attempts (
 CREATE INDEX IF NOT EXISTS idx_match_attempts_attemptedAt ON match_attempts(attemptedAt);
 
 -- ============================================================================
+-- AUDIT ATTEMPTS TABLE
+-- ============================================================================
+-- Tracks false-hit audit attempts so repeated runs scan never-audited movies first
+
+CREATE TABLE IF NOT EXISTS audit_attempts (
+  movieId TEXT PRIMARY KEY,
+  auditedAt TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  detail TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_attempts_auditedAt ON audit_attempts(auditedAt);
+
+-- ============================================================================
 -- STATISTICS AND OPTIMIZATION
 -- ============================================================================
 
