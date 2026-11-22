@@ -229,7 +229,15 @@ export async function getAvailableModels(apiKey: string): Promise<string[]> {
   try {
     const client = createClient(apiKey)
     const response = await client.models.list()
-    return response.data?.map(m => m.id).filter((id): id is string => typeof id === 'string') || []
+    const models: string[] = []
+    for await (const page of response) {
+      for (const m of page.result.data ?? []) {
+        if (typeof m.id === 'string') {
+          models.push(m.id)
+        }
+      }
+    }
+    return models
   } catch {
     return []
   }

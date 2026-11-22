@@ -77,7 +77,7 @@ export function getAdminDatabase(): Database.Database {
       console.log(`[AdminDB] Connected to admin database: ${DB_PATH}`)
     } catch (error) {
       adminDb = null
-      throw new Error(`Failed to initialize admin database: ${error}`)
+      throw new Error(`Failed to initialize admin database: ${error}`, { cause: error })
     }
   }
 
@@ -93,7 +93,7 @@ function configurePragmas(db: Database.Database): void {
       db.pragma(`${pragma} = ${value}`)
     }
   } catch (error) {
-    throw new Error(`Failed to configure pragmas: ${error}`)
+    throw new Error(`Failed to configure pragmas: ${error}`, { cause: error })
   }
 }
 
@@ -109,7 +109,7 @@ function verifyConnection(db: Database.Database): void {
       throw new Error('Database health check failed: unexpected result')
     }
   } catch (error) {
-    throw new Error(`Database health check failed: ${error}`)
+    throw new Error(`Database health check failed: ${error}`, { cause: error })
   }
 }
 
@@ -195,7 +195,7 @@ export async function withTransaction<T>(
     } catch {
       // Ignore rollback errors (transaction might not be active)
     }
-    throw new Error(`Transaction failed: ${error}`)
+    throw new Error(`Transaction failed: ${error}`, { cause: error })
   }
 }
 

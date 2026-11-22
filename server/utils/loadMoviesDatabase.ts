@@ -110,16 +110,19 @@ export async function loadMoviesDatabase(): Promise<MoviesDatabase> {
   } catch (error) {
     // Check if it's a database file not found error
     if (error instanceof Error && error.message.includes('ENOENT')) {
-      throw new Error('Database file not found: data/movies.db. Please ensure the database exists.')
+      throw new Error(
+        'Database file not found: data/movies.db. Please ensure the database exists.',
+        { cause: error }
+      )
     }
 
     // Check if it's a database connection error
     if (error instanceof Error && error.message.includes('Failed to initialize admin database')) {
-      throw new Error(`Failed to connect to database: ${error.message}`)
+      throw new Error(`Failed to connect to database: ${error.message}`, { cause: error })
     }
 
     console.error('Failed to load movies database:', error)
-    throw new Error(`Failed to load movies database: ${error}`)
+    throw new Error(`Failed to load movies database: ${error}`, { cause: error })
   }
 }
 

@@ -195,6 +195,7 @@ export default defineNuxtConfig({
 
   // Nitro configuration for serving WASM files with correct MIME type
   nitro: {
+    ...(process.env.NITRO_OUTPUT_DIR ? { output: { dir: process.env.NITRO_OUTPUT_DIR } } : {}),
     // Externalize packages that have native Node.js dependencies incompatible with Node 24
     // onnxruntime-node doesn't support Node 24's NAPI v10 yet
     externals: {
@@ -203,6 +204,11 @@ export default defineNuxtConfig({
     },
     hooks: {
       async 'prerender:routes'(routes) {
+        if (process.env.SKIP_PRERENDER === '1' || process.env.SKIP_PRERENDER === 'true') {
+          console.log('[prerender] Skipping route registration (SKIP_PRERENDER enabled)')
+          return
+        }
+
         // Read all movie IDs from SQLite and register as prerender routes
         const Database = (await import('better-sqlite3')).default
         const { resolve } = await import('path')

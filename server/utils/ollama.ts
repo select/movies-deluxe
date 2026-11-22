@@ -116,7 +116,9 @@ export async function loadPrompt(promptName: string): Promise<string> {
     const promptPath = join(process.cwd(), 'prompts', `${promptName}.md`)
     return await readFile(promptPath, 'utf-8')
   } catch (error) {
-    throw new Error(`Failed to load prompt "${promptName}": ${(error as Error).message}`)
+    throw new Error(`Failed to load prompt "${promptName}": ${(error as Error).message}`, {
+      cause: error,
+    })
   }
 }
 

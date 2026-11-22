@@ -29,7 +29,7 @@ async function cleanFailedOmdb() {
   const moviesDb: MoviesDatabase = JSON.parse(moviesData)
 
   console.log('📖 Reading failed OMDB matches...')
-  let failedMatches: FailedOmdbMatch[] = []
+  let failedMatches: FailedOmdbMatch[]
   try {
     const failedData = await readFile(failedPath, 'utf-8')
     failedMatches = JSON.parse(failedData)

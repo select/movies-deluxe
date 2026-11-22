@@ -187,8 +187,7 @@ function loadSourcesForMovie(db: Database.Database, movieId: string): MovieSourc
  */
 function loadMetadataForMovie(db: Database.Database, movieId: string): MovieMetadata | undefined {
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
-    | MetadataRow
-    | undefined
+    MetadataRow | undefined
 
   if (!metadata) return undefined
 
@@ -262,15 +261,14 @@ export async function getMovieById(movieId: string): Promise<MovieEntry | null> 
     const db = getAdminDatabase()
 
     const movie = db.prepare('SELECT * FROM movies WHERE movieId = ?').get(movieId) as
-      | MovieRow
-      | undefined
+      MovieRow | undefined
 
     if (!movie) return null
 
     return buildMovieEntry(db, movie)
   } catch (error) {
     console.error(`[movieHelpers] Error fetching movie ${movieId}:`, error)
-    throw new Error(`Failed to fetch movie: ${error}`)
+    throw new Error(`Failed to fetch movie: ${error}`, { cause: error })
   }
 }
 
@@ -300,7 +298,7 @@ export async function getMoviesByIds(movieIds: string[]): Promise<MovieEntry[]> 
     return movieIds.map(id => movieMap.get(id)).filter((m): m is MovieEntry => m !== undefined)
   } catch (error) {
     console.error('[movieHelpers] Error batch fetching movies:', error)
-    throw new Error(`Failed to batch fetch movies: ${error}`)
+    throw new Error(`Failed to batch fetch movies: ${error}`, { cause: error })
   }
 }
 
@@ -413,7 +411,7 @@ export async function searchMovies(
     return movies.map(movie => buildMovieEntry(db, movie))
   } catch (error) {
     console.error('[movieHelpers] Error searching movies:', error)
-    throw new Error(`Failed to search movies: ${error}`)
+    throw new Error(`Failed to search movies: ${error}`, { cause: error })
   }
 }
 
@@ -428,7 +426,7 @@ export async function getMovieCount(): Promise<number> {
     return result.count
   } catch (error) {
     console.error('[movieHelpers] Error getting movie count:', error)
-    throw new Error(`Failed to get movie count: ${error}`)
+    throw new Error(`Failed to get movie count: ${error}`, { cause: error })
   }
 }
 
@@ -513,7 +511,7 @@ export async function addSource(movieId: string, source: MovieSource): Promise<v
     })
   } catch (error) {
     console.error(`[movieHelpers] Error adding source to movie ${movieId}:`, error)
-    throw new Error(`Failed to add source: ${error}`)
+    throw new Error(`Failed to add source: ${error}`, { cause: error })
   }
 }
 
@@ -543,7 +541,7 @@ export async function removeSource(movieId: string, sourceId: string): Promise<v
     })
   } catch (error) {
     console.error(`[movieHelpers] Error removing source ${sourceId} from movie ${movieId}:`, error)
-    throw new Error(`Failed to remove source: ${error}`)
+    throw new Error(`Failed to remove source: ${error}`, { cause: error })
   }
 }
 
@@ -564,7 +562,7 @@ export async function getSourcesByMovieId(movieId: string): Promise<MovieSource[
     return loadSourcesForMovie(db, movieId)
   } catch (error) {
     console.error(`[movieHelpers] Error getting sources for movie ${movieId}:`, error)
-    throw new Error(`Failed to get sources: ${error}`)
+    throw new Error(`Failed to get sources: ${error}`, { cause: error })
   }
 }
 
@@ -605,7 +603,7 @@ export async function updateSourceQualityMarks(sourceId: string, marks: string[]
     })
   } catch (error) {
     console.error(`[movieHelpers] Error updating quality marks for source ${sourceId}:`, error)
-    throw new Error(`Failed to update quality marks: ${error}`)
+    throw new Error(`Failed to update quality marks: ${error}`, { cause: error })
   }
 }
 
@@ -664,7 +662,7 @@ export async function updateMetadata(movieId: string, metadata: MovieMetadata): 
     })
   } catch (error) {
     console.error(`[movieHelpers] Error updating metadata for movie ${movieId}:`, error)
-    throw new Error(`Failed to update metadata: ${error}`)
+    throw new Error(`Failed to update metadata: ${error}`, { cause: error })
   }
 }
 
@@ -696,7 +694,7 @@ export async function updateAIMetadata(movieId: string, aiData: AIMetadata): Pro
     })
   } catch (error) {
     console.error(`[movieHelpers] Error updating AI metadata for movie ${movieId}:`, error)
-    throw new Error(`Failed to update AI metadata: ${error}`)
+    throw new Error(`Failed to update AI metadata: ${error}`, { cause: error })
   }
 }
 
@@ -709,13 +707,12 @@ export async function hasMetadata(movieId: string): Promise<boolean> {
     const db = getAdminDatabase()
 
     const result = db.prepare('SELECT 1 FROM metadata WHERE movieId = ? LIMIT 1').get(movieId) as
-      | { 1: number }
-      | undefined
+      { 1: number } | undefined
 
     return result !== undefined
   } catch (error) {
     console.error(`[movieHelpers] Error checking metadata for movie ${movieId}:`, error)
-    throw new Error(`Failed to check metadata: ${error}`)
+    throw new Error(`Failed to check metadata: ${error}`, { cause: error })
   }
 }
 
@@ -761,7 +758,9 @@ export async function addToCollection(movieId: string, collectionId: string): Pr
       } catch (error: unknown) {
         const err = error as { code?: string }
         if (err.code === 'SQLITE_CONSTRAINT') {
-          throw new Error(`Movie ${movieId} is already in collection ${collectionId}`)
+          throw new Error(`Movie ${movieId} is already in collection ${collectionId}`, {
+            cause: error,
+          })
         }
         throw error
       }
@@ -774,7 +773,7 @@ export async function addToCollection(movieId: string, collectionId: string): Pr
       `[movieHelpers] Error adding movie ${movieId} to collection ${collectionId}:`,
       error
     )
-    throw new Error(`Failed to add to collection: ${error}`)
+    throw new Error(`Failed to add to collection: ${error}`, { cause: error })
   }
 }
 
@@ -810,7 +809,7 @@ export async function removeFromCollection(movieId: string, collectionId: string
       `[movieHelpers] Error removing movie ${movieId} from collection ${collectionId}:`,
       error
     )
-    throw new Error(`Failed to remove from collection: ${error}`)
+    throw new Error(`Failed to remove from collection: ${error}`, { cause: error })
   }
 }
 
@@ -838,6 +837,6 @@ export async function getMovieCollections(
     return collections
   } catch (error) {
     console.error(`[movieHelpers] Error getting collections for movie ${movieId}:`, error)
-    throw new Error(`Failed to get collections: ${error}`)
+    throw new Error(`Failed to get collections: ${error}`, { cause: error })
   }
 }

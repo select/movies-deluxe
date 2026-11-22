@@ -758,6 +758,8 @@ export const useMovieStore = defineStore('movie', () => {
   watchDebounced(
     () => JSON.stringify(filters.value),
     async () => {
+      if (import.meta.server) return
+
       console.log('[watchFilters] Filter change detected')
 
       // Only apply filters on the search page
