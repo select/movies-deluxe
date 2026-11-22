@@ -234,6 +234,20 @@ function peopleOverlapCount(aList: string[], bList: string[]): number {
   return matches
 }
 
+const RELEASE_NOISE_RE =
+  /\b(dvdrip|dv\s*dri\s*p|brrip|bdrip|webrip|hdrip|hdtv|x264|x\s*264|h264|h\s*264|xvid|divx|aac|ac3|mp3|chapters|vose|subtitulado|english\s+subtitles?|full\s+movie|turkish\s+movie|1080p|720p|480p|360p)\b/gi
+
+function stripReleaseNoise(raw: string): string {
+  return raw
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]*\]/g, ' ')
+    .replace(RELEASE_NOISE_RE, ' ')
+    .replace(/\b(18\d{2}|19\d{2}|20[0-3]\d)\b/g, ' ')
+    .replace(/[,]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function extractTitleVariants(raw?: string | null): string[] {
   if (!raw || !raw.trim()) return []
   const variants = new Set<string>([raw.trim()])
@@ -244,6 +258,10 @@ function extractTitleVariants(raw?: string | null): string[] {
     .replace(/\s+/g, ' ')
     .trim()
   if (stripped) variants.add(stripped)
+
+  const noiseStripped = stripReleaseNoise(raw)
+  if (noiseStripped.length >= 2) variants.add(noiseStripped)
+
   // Split pipe-separated segments (e.g. "Hook | Real Title | Genre")
   if (raw.includes('|')) {
     for (const part of raw.split('|')) {
@@ -252,6 +270,8 @@ function extractTitleVariants(raw?: string | null): string[] {
         .replace(/\[[^\]]*\]/g, ' ')
         .trim()
       if (cleanPart.length >= 2) variants.add(cleanPart)
+      const cleanNoisePart = stripReleaseNoise(part)
+      if (cleanNoisePart.length >= 2) variants.add(cleanNoisePart)
     }
   }
   return Array.from(variants)
