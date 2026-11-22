@@ -7,6 +7,7 @@
  * Usage:
  *   pnpm tsx scripts/build-imdb-index.ts
  *   pnpm tsx scripts/build-imdb-index.ts --skip-download --limit 10000
+ *   pnpm tsx scripts/build-imdb-index.ts --include-episodes
  */
 
 import Database from 'better-sqlite3'
@@ -28,24 +29,34 @@ const BASE_URL = 'https://datasets.imdbws.com'
 const DATASETS = [
   'title.basics.tsv.gz',
   'title.akas.tsv.gz',
-  'name.basics.tsv.gz',
   'title.principals.tsv.gz',
+  'name.basics.tsv.gz',
 ] as const
 
 const BATCH_SIZE = 10_000
+const PROGRESS_INTERVAL = 500_000
+const ALLOWED_TITLE_TYPES = new Set(['movie', 'tvMovie', 'short', 'video', 'tvMiniSeries'])
 const RELEVANT_PRINCIPAL_CATEGORIES = new Set(['director', 'actor', 'actress'])
 
 interface CliOptions {
   skipDownload: boolean
   forceDownload: boolean
+  includeEpisodes: boolean
   limit: number | null
   dbPath: string
   cacheDir: string
 }
 
+interface ImportStats {
+  scanned: number
+  kept: number
+  elapsedSec: string
+}
+
 function parseArgs(argv: string[]): CliOptions {
   let skipDownload = false
   let forceDownload = false
+  let includeEpisodes = false
   let limit: number | null = null
   let dbPath = join(process.cwd(), 'data', 'imdb-index.db')
   let cacheDir = join(process.cwd(), 'data', 'imdb-datasets')
@@ -57,6 +68,8 @@ function parseArgs(argv: string[]): CliOptions {
       skipDownload = true
     } else if (arg === '--force-download') {
       forceDownload = true
+    } else if (arg === '--include-episodes') {
+      includeEpisodes = true
     } else if (arg.startsWith('--limit=')) {
       const val = parseInt(arg.slice('--limit='.length), 10)
       if (!Number.isNaN(val) && val > 0) limit = val
@@ -66,12 +79,18 @@ function parseArgs(argv: string[]): CliOptions {
       i++
     } else if (arg.startsWith('--db=')) {
       dbPath = arg.slice('--db='.length)
+    } else if (arg === '--db' && argv[i + 1]) {
+      dbPath = argv[i + 1]!
+      i++
     } else if (arg.startsWith('--cache-dir=')) {
       cacheDir = arg.slice('--cache-dir='.length)
+    } else if (arg === '--cache-dir' && argv[i + 1]) {
+      cacheDir = argv[i + 1]!
+      i++
     }
   }
 
-  return { skipDownload, forceDownload, limit, dbPath, cacheDir }
+  return { skipDownload, forceDownload, includeEpisodes, limit, dbPath, cacheDir }
 }
 
 function cleanTsvField(val: string | undefined): string | null {
@@ -104,9 +123,11 @@ async function downloadDataset(filename: string, destPath: string): Promise<void
 
 async function streamTsvGz(
   filePath: string,
+  label: string,
   limit: number | null,
-  onBatch: (rows: string[][]) => void
-): Promise<number> {
+  onBatch: (rows: string[][]) => number
+): Promise<ImportStats> {
+  const startTime = Date.now()
   const gunzip = createGunzip()
   const rl = createInterface({
     input: createReadStream(filePath).pipe(gunzip),
@@ -114,7 +135,9 @@ async function streamTsvGz(
   })
 
   let isHeader = true
-  let totalRows = 0
+  let scanned = 0
+  let kept = 0
+  let nextProgressAt = PROGRESS_INTERVAL
   let batch: string[][] = []
 
   for await (const line of rl) {
@@ -125,24 +148,33 @@ async function streamTsvGz(
     if (!line) continue
 
     batch.push(line.split('\t'))
-    totalRows++
+    scanned++
 
     if (batch.length >= BATCH_SIZE) {
-      onBatch(batch)
+      kept += onBatch(batch)
       batch = []
+
+      if (scanned >= nextProgressAt) {
+        const elapsedSec = ((Date.now() - startTime) / 1000).toFixed(1)
+        console.log(
+          `[IMDb Index] ${label}: scanned ${scanned.toLocaleString()} rows, kept ${kept.toLocaleString()} rows (${elapsedSec}s)`
+        )
+        nextProgressAt += PROGRESS_INTERVAL
+      }
     }
 
-    if (limit !== null && totalRows >= limit) {
+    if (limit !== null && scanned >= limit) {
       rl.close()
       break
     }
   }
 
   if (batch.length > 0) {
-    onBatch(batch)
+    kept += onBatch(batch)
   }
 
-  return totalRows
+  const elapsedSec = ((Date.now() - startTime) / 1000).toFixed(1)
+  return { scanned, kept, elapsedSec }
 }
 
 function initializeSchema(db: Database.Database): void {
@@ -202,8 +234,10 @@ function initializeSchema(db: Database.Database): void {
 async function importTitleBasics(
   db: Database.Database,
   filePath: string,
-  limit: number | null
-): Promise<void> {
+  limit: number | null,
+  includeEpisodes: boolean
+): Promise<Set<string> | null> {
+  const keptTitles = includeEpisodes ? null : new Set<string>()
   const insertTitle = db.prepare(`
     INSERT OR IGNORE INTO titles
       (tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, runtimeMinutes, genres)
@@ -214,7 +248,8 @@ async function importTitleBasics(
     VALUES (?, ?, ?, ?)
   `)
 
-  const insertBatch = db.transaction((rows: string[][]) => {
+  const insertBatch = db.transaction((rows: string[][]): number => {
+    let kept = 0
     for (const cols of rows) {
       const tconst = cleanTsvField(cols[0])
       const titleType = cleanTsvField(cols[1])
@@ -226,6 +261,7 @@ async function importTitleBasics(
       const genres = cleanTsvField(cols[8])
 
       if (!tconst || !primaryTitle || isAdult === 1) continue
+      if (!includeEpisodes && (!titleType || !ALLOWED_TITLE_TYPES.has(titleType))) continue
 
       insertTitle.run(
         tconst,
@@ -241,17 +277,24 @@ async function importTitleBasics(
       if (originalTitle && originalTitle !== primaryTitle) {
         insertFts.run(tconst, originalTitle, titleType, startYear)
       }
+      keptTitles?.add(tconst)
+      kept++
     }
+    return kept
   })
 
-  const count = await streamTsvGz(filePath, limit, insertBatch)
-  console.log(`[IMDb Index] Imported ${count} rows from title.basics.tsv.gz`)
+  const stats = await streamTsvGz(filePath, 'title.basics.tsv.gz', limit, insertBatch)
+  console.log(
+    `[IMDb Index] Imported ${stats.kept.toLocaleString()} / ${stats.scanned.toLocaleString()} rows from title.basics.tsv.gz (${stats.elapsedSec}s)`
+  )
+  return keptTitles
 }
 
 async function importTitleAkas(
   db: Database.Database,
   filePath: string,
-  limit: number | null
+  limit: number | null,
+  keptTitles: Set<string> | null
 ): Promise<void> {
   const insertAka = db.prepare(`
     INSERT INTO akas (titleId, title, region, language, isOriginalTitle)
@@ -262,7 +305,8 @@ async function importTitleAkas(
     VALUES (?, ?, NULL, NULL)
   `)
 
-  const insertBatch = db.transaction((rows: string[][]) => {
+  const insertBatch = db.transaction((rows: string[][]): number => {
+    let kept = 0
     for (const cols of rows) {
       const titleId = cleanTsvField(cols[0])
       const title = cleanTsvField(cols[2])
@@ -271,50 +315,35 @@ async function importTitleAkas(
       const isOriginalTitle = parseIntField(cols[7]) ?? 0
 
       if (!titleId || !title) continue
+      if (keptTitles && !keptTitles.has(titleId)) continue
 
       insertAka.run(titleId, title, region, language, isOriginalTitle)
       insertFts.run(titleId, title)
+      kept++
     }
+    return kept
   })
 
-  const count = await streamTsvGz(filePath, limit, insertBatch)
-  console.log(`[IMDb Index] Imported ${count} rows from title.akas.tsv.gz`)
-}
-
-async function importNameBasics(
-  db: Database.Database,
-  filePath: string,
-  limit: number | null
-): Promise<void> {
-  const insertName = db.prepare(`
-    INSERT OR IGNORE INTO names (nconst, primaryName)
-    VALUES (?, ?)
-  `)
-
-  const insertBatch = db.transaction((rows: string[][]) => {
-    for (const cols of rows) {
-      const nconst = cleanTsvField(cols[0])
-      const primaryName = cleanTsvField(cols[1])
-      if (!nconst || !primaryName) continue
-      insertName.run(nconst, primaryName)
-    }
-  })
-
-  const count = await streamTsvGz(filePath, limit, insertBatch)
-  console.log(`[IMDb Index] Imported ${count} rows from name.basics.tsv.gz`)
+  const stats = await streamTsvGz(filePath, 'title.akas.tsv.gz', limit, insertBatch)
+  console.log(
+    `[IMDb Index] Imported ${stats.kept.toLocaleString()} / ${stats.scanned.toLocaleString()} rows from title.akas.tsv.gz (${stats.elapsedSec}s)`
+  )
 }
 
 async function importTitlePrincipals(
   db: Database.Database,
   filePath: string,
-  limit: number | null
-): Promise<void> {
+  limit: number | null,
+  keptTitles: Set<string> | null
+): Promise<Set<string>> {
+  const keptNames = new Set<string>()
   const insertPrincipal = db.prepare(`
     INSERT INTO principals (tconst, ordering, nconst, category)
     VALUES (?, ?, ?, ?)
   `)
 
-  const insertBatch = db.transaction((rows: string[][]) => {
+  const insertBatch = db.transaction((rows: string[][]): number => {
+    let kept = 0
     for (const cols of rows) {
       const tconst = cleanTsvField(cols[0])
       const ordering = parseIntField(cols[1])
@@ -324,13 +353,51 @@ async function importTitlePrincipals(
       if (!tconst || !nconst || !category || !RELEVANT_PRINCIPAL_CATEGORIES.has(category)) {
         continue
       }
+      if (keptTitles && !keptTitles.has(tconst)) continue
 
       insertPrincipal.run(tconst, ordering, nconst, category)
+      keptNames.add(nconst)
+      kept++
     }
+    return kept
   })
 
-  const count = await streamTsvGz(filePath, limit, insertBatch)
-  console.log(`[IMDb Index] Imported ${count} rows from title.principals.tsv.gz`)
+  const stats = await streamTsvGz(filePath, 'title.principals.tsv.gz', limit, insertBatch)
+  console.log(
+    `[IMDb Index] Imported ${stats.kept.toLocaleString()} / ${stats.scanned.toLocaleString()} rows from title.principals.tsv.gz (${stats.elapsedSec}s)`
+  )
+  return keptNames
+}
+
+async function importNameBasics(
+  db: Database.Database,
+  filePath: string,
+  limit: number | null,
+  keptNames: Set<string>
+): Promise<void> {
+  const insertName = db.prepare(`
+    INSERT OR IGNORE INTO names (nconst, primaryName)
+    VALUES (?, ?)
+  `)
+
+  const insertBatch = db.transaction((rows: string[][]): number => {
+    let kept = 0
+    for (const cols of rows) {
+      const nconst = cleanTsvField(cols[0])
+      const primaryName = cleanTsvField(cols[1])
+      if (!nconst || !primaryName) continue
+      if (!keptNames.has(nconst)) continue
+
+      insertName.run(nconst, primaryName)
+      kept++
+    }
+    return kept
+  })
+
+  const stats = await streamTsvGz(filePath, 'name.basics.tsv.gz', limit, insertBatch)
+  console.log(
+    `[IMDb Index] Imported ${stats.kept.toLocaleString()} / ${stats.scanned.toLocaleString()} rows from name.basics.tsv.gz (${stats.elapsedSec}s)`
+  )
 }
 
 async function main(): Promise<void> {
@@ -362,13 +429,29 @@ async function main(): Promise<void> {
     console.log(`[IMDb Index] Initializing SQLite schema at ${options.dbPath}`)
     initializeSchema(db)
 
-    await importTitleBasics(db, join(options.cacheDir, 'title.basics.tsv.gz'), options.limit)
-    await importTitleAkas(db, join(options.cacheDir, 'title.akas.tsv.gz'), options.limit)
-    await importNameBasics(db, join(options.cacheDir, 'name.basics.tsv.gz'), options.limit)
-    await importTitlePrincipals(
+    const keptTitles = await importTitleBasics(
+      db,
+      join(options.cacheDir, 'title.basics.tsv.gz'),
+      options.limit,
+      options.includeEpisodes
+    )
+    await importTitleAkas(
+      db,
+      join(options.cacheDir, 'title.akas.tsv.gz'),
+      options.limit,
+      keptTitles
+    )
+    const keptNames = await importTitlePrincipals(
       db,
       join(options.cacheDir, 'title.principals.tsv.gz'),
-      options.limit
+      options.limit,
+      keptTitles
+    )
+    await importNameBasics(
+      db,
+      join(options.cacheDir, 'name.basics.tsv.gz'),
+      options.limit,
+      keptNames
     )
 
     console.log('[IMDb Index] Creating lookup indexes...')
