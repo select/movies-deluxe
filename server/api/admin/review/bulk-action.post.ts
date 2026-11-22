@@ -29,19 +29,11 @@ CREATE TABLE IF NOT EXISTS match_review_queue (
 export default defineEventHandler(async (event): Promise<MatchReviewBulkActionResponse> => {
   const body = await readBody<MatchReviewBulkActionRequest>(event)
   const action = body?.action
-  const kind = body?.kind ?? 'archive_preview'
 
-  if (action !== 'mark_all_previews') {
+  if (action !== 'mark_all_previews' && action !== 'keep_all_llm_matches') {
     throw createError({
       statusCode: 400,
       message: `Invalid bulk action: ${String(action)}`,
-    })
-  }
-
-  if (kind !== 'archive_preview') {
-    throw createError({
-      statusCode: 400,
-      message: `Invalid kind for mark_all_previews: ${String(kind)}`,
     })
   }
 
@@ -49,6 +41,71 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
   db.exec(CREATE_QUEUE_TABLE_SQL)
 
   const now = new Date().toISOString()
+
+  if (action === 'keep_all_llm_matches') {
+    const minConfidence =
+      typeof body?.minConfidence === 'number' && Number.isFinite(body.minConfidence)
+        ? body.minConfidence
+        : 0.85
+
+    let processedItems = 0
+    let verifiedMovies = 0
+
+    await withTransaction(async txDb => {
+      const matchingItems = txDb
+        .prepare(
+          `SELECT id, movieId FROM match_review_queue
+           WHERE status = 'pending'
+             AND kind = 'false_hit'
+             AND llmVerdict = 'match'
+             AND llmConfidence >= ?`
+        )
+        .all(minConfidence) as Array<{ id: number; movieId: string }>
+
+      if (matchingItems.length === 0) return
+
+      const verifyStmt = txDb.prepare(
+        'UPDATE movies SET verified = 1, lastUpdated = ? WHERE movieId = ?'
+      )
+      const uniqueMovieIds = new Set(matchingItems.map(i => i.movieId))
+      for (const movieId of uniqueMovieIds) {
+        const res = verifyStmt.run(now, movieId)
+        verifiedMovies += res.changes
+      }
+
+      const queueRes = txDb
+        .prepare(
+          `UPDATE match_review_queue
+           SET status = 'rejected', resolvedAt = datetime('now')
+           WHERE status = 'pending'
+             AND kind = 'false_hit'
+             AND llmVerdict = 'match'
+             AND llmConfidence >= ?`
+        )
+        .run(minConfidence)
+
+      processedItems = queueRes.changes
+    })
+
+    return {
+      success: true,
+      processedItems,
+      markedSources: verifiedMovies,
+      message:
+        processedItems === 0
+          ? 'No pending LLM-confirmed matches to verify'
+          : `Verified ${verifiedMovies} movie${verifiedMovies === 1 ? '' : 's'} and dismissed ${processedItems} LLM-confirmed false-hit item${processedItems === 1 ? '' : 's'}`,
+    }
+  }
+
+  const kind = body?.kind ?? 'archive_preview'
+
+  if (kind !== 'archive_preview') {
+    throw createError({
+      statusCode: 400,
+      message: `Invalid kind for mark_all_previews: ${String(kind)}`,
+    })
+  }
 
   try {
     let processedItems = 0

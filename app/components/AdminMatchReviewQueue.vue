@@ -365,6 +365,16 @@
 
       <div class="flex flex-wrap items-center gap-3">
         <button
+          v-if="selectedStatus === 'pending' && counts.byKind.false_hit > 0"
+          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+          :disabled="bulkActing || loading"
+          @click="keepAllLlmMatches"
+        >
+          <div class="i-mdi-check-decagram" :class="{ 'animate-spin': bulkActing }"></div>
+          Keep &amp; Verify All LLM Matches (≥85%)
+        </button>
+
+        <button
           v-if="selectedStatus === 'pending' && counts.byKind.archive_preview > 0"
           class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
           :disabled="bulkActing || loading"
@@ -1039,6 +1049,27 @@ async function performAction(id: number, action: MatchReviewActionType, customIm
     errorMessage.value = err instanceof Error ? err.message : 'Failed to apply review action'
   } finally {
     actingId.value = null
+  }
+}
+
+async function keepAllLlmMatches() {
+  bulkActing.value = true
+  errorMessage.value = null
+  try {
+    await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
+      method: 'POST',
+      body: {
+        action: 'keep_all_llm_matches',
+        minConfidence: 0.85,
+      },
+    })
+    offset.value = 0
+    await fetchQueue()
+  } catch (err) {
+    errorMessage.value =
+      err instanceof Error ? err.message : 'Failed to verify all LLM-confirmed matches'
+  } finally {
+    bulkActing.value = false
   }
 }
 

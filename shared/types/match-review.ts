@@ -105,8 +105,9 @@ export interface MatchReviewActionResponse {
 }
 
 export interface MatchReviewBulkActionRequest {
-  action: 'mark_all_previews'
-  kind?: 'archive_preview'
+  action: 'mark_all_previews' | 'keep_all_llm_matches'
+  kind?: 'archive_preview' | 'false_hit'
+  minConfidence?: number
 }
 
 export interface MatchReviewBulkActionResponse {
