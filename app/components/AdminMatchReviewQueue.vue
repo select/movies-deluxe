@@ -520,14 +520,14 @@
               :key="src.id"
               class="p-2.5 rounded border space-y-1.5"
               :class="
-                item.sourceId && src.sourceId === item.sourceId
+                isSourceHighlighted(item, src)
                   ? 'border-purple-400 dark:border-purple-600 bg-purple-50/40 dark:bg-purple-900/10 ring-1 ring-purple-400/40'
                   : 'border-theme-border/70 bg-theme-background/50'
               "
             >
               <div class="flex flex-wrap items-center gap-2">
                 <span
-                  v-if="item.sourceId && src.sourceId === item.sourceId"
+                  v-if="isSourceHighlighted(item, src)"
                   class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300"
                 >
                   Flagged
@@ -1130,6 +1130,23 @@ function verdictBadgeClass(verdict: LlmVerdict): string {
     return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
   }
   return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+}
+
+function isSourceHighlighted(
+  item: MatchReviewQueueItem,
+  src: MatchReviewQueueItem['sources'][number]
+): boolean {
+  if (item.sourceId && src.sourceId === item.sourceId) return true
+  if (
+    item.kind === 'archive_preview' &&
+    src.platform === 'archive.org' &&
+    src.mbPerMin !== null &&
+    src.mbPerMin < 1.2 &&
+    !src.qualityMarks.includes('incomplete')
+  ) {
+    return true
+  }
+  return false
 }
 
 const PREVIEW_TEXT_RE = /\b(preview|trailer|tv\s*spot|teaser|clip|sample)\b/i
