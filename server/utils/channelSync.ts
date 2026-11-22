@@ -204,13 +204,16 @@ async function fetchArchivePageWithRetry(
 }
 
 async function fetchAllArchiveItems(
-  collection = 'feature_films'
+  collection = 'feature_films',
+  onStatus?: (message: string) => void
 ): Promise<Map<string, ArchiveOrgMovie>> {
   const remoteMap = new Map<string, ArchiveOrgMovie>()
   let cursor: string | undefined
   let expectedTotal: number | null = null
+  let page = 0
 
   while (true) {
+    page++
     const response = await fetchArchivePageWithRetry(collection, 1000, cursor)
 
     if (expectedTotal === null && typeof response.total === 'number') {
@@ -230,6 +233,12 @@ async function fetchAllArchiveItems(
       if (item.identifier) {
         remoteMap.set(item.identifier, item)
       }
+    }
+
+    if (page === 1 || page % 5 === 0) {
+      onStatus?.(
+        `Archive.org page ${page}: ${remoteMap.size}${expectedTotal ? `/${expectedTotal}` : ''} items`
+      )
     }
 
     if (!response.cursor || response.cursor === cursor) {
@@ -261,6 +270,7 @@ async function syncYouTubeChannel(
     dryRun: boolean
     retryFailed: boolean
     probeActive: boolean
+    onStatus?: (message: string) => void
   }
 ): Promise<SyncChannelSummary> {
   const startedAt = Math.floor(Date.now() / 1000)
@@ -373,12 +383,23 @@ async function syncYouTubeChannel(
       }
     }
 
+    options.onStatus?.(
+      `[${channelConfig.name}] Diff: ${remoteSet.size} remote, ${dbBySourceId.size} in DB, ${addedIds.length} new, ${summary.skippedFailed} skipped-failed`
+    )
+
     // 5. Added sources: scrape and upsert
     if (options.dryRun) {
       summary.added = addedIds.length
     } else if (addedIds.length > 0 && youtube) {
       const minDuration = getMinMovieDurationSeconds()
+      let processedNew = 0
       for (const videoId of addedIds) {
+        processedNew++
+        if (processedNew % 25 === 0 || processedNew === addedIds.length) {
+          options.onStatus?.(
+            `[${channelConfig.name}] Checked ${processedNew}/${addedIds.length} new videos (added: ${summary.added})`
+          )
+        }
         try {
           const fullVideo = await youtube.getBasicInfo(videoId)
           if (!fullVideo || !fullVideo.basic_info) {
@@ -490,6 +511,7 @@ async function syncYouTubeChannel(
 
     if (missingRows.length > 0) {
       const missingIds = [...new Set(missingRows.map(r => r.sourceId))]
+      options.onStatus?.(`[${channelConfig.name}] Probing ${missingIds.length} missing video(s)...`)
       const probeResults = await probeYouTubeSources(missingIds, {
         apiKey,
         youtube: youtube ?? undefined,
@@ -626,6 +648,7 @@ async function syncArchiveCollection(
   db: Database.Database,
   options: {
     dryRun: boolean
+    onStatus?: (message: string) => void
   }
 ): Promise<SyncChannelSummary> {
   const channelId = 'archive.org'
@@ -655,7 +678,7 @@ async function syncArchiveCollection(
       ).run()
     }
 
-    const remoteMap = await fetchAllArchiveItems('feature_films')
+    const remoteMap = await fetchAllArchiveItems('feature_films', options.onStatus)
     summary.totalRemote = remoteMap.size
 
     const dbRows = db
@@ -724,11 +747,20 @@ async function syncArchiveCollection(
       }
     }
 
+    options.onStatus?.(
+      `[Archive.org] Diff: ${remoteMap.size} remote, ${dbBySourceId.size} in DB, ${addedItems.length} new`
+    )
+
     // Added items
     if (options.dryRun) {
       summary.added = addedItems.length
     } else {
+      let processedNew = 0
       for (const item of addedItems) {
+        processedNew++
+        if (processedNew % 100 === 0 || processedNew === addedItems.length) {
+          options.onStatus?.(`[Archive.org] Added ${processedNew}/${addedItems.length} new items`)
+        }
         const movieEntry = await processArchiveMovie(item, 'feature_films')
         if (movieEntry && movieEntry.sources[0]) {
           movieEntry.sources[0].channelName = channelName
@@ -765,6 +797,7 @@ async function syncArchiveCollection(
 
     if (missingRows.length > 0) {
       const missingIds = [...new Set(missingRows.map(r => r.sourceId))]
+      options.onStatus?.(`[Archive.org] Probing ${missingIds.length} missing item(s)...`)
       const probeResults = await probeArchiveSources(missingIds)
       summary.probed += missingIds.length
 
@@ -910,6 +943,14 @@ export async function syncChannels(
           dryRun,
           retryFailed,
           probeActive,
+          onStatus: message => {
+            options.onProgress?.({
+              current: completedTargets,
+              total: totalTargets,
+              channelId: ch.id,
+              message,
+            })
+          },
         })
         summaries.push(summary)
         completedTargets++
@@ -932,7 +973,17 @@ export async function syncChannels(
       message: 'Syncing Archive.org (feature_films)...',
     })
 
-    const archiveSummary = await syncArchiveCollection(db, { dryRun })
+    const archiveSummary = await syncArchiveCollection(db, {
+      dryRun,
+      onStatus: message => {
+        options.onProgress?.({
+          current: completedTargets,
+          total: totalTargets,
+          channelId: 'archive.org',
+          message,
+        })
+      },
+    })
     summaries.push(archiveSummary)
     completedTargets++
 

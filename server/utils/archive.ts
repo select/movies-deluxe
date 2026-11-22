@@ -55,9 +55,11 @@ export async function fetchArchiveOrgMovies(
 /**
  * Extract year from Archive.org date field
  */
-export function extractYear(date?: string): number | undefined {
-  if (!date) return undefined
-  const yearMatch = date.match(/\b(19|20)\d{2}\b/)
+export function extractYear(date?: string | number | string[]): number | undefined {
+  if (date === undefined || date === null) return undefined
+  const raw = Array.isArray(date) ? String(date[0] ?? '') : String(date)
+  if (!raw) return undefined
+  const yearMatch = raw.match(/\b(19|20)\d{2}\b/)
   if (yearMatch) {
     return parseInt(yearMatch[0])
   }

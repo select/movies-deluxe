@@ -63,8 +63,8 @@ export function getAdminDatabase(): Database.Database {
     try {
       // Create database connection
       adminDb = new Database(DB_PATH, {
-        // Enable verbose mode in development for debugging
-        verbose: process.env.NODE_ENV === 'development' ? console.log : undefined,
+        // Opt-in verbose SQL logging via DB_VERBOSE=true
+        verbose: process.env.DB_VERBOSE === 'true' ? console.log : undefined,
         timeout: 10000, // Wait up to 10 seconds if database is busy
       })
 
