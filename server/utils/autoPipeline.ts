@@ -81,6 +81,7 @@ export interface AutoAuditFalseHitsResult {
   autoRematched: number
   autoUnmatched: number
   queuedUncertain: number
+  errors: number
   samples: Array<{
     movieId: string
     title: string
@@ -989,33 +990,72 @@ export async function runAutoAuditFalseHits(
   const omdbApiKey = process.env.OMDB_API_KEY
 
   const db = getAdminDatabase()
+  ensureMatchReviewQueueTable(db)
   const verifiedFilter = includeVerified ? '' : 'AND m.verified = 0'
 
-  const movies = db
+  // Step 1: Pending false_hit queue items (up to safeLimit)
+  const queueRows = db
     .prepare(
-      `SELECT
-        m.movieId, m.title as movieTitle, m.year as movieYear,
-        md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
-        md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
-      FROM movies m
-      LEFT JOIN metadata md ON m.movieId = md.movieId
-      WHERE m.movieId LIKE 'tt%'
-        ${verifiedFilter}
-      ORDER BY m.lastUpdated DESC
-      LIMIT ?`
+      `SELECT id, movieId, sourceId, currentImdbId, llmVerdict, llmConfidence, llmReason
+       FROM match_review_queue
+       WHERE status = 'pending' AND kind = 'false_hit'
+       ORDER BY id ASC
+       LIMIT ?`
     )
     .all(safeLimit) as Array<{
+    id: number
     movieId: string
-    movieTitle: string
-    movieYear: number | null
-    omdbTitle: string | null
-    omdbYear: string | null
-    omdbRuntime: string | null
-    omdbDirector: string | null
-    omdbActors: string | null
-    omdbPlot: string | null
-    omdbType: string | null
+    sourceId: string | null
+    currentImdbId: string | null
+    llmVerdict: 'match' | 'mismatch' | 'uncertain' | null
+    llmConfidence: number | null
+    llmReason: string | null
   }>
+
+  const queueMovieIds = new Set(queueRows.map(r => r.movieId))
+  const remaining = Math.max(0, safeLimit - queueRows.length)
+
+  // Step 2: Unverified matched movies not already in Step 1
+  const rawMovies =
+    remaining > 0
+      ? (db
+          .prepare(
+            `SELECT
+              m.movieId, m.title as movieTitle, m.year as movieYear,
+              md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
+              md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
+            FROM movies m
+            LEFT JOIN metadata md ON m.movieId = md.movieId
+            WHERE m.movieId LIKE 'tt%'
+              ${verifiedFilter}
+            ORDER BY m.lastUpdated DESC
+            LIMIT ?`
+          )
+          .all(remaining + queueMovieIds.size) as Array<{
+          movieId: string
+          movieTitle: string
+          movieYear: number | null
+          omdbTitle: string | null
+          omdbYear: string | null
+          omdbRuntime: string | null
+          omdbDirector: string | null
+          omdbActors: string | null
+          omdbPlot: string | null
+          omdbType: string | null
+        }>)
+      : []
+
+  const movies = rawMovies.filter(m => !queueMovieIds.has(m.movieId)).slice(0, remaining)
+
+  const getMovieStmt = db.prepare(
+    `SELECT
+      m.movieId, m.title as movieTitle, m.year as movieYear,
+      md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
+      md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
+     FROM movies m
+     LEFT JOIN metadata md ON m.movieId = md.movieId
+     WHERE m.movieId = ?`
+  )
 
   const getSourcesStmt = db.prepare(
     `SELECT s.id, s.movieId, s.sourceId, s.channelId, c.platform, c.name as channelName,
@@ -1025,13 +1065,14 @@ export async function runAutoAuditFalseHits(
      WHERE s.movieId = ?`
   )
 
-  const total = movies.length
+  const total = queueRows.length + movies.length
   let scanned = 0
   let deterministicFlagged = 0
   let llmKept = 0
   let autoRematched = 0
   let autoUnmatched = 0
   let queuedUncertain = 0
+  let errors = 0
   const samples: AutoAuditFalseHitsResult['samples'] = []
 
   emitProgress({
@@ -1039,7 +1080,7 @@ export async function runAutoAuditFalseHits(
     status: 'starting',
     current: 0,
     total,
-    message: `Starting ${dryRun ? 'dry-run ' : ''}auto false-hit audit (${total} movies)...`,
+    message: `Starting ${dryRun ? 'dry-run ' : ''}false-hit fix (${queueRows.length} queued, ${movies.length} matched movies)...`,
     successCurrent: 0,
     failedCurrent: 0,
   })
@@ -1047,6 +1088,213 @@ export async function runAutoAuditFalseHits(
   const startedAt = Date.now()
 
   try {
+    // Step 1: Resolve pending false_hit queue items first
+    for (const row of queueRows) {
+      scanned++
+      emitProgress({
+        type: 'audit',
+        status: 'in_progress',
+        current: scanned,
+        total,
+        message: `Resolving queued false hit #${row.id} (${row.movieId})`,
+        successCurrent: autoRematched + autoUnmatched + llmKept,
+        failedCurrent: queuedUncertain + errors,
+        estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
+      })
+
+      try {
+        const movie = getMovieStmt.get(row.movieId) as
+          | {
+              movieId: string
+              movieTitle: string
+              movieYear: number | null
+              omdbTitle: string | null
+              omdbYear: string | null
+              omdbRuntime: string | null
+              omdbDirector: string | null
+              omdbActors: string | null
+              omdbPlot: string | null
+              omdbType: string | null
+            }
+          | undefined
+
+        const sources = movie ? (getSourcesStmt.all(movie.movieId) as SourceRow[]) : []
+        const primarySource = sources[0]
+
+        if (!movie || !movie.movieId.startsWith('tt') || !primarySource) {
+          if (!dryRun) {
+            resolveReviewItem(db, row.id, 'resolved')
+          }
+          continue
+        }
+
+        const candidateTitle = movie.omdbTitle || movie.movieTitle
+        const candidateYear = extractYearFromTitle(movie.omdbYear) ?? movie.movieYear ?? null
+        const candidateRuntimeMin = parseRuntimeMinutes(movie.omdbRuntime)
+        const rawSourceTitle = primarySource.title || movie.movieTitle
+        const sourceDurationMin =
+          primarySource.duration && primarySource.duration > 0
+            ? Math.round(primarySource.duration / 60)
+            : null
+
+        const hasCachedVerdict =
+          row.llmVerdict !== null &&
+          row.llmConfidence !== null &&
+          row.llmConfidence !== undefined &&
+          !row.llmReason?.startsWith('Verification error:')
+
+        const verdict = hasCachedVerdict
+          ? {
+              verdict: row.llmVerdict!,
+              confidence: row.llmConfidence!,
+              reason: row.llmReason || 'Cached queue verdict',
+            }
+          : await verifyMatchCandidate(
+              {
+                movieId: movie.movieId,
+                title: rawSourceTitle,
+                year: primarySource.year ?? extractYearFromTitle(rawSourceTitle),
+                durationMin: sourceDurationMin,
+                description: primarySource.description,
+                channelName: primarySource.channelName,
+              },
+              {
+                imdbId: movie.movieId,
+                title: candidateTitle,
+                year: candidateYear,
+                runtimeMin: candidateRuntimeMin,
+                director: movie.omdbDirector,
+                actors: movie.omdbActors,
+                plot: movie.omdbPlot,
+                type: movie.omdbType,
+              },
+              { model }
+            )
+
+        if (verdict.verdict === 'match' && verdict.confidence >= minConfidence) {
+          llmKept++
+          if (!dryRun) {
+            resolveReviewItem(db, row.id, 'resolved')
+          }
+          if (samples.length < 30) {
+            samples.push({
+              movieId: movie.movieId,
+              title: candidateTitle,
+              action: 'kept',
+              llmVerdict: verdict.verdict,
+              llmConfidence: verdict.confidence,
+              llmReason: verdict.reason,
+              flags: ['queued_false_hit'],
+            })
+          }
+          continue
+        }
+
+        if (verdict.verdict === 'mismatch' && verdict.confidence >= minConfidence) {
+          let replacementId: string | null = null
+          let replacementMeta: MovieMetadata | null = null
+
+          if (rematch) {
+            const replacement = await findReplacementImdbMatch(
+              {
+                movieId: movie.movieId,
+                rawTitle: rawSourceTitle,
+                description: primarySource.description,
+                sourceId: primarySource.sourceId,
+                platform: primarySource.platform,
+                channelId: primarySource.channelId,
+                channelName: primarySource.channelName,
+                sourceYear: primarySource.year,
+                movieYear: movie.movieYear,
+                sourceDurationMin,
+                excludeImdbId: movie.movieId,
+              },
+              {
+                minRematchConfidence: Math.max(minConfidence, 0.85),
+                allowGoogle,
+                model,
+                omdbApiKey,
+              }
+            )
+            if (replacement) {
+              replacementId = replacement.imdbId
+              replacementMeta = replacement.meta
+            }
+          }
+
+          if (replacementId && isImdbId(replacementId)) {
+            autoRematched++
+            if (!dryRun) {
+              const mig = await migrateMovieId(movie.movieId, replacementId)
+              if (mig.success && replacementMeta) {
+                upsertMetadataAndMovie(db, replacementId, replacementMeta)
+              }
+              resolveReviewItem(db, row.id, 'resolved')
+            }
+            if (samples.length < 30) {
+              samples.push({
+                movieId: movie.movieId,
+                title: candidateTitle,
+                action: 'rematched',
+                newMovieId: replacementId,
+                llmVerdict: verdict.verdict,
+                llmConfidence: verdict.confidence,
+                llmReason: verdict.reason,
+                flags: ['queued_false_hit'],
+              })
+            }
+          } else {
+            autoUnmatched++
+            const tempId =
+              primarySource.platform === 'youtube'
+                ? generateYouTubeId(primarySource.sourceId)
+                : generateArchiveId(primarySource.sourceId)
+            if (!dryRun) {
+              db.prepare('DELETE FROM metadata WHERE movieId = ?').run(movie.movieId)
+              await migrateMovieId(movie.movieId, tempId)
+              db.prepare(
+                'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
+              ).run(rawSourceTitle, new Date().toISOString(), tempId)
+              resolveReviewItem(db, row.id, 'resolved')
+            }
+            if (samples.length < 30) {
+              samples.push({
+                movieId: movie.movieId,
+                title: candidateTitle,
+                action: 'unmatched',
+                newMovieId: tempId,
+                llmVerdict: verdict.verdict,
+                llmConfidence: verdict.confidence,
+                llmReason: verdict.reason,
+                flags: ['queued_false_hit'],
+              })
+            }
+          }
+          continue
+        }
+
+        queuedUncertain++
+        if (samples.length < 30) {
+          samples.push({
+            movieId: movie.movieId,
+            title: candidateTitle,
+            action: 'queued',
+            llmVerdict: verdict.verdict,
+            llmConfidence: verdict.confidence,
+            llmReason: verdict.reason,
+            flags: ['queued_false_hit'],
+          })
+        }
+      } catch (err) {
+        errors++
+        console.error(
+          `[AutoAuditFalseHits] Error resolving queue #${row.id} (${row.movieId}):`,
+          err
+        )
+      }
+    }
+
+    // Step 2: Scan unverified matched movies
     for (const movie of movies) {
       scanned++
       const sources = getSourcesStmt.all(movie.movieId) as SourceRow[]
@@ -1299,6 +1547,7 @@ export async function runAutoAuditFalseHits(
       autoRematched,
       autoUnmatched,
       queuedUncertain,
+      errors,
       samples,
     }
   } catch (error) {

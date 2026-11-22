@@ -27,43 +27,13 @@
             />
           </label>
 
-          <label v-if="autoTask !== 'clean_previews'" class="flex items-center gap-1.5 text-xs">
-            <span class="text-theme-textmuted">Min Confidence:</span>
-            <input
-              v-model.number="autoMinConfidence"
-              type="number"
-              min="0.5"
-              max="1"
-              step="0.05"
-              class="w-16 px-2 py-1 text-xs rounded-lg border border-theme-border bg-theme-surface text-theme-text font-mono"
-              :disabled="autoRunning"
-            />
-          </label>
-
-          <label
-            v-if="autoTask !== 'clean_previews'"
-            class="flex items-center gap-1.5 text-xs cursor-pointer select-none"
-          >
-            <input v-model="autoAllowGoogle" type="checkbox" :disabled="autoRunning" />
-            <span>Allow Google (&le;100/day)</span>
-          </label>
-
           <button
-            class="px-3 py-1.5 text-xs font-semibold bg-theme-surface border border-theme-border hover:bg-theme-selection text-theme-text rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
-            :disabled="autoRunning || auditing"
-            @click="runAutoPipeline(true)"
-          >
-            <div class="i-mdi-play-outline" :class="{ 'animate-spin': autoRunning }"></div>
-            Dry Run
-          </button>
-
-          <button
-            class="px-3 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
-            :disabled="autoRunning || auditing"
-            @click="runAutoPipeline(false)"
+            class="px-3.5 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            :disabled="autoRunning"
+            @click="runAutoPipeline"
           >
             <div class="i-mdi-auto-fix" :class="{ 'animate-spin': autoRunning }"></div>
-            Run &amp; Auto-Apply
+            {{ autoRunning ? 'Running...' : 'Run' }}
           </button>
         </div>
       </div>
@@ -129,15 +99,6 @@
               <span class="font-mono">Rematched: {{ autoResult.autoRematched }}</span>
               <span class="font-mono">Unmatched: {{ autoResult.autoUnmatched }}</span>
               <span class="font-mono">Queued: {{ autoResult.queuedUncertain }}</span>
-            </template>
-
-            <template v-else-if="autoResult.task === 'resolve_false_hit_queue'">
-              <span class="font-mono">Scanned: {{ autoResult.scanned }}</span>
-              <span class="font-mono">Auto-Kept: {{ autoResult.autoKept }}</span>
-              <span class="font-mono">Rematched: {{ autoResult.autoRematched }}</span>
-              <span class="font-mono">Unmatched: {{ autoResult.autoUnmatched }}</span>
-              <span class="font-mono">Still Uncertain: {{ autoResult.stillUncertain }}</span>
-              <span class="font-mono">Already Resolved: {{ autoResult.alreadyResolved }}</span>
               <span v-if="autoResult.errors" class="font-mono text-red-600 dark:text-red-300">
                 Errors: {{ autoResult.errors }}
               </span>
@@ -148,6 +109,12 @@
               <span class="font-mono">Direct: {{ autoResult.directUrlMatches }}</span>
               <span class="font-mono">Deterministic: {{ autoResult.deterministicMatches }}</span>
               <span class="font-mono">LLM: {{ autoResult.llmMatches }}</span>
+              <span v-if="autoResult.plannedLlmMatches" class="font-mono">
+                Planned LLM: {{ autoResult.plannedLlmMatches }}
+              </span>
+              <span v-if="autoResult.notAMovie" class="font-mono">
+                Not a Movie: {{ autoResult.notAMovie }}
+              </span>
               <span class="font-mono">Queued: {{ autoResult.queuedUncertain }}</span>
               <span class="font-mono">No Match: {{ autoResult.noMatch }}</span>
               <span v-if="autoResult.errors" class="font-mono text-red-600 dark:text-red-300">
@@ -227,41 +194,6 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <label class="flex items-center gap-1.5 text-sm cursor-pointer select-none">
-          <input v-model="auditUseLlm" type="checkbox" :disabled="auditing" />
-          <span>Use LLM Verifier</span>
-        </label>
-
-        <label class="flex items-center gap-1.5 text-sm">
-          <span class="text-theme-textmuted">Limit:</span>
-          <input
-            v-model.number="auditLimit"
-            type="number"
-            min="1"
-            max="5000"
-            class="w-20 px-2 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text font-mono"
-            :disabled="auditing"
-          />
-        </label>
-
-        <button
-          class="px-3.5 py-2 text-sm font-semibold bg-theme-background border border-theme-border hover:bg-theme-selection text-theme-text rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
-          :disabled="auditing"
-          @click="runAudit(true)"
-        >
-          <div class="i-mdi-magnify-scan" :class="{ 'animate-spin': auditing }"></div>
-          Run Audit (Dry Run)
-        </button>
-
-        <button
-          class="px-3.5 py-2 text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
-          :disabled="auditing"
-          @click="runAudit(false)"
-        >
-          <div class="i-mdi-playlist-plus" :class="{ 'animate-spin': auditing }"></div>
-          Run Audit &amp; Enqueue
-        </button>
-
         <button
           class="px-3 py-2 text-sm bg-theme-background border border-theme-border rounded-lg hover:bg-theme-selection transition-colors flex items-center gap-1"
           :disabled="loading"
@@ -318,41 +250,7 @@
       </div>
     </div>
 
-    <!-- Audit Result / Error Banners -->
-    <div
-      v-if="auditResult"
-      class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-200 flex flex-wrap items-center justify-between gap-2"
-    >
-      <div class="flex flex-wrap items-center gap-3">
-        <span class="font-semibold">
-          Audit {{ auditResult.dryRun ? '(Dry Run)' : 'Complete' }}:
-        </span>
-        <span v-if="auditResult.scanned !== undefined" class="font-mono">
-          Scanned: {{ auditResult.scanned }}
-        </span>
-        <span v-if="auditResult.flagged !== undefined" class="font-mono">
-          Flagged: {{ auditResult.flagged }}
-        </span>
-        <span v-if="auditResult.enqueued !== undefined" class="font-mono">
-          Enqueued: {{ auditResult.enqueued }}
-        </span>
-        <span v-if="auditResult.message">{{ auditResult.message }}</span>
-      </div>
-      <button class="text-xs underline opacity-80 hover:opacity-100" @click="auditResult = null">
-        Dismiss
-      </button>
-    </div>
-
-    <div
-      v-if="bulkMessage"
-      class="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-sm text-emerald-800 dark:text-emerald-200 flex items-center justify-between gap-2"
-    >
-      <span>{{ bulkMessage }}</span>
-      <button class="text-xs underline opacity-80 hover:opacity-100" @click="bulkMessage = null">
-        Dismiss
-      </button>
-    </div>
-
+    <!-- Error Banner -->
     <div
       v-if="errorMessage"
       class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300 flex items-center justify-between gap-2"
@@ -393,63 +291,20 @@
         </button>
       </div>
 
-      <div class="flex flex-wrap items-center gap-3">
-        <button
-          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-fuchsia-600 hover:bg-fuchsia-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
-          :disabled="bulkActing || loading"
-          title="Scan all Archive.org feature sources (< 1.2 MB/min + trailer/preview keyword) and mark them as trailers/incomplete"
-          @click="markLowRatioTrailers"
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
+          Status:
+        </span>
+        <select
+          v-model="selectedStatus"
+          class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
+          @change="onStatusChange"
         >
-          <div class="i-mdi-movie-filter-outline" :class="{ 'animate-spin': bulkActing }"></div>
-          Mark Low MB/min Trailers
-        </button>
-
-        <button
-          v-if="selectedStatus === 'pending' && counts.byKind.false_hit > 0"
-          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
-          :disabled="bulkActing || loading"
-          title="Unmatch (or detach on multi-source movies) all pending false hits flagged with both title_low_similarity and year_major_mismatch"
-          @click="unmatchLowSimYearMismatch"
-        >
-          <div class="i-mdi-link-off" :class="{ 'animate-spin': bulkActing }"></div>
-          Unmatch Low-Sim + Year Mismatch
-        </button>
-
-        <button
-          v-if="selectedStatus === 'pending' && counts.byKind.false_hit > 0"
-          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
-          :disabled="bulkActing || loading"
-          @click="keepAllLlmMatches"
-        >
-          <div class="i-mdi-check-decagram" :class="{ 'animate-spin': bulkActing }"></div>
-          Keep &amp; Verify All LLM Matches (≥85%)
-        </button>
-
-        <button
-          v-if="selectedStatus === 'pending' && counts.byKind.archive_preview > 0"
-          class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
-          :disabled="bulkActing || loading"
-          @click="markAllPendingPreviews"
-        >
-          <div class="i-mdi-filmstrip-off" :class="{ 'animate-spin': bulkActing }"></div>
-          Mark All Pending Previews Incomplete ({{ counts.byKind.archive_preview }})
-        </button>
-
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
-            Status:
-          </span>
-          <select
-            v-model="selectedStatus"
-            class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
-            @change="onStatusChange"
-          >
-            <option value="pending">Pending ({{ counts.byStatus.pending }})</option>
-            <option value="approved">Approved ({{ counts.byStatus.approved }})</option>
-            <option value="rejected">Rejected ({{ counts.byStatus.rejected }})</option>
-            <option value="resolved">Resolved ({{ counts.byStatus.resolved }})</option>
-          </select>
-        </div>
+          <option value="pending">Pending ({{ counts.byStatus.pending }})</option>
+          <option value="approved">Approved ({{ counts.byStatus.approved }})</option>
+          <option value="rejected">Rejected ({{ counts.byStatus.rejected }})</option>
+          <option value="resolved">Resolved ({{ counts.byStatus.resolved }})</option>
+        </select>
       </div>
     </div>
 
@@ -869,11 +724,9 @@ import { $fetch } from '#build/fetch'
 import { NuxtLink } from '#components'
 import { useAdminStore } from '~/stores/useAdminStore'
 import type {
-  AuditMatchesResponse,
   LlmVerdict,
   MatchReviewActionResponse,
   MatchReviewActionType,
-  MatchReviewBulkActionResponse,
   MatchReviewCounts,
   MatchReviewListResponse,
   MatchReviewQueueItem,
@@ -882,11 +735,7 @@ import type {
 } from '#shared/types/match-review'
 
 type KindFilter = 'all' | ReviewItemKind
-type AutoTaskType =
-  | 'clean_previews'
-  | 'audit_false_hits'
-  | 'resolve_false_hit_queue'
-  | 'match_unmatched'
+type AutoTaskType = 'clean_previews' | 'audit_false_hits' | 'match_unmatched'
 
 interface AutoCleanPreviewsResponse {
   task: 'clean_previews'
@@ -909,18 +758,6 @@ interface AutoAuditFalseHitsResponse {
   autoRematched: number
   autoUnmatched: number
   queuedUncertain: number
-  samples: Array<{ title: string; action: string }>
-}
-
-interface AutoResolveFalseHitQueueResponse {
-  task: 'resolve_false_hit_queue'
-  dryRun: boolean
-  scanned: number
-  autoKept: number
-  autoRematched: number
-  autoUnmatched: number
-  stillUncertain: number
-  alreadyResolved: number
   errors: number
   samples: Array<{ title: string; action: string }>
 }
@@ -932,6 +769,8 @@ interface AutoMatchUnmatchedResponse {
   directUrlMatches: number
   deterministicMatches: number
   llmMatches: number
+  plannedLlmMatches?: number
+  notAMovie?: number
   queuedUncertain: number
   noMatch: number
   errors: number
@@ -941,7 +780,6 @@ interface AutoMatchUnmatchedResponse {
 type AutoPipelineResult =
   | AutoCleanPreviewsResponse
   | AutoAuditFalseHitsResponse
-  | AutoResolveFalseHitQueueResponse
   | AutoMatchUnmatchedResponse
 
 function formatETA(seconds: number): string {
@@ -961,7 +799,7 @@ const autoTaskCards: Array<{
 }> = [
   {
     id: 'clean_previews',
-    title: 'Auto-Clean Archive Previews',
+    title: 'Clean Previews',
     description:
       'Uses size + film length, protects cartoons, removes redundant trailers/TV spots, marks single-source previews.',
     icon: 'i-mdi-filmstrip-off',
@@ -969,22 +807,15 @@ const autoTaskCards: Array<{
   },
   {
     id: 'audit_false_hits',
-    title: 'Auto-Audit & Fix False Hits',
-    description: 'LLM-verified auto-rematch/unmatch; only uncertain items go to the review queue.',
+    title: 'Fix False Hits',
+    description:
+      'Resolves pending false-hit queue items first, then audits & fixes matched movies via LLM.',
     icon: 'i-mdi-shield-search',
     iconClass: 'text-red-500',
   },
   {
-    id: 'resolve_false_hit_queue',
-    title: 'Auto-Fix False-Hit Queue',
-    description:
-      'Resolves pending false-hit queue items: auto-keeps confirmed matches and LLM-rematches or unmatches false hits.',
-    icon: 'i-mdi-auto-fix',
-    iconClass: 'text-emerald-500',
-  },
-  {
     id: 'match_unmatched',
-    title: 'Auto-Match Unmatched',
+    title: 'Match Unmatched',
     description:
       'Local IMDb index + TMDB + LLM adjudicator; only uncertain items go to the review queue.',
     icon: 'i-mdi-movie-search',
@@ -1016,33 +847,23 @@ const selectedStatus = ref<ReviewItemStatus>('pending')
 
 const loading = ref(false)
 const actingId = ref<number | null>(null)
-const bulkActing = ref(false)
 const errorMessage = ref<string | null>(null)
-const bulkMessage = ref<string | null>(null)
 
 const autoTask = ref<AutoTaskType>('clean_previews')
 const autoLimit = ref(500)
-const autoMinConfidence = ref(0.85)
-const autoAllowGoogle = ref(false)
 const autoRunning = ref(false)
 const autoResult = ref<AutoPipelineResult | null>(null)
 const showAutoSamples = ref(false)
-
-const auditing = ref(false)
-const auditUseLlm = ref(true)
-const auditLimit = ref(100)
-const auditResult = ref<AuditMatchesResponse | null>(null)
 
 const customImdbIds = reactive<Record<number, string>>({})
 
 function autoTaskLabel(task: AutoTaskType): string {
   if (task === 'clean_previews') return 'Archive Preview Cleanup'
-  if (task === 'audit_false_hits') return 'False-Hit Audit'
-  if (task === 'resolve_false_hit_queue') return 'False-Hit Queue Resolution'
+  if (task === 'audit_false_hits') return 'Fix False Hits'
   return 'Unmatched Auto-Match'
 }
 
-async function runAutoPipeline(dryRun: boolean) {
+async function runAutoPipeline() {
   autoRunning.value = true
   errorMessage.value = null
   showAutoSamples.value = false
@@ -1051,21 +872,19 @@ async function runAutoPipeline(dryRun: boolean) {
       method: 'POST',
       body: {
         task: autoTask.value,
-        dryRun,
+        dryRun: false,
         limit: autoLimit.value,
         ...(autoTask.value !== 'clean_previews'
           ? {
-              minConfidence: autoMinConfidence.value,
-              allowGoogle: autoAllowGoogle.value,
+              minConfidence: 0.85,
+              allowGoogle: true,
             }
           : {}),
       },
     })
     autoResult.value = res
-    if (!dryRun) {
-      offset.value = 0
-      await fetchQueue()
-    }
+    offset.value = 0
+    await fetchQueue()
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : 'Automated pipeline request failed'
   } finally {
@@ -1095,30 +914,6 @@ async function fetchQueue() {
   }
 }
 
-async function runAudit(dryRun: boolean) {
-  auditing.value = true
-  errorMessage.value = null
-  try {
-    const res = await $fetch<AuditMatchesResponse>('/api/admin/audit/matches', {
-      method: 'POST',
-      body: {
-        dryRun,
-        useLlm: auditUseLlm.value,
-        limit: auditLimit.value,
-      },
-    })
-    auditResult.value = { ...res, dryRun }
-    if (!dryRun) {
-      offset.value = 0
-      await fetchQueue()
-    }
-  } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Audit request failed'
-  } finally {
-    auditing.value = false
-  }
-}
-
 async function performAction(id: number, action: MatchReviewActionType, customImdbId?: string) {
   actingId.value = id
   errorMessage.value = null
@@ -1136,91 +931,6 @@ async function performAction(id: number, action: MatchReviewActionType, customIm
     errorMessage.value = err instanceof Error ? err.message : 'Failed to apply review action'
   } finally {
     actingId.value = null
-  }
-}
-
-async function unmatchLowSimYearMismatch() {
-  bulkActing.value = true
-  errorMessage.value = null
-  bulkMessage.value = null
-  try {
-    const res = await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
-      method: 'POST',
-      body: {
-        action: 'unmatch_low_sim_year_mismatch',
-      },
-    })
-    bulkMessage.value = res.message
-    offset.value = 0
-    await fetchQueue()
-  } catch (err) {
-    errorMessage.value =
-      err instanceof Error ? err.message : 'Failed to unmatch low-similarity/year-mismatch items'
-  } finally {
-    bulkActing.value = false
-  }
-}
-
-async function markLowRatioTrailers() {
-  bulkActing.value = true
-  errorMessage.value = null
-  bulkMessage.value = null
-  try {
-    const res = await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
-      method: 'POST',
-      body: {
-        action: 'mark_low_ratio_trailers',
-        maxMbPerMin: 1.2,
-      },
-    })
-    bulkMessage.value = res.message
-    offset.value = 0
-    await fetchQueue()
-  } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Failed to mark low MB/min trailers'
-  } finally {
-    bulkActing.value = false
-  }
-}
-
-async function keepAllLlmMatches() {
-  bulkActing.value = true
-  errorMessage.value = null
-  try {
-    await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
-      method: 'POST',
-      body: {
-        action: 'keep_all_llm_matches',
-        minConfidence: 0.85,
-      },
-    })
-    offset.value = 0
-    await fetchQueue()
-  } catch (err) {
-    errorMessage.value =
-      err instanceof Error ? err.message : 'Failed to verify all LLM-confirmed matches'
-  } finally {
-    bulkActing.value = false
-  }
-}
-
-async function markAllPendingPreviews() {
-  bulkActing.value = true
-  errorMessage.value = null
-  try {
-    await $fetch<MatchReviewBulkActionResponse>('/api/admin/review/bulk-action', {
-      method: 'POST',
-      body: {
-        action: 'mark_all_previews',
-      },
-    })
-    offset.value = 0
-    await fetchQueue()
-  } catch (err) {
-    errorMessage.value =
-      err instanceof Error ? err.message : 'Failed to mark all pending previews incomplete'
-  } finally {
-    bulkActing.value = false
   }
 }
 
