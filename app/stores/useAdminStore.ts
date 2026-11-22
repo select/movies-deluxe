@@ -28,6 +28,7 @@ export interface ProgressUpdate {
     | 'embeddings'
     | 'similar'
     | 'channelSync'
+    | 'audit'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number

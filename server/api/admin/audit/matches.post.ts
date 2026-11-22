@@ -11,6 +11,7 @@ import {
   fetchArchiveVideoLength,
 } from '#server/utils/archivePreviewDetector'
 import { enqueueReviewItem } from '#server/utils/matchReviewQueue'
+import { emitProgress } from '#server/utils/progress'
 
 interface AuditMatchesBody {
   limit?: number
@@ -114,6 +115,17 @@ export default defineEventHandler(async event => {
   let flaggedArchivePreviews = 0
   let llmVerified = 0
   let enqueued = 0
+  const total = movies.length
+
+  emitProgress({
+    type: 'audit',
+    status: 'starting',
+    current: 0,
+    total,
+    message: `Starting ${dryRun ? 'dry-run ' : ''}audit of ${total} matched movies...`,
+    successCurrent: 0,
+    failedCurrent: 0,
+  })
 
   const samples: Array<{
     kind: 'false_hit' | 'archive_preview'
@@ -126,172 +138,119 @@ export default defineEventHandler(async event => {
     llmReason?: string | null
   }> = []
 
-  for (const movie of movies) {
-    scanned++
-    const sources = getSourcesStmt.all(movie.movieId) as SourceRow[]
-    const primarySource = sources[0]
+  const progressInterval = useLlm || verifyArchiveMetadata ? 1 : 25
 
-    const candidateTitle = movie.omdbTitle || movie.movieTitle
-    const candidateYear = extractYearFromTitle(movie.omdbYear) ?? movie.movieYear ?? null
-    const candidateRuntimeMin = parseRuntimeMinutes(movie.omdbRuntime)
-
-    // 1. Deterministic false-hit check
-    const rawSourceTitle = primarySource?.title || movie.movieTitle
-    const sourceDurationMin =
-      primarySource?.duration && primarySource.duration > 0
-        ? Math.round(primarySource.duration / 60)
-        : null
-
-    const scoreResult = scoreMatchCandidate(
-      {
-        title: rawSourceTitle,
-        aiTitle: movie.aiTitle,
-        aiYear: movie.aiYear,
-        sourceYear: primarySource?.year ?? null,
-        titleYear: extractYearFromTitle(rawSourceTitle),
-        sourceDurationMin,
-      },
-      {
-        imdbId: movie.movieId,
-        title: candidateTitle,
-        year: candidateYear,
-        runtimeMin: candidateRuntimeMin,
-        director: movie.omdbDirector,
-        cast: movie.omdbActors,
-        type: movie.omdbType,
-      }
-    )
-
-    const isFalseHit =
-      scoreResult.tier === 'reject' ||
-      (scoreResult.tier === 'needs_review' &&
-        scoreResult.score < 60 &&
-        scoreResult.flags.some(
-          f => f !== 'no_supporting_evidence' && f !== 'title_partial_similarity'
-        ))
-
-    if (isFalseHit) {
-      flaggedFalseHits++
-      let llmVerdict: 'match' | 'mismatch' | 'uncertain' | null = null
-      let llmConfidence: number | null = null
-      let llmReason: string | null = null
-
-      if (useLlm) {
-        const verification = await verifyMatchCandidate(
-          {
-            movieId: movie.movieId,
-            title: rawSourceTitle,
-            aiTitle: movie.aiTitle,
-            year: movie.aiYear ?? primarySource?.year ?? null,
-            durationMin: sourceDurationMin,
-            description: primarySource?.description ?? null,
-            channelName: primarySource?.channelName ?? null,
-          },
-          {
-            imdbId: movie.movieId,
-            title: candidateTitle,
-            year: candidateYear,
-            runtimeMin: candidateRuntimeMin,
-            director: movie.omdbDirector,
-            actors: movie.omdbActors,
-            plot: movie.omdbPlot,
-            type: movie.omdbType,
-          },
-          { model }
-        )
-        llmVerified++
-        llmVerdict = verification.verdict
-        llmConfidence = verification.confidence
-        llmReason = verification.reason
-      }
-
-      if (!dryRun) {
-        enqueueReviewItem(db, {
-          movieId: movie.movieId,
-          kind: 'false_hit',
-          sourceId: primarySource?.sourceId ?? null,
-          currentImdbId: movie.movieId,
-          proposedImdbId: null,
-          score: scoreResult.score,
-          llmVerdict,
-          llmConfidence,
-          llmReason,
-          flags: scoreResult.flags,
-          candidate: {
-            omdbTitle: candidateTitle,
-            omdbYear: candidateYear,
-            omdbRuntime: movie.omdbRuntime,
-            sourceTitle: rawSourceTitle,
-            aiTitle: movie.aiTitle,
-            aiYear: movie.aiYear,
-            breakdown: scoreResult.breakdown,
-          },
+  try {
+    for (const movie of movies) {
+      scanned++
+      if (scanned === 1 || scanned % progressInterval === 0 || scanned === total) {
+        emitProgress({
+          type: 'audit',
+          status: 'in_progress',
+          current: scanned,
+          total,
+          message: `${movie.omdbTitle || movie.movieTitle} (${flaggedFalseHits} false hits, ${flaggedArchivePreviews} previews)`,
+          successCurrent: flaggedFalseHits + flaggedArchivePreviews,
+          failedCurrent: enqueued,
         })
-        enqueued++
       }
+      const sources = getSourcesStmt.all(movie.movieId) as SourceRow[]
+      const primarySource = sources[0]
 
-      if (samples.length < 30) {
-        samples.push({
-          kind: 'false_hit',
-          movieId: movie.movieId,
-          sourceId: primarySource?.sourceId ?? null,
+      const candidateTitle = movie.omdbTitle || movie.movieTitle
+      const candidateYear = extractYearFromTitle(movie.omdbYear) ?? movie.movieYear ?? null
+      const candidateRuntimeMin = parseRuntimeMinutes(movie.omdbRuntime)
+
+      // 1. Deterministic false-hit check
+      const rawSourceTitle = primarySource?.title || movie.movieTitle
+      const sourceDurationMin =
+        primarySource?.duration && primarySource.duration > 0
+          ? Math.round(primarySource.duration / 60)
+          : null
+
+      const scoreResult = scoreMatchCandidate(
+        {
+          title: rawSourceTitle,
+          aiTitle: movie.aiTitle,
+          aiYear: movie.aiYear,
+          sourceYear: primarySource?.year ?? null,
+          titleYear: extractYearFromTitle(rawSourceTitle),
+          sourceDurationMin,
+        },
+        {
+          imdbId: movie.movieId,
           title: candidateTitle,
-          score: scoreResult.score,
-          flags: scoreResult.flags,
-          llmVerdict,
-          llmReason,
-        })
-      }
-    }
-
-    // 2. Archive.org preview detection (size + film length)
-    if (checkArchivePreviews) {
-      const archiveSources = sources.filter(
-        s => s.platform === 'archive.org' || s.channelId === 'archive.org'
+          year: candidateYear,
+          runtimeMin: candidateRuntimeMin,
+          director: movie.omdbDirector,
+          cast: movie.omdbActors,
+          type: movie.omdbType,
+        }
       )
 
-      for (const arch of archiveSources) {
-        const analysis = analyzeArchiveSourceSize({
-          sourceId: arch.sourceId,
-          title: arch.title,
-          description: arch.description,
-          sizeBytes: arch.size,
-          runtimeMinutes: candidateRuntimeMin,
-          durationSeconds: arch.duration,
-        })
+      const isFalseHit =
+        scoreResult.tier === 'reject' ||
+        (scoreResult.tier === 'needs_review' &&
+          scoreResult.score < 60 &&
+          scoreResult.flags.some(
+            f => f !== 'no_supporting_evidence' && f !== 'title_partial_similarity'
+          ))
 
-        if (!analysis.isLikelyPreview) continue
+      if (isFalseHit) {
+        flaggedFalseHits++
+        let llmVerdict: 'match' | 'mismatch' | 'uncertain' | null = null
+        let llmConfidence: number | null = null
+        let llmReason: string | null = null
 
-        const flags = [...analysis.flags]
-        let confirmedLengthMin: number | null = null
-
-        if (verifyArchiveMetadata) {
-          const meta = await fetchArchiveVideoLength(arch.sourceId, candidateRuntimeMin)
-          confirmedLengthMin = meta.longestVideoMinutes
-          if (meta.confirmedPreview) {
-            flags.push('confirmed_short_archive_video')
-          }
+        if (useLlm) {
+          const verification = await verifyMatchCandidate(
+            {
+              movieId: movie.movieId,
+              title: rawSourceTitle,
+              aiTitle: movie.aiTitle,
+              year: movie.aiYear ?? primarySource?.year ?? null,
+              durationMin: sourceDurationMin,
+              description: primarySource?.description ?? null,
+              channelName: primarySource?.channelName ?? null,
+            },
+            {
+              imdbId: movie.movieId,
+              title: candidateTitle,
+              year: candidateYear,
+              runtimeMin: candidateRuntimeMin,
+              director: movie.omdbDirector,
+              actors: movie.omdbActors,
+              plot: movie.omdbPlot,
+              type: movie.omdbType,
+            },
+            { model }
+          )
+          llmVerified++
+          llmVerdict = verification.verdict
+          llmConfidence = verification.confidence
+          llmReason = verification.reason
         }
-
-        flaggedArchivePreviews++
 
         if (!dryRun) {
           enqueueReviewItem(db, {
             movieId: movie.movieId,
-            kind: 'archive_preview',
-            sourceId: arch.sourceId,
+            kind: 'false_hit',
+            sourceId: primarySource?.sourceId ?? null,
             currentImdbId: movie.movieId,
             proposedImdbId: null,
-            score: analysis.mbPerMin,
-            flags,
+            score: scoreResult.score,
+            llmVerdict,
+            llmConfidence,
+            llmReason,
+            flags: scoreResult.flags,
             candidate: {
-              sourceTitle: arch.title,
               omdbTitle: candidateTitle,
-              sizeMB: analysis.sizeMB,
-              runtimeMinutes: analysis.runtimeMinutes,
-              mbPerMin: analysis.mbPerMin,
-              confirmedLengthMin,
-              reason: analysis.reason,
+              omdbYear: candidateYear,
+              omdbRuntime: movie.omdbRuntime,
+              sourceTitle: rawSourceTitle,
+              aiTitle: movie.aiTitle,
+              aiYear: movie.aiYear,
+              breakdown: scoreResult.breakdown,
             },
           })
           enqueued++
@@ -299,31 +258,119 @@ export default defineEventHandler(async event => {
 
         if (samples.length < 30) {
           samples.push({
-            kind: 'archive_preview',
+            kind: 'false_hit',
             movieId: movie.movieId,
-            sourceId: arch.sourceId,
-            title: arch.title || candidateTitle,
-            score: analysis.mbPerMin,
-            flags,
+            sourceId: primarySource?.sourceId ?? null,
+            title: candidateTitle,
+            score: scoreResult.score,
+            flags: scoreResult.flags,
+            llmVerdict,
+            llmReason,
           })
         }
       }
-    }
-  }
 
-  return {
-    success: true,
-    scanned,
-    flagged: flaggedFalseHits + flaggedArchivePreviews,
-    flaggedFalseHits,
-    flaggedArchivePreviews,
-    byKind: {
-      false_hit: flaggedFalseHits,
-      archive_preview: flaggedArchivePreviews,
-    },
-    llmVerified,
-    enqueued,
-    dryRun,
-    samples,
+      // 2. Archive.org preview detection (size + film length)
+      if (checkArchivePreviews) {
+        const archiveSources = sources.filter(
+          s => s.platform === 'archive.org' || s.channelId === 'archive.org'
+        )
+
+        for (const arch of archiveSources) {
+          const analysis = analyzeArchiveSourceSize({
+            sourceId: arch.sourceId,
+            title: arch.title,
+            description: arch.description,
+            sizeBytes: arch.size,
+            runtimeMinutes: candidateRuntimeMin,
+            durationSeconds: arch.duration,
+          })
+
+          if (!analysis.isLikelyPreview) continue
+
+          const flags = [...analysis.flags]
+          let confirmedLengthMin: number | null = null
+
+          if (verifyArchiveMetadata) {
+            const meta = await fetchArchiveVideoLength(arch.sourceId, candidateRuntimeMin)
+            confirmedLengthMin = meta.longestVideoMinutes
+            if (meta.confirmedPreview) {
+              flags.push('confirmed_short_archive_video')
+            }
+          }
+
+          flaggedArchivePreviews++
+
+          if (!dryRun) {
+            enqueueReviewItem(db, {
+              movieId: movie.movieId,
+              kind: 'archive_preview',
+              sourceId: arch.sourceId,
+              currentImdbId: movie.movieId,
+              proposedImdbId: null,
+              score: analysis.mbPerMin,
+              flags,
+              candidate: {
+                sourceTitle: arch.title,
+                omdbTitle: candidateTitle,
+                sizeMB: analysis.sizeMB,
+                runtimeMinutes: analysis.runtimeMinutes,
+                mbPerMin: analysis.mbPerMin,
+                confirmedLengthMin,
+                reason: analysis.reason,
+              },
+            })
+            enqueued++
+          }
+
+          if (samples.length < 30) {
+            samples.push({
+              kind: 'archive_preview',
+              movieId: movie.movieId,
+              sourceId: arch.sourceId,
+              title: arch.title || candidateTitle,
+              score: analysis.mbPerMin,
+              flags,
+            })
+          }
+        }
+      }
+    }
+
+    emitProgress({
+      type: 'audit',
+      status: 'completed',
+      current: scanned,
+      total,
+      message: `Audit ${dryRun ? '(dry run) ' : ''}complete: ${flaggedFalseHits} false hits, ${flaggedArchivePreviews} archive previews`,
+      successCurrent: flaggedFalseHits + flaggedArchivePreviews,
+      failedCurrent: enqueued,
+    })
+
+    return {
+      success: true,
+      scanned,
+      flagged: flaggedFalseHits + flaggedArchivePreviews,
+      flaggedFalseHits,
+      flaggedArchivePreviews,
+      byKind: {
+        false_hit: flaggedFalseHits,
+        archive_preview: flaggedArchivePreviews,
+      },
+      llmVerified,
+      enqueued,
+      dryRun,
+      samples,
+    }
+  } catch (error) {
+    emitProgress({
+      type: 'audit',
+      status: 'error',
+      current: scanned,
+      total,
+      message: error instanceof Error ? error.message : 'Audit failed',
+      lastError: error instanceof Error ? error.message : String(error),
+    })
+    throw error
   }
 })

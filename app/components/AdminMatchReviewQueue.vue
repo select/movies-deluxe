@@ -83,6 +83,43 @@
       </div>
     </div>
 
+    <!-- Live Audit Progress Bar -->
+    <div
+      v-if="
+        progress.audit &&
+        (progress.audit.status === 'starting' || progress.audit.status === 'in_progress')
+      "
+      class="p-4 rounded-xl bg-theme-background border border-theme-border space-y-2"
+    >
+      <div class="flex items-center justify-between text-xs gap-2">
+        <span class="text-theme-textmuted truncate">
+          {{ progress.audit.message }}
+        </span>
+        <span class="font-mono text-nowrap text-theme-text">
+          {{ progress.audit.current }} / {{ progress.audit.total || '?' }}
+          <template v-if="progress.audit.total">
+            ({{ Math.round((progress.audit.current / progress.audit.total) * 100) }}%)
+          </template>
+        </span>
+      </div>
+      <div class="h-2.5 bg-theme-border rounded-full overflow-hidden">
+        <div
+          class="h-full bg-amber-500 transition-all duration-200"
+          :style="{
+            width: progress.audit.total
+              ? `${Math.min(100, (progress.audit.current / progress.audit.total) * 100)}%`
+              : '0%',
+          }"
+        ></div>
+      </div>
+      <div class="flex items-center gap-4 text-[11px] text-theme-textmuted">
+        <span>Flagged: {{ progress.audit.successCurrent || 0 }}</span>
+        <span v-if="progress.audit.failedCurrent"
+          >Enqueued: {{ progress.audit.failedCurrent }}</span
+        >
+      </div>
+    </div>
+
     <!-- Audit Result / Error Banners -->
     <div
       v-if="auditResult"
@@ -552,8 +589,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { storeToRefs } from '#imports'
 import { $fetch } from '#build/fetch'
 import { NuxtLink } from '#components'
+import { useAdminStore } from '~/stores/useAdminStore'
 import type {
   AuditMatchesResponse,
   LlmVerdict,
@@ -574,6 +613,9 @@ const kindTabs: Array<{ value: KindFilter; label: string }> = [
   { value: 'archive_preview', label: 'Archive Previews' },
   { value: 'new_match', label: 'New Matches' },
 ]
+
+const adminStore = useAdminStore()
+const { progress } = storeToRefs(adminStore)
 
 const items = ref<MatchReviewQueueItem[]>([])
 const total = ref(0)
