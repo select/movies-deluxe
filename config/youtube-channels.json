@@ -137,6 +137,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Curated collection of licensed Hollywood classics, independent releases, dramas, and thrillers"
+    },
+    {
+      "id": "UCIbCd95HIkwZx6DqlWSeDcA",
+      "handle": "@FreeMoviesByCONtv",
+      "name": "Free Movies By CONtv",
+      "language": "en",
+      "enabled": true,
+      "notes": "Free full-length movies from CONtv (Cineverse / Cinedigm) powered by CoPilot Media"
     }
   ]
 }
