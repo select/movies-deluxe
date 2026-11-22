@@ -2,7 +2,7 @@
 description: Check for type and lint errors and fix them
 ---
 
-Create a beads issue to check for type and lint errors and fix them
+Check for type and lint errors and fix them
 
 ## Commands
 

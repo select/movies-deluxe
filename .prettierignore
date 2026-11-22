@@ -16,11 +16,6 @@ dist
 # Third-party libraries
 public/sqlite-wasm
 
-
-# Beads
-.beads/*.jsonl
-.beads/
-
 # OpenCode
 .opencode/
 

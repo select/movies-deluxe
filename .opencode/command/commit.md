@@ -18,7 +18,7 @@ Create a git commit following Conventional Commits format: `<type>(<scope>): <su
 
 **Best Practices**:
 
-- ✅ Present tense ("add" not "added"), be specific, reference beads issues
+- ✅ Present tense ("add" not "added"), be specific
 - ❌ No past tense, vague terms, capitals, periods, or secrets
 
 **Example**: `feat(admin): add omdb enrichment panel`
