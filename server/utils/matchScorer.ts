@@ -92,6 +92,14 @@ export function normalizeTitleForMatching(raw: string): string {
     .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
 
   return splitCamel
+    .replace(/\u0131/g, 'i')
+    .replace(/\u0130/g, 'i')
+    .replace(/ß/g, 'ss')
+    .replace(/[æÆ]/g, 'ae')
+    .replace(/[œŒ]/g, 'oe')
+    .replace(/[øØ]/g, 'o')
+    .replace(/[łŁ]/g, 'l')
+    .replace(/[đĐ]/g, 'd')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
@@ -307,8 +315,9 @@ export function scoreMatchCandidate(
   }
 
   // 2. Year score (-35..+15 points)
+  // Prefer explicit source metadata/title year over AI-extracted year (which can be hallucinated)
   const effectiveSourceYear =
-    source.aiYear ?? source.sourceYear ?? source.titleYear ?? extractYearFromTitle(source.title)
+    source.sourceYear ?? source.titleYear ?? extractYearFromTitle(source.title) ?? source.aiYear
   const candidateYear = candidate.year ?? null
 
   let yearScore = 0

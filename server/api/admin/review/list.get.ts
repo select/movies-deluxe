@@ -53,6 +53,8 @@ interface QueueRow {
   movieTitle: string | null
   movieYear: number | null
   movieVerified: number | null
+  aiTitle: string | null
+  aiYear: number | null
   metaTitle: string | null
   metaYear: string | null
   metaRuntime: string | null
@@ -251,6 +253,8 @@ export default defineEventHandler((event): MatchReviewListResponse => {
           m.title AS movieTitle,
           m.year AS movieYear,
           m.verified AS movieVerified,
+          ai.title AS aiTitle,
+          ai.year AS aiYear,
           meta.Title AS metaTitle,
           meta.Year AS metaYear,
           meta.Runtime AS metaRuntime,
@@ -261,6 +265,7 @@ export default defineEventHandler((event): MatchReviewListResponse => {
           meta.imdbID AS metaImdbID
         FROM match_review_queue q
         LEFT JOIN movies m ON q.movieId = m.movieId
+        LEFT JOIN ai_metadata ai ON q.movieId = ai.movieId
         LEFT JOIN metadata meta ON q.movieId = meta.movieId
         ${whereSql}
         ORDER BY
@@ -330,6 +335,8 @@ export default defineEventHandler((event): MatchReviewListResponse => {
             title: row.movieTitle,
             year: row.movieYear,
             verified: row.movieVerified === 1,
+            aiTitle: row.aiTitle,
+            aiYear: row.aiYear,
           }
         : null
 
