@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-11-22T18:44:36.122Z"
+    "lastUpdated": "2026-11-22T18:50:55.220Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -146,7 +146,8 @@
       "must-watch",
       "cinema-history",
       "masterpieces"
-    ]
+    ],
+    "category": "Featured"
   },
   "criterion-collection": {
     "id": "criterion-collection",
@@ -447,7 +448,8 @@
       "prestigious",
       "restored",
       "cinema-history"
-    ]
+    ],
+    "category": "Featured"
   },
   "animation-shorts": {
     "id": "animation-shorts",
@@ -2073,7 +2075,8 @@
       "golden-age",
       "cartoons",
       "family"
-    ]
+    ],
+    "category": "Featured"
   },
   "sherlock-holmes": {
     "id": "sherlock-holmes",
@@ -2145,7 +2148,8 @@
       "classic",
       "crime",
       "british"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "vampire-movies": {
     "id": "vampire-movies",
@@ -2277,7 +2281,8 @@
       "supernatural",
       "classic-horror"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Themes & Creatures"
   },
   "cloak-and-dagger": {
     "id": "cloak-and-dagger",
@@ -2439,7 +2444,8 @@
       "action",
       "historical",
       "espionage"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "ninja": {
     "id": "ninja",
@@ -2488,7 +2494,8 @@
       "ninja",
       "japanese-cinema",
       "warriors"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "samurai": {
     "id": "samurai",
@@ -2543,7 +2550,8 @@
       "historical",
       "warriors",
       "honor"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "knights-and-vikings": {
     "id": "knights-and-vikings",
@@ -2622,7 +2630,8 @@
       "historical",
       "adventure",
       "warriors"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "monster-madness": {
     "id": "monster-madness",
@@ -2691,7 +2700,8 @@
       "japanese-cinema",
       "sci-fi",
       "action"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "dangerous-dinosaurs": {
     "id": "dangerous-dinosaurs",
@@ -2813,7 +2823,8 @@
       "monsters",
       "adventure",
       "science-fiction"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "fin-flicks": {
     "id": "fin-flicks",
@@ -2937,7 +2948,8 @@
       "horror",
       "action",
       "creature-feature"
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "charlie-chaplin": {
     "id": "charlie-chaplin",
@@ -3019,7 +3031,8 @@
       "slapstick",
       "classic-hollywood",
       "shorts"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "buster-keaton": {
     "id": "buster-keaton",
@@ -3113,7 +3126,8 @@
       "slapstick",
       "physical-comedy",
       "classic-hollywood"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "abbott-and-costello": {
     "id": "abbott-and-costello",
@@ -3140,7 +3154,8 @@
       "duo",
       "slapstick",
       "wordplay"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "elia-kazan": {
     "id": "elia-kazan",
@@ -3177,7 +3192,8 @@
       "oscar-winner",
       "method-acting"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Directors"
   },
   "alfred-hitchcock": {
     "id": "alfred-hitchcock",
@@ -3237,7 +3253,8 @@
       "mystery",
       "classic-hollywood",
       "auteur"
-    ]
+    ],
+    "category": "Directors"
   },
   "akira-kurosawa": {
     "id": "akira-kurosawa",
@@ -3271,7 +3288,8 @@
       "drama",
       "masterpieces",
       "auteur"
-    ]
+    ],
+    "category": "Directors"
   },
   "billy-wilder": {
     "id": "billy-wilder",
@@ -3309,7 +3327,8 @@
       "film-noir",
       "classic-hollywood",
       "auteur"
-    ]
+    ],
+    "category": "Directors"
   },
   "martial-arts": {
     "id": "martial-arts",
@@ -3390,7 +3409,8 @@
       "fight-scenes",
       "samurai"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "sci-fi": {
     "id": "sci-fi",
@@ -3483,7 +3503,8 @@
       "future",
       "technology",
       "aliens"
-    ]
+    ],
+    "category": "Genres"
   },
   "animation-features": {
     "id": "animation-features",
@@ -3519,7 +3540,8 @@
       "anime",
       "animated-films"
     ],
-    "enabled": false
+    "enabled": false,
+    "category": "Featured"
   },
   "horror": {
     "id": "horror",
@@ -3625,7 +3647,8 @@
       "suspense",
       "monsters",
       "supernatural"
-    ]
+    ],
+    "category": "Genres"
   },
   "film-noir": {
     "id": "film-noir",
@@ -3789,7 +3812,8 @@
       "black-and-white",
       "detective"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "romance": {
     "id": "romance",
@@ -3960,7 +3984,8 @@
       "relationships",
       "heartwarming"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "adventure": {
     "id": "adventure",
@@ -4070,7 +4095,8 @@
       "journey",
       "epic"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "mystery": {
     "id": "mystery",
@@ -4216,7 +4242,8 @@
       "suspense",
       "investigation"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "thriller": {
     "id": "thriller",
@@ -4356,7 +4383,8 @@
       "psychological",
       "crime"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "war": {
     "id": "war",
@@ -4458,7 +4486,8 @@
       "historical",
       "drama"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "western": {
     "id": "western",
@@ -4630,7 +4659,8 @@
         }
       }
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Genres"
   },
   "surrealist-cinema": {
     "id": "surrealist-cinema",
@@ -4674,7 +4704,8 @@
       "experimental",
       "avant-garde",
       "dreamlike"
-    ]
+    ],
+    "category": "Genres"
   },
   "1920s": {
     "id": "1920s",
@@ -4807,7 +4838,8 @@
       "classics",
       "vintage"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "1930s": {
     "id": "1930s",
@@ -4938,7 +4970,8 @@
       "classics",
       "hollywood"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "1940s": {
     "id": "1940s",
@@ -5022,7 +5055,8 @@
       "war-films",
       "classics",
       "golden-age"
-    ]
+    ],
+    "category": "Decades"
   },
   "1950s": {
     "id": "1950s",
@@ -5190,7 +5224,8 @@
       "classics",
       "technicolor"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "1960s": {
     "id": "1960s",
@@ -5329,7 +5364,8 @@
       "classics",
       "revolution"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "1970s": {
     "id": "1970s",
@@ -5447,7 +5483,8 @@
       "classics",
       "gritty"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "1980s": {
     "id": "1980s",
@@ -5509,7 +5546,8 @@
       "classics",
       "nostalgia"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "1990s": {
     "id": "1990s",
@@ -5577,7 +5615,8 @@
       "modern",
       "classics"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "2000s": {
     "id": "2000s",
@@ -5687,7 +5726,8 @@
       "contemporary",
       "millennium"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "2010s": {
     "id": "2010s",
@@ -5802,7 +5842,8 @@
       "modern",
       "recent"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "2020s": {
     "id": "2020s",
@@ -5846,7 +5887,8 @@
       "modern",
       "current"
     ],
-    "enabled": true
+    "enabled": true,
+    "category": "Decades"
   },
   "canine-cinema": {
     "id": "canine-cinema",
@@ -5870,7 +5912,8 @@
       "heartwarming",
       "adventure"
     ],
-    "enabled": false
+    "enabled": false,
+    "category": "Themes & Creatures"
   },
   "frankenstein": {
     "id": "frankenstein",
@@ -5934,7 +5977,8 @@
           }
         }
       }
-    ]
+    ],
+    "category": "Themes & Creatures"
   },
   "dw-griffith": {
     "id": "dw-griffith",
@@ -6098,7 +6142,8 @@
       "pioneer",
       "director",
       "classic-hollywood"
-    ]
+    ],
+    "category": "Directors"
   },
   "laurel-and-hardy": {
     "id": "laurel-and-hardy",
@@ -6198,7 +6243,8 @@
       "slapstick",
       "classic-hollywood",
       "duo"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "georges-melies": {
     "id": "georges-melies",
@@ -6269,7 +6315,8 @@
       "french-cinema",
       "fantasy",
       "pioneer"
-    ]
+    ],
+    "category": "Directors"
   },
   "john-wayne": {
     "id": "john-wayne",
@@ -6338,7 +6385,8 @@
       "classic-hollywood",
       "actor",
       "adventure"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "bela-lugosi": {
     "id": "bela-lugosi",
@@ -6404,7 +6452,8 @@
       "gothic",
       "cult",
       "classic-hollywood"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "john-ford": {
     "id": "john-ford",
@@ -6467,7 +6516,8 @@
       "drama",
       "auteur",
       "classic-hollywood"
-    ]
+    ],
+    "category": "Directors"
   },
   "boris-karloff": {
     "id": "boris-karloff",
@@ -6530,7 +6580,8 @@
       "thriller",
       "monster",
       "classic-hollywood"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "vincent-price": {
     "id": "vincent-price",
@@ -6588,7 +6639,8 @@
       "gothic",
       "cult",
       "thriller"
-    ]
+    ],
+    "category": "Icons & Legends"
   },
   "fritz-lang": {
     "id": "fritz-lang",
@@ -6640,7 +6692,8 @@
       "expressionism",
       "auteur",
       "thriller"
-    ]
+    ],
+    "category": "Directors"
   },
   "frank-capra": {
     "id": "frank-capra",
@@ -6692,6 +6745,613 @@
       "drama",
       "auteur",
       "classic-hollywood"
+    ],
+    "category": "Directors"
+  },
+  "space-and-alien-invasion": {
+    "id": "space-and-alien-invasion",
+    "name": "Space & Alien Invasion",
+    "description": "Interplanetary voyages, flying saucers, and extraterrestrial encounters from vintage and cult sci-fi cinema.",
+    "category": "Themes & Creatures",
+    "movieIds": [
+      "tt0078748",
+      "tt0043456",
+      "tt0070544",
+      "tt0096256",
+      "tt2150497",
+      "tt0062168",
+      "tt0122111",
+      "tt0050873",
+      "tt0015431",
+      "tt0348366",
+      "tt0058700",
+      "tt0087004",
+      "tt0049646",
+      "tt0472566",
+      "tt0407304",
+      "tt5056352",
+      "tt0092610",
+      "tt0432637",
+      "tt0326373",
+      "tt0008100",
+      "tt0063172",
+      "tt0937419",
+      "tt0038007",
+      "tt0150764",
+      "tt0051418",
+      "tt0056352",
+      "tt0067065",
+      "tt0059346",
+      "tt2536246",
+      "tt0050778",
+      "tt0055894",
+      "tt0120157",
+      "tt8223770",
+      "tt0051786",
+      "tt0077305",
+      "tt1260515",
+      "tt1971325",
+      "tt8664988",
+      "tt0466664",
+      "tt12800524",
+      "tt0109965",
+      "tt0043778",
+      "tt0053388",
+      "tt0090729",
+      "tt0047559",
+      "tt0247746",
+      "tt0059504",
+      "tt0062704",
+      "tt0970416",
+      "tt0043380",
+      "tt0080836",
+      "tt0095687",
+      "tt0052564",
+      "tt0058659",
+      "tt3722614",
+      "tt0047590",
+      "tt0050210",
+      "tt0052228",
+      "tt0052320",
+      "tt0383353",
+      "tt0043545",
+      "tt0046351",
+      "tt0051881",
+      "tt0052379",
+      "tt0097176",
+      "tt0052929",
+      "tt3665498",
+      "tt0042897",
+      "tt0045073",
+      "tt0046907",
+      "tt0049370",
+      "tt0059486",
+      "tt0134983",
+      "tt5215088",
+      "tt0049900",
+      "tt0051020",
+      "tt0062411",
+      "tt0068595",
+      "tt0098350",
+      "tt0046316",
+      "tt0053250",
+      "tt0060868",
+      "tt0089641",
+      "tt2145829",
+      "tt3397918",
+      "tt0045553",
+      "tt0062360",
+      "tt1977094",
+      "tt0051432",
+      "tt0053103",
+      "tt0088961",
+      "tt0404756",
+      "tt3774802",
+      "tt0052227",
+      "tt0054950",
+      "tt0048957",
+      "tt0064360",
+      "tt2769184",
+      "tt5931338",
+      "tt3198000",
+      "tt0046186",
+      "tt0158409",
+      "tt0045609",
+      "tt0046192",
+      "tt0052077",
+      "tt0053337",
+      "tt0055294",
+      "tt0167215",
+      "tt0046065",
+      "tt0059887",
+      "tt0092530",
+      "tt1601452",
+      "tt0050723",
+      "tt0053232",
+      "tt0051993",
+      "tt0054330",
+      "tt0115006",
+      "tt0157079",
+      "tt0150500",
+      "tt1995400",
+      "tt12483708",
+      "tt0047149",
+      "tt0058072",
+      "tt0080596",
+      "tt1298605",
+      "tt6409856",
+      "tt11266868",
+      "tt0230832",
+      "tt0059920",
+      "tt0060558",
+      "tt0116030",
+      "tt0228303",
+      "tt0054415",
+      "tt0112466",
+      "tt0854667",
+      "tt2756412",
+      "tt6678874",
+      "tt5300154",
+      "tt0045655",
+      "tt0061217",
+      "tt0060672",
+      "tt0079894",
+      "tt0075990",
+      "tt5258074",
+      "tt1564571",
+      "tt12295244",
+      "tt0063790",
+      "tt0149677",
+      "tt0101264",
+      "tt2411516",
+      "tt3078932",
+      "tt0077834",
+      "tt0104055",
+      "tt1564369",
+      "tt3453772",
+      "tt5336798",
+      "tt0062036",
+      "tt0077640",
+      "tt0481509",
+      "tt2175927",
+      "tt3530690",
+      "tt4290974",
+      "tt0061592",
+      "tt0426556",
+      "tt0046977",
+      "tt8783146",
+      "tt17425022",
+      "tt9600274",
+      "tt4943934",
+      "tt15331462",
+      "tt2275499",
+      "tt13179918",
+      "tt12942958",
+      "tt0048256",
+      "tt2175184",
+      "tt6874406",
+      "tt14516188",
+      "tt3677466",
+      "tt4982252",
+      "tt1183733",
+      "tt1350512",
+      "tt5720450",
+      "tt11518196",
+      "tt9301884",
+      "tt1094162",
+      "tt32559869",
+      "tt35667868",
+      "tt8783920"
+    ],
+    "createdAt": "2026-11-22T18:50:55.220Z",
+    "updatedAt": "2026-11-22T18:50:55.220Z",
+    "savedQueries": [
+      {
+        "searchQuery": "space alien",
+        "filterState": {
+          "searchQuery": "space alien",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "sci-fi",
+      "space",
+      "aliens",
+      "cult"
+    ]
+  },
+  "spy-and-espionage": {
+    "id": "spy-and-espionage",
+    "name": "Spy & Espionage",
+    "description": "Secret agents, Cold War intrigue, double-crosses, and covert missions.",
+    "category": "Themes & Creatures",
+    "movieIds": [
+      "tt0010323",
+      "tt0056111",
+      "tt2506426",
+      "tt27847051",
+      "tt0038787",
+      "tt0184950",
+      "tt0026029",
+      "tt0475536",
+      "tt0019415",
+      "tt0054953",
+      "tt0162458",
+      "tt0019195",
+      "tt0021800",
+      "tt0102487",
+      "tt0037075",
+      "tt0039090",
+      "tt0015119",
+      "tt0035372",
+      "tt0038289",
+      "tt0059303",
+      "tt1245526",
+      "tt2785288",
+      "tt0002898",
+      "tt0029751",
+      "tt0035612",
+      "tt0151413",
+      "tt0149769",
+      "tt0052327",
+      "tt0286027",
+      "tt0064067",
+      "tt0031446",
+      "tt0035121",
+      "tt0035298",
+      "tt0178446",
+      "tt0294808",
+      "tt1226753",
+      "tt0011958",
+      "tt0018014",
+      "tt0025452",
+      "tt0033876",
+      "tt0034647",
+      "tt0036338",
+      "tt0036279",
+      "tt0045230",
+      "tt0343737",
+      "tt5774450",
+      "tt0007992",
+      "tt0020223",
+      "tt0023323",
+      "tt0024161",
+      "tt0033758",
+      "tt0033890",
+      "tt0037972",
+      "tt0037795",
+      "tt0038062",
+      "tt0040679",
+      "tt0053354",
+      "tt0065452",
+      "tt0089240",
+      "tt0102715",
+      "tt0028101",
+      "tt0034740",
+      "tt0039193",
+      "tt0051492",
+      "tt14140954",
+      "tt0142977",
+      "tt0021219",
+      "tt0028231",
+      "tt0035125",
+      "tt0036336",
+      "tt0042310",
+      "tt0044698",
+      "tt0079236",
+      "tt5563718",
+      "tt0474653",
+      "tt0037255",
+      "tt0040478",
+      "tt0040947",
+      "tt0054806",
+      "tt0061018",
+      "tt0061647",
+      "tt0274166",
+      "tt0028767",
+      "tt0029298",
+      "tt0029584",
+      "tt0048640",
+      "tt0054058",
+      "tt0071663",
+      "tt0008550",
+      "tt0141010",
+      "tt0032283",
+      "tt0035750",
+      "tt0044379",
+      "tt0046307",
+      "tt0021305",
+      "tt0026993",
+      "tt0030473",
+      "tt0032009",
+      "tt0035249",
+      "tt0035371",
+      "tt0034169",
+      "tt0035665",
+      "tt0037538",
+      "tt0040815",
+      "tt0065611",
+      "tt0029712",
+      "tt5191424",
+      "tt0035462",
+      "tt0035010",
+      "tt1686784",
+      "tt0227396",
+      "tt0021472",
+      "tt0027180",
+      "tt0034500",
+      "tt0178348",
+      "tt0254632",
+      "tt0047475",
+      "tt0211663",
+      "tt1235803",
+      "tt0045219",
+      "tt0151455",
+      "tt0290100",
+      "tt0021785",
+      "tt0025472",
+      "tt0031177",
+      "tt0035378",
+      "tt0028128",
+      "tt0030736",
+      "tt0032021",
+      "tt0058703",
+      "tt0347167",
+      "tt0021001",
+      "tt0031077",
+      "tt0033613",
+      "tt0038046",
+      "tt0178896",
+      "tt0042383",
+      "tt0044371",
+      "tt0045783",
+      "tt4294238",
+      "tt0002621",
+      "tt0180684",
+      "tt0035425",
+      "tt0036397",
+      "tt0037446",
+      "tt0046729",
+      "tt0053651",
+      "tt6912990",
+      "tt0044133",
+      "tt0065045",
+      "tt0031778",
+      "tt0032329",
+      "tt0036690",
+      "tt0059124",
+      "tt0434198",
+      "tt0033595",
+      "tt0036164",
+      "tt0025006",
+      "tt0075188",
+      "tt0025308",
+      "tt0025518",
+      "tt0034221",
+      "tt0034416",
+      "tt0029544",
+      "tt0033611",
+      "tt0430328",
+      "tt0034637",
+      "tt0070569",
+      "tt0484831",
+      "tt0137193",
+      "tt0088046",
+      "tt1531697",
+      "tt0061445",
+      "tt0151339",
+      "tt11758792",
+      "tt9641092",
+      "tt1971310",
+      "tt0060672",
+      "tt5470222",
+      "tt0059171",
+      "tt0055380",
+      "tt0454097",
+      "tt0235777",
+      "tt0030699",
+      "tt0408107",
+      "tt20114908",
+      "tt14596750"
+    ],
+    "createdAt": "2026-11-22T18:50:55.220Z",
+    "updatedAt": "2026-11-22T18:50:55.220Z",
+    "savedQueries": [
+      {
+        "searchQuery": "spy",
+        "filterState": {
+          "searchQuery": "spy",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "spy",
+      "espionage",
+      "thriller",
+      "mystery"
+    ]
+  },
+  "pirates-and-high-seas": {
+    "id": "pirates-and-high-seas",
+    "name": "Pirates & High Seas",
+    "description": "Swashbuckling adventures, buried treasure, and naval battles on the high seas.",
+    "category": "Themes & Creatures",
+    "movieIds": [
+      "tt0046478",
+      "tt0054331",
+      "tt0151564",
+      "tt0016751",
+      "tt0029700",
+      "tt0085127",
+      "tt0003740",
+      "tt0015224",
+      "tt0019267",
+      "tt0037895",
+      "tt0016654",
+      "tt0019676",
+      "tt0017226",
+      "tt0033519",
+      "tt0043067",
+      "tt0033040",
+      "tt0252973",
+      "tt5126922",
+      "tt0173837",
+      "tt0044333",
+      "tt0059269",
+      "tt0009986",
+      "tt0141134",
+      "tt6083388",
+      "tt8667502",
+      "tt0037576",
+      "tt0038108",
+      "tt0203635",
+      "tt0021483",
+      "tt0035203",
+      "tt0028100",
+      "tt0039218",
+      "tt0148056",
+      "tt0033139",
+      "tt0472483",
+      "tt0046223",
+      "tt0048023",
+      "tt0025656",
+      "tt0426501",
+      "tt0020959",
+      "tt0006115",
+      "tt0046787",
+      "tt0027496",
+      "tt0153810",
+      "tt9341668",
+      "tt0002922",
+      "tt0151986",
+      "tt0130142",
+      "tt0130218",
+      "tt0151934",
+      "tt0021231",
+      "tt0161331",
+      "tt0027420",
+      "tt0052072",
+      "tt0152275",
+      "tt1129410",
+      "tt0054237",
+      "tt0168785",
+      "tt6716912",
+      "tt1999141",
+      "tt0811011",
+      "tt0148610"
+    ],
+    "createdAt": "2026-11-22T18:50:55.220Z",
+    "updatedAt": "2026-11-22T18:50:55.220Z",
+    "savedQueries": [
+      {
+        "searchQuery": "pirate",
+        "filterState": {
+          "searchQuery": "pirate",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "adventure",
+      "pirates",
+      "swashbuckler",
+      "action"
+    ]
+  },
+  "zombies-and-undead": {
+    "id": "zombies-and-undead",
+    "name": "Zombies & Undead",
+    "description": "Classic voodoo zombies, Romero-era living dead, and cult undead horror.",
+    "category": "Themes & Creatures",
+    "movieIds": [
+      "tt0063350",
+      "tt0058700",
+      "tt0023694",
+      "tt0035613",
+      "tt0035665",
+      "tt0036125",
+      "tt0071508",
+      "tt0475937",
+      "tt2787824",
+      "tt0071395",
+      "tt0869152",
+      "tt0034224",
+      "tt0034546",
+      "tt0039076",
+      "tt1534571",
+      "tt0033787",
+      "tt0038270",
+      "tt0067396",
+      "tt0780583",
+      "tt1230211",
+      "tt0075838",
+      "tt0069165",
+      "tt0036307",
+      "tt1839426",
+      "tt0069933",
+      "tt0489018",
+      "tt0062957",
+      "tt3602422",
+      "tt0074383",
+      "tt1876547",
+      "tt2523692",
+      "tt1043585",
+      "tt1191971",
+      "tt4685626",
+      "tt0054724",
+      "tt2236182",
+      "tt9670282",
+      "tt0028174",
+      "tt0060558",
+      "tt0063142",
+      "tt1075746",
+      "tt4511566",
+      "tt2089863",
+      "tt0346811",
+      "tt3709718",
+      "tt0051064",
+      "tt13835046",
+      "tt0086486",
+      "tt2798680",
+      "tt1091869",
+      "tt5950092",
+      "tt0843873",
+      "tt0463392",
+      "tt26324048",
+      "tt3122618",
+      "tt4675332",
+      "tt8733322"
+    ],
+    "createdAt": "2026-11-22T18:50:55.220Z",
+    "updatedAt": "2026-11-22T18:50:55.220Z",
+    "savedQueries": [
+      {
+        "searchQuery": "zombie",
+        "filterState": {
+          "searchQuery": "zombie",
+          "sort": {
+            "field": "relevance",
+            "direction": "desc"
+          }
+        }
+      }
+    ],
+    "tags": [
+      "horror",
+      "zombies",
+      "cult",
+      "undead"
     ]
   }
 }
