@@ -5,12 +5,21 @@
  * Supports multiple providers (Ollama, OpenRouter) through a unified interface.
  */
 
+export type ExtractedContentType =
+  'movie' | 'short' | 'tv_episode' | 'double_feature' | 'part' | 'clip' | 'unknown'
+
 /**
  * Extracted movie metadata from AI
  */
 export interface ExtractedMetadata {
   title?: string
   year?: number
+  originalTitle?: string
+  altTitles?: string[]
+  director?: string
+  cast?: string[]
+  language?: string
+  contentType?: ExtractedContentType
 }
 
 /**

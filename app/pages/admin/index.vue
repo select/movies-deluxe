@@ -271,6 +271,9 @@
       <!-- Channel Sync & Diff -->
       <AdminChannelSync />
 
+      <!-- Match Review Queue -->
+      <AdminMatchReviewQueue />
+
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         <!-- Data Collection Section -->
@@ -369,6 +372,7 @@ import AdminYouTubeChannelStats from '~/components/AdminYouTubeChannelStats.vue'
 import AdminArchiveScraper from '~/components/AdminArchiveScraper.vue'
 import AdminYouTubeScraper from '~/components/AdminYouTubeScraper.vue'
 import AdminChannelSync from '~/components/AdminChannelSync.vue'
+import AdminMatchReviewQueue from '~/components/AdminMatchReviewQueue.vue'
 import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
 import AdminEmbeddingsGenerator from '~/components/AdminEmbeddingsGenerator.vue'
 import AdminCollectionCleanup from '~/components/AdminCollectionCleanup.vue'

@@ -1,51 +1,44 @@
 # Batch Movie Metadata Extraction
 
-Extract clean movie titles and release years from multiple raw source entries.
+Extract structured movie metadata from multiple raw source entries.
 
 ## Task
 
-For EACH movie in the input array, extract: (1) Clean movie title without promotional text, (2) Original theatrical release year (NOT upload year)
+For EACH movie in the input array, extract a JSON object preserving `id` plus:
 
-**Remove:**
+- `title` (string, required): Clean movie title without promotional text, channel names, quality tags, or hooks.
+- `originalTitle` (string, optional): Original or English theatrical title if `title` is localized/translated (e.g. German, Korean, Russian, Spanish) or vice versa.
+- `altTitles` (string[], optional): Other known alternative/localized titles mentioned in the text.
+- `year` (number, optional): Original theatrical release year (4-digit integer, NOT upload year).
+- `director` (string, optional): Director's full name if clearly stated.
+- `cast` (string[], optional): Up to 5 main cast/actor names if clearly stated.
+- `language` (string, optional): 2-letter ISO 639-1 language code (e.g. `"en"`, `"de"`, `"ko"`, `"ru"`, `"es"`).
+- `contentType` (string, optional): One of `"movie"`, `"double_feature"`, `"part"`, `"tv_episode"`, `"clip"`.
 
-- Channel names (FilmRise, Popcornflix, Movie Central, Netzkino)
-- Promotional text (Free Full Movie, HD, 720p, 1080p, 4K)
-- Version suffixes (Colorized, Restored, Remastered, Director's Cut, Extended Edition, CLIP, Rare Classic, A Golden Classic, Full Movie)
-- Actor/cast names after dash separator
-- Genre labels and quality indicators
-- Video type labels
-- Formatting characters (|, [], "")
-- Promotional hooks/taglines (e.g., "Her Student Wants Her To Himself")
+**Omit any optional field if unknown or not present.** Do not use `null` or empty strings/arrays.
 
-**Keep:** Original movie title, subtitle if official, original theatrical release year
+## Cleaning & Classification Rules
 
-**Year:** Use 4-digit years from title/description, prefer parentheses format "Title (1942)", choose earliest if multiple, omit if not found
-
-**Pattern Recognition:** Many titles follow "Promotional Hook | Actual Movie Title | Genre/Quality Info" - extract the actual movie title from the middle section
+- Remove channel names (FilmRise, Popcornflix, Movie Central, Netzkino), promotional text (Free Full Movie, Ganzer Film, Película Completa, HD, 1080p, 4K), version suffixes (Colorized, Restored, Remastered), genre labels, and formatting (`|`, `[]`, `""`).
+- Strip promotional clickbait hooks (`"Hook | Real Title | Genre"` → `title: "Real Title"`).
+- Move actor/director names after dashes or pipes into `cast` / `director`.
+- Handle German, Korean, Russian, Spanish, French, Italian, and Japanese localized titles cleanly, populating `originalTitle` / `altTitles` and `language` when present.
+- Classify `contentType`:
+  - `"double_feature"`: Two films in one upload (`A + B`, `Double Feature`).
+  - `"part"`: Multi-part upload (`Part 2 of 4`, `Pt. 1`, `Teil 2`).
+  - `"tv_episode"`: TV episode (`s1e01`, `S02E04`, `STUDIO ONE`, `Episode 3`).
+  - `"clip"`: Trailer, teaser, preview, clip, or review.
+  - `"movie"`: Standard full movie or short film.
 
 ## Input Format
 
-JSON array of movies:
-
 ```json
-[
-  { "id": "movie-123", "title": "Raw Title Here", "description": "Optional description..." },
-  { "id": "movie-456", "title": "Another Raw Title", "description": "Another description..." }
-]
+[{ "id": "movie-123", "title": "Raw Title Here", "description": "Optional description..." }]
 ```
 
 ## Output Format
 
-**IMPORTANT:** Respond ONLY with valid JSON array. No text, explanations, or markdown.
-
-Return a JSON array with the same `id` for each input, plus extracted `title` and optional `year`:
-
-```json
-[
-  { "id": "movie-123", "title": "Clean Title", "year": 1942 },
-  { "id": "movie-456", "title": "Another Clean Title" }
-]
-```
+**IMPORTANT:** Respond ONLY with a valid JSON array. No text, explanations, or markdown.
 
 ## Examples
 
@@ -54,24 +47,28 @@ Input:
 ```json
 [
   { "id": "a1", "title": "Nosferatu (1922) - Classic Horror [HD]", "description": "" },
-  { "id": "a2", "title": "Dr. Jekyll And Mr. Hyde Colorized", "description": "" },
-  { "id": "a3", "title": "Snowfire - Molly McGowan, Melody McGowan", "description": "" },
   {
-    "id": "a4",
+    "id": "a2",
     "title": "Her Student Wants Her To Himself | The Wrong Teacher | HD Crime Thriller",
     "description": ""
   },
   {
-    "id": "b1",
-    "title": "A Christmas Karen | Free Full Holiday Movie | FilmRise",
-    "description": "...2022 holiday comedy..."
-  },
-  {
-    "id": "b2",
-    "title": "Trusting Him Was Her Biggest Mistake | The Wrong Friend | Full 2025 Thriller Movie",
+    "id": "a3",
+    "title": "Der müde Tod (Destiny) 1921 - Fritz Lang - Ganzer Film Deutsch",
     "description": ""
   },
-  { "id": "c1", "title": "The Santa Trap | Free Full Movie", "description": "A family comedy..." },
+  {
+    "id": "a4",
+    "title": "Snowfire - Molly McGowan, Melody McGowan",
+    "description": ""
+  },
+  {
+    "id": "b1",
+    "title": "Night of the Living Dead + Carnival of Souls Double Feature",
+    "description": ""
+  },
+  { "id": "b2", "title": "The Phantom of the Opera (1925) - Part 2 of 4", "description": "" },
+  { "id": "c1", "title": "STUDIO ONE: Twelve Angry Men (1954) s1e01", "description": "" },
   { "id": "c2", "title": "Night of the Living Dead - CLIP", "description": "" }
 ]
 ```
@@ -80,14 +77,46 @@ Output:
 
 ```json
 [
-  { "id": "a1", "title": "Nosferatu", "year": 1922 },
-  { "id": "a2", "title": "Dr. Jekyll And Mr. Hyde" },
-  { "id": "a3", "title": "Snowfire" },
-  { "id": "a4", "title": "The Wrong Teacher" },
-  { "id": "b1", "title": "A Christmas Karen", "year": 2022 },
-  { "id": "b2", "title": "The Wrong Friend", "year": 2025 },
-  { "id": "c1", "title": "The Santa Trap" },
-  { "id": "c2", "title": "Night of the Living Dead" }
+  { "id": "a1", "title": "Nosferatu", "year": 1922, "language": "en", "contentType": "movie" },
+  { "id": "a2", "title": "The Wrong Teacher", "language": "en", "contentType": "movie" },
+  {
+    "id": "a3",
+    "title": "Der müde Tod",
+    "originalTitle": "Destiny",
+    "year": 1921,
+    "director": "Fritz Lang",
+    "language": "de",
+    "contentType": "movie"
+  },
+  {
+    "id": "a4",
+    "title": "Snowfire",
+    "cast": ["Molly McGowan", "Melody McGowan"],
+    "language": "en",
+    "contentType": "movie"
+  },
+  {
+    "id": "b1",
+    "title": "Night of the Living Dead",
+    "altTitles": ["Carnival of Souls"],
+    "language": "en",
+    "contentType": "double_feature"
+  },
+  {
+    "id": "b2",
+    "title": "The Phantom of the Opera",
+    "year": 1925,
+    "language": "en",
+    "contentType": "part"
+  },
+  {
+    "id": "c1",
+    "title": "Twelve Angry Men",
+    "year": 1954,
+    "language": "en",
+    "contentType": "tv_episode"
+  },
+  { "id": "c2", "title": "Night of the Living Dead", "language": "en", "contentType": "clip" }
 ]
 ```
 

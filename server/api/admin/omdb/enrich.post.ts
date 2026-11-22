@@ -27,9 +27,9 @@ import {
   saveFailedOmdbMatch,
   removeFailedOmdbMatch,
 } from '#server/utils/failedOmdb'
-import { extractMovieKeys } from '#server/utils/movieData'
 import { extractYearAndCleanTitle, cleanTitleGeneral } from '#server/utils/titleCleaner'
-import { matchMovie } from '#server/utils/omdb'
+import { getMovieByImdbId, matchMovie } from '#server/utils/omdb'
+import { extractImdbIdFromText } from '#server/utils/candidateRetriever'
 
 /**
  * Load a complete movie entry from the SQLite database
@@ -257,10 +257,16 @@ export default defineEventHandler(async event => {
     let count = 0
     const failed = loadFailedOmdbMatches()
 
-    // Get movie IDs from extractMovieKeys (still uses JSON for now)
+    // Query movie IDs directly from SQLite (data/movies.db)
+    const rows = onlyUnmatched
+      ? (db.prepare("SELECT movieId FROM movies WHERE movieId NOT LIKE 'tt%'").all() as {
+          movieId: string
+        }[])
+      : (db.prepare('SELECT movieId FROM movies').all() as { movieId: string }[])
+
     const keys = onlyUnmatched
-      ? await extractMovieKeys('unmatched', key => !failed.has(key))
-      : await extractMovieKeys()
+      ? rows.map(r => r.movieId).filter(key => !failed.has(key))
+      : rows.map(r => r.movieId)
 
     const processingTotal = targetLimit || keys.length
 
@@ -353,7 +359,7 @@ export default defineEventHandler(async event => {
 
       // Parse title and extract year
       const { title: name, year: titleYear } = extractYearAndCleanTitle(primaryTitle)
-      const yearToUse = sourceYear || titleYear
+      const yearToUse = movie.ai?.year || sourceYear || titleYear
 
       // Track all attempts for enhanced failure tracking
       const attempts: Array<{ query: string; year?: number }> = []
@@ -362,8 +368,28 @@ export default defineEventHandler(async event => {
         // Try multiple cleaning strategies for better OMDB matching
         let matchResult: MatchResult = { confidence: MatchConfidence.NONE }
 
+        // Strategy 0: Check source descriptions for direct IMDb tt* IDs and verify via OMDb
+        for (const src of movie.sources) {
+          const directImdbId = extractImdbIdFromText(src.description)
+          if (directImdbId) {
+            console.log(`[OMDB] Found direct IMDb ID in description: ${directImdbId}`)
+            attempts.push({ query: directImdbId })
+            const directMetadata = await getMovieByImdbId(directImdbId, apiKey)
+            if (directMetadata?.Title) {
+              matchResult = {
+                confidence: MatchConfidence.EXACT,
+                movieId: directMetadata.imdbID || directImdbId,
+                title: directMetadata.Title,
+                year: directMetadata.Year,
+                metadata: directMetadata,
+              }
+              break
+            }
+          }
+        }
+
         // Strategy 1: Try with AI-extracted title if available (using primary source year)
-        if (movie.ai?.title) {
+        if (matchResult.confidence === MatchConfidence.NONE && movie.ai?.title) {
           console.log(`[OMDB] Using AI-extracted title: "${movie.ai.title}" (year: ${yearToUse})`)
           attempts.push({ query: movie.ai.title, year: yearToUse })
           matchResult = await matchMovie(movie.ai.title, yearToUse, apiKey)

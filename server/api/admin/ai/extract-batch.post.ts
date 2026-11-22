@@ -1,23 +1,15 @@
-import { readFile, writeFile } from 'fs/promises'
-import { join } from 'path'
 import { defineEventHandler, readBody, createError } from 'h3'
 import { useRuntimeConfig } from 'nitropack/runtime'
+import { getAdminDatabase } from '#server/utils/adminDb'
 import {
   clearFailedAIExtractions,
   loadFailedAIExtractions,
   removeFailedAIExtraction,
   saveFailedAIExtraction,
 } from '#server/utils/failedAI'
-import type { MoviesDatabase, MovieEntry } from '#shared/types/movie'
 import { emitProgress } from '#server/utils/progress'
 import { extractMovieMetadataBatchOpenRouter } from '#server/utils/openrouter'
 import { extractMovieMetadataBatch } from '#server/utils/ollama'
-
-// Note: The following functions are auto-imported from server/utils/:
-// - loadFailedAIExtractions, saveFailedAIExtraction, clearFailedAIExtractions, removeFailedAIExtraction, hasFailedAIExtraction (from failedAI.ts)
-// - emitProgress (from progress.ts)
-// - extractMovieMetadata, extractMovieMetadataBatch (from ollama.ts)
-// - extractMovieMetadataOpenRouter, extractMovieMetadataBatchOpenRouter (from openrouter.ts)
 
 interface BatchOptions {
   provider?: 'ollama' | 'openrouter'
@@ -27,6 +19,14 @@ interface BatchOptions {
   onlyUnmatched?: boolean
   forceReExtract?: boolean
   forceRetryFailed?: boolean
+}
+
+interface CandidateMovieRow {
+  movieId: string
+  movieTitle: string
+  sourceTitle: string | null
+  sourceDescription: string | null
+  sourceType: string | null
 }
 
 export default defineEventHandler(async event => {
@@ -66,7 +66,6 @@ export default defineEventHandler(async event => {
   if (provider === 'ollama') {
     const ollamaHost = config.ollamaHost
     try {
-      // Check if Ollama is reachable
       const response = await fetch(`${ollamaHost}/api/tags`, {
         signal: AbortSignal.timeout(5000),
       })
@@ -88,9 +87,7 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    const filePath = join(process.cwd(), 'data/movies.json')
-    const content = await readFile(filePath, 'utf-8')
-    const db = JSON.parse(content)
+    const db = getAdminDatabase()
 
     if (forceRetryFailed) {
       clearFailedAIExtractions()
@@ -99,24 +96,72 @@ export default defineEventHandler(async event => {
     // Load failed extractions to skip them
     const failedExtractions = loadFailedAIExtractions()
 
-    // Get movies to process
-    const movies = Object.entries(db as MoviesDatabase)
-      .filter(([id, movie]: [string, MovieEntry | unknown]) => {
-        if (id.startsWith('_')) return false
-        const movieEntry = movie as MovieEntry
+    // Query candidate movies directly from SQLite (data/movies.db)
+    const whereClauses: string[] = []
+    if (!forceReExtract) {
+      whereClauses.push("(ai.title IS NULL OR ai.title = '')")
+    }
+    if (onlyUnmatched) {
+      whereClauses.push('meta.movieId IS NULL')
+    }
+    const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
 
-        // Skip if already has AI data and not forcing re-extraction
-        if (!forceReExtract && movieEntry.ai?.title) return false
+    const rows = db
+      .prepare(
+        `
+        SELECT
+          m.movieId,
+          m.title AS movieTitle,
+          (
+            SELECT s.title
+            FROM sources s
+            WHERE s.movieId = m.movieId
+            ORDER BY s.addedAt ASC
+            LIMIT 1
+          ) AS sourceTitle,
+          (
+            SELECT s.description
+            FROM sources s
+            WHERE s.movieId = m.movieId
+            ORDER BY s.addedAt ASC
+            LIMIT 1
+          ) AS sourceDescription,
+          (
+            SELECT c.platform
+            FROM sources s
+            JOIN channels c ON s.channelId = c.id
+            WHERE s.movieId = m.movieId
+            ORDER BY s.addedAt ASC
+            LIMIT 1
+          ) AS sourceType
+        FROM movies m
+        LEFT JOIN ai_metadata ai ON m.movieId = ai.movieId
+        LEFT JOIN metadata meta ON m.movieId = meta.movieId
+        ${whereSql}
+      `
+      )
+      .all() as CandidateMovieRow[]
 
-        // Skip if only processing unmatched and this has metadata
-        if (onlyUnmatched && movieEntry.metadata) return false
-
-        // Skip if this entry has failed before (unless forcing retry)
-        if (!forceRetryFailed && failedExtractions.has(id)) return false
-
-        return true
-      })
+    const movies = rows
+      .filter(row => forceRetryFailed || !failedExtractions.has(row.movieId))
       .slice(0, limit)
+
+    const upsertAiStmt = db.prepare(`
+      INSERT INTO ai_metadata (movieId, title, year, extractedAt)
+      VALUES (?, ?, ?, datetime('now'))
+      ON CONFLICT(movieId) DO UPDATE SET
+        title = excluded.title,
+        year = excluded.year,
+        extractedAt = datetime('now')
+    `)
+
+    const saveBatchResults = db.transaction(
+      (entries: Array<{ movieId: string; title: string; year?: number }>) => {
+        for (const entry of entries) {
+          upsertAiStmt.run(entry.movieId, entry.title, entry.year ?? null)
+        }
+      }
+    )
 
     const total = movies.length
     let current = 0
@@ -143,16 +188,11 @@ export default defineEventHandler(async event => {
       const batchNumber = Math.floor(i / batchSize) + 1
       const totalBatches = Math.ceil(movies.length / batchSize)
 
-      // Prepare batch input
-      const batchInput = batch.map(([id, movie]) => {
-        const movieEntry = movie as MovieEntry
-        const source = movieEntry.sources[0]
-        return {
-          id,
-          title: source?.title || movieEntry.title,
-          description: source?.description || '',
-        }
-      })
+      const batchInput = batch.map(row => ({
+        id: row.movieId,
+        title: row.sourceTitle || row.movieTitle,
+        description: row.sourceDescription || '',
+      }))
 
       console.log(
         `[AI Extraction] Processing batch ${batchNumber}/${totalBatches} (${batch.length} movies)`
@@ -169,7 +209,6 @@ export default defineEventHandler(async event => {
       })
 
       try {
-        // Call the appropriate batch extraction function based on provider
         const extractedMap =
           provider === 'openrouter'
             ? await extractMovieMetadataBatchOpenRouter(batchInput, { model })
@@ -177,24 +216,27 @@ export default defineEventHandler(async event => {
 
         console.log(`[AI Extraction] Batch ${batchNumber} returned ${extractedMap.size} results`)
 
-        // Process results for each movie in the batch
-        for (const [id, movie] of batch) {
+        const toPersist: Array<{ movieId: string; title: string; year?: number }> = []
+
+        for (const row of batch) {
           current++
-          const movieEntry = movie as MovieEntry
-          const source = movieEntry.sources[0]
-          const title = source?.title || movieEntry.title
-          const description = source?.description || ''
+          const id = row.movieId
+          const title = row.sourceTitle || row.movieTitle
+          const description = row.sourceDescription || ''
 
           const extracted = extractedMap.get(id)
 
           if (extracted?.title) {
-            movieEntry.ai = extracted
+            toPersist.push({
+              movieId: id,
+              title: extracted.title,
+              year: extracted.year,
+            })
             successCount++
             console.log(
               `[AI Extraction]   + ${id}: "${extracted.title}"${extracted.year ? ` (${extracted.year})` : ''}`
             )
 
-            // Remove from failed list if it was there (successful retry)
             removeFailedAIExtraction(id)
           } else {
             failedCount++
@@ -202,7 +244,6 @@ export default defineEventHandler(async event => {
               `[AI Extraction]   - ${id}: No result (source: "${title.substring(0, 50)}...")`
             )
 
-            // Track the failed extraction attempt
             saveFailedAIExtraction(
               id,
               title,
@@ -212,9 +253,9 @@ export default defineEventHandler(async event => {
                 description,
                 timestamp: new Date().toISOString(),
               },
-              source
+              row.sourceType
                 ? {
-                    type: source.type || 'unknown',
+                    type: row.sourceType,
                     hasDescription: Boolean(description),
                     titleLength: title.length,
                     descriptionLength: description.length,
@@ -223,7 +264,6 @@ export default defineEventHandler(async event => {
             )
           }
 
-          // Emit progress for each movie processed
           emitProgress({
             type: 'ai',
             status: 'in_progress',
@@ -237,20 +277,20 @@ export default defineEventHandler(async event => {
           })
         }
 
-        // Save after each batch to prevent data loss
-        await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
+        // Persist batch results to SQLite after each batch
+        if (toPersist.length > 0) {
+          saveBatchResults(toPersist)
+        }
       } catch (error) {
-        // Batch failed entirely - mark all items in batch as failed
         console.error(`Batch ${batchNumber} failed:`, error)
 
-        for (const [id, movie] of batch) {
+        for (const row of batch) {
           current++
           failedCount++
 
-          const movieEntry = movie as MovieEntry
-          const source = movieEntry.sources[0]
-          const title = source?.title || movieEntry.title
-          const description = source?.description || ''
+          const id = row.movieId
+          const title = row.sourceTitle || row.movieTitle
+          const description = row.sourceDescription || ''
 
           saveFailedAIExtraction(
             id,
@@ -261,9 +301,9 @@ export default defineEventHandler(async event => {
               description,
               timestamp: new Date().toISOString(),
             },
-            source
+            row.sourceType
               ? {
-                  type: source.type || 'unknown',
+                  type: row.sourceType,
                   hasDescription: Boolean(description),
                   titleLength: title.length,
                   descriptionLength: description.length,
@@ -287,10 +327,6 @@ export default defineEventHandler(async event => {
         `[AI Extraction] Batch ${batchNumber}/${totalBatches} complete: ${successCount} success, ${failedCount} failed (total: ${current}/${total})`
       )
     }
-
-    // Final save
-    db._schema.lastUpdated = new Date().toISOString()
-    await writeFile(filePath, JSON.stringify(db, null, 2), 'utf-8')
 
     emitProgress({
       type: 'ai',

@@ -1,44 +1,52 @@
 /**
  * OpenRouter AI Integration Utilities
  *
- * Provides utilities for extracting movie metadata using OpenRouter SDK.
- * Uses Groq as the preferred provider for fast inference.
+ * Provides utilities for extracting movie metadata and structured JSON
+ * responses using OpenRouter SDK.
  * Implements the AIProvider interface for abstraction.
  */
 
 import { OpenRouter } from '@openrouter/sdk'
-import { loadPrompt, parseMetadataResponse, parseBatchMetadataResponse } from './ollama'
+import { useRuntimeConfig } from 'nitropack/runtime'
+import { loadPrompt, extractJsonFromResponse, extractJsonArrayFromResponse } from './ollama'
 import type {
   AIProvider,
-  OpenRouterConfig as OpenRouterProviderConfig,
+  OpenRouterConfig,
   ExtractedMetadata,
+  ExtractedContentType,
   BatchMovieInput,
 } from '../../shared/types/ai-provider'
-import { useRuntimeConfig } from 'nitropack/runtime'
-
-/**
- * OpenRouter configuration
- */
-interface OpenRouterConfig {
-  apiKey?: string
-  model?: string
-  provider?: string // Provider slug (e.g., 'Groq')
-}
 
 /**
  * Default OpenRouter configuration
  */
 const DEFAULT_CONFIG = {
-  model: 'qwen/qwen3-32b',
-  provider: 'Groq', // Use Groq for fast inference
+  model: 'google/gemini-2.5-flash-lite',
 }
 
+const VALID_CONTENT_TYPES = new Set<ExtractedContentType>([
+  'movie',
+  'short',
+  'tv_episode',
+  'double_feature',
+  'part',
+  'clip',
+  'unknown',
+])
+
 /**
- * Get OpenRouter API key from runtime config
+ * Get OpenRouter API key from runtime config (with process.env fallback)
  */
 export function getOpenRouterApiKey(): string | undefined {
-  const config = useRuntimeConfig()
-  return config.openrouterApiKey
+  try {
+    const config = useRuntimeConfig()
+    if (config.openrouterApiKey) {
+      return config.openrouterApiKey
+    }
+  } catch {
+    // Outside Nitro runtime context
+  }
+  return process.env.OPENROUTER_API_KEY
 }
 
 /**
@@ -60,6 +68,208 @@ function createClient(apiKey: string): OpenRouter {
 }
 
 /**
+ * Build chatRequest options, only including provider routing if explicitly requested
+ */
+function buildChatRequest(prompt: string, model: string, provider?: string) {
+  return {
+    model,
+    messages: [{ role: 'user' as const, content: prompt }],
+    ...(provider
+      ? {
+          provider: {
+            only: [provider],
+            allowFallbacks: false,
+          },
+        }
+      : {}),
+    stream: false as const,
+  }
+}
+
+/**
+ * Strip markdown code fences from LLM responses
+ */
+function stripCodeFences(content: string): string {
+  const trimmed = content.trim()
+  const fenceMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i)
+  return fenceMatch?.[1] ? fenceMatch[1].trim() : trimmed
+}
+
+/**
+ * Normalize and validate an ExtractedMetadata object (including extended fields)
+ */
+function normalizeExtractedItem(raw: Record<string, unknown>): ExtractedMetadata | null {
+  if (!raw?.title || typeof raw.title !== 'string') {
+    return null
+  }
+
+  const result: ExtractedMetadata = {
+    title: raw.title.trim(),
+  }
+
+  if (raw.year !== undefined && raw.year !== null) {
+    const year = Number(raw.year)
+    const currentYear = new Date().getFullYear()
+    if (!Number.isNaN(year) && year >= 1800 && year <= currentYear + 5) {
+      result.year = year
+    }
+  }
+
+  if (typeof raw.originalTitle === 'string' && raw.originalTitle.trim()) {
+    result.originalTitle = raw.originalTitle.trim()
+  }
+
+  if (Array.isArray(raw.altTitles)) {
+    const alts = raw.altTitles
+      .filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
+      .map(t => t.trim())
+    if (alts.length > 0) {
+      result.altTitles = alts
+    }
+  }
+
+  if (typeof raw.director === 'string' && raw.director.trim()) {
+    result.director = raw.director.trim()
+  }
+
+  if (Array.isArray(raw.cast)) {
+    const cast = raw.cast
+      .filter((c): c is string => typeof c === 'string' && c.trim().length > 0)
+      .map(c => c.trim())
+    if (cast.length > 0) {
+      result.cast = cast
+    }
+  }
+
+  if (typeof raw.language === 'string' && raw.language.trim()) {
+    result.language = raw.language.trim()
+  }
+
+  if (
+    typeof raw.contentType === 'string' &&
+    VALID_CONTENT_TYPES.has(raw.contentType as ExtractedContentType)
+  ) {
+    result.contentType = raw.contentType as ExtractedContentType
+  }
+
+  return result
+}
+
+/**
+ * Parse single metadata response from OpenRouter (supports extended fields)
+ */
+export function parseOpenRouterMetadataResponse(content: string): ExtractedMetadata | null {
+  const cleaned = stripCodeFences(content)
+  const jsonString = extractJsonFromResponse(cleaned)
+  if (!jsonString) {
+    console.warn('No JSON found in OpenRouter response')
+    return null
+  }
+
+  try {
+    const extracted = JSON.parse(jsonString) as Record<string, unknown>
+    const normalized = normalizeExtractedItem(extracted)
+    if (!normalized) {
+      console.warn('Invalid metadata structure: missing or invalid title')
+      return null
+    }
+    return normalized
+  } catch (error) {
+    console.error('Error parsing JSON from OpenRouter response:', error)
+    return null
+  }
+}
+
+/**
+ * Parse batch metadata response from OpenRouter (supports extended fields)
+ */
+export function parseOpenRouterBatchMetadataResponse(
+  content: string
+): Array<ExtractedMetadata & { id: string }> {
+  const cleaned = stripCodeFences(content)
+  const jsonString = extractJsonArrayFromResponse(cleaned)
+  if (!jsonString) {
+    console.warn('No JSON array found in OpenRouter batch response')
+    return []
+  }
+
+  try {
+    const extracted = JSON.parse(jsonString)
+    if (!Array.isArray(extracted)) {
+      console.warn('OpenRouter batch response is not an array')
+      return []
+    }
+
+    const results: Array<ExtractedMetadata & { id: string }> = []
+    for (const item of extracted) {
+      if (!item || typeof item !== 'object') continue
+      const record = item as Record<string, unknown>
+      if (!record.id || typeof record.id !== 'string') {
+        console.warn('Batch item missing id, skipping')
+        continue
+      }
+      const normalized = normalizeExtractedItem(record)
+      if (!normalized) {
+        console.warn(`Batch item ${record.id} missing title, skipping`)
+        continue
+      }
+      results.push({ id: record.id, ...normalized })
+    }
+
+    return results
+  } catch (error) {
+    console.error('Error parsing JSON array from OpenRouter batch response:', error)
+    return []
+  }
+}
+
+/**
+ * Reusable helper for sending a prompt to OpenRouter and parsing a JSON response
+ */
+export async function chatJsonOpenRouter<T>(
+  prompt: string,
+  config: OpenRouterConfig = {}
+): Promise<T | null> {
+  const apiKey = config.apiKey || getOpenRouterApiKey()
+  const model = config.model || DEFAULT_CONFIG.model
+  const provider = config.provider
+
+  if (!apiKey) {
+    console.warn('OpenRouter API key not configured (OPENROUTER_API_KEY)')
+    return null
+  }
+
+  try {
+    const client = createClient(apiKey)
+    const completion = await client.chat.send({
+      chatRequest: buildChatRequest(prompt, model, provider),
+    })
+
+    const rawContent = completion.choices?.[0]?.message?.content
+    const content = typeof rawContent === 'string' ? rawContent : null
+    if (!content) {
+      console.warn('Empty or non-string response from OpenRouter')
+      return null
+    }
+
+    const cleaned = stripCodeFences(content)
+    const jsonString = cleaned.startsWith('[')
+      ? extractJsonArrayFromResponse(cleaned)
+      : extractJsonFromResponse(cleaned) || extractJsonArrayFromResponse(cleaned)
+
+    if (!jsonString) {
+      console.warn('No JSON found in OpenRouter JSON response')
+      return null
+    }
+
+    return JSON.parse(jsonString) as T
+  } catch (error) {
+    console.error('Error in chatJsonOpenRouter:', error)
+    return null
+  }
+}
+
+/**
  * Extract movie metadata using OpenRouter AI
  * Main entry point for AI extraction via OpenRouter
  *
@@ -75,7 +285,7 @@ export async function extractMovieMetadataOpenRouter(
 ): Promise<ExtractedMetadata | null> {
   const apiKey = config.apiKey || getOpenRouterApiKey()
   const model = config.model || DEFAULT_CONFIG.model
-  const provider = config.provider || DEFAULT_CONFIG.provider
+  const provider = config.provider
 
   if (!apiKey) {
     console.warn('OpenRouter API key not configured (OPENROUTER_API_KEY)')
@@ -83,29 +293,16 @@ export async function extractMovieMetadataOpenRouter(
   }
 
   try {
-    // Load prompt template (reuse from ollama.ts)
     const promptTemplate = await loadPrompt('extract-movie-metadata')
-
-    // Replace placeholders in prompt
     const prompt = promptTemplate
       .replace('{title}', title)
       .replace('{description}', description || 'No description available')
 
-    // Create client and make request
     const client = createClient(apiKey)
     const completion = await client.chat.send({
-      chatRequest: {
-        model,
-        messages: [{ role: 'user', content: prompt }],
-        provider: {
-          only: [provider], // Route to specific provider (e.g., Groq)
-          allowFallbacks: false,
-        },
-        stream: false,
-      },
+      chatRequest: buildChatRequest(prompt, model, provider),
     })
 
-    // Extract content from response
     const rawContent = completion.choices?.[0]?.message?.content
     const content = typeof rawContent === 'string' ? rawContent : null
     if (!content) {
@@ -113,13 +310,7 @@ export async function extractMovieMetadataOpenRouter(
       return null
     }
 
-    // Parse and validate response (reuse from ollama.ts)
-    const extracted = parseMetadataResponse(content)
-    if (!extracted) {
-      return null
-    }
-
-    return extracted
+    return parseOpenRouterMetadataResponse(content)
   } catch (error) {
     console.error(`Error extracting metadata for "${title}" via OpenRouter:`, error)
     return null
@@ -132,7 +323,6 @@ export async function extractMovieMetadataOpenRouter(
 export async function validateApiKey(apiKey: string): Promise<boolean> {
   try {
     const client = createClient(apiKey)
-    // List models to verify API key
     await client.models.list()
     return true
   } catch {
@@ -153,7 +343,7 @@ export async function extractMovieMetadataBatchOpenRouter(
 ): Promise<Map<string, ExtractedMetadata>> {
   const apiKey = config.apiKey || getOpenRouterApiKey()
   const model = config.model || DEFAULT_CONFIG.model
-  const provider = config.provider || DEFAULT_CONFIG.provider
+  const provider = config.provider
   const results = new Map<string, ExtractedMetadata>()
 
   if (movies.length === 0) {
@@ -166,10 +356,7 @@ export async function extractMovieMetadataBatchOpenRouter(
   }
 
   try {
-    // Load batch prompt template
     const promptTemplate = await loadPrompt('extract-movie-metadata-batch')
-
-    // Format movies as JSON for the prompt
     const moviesJson = JSON.stringify(
       movies.map(m => ({
         id: m.id,
@@ -180,24 +367,13 @@ export async function extractMovieMetadataBatchOpenRouter(
       2
     )
 
-    // Replace placeholder in prompt
     const prompt = promptTemplate.replace('{movies}', moviesJson)
 
-    // Create client and make request
     const client = createClient(apiKey)
     const completion = await client.chat.send({
-      chatRequest: {
-        model,
-        messages: [{ role: 'user', content: prompt }],
-        provider: {
-          only: [provider],
-          allowFallbacks: false,
-        },
-        stream: false,
-      },
+      chatRequest: buildChatRequest(prompt, model, provider),
     })
 
-    // Extract content from response
     const rawContent = completion.choices?.[0]?.message?.content
     const content = typeof rawContent === 'string' ? rawContent : null
     if (!content) {
@@ -205,15 +381,10 @@ export async function extractMovieMetadataBatchOpenRouter(
       return results
     }
 
-    // Parse batch response
-    const extracted = parseBatchMetadataResponse(content)
-
-    // Convert to Map
+    const extracted = parseOpenRouterBatchMetadataResponse(content)
     for (const item of extracted) {
-      results.set(item.id, {
-        title: item.title,
-        year: item.year,
-      })
+      const { id, ...metadata } = item
+      results.set(id, metadata)
     }
 
     return results
@@ -251,12 +422,12 @@ export async function getAvailableModels(apiKey: string): Promise<string[]> {
 export class OpenRouterProvider implements AIProvider {
   private apiKey?: string
   private model: string
-  private provider: string
+  private provider?: string
 
-  constructor(config: OpenRouterProviderConfig = {}) {
+  constructor(config: OpenRouterConfig = {}) {
     this.apiKey = config.apiKey || getOpenRouterApiKey()
     this.model = config.model || DEFAULT_CONFIG.model
-    this.provider = config.provider || DEFAULT_CONFIG.provider
+    this.provider = config.provider
   }
 
   async isAvailable(): Promise<boolean> {
@@ -266,24 +437,24 @@ export class OpenRouterProvider implements AIProvider {
   async extractMovieMetadata(
     title: string,
     description?: string,
-    config?: OpenRouterProviderConfig
+    config?: OpenRouterConfig
   ): Promise<ExtractedMetadata | null> {
-    const mergedConfig = {
+    const mergedConfig: OpenRouterConfig = {
       apiKey: this.apiKey,
       model: config?.model || this.model,
-      provider: config?.provider || this.provider,
+      provider: config?.provider ?? this.provider,
     }
     return await extractMovieMetadataOpenRouter(title, description, mergedConfig)
   }
 
   async extractMovieMetadataBatch(
     movies: BatchMovieInput[],
-    config?: OpenRouterProviderConfig
+    config?: OpenRouterConfig
   ): Promise<Map<string, ExtractedMetadata>> {
-    const mergedConfig = {
+    const mergedConfig: OpenRouterConfig = {
       apiKey: this.apiKey,
       model: config?.model || this.model,
-      provider: config?.provider || this.provider,
+      provider: config?.provider ?? this.provider,
     }
     return await extractMovieMetadataBatchOpenRouter(movies, mergedConfig)
   }
@@ -292,6 +463,6 @@ export class OpenRouterProvider implements AIProvider {
 /**
  * Create a default OpenRouter provider instance
  */
-export function createOpenRouterProvider(config?: OpenRouterProviderConfig): AIProvider {
+export function createOpenRouterProvider(config?: OpenRouterConfig): AIProvider {
   return new OpenRouterProvider(config)
 }
