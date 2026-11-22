@@ -268,6 +268,9 @@
         />
       </section>
 
+      <!-- Channel Sync & Diff -->
+      <AdminChannelSync />
+
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         <!-- Data Collection Section -->

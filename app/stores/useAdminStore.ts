@@ -23,6 +23,7 @@ export interface ProgressUpdate {
     | 'home'
     | 'embeddings'
     | 'similar'
+    | 'channelSync'
   status: 'starting' | 'in_progress' | 'completed' | 'error'
   current: number
   total: number

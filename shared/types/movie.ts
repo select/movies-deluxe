@@ -11,6 +11,29 @@
 export type MovieSourceType = 'archive.org' | 'youtube'
 
 /**
+ * Availability status for a movie source
+ */
+export type SourceStatus = 'active' | 'unlisted' | 'unavailable' | 'removed_from_channel'
+
+/**
+ * Normalized reason why a source is not active or has playback restrictions
+ */
+export type SourceUnavailableReason =
+  | 'deleted'
+  | 'private'
+  | 'unlisted'
+  | 'copyright_takedown'
+  | 'tos_violation'
+  | 'channel_terminated'
+  | 'members_only'
+  | 'age_restricted'
+  | 'not_embeddable'
+  | 'geo_blocked_all'
+  | 'archive_dark'
+  | 'delisted_from_collection'
+  | 'unavailable_unknown'
+
+/**
  * Channel/collection information
  */
 export interface Channel {
@@ -48,6 +71,12 @@ export interface MovieSource {
   downloads?: number // Download count (Archive.org)
   viewCount?: number // View count (YouTube)
   regionRestriction?: YouTubeRegionRestriction // Geographic restrictions (YouTube)
+  status?: SourceStatus // Availability status
+  unavailableReason?: SourceUnavailableReason // Normalized reason if unavailable/restricted
+  unavailableDetail?: string // Raw YouTube/Archive reason text
+  lastSeenAt?: number // Unix timestamp when last seen in remote listing
+  lastCheckedAt?: number // Unix timestamp when last probed
+  statusChangedAt?: number // Unix timestamp when status last changed
 
   // Runtime fields (not stored in DB, computed from channel join)
   type?: MovieSourceType // Computed from channel.platform

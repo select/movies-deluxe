@@ -75,7 +75,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
   logger.info('Querying movies from admin database...')
   const startTime = Date.now()
 
-  // Query all movies with their sources (excluding quality-marked sources)
+  // Query all movies with their sources (excluding quality-marked and truly unplayable sources)
   const moviesQuery = `
     SELECT DISTINCT
       m.movieId,
@@ -85,9 +85,13 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
       m.lastUpdated
     FROM movies m
     WHERE EXISTS (
-      -- Only include movies that have at least one source without quality marks
+      -- Only include movies that have at least one public-visible source without quality marks
       SELECT 1 FROM sources s
       WHERE s.movieId = m.movieId
+      AND (
+        s.status IN ('active', 'unlisted')
+        OR (s.status = 'unavailable' AND s.unavailableReason IN ('not_embeddable', 'age_restricted'))
+      )
       AND NOT EXISTS (
         SELECT 1 FROM source_quality_marks sqm
         WHERE sqm.sourceId = s.id
@@ -388,7 +392,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
         // Determine language from sources (priority: archive.org > youtube) or metadata
         let language: string | null = null
 
-        // Query sources for this movie (excluding quality-marked ones)
+        // Query sources for this movie (excluding quality-marked and truly unplayable ones)
         const sources = adminDb
           .prepare(
             `
@@ -396,6 +400,10 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
             FROM sources s
             JOIN channels c ON s.channelId = c.id
             WHERE s.movieId = ?
+            AND (
+              s.status IN ('active', 'unlisted')
+              OR (s.status = 'unavailable' AND s.unavailableReason IN ('not_embeddable', 'age_restricted'))
+            )
             AND NOT EXISTS (
               SELECT 1 FROM source_quality_marks sqm
               WHERE sqm.sourceId = s.id

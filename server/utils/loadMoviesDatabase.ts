@@ -19,6 +19,8 @@ import type {
   MovieMetadata,
   AIMetadata,
   DatabaseSchema,
+  SourceStatus,
+  SourceUnavailableReason,
 } from '../../shared/types/movie'
 import type Database from 'better-sqlite3'
 import { getAdminDatabase } from './adminDb'
@@ -185,6 +187,12 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
       s.downloads,
       s.viewCount,
       s.regionRestriction,
+      s.status,
+      s.unavailableReason,
+      s.unavailableDetail,
+      s.lastSeenAt,
+      s.lastCheckedAt,
+      s.statusChangedAt,
       c.platform as type,
       c.name as channelName
     FROM sources s
@@ -208,6 +216,12 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
     downloads: number | null
     viewCount: number | null
     regionRestriction: string | null
+    status: string | null
+    unavailableReason: string | null
+    unavailableDetail: string | null
+    lastSeenAt: number | null
+    lastCheckedAt: number | null
+    statusChangedAt: number | null
     channelName: string
   }>
 
@@ -281,6 +295,15 @@ async function loadAllSources(db: Database.Database): Promise<Map<string, MovieS
         }
       }
     }
+
+    if (source.status) movieSource.status = source.status as SourceStatus
+    if (source.unavailableReason) {
+      movieSource.unavailableReason = source.unavailableReason as SourceUnavailableReason
+    }
+    if (source.unavailableDetail) movieSource.unavailableDetail = source.unavailableDetail
+    if (source.lastSeenAt !== null) movieSource.lastSeenAt = source.lastSeenAt
+    if (source.lastCheckedAt !== null) movieSource.lastCheckedAt = source.lastCheckedAt
+    if (source.statusChangedAt !== null) movieSource.statusChangedAt = source.statusChangedAt
 
     // Add quality marks
     const qualityMarks = qualityMarksMap.get(source.id)

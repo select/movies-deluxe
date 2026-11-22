@@ -76,6 +76,45 @@
               </span>
             </div>
 
+            <!-- Source Availability Status -->
+            <div
+              v-if="source.status || source.unavailableReason || source.lastCheckedAt"
+              class="mb-2 p-2 rounded border text-xs flex flex-col gap-1"
+              :class="
+                !source.status || source.status === 'active'
+                  ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800/50'
+                  : source.status === 'unlisted' ||
+                      source.unavailableReason === 'not_embeddable' ||
+                      source.unavailableReason === 'age_restricted'
+                    ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+                    : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+              "
+            >
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-semibold">Status:</span>
+                  <span class="font-mono uppercase text-[11px]">{{
+                    source.status || 'active'
+                  }}</span>
+                  <span
+                    v-if="source.unavailableReason"
+                    class="px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 font-mono text-[10px]"
+                  >
+                    {{ source.unavailableReason }}
+                  </span>
+                </div>
+                <span v-if="source.lastCheckedAt" class="text-[10px] text-theme-textmuted">
+                  Checked: {{ new Date(source.lastCheckedAt * 1000).toLocaleString() }}
+                </span>
+              </div>
+              <p
+                v-if="source.unavailableDetail"
+                class="text-[11px] text-theme-textmuted break-words"
+              >
+                {{ source.unavailableDetail }}
+              </p>
+            </div>
+
             <!-- Region Restrictions (YouTube only) -->
             <div
               v-if="source.type === 'youtube' && source.regionRestriction"

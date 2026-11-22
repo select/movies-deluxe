@@ -356,13 +356,56 @@
 
         <!-- Video Player -->
         <div v-if="currentSource" class="bg-black rounded-lg overflow-hidden">
+          <!-- YouTube Player (Link-out card for not_embeddable / age_restricted) -->
+          <div
+            v-if="
+              currentSource.type === 'youtube' &&
+              (currentSource.unavailableReason === 'not_embeddable' ||
+                currentSource.unavailableReason === 'age_restricted')
+            "
+            class="aspect-video flex flex-col items-center justify-center p-6 text-center bg-theme-surface border border-theme-border/60 rounded-lg"
+          >
+            <div class="i-mdi-youtube text-6xl text-red-600 mb-3"></div>
+            <h3 class="text-xl font-bold text-theme-text mb-2">
+              {{
+                currentSource.unavailableReason === 'age_restricted'
+                  ? 'Age-Restricted on YouTube'
+                  : 'Embedding Disabled by Uploader'
+              }}
+            </h3>
+            <p class="text-sm text-theme-textmuted max-w-md mb-6">
+              {{
+                currentSource.unavailableReason === 'age_restricted'
+                  ? 'This video is age-restricted and must be watched directly on YouTube with age verification.'
+                  : 'The uploader has disabled embedded playback for this video, but it is still available to watch directly on YouTube.'
+              }}
+            </p>
+            <a
+              :href="getSourceUrl(currentSource)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-600 hover:bg-red-500 text-white font-semibold transition-colors shadow-lg"
+            >
+              <div class="i-mdi-open-in-new text-lg"></div>
+              Watch on YouTube
+            </a>
+          </div>
+
           <!-- YouTube Player -->
-          <div v-if="currentSource.type === 'youtube'" class="aspect-video">
+          <div v-else-if="currentSource.type === 'youtube'" class="aspect-video">
             <iframe
               :src="`https://www.youtube.com/embed/${currentSource.id}`"
               class="w-full h-full"
               frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
               allowfullscreen
               title="YouTube video player"
             ></iframe>

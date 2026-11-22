@@ -5,7 +5,13 @@
  * directly to the SQLite database using transactions.
  */
 
-import type { MovieEntry, MovieSource, MovieSourceType } from '../../shared/types/movie'
+import type {
+  MovieEntry,
+  MovieSource,
+  MovieSourceType,
+  SourceStatus,
+  SourceUnavailableReason,
+} from '../../shared/types/movie'
 import { withTransaction } from './adminDb'
 import type Database from 'better-sqlite3'
 
@@ -24,6 +30,12 @@ interface SourceRow {
   downloads: number | null
   viewCount: number | null
   regionRestriction: string | null
+  status: string | null
+  unavailableReason: string | null
+  unavailableDetail: string | null
+  lastSeenAt: number | null
+  lastCheckedAt: number | null
+  statusChangedAt: number | null
 }
 
 interface MetadataRow {
@@ -119,6 +131,12 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
       downloads: source.downloads || undefined,
       viewCount: source.viewCount || undefined,
       regionRestriction: regionRestriction || undefined,
+      status: (source.status as SourceStatus) || undefined,
+      unavailableReason: (source.unavailableReason as SourceUnavailableReason) || undefined,
+      unavailableDetail: source.unavailableDetail || undefined,
+      lastSeenAt: source.lastSeenAt ?? undefined,
+      lastCheckedAt: source.lastCheckedAt ?? undefined,
+      statusChangedAt: source.statusChangedAt ?? undefined,
       // Runtime fields from join
       type: source.type as MovieSourceType,
       channelName: source.channelName,
@@ -127,8 +145,7 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
 
   // Load metadata
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
-    | MetadataRow
-    | undefined
+    MetadataRow | undefined
 
   if (metadata) {
     // No need to load ratings - imdbRating is already in metadata table
@@ -256,8 +273,10 @@ export async function upsertMovie(
         INSERT OR IGNORE INTO sources (
           movieId, channelId, sourceId, title, description,
           size, addedAt, duration, language, year,
-          downloads, viewCount, regionRestriction
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          downloads, viewCount, regionRestriction,
+          status, unavailableReason, unavailableDetail,
+          lastSeenAt, lastCheckedAt, statusChangedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       const updateSource = db.prepare(`
@@ -268,7 +287,13 @@ export async function upsertMovie(
             language = COALESCE(?, language), year = COALESCE(?, year), 
             downloads = COALESCE(?, downloads),
             viewCount = COALESCE(?, viewCount), 
-            regionRestriction = COALESCE(?, regionRestriction)
+            regionRestriction = COALESCE(?, regionRestriction),
+            status = COALESCE(?, status),
+            unavailableReason = COALESCE(?, unavailableReason),
+            unavailableDetail = COALESCE(?, unavailableDetail),
+            lastSeenAt = COALESCE(?, lastSeenAt),
+            lastCheckedAt = COALESCE(?, lastCheckedAt),
+            statusChangedAt = COALESCE(?, statusChangedAt)
         WHERE movieId = ? AND channelId = ? AND sourceId = ?
       `)
 
@@ -312,6 +337,12 @@ export async function upsertMovie(
             source.downloads,
             source.viewCount,
             regionRestrictionJson,
+            source.status ?? null,
+            source.unavailableReason ?? null,
+            source.unavailableDetail ?? null,
+            source.lastSeenAt ?? Math.floor(Date.now() / 1000),
+            source.lastCheckedAt ?? null,
+            source.statusChangedAt ?? null,
             existingMovieId,
             source.channelId,
             source.id
@@ -345,7 +376,13 @@ export async function upsertMovie(
             source.year,
             source.downloads,
             source.viewCount,
-            regionRestrictionJson
+            regionRestrictionJson,
+            source.status || 'active',
+            source.unavailableReason ?? null,
+            source.unavailableDetail ?? null,
+            source.lastSeenAt ?? Math.floor(Date.now() / 1000),
+            source.lastCheckedAt ?? null,
+            source.statusChangedAt ?? null
           )
 
           // Handle quality marks for new source
@@ -421,8 +458,10 @@ export async function upsertMovie(
         INSERT OR IGNORE INTO sources (
           movieId, channelId, sourceId, title, description,
           size, addedAt, duration, language, year,
-          downloads, viewCount, regionRestriction
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          downloads, viewCount, regionRestriction,
+          status, unavailableReason, unavailableDetail,
+          lastSeenAt, lastCheckedAt, statusChangedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       // Ensure channels exist before inserting sources
@@ -460,7 +499,13 @@ export async function upsertMovie(
           source.year,
           source.downloads,
           source.viewCount,
-          regionRestrictionJson
+          regionRestrictionJson,
+          source.status || 'active',
+          source.unavailableReason ?? null,
+          source.unavailableDetail ?? null,
+          source.lastSeenAt ?? Math.floor(Date.now() / 1000),
+          source.lastCheckedAt ?? null,
+          source.statusChangedAt ?? null
         )
 
         // Handle quality marks

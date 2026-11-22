@@ -1,15 +1,15 @@
 import { defineEventHandler, readBody, createError } from 'h3'
-import { readFile, writeFile } from 'fs/promises'
-import { join } from 'path'
-import type { MoviesDatabase, MovieEntry } from '../../../../shared/types/movie'
-
-const MOVIES_DB_PATH = join(process.cwd(), 'data/movies.json')
+import { withTransaction } from '../../../utils/adminDb'
 
 export default defineEventHandler(async event => {
-  const body = await readBody(event)
+  const body = await readBody<{
+    movieId?: string
+    sourceId?: string | number
+    qualityMarks?: string[]
+  }>(event)
   const { movieId, sourceId, qualityMarks } = body
 
-  if (!movieId || !sourceId) {
+  if (!movieId || sourceId === undefined || sourceId === null || sourceId === '') {
     throw createError({
       statusCode: 400,
       message: 'Missing movieId or sourceId',
@@ -17,48 +17,50 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    // Read database
-    const dbContent = await readFile(MOVIES_DB_PATH, 'utf-8')
-    const db: MoviesDatabase = JSON.parse(dbContent)
+    const now = new Date().toISOString()
 
-    const movie = db[movieId]
+    await withTransaction(async db => {
+      const movie = db.prepare('SELECT movieId FROM movies WHERE movieId = ?').get(movieId) as
+        { movieId: string } | undefined
 
-    if (!movie || typeof movie === 'string') {
-      throw createError({
-        statusCode: 404,
-        message: 'Movie not found',
-      })
-    }
+      if (!movie) {
+        throw createError({
+          statusCode: 404,
+          message: 'Movie not found',
+        })
+      }
 
-    // Type guard to ensure it's a MovieEntry
-    const movieEntry = movie as MovieEntry
+      const source = db
+        .prepare('SELECT id FROM sources WHERE movieId = ? AND (sourceId = ? OR id = ?)')
+        .get(movieId, String(sourceId), sourceId) as { id: number } | undefined
 
-    // Find and update the source
-    const sourceIndex = movieEntry.sources.findIndex(s => s.id === sourceId)
-    if (sourceIndex === -1) {
-      throw createError({
-        statusCode: 404,
-        message: 'Source not found',
-      })
-    }
+      if (!source) {
+        throw createError({
+          statusCode: 404,
+          message: 'Source not found',
+        })
+      }
 
-    const source = movieEntry.sources[sourceIndex]
-    if (!source) {
-      throw createError({
-        statusCode: 404,
-        message: 'Source not found',
-      })
-    }
+      db.prepare('DELETE FROM source_quality_marks WHERE sourceId = ?').run(source.id)
 
-    // Update the source quality marks
-    source.qualityMarks = qualityMarks && qualityMarks.length > 0 ? qualityMarks : undefined
-    movieEntry.lastUpdated = new Date().toISOString()
+      if (Array.isArray(qualityMarks) && qualityMarks.length > 0) {
+        const insertMark = db.prepare(`
+          INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt)
+          VALUES (?, ?, ?)
+        `)
+        for (const mark of qualityMarks) {
+          insertMark.run(source.id, mark, now)
+        }
+      }
 
-    // Write back to database
-    await writeFile(MOVIES_DB_PATH, JSON.stringify(db, null, 2), 'utf-8')
+      db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movieId)
+    })
 
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'statusCode' in error) {
+      throw error
+    }
     console.error('Failed to update source quality:', error)
     throw createError({
       statusCode: 500,

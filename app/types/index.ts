@@ -23,6 +23,8 @@ import type {
   MatchResult,
   MatchConfidence,
   TemporaryId,
+  SourceStatus,
+  SourceUnavailableReason,
 } from '#shared/types/movie'
 import type { Collection, CollectionsDatabase, SavedQuery } from '#shared/types/collections'
 import type {
@@ -125,6 +127,7 @@ export {
  * Used for initial load to minimize memory usage
  * @deprecated Use LightweightMovie instead
  */
+export type { SourceStatus, SourceUnavailableReason }
 export type LightweightMovieEntry = LightweightMovie
 
 /**
