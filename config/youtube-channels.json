@@ -153,6 +153,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Curated creep, cult, and horror movies"
+    },
+    {
+      "id": "UCyJYCQ6WaEMhdZAuPo799bA",
+      "handle": "@GrjngoWesternMovies",
+      "name": "Grjngo - Western Movies",
+      "language": "en",
+      "enabled": true,
+      "notes": "Licensed full-length western movies from Grjngo"
     }
   ]
 }
