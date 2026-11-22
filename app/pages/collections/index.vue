@@ -44,6 +44,24 @@
         </div>
       </div>
 
+      <!-- Minimal Jump-to-Category Bar -->
+      <nav
+        v-if="!isLoading && !searchQuery && categorizedSections.length > 1"
+        aria-label="Jump to category"
+        class="mb-8 flex flex-wrap items-center gap-2"
+      >
+        <button
+          v-for="section in categorizedSections"
+          :key="section.slug"
+          type="button"
+          class="px-3 py-1 rounded-full text-xs font-medium bg-theme-surface/60 hover:bg-theme-primary hover:text-white text-theme-textmuted border border-theme-border/50 transition-colors flex items-center gap-1.5"
+          @click="jumpToCategory(section.slug)"
+        >
+          <span>{{ section.name }}</span>
+          <span class="opacity-60 font-mono text-[11px]">{{ section.items.length }}</span>
+        </button>
+      </nav>
+
       <!-- Loading State -->
       <div
         v-if="isLoading"
@@ -62,13 +80,42 @@
         <p class="text-theme-textmuted">Check back later for curated movie collections.</p>
       </div>
 
-      <!-- Collections Grid -->
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Search Results Flat Grid -->
+      <div
+        v-else-if="searchQuery.trim()"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
         <CollectionCard
           v-for="collection in filteredCollections"
           :key="collection.id"
           :collection="collection"
         />
+      </div>
+
+      <!-- Categorized Collections Sections -->
+      <div v-else class="space-y-10">
+        <section
+          v-for="section in categorizedSections"
+          :id="`category-${section.slug}`"
+          :key="section.slug"
+          class="scroll-mt-8"
+        >
+          <div class="flex items-baseline gap-2 mb-4 border-b border-theme-border/30 pb-1.5">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-theme-textmuted/80">
+              {{ section.name }}
+            </h2>
+            <span class="text-[11px] font-mono text-theme-textmuted/50">
+              {{ section.items.length }}
+            </span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <CollectionCard
+              v-for="collection in section.items"
+              :key="collection.id"
+              :collection="collection"
+            />
+          </div>
+        </section>
       </div>
     </div>
   </main>
@@ -83,10 +130,36 @@ import { useRuntimeConfig, useHead } from '#app'
 import CollectionCardSkeleton from '~/components/CollectionCardSkeleton.vue'
 import CollectionCard from '~/components/CollectionCard.vue'
 
+import type { Collection } from '#shared/types/collections'
+
 const { isLoading, collections } = storeToRefs(useCollectionsStore())
 const { loadCollections } = useCollectionsStore()
 
 const searchQuery = ref('')
+
+const CATEGORY_ORDER = [
+  'Featured',
+  'Directors',
+  'Icons & Legends',
+  'Genres',
+  'Themes & Creatures',
+  'Decades',
+  'Other',
+]
+
+function slugifyCategory(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function jumpToCategory(slug: string) {
+  const el = document.getElementById(`category-${slug}`)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
 
 // Filter collections based on search query and enabled status
 const filteredCollections = computed(() => {
@@ -111,6 +184,28 @@ const filteredCollections = computed(() => {
   // Search all collections, then filter out disabled ones from results
   const results = fuse.search(searchQuery.value)
   return results.map(result => result.item)
+})
+
+const categorizedSections = computed(() => {
+  const groups = new Map<string, Collection[]>()
+  for (const col of filteredCollections.value) {
+    const cat = col.category || 'Other'
+    const list = groups.get(cat) || []
+    list.push(col)
+    groups.set(cat, list)
+  }
+
+  return Array.from(groups.entries())
+    .sort((a, b) => {
+      const ia = CATEGORY_ORDER.indexOf(a[0])
+      const ib = CATEGORY_ORDER.indexOf(b[0])
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
+    })
+    .map(([name, items]) => ({
+      name,
+      slug: slugifyCategory(name),
+      items,
+    }))
 })
 
 onMounted(() => {

@@ -28,6 +28,7 @@ export interface Collection {
   id: string
   name: string
   description: string
+  category?: string
   movieIds: string[]
   savedQueries?: SavedQuery[]
   tags?: string[]
