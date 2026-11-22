@@ -1,5 +1,5 @@
 import type { Innertube } from 'youtubei.js'
-import { generateYouTubeId, type MovieEntry } from '../../shared/types/movie'
+import { generateYouTubeId, type MovieEntry, type MovieSource } from '../../shared/types/movie'
 import {
   saveFailedYouTubeVideo,
   removeFailedYouTubeVideo,
@@ -7,8 +7,11 @@ import {
   type FailureReason,
 } from './failedYoutube'
 import type Database from 'better-sqlite3'
-import { useRuntimeConfig } from 'nitropack/runtime'
-import type { MovieSource } from '#shared/types/movie'
+
+function getMinMovieDurationSeconds(): number {
+  const envMinutes = Number(process.env.NUXT_MIN_MOVIE_DURATION_MINUTES || '40')
+  return (Number.isFinite(envMinutes) && envMinutes > 0 ? envMinutes : 40) * 60
+}
 
 export function parseMovieTitle(title: string): { title: string; year?: number } {
   const yearPatterns = [/\((\d{4})\)/, /\[(\d{4})\]/, /\|\s*(\d{4})/, /-\s*(\d{4})/, /\s+(\d{4})$/]
@@ -182,8 +185,7 @@ export async function fetchChannelVideos(
       }
 
       // Filter by duration (configurable minimum)
-      const config = useRuntimeConfig()
-      const minDuration = (config.minMovieDurationMinutes as number) * 60
+      const minDuration = getMinMovieDurationSeconds()
       if (duration < minDuration) {
         saveFailedYouTubeVideo({
           videoId,
