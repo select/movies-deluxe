@@ -105,6 +105,14 @@
       "language": "ko",
       "enabled": true,
       "notes": "Official channel hosting restored classic Korean films, often with subtitles (52 videos)"
+    },
+    {
+      "id": "UCq71uPvIx7A96590hKagGbg",
+      "handle": "@blockbusterenglishmovies",
+      "name": "Blockbuster English Movies",
+      "language": "en",
+      "enabled": true,
+      "notes": "Free full-length English and Hollywood movies across action, horror, thriller, sci-fi, comedy, and adventure genres"
     }
   ]
 }
