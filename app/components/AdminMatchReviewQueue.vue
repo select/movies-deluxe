@@ -290,11 +290,19 @@
           }"
         ></div>
       </div>
-      <div class="flex items-center gap-4 text-[11px] text-theme-textmuted">
-        <span>Flagged: {{ progress.audit.successCurrent || 0 }}</span>
-        <span v-if="progress.audit.failedCurrent"
-          >Enqueued: {{ progress.audit.failedCurrent }}</span
+      <div class="flex items-center justify-between gap-4 text-[11px] text-theme-textmuted">
+        <div class="flex items-center gap-4">
+          <span>Flagged: {{ progress.audit.successCurrent || 0 }}</span>
+          <span v-if="progress.audit.failedCurrent"
+            >Enqueued: {{ progress.audit.failedCurrent }}</span
+          >
+        </div>
+        <span
+          v-if="progress.audit.estimatedTimeRemaining && progress.audit.estimatedTimeRemaining > 0"
+          class="font-mono text-nowrap"
         >
+          ETA: {{ formatETA(progress.audit.estimatedTimeRemaining) }}
+        </span>
       </div>
     </div>
 
@@ -905,6 +913,14 @@ type AutoPipelineResult =
   | AutoCleanPreviewsResponse
   | AutoAuditFalseHitsResponse
   | AutoMatchUnmatchedResponse
+
+function formatETA(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+  const hours = Math.floor(seconds / 3600)
+  const mins = Math.floor((seconds % 3600) / 60)
+  return `${hours}h ${mins}m`
+}
 
 const autoTaskCards: Array<{
   id: AutoTaskType

@@ -228,6 +228,17 @@ interface SourceRow {
   isIncomplete?: number
 }
 
+function computeEtaSeconds(
+  startedAtMs: number,
+  completed: number,
+  total: number
+): number | undefined {
+  if (completed < 1 || total <= completed) return undefined
+  const elapsedMs = Date.now() - startedAtMs
+  const remainingMs = (elapsedMs / completed) * (total - completed)
+  return Math.max(1, Math.round(remainingMs / 1000))
+}
+
 function upsertMetadataAndMovie(db: Database.Database, imdbId: string, meta: MovieMetadata): void {
   const now = new Date().toISOString()
   const yearNum = meta.Year ? parseInt(meta.Year.slice(0, 4), 10) : null
@@ -369,6 +380,8 @@ export async function runAutoCleanArchivePreviews(
     failedCurrent: 0,
   })
 
+  const startedAt = Date.now()
+
   try {
     for (const movie of movies) {
       scannedMovies++
@@ -381,6 +394,7 @@ export async function runAutoCleanArchivePreviews(
           message: `Cleaning Archive previews: ${movie.title} (removed: ${removedRedundant}, marked: ${markedIncomplete})`,
           successCurrent: removedRedundant + markedIncomplete,
           failedCurrent: queuedBorderline,
+          estimatedTimeRemaining: computeEtaSeconds(startedAt, scannedMovies - 1, total),
         })
       }
 
@@ -633,6 +647,8 @@ export async function runAutoAuditFalseHits(
     failedCurrent: 0,
   })
 
+  const startedAt = Date.now()
+
   try {
     for (const movie of movies) {
       scanned++
@@ -689,6 +705,7 @@ export async function runAutoAuditFalseHits(
             message: `Scanning: ${candidateTitle} (flagged: ${deterministicFlagged}, fixed: ${autoRematched + autoUnmatched})`,
             successCurrent: autoRematched + autoUnmatched + llmKept,
             failedCurrent: queuedUncertain,
+            estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
           })
         }
         continue
@@ -703,6 +720,7 @@ export async function runAutoAuditFalseHits(
         message: `LLM verifying: ${candidateTitle} (${deterministicFlagged} flagged)`,
         successCurrent: autoRematched + autoUnmatched + llmKept,
         failedCurrent: queuedUncertain,
+        estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
       })
 
       const verdict = await verifyMatchCandidate(
@@ -1062,6 +1080,8 @@ export async function runAutoMatchUnmatched(
     failedCurrent: 0,
   })
 
+  const startedAt = Date.now()
+
   try {
     for (const movie of movies) {
       scanned++
@@ -1094,6 +1114,7 @@ export async function runAutoMatchUnmatched(
         message: `Matching: ${queryTitle} (matched: ${directUrlMatches + deterministicMatches + llmMatches})`,
         successCurrent: directUrlMatches + deterministicMatches + llmMatches,
         failedCurrent: noMatch + errors,
+        estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
       })
 
       try {
