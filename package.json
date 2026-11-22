@@ -34,7 +34,7 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "upcheck": "npm-check -u --save-exact"
+    "upcheck": "ncu -i"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
@@ -99,7 +99,7 @@
     "eslint-plugin-vue": "10.9.1",
     "glob": "13.0.6",
     "lint-staged": "17.0.4",
-    "npm-check": "6.0.1",
+    "npm-check-updates": "23.1.1",
     "onnxruntime-node": "1.26.0",
     "oxlint": "1.64.0",
     "prettier": "3.3.3",
