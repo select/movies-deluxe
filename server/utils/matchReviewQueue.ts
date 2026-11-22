@@ -263,7 +263,8 @@ export function resolveReviewItem(
   ).run(status, id)
 
   const updated = db.prepare('SELECT * FROM match_review_queue WHERE id = ?').get(id) as
-    MatchReviewQueueRow | undefined
+    | MatchReviewQueueRow
+    | undefined
 
   return updated ?? null
 }

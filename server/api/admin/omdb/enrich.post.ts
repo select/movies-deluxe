@@ -132,7 +132,8 @@ async function loadMovieFromDb(db: Database.Database, movieId: string): Promise<
   }
 
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
-    MetadataRow | undefined
+    | MetadataRow
+    | undefined
 
   let convertedMetadata: MovieEntry['metadata'] = undefined
   if (metadata) {

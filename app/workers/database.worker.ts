@@ -224,7 +224,12 @@ async function loadRemoteDatabase(url: string) {
 // Message queue to ensure sequential processing
 interface QueuedMessage {
   type:
-    'init' | 'exec' | 'query-by-ids' | 'vector-search' | 'attach-embeddings' | 'detach-embeddings'
+    | 'init'
+    | 'exec'
+    | 'query-by-ids'
+    | 'vector-search'
+    | 'attach-embeddings'
+    | 'detach-embeddings'
   id: string
   // For init, attach-embeddings
   url?: string

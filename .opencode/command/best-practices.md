@@ -11,7 +11,7 @@ Set up
 - linting with eslint (`@nuxt/eslint`),
 - oxlint (with eslint plugin),
 - type checking,
-- prettier,
+- oxfmt,
 - conventional commits with git hooks (simple git hooks)
   set up npm scripts for lint and type checks
 

@@ -5,7 +5,11 @@ export type ReviewItemStatus = 'pending' | 'approved' | 'rejected' | 'resolved'
 export type LlmVerdict = 'match' | 'mismatch' | 'uncertain'
 
 export type MatchReviewActionType =
-  'keep_verified' | 'approve_match' | 'unmatch' | 'mark_preview' | 'reject'
+  | 'keep_verified'
+  | 'approve_match'
+  | 'unmatch'
+  | 'mark_preview'
+  | 'reject'
 
 export interface MatchReviewSourceInfo {
   id: number

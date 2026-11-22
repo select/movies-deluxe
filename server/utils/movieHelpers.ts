@@ -187,7 +187,8 @@ function loadSourcesForMovie(db: Database.Database, movieId: string): MovieSourc
  */
 function loadMetadataForMovie(db: Database.Database, movieId: string): MovieMetadata | undefined {
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
-    MetadataRow | undefined
+    | MetadataRow
+    | undefined
 
   if (!metadata) return undefined
 
@@ -261,7 +262,8 @@ export async function getMovieById(movieId: string): Promise<MovieEntry | null> 
     const db = getAdminDatabase()
 
     const movie = db.prepare('SELECT * FROM movies WHERE movieId = ?').get(movieId) as
-      MovieRow | undefined
+      | MovieRow
+      | undefined
 
     if (!movie) return null
 
@@ -707,7 +709,8 @@ export async function hasMetadata(movieId: string): Promise<boolean> {
     const db = getAdminDatabase()
 
     const result = db.prepare('SELECT 1 FROM metadata WHERE movieId = ? LIMIT 1').get(movieId) as
-      { 1: number } | undefined
+      | { 1: number }
+      | undefined
 
     return result !== undefined
   } catch (error) {

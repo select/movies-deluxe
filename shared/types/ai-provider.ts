@@ -6,7 +6,13 @@
  */
 
 export type ExtractedContentType =
-  'movie' | 'short' | 'tv_episode' | 'double_feature' | 'part' | 'clip' | 'unknown'
+  | 'movie'
+  | 'short'
+  | 'tv_episode'
+  | 'double_feature'
+  | 'part'
+  | 'clip'
+  | 'unknown'
 
 /**
  * Extracted movie metadata from AI

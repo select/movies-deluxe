@@ -145,7 +145,8 @@ function loadMovieById(db: Database.Database, movieId: string): MovieEntry {
 
   // Load metadata
   const metadata = db.prepare('SELECT * FROM metadata WHERE movieId = ?').get(movieId) as
-    MetadataRow | undefined
+    | MetadataRow
+    | undefined
 
   if (metadata) {
     // No need to load ratings - imdbRating is already in metadata table

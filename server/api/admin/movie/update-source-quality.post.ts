@@ -21,7 +21,8 @@ export default defineEventHandler(async event => {
 
     await withTransaction(async db => {
       const movie = db.prepare('SELECT movieId FROM movies WHERE movieId = ?').get(movieId) as
-        { movieId: string } | undefined
+        | { movieId: string }
+        | undefined
 
       if (!movie) {
         throw createError({

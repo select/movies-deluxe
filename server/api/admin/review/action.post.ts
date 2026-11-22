@@ -201,7 +201,8 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
         `
         )
         .get(item.movieId) as
-        { sourceId: string; title: string | null; platform: 'youtube' | 'archive.org' } | undefined
+        | { sourceId: string; title: string | null; platform: 'youtube' | 'archive.org' }
+        | undefined
 
       if (isImdbId(item.movieId) && primarySource) {
         const baseTempId =

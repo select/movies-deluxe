@@ -10,7 +10,7 @@ Check for type and lint errors and fix them
 pnpm typecheck        # Check TypeScript types
 pnpm lint             # Run oxlint + eslint
 pnpm lint:fix         # Auto-fix lint errors
-pnpm format           # Format with Prettier
+pnpm format           # Format with oxfmt
 ```
 
 ## Workflow

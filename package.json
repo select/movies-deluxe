@@ -15,8 +15,8 @@
     "commitlint": "commitlint --edit",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "typecheck": "nuxt typecheck",
     "typecheck:watch": "nuxt typecheck --watch",
     "db:generate": "tsx scripts/generate-sqlite.ts",
@@ -47,10 +47,10 @@
     "*.{js,ts,vue}": [
       "oxlint",
       "eslint",
-      "prettier --check --ignore-path .prettierignore"
+      "oxfmt --check --no-error-on-unmatched-pattern"
     ],
     "*.{json,md,yml,yaml}": [
-      "prettier --check --ignore-path .prettierignore"
+      "oxfmt --check --no-error-on-unmatched-pattern"
     ]
   },
   "dependencies": {
@@ -105,8 +105,8 @@
     "npm-check-updates": "23.1.1",
     "nuxt-explicit-imports": "^0.1.0",
     "onnxruntime-node": "1.31.1",
+    "oxfmt": "^0.79.0",
     "oxlint": "1.94.0",
-    "prettier": "3.10.1",
     "puppeteer": "25.18.1",
     "puppeteer-extra": "3.3.6",
     "puppeteer-extra-plugin-stealth": "2.11.2",

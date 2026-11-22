@@ -365,7 +365,8 @@ export async function probeYouTubeSources(
       try {
         const info = await youtube.getBasicInfo(videoId)
         const playability = info?.playability_status as
-          { status?: string; reason?: unknown; error_screen?: unknown } | undefined
+          | { status?: string; reason?: unknown; error_screen?: unknown }
+          | undefined
 
         if (!playability) {
           results.set(videoId, {
