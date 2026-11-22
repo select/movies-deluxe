@@ -22,7 +22,7 @@
     >
       {{ label }}
     </span>
-    <slot></slot>
+    <slot />
   </label>
 </template>
 

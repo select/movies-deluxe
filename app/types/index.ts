@@ -116,14 +116,6 @@ export {
   SourceQualityMark,
 }
 
-export type {
-  ThemeVariant,
-  ThemeColors,
-  ThemeMetadata,
-  ThemeDefinition,
-  ThemeRegistry,
-} from './theme'
-
 /**
  * Frontend-specific types
  */
@@ -134,27 +126,6 @@ export type {
  * @deprecated Use LightweightMovie instead
  */
 export type LightweightMovieEntry = LightweightMovie
-
-/**
- * Loading state for async operations in stores
- *
- * @example
- * ```ts
- * const isLoading = ref<LoadingState>({
- *   movies: false,
- *   movieDetails: false,
- *   imdbFetch: false,
- * })
- * ```
- */
-export interface LoadingState {
-  /** Loading movies from data source */
-  movies: boolean
-  /** Loading individual movie details */
-  movieDetails: boolean
-  /** Fetching OMDB metadata */
-  imdbFetch: boolean
-}
 
 /**
  * Poster availability status

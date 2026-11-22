@@ -139,5 +139,3 @@ export interface CollectionCleanupResult {
     updatedMovies: Array<{ oldId: string; newId: string }>
   }>
 }
-
-export * from '#shared/types/admin'

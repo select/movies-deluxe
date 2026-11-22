@@ -163,6 +163,7 @@ export default defineNuxtConfig({
   // Vite configuration for SQLite WASM support
   vite: {
     optimizeDeps: {
+      include: ['@vueuse/integrations/useFocusTrap', 'fuse.js'],
       exclude: ['@sqlite.org/sqlite-wasm', 'sqlite-wasm-vec', 'onnxruntime-web'],
     },
     server: {

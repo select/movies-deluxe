@@ -27,7 +27,7 @@
     <span v-if="label" class="text-sm select-none" :class="{ 'text-theme-textmuted': disabled }">
       {{ label }}
     </span>
-    <slot></slot>
+    <slot />
   </label>
 </template>
 

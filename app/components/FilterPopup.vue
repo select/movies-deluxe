@@ -39,7 +39,7 @@
               class="p-4 overflow-y-auto scrollbar-thin max-h-[40vh] md:max-h-[280px] relative"
               @scroll="updateScrollState"
             >
-              <slot></slot>
+              <slot />
 
               <!-- Down Scroll Indicator -->
               <button

@@ -2,12 +2,7 @@
   <MovieListPage
     :title="collection?.name || 'Loading...'"
     :description="collection?.description || ''"
-    :breadcrumbs="{
-      parentPath: '/collections',
-      parentIcon: 'i-mdi:movie-roll',
-      parentLabel: 'Collections',
-      currentLabel: collection?.name || 'Loading...',
-    }"
+    :breadcrumbs="breadcrumbs"
     :movie-ids="validMovieIds"
     :movie-count="validMovieIds.length"
     :is-loading="isLoading"
@@ -30,6 +25,13 @@ const { getCollectionById } = collectionsStore
 const collection = ref<Collection | null>(null)
 const validMovieIds = ref<string[]>([])
 const isLoading = ref(true)
+
+const breadcrumbs = computed(() => ({
+  parentPath: '/collections',
+  parentIcon: 'i-mdi:movie-roll',
+  parentLabel: 'Collections',
+  currentLabel: collection.value?.name || 'Loading...',
+}))
 
 // SSR-compatible fetch for prerendering social card meta tags
 const { data: seoCollection } = await useAsyncData(

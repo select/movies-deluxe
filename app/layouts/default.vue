@@ -11,7 +11,7 @@
 
     <!-- Page Content with mobile bottom padding for navigation clearance -->
     <div class="pb-24 md:pb-0">
-      <slot></slot>
+      <slot />
     </div>
 
     <!-- Toast Container -->

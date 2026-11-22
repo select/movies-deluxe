@@ -8,7 +8,6 @@ import type {
   PosterOptions,
   OMDBOptions,
   CollectionCleanupResult,
-  GenerateDatabaseRequest,
 } from '~/types/admin'
 import { useStorage } from '@vueuse/core'
 
