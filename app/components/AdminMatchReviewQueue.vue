@@ -674,7 +674,10 @@
 
             <!-- Candidate Info (for new_match or proposed replacement) -->
             <div
-              v-else-if="item.candidate"
+              v-else-if="
+                item.candidate &&
+                (item.candidate.Title || item.candidate.title || item.proposedImdbId)
+              "
               class="p-2.5 rounded border border-green-200 dark:border-green-800/60 bg-green-50/50 dark:bg-green-900/10 space-y-1 text-xs"
             >
               <div class="font-semibold text-green-800 dark:text-green-300">Proposed Candidate</div>
@@ -739,13 +742,23 @@
             </button>
 
             <button
-              v-if="item.kind === 'archive_preview'"
+              v-if="item.kind === 'archive_preview' || item.kind === 'false_hit'"
               class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
               :disabled="actingId === item.id"
               @click="performAction(item.id, 'mark_preview')"
             >
               <div class="i-mdi-filmstrip-off"></div>
               Mark Preview/Incomplete
+            </button>
+
+            <button
+              v-if="item.sourceId && item.sources.length > 1"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
+              :disabled="actingId === item.id"
+              @click="performAction(item.id, 'remove_source')"
+            >
+              <div class="i-mdi-delete-outline"></div>
+              Remove Flagged Source
             </button>
 
             <button

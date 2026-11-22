@@ -9,6 +9,7 @@ export type MatchReviewActionType =
   | 'approve_match'
   | 'unmatch'
   | 'mark_preview'
+  | 'remove_source'
   | 'reject'
 
 export interface MatchReviewSourceInfo {

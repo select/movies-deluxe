@@ -39,6 +39,7 @@ const VALID_ACTIONS = new Set<MatchReviewActionType>([
   'approve_match',
   'unmatch',
   'mark_preview',
+  'remove_source',
   'reject',
 ])
 
@@ -125,6 +126,48 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
         status: 'rejected',
         movieId: item.movieId,
         message: 'Review item dismissed',
+      }
+    }
+
+    if (action === 'remove_source') {
+      if (!item.sourceId) {
+        throw createError({
+          statusCode: 400,
+          message: 'No flagged sourceId on this queue item',
+        })
+      }
+
+      const sourceCountRow = db
+        .prepare('SELECT COUNT(*) as cnt FROM sources WHERE movieId = ?')
+        .get(item.movieId) as { cnt: number }
+
+      if (sourceCountRow.cnt <= 1) {
+        throw createError({
+          statusCode: 400,
+          message:
+            'Cannot remove the only source on a movie; use Mark Preview/Incomplete or Unmatch',
+        })
+      }
+
+      await withTransaction(async txDb => {
+        txDb
+          .prepare('DELETE FROM sources WHERE movieId = ? AND sourceId = ?')
+          .run(item.movieId, item.sourceId)
+        txDb.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, item.movieId)
+        txDb
+          .prepare(
+            "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+          )
+          .run(id)
+      })
+
+      return {
+        success: true,
+        id,
+        action,
+        status: 'approved',
+        movieId: item.movieId,
+        message: `Removed flagged source ${item.sourceId}`,
       }
     }
 
