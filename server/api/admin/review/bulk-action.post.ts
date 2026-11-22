@@ -69,7 +69,11 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
              s.title,
              s.description,
              s.size,
-             CAST(REPLACE(md.Runtime, ' min', '') AS INTEGER) as runtimeMin
+             CAST(REPLACE(md.Runtime, ' min', '') AS INTEGER) as runtimeMin,
+             EXISTS (
+               SELECT 1 FROM source_quality_marks sqm
+               WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
+             ) as alreadyIncomplete
            FROM sources s
            JOIN metadata md ON md.movieId = s.movieId
            WHERE s.movieId LIKE 'tt%'
@@ -77,11 +81,7 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
              AND s.size IS NOT NULL
              AND md.Runtime IS NOT NULL
              AND md.Runtime LIKE '% min'
-             AND CAST(REPLACE(md.Runtime, ' min', '') AS INTEGER) >= 50
-             AND NOT EXISTS (
-               SELECT 1 FROM source_quality_marks sqm
-               WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
-             )`
+             AND CAST(REPLACE(md.Runtime, ' min', '') AS INTEGER) >= 50`
         )
         .all() as Array<{
         sourceRowId: number
@@ -91,6 +91,7 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
         description: string | null
         size: number
         runtimeMin: number
+        alreadyIncomplete: number
       }>
 
       const insertMarkStmt = txDb.prepare(
@@ -112,7 +113,7 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
          SET status = 'approved', resolvedAt = datetime('now')
          WHERE status = 'pending'
            AND movieId = ?
-           AND sourceId = ?`
+           AND (sourceId = ? OR (sourceId IS NULL AND kind IN ('archive_preview', 'false_hit')))`
       )
       const updateMovieStmt = txDb.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
       const hasQualityLabelsTable = Boolean(
@@ -132,11 +133,13 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
           continue
         }
 
-        const markRes = insertMarkStmt.run(row.sourceRowId, now)
-        markedSources += markRes.changes
+        if (!row.alreadyIncomplete) {
+          const markRes = insertMarkStmt.run(row.sourceRowId, now)
+          markedSources += markRes.changes
+          touchedMovies.add(row.movieId)
+        }
         const qRes = resolveQueueStmt.run(row.movieId, row.sourceId)
         processedItems += qRes.changes
-        touchedMovies.add(row.movieId)
       }
 
       for (const movieId of touchedMovies) {
@@ -155,9 +158,9 @@ export default defineEventHandler(async (event): Promise<MatchReviewBulkActionRe
       processedItems,
       markedSources,
       message:
-        markedSources === 0
-          ? 'No unmarked low-MB/min Archive.org trailers found'
-          : `Marked ${markedSources} low-MB/min trailer source${markedSources === 1 ? '' : 's'} across ${touchedMovies.size} movie${touchedMovies.size === 1 ? '' : 's'}`,
+        markedSources === 0 && processedItems === 0
+          ? 'No unmarked or pending low-MB/min Archive.org trailers found'
+          : `Marked ${markedSources} low-MB/min trailer source${markedSources === 1 ? '' : 's'} and resolved ${processedItems} pending queue item${processedItems === 1 ? '' : 's'}`,
     }
   }
 
