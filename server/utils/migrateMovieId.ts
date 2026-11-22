@@ -155,7 +155,18 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
       const collectionMoviesResult = collectionMoviesStmt.run(newId, oldId)
       tablesUpdated.collectionMovies = collectionMoviesResult.changes
 
-      // movie_quality_labels table removed - no longer needed
+      // Update movie_quality_labels if the table exists (prevents FK constraint violations on migration)
+      const hasQualityLabelsTable = db
+        .prepare(
+          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'movie_quality_labels'"
+        )
+        .get()
+      if (hasQualityLabelsTable) {
+        db.prepare('UPDATE movie_quality_labels SET movieId = ? WHERE movieId = ?').run(
+          newId,
+          oldId
+        )
+      }
 
       // Update ai_metadata
       const aiMetadataStmt = db.prepare('UPDATE ai_metadata SET movieId = ? WHERE movieId = ?')
