@@ -247,17 +247,6 @@
           progress-color="bg-purple-500"
           :subtitle="`${stats.posters.downloaded} / ${stats.posters.withImdbId} movies with IMDB ID`"
         />
-
-        <AdminStatsCard
-          title="AI Extracted"
-          :value="stats.ai.withAiData"
-          icon="i-mdi-robot"
-          icon-color="text-purple-500"
-          show-progress
-          :percent="stats.ai.percent"
-          progress-color="bg-purple-500"
-          :subtitle="`${stats.ai.withAiData} / ${stats.ai.totalUnmatched} unmatched`"
-        />
       </section>
 
       <!-- YouTube Channel Stats -->
