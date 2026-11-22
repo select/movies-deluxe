@@ -49,6 +49,7 @@ interface SourceRow {
   size: number | null
   duration: number | null
   year: number | null
+  isIncomplete: number
 }
 
 export default defineEventHandler(async event => {
@@ -104,7 +105,11 @@ export default defineEventHandler(async event => {
       s.description,
       s.size,
       s.duration,
-      s.year
+      s.year,
+      EXISTS (
+        SELECT 1 FROM source_quality_marks sqm
+        WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
+      ) as isIncomplete
     FROM sources s
     JOIN channels c ON s.channelId = c.id
     WHERE s.movieId = ?`
@@ -273,7 +278,7 @@ export default defineEventHandler(async event => {
       // 2. Archive.org preview detection (size + film length)
       if (checkArchivePreviews) {
         const archiveSources = sources.filter(
-          s => s.platform === 'archive.org' || s.channelId === 'archive.org'
+          s => (s.platform === 'archive.org' || s.channelId === 'archive.org') && !s.isIncomplete
         )
 
         for (const arch of archiveSources) {

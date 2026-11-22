@@ -1121,14 +1121,6 @@ function recommendedFix(item: MatchReviewQueueItem): {
   }
 
   if (item.kind === 'archive_preview') {
-    if (hasMultipleSources) {
-      return {
-        action: 'remove_source',
-        label: 'Fix: Remove Preview Source',
-        icon: 'i-mdi-delete-outline',
-        buttonClass: 'bg-red-600 hover:bg-red-700',
-      }
-    }
     return {
       action: 'mark_preview',
       label: 'Fix: Mark Preview/Incomplete',
@@ -1138,25 +1130,29 @@ function recommendedFix(item: MatchReviewQueueItem): {
   }
 
   // false_hit (or fallback)
-  if (hasMultipleSources) {
-    const isFlaggedPreview =
-      item.flags.some(f =>
-        ['preview_keyword', 'low_mb_per_min_feature', 'tiny_or_empty_file'].includes(f)
-      ) ||
-      (flaggedSource?.mbPerMin !== null &&
-        flaggedSource?.mbPerMin !== undefined &&
-        flaggedSource.mbPerMin < 1.2) ||
-      PREVIEW_TEXT_RE.test(`${flaggedSource?.title || ''} ${flaggedSource?.sourceId || ''}`)
+  const isFlaggedPreview =
+    item.flags.some(f =>
+      ['preview_keyword', 'low_mb_per_min_feature', 'tiny_or_empty_file'].includes(f)
+    ) ||
+    (flaggedSource?.mbPerMin !== null &&
+      flaggedSource?.mbPerMin !== undefined &&
+      flaggedSource.mbPerMin < 1.2) ||
+    (flaggedSource?.size !== null &&
+      flaggedSource?.size !== undefined &&
+      flaggedSource.size > 0 &&
+      flaggedSource.size < 5 * 1024 * 1024) ||
+    PREVIEW_TEXT_RE.test(`${flaggedSource?.title || ''} ${flaggedSource?.sourceId || ''}`)
 
-    if (isFlaggedPreview) {
-      return {
-        action: 'remove_source',
-        label: 'Fix: Remove Trailer/Preview Source',
-        icon: 'i-mdi-delete-outline',
-        buttonClass: 'bg-red-600 hover:bg-red-700',
-      }
+  if (isFlaggedPreview) {
+    return {
+      action: 'mark_preview',
+      label: 'Fix: Mark Preview/Incomplete',
+      icon: 'i-mdi-filmstrip-off',
+      buttonClass: 'bg-purple-600 hover:bg-purple-700',
     }
+  }
 
+  if (hasMultipleSources) {
     return {
       action: 'detach_source',
       label: 'Fix: Detach Flagged Source',

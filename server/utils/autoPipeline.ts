@@ -119,6 +119,7 @@ interface SourceRow {
   size: number | null
   duration: number | null
   year: number | null
+  isIncomplete?: number
 }
 
 function upsertMetadataAndMovie(db: Database.Database, imdbId: string, meta: MovieMetadata): void {
@@ -201,7 +202,7 @@ export async function runAutoCleanArchivePreviews(
   options: AutoCleanPreviewsOptions = {}
 ): Promise<AutoCleanPreviewsResult> {
   const dryRun = options.dryRun ?? true
-  const removeRedundant = options.removeRedundant ?? true
+  const removeRedundant = options.removeRedundant ?? false
   const safeLimit = Math.max(1, Math.min(25000, Number(options.limit) || 5000))
   const db = getAdminDatabase()
 
@@ -213,6 +214,10 @@ export async function runAutoCleanArchivePreviews(
        LEFT JOIN metadata md ON m.movieId = md.movieId
        WHERE m.movieId LIKE 'tt%'
          AND s.channelId = 'archive.org'
+         AND NOT EXISTS (
+           SELECT 1 FROM source_quality_marks sqm
+           WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
+         )
          AND (
            s.size IS NOT NULL AND s.size < 104857600
            OR lower(coalesce(s.title, '')) LIKE '%trailer%'
@@ -228,7 +233,11 @@ export async function runAutoCleanArchivePreviews(
 
   const getSourcesStmt = db.prepare(
     `SELECT s.id, s.movieId, s.sourceId, s.channelId, c.platform, c.name as channelName,
-            s.title, s.description, s.size, s.duration, s.year
+            s.title, s.description, s.size, s.duration, s.year,
+            EXISTS (
+              SELECT 1 FROM source_quality_marks sqm
+              WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
+            ) as isIncomplete
      FROM sources s
      JOIN channels c ON s.channelId = c.id
      WHERE s.movieId = ?`
@@ -271,7 +280,9 @@ export async function runAutoCleanArchivePreviews(
 
       const runtimeMin = parseRuntimeMinutes(movie.omdbRuntime)
       const allSources = getSourcesStmt.all(movie.movieId) as SourceRow[]
-      const archiveSources = allSources.filter(s => s.channelId === 'archive.org')
+      const archiveSources = allSources.filter(
+        s => s.channelId === 'archive.org' && !s.isIncomplete
+      )
 
       for (const src of archiveSources) {
         scannedSources++
