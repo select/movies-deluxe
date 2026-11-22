@@ -275,29 +275,7 @@
       <AdminMatchReviewQueue />
 
       <!-- Scrape Controls -->
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-        <!-- Data Collection Section -->
-        <section>
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <div class="i-mdi-database-import text-amber-600"></div>
-            Data Collection
-          </h2>
-          <div class="flex flex-col gap-8">
-            <AdminArchiveScraper
-              v-model="archiveOptions"
-              :loading="scraping"
-              @start="adminStore.startArchiveScrape"
-            />
-
-            <AdminYouTubeScraper
-              v-model="youtubeOptions"
-              :channels="youtubeChannels"
-              :loading="scraping"
-              @start="adminStore.startYouTubeScrape"
-            />
-          </div>
-        </section>
-
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         <!-- Data Management Section -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -369,8 +347,6 @@ import { isLocalhost } from '~/utils/isLocalhost'
 import { $fetch } from '#build/fetch'
 import AdminStatsCard from '~/components/AdminStatsCard.vue'
 import AdminYouTubeChannelStats from '~/components/AdminYouTubeChannelStats.vue'
-import AdminArchiveScraper from '~/components/AdminArchiveScraper.vue'
-import AdminYouTubeScraper from '~/components/AdminYouTubeScraper.vue'
 import AdminChannelSync from '~/components/AdminChannelSync.vue'
 import AdminMatchReviewQueue from '~/components/AdminMatchReviewQueue.vue'
 import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
@@ -399,10 +375,7 @@ const {
   generatingHomePages,
   generatingSimilar,
   stats,
-  archiveOptions,
   scraping,
-  youtubeOptions,
-  youtubeChannels,
   omdbOptions,
   aiOptions,
   posterOptions,
