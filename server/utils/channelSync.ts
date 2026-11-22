@@ -9,7 +9,7 @@ import type {
 } from '../../shared/types/admin'
 import type { SourceStatus, SourceUnavailableReason } from '../../shared/types/movie'
 import { getAdminDatabase } from './adminDb'
-import { fetchArchiveOrgMovies, processArchiveMovie, type ArchiveOrgMovie } from './archive'
+import { processArchiveMovie, type ArchiveOrgMovie, type ArchiveOrgResponse } from './archive'
 import {
   loadFailedYouTubeVideos,
   removeFailedYouTubeVideo,
@@ -169,15 +169,70 @@ function shouldRestoreSource(row: DbSourceRow): boolean {
   return false
 }
 
+async function fetchArchivePageWithRetry(
+  collection: string,
+  rows: number,
+  cursor?: string,
+  maxAttempts = 3
+): Promise<ArchiveOrgResponse> {
+  const url = new URL('https://archive.org/services/search/v1/scrape')
+  url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
+  url.searchParams.set(
+    'fields',
+    'identifier,title,description,date,year,downloads,collection,language,item_size'
+  )
+  url.searchParams.set('count', Math.max(100, rows).toString())
+  if (cursor) {
+    url.searchParams.set('cursor', cursor)
+  }
+
+  let lastError: unknown
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(url.toString())
+      if (!response.ok) {
+        throw new Error(`Archive.org HTTP ${response.status}: ${response.statusText}`)
+      }
+      const data = (await response.json()) as ArchiveOrgResponse
+      if (!data || !Array.isArray(data.items)) {
+        throw new Error('Archive.org returned malformed scrape response (missing items array)')
+      }
+      return data
+    } catch (error) {
+      lastError = error
+      if (attempt < maxAttempts) {
+        await sleep(500 * Math.pow(2, attempt - 1))
+      }
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`Archive.org fetch failed: ${String(lastError)}`)
+}
+
 async function fetchAllArchiveItems(
   collection = 'feature_films'
 ): Promise<Map<string, ArchiveOrgMovie>> {
   const remoteMap = new Map<string, ArchiveOrgMovie>()
   let cursor: string | undefined
+  let expectedTotal: number | null = null
 
   while (true) {
-    const response = await fetchArchiveOrgMovies(collection, 1000, cursor)
-    if (!response.items || response.items.length === 0) break
+    const response = await fetchArchivePageWithRetry(collection, 1000, cursor)
+
+    if (expectedTotal === null && typeof response.total === 'number') {
+      expectedTotal = response.total
+    }
+
+    if (response.items.length === 0) {
+      if (expectedTotal !== null && expectedTotal > 0 && remoteMap.size < expectedTotal * 0.9) {
+        throw new Error(
+          `Archive.org pagination stopped abruptly at ${remoteMap.size}/${expectedTotal} items`
+        )
+      }
+      break
+    }
 
     for (const item of response.items) {
       if (item.identifier) {
@@ -185,9 +240,21 @@ async function fetchAllArchiveItems(
       }
     }
 
-    if (!response.cursor || response.cursor === cursor) break
+    if (!response.cursor || response.cursor === cursor) {
+      break
+    }
     cursor = response.cursor
     await sleep(150)
+  }
+
+  if (expectedTotal !== null && expectedTotal > 0 && remoteMap.size === 0) {
+    throw new Error(`Archive.org returned 0 items when expectedTotal=${expectedTotal}`)
+  }
+
+  if (expectedTotal !== null && expectedTotal > 0 && remoteMap.size < expectedTotal * 0.9) {
+    throw new Error(
+      `Archive.org crawl incomplete: fetched ${remoteMap.size} of ${expectedTotal} expected items`
+    )
   }
 
   return remoteMap
@@ -444,7 +511,7 @@ async function syncYouTubeChannel(
             unavailableDetail = ?,
             regionRestriction = COALESCE(?, regionRestriction),
             lastCheckedAt = ?,
-            statusChangedAt = ?
+            statusChangedAt = COALESCE(?, statusChangedAt)
         WHERE id = ?
       `)
 
@@ -715,7 +782,7 @@ async function syncArchiveCollection(
             unavailableReason = ?,
             unavailableDetail = ?,
             lastCheckedAt = ?,
-            statusChangedAt = ?
+            statusChangedAt = COALESCE(?, statusChangedAt)
         WHERE id = ?
       `)
 

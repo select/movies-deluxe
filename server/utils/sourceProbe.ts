@@ -92,7 +92,7 @@ export function classifyYouTubePlayability(playability: {
   }
 
   if (
-    lower.includes('age') ||
+    /\bage[\s-]?restricted\b/i.test(combinedDetail) ||
     lower.includes('sign in to confirm your age') ||
     lower.includes('inappropriate for some users')
   ) {
