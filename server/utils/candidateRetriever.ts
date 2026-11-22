@@ -9,8 +9,9 @@
  *   5. Wikidata API
  *   6. OMDb search (if OMDB_API_KEY available)
  *   7. Wikipedia MediaWiki API (en.wikipedia.org external IMDb links)
- *   8. Free DuckDuckGo HTML search fallback (site:imdb.com/title, when candidates empty)
- *   9. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
+ *   8. Self-hosted SearXNG JSON search (if SEARXNG_URL set, when candidates < 3)
+ *   9. Free DuckDuckGo HTML search fallback (site:imdb.com/title, when candidates empty)
+ *  10. Optional Google CSE tail fallback (only when allowGoogleFallback: true and under 100/day cap)
  */
 
 import { getImdbLocalById, isImdbLocalIndexAvailable, searchImdbLocalIndex } from './imdbLocalIndex'
@@ -19,6 +20,7 @@ import { searchImdbSuggestions } from './imdbSuggestion'
 import { searchWikidataImdb } from './wikidata'
 import { getMovieByImdbId, searchOMDB } from './omdb'
 import { searchWikipediaForImdb } from './wikipediaSearch'
+import { isSearxngAvailable, searchSearxngForImdb } from './searxngSearch'
 import { searchDuckDuckGoForImdb } from './duckduckgoSearch'
 import { getGoogleQuotaStatus, searchGoogleForImdb } from './googleSearch'
 
@@ -30,6 +32,7 @@ export type CandidateSourceTag =
   | 'wikidata'
   | 'omdb'
   | 'wikipedia'
+  | 'searxng'
   | 'duckduckgo'
   | 'google_cse'
 
@@ -394,7 +397,28 @@ export async function retrieveCandidates(
     }
   }
 
-  // Tier 8: Free DuckDuckGo HTML search fallback (when no candidates found yet)
+  // Tier 8: Self-hosted SearXNG JSON search (if SEARXNG_URL set, when few candidates found)
+  if (isSearxngAvailable() && candidates.size < 3 && searchQueries[0]) {
+    try {
+      const searxHits = await searchSearxngForImdb(searchQueries[0], input.year)
+      for (const hit of searxHits) {
+        mergeCandidate(candidates, {
+          imdbId: hit.imdbId,
+          title: hit.title,
+          altTitles: [],
+          year: hit.year,
+          directors: [],
+          cast: [],
+          overview: hit.snippet,
+          source: 'searxng',
+        })
+      }
+    } catch (error) {
+      console.warn('[CandidateRetriever] SearXNG search failed:', error)
+    }
+  }
+
+  // Tier 9: Free DuckDuckGo HTML search fallback (when no candidates found yet)
   if (options.allowDuckDuckGoFallback !== false && candidates.size === 0 && searchQueries[0]) {
     try {
       const ddgHits = await searchDuckDuckGoForImdb(searchQueries[0], input.year)
