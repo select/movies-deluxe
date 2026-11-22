@@ -8,6 +8,7 @@ export type MatchReviewActionType =
   | 'keep_verified'
   | 'approve_match'
   | 'unmatch'
+  | 'detach_source'
   | 'mark_preview'
   | 'remove_source'
   | 'reject'

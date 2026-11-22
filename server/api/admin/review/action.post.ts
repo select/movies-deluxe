@@ -38,6 +38,7 @@ const VALID_ACTIONS = new Set<MatchReviewActionType>([
   'keep_verified',
   'approve_match',
   'unmatch',
+  'detach_source',
   'mark_preview',
   'remove_source',
   'reject',
@@ -126,6 +127,95 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
         status: 'rejected',
         movieId: item.movieId,
         message: 'Review item dismissed',
+      }
+    }
+
+    if (action === 'detach_source') {
+      if (!item.sourceId) {
+        throw createError({
+          statusCode: 400,
+          message: 'No flagged sourceId on this queue item',
+        })
+      }
+
+      const flaggedSource = db
+        .prepare(
+          `
+          SELECT s.id, s.sourceId, s.title, s.year, c.platform
+          FROM sources s
+          JOIN channels c ON s.channelId = c.id
+          WHERE s.movieId = ? AND s.sourceId = ?
+          LIMIT 1
+        `
+        )
+        .get(item.movieId, item.sourceId) as
+        | {
+            id: number
+            sourceId: string
+            title: string | null
+            year: number | null
+            platform: 'youtube' | 'archive.org'
+          }
+        | undefined
+
+      if (!flaggedSource) {
+        throw createError({
+          statusCode: 404,
+          message: `Flagged source ${item.sourceId} not found on movie ${item.movieId}`,
+        })
+      }
+
+      const sourceCountRow = db
+        .prepare('SELECT COUNT(*) as cnt FROM sources WHERE movieId = ?')
+        .get(item.movieId) as { cnt: number }
+
+      if (sourceCountRow.cnt <= 1) {
+        throw createError({
+          statusCode: 400,
+          message: 'Only one source on this movie; use Unmatch instead',
+        })
+      }
+
+      const baseTempId =
+        flaggedSource.platform === 'archive.org'
+          ? generateArchiveId(flaggedSource.sourceId)
+          : generateYouTubeId(flaggedSource.sourceId)
+
+      let detachedMovieId: string = baseTempId
+      let counter = 1
+      while (db.prepare('SELECT 1 FROM movies WHERE movieId = ?').get(detachedMovieId)) {
+        detachedMovieId = `${baseTempId}-${counter++}`
+      }
+
+      await withTransaction(async txDb => {
+        txDb
+          .prepare(
+            'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, 0, ?)'
+          )
+          .run(
+            detachedMovieId,
+            flaggedSource.title || flaggedSource.sourceId,
+            flaggedSource.year ?? null,
+            now
+          )
+        txDb
+          .prepare('UPDATE sources SET movieId = ? WHERE id = ?')
+          .run(detachedMovieId, flaggedSource.id)
+        txDb.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, item.movieId)
+        txDb
+          .prepare(
+            "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+          )
+          .run(id)
+      })
+
+      return {
+        success: true,
+        id,
+        action,
+        status: 'approved',
+        movieId: detachedMovieId,
+        message: `Detached flagged source into unmatched movie ${detachedMovieId}`,
       }
     }
 

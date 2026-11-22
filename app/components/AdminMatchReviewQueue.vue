@@ -713,52 +713,22 @@
         >
           <div class="flex flex-wrap items-center gap-2">
             <button
+              class="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              :class="recommendedFix(item).buttonClass"
+              :disabled="actingId === item.id"
+              @click="performAction(item.id, recommendedFix(item).action)"
+            >
+              <div :class="recommendedFix(item).icon"></div>
+              {{ recommendedFix(item).label }}
+            </button>
+
+            <button
               class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
               :disabled="actingId === item.id"
               @click="performAction(item.id, 'keep_verified')"
             >
               <div class="i-mdi-check-decagram"></div>
               Keep &amp; Verify
-            </button>
-
-            <button
-              v-if="item.proposedImdbId"
-              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
-              :disabled="actingId === item.id"
-              @click="performAction(item.id, 'approve_match')"
-            >
-              <div class="i-mdi-check"></div>
-              Approve Match ({{ item.proposedImdbId }})
-            </button>
-
-            <button
-              v-if="item.currentImdbId || item.metadata"
-              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
-              :disabled="actingId === item.id"
-              @click="performAction(item.id, 'unmatch')"
-            >
-              <div class="i-mdi-link-off"></div>
-              Unmatch
-            </button>
-
-            <button
-              v-if="item.kind === 'archive_preview' || item.kind === 'false_hit'"
-              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
-              :disabled="actingId === item.id"
-              @click="performAction(item.id, 'mark_preview')"
-            >
-              <div class="i-mdi-filmstrip-off"></div>
-              Mark Preview/Incomplete
-            </button>
-
-            <button
-              v-if="item.sourceId && item.sources.length > 1"
-              class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors flex items-center gap-1 disabled:opacity-50"
-              :disabled="actingId === item.id"
-              @click="performAction(item.id, 'remove_source')"
-            >
-              <div class="i-mdi-delete-outline"></div>
-              Remove Flagged Source
             </button>
 
             <button
@@ -1126,6 +1096,81 @@ function verdictBadgeClass(verdict: LlmVerdict): string {
     return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
   }
   return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+}
+
+const PREVIEW_TEXT_RE = /\b(preview|trailer|tv\s*spot|teaser|clip|sample)\b/i
+
+function recommendedFix(item: MatchReviewQueueItem): {
+  action: MatchReviewActionType
+  label: string
+  icon: string
+  buttonClass: string
+} {
+  const hasMultipleSources = Boolean(item.sourceId && item.sources.length > 1)
+  const flaggedSource = item.sourceId
+    ? item.sources.find(s => s.sourceId === item.sourceId)
+    : undefined
+
+  if (item.kind === 'new_match' && item.proposedImdbId) {
+    return {
+      action: 'approve_match',
+      label: `Fix: Match to ${item.proposedImdbId}`,
+      icon: 'i-mdi-check',
+      buttonClass: 'bg-blue-600 hover:bg-blue-700',
+    }
+  }
+
+  if (item.kind === 'archive_preview') {
+    if (hasMultipleSources) {
+      return {
+        action: 'remove_source',
+        label: 'Fix: Remove Preview Source',
+        icon: 'i-mdi-delete-outline',
+        buttonClass: 'bg-red-600 hover:bg-red-700',
+      }
+    }
+    return {
+      action: 'mark_preview',
+      label: 'Fix: Mark Preview/Incomplete',
+      icon: 'i-mdi-filmstrip-off',
+      buttonClass: 'bg-purple-600 hover:bg-purple-700',
+    }
+  }
+
+  // false_hit (or fallback)
+  if (hasMultipleSources) {
+    const isFlaggedPreview =
+      item.flags.some(f =>
+        ['preview_keyword', 'low_mb_per_min_feature', 'tiny_or_empty_file'].includes(f)
+      ) ||
+      (flaggedSource?.mbPerMin !== null &&
+        flaggedSource?.mbPerMin !== undefined &&
+        flaggedSource.mbPerMin < 1.2) ||
+      PREVIEW_TEXT_RE.test(`${flaggedSource?.title || ''} ${flaggedSource?.sourceId || ''}`)
+
+    if (isFlaggedPreview) {
+      return {
+        action: 'remove_source',
+        label: 'Fix: Remove Trailer/Preview Source',
+        icon: 'i-mdi-delete-outline',
+        buttonClass: 'bg-red-600 hover:bg-red-700',
+      }
+    }
+
+    return {
+      action: 'detach_source',
+      label: 'Fix: Detach Flagged Source',
+      icon: 'i-mdi-call-split',
+      buttonClass: 'bg-orange-600 hover:bg-orange-700',
+    }
+  }
+
+  return {
+    action: 'unmatch',
+    label: 'Fix: Unmatch Movie',
+    icon: 'i-mdi-link-off',
+    buttonClass: 'bg-orange-600 hover:bg-orange-700',
+  }
 }
 
 onMounted(() => {
