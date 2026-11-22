@@ -140,6 +140,8 @@ export async function verifyMatchCandidate(
   const prompt = [
     'You are a film metadata verification expert. Determine whether the uploaded video source and the IMDb candidate refer to the SAME film.',
     'Pay close attention to title (including translations/AKAs), release year, runtime (a 90-min feature vs a 7-min short or vice versa is a mismatch), director/cast, and plot.',
+    'Missing source duration/runtime is normal (e.g., Archive.org items often omit duration) — NEVER return "mismatch" or "uncertain" solely because source duration is missing or because the IMDb runtime is long (150-240+ min is normal for Bollywood, epic, and classic films).',
+    'Ignore release/rip/encoding tags in source titles (e.g., DvDRiP, Dv DRi P, x264, X 264, AAC, Chapters, [Dr C], VOSE, Turkish Movie, Full Movie).',
     'If the source is a trailer, clip, TV episode, or clearly a different movie with a similar title, return "mismatch".',
     '',
     'SOURCE VIDEO:',
@@ -224,6 +226,8 @@ export async function adjudicateCandidates(
   const prompt = [
     'You are a film metadata verification expert. Pick which IMDb candidate (if any) is the SAME film as the uploaded video source.',
     'Check title (including translations/AKAs), release year, runtime, director/cast, and plot.',
+    'Missing source duration/runtime is normal — NEVER reject a candidate solely because source duration is missing or because the IMDb runtime is long (150-240+ min is normal for Bollywood, epic, and classic films).',
+    'Ignore release/rip/encoding tags in source titles (e.g., DvDRiP, Dv DRi P, x264, X 264, AAC, Chapters, VOSE, Full Movie).',
     'If none of the candidates match, set chosenImdbId to null and verdict to "mismatch".',
     '',
     'SOURCE VIDEO:',
