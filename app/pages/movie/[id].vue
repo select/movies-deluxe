@@ -904,16 +904,27 @@ const movieCollections = computed(() => {
   return movie.value?.collections || []
 })
 
-// Sorted sources: YouTube first, then Archive.org by file size
+const hasRegionRestriction = (source: MovieSource): boolean => {
+  return Boolean(
+    source.regionRestriction?.allowed?.length || source.regionRestriction?.blocked?.length
+  )
+}
+
+// Sorted sources: unrestricted first, then YouTube first, then Archive.org by file size
 const sortedSources = computed(() => {
   if (!movie.value || !movie.value.sources) return []
 
   return [...movie.value.sources].sort((a, b) => {
-    // 1. YouTube first
+    // 1. Prefer sources without region restrictions
+    const restrictedA = hasRegionRestriction(a)
+    const restrictedB = hasRegionRestriction(b)
+    if (restrictedA !== restrictedB) return restrictedA ? 1 : -1
+
+    // 2. YouTube first
     if (a.type === 'youtube' && b.type !== 'youtube') return -1
     if (a.type !== 'youtube' && b.type === 'youtube') return 1
 
-    // 2. If both are Archive.org, sort by file size (descending)
+    // 3. If both are Archive.org, sort by file size (descending)
     if (a.type === 'archive.org' && b.type === 'archive.org') {
       const sizeA = a.size || 0
       const sizeB = b.size || 0
