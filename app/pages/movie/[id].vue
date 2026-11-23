@@ -354,6 +354,22 @@
           </div>
         </div>
 
+        <!-- Region Restrictions (YouTube) -->
+        <div
+          v-if="
+            currentSource?.type === 'youtube' &&
+            currentSource.regionRestriction &&
+            (currentSource.regionRestriction.allowed?.length ||
+              currentSource.regionRestriction.blocked?.length)
+          "
+          class="mb-4"
+        >
+          <RegionRestrictionBadges
+            :key="currentSource.sourceId"
+            :region-restriction="currentSource.regionRestriction"
+          />
+        </div>
+
         <!-- Video Player -->
         <div v-if="currentSource" class="bg-black rounded-lg overflow-hidden">
           <!-- YouTube Player (Link-out card for not_embeddable / age_restricted) -->
@@ -691,6 +707,7 @@ import { formatFileSize } from '~/utils/formatFileSize'
 import MovieCard from '~/components/MovieCard.vue'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
 import AdminCurationPanel from '~/components/AdminCurationPanel.vue'
+import RegionRestrictionBadges from '~/components/RegionRestrictionBadges.vue'
 import { NuxtLink } from '#components'
 
 // Stores - get reactive state and methods once
