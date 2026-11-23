@@ -161,6 +161,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Licensed full-length western movies from Grjngo"
+    },
+    {
+      "id": "UCpcM5yWHfE3mGnjOlWXLcUw",
+      "handle": "@GrandpahkMovieHouse",
+      "name": "菲林阿爺HK-Movie House",
+      "language": "zh",
+      "enabled": true,
+      "notes": "Licensed classic Hong Kong and Chinese-language 35mm films and rare archival movies"
     }
   ]
 }
