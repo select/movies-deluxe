@@ -118,12 +118,6 @@ export interface PosterOptions {
   force: boolean
 }
 
-export interface OMDBOptions {
-  limit: number
-  onlyUnmatched: boolean
-  forceRetryFailed: boolean
-}
-
 export interface CollectionCleanupResult {
   success: boolean
   stats: {
