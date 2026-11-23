@@ -15,6 +15,7 @@ import {
   type RetrievedCandidate,
 } from './candidateRetriever'
 import { getImdbLocalById, isImdbLocalIndexAvailable } from './imdbLocalIndex'
+import { isJevAvailable } from './jevClient'
 import {
   ensureMatchReviewQueueTable,
   enqueueReviewItem,
@@ -23,6 +24,7 @@ import {
 import { extractYearFromTitle, parseRuntimeMinutes, scoreMatchCandidate } from './matchScorer'
 import {
   adjudicateCandidates,
+  adjudicateCandidatesWithJev,
   planMatchQueries,
   verifyMatchCandidate,
   type VerifierCandidateInput,
@@ -2270,6 +2272,113 @@ export async function runAutoMatchUnmatched(
               })
             }
             return
+          }
+
+          // Local IMDb + Jev fast path (zero external search APIs)
+          if (!options.model && isJevAvailable()) {
+            const localAdjudicateList = localScored
+              .filter(
+                s =>
+                  !s.result.flags.includes('runtime_feature_short_mismatch') &&
+                  !s.result.flags.includes('non_movie_candidate')
+              )
+              .slice(0, 5)
+
+            if (localAdjudicateList.length > 0 && localAdjudicateList[0]!.result.score >= 45) {
+              const localInputs: VerifierCandidateInput[] = localAdjudicateList.map(s => ({
+                imdbId: s.cand.imdbId,
+                title: s.cand.title,
+                year: s.cand.year ?? null,
+                runtimeMin: s.cand.runtimeMinutes ?? null,
+                director: s.cand.directors.join(', ') || null,
+                actors: s.cand.cast.join(', ') || null,
+                plot: s.cand.overview ?? null,
+                type: s.cand.titleType ?? null,
+              }))
+
+              const localJevAdj = await adjudicateCandidatesWithJev(
+                {
+                  movieId: movie.movieId,
+                  sourceId: movie.sourceId,
+                  title: rawTitle,
+                  originalTitle: extracted.originalTitle ?? null,
+                  altTitles: extracted.altTitles,
+                  year: queryYear ?? null,
+                  durationMin: sourceDurationMin,
+                  director: extracted.director ?? null,
+                  cast: extracted.cast,
+                  description: movie.sourceDescription,
+                  channelName: movie.channelName,
+                },
+                localInputs
+              )
+
+              if (localJevAdj?.isNotAMovie) {
+                notAMovie++
+                noMatch++
+                await serializeDbWrite(() =>
+                  recordAttempt(
+                    movie.movieId,
+                    'no_match',
+                    localCandidates.length,
+                    `not_a_movie: ${localJevAdj.reason}`
+                  )
+                )
+                return
+              }
+
+              if (
+                localJevAdj?.chosenImdbId &&
+                localJevAdj.verdict === 'match' &&
+                localJevAdj.confidence >= Math.max(minConfidence, 0.85)
+              ) {
+                const chosenId = localJevAdj.chosenImdbId
+                const meta = await fetchOmdbCached(chosenId, omdbApiKey, omdbCache)
+                const finalRuntimeCheck = scoreMatchCandidate(
+                  { title: queryTitle, sourceDurationMin },
+                  {
+                    imdbId: chosenId,
+                    title: meta?.Title || chosenId,
+                    runtimeMin: parseRuntimeMinutes(meta?.Runtime),
+                  }
+                )
+                if (
+                  !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
+                  !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
+                ) {
+                  await serializeDbWrite(async () => {
+                    if (!dryRun) {
+                      const mig = await migrateMovieId(movie.movieId, chosenId)
+                      if (mig.success && meta) {
+                        upsertMetadataAndMovie(db, chosenId, meta)
+                      }
+                    }
+                    recordAttempt(
+                      movie.movieId,
+                      'matched',
+                      localCandidates.length,
+                      `Local IMDb + Jev fast-path (${chosenId}, conf ${localJevAdj.confidence})`
+                    )
+                  })
+                  llmMatches++
+                  if (samples.length < 30) {
+                    const chosenCand = localAdjudicateList.find(
+                      s => s.cand.imdbId === chosenId
+                    )?.cand
+                    samples.push({
+                      oldMovieId: movie.movieId,
+                      title: rawTitle,
+                      action: 'llm_match',
+                      imdbId: chosenId,
+                      matchedTitle: meta?.Title || chosenCand?.title || chosenId,
+                      confidence: localJevAdj.confidence,
+                      reason: `Local IMDb + Jev fast-path (${localJevAdj.reason})`,
+                    })
+                  }
+                  return
+                }
+              }
+            }
           }
         }
 
