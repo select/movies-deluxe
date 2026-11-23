@@ -1,51 +1,47 @@
 {
   "database": {
-    "total": 26700,
-    "matched": 18240,
-    "unmatched": 8460,
-    "archiveOrgSources": 26115,
-    "youtubeSources": 11154,
-    "curatedCount": 18240,
-    "qualityMarkedCount": 0,
-    "qualityBreakdown": {},
-    "collections": {
-      "feature_films": 26115
-    }
+    "total": 36292,
+    "matched": 24858,
+    "unmatched": 11434,
+    "archiveOrgSources": 30425,
+    "youtubeSources": 16343,
+    "curatedCount": 24826,
+    "collections": {}
   },
   "external": {
     "archiveOrg": {
-      "total": 27286,
-      "scraped": 26115,
-      "percent": 95.70842190134134,
+      "total": 29641,
+      "scraped": 30425,
+      "percent": 102.64498498701124,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 11154,
-      "totalAvailable": 18097,
-      "totalFailed": 6022,
-      "failureRate": 35.06054960409874,
-      "percent": 61.634525059402115,
+      "totalScraped": 16343,
+      "totalAvailable": 27497,
+      "totalFailed": 7373,
+      "failureRate": 31.088716478326866,
+      "percent": 59.43557478997709,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
           "name": "Netzkino",
           "language": "de",
           "enabled": true,
-          "scraped": 2318,
-          "total": 2765,
-          "failed": 435,
-          "failureRate": 15.800944424264438
+          "scraped": 2780,
+          "total": 2884,
+          "failed": 456,
+          "failureRate": 14.091470951792337
         },
         {
           "id": "UC8IHAQMuiJdY6ALuhG7iU8Q",
           "name": "FilmRise Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 308,
-          "total": 446,
-          "failed": 138,
-          "failureRate": 30.94170403587444
+          "scraped": 406,
+          "total": 543,
+          "failed": 159,
+          "failureRate": 28.14159292035398
         },
         {
           "id": "UCVFYikepF-avelvuIaQ_lHA",
@@ -53,7 +49,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 471,
-          "total": 750,
+          "total": 704,
           "failed": 276,
           "failureRate": 36.94779116465863
         },
@@ -62,60 +58,60 @@
           "name": "Movie Central",
           "language": "en",
           "enabled": true,
-          "scraped": 2377,
-          "total": 2600,
-          "failed": 205,
-          "failureRate": 7.9395817195972125
+          "scraped": 2800,
+          "total": 2827,
+          "failed": 435,
+          "failureRate": 13.446676970633694
         },
         {
           "id": "UCOg0aMAXmF3o5m243PxhE5g",
           "name": "Timeless Classic Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 163,
+          "scraped": 169,
           "total": 174,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 8,
+          "failureRate": 4.519774011299435
         },
         {
           "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
           "name": "Mosfilm",
           "language": "ru",
           "enabled": true,
-          "scraped": 268,
-          "total": 293,
-          "failed": 0,
-          "failureRate": 0
+          "scraped": 305,
+          "total": 315,
+          "failed": 17,
+          "failureRate": 5.279503105590062
         },
         {
           "id": "UCh4JH8axA_jUjB8YoRnm0cg",
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 511,
-          "total": 612,
-          "failed": 106,
-          "failureRate": 17.179902755267424
+          "scraped": 709,
+          "total": 689,
+          "failed": 111,
+          "failureRate": 13.536585365853659
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
           "name": "PizzaFlix",
           "language": "en",
           "enabled": true,
-          "scraped": 1971,
-          "total": 3695,
-          "failed": 1656,
-          "failureRate": 45.6575682382134
+          "scraped": 2150,
+          "total": 3965,
+          "failed": 1820,
+          "failureRate": 45.843828715365234
         },
         {
           "id": "UCT6gOjzXtqeb_oE-wZVHlFA",
           "name": "Public Domain Movies - Classic Old Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 179,
-          "total": 587,
-          "failed": 350,
-          "failureRate": 66.1625708884688
+          "scraped": 180,
+          "total": 976,
+          "failed": 763,
+          "failureRate": 80.9119830328738
         },
         {
           "id": "UCWlLgwn2nfjnefINARfcquA",
@@ -132,71 +128,176 @@
           "name": "Colorized Public Domain",
           "language": "en",
           "enabled": true,
-          "scraped": 234,
-          "total": 287,
-          "failed": 47,
-          "failureRate": 16.72597864768683
+          "scraped": 269,
+          "total": 310,
+          "failed": 48,
+          "failureRate": 15.141955835962145
         },
         {
           "id": "UCycDFnpMeWzaITQSD1dWsOA",
           "name": "Cult Cinema Classics",
           "language": "en",
           "enabled": true,
-          "scraped": 2041,
-          "total": 5253,
-          "failed": 2499,
-          "failureRate": 55.04405286343612
+          "scraped": 2669,
+          "total": 6132,
+          "failed": 2903,
+          "failureRate": 52.09978463747308
         },
         {
           "id": "UCvH6u_Qzn5RQdz9W198umDw",
           "name": "Korean Classic Film",
           "language": "ko",
           "enabled": true,
-          "scraped": 288,
-          "total": 610,
-          "failed": 310,
-          "failureRate": 51.83946488294314
+          "scraped": 307,
+          "total": 680,
+          "failed": 377,
+          "failureRate": 55.11695906432749
+        },
+        {
+          "id": "UCq71uPvIx7A96590hKagGbg",
+          "name": "Blockbuster English Movies",
+          "language": "en",
+          "enabled": true,
+          "scraped": 206,
+          "total": 206,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCgfcqu6AlTobWNcVp5yM86w",
+          "name": "Flix For Free",
+          "language": "en",
+          "enabled": true,
+          "scraped": 427,
+          "total": 429,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCNcUc5v0Kt5afE_jcbbZUBQ",
+          "name": "Artflix - Movie Classics",
+          "language": "en",
+          "enabled": true,
+          "scraped": 724,
+          "total": 916,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCCsrRTpVLRuMV2t3s1SQxfA",
+          "name": "GEM: Film Library",
+          "language": "en",
+          "enabled": true,
+          "scraped": 569,
+          "total": 770,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCIbCd95HIkwZx6DqlWSeDcA",
+          "name": "Free Movies By CONtv",
+          "language": "en",
+          "enabled": true,
+          "scraped": 191,
+          "total": 349,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCHgm6IUmnTV2aAMMCSPq8zA",
+          "name": "A Touch Of Evil",
+          "language": "en",
+          "enabled": true,
+          "scraped": 60,
+          "total": 82,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCyJYCQ6WaEMhdZAuPo799bA",
+          "name": "Grjngo - Western Movies",
+          "language": "en",
+          "enabled": true,
+          "scraped": 926,
+          "total": 1058,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCpcM5yWHfE3mGnjOlWXLcUw",
+          "name": "菲林阿爺HK-Movie House",
+          "language": "zh",
+          "enabled": true,
+          "scraped": 0,
+          "total": 264,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCKiw9OKbQecHMy_K1JqxKeA",
+          "name": "8號電影院 - HK Movie",
+          "language": "zh",
+          "enabled": true,
+          "scraped": 0,
+          "total": 2004,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UC6zrOqTxWKL22LZi7sv1JSQ",
+          "name": "Public Domain Films",
+          "language": "en",
+          "enabled": true,
+          "scraped": 0,
+          "total": 99,
+          "failed": 0,
+          "failureRate": 0
+        },
+        {
+          "id": "UCNJ4O0LvYuMOiOvS-g6eADA",
+          "name": "CineMo",
+          "language": "tl",
+          "enabled": true,
+          "scraped": 0,
+          "total": 1096,
+          "failed": 0,
+          "failureRate": 0
         }
       ]
     }
   },
   "curation": {
-    "total": 26700,
-    "curated": 18240,
-    "percent": 68.31460674157303
+    "total": 36292,
+    "curated": 24826,
+    "percent": 68.40626033285572
   },
   "omdb": {
-    "total": 26700,
-    "matched": 18240,
-    "unmatched": 8460,
-    "percent": 68.31460674157303,
-    "failed": 8823,
-    "failureRate": 32.60170712781288
+    "total": 36292,
+    "matched": 24858,
+    "unmatched": 11434,
+    "percent": 68.49443403504904,
+    "failed": 1002,
+    "failureRate": 3.8747099767981434
   },
   "ai": {
-    "totalUnmatched": 8460,
-    "withAiData": 7898,
-    "withoutAiData": 562,
-    "percent": 93.35697399527186
-  },
-  "quality": {
-    "totalMarked": 0,
-    "breakdown": {},
+    "totalUnmatched": 11434,
+    "withAiData": 0,
+    "withoutAiData": 11434,
     "percent": 0
   },
   "posters": {
-    "totalMovies": 26700,
-    "withPosterUrl": 16455,
-    "withImdbId": 18240,
-    "downloaded": 16759,
-    "missing": 1481,
-    "failed": 1283,
-    "failureRate": 7.111185012748032,
-    "percentOfMoviesWithUrl": 101.84746277727135,
-    "percentOfMoviesWithImdbId": 91.88048245614036,
-    "percentOfAllMovies": 62.767790262172284,
-    "filesInDirectory": 16925,
-    "matchedPosters": 16759
+    "totalMovies": 36292,
+    "withPosterUrl": 0,
+    "withImdbId": 24858,
+    "downloaded": 16605,
+    "missing": 8253,
+    "failed": 1567,
+    "failureRate": 8.623156504512437,
+    "percentOfMoviesWithUrl": 0,
+    "percentOfMoviesWithImdbId": 66.7994207096307,
+    "percentOfAllMovies": 45.75388515375289,
+    "filesInDirectory": 16605,
+    "matchedPosters": 16605
   },
-  "lastUpdated": "2026-02-07T22:00:17.523Z"
+  "lastUpdated": "2026-11-23T14:47:29.923Z"
 }
