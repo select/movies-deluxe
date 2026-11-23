@@ -354,7 +354,7 @@
     </div>
 
     <!-- Queue Card List -->
-    <div v-else class="space-y-4">
+    <div v-else class="max-h-[65vh] overflow-y-auto pr-2 space-y-4">
       <div
         v-for="item in items"
         :key="item.id"
