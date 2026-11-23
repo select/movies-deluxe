@@ -64,7 +64,9 @@ async function main() {
   // Validate embeddings DB exists
   if (!existsSync(EMBEDDINGS_DB_PATH)) {
     console.error(`❌ Embeddings database not found: ${EMBEDDINGS_DB_PATH}`)
-    console.error(`   Run 'pnpm embeddings:generate-${modelId}' first.`)
+    console.error(
+      '   Generate embeddings first via the Admin UI or POST /api/admin/embeddings/generate.'
+    )
     process.exit(1)
   }
 
