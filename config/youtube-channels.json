@@ -169,6 +169,22 @@
       "language": "zh",
       "enabled": true,
       "notes": "Licensed classic Hong Kong and Chinese-language 35mm films and rare archival movies"
+    },
+    {
+      "id": "UCOF23vGxkbhN4wl7ROrgXsA",
+      "handle": "@GoldminesBollywood",
+      "name": "Goldmines Bollywood",
+      "language": "hi",
+      "enabled": true,
+      "notes": "Full-length Hindi Bollywood movies across comedy, action, drama, and romance genres"
+    },
+    {
+      "id": "UCKiw9OKbQecHMy_K1JqxKeA",
+      "handle": "@8-hkmovie",
+      "name": "8號電影院 - HK Movie",
+      "language": "zh",
+      "enabled": true,
+      "notes": "Large catalog of 500+ classic Hong Kong, TVB telemovie, and Asian films"
     }
   ]
 }
