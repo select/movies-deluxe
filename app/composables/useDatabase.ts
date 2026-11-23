@@ -129,12 +129,19 @@ function createDatabase(): UseDatabaseReturn {
       })
     })()
 
-    await initPromise.value
-    // Fallback to fetching config only if worker didn't include it in init-success
-    if (!configCache.value) {
-      await getConfig()
+    try {
+      await initPromise.value
+      // Fallback to fetching config only if worker didn't include it in init-success
+      if (!configCache.value) {
+        await getConfig()
+      }
+      return totalMovies
+    } catch (err) {
+      initPromise.value = null
+      worker.value?.terminate()
+      worker.value = null
+      throw err
     }
-    return totalMovies
   }
 
   const query = async <T = Record<string, unknown>>(

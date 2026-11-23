@@ -109,7 +109,7 @@ const movieCache = new Map<string, LightweightMovie>()
 // Cache for embedding dimensions and quantization from database metadata
 let cachedDimensions: number | null = null
 let cachedQuantization: 'float32' | 'int8' = 'float32'
-let cachedConfig: Record<string, string> = {}
+let cachedConfig: Record<string, string> | null = null
 
 // Track attached embeddings database state
 let embeddingsDbAttached = false
@@ -140,6 +140,27 @@ async function initDatabase() {
   }
 }
 
+// SQLite 3 magic header: "SQLite format 3\0" (16 bytes)
+const SQLITE_MAGIC = [
+  0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00,
+]
+
+function hasSqliteMagic(bytes: Uint8Array): boolean {
+  if (bytes.length < SQLITE_MAGIC.length) return false
+  for (let i = 0; i < SQLITE_MAGIC.length; i++) {
+    if (bytes[i] !== SQLITE_MAGIC[i]) return false
+  }
+  return true
+}
+
+function buildGzipUrl(url: string): string | null {
+  const match = url.match(/^([^?#]+)(.*)$/)
+  if (!match) return null
+  const [, base, suffix] = match
+  if (!base || base.endsWith('.gz')) return null
+  return `${base}.gz${suffix}`
+}
+
 async function readStreamWithMagicCheck(
   body: ReadableStream<Uint8Array>
 ): Promise<{ isGzip: boolean; isSqlite: boolean; stream: ReadableStream<Uint8Array> }> {
@@ -147,7 +168,7 @@ async function readStreamWithMagicCheck(
   const firstChunks: Uint8Array[] = []
   let totalRead = 0
 
-  while (totalRead < 2) {
+  while (totalRead < SQLITE_MAGIC.length) {
     const { done, value } = await reader.read()
     if (done) break
     if (value && value.byteLength > 0) {
@@ -156,15 +177,20 @@ async function readStreamWithMagicCheck(
     }
   }
 
-  const header = new Uint8Array(totalRead)
-  let offset = 0
-  for (const chunk of firstChunks) {
-    header.set(chunk, offset)
-    offset += chunk.byteLength
+  let header: Uint8Array
+  if (firstChunks.length === 1) {
+    header = firstChunks[0]!
+  } else {
+    header = new Uint8Array(totalRead)
+    let offset = 0
+    for (const chunk of firstChunks) {
+      header.set(chunk, offset)
+      offset += chunk.byteLength
+    }
   }
 
   const isGzip = header.length >= 2 && header[0] === 0x1f && header[1] === 0x8b
-  const isSqlite = header.length >= 2 && header[0] === 0x53 && header[1] === 0x51
+  const isSqlite = hasSqliteMagic(header)
 
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
@@ -188,22 +214,25 @@ async function readStreamWithMagicCheck(
   return { isGzip, isSqlite, stream }
 }
 
-async function fetchDatabaseBytes(url: string): Promise<Uint8Array> {
-  if (typeof DecompressionStream !== 'undefined' && !url.endsWith('.gz')) {
-    const gzUrl = `${url}.gz`
+async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+  const gzUrl = typeof DecompressionStream !== 'undefined' ? buildGzipUrl(url) : null
+  if (gzUrl) {
     try {
       console.log('Fetching gzipped database from:', gzUrl)
-      const gzResponse = await fetch(gzUrl)
+      const gzResponse = await fetch(gzUrl, { signal })
       if (gzResponse.ok && gzResponse.body) {
-        const contentEncoding = gzResponse.headers.get('content-encoding')?.toLowerCase() || ''
         const { isGzip, isSqlite, stream } = await readStreamWithMagicCheck(gzResponse.body)
 
-        if (isGzip && !contentEncoding.includes('gzip')) {
+        if (isGzip) {
           const decompressed = stream.pipeThrough(
             new DecompressionStream('gzip') as unknown as TransformStream<Uint8Array, Uint8Array>
           )
           const arrayBuffer = await new Response(decompressed).arrayBuffer()
-          return new Uint8Array(arrayBuffer)
+          const bytes = new Uint8Array(arrayBuffer)
+          if (!hasSqliteMagic(bytes)) {
+            throw new Error('Decompressed response is not a valid SQLite database')
+          }
+          return bytes
         }
 
         if (isSqlite) {
@@ -214,14 +243,19 @@ async function fetchDatabaseBytes(url: string): Promise<Uint8Array> {
 
         await stream.cancel()
         console.warn('Gzipped database response was neither gzip nor SQLite, falling back to:', url)
+      } else {
+        await gzResponse.body?.cancel()
       }
     } catch (err) {
+      if (signal?.aborted) {
+        throw err
+      }
       console.warn('Failed to fetch/decompress gzipped database, falling back to:', url, err)
     }
   }
 
   console.log('Fetching database from:', url)
-  const response = await fetch(url)
+  const response = await fetch(url, { signal })
   if (!response.ok) {
     throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`)
   }
@@ -231,8 +265,15 @@ async function fetchDatabaseBytes(url: string): Promise<Uint8Array> {
 }
 
 async function loadRemoteDatabase(url: string) {
+  const abortController = new AbortController()
   try {
-    const [sqlite, uint8Array] = await Promise.all([initDatabase(), fetchDatabaseBytes(url)])
+    const [sqlite, uint8Array] = await Promise.all([
+      initDatabase().catch(err => {
+        abortController.abort()
+        throw err
+      }),
+      fetchDatabaseBytes(url, abortController.signal),
+    ])
     if (!sqlite) {
       throw new Error('Failed to initialize SQLite')
     }
@@ -356,7 +397,12 @@ async function handleMessage(e: QueuedMessage) {
     if (type === 'init') {
       if (initializationPromise) {
         await initializationPromise
-        self.postMessage({ id, type: 'init-success', success: true, config: cachedConfig })
+        self.postMessage({
+          id,
+          type: 'init-success',
+          success: true,
+          ...(cachedConfig !== null ? { config: cachedConfig } : {}),
+        })
         return
       }
 
@@ -399,13 +445,19 @@ async function handleMessage(e: QueuedMessage) {
         }
       })()
 
-      await initializationPromise
+      try {
+        await initializationPromise
+      } catch (err) {
+        initializationPromise = null
+        throw err
+      }
+
       self.postMessage({
         id,
         type: 'init-success',
         success: true,
         totalMovies,
-        config: cachedConfig,
+        ...(cachedConfig !== null ? { config: cachedConfig } : {}),
       })
       return
     }
