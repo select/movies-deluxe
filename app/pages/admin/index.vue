@@ -75,14 +75,6 @@
               Generate Home Pages
             </button>
             <button
-              class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
-              :disabled="loading || generatingSimilar"
-              @click="adminStore.generateSimilarMovies()"
-            >
-              <div class="i-mdi-vector-link" :class="{ 'animate-spin': generatingSimilar }"></div>
-              Generate Similar Movies
-            </button>
-            <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
@@ -106,24 +98,6 @@
               <div
                 class="h-full bg-blue-500 transition-all duration-300"
                 :style="{ width: `${(progress.home.current / progress.home.total) * 100}%` }"
-              ></div>
-            </div>
-          </div>
-          <!-- Stats Refresh Progress -->
-          <div
-            v-if="progress.similar && progress.similar.status === 'in_progress'"
-            class="w-full max-w-md space-y-2"
-          >
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-theme-textmuted truncate mr-2">{{ progress.similar.message }}</span>
-              <span class="font-mono text-nowrap"
-                >{{ progress.similar.current }} / {{ progress.similar.total }}</span
-              >
-            </div>
-            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
-              <div
-                class="h-full bg-purple-500 transition-all duration-300"
-                :style="{ width: `${(progress.similar.current / progress.similar.total) * 100}%` }"
               ></div>
             </div>
           </div>
@@ -275,6 +249,83 @@
             <AdminDatabaseGenerator />
 
             <AdminEmbeddingsGenerator />
+
+            <!-- Similar Movies Generator -->
+            <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
+              <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <div class="i-mdi-vector-link text-purple-500"></div>
+                Similar Movies
+              </h2>
+
+              <div class="space-y-6">
+                <p class="text-theme-textmuted text-sm">
+                  Precompute top similar movies (similar-movies.db) from leaf-ir vector embeddings
+                  for movie detail pages. Run after updating embeddings and before generating movie
+                  JSONs.
+                </p>
+
+                <button
+                  class="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-purple-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  :disabled="loading || generatingSimilar"
+                  @click="adminStore.generateSimilarMovies()"
+                >
+                  <div v-if="generatingSimilar" class="i-mdi-loading animate-spin"></div>
+                  <div v-else class="i-mdi-vector-link"></div>
+                  {{
+                    generatingSimilar ? 'Generating Similar Movies...' : 'Generate Similar Movies'
+                  }}
+                </button>
+
+                <div
+                  v-if="
+                    progress.similar &&
+                    (progress.similar.status === 'in_progress' ||
+                      progress.similar.status === 'starting')
+                  "
+                  class="space-y-2"
+                >
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-theme-textmuted truncate mr-2">{{
+                      progress.similar.message
+                    }}</span>
+                    <span v-if="progress.similar.total > 0" class="font-mono text-nowrap">
+                      {{ progress.similar.current }} / {{ progress.similar.total }}
+                    </span>
+                  </div>
+                  <div class="h-2 bg-theme-border rounded-full overflow-hidden">
+                    <div
+                      v-if="progress.similar.status === 'starting'"
+                      class="h-full bg-purple-500 animate-pulse w-full"
+                    ></div>
+                    <div
+                      v-else
+                      class="h-full bg-purple-500 transition-all duration-300"
+                      :style="{
+                        width:
+                          progress.similar.total > 0
+                            ? `${(progress.similar.current / progress.similar.total) * 100}%`
+                            : '0%',
+                      }"
+                    ></div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="progress.similar?.status === 'completed'"
+                  class="p-3 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center gap-2 text-sm text-green-500"
+                >
+                  <div class="i-mdi-check-circle"></div>
+                  {{ progress.similar.message }}
+                </div>
+                <div
+                  v-if="progress.similar?.status === 'error'"
+                  class="p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-2 text-sm text-red-500"
+                >
+                  <div class="i-mdi-alert-circle"></div>
+                  {{ progress.similar.message }}
+                </div>
+              </div>
+            </div>
 
             <AdminCollectionCleanup
               :loading="cleaningCollections"
