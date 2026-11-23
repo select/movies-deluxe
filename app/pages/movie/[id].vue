@@ -344,8 +344,6 @@
                   "
                   :region-restriction="source.regionRestriction"
                   compact
-                  :max-visible="COMPACT_REGION_LIMIT"
-                  @select-source="selectedSourceIndex = index"
                 />
               </div>
               <a
@@ -364,22 +362,6 @@
               </a>
             </div>
           </div>
-        </div>
-
-        <!-- Region Restrictions (YouTube, expanded view for lists exceeding compact limit) -->
-        <div
-          v-if="
-            currentSource?.type === 'youtube' &&
-            currentSource.regionRestriction &&
-            ((currentSource.regionRestriction.allowed?.length || 0) > COMPACT_REGION_LIMIT ||
-              (currentSource.regionRestriction.blocked?.length || 0) > COMPACT_REGION_LIMIT)
-          "
-          class="mb-4"
-        >
-          <RegionRestrictionBadges
-            :key="currentSource.sourceId"
-            :region-restriction="currentSource.regionRestriction"
-          />
         </div>
 
         <!-- Video Player -->
@@ -826,7 +808,6 @@ const { showToast } = useToastStore()
 const { y: scrollY } = useWindowScroll()
 
 // Component state
-const COMPACT_REGION_LIMIT = 5
 const movie = ref<MovieEntry | null>(null)
 const relatedMovies = ref<LightweightMovie[]>([])
 const similarMovies = ref<LightweightMovie[]>([])

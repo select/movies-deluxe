@@ -7,14 +7,14 @@
     <div
       v-if="allowedCodes.length > 0"
       class="flex flex-wrap items-center"
-      :class="compact ? 'gap-1' : 'gap-1.5'"
+      :class="[compact ? 'gap-1' : 'gap-1.5', compact && isAllowedExpanded ? 'max-w-xs' : '']"
     >
       <span
-        class="font-medium text-theme-textmuted flex items-center gap-1 select-none"
+        class="font-medium text-theme-textmuted/80 flex items-center gap-1 select-none"
         :class="compact ? 'text-[10px]' : 'text-xs mr-1'"
       >
         <span
-          class="i-mdi-earth text-emerald-600 dark:text-emerald-400"
+          class="i-mdi-earth text-emerald-600/70 dark:text-emerald-400/70"
           :class="compact ? 'text-xs' : 'text-sm'"
         ></span>
         {{ compact ? 'Only:' : 'Available in' }}
@@ -23,7 +23,7 @@
         v-for="code in visibleAllowed"
         :key="`allowed-${code}`"
         :title="getRegionName(code)"
-        class="group/badge relative inline-flex items-center rounded font-semibold tracking-wide bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 cursor-default select-none"
+        class="group/badge relative inline-flex items-center rounded font-medium tracking-wide bg-emerald-500/10 text-emerald-700/85 dark:text-emerald-300/80 border border-emerald-500/15 cursor-default select-none"
         :class="compact ? 'px-1 py-0.5 text-[10px] leading-none' : 'px-1.5 py-0.5 text-[11px]'"
       >
         {{ code }}
@@ -34,21 +34,24 @@
         </span>
       </span>
       <button
-        v-if="compact && allowedCodes.length > effectiveLimit"
+        v-if="allowedCodes.length > effectiveLimit"
         type="button"
-        :title="`Select source to view all ${allowedCodes.length} regions`"
-        class="px-1.5 py-0.5 rounded text-[10px] leading-none font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
-        @click="emit('selectSource')"
-      >
-        +{{ allowedCodes.length - effectiveLimit }}
-      </button>
-      <button
-        v-else-if="!compact && allowedCodes.length > effectiveLimit"
-        type="button"
-        class="px-2 py-0.5 rounded text-[11px] font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
+        :title="
+          isAllowedExpanded
+            ? 'Collapse region list'
+            : `Show all ${allowedCodes.length} allowed regions`
+        "
+        class="rounded font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
+        :class="compact ? 'px-1.5 py-0.5 text-[10px] leading-none' : 'px-2 py-0.5 text-[11px]'"
         @click="isAllowedExpanded = !isAllowedExpanded"
       >
-        {{ isAllowedExpanded ? 'Show less' : `+${allowedCodes.length - effectiveLimit} more` }}
+        {{
+          isAllowedExpanded
+            ? 'Show less'
+            : compact
+              ? `+${allowedCodes.length - effectiveLimit}`
+              : `+${allowedCodes.length - effectiveLimit} more`
+        }}
       </button>
     </div>
 
@@ -56,14 +59,14 @@
     <div
       v-if="blockedCodes.length > 0"
       class="flex flex-wrap items-center"
-      :class="compact ? 'gap-1' : 'gap-1.5'"
+      :class="[compact ? 'gap-1' : 'gap-1.5', compact && isBlockedExpanded ? 'max-w-xs' : '']"
     >
       <span
-        class="font-medium text-theme-textmuted flex items-center gap-1 select-none"
+        class="font-medium text-theme-textmuted/80 flex items-center gap-1 select-none"
         :class="compact ? 'text-[10px]' : 'text-xs mr-1'"
       >
         <span
-          class="i-mdi-earth-off text-red-600 dark:text-red-400"
+          class="i-mdi-earth-off text-red-600/70 dark:text-red-400/70"
           :class="compact ? 'text-xs' : 'text-sm'"
         ></span>
         {{ compact ? 'Blocked:' : 'Blocked in' }}
@@ -72,7 +75,7 @@
         v-for="code in visibleBlocked"
         :key="`blocked-${code}`"
         :title="getRegionName(code)"
-        class="group/badge relative inline-flex items-center rounded font-semibold tracking-wide bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/25 cursor-default select-none"
+        class="group/badge relative inline-flex items-center rounded font-medium tracking-wide bg-red-500/10 text-red-700/85 dark:text-red-300/80 border border-red-500/15 cursor-default select-none"
         :class="compact ? 'px-1 py-0.5 text-[10px] leading-none' : 'px-1.5 py-0.5 text-[11px]'"
       >
         {{ code }}
@@ -83,21 +86,24 @@
         </span>
       </span>
       <button
-        v-if="compact && blockedCodes.length > effectiveLimit"
+        v-if="blockedCodes.length > effectiveLimit"
         type="button"
-        :title="`Select source to view all ${blockedCodes.length} regions`"
-        class="px-1.5 py-0.5 rounded text-[10px] leading-none font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
-        @click="emit('selectSource')"
-      >
-        +{{ blockedCodes.length - effectiveLimit }}
-      </button>
-      <button
-        v-else-if="!compact && blockedCodes.length > effectiveLimit"
-        type="button"
-        class="px-2 py-0.5 rounded text-[11px] font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
+        :title="
+          isBlockedExpanded
+            ? 'Collapse region list'
+            : `Show all ${blockedCodes.length} blocked regions`
+        "
+        class="rounded font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
+        :class="compact ? 'px-1.5 py-0.5 text-[10px] leading-none' : 'px-2 py-0.5 text-[11px]'"
         @click="isBlockedExpanded = !isBlockedExpanded"
       >
-        {{ isBlockedExpanded ? 'Show less' : `+${blockedCodes.length - effectiveLimit} more` }}
+        {{
+          isBlockedExpanded
+            ? 'Show less'
+            : compact
+              ? `+${blockedCodes.length - effectiveLimit}`
+              : `+${blockedCodes.length - effectiveLimit} more`
+        }}
       </button>
     </div>
   </div>
@@ -123,10 +129,6 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits<{
-  selectSource: []
-}>()
-
 const isAllowedExpanded = ref(false)
 const isBlockedExpanded = ref(false)
 
@@ -151,14 +153,10 @@ const blockedCodes = computed(() =>
 )
 
 const visibleAllowed = computed(() =>
-  !props.compact && isAllowedExpanded.value
-    ? allowedCodes.value
-    : allowedCodes.value.slice(0, effectiveLimit.value)
+  isAllowedExpanded.value ? allowedCodes.value : allowedCodes.value.slice(0, effectiveLimit.value)
 )
 
 const visibleBlocked = computed(() =>
-  !props.compact && isBlockedExpanded.value
-    ? blockedCodes.value
-    : blockedCodes.value.slice(0, effectiveLimit.value)
+  isBlockedExpanded.value ? blockedCodes.value : blockedCodes.value.slice(0, effectiveLimit.value)
 )
 </script>
