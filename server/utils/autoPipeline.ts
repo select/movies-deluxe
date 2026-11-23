@@ -2379,6 +2379,20 @@ export async function runAutoMatchUnmatched(
             )
             pass1Adj = adj
 
+            if (adj.isNotAMovie) {
+              notAMovie++
+              noMatch++
+              await serializeDbWrite(() =>
+                recordAttempt(
+                  movie.movieId,
+                  'no_match',
+                  candidates.length,
+                  `not_a_movie: ${adj.reason}`
+                )
+              )
+              return
+            }
+
             if (adj.chosenImdbId && adj.verdict === 'match' && adj.confidence >= minConfidence) {
               const chosenId = adj.chosenImdbId
               const meta = await fetchOmdbCached(chosenId, omdbApiKey, omdbCache)

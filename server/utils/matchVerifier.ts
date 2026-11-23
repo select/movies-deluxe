@@ -1,4 +1,10 @@
 import { OpenRouter } from '@openrouter/sdk'
+import {
+  classifyWithJev,
+  isJevAvailable,
+  type JevChoiceAnswer,
+  type JevNoulAnswer,
+} from './jevClient'
 import type { LlmVerdict } from '../../shared/types/match-review'
 
 export interface VerifierSourceInput {
@@ -35,6 +41,8 @@ export interface VerifyMatchResult {
   verdict: LlmVerdict
   confidence: number
   reason: string
+  provider?: 'jev' | 'openrouter'
+  model?: string
 }
 
 export interface AdjudicateCandidatesResult {
@@ -42,6 +50,9 @@ export interface AdjudicateCandidatesResult {
   verdict: LlmVerdict
   confidence: number
   reason: string
+  isNotAMovie?: boolean
+  provider?: 'jev' | 'openrouter'
+  model?: string
 }
 
 export interface QueryPlanResult {
@@ -62,6 +73,14 @@ const FALLBACK_MODEL = 'openai/gpt-4o-mini'
 
 function getApiKey(opts?: VerifierOptions): string | undefined {
   return opts?.apiKey || process.env.OPENROUTER_API_KEY
+}
+
+function isOpenRouterAvailable(opts?: VerifierOptions): boolean {
+  return Boolean(getApiKey(opts)?.trim())
+}
+
+export function isMatchVerifierAvailable(opts?: VerifierOptions): boolean {
+  return isJevAvailable() || isOpenRouterAvailable(opts)
 }
 
 function createOpenRouterClient(apiKey: string): OpenRouter {
@@ -178,6 +197,83 @@ export async function verifyMatchCandidate(
   candidate: VerifierCandidateInput,
   opts?: VerifierOptions
 ): Promise<VerifyMatchResult> {
+  if (!opts?.model && isJevAvailable()) {
+    try {
+      const res = await classifyWithJev(
+        {
+          source: {
+            rawTitle: source.title,
+            originalTitle: source.originalTitle || undefined,
+            altTitles: source.altTitles?.length ? source.altTitles : undefined,
+            year: source.year ?? undefined,
+            durationMin: source.durationMin ?? undefined,
+            director: source.director || undefined,
+            cast: source.cast?.length ? source.cast : undefined,
+            channelName: source.channelName || undefined,
+            description: source.description ? source.description.slice(0, 600) : undefined,
+          },
+          candidate: {
+            imdbId: candidate.imdbId,
+            title: candidate.title,
+            year: candidate.year ?? undefined,
+            runtimeMin: candidate.runtimeMin ?? undefined,
+            type: candidate.type || undefined,
+            director: candidate.director || undefined,
+            actors: candidate.actors || undefined,
+            plot: candidate.plot ? candidate.plot.slice(0, 300) : undefined,
+          },
+        },
+        {
+          isSameMovie: {
+            type: 'noul',
+            instructions:
+              'Determine whether the uploaded video source and the IMDb candidate refer to the SAME film. Account for localized/translated titles, YouTube promo/rip tags, and YouTube upload years vs true release years. Reject wrong remakes, TV episodes, clips/newsreels, or major runtime mismatches (e.g. feature vs short). Missing source duration is normal.',
+            criteria: {
+              true: 'The source video and IMDb candidate are the same film.',
+              false:
+                'They are different films, a wrong remake, a TV episode, a non-movie clip, or have a major runtime/plot mismatch.',
+            },
+          },
+        }
+      )
+
+      const ans = res.answers.isSameMovie as JevNoulAnswer | undefined
+      if (ans && typeof ans.noul === 'number' && Number.isFinite(ans.noul)) {
+        const prob = Math.max(0, Math.min(1, ans.noul))
+        if (prob >= 0.85) {
+          return {
+            verdict: 'match',
+            confidence: Number(prob.toFixed(2)),
+            reason: `Jev match (${Math.round(prob * 100)}%)`,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+        if (prob <= 0.2) {
+          return {
+            verdict: 'mismatch',
+            confidence: Number((1 - prob).toFixed(2)),
+            reason: `Jev mismatch (${Math.round((1 - prob) * 100)}%)`,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+        if (!isOpenRouterAvailable(opts)) {
+          return {
+            verdict: 'uncertain',
+            confidence: Number(prob.toFixed(2)),
+            reason: `Jev uncertain (${Math.round(prob * 100)}%)`,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+      }
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error)
+      console.warn(`[MatchVerifier] Jev verifyMatchCandidate fallback to OpenRouter: ${msg}`)
+    }
+  }
+
   const apiKey = getApiKey(opts)
   if (!apiKey) {
     return {
@@ -222,6 +318,8 @@ export async function verifyMatchCandidate(
         typeof parsed.reason === 'string' && parsed.reason.trim()
           ? parsed.reason.trim()
           : 'No reason provided',
+      provider: 'openrouter',
+      model,
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
@@ -247,6 +345,120 @@ export async function adjudicateCandidates(
       verdict: 'mismatch',
       confidence: 1,
       reason: 'No candidates provided',
+    }
+  }
+
+  if (!opts?.model && isJevAvailable() && candidates.length > 0) {
+    const idMap: Record<string, string> = {}
+    const criteria: Record<string, string> = {}
+
+    candidates.forEach((c, idx) => {
+      const key = `cand_${idx}`
+      idMap[key] = c.imdbId
+      const topCast = c.actors
+        ? c.actors
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+            .slice(0, 3)
+            .join(', ')
+        : ''
+      const parts = [
+        `${c.imdbId}: "${c.title}"`,
+        c.year ? `(${c.year})` : '',
+        c.runtimeMin ? `${c.runtimeMin}min` : '',
+        c.type ? `[${c.type}]` : '',
+        c.director ? `dir: ${c.director}` : '',
+        topCast ? `cast: ${topCast}` : '',
+        c.plot ? `plot: ${c.plot.slice(0, 140)}` : '',
+      ].filter(Boolean)
+      criteria[key] = parts.join(' ')
+    })
+
+    criteria.none_match = 'None of the listed IMDb candidates match this film.'
+    criteria.not_a_movie =
+      'The source is NOT a movie/film (e.g. TV series episode, newsreel, lecture, interview, audiobook, or non-film upload).'
+
+    try {
+      const res = await classifyWithJev(
+        {
+          source: {
+            rawTitle: source.title,
+            sourceId: source.sourceId || undefined,
+            originalTitle: source.originalTitle || undefined,
+            altTitles: source.altTitles?.length ? source.altTitles : undefined,
+            year: source.year ?? undefined,
+            durationMin: source.durationMin ?? undefined,
+            director: source.director || undefined,
+            cast: source.cast?.length ? source.cast : undefined,
+            channelName: source.channelName || undefined,
+            description: source.description ? source.description.slice(0, 700) : undefined,
+          },
+        },
+        {
+          bestMatch: {
+            type: 'choice',
+            instructions:
+              'Pick which IMDb candidate (if any) is the SAME film as the uploaded video source. Account for localized/translated titles and ignore YouTube clickbait hooks before "|" or promo/rip tags. When source has no year, require corroborating plot/cast/director/distinctive title evidence. Choose none_match if none fit, or not_a_movie if the source is a TV episode, newsreel, or non-film.',
+            criteria,
+          },
+        }
+      )
+
+      const ans = res.answers.bestMatch as JevChoiceAnswer | undefined
+      if (ans && ans.choice) {
+        const choice = ans.choice
+        const prob = Math.max(0, Math.min(1, ans.probabilities?.[choice] ?? ans.confidence ?? 0))
+
+        if (choice === 'not_a_movie' && prob >= 0.85) {
+          return {
+            chosenImdbId: null,
+            verdict: 'mismatch',
+            confidence: 0,
+            reason: `Jev: not a movie (${Math.round(prob * 100)}%)`,
+            isNotAMovie: true,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+
+        if (choice === 'none_match' && prob >= 0.8) {
+          return {
+            chosenImdbId: null,
+            verdict: 'mismatch',
+            confidence: 0,
+            reason: `Jev: no candidate matches (${Math.round(prob * 100)}%)`,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+
+        const matchedId = idMap[choice]
+        if (matchedId && prob >= 0.85) {
+          return {
+            chosenImdbId: matchedId,
+            verdict: 'match',
+            confidence: Number(prob.toFixed(2)),
+            reason: `Jev match (${Math.round(prob * 100)}%)`,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+
+        if (!isOpenRouterAvailable(opts)) {
+          return {
+            chosenImdbId: matchedId || null,
+            verdict: 'uncertain',
+            confidence: Number(prob.toFixed(2)),
+            reason: `Jev uncertain (${choice}, ${Math.round(prob * 100)}%)`,
+            provider: 'jev',
+            model: res.model,
+          }
+        }
+      }
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error)
+      console.warn(`[MatchVerifier] Jev adjudicateCandidates fallback to OpenRouter: ${msg}`)
     }
   }
 
@@ -318,6 +530,8 @@ export async function adjudicateCandidates(
         typeof parsed.reason === 'string' && parsed.reason.trim()
           ? parsed.reason.trim()
           : 'No reason provided',
+      provider: 'openrouter',
+      model,
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
