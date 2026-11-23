@@ -1,4 +1,4 @@
-import { existsSync, statSync, readdirSync } from 'node:fs'
+import { existsSync, statSync, readdirSync, unlinkSync } from 'node:fs'
 import { join } from 'node:path'
 import * as tar from 'tar'
 import { defineEventHandler } from 'h3'
@@ -47,6 +47,7 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
       .sort((a, b) => a.name.localeCompare(b.name))
 
     if (posterFiles.length === 0) {
+      cleanupStalePosterArchives(dataDir, 0)
       return {
         success: true,
         archivesCreated: 0,
@@ -115,6 +116,8 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
       archiveIndex++
     }
 
+    cleanupStalePosterArchives(dataDir, archives.length)
+
     emitProgress({
       type: 'posterArchive',
       status: 'completed',
@@ -144,6 +147,30 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
     }
   }
 })
+
+function cleanupStalePosterArchives(dataDir: string, createdCount: number): void {
+  if (!existsSync(dataDir)) {
+    return
+  }
+
+  for (const filename of readdirSync(dataDir)) {
+    const match = /^posters-part(\d+)\.tar\.gz$/.exec(filename)
+    if (!match) {
+      continue
+    }
+
+    const partNumber = Number.parseInt(match[1]!, 10)
+    if (partNumber > createdCount) {
+      try {
+        unlinkSync(join(dataDir, filename))
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+          throw err
+        }
+      }
+    }
+  }
+}
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B'

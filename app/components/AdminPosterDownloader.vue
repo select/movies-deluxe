@@ -44,16 +44,88 @@
           ></div>
         </div>
       </div>
+
+      <!-- Poster Cleanup -->
+      <div class="border-t border-theme-border pt-6 space-y-4">
+        <button
+          class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl shadow-lg shadow-amber-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          :disabled="loading || cleanupLoading"
+          @click="executeCleanup"
+        >
+          <div v-if="cleanupLoading" class="i-mdi-loading animate-spin"></div>
+          <div v-else class="i-mdi-broom"></div>
+          {{ cleanupLoading ? 'Cleaning Up Posters...' : 'Clean Up Unlisted Posters' }}
+        </button>
+
+        <!-- Cleanup Result -->
+        <div
+          v-if="cleanupResult"
+          class="p-4 rounded-xl border flex items-start gap-2 text-sm"
+          :class="
+            cleanupResult.removedCount > 0
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+              : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+          "
+        >
+          <div
+            class="text-lg shrink-0 mt-0.5"
+            :class="
+              cleanupResult.removedCount > 0
+                ? 'i-mdi-check-circle text-green-600 dark:text-green-400'
+                : 'i-mdi-information text-blue-600 dark:text-blue-400'
+            "
+          ></div>
+          <div
+            :class="
+              cleanupResult.removedCount > 0
+                ? 'text-green-800 dark:text-green-200'
+                : 'text-blue-800 dark:text-blue-200'
+            "
+          >
+            <template v-if="cleanupResult.removedCount > 0">
+              Removed {{ cleanupResult.removedCount }} unlisted poster(s), freed
+              {{ formatBytes(cleanupResult.freedBytes) }}.
+              {{ cleanupResult.remainingCount }} poster(s) remaining.
+            </template>
+            <template v-else>
+              All {{ cleanupResult.totalScanned }} posters are listed. No unlisted posters removed.
+            </template>
+          </div>
+        </div>
+
+        <!-- Cleanup Error -->
+        <div
+          v-if="cleanupError"
+          class="p-4 rounded-xl border bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 flex items-start gap-2 text-sm"
+        >
+          <div
+            class="i-mdi-alert-circle text-red-600 dark:text-red-400 text-lg shrink-0 mt-0.5"
+          ></div>
+          <div class="text-red-800 dark:text-red-200">{{ cleanupError }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PosterOptions } from '~/types/admin'
+import { ref } from 'vue'
 import { storeToRefs } from '#imports'
+import { $fetch } from '#build/fetch'
 import { useAdminStore } from '~/stores/useAdminStore'
 import AppInputNumber from '~/components/AppInputNumber.vue'
 import AppInputSwitch from '~/components/AppInputSwitch.vue'
+
+interface PosterCleanupResponse {
+  removedCount: number
+  freedBytes: number
+  remainingCount: number
+  totalScanned: number
+  scope: 'listed' | 'admin'
+  dryRun: boolean
+  sampleRemovedIds: string[]
+}
 
 const options = defineModel<PosterOptions>({ required: true })
 
@@ -65,5 +137,37 @@ defineEmits<{
   start: []
 }>()
 
-const { progress } = storeToRefs(useAdminStore())
+const adminStore = useAdminStore()
+const { progress } = storeToRefs(adminStore)
+
+const cleanupLoading = ref(false)
+const cleanupResult = ref<PosterCleanupResponse | null>(null)
+const cleanupError = ref<string | null>(null)
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
+}
+
+async function executeCleanup() {
+  cleanupLoading.value = true
+  cleanupResult.value = null
+  cleanupError.value = null
+
+  try {
+    const res = await $fetch<PosterCleanupResponse>('/api/admin/posters/cleanup', {
+      method: 'POST',
+      body: { dryRun: false, scope: 'listed' },
+    })
+    cleanupResult.value = res
+    await adminStore.refreshStats()
+  } catch (error) {
+    cleanupError.value = error instanceof Error ? error.message : 'Failed to clean up posters'
+  } finally {
+    cleanupLoading.value = false
+  }
+}
 </script>
