@@ -17,7 +17,9 @@
 
 import Database from 'better-sqlite3'
 import { join } from 'path'
-import { existsSync, unlinkSync } from 'fs'
+import { createReadStream, createWriteStream, existsSync, statSync, unlinkSync } from 'fs'
+import { pipeline } from 'node:stream/promises'
+import { createGzip } from 'node:zlib'
 import { getAdminDatabase } from './adminDb'
 import { createLogger } from './logger'
 import { normalizeLanguageCode } from '../../shared/utils/languageNormalizer'
@@ -26,6 +28,7 @@ import type { MovieMetadata } from '../../shared/types/movie'
 
 const logger = createLogger('SQLiteGen')
 const DB_PATH = join(process.cwd(), 'public/data/movies.db')
+const GZ_PATH = `${DB_PATH}.gz`
 
 export interface GenerateSQLiteOptions {
   skipJsonGeneration?: boolean
@@ -692,6 +695,17 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
   } finally {
     sqlite.close()
   }
+
+  // 9. Generate gzipped database for faster client transport
+  logger.info('Compressing database to movies.db.gz...')
+  const gzStartTime = Date.now()
+  await pipeline(createReadStream(DB_PATH), createGzip({ level: 9 }), createWriteStream(GZ_PATH))
+  const rawSize = statSync(DB_PATH).size
+  const gzSize = statSync(GZ_PATH).size
+  const ratio = rawSize > 0 ? ((1 - gzSize / rawSize) * 100).toFixed(1) : '0.0'
+  logger.success(
+    `Compressed database: ${(gzSize / 1024 / 1024).toFixed(2)} MB (${ratio}% smaller than ${(rawSize / 1024 / 1024).toFixed(2)} MB) in ${Date.now() - gzStartTime}ms`
+  )
 }
 
 /**

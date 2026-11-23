@@ -28,6 +28,7 @@ tsconfig.tsbuildinfo
 
 # Large generated data files
 public/data/movies.db
+public/data/movies.db.gz
 data/stats.json
 data/criterion-cache.json
 # Embedding databases (generated locally)
