@@ -81,6 +81,6 @@ export default defineEventHandler(async event => {
     minConfidence: body.minConfidence,
     allowGoogle: body.allowGoogle,
     model: body.model,
-    pass1Only: body.pass1Only,
+    pass1Only: body.pass1Only === true,
   })
 })

@@ -43,21 +43,20 @@
         <div
           v-for="card in autoTaskCards"
           :key="card.id"
-          role="button"
-          :tabindex="autoRunning ? -1 : 0"
-          :aria-disabled="autoRunning"
-          class="text-left p-3 rounded-lg border transition-colors space-y-1 flex flex-col justify-between"
+          class="p-3 rounded-lg border transition-colors flex flex-col justify-between"
           :class="[
             autoTask === card.id
               ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-900/20'
               : 'border-theme-border bg-theme-surface hover:bg-theme-selection/50',
-            autoRunning ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
+            autoRunning ? 'opacity-60' : '',
           ]"
-          @click="!autoRunning && (autoTask = card.id)"
-          @keydown.enter.prevent="!autoRunning && (autoTask = card.id)"
-          @keydown.space.prevent="!autoRunning && (autoTask = card.id)"
         >
-          <div class="space-y-1">
+          <button
+            type="button"
+            :disabled="autoRunning"
+            class="w-full text-left space-y-1 flex-1 disabled:cursor-not-allowed"
+            @click="autoTask = card.id"
+          >
             <div class="flex items-center justify-between gap-2">
               <span class="text-xs font-bold text-theme-text flex items-center gap-1.5">
                 <div :class="[card.icon, card.iconClass]"></div>
@@ -73,12 +72,10 @@
             <p class="text-[11px] text-theme-textmuted leading-snug">
               {{ card.description }}
             </p>
-          </div>
+          </button>
           <div
             v-if="card.id === 'match_unmatched'"
             class="pt-2 mt-2 border-t border-theme-border/60"
-            @click.stop
-            @keydown.space.stop
           >
             <label
               class="inline-flex items-center gap-1.5 text-[11px] font-medium text-theme-text select-none"
@@ -90,6 +87,7 @@
                 type="checkbox"
                 class="rounded border-theme-border text-blue-600 focus:ring-blue-500"
                 :disabled="autoRunning"
+                @change="!autoRunning && (autoTask = 'match_unmatched')"
               />
               <span>Pass 1 only (fast)</span>
             </label>
@@ -106,7 +104,10 @@
           <div class="flex flex-wrap items-center gap-3">
             <span class="font-bold">
               {{ autoTaskLabel(autoResult.task) }}
-              {{ autoResult.dryRun ? '(Dry Run)' : '(Applied)' }}:
+              {{ autoResult.dryRun ? '(Dry Run)' : '(Applied)' }}
+              <template v-if="autoResult.task === 'match_unmatched' && autoResult.pass1Only">
+                (Pass 1 only) </template
+              >:
             </span>
 
             <template v-if="autoResult.task === 'clean_previews'">
