@@ -6,7 +6,6 @@ import type {
   ArchiveOptions,
   YouTubeOptions,
   PosterOptions,
-  OMDBOptions,
   CollectionCleanupResult,
 } from '~/types/admin'
 import { defineStore, acceptHMRUpdate } from '#imports'
@@ -18,7 +17,6 @@ export interface ProgressUpdate {
   type:
     | 'archive'
     | 'youtube'
-    | 'omdb'
     | 'posters'
     | 'sqlite'
     | 'ai'
@@ -68,12 +66,6 @@ export const useAdminStore = defineStore('admin', () => {
   const posterOptions = reactive<PosterOptions>({
     limit: 50,
     force: false,
-  })
-
-  const omdbOptions = reactive<OMDBOptions>({
-    limit: 50,
-    onlyUnmatched: true,
-    forceRetryFailed: false,
   })
 
   const updateProgress = (update: ProgressUpdate) => {
@@ -176,28 +168,6 @@ export const useAdminStore = defineStore('admin', () => {
         processed: 0,
         successful: 0,
         failed: 0,
-        errors: [e instanceof Error ? e.message : String(e)],
-      }
-    } finally {
-      scraping.value = false
-    }
-  }
-
-  const startOMDBEnrichment = async () => {
-    scraping.value = true
-    results.value = null
-    try {
-      results.value = await $fetch<ScrapeResults>('/api/admin/omdb/enrich', {
-        method: 'POST',
-        body: omdbOptions,
-      })
-      await refreshStats()
-    } catch (e: unknown) {
-      window.console.error('OMDB enrichment failed', e)
-      results.value = {
-        processed: 0,
-        added: 0,
-        updated: 0,
         errors: [e instanceof Error ? e.message : String(e)],
       }
     } finally {
@@ -337,7 +307,6 @@ export const useAdminStore = defineStore('admin', () => {
     archiveOptions,
     youtubeOptions,
     posterOptions,
-    omdbOptions,
     updateProgress,
     clearProgress,
     loadYouTubeChannels,
@@ -345,7 +314,6 @@ export const useAdminStore = defineStore('admin', () => {
     startArchiveScrape,
     startYouTubeScrape,
     startPosterDownload,
-    startOMDBEnrichment,
     generateSqlite,
     generateHomePages,
     generateSimilarMovies,

@@ -434,16 +434,6 @@ export function mergeMovieEntries(entry1: MovieEntry, entry2: MovieEntry): Movie
 }
 
 /**
- * DEPRECATED: Failed OMDB matches are now tracked in public/data/failed-omdb.json
- * Use functions from server/utils/failedOmdb.ts instead:
- * - saveFailedOmdbMatch(identifier, title, reason)
- * - hasFailedOmdbMatch(identifier)
- * - clearFailedOmdbMatches()
- * - removeFailedOmdbMatch(identifier)
- * - getFailedOmdbMatches()
- */
-
-/**
  * Find duplicate movies grouped by normalized title
  * Returns a Map where keys are normalized titles and values are arrays of movie entries
  */

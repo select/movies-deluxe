@@ -6,7 +6,6 @@ export interface ProgressUpdate {
   type:
     | 'archive'
     | 'youtube'
-    | 'omdb'
     | 'posters'
     | 'sqlite'
     | 'ai'

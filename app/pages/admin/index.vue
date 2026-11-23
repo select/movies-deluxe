@@ -291,12 +291,6 @@
             Data Enrichment
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <AdminOMDBEnrichment
-              v-model="omdbOptions"
-              :loading="scraping"
-              @start="adminStore.startOMDBEnrichment"
-            />
-
             <AdminPosterDownloader
               v-model="posterOptions"
               :loading="scraping"
@@ -335,7 +329,6 @@ import AdminMatchReviewQueue from '~/components/AdminMatchReviewQueue.vue'
 import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
 import AdminEmbeddingsGenerator from '~/components/AdminEmbeddingsGenerator.vue'
 import AdminCollectionCleanup from '~/components/AdminCollectionCleanup.vue'
-import AdminOMDBEnrichment from '~/components/AdminOMDBEnrichment.vue'
 import AdminPosterDownloader from '~/components/AdminPosterDownloader.vue'
 import AdminArchiver from '~/components/AdminArchiver.vue'
 import AdminResultsLog from '~/components/AdminResultsLog.vue'
@@ -358,7 +351,6 @@ const {
   generatingSimilar,
   stats,
   scraping,
-  omdbOptions,
   posterOptions,
   cleaningCollections,
   collectionCleanupResults,
