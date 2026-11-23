@@ -108,7 +108,10 @@ export const useMovieStore = defineStore('movie', () => {
 
   // Expose embeddings state from database composable
   const isEmbeddingsLoaded = computed(() => db.isEmbeddingsLoaded.value)
-  const isEmbeddingsLoading = computed(() => db.isEmbeddingsLoading.value)
+  const isLoadingEmbeddings = ref(false)
+  const isEmbeddingsLoading = computed(
+    () => isLoadingEmbeddings.value || db.isEmbeddingsLoading.value
+  )
   const currentEmbeddingsModelId = computed(() => db.currentEmbeddingsModelId.value)
 
   // Track IDs currently being fetched to avoid duplicate requests
@@ -122,6 +125,9 @@ export const useMovieStore = defineStore('movie', () => {
 
   // In-flight promise for deduplicating concurrent loadFromFile() calls
   let loadPromise: Promise<void> | null = null
+
+  // In-flight promises for deduplicating concurrent loadEmbeddings() calls per model
+  const embeddingsLoadPromises = new Map<string, Promise<number>>()
 
   // ============================================
   // COMPUTED PROPERTIES - Data Views
@@ -306,27 +312,44 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Load embeddings for semantic search
-   * Can be called after loadFromFile() to enable semantic search functionality
+   * Deduplicated per modelId with an in-flight promise so rapid clicks cannot trigger
+   * duplicate attach-embeddings messages.
    * @param modelId - The embedding model ID (e.g., 'nomic', 'leaf-ir', 'potion')
    */
   const loadEmbeddings = async (modelId: string): Promise<number> => {
-    console.log('[loadEmbeddings] Loading embeddings for model:', modelId)
-    try {
-      if (!db.isReady.value) {
-        await loadFromFile()
-      }
-      const count = await db.attachEmbeddings(modelId)
-      console.log('[loadEmbeddings] Embeddings loaded successfully, count:', count)
-      return count
-    } catch (err) {
-      console.error('[loadEmbeddings] Failed to load embeddings:', err)
-
-      // Show toast notification for embeddings loading failure
-      const { showToast } = useToastStore()
-      showToast('Failed to load embeddings for semantic search.', 'error', 5000)
-
-      throw err
+    const existingPromise = embeddingsLoadPromises.get(modelId)
+    if (existingPromise) {
+      return existingPromise
     }
+
+    isLoadingEmbeddings.value = true
+    const promise = (async () => {
+      console.log('[loadEmbeddings] Loading embeddings for model:', modelId)
+      try {
+        if (!db.isReady.value) {
+          await loadFromFile()
+        }
+        const count = await db.attachEmbeddings(modelId)
+        console.log('[loadEmbeddings] Embeddings loaded successfully, count:', count)
+        return count
+      } catch (err) {
+        console.error('[loadEmbeddings] Failed to load embeddings:', err)
+
+        // Show toast notification for embeddings loading failure
+        const { showToast } = useToastStore()
+        showToast('Failed to load embeddings for semantic search.', 'error', 5000)
+
+        throw err
+      } finally {
+        embeddingsLoadPromises.delete(modelId)
+        if (embeddingsLoadPromises.size === 0) {
+          isLoadingEmbeddings.value = false
+        }
+      }
+    })()
+
+    embeddingsLoadPromises.set(modelId, promise)
+    return promise
   }
 
   /**
@@ -440,6 +463,16 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
+   * Escape and quote an FTS5 phrase safely.
+   * Returns null for empty/whitespace-only terms.
+   */
+  const formatFtsPhrase = (term: string): string | null => {
+    const trimmed = term.trim()
+    if (!trimmed) return null
+    return `"${trimmed.replace(/"/g, '""')}"`
+  }
+
+  /**
    * Build unified SQL query for both search and filter scenarios
    */
   const buildFilterQuery = (searchQuery?: string) => {
@@ -456,81 +489,62 @@ export const useMovieStore = defineStore('movie', () => {
         parsed.writers?.length ||
         parsed.title
       )
+      const ftsTerms: string[] = []
 
-      if (hasKeywords) {
-        const joins: string[] = []
-        const searchConditions: string[] = []
-
-        if (parsed.title) {
-          joins.push(`JOIN fts_movies ft ON m.movieId = ft.movieId`)
-          searchConditions.push(`ft.title MATCH ?`)
-          params.push(`"${parsed.title.replace(/"/g, '""')}"`)
+      if (parsed.title) {
+        const phrase = formatFtsPhrase(parsed.title)
+        if (phrase) {
+          ftsTerms.push(`title:${phrase}`)
         }
+      }
 
-        if (parsed.actors) {
-          parsed.actors.forEach((actor, i) => {
-            const ma = `ma${i}`
-            const fa = `fa${i}`
-            joins.push(`JOIN movie_actors ${ma} ON m.movieId = ${ma}.movieId`)
-            joins.push(`JOIN fts_actors ${fa} ON ${ma}.actorId = ${fa}.actorId`)
-            searchConditions.push(`${fa}.name MATCH ?`)
-            params.push(`"${actor.replace(/"/g, '""')}"`)
-          })
+      if (parsed.actors) {
+        for (const actor of parsed.actors) {
+          const phrase = formatFtsPhrase(actor)
+          if (phrase) {
+            ftsTerms.push(`actors:${phrase}`)
+          }
         }
+      }
 
-        if (parsed.directors) {
-          parsed.directors.forEach((director, i) => {
-            const md = `md${i}`
-            const fd = `fd${i}`
-            joins.push(`JOIN movie_directors ${md} ON m.movieId = ${md}.movieId`)
-            joins.push(`JOIN fts_directors ${fd} ON ${md}.directorId = ${fd}.directorId`)
-            searchConditions.push(`${fd}.name MATCH ?`)
-            params.push(`"${director.replace(/"/g, '""')}"`)
-          })
+      if (parsed.directors) {
+        for (const director of parsed.directors) {
+          const phrase = formatFtsPhrase(director)
+          if (phrase) {
+            ftsTerms.push(`directors:${phrase}`)
+          }
         }
+      }
 
-        if (parsed.writers) {
-          parsed.writers.forEach((writer, i) => {
-            const mw = `mw${i}`
-            const fw = `fw${i}`
-            joins.push(`JOIN movie_writers ${mw} ON m.movieId = ${mw}.movieId`)
-            joins.push(`JOIN fts_writers ${fw} ON ${mw}.writerId = ${fw}.writerId`)
-            searchConditions.push(`${fw}.name MATCH ?`)
-            params.push(`"${writer.replace(/"/g, '""')}"`)
-          })
+      if (parsed.writers) {
+        for (const writer of parsed.writers) {
+          const phrase = formatFtsPhrase(writer)
+          if (phrase) {
+            ftsTerms.push(`writers:${phrase}`)
+          }
         }
+      }
 
-        if (parsed.general) {
-          joins.push(`JOIN fts_movies fg ON m.movieId = fg.movieId`)
-          searchConditions.push(`fg.title MATCH ?`)
-          params.push(`"${parsed.general.replace(/"/g, '""')}"`)
+      if (parsed.general) {
+        const phrase = formatFtsPhrase(parsed.general)
+        if (phrase) {
+          ftsTerms.push(hasKeywords ? `title:${phrase}` : phrase)
         }
+      }
 
-        sql = `
-          SELECT DISTINCT m.movieId
-          FROM movies m
-          ${joins.join(' ')}
-          WHERE ${searchConditions.join(' AND ')}
-        `
-      } else if (parsed.general) {
-        // General search across all fields using UNION for better performance and correctness
-        const generalTerm = `"${parsed.general.replace(/"/g, '""')}"`
+      if (ftsTerms.length > 0) {
         sql = `
           SELECT m.movieId
           FROM movies m
-          WHERE m.movieId IN (
-            SELECT movieId FROM fts_movies WHERE title MATCH ?
-            UNION
-            SELECT ma.movieId FROM fts_actors fa JOIN movie_actors ma ON fa.actorId = ma.actorId WHERE name MATCH ?
-            UNION
-            SELECT md.movieId FROM fts_directors fd JOIN movie_directors md ON fd.directorId = md.directorId WHERE name MATCH ?
-            UNION
-            SELECT mw.movieId FROM fts_writers fw JOIN movie_writers mw ON fw.writerId = mw.writerId WHERE name MATCH ?
-          )
+          WHERE m.rowid IN (SELECT rowid FROM fts_search WHERE fts_search MATCH ?)
         `
-        params.push(generalTerm, generalTerm, generalTerm, generalTerm)
+        params.push(ftsTerms.join(' AND '))
       } else {
-        sql = `SELECT m.movieId FROM movies m WHERE 1=1`
+        sql = `
+          SELECT m.movieId
+          FROM movies m
+          WHERE 1=1
+        `
       }
     } else {
       // No search query - query all movies
@@ -546,13 +560,8 @@ export const useMovieStore = defineStore('movie', () => {
       const cond = `m.imdbRating >= ?`
       whereConditions.push(cond)
       whereParams.push(filters.value.minRating)
-      if (!searchQuery?.trim() || sql.includes('WHERE 1=1')) {
-        sql += ` AND ${cond}`
-        params.push(filters.value.minRating)
-      } else {
-        sql += ` AND ${cond}`
-        params.push(filters.value.minRating)
-      }
+      sql += ` AND ${cond}`
+      params.push(filters.value.minRating)
     }
 
     if (filters.value.minYear > 0) {

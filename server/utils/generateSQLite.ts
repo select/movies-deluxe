@@ -16,7 +16,7 @@
  */
 
 import Database from 'better-sqlite3'
-import { join } from 'path'
+import { join } from 'node:path'
 import {
   createReadStream,
   createWriteStream,
@@ -24,7 +24,7 @@ import {
   renameSync,
   statSync,
   unlinkSync,
-} from 'fs'
+} from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { createGzip } from 'node:zlib'
 import { getAdminDatabase } from './adminDb'
@@ -52,18 +52,6 @@ interface MovieData {
   verified: number
   lastUpdated: string
   metadata?: MovieMetadata
-}
-
-/**
- * Collection data structure from admin DB
- */
-interface CollectionData {
-  id: string
-  name: string
-  description: string | null
-  createdAt: string
-  updatedAt: string
-  movieIds: string[]
 }
 
 export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promise<void> {
@@ -129,17 +117,12 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     metadata: metadataMap.get(movie.movieId),
   }))
 
-  // Load collections
-  const collections = loadCollections(adminDb)
-
-  // Create a Set of valid movie IDs for quick lookup
-  const validMovieIds = new Set(movies.map(m => m.movieId))
-
   logger.info(`Processing ${movies.length} movies for web database`)
 
   onProgress?.({ current: 0, total: movies.length, message: 'Loading data' })
 
   // 3. Remove existing DBs if they exist
+  const tmpGzPath = `${GZ_PATH}.tmp`
   if (existsSync(DB_PATH)) {
     logger.info('Removing existing database file')
     unlinkSync(DB_PATH)
@@ -147,6 +130,10 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
   if (existsSync(GZ_PATH)) {
     logger.info('Removing existing gzipped database file')
     unlinkSync(GZ_PATH)
+  }
+  if (existsSync(tmpGzPath)) {
+    logger.info('Removing existing temporary gzipped database file')
+    unlinkSync(tmpGzPath)
   }
 
   // 4. Initialize Database
@@ -191,91 +178,13 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
         created_at TEXT NOT NULL
       );
 
-      CREATE TABLE collections (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT,
-        createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL
-      );
-
-      CREATE TABLE collection_movies (
-        collectionId TEXT NOT NULL,
-        movieId TEXT NOT NULL,
-        addedAt TEXT NOT NULL,
-        PRIMARY KEY (collectionId, movieId),
-        FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,
-        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE
-      );
-
-      -- People tables
-      CREATE TABLE actors (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE,
-        movie_count INTEGER DEFAULT 0
-      );
-
-      CREATE TABLE directors (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE,
-        movie_count INTEGER DEFAULT 0
-      );
-
-      CREATE TABLE writers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE,
-        movie_count INTEGER DEFAULT 0
-      );
-
-      -- Junction tables
-      CREATE TABLE movie_actors (
-        movieId TEXT NOT NULL,
-        actorId INTEGER NOT NULL,
-        character TEXT,
-        PRIMARY KEY (movieId, actorId),
-        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE,
-        FOREIGN KEY (actorId) REFERENCES actors (id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE movie_directors (
-        movieId TEXT NOT NULL,
-        directorId INTEGER NOT NULL,
-        PRIMARY KEY (movieId, directorId),
-        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE,
-        FOREIGN KEY (directorId) REFERENCES directors (id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE movie_writers (
-        movieId TEXT NOT NULL,
-        writerId INTEGER NOT NULL,
-        PRIMARY KEY (movieId, writerId),
-        FOREIGN KEY (movieId) REFERENCES movies (movieId) ON DELETE CASCADE,
-        FOREIGN KEY (writerId) REFERENCES writers (id) ON DELETE CASCADE
-      );
-
-      -- FTS5 Virtual Table for Search (title only)
-      CREATE VIRTUAL TABLE fts_movies USING fts5(
-        movieId UNINDEXED,
+      -- Contentless FTS5 Virtual Table for Search (keyed by movies.rowid)
+      CREATE VIRTUAL TABLE fts_search USING fts5(
         title,
-        tokenize='unicode61'
-      );
-
-      -- FTS5 Virtual Tables for People
-      CREATE VIRTUAL TABLE fts_actors USING fts5(
-        actorId UNINDEXED,
-        name,
-        tokenize='unicode61'
-      );
-
-      CREATE VIRTUAL TABLE fts_directors USING fts5(
-        directorId UNINDEXED,
-        name,
-        tokenize='unicode61'
-      );
-
-      CREATE VIRTUAL TABLE fts_writers USING fts5(
-        writerId UNINDEXED,
-        name,
+        actors,
+        directors,
+        writers,
+        content='',
         tokenize='unicode61'
       );
 
@@ -295,28 +204,11 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
       CREATE INDEX idx_movies_title ON movies(title);
       CREATE INDEX idx_movies_source_type ON movies(primarySourceType);
       CREATE INDEX idx_movies_channel ON movies(primaryChannelName);
-      
+
       CREATE INDEX idx_genres_name ON genres(name);
       CREATE INDEX idx_genres_count ON genres(movie_count DESC);
       CREATE INDEX idx_countries_name ON countries(name);
       CREATE INDEX idx_countries_count ON countries(movie_count DESC);
-      CREATE INDEX idx_collection_movies_collectionId ON collection_movies(collectionId);
-      CREATE INDEX idx_collection_movies_movieId ON collection_movies(movieId);
-
-      -- People indexes
-      CREATE INDEX idx_actors_name ON actors(name);
-      CREATE INDEX idx_actors_count ON actors(movie_count DESC);
-      CREATE INDEX idx_directors_name ON directors(name);
-      CREATE INDEX idx_directors_count ON directors(movie_count DESC);
-      CREATE INDEX idx_writers_name ON writers(name);
-      CREATE INDEX idx_writers_count ON writers(movie_count DESC);
-
-      CREATE INDEX idx_movie_actors_movieId ON movie_actors(movieId);
-      CREATE INDEX idx_movie_actors_actorId ON movie_actors(actorId);
-      CREATE INDEX idx_movie_directors_movieId ON movie_directors(movieId);
-      CREATE INDEX idx_movie_directors_directorId ON movie_directors(directorId);
-      CREATE INDEX idx_movie_writers_movieId ON movie_writers(movieId);
-      CREATE INDEX idx_movie_writers_writerId ON movie_writers(writerId);
     `)
 
     // 5. Prepare Statements
@@ -338,55 +230,12 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     `)
 
     const insertFts = sqlite.prepare(`
-      INSERT INTO fts_movies (movieId, title)
-      VALUES (?, ?)
-    `)
-
-    const insertCollection = sqlite.prepare(`
-      INSERT INTO collections (id, name, description, createdAt, updatedAt)
+      INSERT INTO fts_search (rowid, title, actors, directors, writers)
       VALUES (?, ?, ?, ?, ?)
-    `)
-
-    const insertCollectionMovie = sqlite.prepare(`
-      INSERT INTO collection_movies (collectionId, movieId, addedAt)
-      VALUES (?, ?, ?)
     `)
 
     const insertConfig = sqlite.prepare(`
       INSERT INTO config (key, value) VALUES (?, ?)
-    `)
-
-    const insertActor = sqlite.prepare(`
-      INSERT OR IGNORE INTO actors (name) VALUES (?)
-    `)
-    const getActorId = sqlite.prepare(`SELECT id FROM actors WHERE name = ?`)
-    const insertMovieActor = sqlite.prepare(`
-      INSERT OR IGNORE INTO movie_actors (movieId, actorId) VALUES (?, ?)
-    `)
-    const insertFtsActor = sqlite.prepare(`
-      INSERT INTO fts_actors (actorId, name) VALUES (?, ?)
-    `)
-
-    const insertDirector = sqlite.prepare(`
-      INSERT OR IGNORE INTO directors (name) VALUES (?)
-    `)
-    const getDirectorId = sqlite.prepare(`SELECT id FROM directors WHERE name = ?`)
-    const insertMovieDirector = sqlite.prepare(`
-      INSERT OR IGNORE INTO movie_directors (movieId, directorId) VALUES (?, ?)
-    `)
-    const insertFtsDirector = sqlite.prepare(`
-      INSERT INTO fts_directors (directorId, name) VALUES (?, ?)
-    `)
-
-    const insertWriter = sqlite.prepare(`
-      INSERT OR IGNORE INTO writers (name) VALUES (?)
-    `)
-    const getWriterId = sqlite.prepare(`SELECT id FROM writers WHERE name = ?`)
-    const insertMovieWriter = sqlite.prepare(`
-      INSERT OR IGNORE INTO movie_writers (movieId, writerId) VALUES (?, ?)
-    `)
-    const insertFtsWriter = sqlite.prepare(`
-      INSERT INTO fts_writers (writerId, name) VALUES (?, ?)
     `)
 
     // 6. Insert Data in a Transaction
@@ -469,7 +318,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
           primaryChannelName = primarySource.channelName || null
         }
 
-        insertMovie.run(
+        const info = insertMovie.run(
           movie.movieId,
           movie.title,
           movie.year || null,
@@ -486,50 +335,13 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
 
         // Sources are now stored in individual JSON files, not in the database
 
-        // Insert into FTS
-        insertFts.run(movie.movieId, movie.title)
+        // Insert into contentless FTS5 keyed by movies.rowid
+        const actorsText = normalizePeopleField(m.Actors)
+        const directorsText = normalizePeopleField(m.Director)
+        const writersText = normalizePeopleField(m.Writer)
+        insertFts.run(info.lastInsertRowid, movie.title, actorsText, directorsText, writersText)
 
         // Note: Vector embeddings are stored externally, not in the main DB
-
-        // Insert People (Actors, Directors, Writers)
-        if (m.Actors && m.Actors !== 'N/A') {
-          const actors = m.Actors.split(',')
-            .map(a => a.trim())
-            .filter(Boolean)
-          for (const name of actors) {
-            insertActor.run(name)
-            const row = getActorId.get(name) as { id: number }
-            if (row) {
-              insertMovieActor.run(movie.movieId, row.id)
-            }
-          }
-        }
-
-        if (m.Director && m.Director !== 'N/A') {
-          const directors = m.Director.split(',')
-            .map(d => d.trim())
-            .filter(Boolean)
-          for (const name of directors) {
-            insertDirector.run(name)
-            const row = getDirectorId.get(name) as { id: number }
-            if (row) {
-              insertMovieDirector.run(movie.movieId, row.id)
-            }
-          }
-        }
-
-        if (m.Writer && m.Writer !== 'N/A') {
-          const writers = m.Writer.split(',')
-            .map(w => w.trim())
-            .filter(Boolean)
-          for (const name of writers) {
-            insertWriter.run(name)
-            const row = getWriterId.get(name) as { id: number }
-            if (row) {
-              insertMovieWriter.run(movie.movieId, row.id)
-            }
-          }
-        }
 
         count++
         if (count % 100 === 0) {
@@ -590,72 +402,6 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
 
       logger.info(`Inserted ${genreCounts.size} genres and ${countryCounts.size} countries`)
 
-      // 6.7. Populate Collections
-      logger.info('Populating collections...')
-      for (const collection of collections) {
-        insertCollection.run(
-          collection.id,
-          collection.name,
-          collection.description || null,
-          collection.createdAt,
-          collection.updatedAt
-        )
-
-        // Deduplicate movieIds to avoid UNIQUE constraint violations
-        const uniqueMovieIds = [...new Set(collection.movieIds)]
-        for (const movieId of uniqueMovieIds) {
-          // Only insert if movie exists in our filtered database (not quality-labeled)
-          if (validMovieIds.has(movieId)) {
-            insertCollectionMovie.run(collection.id, movieId, collection.updatedAt)
-          }
-        }
-      }
-      logger.info(`Inserted ${collections.length} collections`)
-
-      // 6.8. Update People Counts and FTS
-      logger.info('Updating people counts and FTS...')
-      onProgress?.({
-        current: movies.length,
-        total: movies.length,
-        message: 'Updating people counts and FTS',
-      })
-
-      // Update counts
-      sqlite.exec(`
-        UPDATE actors SET movie_count = (SELECT COUNT(*) FROM movie_actors WHERE actorId = actors.id);
-        UPDATE directors SET movie_count = (SELECT COUNT(*) FROM movie_directors WHERE directorId = directors.id);
-        UPDATE writers SET movie_count = (SELECT COUNT(*) FROM movie_writers WHERE writerId = writers.id);
-      `)
-
-      // Populate FTS
-      const allActors = sqlite.prepare('SELECT id, name FROM actors').all() as {
-        id: number
-        name: string
-      }[]
-      for (const actor of allActors) {
-        insertFtsActor.run(actor.id, actor.name)
-      }
-
-      const allDirectors = sqlite.prepare('SELECT id, name FROM directors').all() as {
-        id: number
-        name: string
-      }[]
-      for (const director of allDirectors) {
-        insertFtsDirector.run(director.id, director.name)
-      }
-
-      const allWriters = sqlite.prepare('SELECT id, name FROM writers').all() as {
-        id: number
-        name: string
-      }[]
-      for (const writer of allWriters) {
-        insertFtsWriter.run(writer.id, writer.name)
-      }
-
-      logger.info(
-        `Processed ${allActors.length} actors, ${allDirectors.length} directors, ${allWriters.length} writers`
-      )
-
       sqlite.exec('COMMIT')
     } catch (err) {
       sqlite.exec('ROLLBACK')
@@ -667,31 +413,13 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     onProgress?.({
       current: movies.length,
       total: movies.length,
-      message: 'Optimizing: FTS movies',
+      message: 'Optimizing: FTS search',
     })
-    sqlite.exec("INSERT INTO fts_movies(fts_movies) VALUES('optimize')")
-    onProgress?.({
-      current: movies.length,
-      total: movies.length,
-      message: 'Optimizing: FTS actors',
-    })
-    sqlite.exec("INSERT INTO fts_actors(fts_actors) VALUES('optimize')")
-    onProgress?.({
-      current: movies.length,
-      total: movies.length,
-      message: 'Optimizing: FTS directors',
-    })
-    sqlite.exec("INSERT INTO fts_directors(fts_directors) VALUES('optimize')")
-    onProgress?.({
-      current: movies.length,
-      total: movies.length,
-      message: 'Optimizing: FTS writers',
-    })
-    sqlite.exec("INSERT INTO fts_writers(fts_writers) VALUES('optimize')")
-    onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing: VACUUM' })
-    sqlite.exec('VACUUM')
+    sqlite.exec("INSERT INTO fts_search(fts_search) VALUES('optimize')")
     onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing: ANALYZE' })
     sqlite.exec('ANALYZE')
+    onProgress?.({ current: movies.length, total: movies.length, message: 'Optimizing: VACUUM' })
+    sqlite.exec('VACUUM')
 
     logger.success('SQLite database generated successfully!')
 
@@ -713,7 +441,6 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     message: 'Compressing database...',
   })
   const gzStartTime = Date.now()
-  const tmpGzPath = `${GZ_PATH}.tmp`
   try {
     await pipeline(
       createReadStream(DB_PATH),
@@ -722,8 +449,12 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     )
     renameSync(tmpGzPath, GZ_PATH)
   } catch (error) {
-    if (existsSync(tmpGzPath)) {
-      unlinkSync(tmpGzPath)
+    try {
+      if (existsSync(tmpGzPath)) {
+        unlinkSync(tmpGzPath)
+      }
+    } catch {
+      // Ignore cleanup errors so the original compression error is preserved
     }
     logger.error('Failed to compress SQLite database:', error)
     throw error
@@ -824,50 +555,14 @@ function loadMetadataMap(db: Database.Database): Map<string, MovieMetadata> {
 }
 
 /**
- * Load collections from admin database
- * Returns an array of collection data with movieIds
+ * Normalize a comma-separated people field (Actors, Director, Writer) for FTS5 indexing.
+ * Returns empty string if missing or 'N/A'.
  */
-function loadCollections(db: Database.Database): CollectionData[] {
-  // Load all collections
-  const collectionsRaw = db
-    .prepare(
-      `
-    SELECT id, name, description, createdAt, updatedAt
-    FROM collections
-    ORDER BY name
-  `
-    )
-    .all() as Array<{
-    id: string
-    name: string
-    description: string | null
-    createdAt: string
-    updatedAt: string
-  }>
-
-  // Load all collection movies
-  const collectionMovies = db
-    .prepare(
-      `
-    SELECT collectionId, movieId
-    FROM collection_movies
-    ORDER BY collectionId
-  `
-    )
-    .all() as Array<{ collectionId: string; movieId: string }>
-
-  // Build map of collectionId -> movieIds
-  const movieIdsMap = new Map<string, string[]>()
-  for (const cm of collectionMovies) {
-    if (!movieIdsMap.has(cm.collectionId)) {
-      movieIdsMap.set(cm.collectionId, [])
-    }
-    movieIdsMap.get(cm.collectionId)!.push(cm.movieId)
-  }
-
-  // Build collection data array
-  return collectionsRaw.map(col => ({
-    ...col,
-    movieIds: movieIdsMap.get(col.id) || [],
-  }))
+function normalizePeopleField(value?: string | null): string {
+  if (!value || value === 'N/A') return ''
+  return value
+    .split(',')
+    .map(p => p.trim())
+    .filter(Boolean)
+    .join(', ')
 }
