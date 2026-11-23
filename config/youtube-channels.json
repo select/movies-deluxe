@@ -185,6 +185,14 @@
       "language": "zh",
       "enabled": true,
       "notes": "Large catalog of 500+ classic Hong Kong, TVB telemovie, and Asian films"
+    },
+    {
+      "id": "UC6zrOqTxWKL22LZi7sv1JSQ",
+      "handle": "@PublicDomainFilms",
+      "name": "Public Domain Films",
+      "language": "en",
+      "enabled": true,
+      "notes": "Non-monetized collection of US public-domain films sourced from the Internet Archive"
     }
   ]
 }
