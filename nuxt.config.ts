@@ -198,6 +198,9 @@ export default defineNuxtConfig({
     ],
   },
 
+  // Ignore folders with large file counts and build output directories from Nuxt & Vite file watchers
+  ignore: ['public/posters', 'public/movies', '.output', 'dist'],
+
   // Nitro configuration for serving WASM files with correct MIME type
   nitro: {
     ...(process.env.NITRO_OUTPUT_DIR ? { output: { dir: process.env.NITRO_OUTPUT_DIR } } : {}),
