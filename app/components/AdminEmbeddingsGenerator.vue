@@ -23,32 +23,10 @@
             />
           </div>
         </div>
-        <div class="flex items-center gap-2 mt-2">
-          <button
-            class="text-xs text-indigo-500 hover:text-indigo-600 underline"
-            :disabled="generating"
-            @click="selectAll"
-          >
-            Select All
-          </button>
-          <span class="text-theme-textmuted">|</span>
-          <button
-            class="text-xs text-theme-textmuted hover:text-theme-text underline"
-            :disabled="generating"
-            @click="selectNone"
-          >
-            Clear
-          </button>
-        </div>
       </div>
 
       <!-- Options -->
       <div class="space-y-3">
-        <AppInputNumber
-          v-model="options.limit"
-          label="Limit (0 = no limit)"
-          :disabled="generating"
-        />
         <AppInputCheckbox
           v-model="options.forceRebuild"
           label="Force rebuild (delete existing databases)"
@@ -190,7 +168,6 @@ import { useAdminStore } from '~/stores/useAdminStore'
 import { ref, reactive } from 'vue'
 import { $fetch } from '#build/fetch'
 import AppInputCheckbox from '~/components/AppInputCheckbox.vue'
-import AppInputNumber from '~/components/AppInputNumber.vue'
 
 interface ModelResult {
   model: string
@@ -219,7 +196,6 @@ const lastResults = ref<ModelResult[] | null>(null)
 const apiErrors = ref<string[]>([])
 
 const options = reactive({
-  limit: 0,
   forceRebuild: false,
 })
 
@@ -232,18 +208,6 @@ function getModelLabel(model: {
   return model.quantization === 'int8'
     ? `${model.name} (${model.dimensions}D int8)`
     : `${model.name} (${model.dimensions}D)`
-}
-
-function selectAll() {
-  EMBEDDING_MODELS.forEach(m => {
-    selectedModels.value[m.id] = true
-  })
-}
-
-function selectNone() {
-  EMBEDDING_MODELS.forEach(m => {
-    selectedModels.value[m.id] = false
-  })
 }
 
 function getModelName(modelId: string): string {
@@ -272,7 +236,6 @@ async function handleGenerate() {
       method: 'POST',
       body: {
         models: Object.keys(selectedModels.value).filter(key => selectedModels.value[key]),
-        limit: options.limit || undefined,
         forceRebuild: options.forceRebuild,
       },
     })

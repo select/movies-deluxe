@@ -266,12 +266,12 @@
       <!-- Scrape Controls -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         <!-- Data Management Section -->
-        <section>
+        <section class="md:col-span-2">
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             <div class="i-mdi-database-cog text-blue-600"></div>
             Data Management
           </h2>
-          <div class="flex flex-col gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <AdminDatabaseGenerator />
 
             <AdminEmbeddingsGenerator />
@@ -281,23 +281,23 @@
               :results="collectionCleanupResults"
               @start="adminStore.cleanupCollections"
             />
+
+            <AdminArchiver />
           </div>
         </section>
 
         <!-- Data Enrichment Section -->
-        <section class="md:col-span-2">
+        <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             <div class="i-mdi-database-sync text-green-600"></div>
             Data Enrichment
           </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="flex flex-col gap-8">
             <AdminPosterDownloader
               v-model="posterOptions"
               :loading="scraping"
               @start="adminStore.startPosterDownload"
             />
-
-            <AdminArchiver />
           </div>
         </section>
       </div>
