@@ -10,7 +10,6 @@ interface MovieRow {
 }
 
 interface MetadataRow {
-  Poster: string | null
   Director: string | null
   Writer: string | null
   Actors: string | null
@@ -73,8 +72,20 @@ export default defineEventHandler(async event => {
           OR LOWER(movieId) LIKE ?
         )`
       )
+      const ftsQuery = q
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(token => `"${token.replace(/"/g, '""')}"*`)
+        .join(' ')
       const searchPattern = `%${q}%`
-      params.push(q, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern)
+      params.push(
+        ftsQuery,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern
+      )
     }
 
     // Year filters
@@ -149,21 +160,23 @@ export default defineEventHandler(async event => {
 
       // Check for archive.org sources
       if (sources.includes('archive.org')) {
-        sourceConditions.push(`type = 'archive.org'`)
+        sourceConditions.push(`c.platform = 'archive.org'`)
       }
 
       // Check for YouTube channels
       const youtubeChannels = sources.filter(s => s !== 'archive.org')
       if (youtubeChannels.length > 0) {
         const channelPlaceholders = youtubeChannels.map(() => '?').join(',')
-        sourceConditions.push(`(type = 'youtube' AND channelName IN (${channelPlaceholders}))`)
+        sourceConditions.push(`(c.platform = 'youtube' AND c.name IN (${channelPlaceholders}))`)
         sourceParams.push(...youtubeChannels)
       }
 
       if (sourceConditions.length > 0) {
         conditions.push(
           `movieId IN (
-            SELECT DISTINCT movieId FROM sources 
+            SELECT DISTINCT s.movieId
+            FROM sources s
+            JOIN channels c ON s.channelId = c.id
             WHERE ${sourceConditions.join(' OR ')}
           )`
         )
@@ -208,7 +221,6 @@ export default defineEventHandler(async event => {
       const metadataQuery = `
         SELECT 
           movieId,
-          Poster,
           Director,
           Writer,
           Plot,
@@ -234,7 +246,6 @@ export default defineEventHandler(async event => {
         year: movie.year ?? undefined,
         metadata: metadata
           ? {
-              Poster: metadata.Poster ?? undefined,
               Director: metadata.Director ?? undefined,
               Writer: metadata.Writer ?? undefined,
               Plot: metadata.Plot ?? undefined,
