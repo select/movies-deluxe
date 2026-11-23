@@ -1,0 +1,331 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1620" viewBox="0 0 1440 1620">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 12; }
+      .subcard { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 8; }
+      .title { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 26px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 14px; fill: #94a3b8; }
+      .stage-num { font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace; font-size: 12px; font-weight: 700; }
+      .heading { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 16px; font-weight: 700; fill: #f1f5f9; }
+      .body { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 13px; fill: #cbd5e1; }
+      .muted { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 12px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace; font-size: 12px; fill: #e2e8f0; }
+      .badge-text { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 11px; font-weight: 700; }
+      .arrow { stroke: #64748b; stroke-width: 2; fill: none; }
+      .arrow-green { stroke: #10b981; stroke-width: 2; fill: none; }
+      .arrow-amber { stroke: #f59e0b; stroke-width: 2; fill: none; }
+      .arrow-purple { stroke: #a855f7; stroke-width: 2; fill: none; }
+      .arrow-red { stroke: #ef4444; stroke-width: 2; fill: none; }
+      .arrow-label { font-family: 'Inter', 'DejaVu Sans', system-ui, sans-serif; font-size: 11px; font-weight: 600; }
+    </style>
+
+    <marker id="ah-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="ah-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+    </marker>
+    <marker id="ah-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b"/>
+    </marker>
+    <marker id="ah-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a855f7"/>
+    </marker>
+    <marker id="ah-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="1620" class="bg"/>
+
+  <!-- Header -->
+  <text x="48" y="54" class="title">Match Unmatched — Full Auto-Matching Cascade</text>
+  <text x="48" y="80" class="subtitle">server/utils/autoPipeline.ts  •  runAutoMatchUnmatched()  •  5× Parallel Worker Pool + Serialized SQLite Writes</text>
+
+  <!-- Legend -->
+  <g transform="translate(860, 32)">
+    <rect x="0" y="0" width="532" height="52" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <circle cx="24" cy="26" r="6" fill="#10b981"/>
+    <text x="38" y="30" class="body">Auto-Match (tt*)</text>
+    <circle cx="174" cy="26" r="6" fill="#f59e0b"/>
+    <text x="188" y="30" class="body">Review Queue</text>
+    <circle cx="312" cy="26" r="6" fill="#a855f7"/>
+    <text x="326" y="30" class="body">Not a Movie</text>
+    <circle cx="432" cy="26" r="6" fill="#ef4444"/>
+    <text x="446" y="30" class="body">No Match</text>
+  </g>
+
+  <!-- ==================== STAGE 0: INPUT & WORKER POOL ==================== -->
+  <g transform="translate(48, 108)">
+    <rect x="0" y="0" width="960" height="92" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="1.8"/>
+    <rect x="16" y="14" width="108" height="22" rx="6" fill="#1d4ed8"/>
+    <text x="70" y="29" text-anchor="middle" class="badge-text" fill="#eff6ff">INPUT QUEUE</text>
+    <text x="138" y="30" class="heading">Select Unmatched Movies &amp; Dispatch 5 Concurrent Workers</text>
+    <text x="16" y="56" class="mono">WHERE movieId NOT LIKE 'tt%' AND NOT pending in match_review_queue  •  ORDER BY attemptedAt IS NOT NULL ASC, attemptedAt ASC</text>
+    <text x="16" y="77" class="muted">Per movie: extractSourceMetadata() cleans channel title, strips promo-tag years, extracts director / cast / original title / slug hints</text>
+  </g>
+
+  <!-- Arrow 0 -> Pass 1 -->
+  <line x1="528" y1="200" x2="528" y2="232" class="arrow" marker-end="url(#ah-slate)"/>
+
+  <!-- ==================== PASS 1: DIRECT IMDb ID ==================== -->
+  <g transform="translate(48, 236)">
+    <rect x="0" y="0" width="960" height="84" rx="12" class="card"/>
+    <rect x="16" y="14" width="76" height="22" rx="6" fill="#065f46"/>
+    <text x="54" y="29" text-anchor="middle" class="badge-text" fill="#d1fae5">PASS 1</text>
+    <text x="106" y="30" class="heading">Direct IMDb URL / tt* ID Regex</text>
+    <text x="16" y="54" class="body">Scans source description &amp; title for <tspan class="mono">imdb.com/title/tt\d{7,9}</tspan> or bare <tspan class="mono">tt\d{7,9}</tspan>.</text>
+    <text x="16" y="72" class="muted">Zero search APIs, zero LLM calls — fetches OMDb metadata and migrates immediately.</text>
+  </g>
+
+  <!-- Pass 1 -> Matched Rail -->
+  <path d="M 1008 278 L 1110 278" class="arrow-green" marker-end="url(#ah-green)"/>
+  <text x="1058" y="270" text-anchor="middle" class="arrow-label" fill="#34d399">tt* found</text>
+
+  <!-- Arrow Pass 1 -> Pass 1b -->
+  <line x1="528" y1="320" x2="528" y2="352" class="arrow" marker-end="url(#ah-slate)"/>
+  <text x="542" y="340" class="arrow-label" fill="#94a3b8">none</text>
+
+  <!-- ==================== PASS 1b: LOCAL-FIRST FAST PATH ==================== -->
+  <g transform="translate(48, 356)">
+    <rect x="0" y="0" width="960" height="104" rx="12" fill="#1e293b" stroke="#0ea5e9" stroke-width="1.8"/>
+    <rect x="16" y="14" width="84" height="22" rx="6" fill="#0369a1"/>
+    <text x="58" y="29" text-anchor="middle" class="badge-text" fill="#e0f2fe">PASS 1b</text>
+    <text x="114" y="30" class="heading">Local-First Fast Path (&lt;2ms via data/imdb-index.db)</text>
+    <text x="16" y="54" class="body">FTS5 title + year + director/cast search in local IMDb SQLite (<tspan class="mono">skipExternalApis: true</tspan>) → <tspan class="mono">scoreMatchCandidate()</tspan>.</text>
+    <text x="16" y="75" class="body">Anti-FP Guardrail: <tspan fill="#38bdf8" font-weight="600">tier === 'auto_accept'  AND  score ≥ 85  AND  (yearScore &gt; 0 OR peopleScore &gt; 0)  AND  gap ≥ 10</tspan></text>
+    <text x="16" y="93" class="muted">Skips ALL external search APIs &amp; LLM when local match is unambiguous with year/people backing!</text>
+  </g>
+
+  <!-- Pass 1b -> Matched Rail -->
+  <path d="M 1008 408 L 1110 408" class="arrow-green" marker-end="url(#ah-green)"/>
+  <text x="1058" y="400" text-anchor="middle" class="arrow-label" fill="#34d399">fast accept</text>
+
+  <!-- Arrow Pass 1b -> Pass 2 -->
+  <line x1="528" y1="460" x2="528" y2="492" class="arrow" marker-end="url(#ah-slate)"/>
+  <text x="542" y="480" class="arrow-label" fill="#94a3b8">ambiguous / year-less / not found</text>
+
+  <!-- ==================== PASS 2: MULTI-SOURCE RETRIEVAL ==================== -->
+  <g transform="translate(48, 496)">
+    <rect x="0" y="0" width="960" height="196" rx="12" class="card"/>
+    <rect x="16" y="14" width="76" height="22" rx="6" fill="#1e40af"/>
+    <text x="54" y="29" text-anchor="middle" class="badge-text" fill="#dbeafe">PASS 2</text>
+    <text x="106" y="30" class="heading">Multi-Source Candidate Retrieval (candidateRetriever.ts)</text>
+
+    <!-- Parallel Tiers 3-7 -->
+    <text x="16" y="56" class="muted">Tiers 3–7 run in PARALLEL (Promise.allSettled), merged in deterministic tier order:</text>
+    <g transform="translate(16, 66)">
+      <rect x="0" y="0" width="176" height="46" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="88" y="20" text-anchor="middle" class="mono" fill="#38bdf8">Tier 3: TMDB</text>
+      <text x="88" y="37" text-anchor="middle" class="muted">top 3 queries ∥</text>
+
+      <rect x="188" y="0" width="176" height="46" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="276" y="20" text-anchor="middle" class="mono" fill="#38bdf8">Tier 4: IMDb Sugg.</text>
+      <text x="276" y="37" text-anchor="middle" class="muted">top 3 queries ∥</text>
+
+      <rect x="376" y="0" width="176" height="46" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="464" y="20" text-anchor="middle" class="mono" fill="#38bdf8">Tier 5: Wikidata</text>
+      <text x="464" y="37" text-anchor="middle" class="muted">top 3 queries ∥</text>
+
+      <rect x="564" y="0" width="176" height="46" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="652" y="20" text-anchor="middle" class="mono" fill="#38bdf8">Tier 6: OMDb</text>
+      <text x="652" y="37" text-anchor="middle" class="muted">year → year-less</text>
+
+      <rect x="752" y="0" width="176" height="46" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="840" y="20" text-anchor="middle" class="mono" fill="#38bdf8">Tier 7: Wikipedia</text>
+      <text x="840" y="37" text-anchor="middle" class="muted">if local &lt; 3</text>
+    </g>
+
+    <!-- Gated Fallbacks 8-10 -->
+    <text x="16" y="134" class="muted">Gated Tail Fallbacks (only triggered when candidate pool is still thin):</text>
+    <g transform="translate(16, 144)">
+      <rect x="0" y="0" width="300" height="38" rx="8" class="subcard" stroke="#475569"/>
+      <text x="150" y="23" text-anchor="middle" class="mono">Tier 8: SearXNG (if cands &lt; 3)</text>
+
+      <rect x="314" y="0" width="300" height="38" rx="8" class="subcard" stroke="#475569"/>
+      <text x="464" y="23" text-anchor="middle" class="mono">Tier 9: DuckDuckGo (if empty)</text>
+
+      <rect x="628" y="0" width="300" height="38" rx="8" class="subcard" stroke="#475569"/>
+      <text x="778" y="23" text-anchor="middle" class="mono">Tier 10: Google CSE (if empty, ≤100/d)</text>
+    </g>
+  </g>
+
+  <!-- Arrow Pass 2 -> Pass 3 -->
+  <line x1="528" y1="692" x2="528" y2="724" class="arrow" marker-end="url(#ah-slate)"/>
+
+  <!-- ==================== PASS 3: SCORING + PASS-1 HYDRATED LLM ==================== -->
+  <g transform="translate(48, 728)">
+    <rect x="0" y="0" width="960" height="224" rx="12" class="card"/>
+    <rect x="16" y="14" width="76" height="22" rx="6" fill="#0f766e"/>
+    <text x="54" y="29" text-anchor="middle" class="badge-text" fill="#ccfbf1">PASS 3</text>
+    <text x="106" y="30" class="heading">Deterministic Scoring + Hydrated LLM Adjudication (Pass 1)</text>
+
+    <!-- 3a Deterministic -->
+    <g transform="translate(16, 46)">
+      <rect x="0" y="0" width="928" height="66" rx="8" class="subcard"/>
+      <text x="14" y="21" class="body" font-weight="700" fill="#f1f5f9">3a. Deterministic Auto-Accept Check</text>
+      <text x="14" y="40" class="body">Scores all candidates (title, year, runtime, director/cast). Auto-accepts ONLY when:</text>
+      <text x="14" y="57" class="mono" fill="#34d399">tier === 'auto_accept'  AND  (yearScore &gt; 0 OR peopleScore &gt; 0)  AND  gap ≥ 10</text>
+    </g>
+
+    <!-- 3b Hydrated LLM -->
+    <g transform="translate(16, 120)">
+      <rect x="0" y="0" width="928" height="92" rx="8" class="subcard" stroke="#6366f1"/>
+      <text x="14" y="22" class="body" font-weight="700" fill="#a5b4fc">3b. Candidate Hydration + LLM Adjudicator (adjudicateCandidates)</text>
+      <text x="14" y="43" class="body">1. Hydrates top 5 candidates from local <tspan class="mono">imdb-index.db</tspan> + top 3 Plot/Director/Actors from <tspan class="mono">OMDb (cached)</tspan>.</text>
+      <text x="14" y="63" class="body">2. LLM (<tspan class="mono">gemini-2.5-flash-lite</tspan> → retry/fallback <tspan class="mono">gpt-4o-mini</tspan>) picks best match with strict anti-FP rules.</text>
+      <text x="14" y="81" class="muted">3. If verdict='match' &amp; conf ≥ 0.85 → final OMDb runtime sanity check (blocks feature-vs-short &amp; major runtime mismatches).</text>
+    </g>
+  </g>
+
+  <!-- Pass 3 -> Matched Rail -->
+  <path d="M 1008 815 L 1110 815" class="arrow-green" marker-end="url(#ah-green)"/>
+  <text x="1058" y="807" text-anchor="middle" class="arrow-label" fill="#34d399">det / LLM ≥0.85</text>
+
+  <!-- Arrow Pass 3 -> Pass 4 -->
+  <line x1="528" y1="952" x2="528" y2="984" class="arrow" marker-end="url(#ah-slate)"/>
+  <text x="542" y="972" class="arrow-label" fill="#94a3b8">no confident Pass-1 match (records Pass-1 rejected IDs)</text>
+
+  <!-- ==================== PASS 4: PHASE 2 LLM QUERY PLANNER ==================== -->
+  <g transform="translate(48, 988)">
+    <rect x="0" y="0" width="960" height="288" rx="12" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.8"/>
+    <rect x="16" y="14" width="76" height="22" rx="6" fill="#6d28d9"/>
+    <text x="54" y="29" text-anchor="middle" class="badge-text" fill="#ede9fe">PASS 4</text>
+    <text x="106" y="30" class="heading">Phase 2: LLM Query Planner + Parallel Fan-Out + Re-Adjudication</text>
+
+    <!-- 4a Query Planner -->
+    <g transform="translate(16, 46)">
+      <rect x="0" y="0" width="928" height="68" rx="8" class="subcard" stroke="#8b5cf6"/>
+      <text x="14" y="22" class="body" font-weight="700" fill="#c4b5fd">4a. LLM Query Planner (planMatchQueries)</text>
+      <text x="14" y="42" class="body">Reads raw title, Archive slug / YouTube description, channel, duration &amp; Pass-1 rejected candidates.</text>
+      <text x="14" y="59" class="muted">Outputs: <tspan class="mono">isMovie</tspan> (false for newsreels/trailers/ads/talks), <tspan class="mono">canonicalTitle</tspan>, <tspan class="mono">originalTitle</tspan>, <tspan class="mono">altTitles</tspan>, <tspan class="mono">year</tspan>, <tspan class="mono">director/cast</tspan>, <tspan class="mono">webQueries[2]</tspan>.</text>
+    </g>
+
+    <!-- 4b Parallel Fan-out -->
+    <g transform="translate(16, 124)">
+      <rect x="0" y="0" width="454" height="68" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="14" y="22" class="body" font-weight="700" fill="#38bdf8">4b-i. Planned Multi-Source Retrieval ∥</text>
+      <text x="14" y="42" class="body"><tspan class="mono">retrieveCandidates()</tspan> with planned canonical/alt titles</text>
+      <text x="14" y="59" class="muted">+ extracted year, director &amp; cast</text>
+
+      <rect x="474" y="0" width="454" height="68" rx="8" class="subcard" stroke="#38bdf8"/>
+      <text x="488" y="22" class="body" font-weight="700" fill="#38bdf8">4b-ii. Parallel SearXNG Raw Web Queries ∥</text>
+      <text x="488" y="42" class="body"><tspan class="mono">searchSearxngRawForImdb()</tspan> on <tspan class="mono">webQueries[0..1]</tspan></text>
+      <text x="488" y="59" class="muted">Scoped to <tspan class="mono">site:imdb.com/title</tspan> (Bing/SearXNG)</text>
+    </g>
+
+    <!-- 4c Pass 2 Adjudication -->
+    <g transform="translate(16, 202)">
+      <rect x="0" y="0" width="928" height="72" rx="8" class="subcard" stroke="#6366f1"/>
+      <text x="14" y="22" class="body" font-weight="700" fill="#a5b4fc">4c. Fresh Candidate Hydration + LLM Adjudication (Pass 2)</text>
+      <text x="14" y="42" class="body">Filters out Pass-1 rejected IDs, hydrates fresh top candidates (local IMDb + cached OMDb), runs <tspan class="mono">adjudicateCandidates()</tspan>.</text>
+      <text x="14" y="60" class="muted">If verdict='match' &amp; conf ≥ 0.85 + passes OMDb runtime check → Auto-Match! Otherwise falls through to Queue / No Match.</text>
+    </g>
+  </g>
+
+  <!-- Pass 4 -> Not a movie -->
+  <path d="M 1008 1068 L 1110 1068" class="arrow-purple" marker-end="url(#ah-purple)"/>
+  <text x="1058" y="1060" text-anchor="middle" class="arrow-label" fill="#c084fc">isMovie=false</text>
+
+  <!-- Pass 4 -> Matched Rail -->
+  <path d="M 1008 1226 L 1060 1226 L 1060 815" class="arrow-green"/>
+  <text x="1058" y="1244" text-anchor="middle" class="arrow-label" fill="#34d399">Pass 2 ≥0.85</text>
+
+  <!-- Arrow Pass 4 -> Fallback Decision -->
+  <line x1="528" y1="1276" x2="528" y2="1312" class="arrow" marker-end="url(#ah-slate)"/>
+  <text x="542" y="1298" class="arrow-label" fill="#94a3b8">still unmatched</text>
+
+  <!-- ==================== STAGE 5: UNCERTAIN vs NO MATCH ==================== -->
+  <g transform="translate(48, 1316)">
+    <rect x="0" y="0" width="960" height="108" rx="12" class="card"/>
+    <rect x="16" y="14" width="112" height="22" rx="6" fill="#b45309"/>
+    <text x="72" y="29" text-anchor="middle" class="badge-text" fill="#fef3c7">FALLBACK GATE</text>
+    <text x="142" y="30" class="heading">Uncertain Candidate → Review Queue  |  No Candidate → No Match</text>
+    <text x="16" y="56" class="body">• If Pass 1 or Pass 2 LLM returned <tspan class="mono">verdict = 'uncertain'</tspan> or <tspan class="mono">'match'</tspan> with <tspan class="mono">conf &lt; 0.85</tspan> (with a candidate ID) → enqueue <tspan class="mono">kind='new_match'</tspan>.</text>
+    <text x="16" y="77" class="body">• Otherwise (no candidates, or LLM confirmed <tspan class="mono">mismatch</tspan>) → record <tspan class="mono">no_match</tspan> in <tspan class="mono">match_attempts</tspan>.</text>
+    <text x="16" y="96" class="muted">• On transient error → record <tspan class="mono">error</tspan> (does not blacklist candidates).</text>
+  </g>
+
+  <!-- Fallback -> Queue & No Match -->
+  <path d="M 1008 1352 L 1110 1352" class="arrow-amber" marker-end="url(#ah-amber)"/>
+  <text x="1058" y="1344" text-anchor="middle" class="arrow-label" fill="#fbbf24">uncertain</text>
+
+  <path d="M 1008 1398 L 1110 1398" class="arrow-red" marker-end="url(#ah-red)"/>
+  <text x="1058" y="1390" text-anchor="middle" class="arrow-label" fill="#f87171">no match</text>
+
+  <!-- ==================== RIGHT COLUMN: OUTCOMES + DB SERIALIZER ==================== -->
+
+  <!-- Outcome 1: Matched -->
+  <g transform="translate(1114, 236)">
+    <rect x="0" y="0" width="278" height="632" rx="12" fill="#064e3b" fill-opacity="0.35" stroke="#10b981" stroke-width="2"/>
+    <rect x="16" y="16" width="124" height="24" rx="6" fill="#059669"/>
+    <text x="78" y="32" text-anchor="middle" class="badge-text" fill="#ecfdf5">AUTO-MATCHED</text>
+    <text x="16" y="64" class="heading" fill="#6ee7b7">Persist to SQLite</text>
+    <text x="16" y="88" class="body">Inside <tspan class="mono">serializeDbWrite()</tspan>:</text>
+    <text x="16" y="116" class="mono">1. migrateMovieId(</text>
+    <text x="28" y="134" class="mono">oldId → ttXXXXXXX)</text>
+    <text x="16" y="160" class="mono">2. upsertMetadataAndMovie()</text>
+    <text x="28" y="178" class="muted">(uses cached OMDb meta)</text>
+    <text x="16" y="204" class="mono">3. recordAttempt('matched')</text>
+
+    <line x1="16" y1="232" x2="262" y2="232" stroke="#10b981" stroke-opacity="0.35"/>
+
+    <text x="16" y="258" class="body" font-weight="700" fill="#a7f3d0">Match Entry Points:</text>
+    <text x="16" y="284" class="body">• Pass 1: Direct URL</text>
+    <text x="16" y="308" class="body">• Pass 1b: Local Fast Path</text>
+    <text x="16" y="332" class="body">• Pass 3a: Deterministic</text>
+    <text x="16" y="356" class="body">• Pass 3b: LLM Pass 1</text>
+    <text x="16" y="380" class="body">• Pass 4c: LLM Pass 2</text>
+
+    <line x1="16" y1="406" x2="262" y2="406" stroke="#10b981" stroke-opacity="0.35"/>
+
+    <text x="16" y="432" class="body" font-weight="700" fill="#a7f3d0">60-Movie Benchmark:</text>
+    <text x="16" y="458" class="heading" fill="#34d399">76.7% Raw</text>
+    <text x="16" y="482" class="heading" fill="#6ee7b7">86.8% Eligible</text>
+    <text x="16" y="508" class="muted">46 / 53 real movies</text>
+    <text x="16" y="528" class="muted">(7 classified not_a_movie)</text>
+
+    <line x1="16" y1="554" x2="262" y2="554" stroke="#10b981" stroke-opacity="0.35"/>
+    <text x="16" y="580" class="body" font-weight="700" fill="#a7f3d0">Throughput (5× pool):</text>
+    <text x="16" y="604" class="mono" fill="#6ee7b7">~1.5s / movie (~40/min)</text>
+  </g>
+
+  <!-- Outcome 2: Not a Movie -->
+  <g transform="translate(1114, 1016)">
+    <rect x="0" y="0" width="278" height="108" rx="12" fill="#4c1d95" fill-opacity="0.35" stroke="#a855f7" stroke-width="2"/>
+    <rect x="16" y="14" width="108" height="22" rx="6" fill="#7e22ce"/>
+    <text x="70" y="29" text-anchor="middle" class="badge-text" fill="#f3e8ff">NOT A MOVIE</text>
+    <text x="16" y="58" class="body">Newsreels, ads, trailers, talks.</text>
+    <text x="16" y="78" class="mono">recordAttempt('not_a_movie')</text>
+    <text x="16" y="96" class="muted">Skips retrieval &amp; review queue.</text>
+  </g>
+
+  <!-- Outcome 3: Review Queue -->
+  <g transform="translate(1114, 1304)">
+    <rect x="0" y="0" width="278" height="72" rx="12" fill="#78350f" fill-opacity="0.35" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="16" y="12" width="118" height="22" rx="6" fill="#d97706"/>
+    <text x="75" y="27" text-anchor="middle" class="badge-text" fill="#fef3c7">REVIEW QUEUE</text>
+    <text x="16" y="56" class="mono">enqueueReviewItem('new_match')</text>
+  </g>
+
+  <!-- Outcome 4: No Match -->
+  <g transform="translate(1114, 1388)">
+    <rect x="0" y="0" width="278" height="72" rx="12" fill="#7f1d1d" fill-opacity="0.35" stroke="#ef4444" stroke-width="2"/>
+    <rect x="16" y="12" width="96" height="22" rx="6" fill="#dc2626"/>
+    <text x="64" y="27" text-anchor="middle" class="badge-text" fill="#fee2e2">NO MATCH</text>
+    <text x="16" y="56" class="mono">recordAttempt('no_match')</text>
+  </g>
+
+  <!-- ==================== FOOTER: LIVE PROGRESS & RESUMABILITY ==================== -->
+  <g transform="translate(48, 1468)">
+    <rect x="0" y="0" width="1344" height="108" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+    <rect x="16" y="14" width="196" height="22" rx="6" fill="#334155"/>
+    <text x="114" y="29" text-anchor="middle" class="badge-text" fill="#f1f5f9">PER-MOVIE FINALLY BLOCK</text>
+    <text x="228" y="30" class="heading">Serialized SQLite Commits + Live SSE Progress &amp; ETA</text>
+    <text x="16" y="58" class="body">• Every movie commits immediately via <tspan class="mono">serializeDbWrite()</tspan> — safe to restart the server at any time without losing progress.</text>
+    <text x="16" y="80" class="body">• <tspan class="mono">emitProgress({ type: 'audit', current: scanned, total, estimatedTimeRemaining: computeEtaSeconds(...) })</tspan> streams live to Admin UI.</text>
+    <text x="16" y="99" class="muted">• Next run automatically starts with never-attempted movies (<tspan class="mono">match_attempts.attemptedAt IS NULL</tspan>), then cycles oldest-attempted first.</text>
+  </g>
+</svg>
