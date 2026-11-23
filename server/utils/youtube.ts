@@ -1,11 +1,17 @@
 import type { Innertube } from 'youtubei.js'
-import { generateYouTubeId, type MovieEntry, type MovieSource } from '../../shared/types/movie'
+import {
+  generateYouTubeId,
+  type MovieEntry,
+  type MovieSource,
+  type YouTubeRegionRestriction,
+} from '../../shared/types/movie'
 import {
   saveFailedYouTubeVideo,
   removeFailedYouTubeVideo,
   loadFailedYouTubeVideos,
   type FailureReason,
 } from './failedYoutube'
+import { probeYouTubeSources, type SourceProbeResult } from './sourceProbe'
 import type Database from 'better-sqlite3'
 
 function getMinMovieDurationSeconds(): number {
@@ -109,6 +115,23 @@ export async function fetchChannelVideos(
   // Filter out already scraped videos
   const newVideoIds = allVideoIds.filter(id => !existingVideoIds.has(id))
   console.log(`New videos to process: ${newVideoIds.length}`)
+
+  // Batch-probe candidate videos via YouTube Data API v3 to populate regionRestriction
+  const candidateIds = newVideoIds.filter(id => !failedVideoIds.has(id))
+  let probeResults = new Map<string, SourceProbeResult>()
+  if (candidateIds.length > 0) {
+    try {
+      probeResults = await probeYouTubeSources(candidateIds, {
+        apiKey: youtubeApiKey,
+        skipStage2: true,
+      })
+    } catch (error) {
+      console.warn(
+        '[YouTube] Failed to probe regionRestriction for new videos, continuing without it:',
+        error
+      )
+    }
+  }
 
   let count = 0
 
@@ -222,6 +245,7 @@ export async function fetchChannelVideos(
         channelId: fullVideo.basic_info.channel_id || channelIdentifier,
         duration,
         viewCount: fullVideo.basic_info.view_count || 0,
+        regionRestriction: probeResults.get(videoId)?.regionRestriction,
       }
 
       // Process video into movie entry
@@ -275,6 +299,7 @@ export async function processYouTubeVideo(
     channelId: string
     duration?: number
     viewCount?: number
+    regionRestriction?: YouTubeRegionRestriction
   },
   channelConfig: { id: string; language?: string } | undefined
 ): Promise<MovieEntry | null> {
@@ -292,6 +317,7 @@ export async function processYouTubeVideo(
     language: channelConfig?.language,
     duration: video.duration,
     viewCount: video.viewCount,
+    regionRestriction: video.regionRestriction,
     addedAt: Math.floor(Date.now() / 1000), // Unix timestamp
   }
 
