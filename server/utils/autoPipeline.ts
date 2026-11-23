@@ -2101,9 +2101,24 @@ export async function runAutoMatchUnmatched(
      VALUES (?, ?, ?, ?, ?)
      ON CONFLICT(movieId) DO UPDATE SET
        attemptedAt = excluded.attemptedAt,
-       outcome = excluded.outcome,
-       candidateCount = excluded.candidateCount,
-       reason = excluded.reason`
+       outcome = CASE
+         WHEN excluded.outcome = 'pass1_deferred'
+           AND match_attempts.outcome IN ('no_match', 'not_a_movie', 'queued', 'error')
+         THEN match_attempts.outcome
+         ELSE excluded.outcome
+       END,
+       candidateCount = CASE
+         WHEN excluded.outcome = 'pass1_deferred'
+           AND match_attempts.outcome IN ('no_match', 'not_a_movie', 'queued', 'error')
+         THEN match_attempts.candidateCount
+         ELSE excluded.candidateCount
+       END,
+       reason = CASE
+         WHEN excluded.outcome = 'pass1_deferred'
+           AND match_attempts.outcome IN ('no_match', 'not_a_movie', 'queued', 'error')
+         THEN match_attempts.reason
+         ELSE excluded.reason
+       END`
   )
   const recordAttempt = (
     movieId: string,
