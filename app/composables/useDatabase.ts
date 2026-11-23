@@ -296,7 +296,7 @@ function createDatabase(): UseDatabaseReturn {
 
   /**
    * Attach an embeddings database for a specific model
-   * @param modelId - The model ID (e.g., 'nomic', 'leaf-ir', 'potion')
+   * @param modelId - The model ID (e.g., 'leaf-ir')
    * @returns Promise that resolves with the embeddings count on success
    */
   const attachEmbeddings = async (modelId: string): Promise<number> => {

@@ -1,6 +1,5 @@
 /**
  * Unified interface for embedding providers in the browser.
- * Both LEAF IR and Potion embedding modules should implement this interface.
  */
 export interface EmbeddingProvider {
   /** Name of the model provider */

@@ -4,15 +4,14 @@
  * Precalculates movie-to-movie similarity using vector embeddings (KNN search)
  * and stores results in a lightweight lookup database (data/similar-movies.db).
  *
- * This is an expensive operation (~12 min for leaf-ir 256d, ~2 min for potion 64d)
+ * This is an expensive operation (~12 min for leaf-ir 256d)
  * and should be run locally whenever embeddings are updated.
  *
  * The generated DB is committed to the repo and read during `pnpm db:generate`.
  *
  * Usage:
  *   pnpm similar:generate                    # Use default (leaf-ir)
- *   pnpm similar:generate --model=potion     # Use potion (64d, faster)
- *   pnpm similar:generate --model=leaf-ir    # Use leaf-ir (256d int8, better quality)
+ *   pnpm similar:generate --model=leaf-ir    # Use leaf-ir (256d int8)
  *   pnpm similar:generate --limit=15         # Store top 15 similar (default: 10)
  */
 
@@ -36,7 +35,7 @@ Usage: pnpm similar:generate [options]
 
 Options:
   --model=<id>   Embedding model to use (default: leaf-ir)
-                 Available: leaf-ir (256d int8), potion (64d)
+                 Available: leaf-ir (256d int8)
   --limit=<n>    Number of similar movies to store per movie (default: 10)
   -h, --help     Show this help message
 

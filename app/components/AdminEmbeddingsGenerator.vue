@@ -21,12 +21,6 @@
               :label="getModelLabel(model)"
               :disabled="generating"
             />
-            <p
-              v-if="model.id === 'nomic'"
-              class="text-[10px] text-amber-600 dark:text-amber-400 ml-6 -mt-1"
-            >
-              Requires Ollama server running locally (slow)
-            </p>
           </div>
         </div>
         <div class="flex items-center gap-2 mt-2">
@@ -210,12 +204,11 @@ interface ModelResult {
 
 const { progress } = storeToRefs(useAdminStore())
 
-// Default to faster models (leaf-ir and potion), exclude slow nomic
-// Initialize all models to false to avoid undefined values
+// Select leaf-ir by default
 const selectedModels = ref<Record<string, boolean>>(
   EMBEDDING_MODELS.reduce(
     (acc, model) => {
-      acc[model.id] = model.id === 'leaf-ir' || model.id === 'potion'
+      acc[model.id] = model.id === 'leaf-ir'
       return acc
     },
     {} as Record<string, boolean>

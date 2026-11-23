@@ -65,9 +65,6 @@ export async function initEmbeddingsDatabase(
   insertConfig.run('embedding_model_name', modelConfig.name)
   insertConfig.run('embedding_dimensions', modelConfig.dimensions.toString())
   insertConfig.run('embedding_quantization', modelConfig.quantization || 'float32')
-  if (modelConfig.ollamaModel) {
-    insertConfig.run('embedding_model_ollama', modelConfig.ollamaModel)
-  }
 
   return db
 }

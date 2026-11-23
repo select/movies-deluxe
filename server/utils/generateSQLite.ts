@@ -187,7 +187,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
       );
 
       -- Note: Vector embeddings are stored externally in separate DB files
-      -- (e.g., data/embeddings-nomic.db) to keep movies.db lightweight
+      -- (e.g., public/data/embeddings-leaf-ir-movies.db) to keep movies.db lightweight
 
       -- Config table for metadata
       CREATE TABLE config (

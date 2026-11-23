@@ -316,7 +316,7 @@ export const useMovieStore = defineStore('movie', () => {
    * Load embeddings for semantic search
    * Deduplicates concurrent calls for the same modelId and serializes switches to a different
    * modelId so the worker never receives concurrent attach-embeddings requests.
-   * @param modelId - The embedding model ID (e.g., 'nomic', 'leaf-ir', 'potion')
+   * @param modelId - The embedding model ID (e.g., 'leaf-ir')
    */
   const loadEmbeddings = async (modelId: string): Promise<number> => {
     if (currentEmbeddingsLoad?.modelId === modelId) {

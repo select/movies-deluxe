@@ -1,9 +1,8 @@
 import { LeafIrEmbeddingProvider } from '../utils/embedding/leafIrEmbedding'
-import { PotionEmbeddingProvider } from '../utils/embedding/potionEmbedding'
 import type { EmbeddingProvider } from '../types/embedding'
 
 let currentProvider: EmbeddingProvider | null = null
-let currentProviderName: 'leaf-ir' | 'potion' | null = null
+let currentProviderName: 'leaf-ir' | null = null
 let cachedBaseURL = '/'
 
 self.onmessage = async (e: MessageEvent) => {
@@ -28,8 +27,6 @@ self.onmessage = async (e: MessageEvent) => {
 
       if (provider === 'leaf-ir') {
         currentProvider = new LeafIrEmbeddingProvider()
-      } else if (provider === 'potion') {
-        currentProvider = new PotionEmbeddingProvider()
       } else {
         throw new Error(`Unknown provider: ${provider}`)
       }

@@ -2,7 +2,7 @@
  * Embeddings Generation API Endpoint
  *
  * Generates embeddings for movies using the specified embedding model(s).
- * Supports: nomic (Ollama), leaf-ir (local Transformers.js), potion (local ONNX)
+ * Supports: leaf-ir (local Transformers.js)
  *
  * NOTE: We use dynamic imports for model-specific modules to avoid loading
  * heavy dependencies (like onnxruntime-node) at startup.
@@ -22,7 +22,7 @@ import { emitProgress } from '#server/utils/progress'
 import { movieToMarkdown } from '#server/utils/movieEmbeddings'
 
 interface GenerateEmbeddingsRequest {
-  models: string[] // ['nomic', 'leaf-ir', 'potion'] or ['all']
+  models: string[] // ['leaf-ir'] or ['all']
   limit?: number
   forceRebuild?: boolean
 }
@@ -68,7 +68,7 @@ class RollingAverage {
 
 export default defineEventHandler(async event => {
   const body = await readBody<GenerateEmbeddingsRequest>(event)
-  const { models: requestModels = ['nomic'], limit = 0, forceRebuild = false } = body || {}
+  const { models: requestModels = ['leaf-ir'], limit = 0, forceRebuild = false } = body || {}
   let models = requestModels
 
   // Handle 'all' option
@@ -104,20 +104,11 @@ export default defineEventHandler(async event => {
     let checkAvailability: () => Promise<{ available: boolean; error?: string }>
 
     try {
-      if (modelId === 'nomic') {
-        const nomicModule = await import('../../../utils/embeddings/_nomic')
-        checkAvailability = nomicModule.checkNomicAvailability
-        generateEmbedding = (text: string) => nomicModule.generateNomicEmbedding(text, modelConfig)
-      } else if (modelId === 'leaf-ir') {
+      if (modelId === 'leaf-ir') {
         const leafIrModule = await import('../../../utils/embeddings/_leafIr')
         checkAvailability = leafIrModule.checkLeafIrAvailability
         initPipeline = leafIrModule.initLeafIrPipeline
         generateEmbedding = leafIrModule.generateLeafIrEmbedding
-      } else if (modelId === 'potion') {
-        const potionModule = await import('../../../utils/embeddings/_potion')
-        checkAvailability = potionModule.checkPotionAvailability
-        initPipeline = potionModule.initPotionPipeline
-        generateEmbedding = potionModule.generatePotionEmbedding
       } else {
         errors.push(`Unknown model type: ${modelId}`)
         continue

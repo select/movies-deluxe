@@ -8,8 +8,8 @@ export interface UseBrowserEmbeddingReturn {
   isReady: Ref<boolean>
   error: Ref<string | null>
   progress: Ref<number>
-  currentProvider: Ref<'leaf-ir' | 'potion' | null>
-  init: (provider: 'leaf-ir' | 'potion') => Promise<void>
+  currentProvider: Ref<'leaf-ir' | null>
+  init: (provider: 'leaf-ir') => Promise<void>
   embed: (text: string) => Promise<Float32Array | Int8Array>
   dispose: () => Promise<void>
 }
@@ -19,7 +19,7 @@ export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
   const isReady = ref(false)
   const error = ref<string | null>(null)
   const progress = ref(0)
-  const currentProvider = ref<'leaf-ir' | 'potion' | null>(null)
+  const currentProvider = ref<'leaf-ir' | null>(null)
 
   let worker: Worker | null = null
   const pendingRequests = new Map<
@@ -76,7 +76,7 @@ export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
   /**
    * Initialize the embedding provider.
    */
-  const init = async (provider: 'leaf-ir' | 'potion') => {
+  const init = async (provider: 'leaf-ir') => {
     if (currentProvider.value === provider && isReady.value) return
 
     isLoading.value = true

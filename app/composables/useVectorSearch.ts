@@ -6,7 +6,6 @@ import { useMovieStore } from '~/stores/useMovieStore'
 import { ref } from 'vue'
 
 // Default to leaf-ir - runs in browser, MRL 256d + int8 quantized
-// Options: 'leaf-ir' (256d int8) or 'potion' (64d float32)
 const DEFAULT_EMBEDDING_MODEL = 'leaf-ir'
 
 export interface UseVectorSearchReturn {
@@ -99,15 +98,14 @@ export function useVectorSearch(): UseVectorSearchReturn {
       // Auto-detect model from database config
       const modelInfo = await db.getEmbeddingModelInfo()
 
-      // Only leaf-ir and potion are supported in browser
+      // Only leaf-ir is supported in browser
       const modelId = modelInfo?.id
-      if (modelId !== 'leaf-ir' && modelId !== 'potion') {
-        error.value = `Unsupported embedding model: ${modelId}. Only leaf-ir and potion work in browser.`
+      if (modelId !== 'leaf-ir') {
+        error.value = `Unsupported embedding model: ${modelId}. Only leaf-ir works in browser.`
         return []
       }
 
-      const provider = modelId === 'leaf-ir' ? 'leaf-ir' : 'potion'
-      await browserEmbedding.init(provider)
+      await browserEmbedding.init('leaf-ir')
       const embedding = await browserEmbedding.embed(query)
 
       // 2. Perform vector search in the database worker
