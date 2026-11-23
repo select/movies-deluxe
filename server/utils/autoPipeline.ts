@@ -1311,18 +1311,32 @@ export async function runAutoAuditFalseHits(
           if (replacementId && isImdbId(replacementId)) {
             const finalReplacementId = replacementId
             const finalReplacementMeta = replacementMeta
-            autoRematched++
+            let migrated = dryRun
             if (!dryRun) {
               await serializeDbWrite(async () => {
-                const mig = await migrateMovieId(movie.movieId, finalReplacementId)
-                if (mig.success && finalReplacementMeta) {
-                  upsertMetadataAndMovie(db, finalReplacementId, finalReplacementMeta)
+                const mig = await migrateMovieId(movie.movieId, finalReplacementId, {
+                  mergeIfExists: true,
+                })
+                if (mig.success) {
+                  migrated = true
+                  if (finalReplacementMeta) {
+                    upsertMetadataAndMovie(db, finalReplacementId, finalReplacementMeta)
+                  }
+                  resolveReviewItem(db, row.id, 'resolved')
+                  deleteAudit(movie.movieId)
+                  recordAudit(finalReplacementId, 'rematched', `Rematched from ${movie.movieId}`)
+                } else {
+                  console.error(
+                    `[AutoAuditFalseHits] Failed to migrate ${movie.movieId} -> ${finalReplacementId}: ${mig.message}`
+                  )
                 }
-                resolveReviewItem(db, row.id, 'resolved')
-                deleteAudit(movie.movieId)
-                recordAudit(finalReplacementId, 'rematched', `Rematched from ${movie.movieId}`)
               })
             }
+            if (!migrated) {
+              errors++
+              return
+            }
+            autoRematched++
             if (samples.length < 30) {
               samples.push({
                 movieId: movie.movieId,
@@ -1539,22 +1553,36 @@ export async function runAutoAuditFalseHits(
           if (replacementId && isImdbId(replacementId)) {
             const finalReplacementId = replacementId
             const finalReplacementMeta = replacementMeta
-            autoRematched++
+            let migrated = dryRun
             if (!dryRun) {
               await serializeDbWrite(async () => {
-                const mig = await migrateMovieId(movie.movieId, finalReplacementId)
-                if (mig.success && finalReplacementMeta) {
-                  upsertMetadataAndMovie(db, finalReplacementId, finalReplacementMeta)
+                const mig = await migrateMovieId(movie.movieId, finalReplacementId, {
+                  mergeIfExists: true,
+                })
+                if (mig.success) {
+                  migrated = true
+                  if (finalReplacementMeta) {
+                    upsertMetadataAndMovie(db, finalReplacementId, finalReplacementMeta)
+                  }
+                  db.prepare(
+                    `UPDATE match_review_queue
+                     SET status = 'resolved', resolvedAt = datetime('now')
+                     WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
+                  ).run(movie.movieId)
+                  deleteAudit(movie.movieId)
+                  recordAudit(finalReplacementId, 'rematched', `Rematched from ${movie.movieId}`)
+                } else {
+                  console.error(
+                    `[AutoAuditFalseHits] Failed to migrate ${movie.movieId} -> ${finalReplacementId}: ${mig.message}`
+                  )
                 }
-                db.prepare(
-                  `UPDATE match_review_queue
-                   SET status = 'resolved', resolvedAt = datetime('now')
-                   WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
-                ).run(movie.movieId)
-                deleteAudit(movie.movieId)
-                recordAudit(finalReplacementId, 'rematched', `Rematched from ${movie.movieId}`)
               })
             }
+            if (!migrated) {
+              errors++
+              return
+            }
+            autoRematched++
             if (samples.length < 30) {
               samples.push({
                 movieId: movie.movieId,
@@ -1918,14 +1946,28 @@ export async function runAutoResolveFalseHitQueue(
           }
 
           if (replacementId && isImdbId(replacementId)) {
-            autoRematched++
+            let migrated = dryRun
             if (!dryRun) {
-              const mig = await migrateMovieId(movie.movieId, replacementId)
-              if (mig.success && replacementMeta) {
-                upsertMetadataAndMovie(db, replacementId, replacementMeta)
+              const mig = await migrateMovieId(movie.movieId, replacementId, {
+                mergeIfExists: true,
+              })
+              if (mig.success) {
+                migrated = true
+                if (replacementMeta) {
+                  upsertMetadataAndMovie(db, replacementId, replacementMeta)
+                }
+                resolveReviewItem(db, row.id, 'resolved')
+              } else {
+                console.error(
+                  `[AutoResolveQueue] Failed to migrate ${movie.movieId} -> ${replacementId}: ${mig.message}`
+                )
               }
-              resolveReviewItem(db, row.id, 'resolved')
             }
+            if (!migrated) {
+              errors++
+              continue
+            }
+            autoRematched++
             if (samples.length < 30) {
               samples.push({
                 queueId: row.id,
@@ -2135,6 +2177,11 @@ export async function runAutoMatchUnmatched(
       reason ?? null
     )
   }
+  const deleteAttemptStmt = db.prepare('DELETE FROM match_attempts WHERE movieId = ?')
+  const deleteAttempt = (movieId: string) => {
+    if (dryRun) return
+    deleteAttemptStmt.run(movieId)
+  }
 
   const total = movies.length
   let scanned = 0
@@ -2191,15 +2238,25 @@ export async function runAutoMatchUnmatched(
         const directId = extractImdbIdFromText(movie.sourceDescription || undefined)
         if (directId) {
           const meta = await fetchOmdbCached(directId, omdbApiKey, omdbCache)
+          let migrated = dryRun
           await serializeDbWrite(async () => {
             if (!dryRun) {
-              const mig = await migrateMovieId(movie.movieId, directId)
-              if (mig.success && meta) {
-                upsertMetadataAndMovie(db, directId, meta)
+              const mig = await migrateMovieId(movie.movieId, directId, { mergeIfExists: true })
+              if (mig.success) {
+                migrated = true
+                if (meta) {
+                  upsertMetadataAndMovie(db, directId, meta)
+                }
+                deleteAttempt(movie.movieId)
+              } else {
+                recordAttempt(movie.movieId, 'error', 1, mig.message)
               }
             }
-            recordAttempt(movie.movieId, 'matched', 1, `Direct IMDb ID ${directId}`)
           })
+          if (!migrated) {
+            errors++
+            return
+          }
           directUrlMatches++
           if (samples.length < 30) {
             samples.push({
@@ -2272,20 +2329,27 @@ export async function runAutoMatchUnmatched(
             (!localSecond || localTop.result.score - localSecond.result.score >= 10)
           ) {
             const meta = await fetchOmdbCached(localTop.cand.imdbId, omdbApiKey, omdbCache)
+            let migrated = dryRun
             await serializeDbWrite(async () => {
               if (!dryRun) {
-                const mig = await migrateMovieId(movie.movieId, localTop.cand.imdbId)
-                if (mig.success && meta) {
-                  upsertMetadataAndMovie(db, localTop.cand.imdbId, meta)
+                const mig = await migrateMovieId(movie.movieId, localTop.cand.imdbId, {
+                  mergeIfExists: true,
+                })
+                if (mig.success) {
+                  migrated = true
+                  if (meta) {
+                    upsertMetadataAndMovie(db, localTop.cand.imdbId, meta)
+                  }
+                  deleteAttempt(movie.movieId)
+                } else {
+                  recordAttempt(movie.movieId, 'error', localCandidates.length, mig.message)
                 }
               }
-              recordAttempt(
-                movie.movieId,
-                'matched',
-                localCandidates.length,
-                `Local deterministic auto-accept (${localTop.cand.imdbId}, score ${localTop.result.score})`
-              )
             })
+            if (!migrated) {
+              errors++
+              return
+            }
             deterministicMatches++
             if (samples.length < 30) {
               samples.push({
@@ -2373,20 +2437,27 @@ export async function runAutoMatchUnmatched(
                   !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
                   !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
                 ) {
+                  let migrated = dryRun
                   await serializeDbWrite(async () => {
                     if (!dryRun) {
-                      const mig = await migrateMovieId(movie.movieId, chosenId)
-                      if (mig.success && meta) {
-                        upsertMetadataAndMovie(db, chosenId, meta)
+                      const mig = await migrateMovieId(movie.movieId, chosenId, {
+                        mergeIfExists: true,
+                      })
+                      if (mig.success) {
+                        migrated = true
+                        if (meta) {
+                          upsertMetadataAndMovie(db, chosenId, meta)
+                        }
+                        deleteAttempt(movie.movieId)
+                      } else {
+                        recordAttempt(movie.movieId, 'error', localCandidates.length, mig.message)
                       }
                     }
-                    recordAttempt(
-                      movie.movieId,
-                      'matched',
-                      localCandidates.length,
-                      `Local IMDb + Jev fast-path (${chosenId}, conf ${localJevAdj.confidence})`
-                    )
                   })
+                  if (!migrated) {
+                    errors++
+                    return
+                  }
                   llmMatches++
                   if (samples.length < 30) {
                     const chosenCand = localAdjudicateList.find(
@@ -2457,20 +2528,27 @@ export async function runAutoMatchUnmatched(
             (!second || top.result.score - second.result.score >= 10)
           ) {
             const meta = await fetchOmdbCached(top.cand.imdbId, omdbApiKey, omdbCache)
+            let migrated = dryRun
             await serializeDbWrite(async () => {
               if (!dryRun) {
-                const mig = await migrateMovieId(movie.movieId, top.cand.imdbId)
-                if (mig.success && meta) {
-                  upsertMetadataAndMovie(db, top.cand.imdbId, meta)
+                const mig = await migrateMovieId(movie.movieId, top.cand.imdbId, {
+                  mergeIfExists: true,
+                })
+                if (mig.success) {
+                  migrated = true
+                  if (meta) {
+                    upsertMetadataAndMovie(db, top.cand.imdbId, meta)
+                  }
+                  deleteAttempt(movie.movieId)
+                } else {
+                  recordAttempt(movie.movieId, 'error', candidates.length, mig.message)
                 }
               }
-              recordAttempt(
-                movie.movieId,
-                'matched',
-                candidates.length,
-                `Deterministic auto-accept (${top.cand.imdbId}, score ${top.result.score})`
-              )
             })
+            if (!migrated) {
+              errors++
+              return
+            }
             deterministicMatches++
             if (samples.length < 30) {
               samples.push({
@@ -2557,20 +2635,27 @@ export async function runAutoMatchUnmatched(
                 !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
                 !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
               ) {
+                let migrated = dryRun
                 await serializeDbWrite(async () => {
                   if (!dryRun) {
-                    const mig = await migrateMovieId(movie.movieId, chosenId)
-                    if (mig.success && meta) {
-                      upsertMetadataAndMovie(db, chosenId, meta)
+                    const mig = await migrateMovieId(movie.movieId, chosenId, {
+                      mergeIfExists: true,
+                    })
+                    if (mig.success) {
+                      migrated = true
+                      if (meta) {
+                        upsertMetadataAndMovie(db, chosenId, meta)
+                      }
+                      deleteAttempt(movie.movieId)
+                    } else {
+                      recordAttempt(movie.movieId, 'error', candidates.length, mig.message)
                     }
                   }
-                  recordAttempt(
-                    movie.movieId,
-                    'matched',
-                    candidates.length,
-                    `LLM match (${chosenId}, conf ${adj.confidence})`
-                  )
                 })
+                if (!migrated) {
+                  errors++
+                  return
+                }
                 llmMatches++
                 if (samples.length < 30) {
                   samples.push({
@@ -2782,20 +2867,32 @@ export async function runAutoMatchUnmatched(
                   !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
                   !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
                 ) {
+                  let migrated = dryRun
                   await serializeDbWrite(async () => {
                     if (!dryRun) {
-                      const mig = await migrateMovieId(movie.movieId, chosenId2)
-                      if (mig.success && meta) {
-                        upsertMetadataAndMovie(db, chosenId2, meta)
+                      const mig = await migrateMovieId(movie.movieId, chosenId2, {
+                        mergeIfExists: true,
+                      })
+                      if (mig.success) {
+                        migrated = true
+                        if (meta) {
+                          upsertMetadataAndMovie(db, chosenId2, meta)
+                        }
+                        deleteAttempt(movie.movieId)
+                      } else {
+                        recordAttempt(
+                          movie.movieId,
+                          'error',
+                          candidates.length + freshList.length,
+                          mig.message
+                        )
                       }
                     }
-                    recordAttempt(
-                      movie.movieId,
-                      'matched',
-                      candidates.length + freshList.length,
-                      `Phase-2 planned LLM match (${chosenId2}, conf ${adj2.confidence})`
-                    )
                   })
+                  if (!migrated) {
+                    errors++
+                    return
+                  }
                   llmMatches++
                   plannedLlmMatches++
                   if (samples.length < 30) {

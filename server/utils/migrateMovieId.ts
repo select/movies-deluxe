@@ -28,10 +28,18 @@ import type { Database } from 'better-sqlite3'
 import { withTransaction } from './adminDb'
 
 /**
+ * Options for movie ID migration
+ */
+export interface MigrateMovieIdOptions {
+  mergeIfExists?: boolean
+}
+
+/**
  * Result of movie ID migration operation
  */
 export interface MigrationResult {
   success: boolean
+  merged?: boolean
   oldId: string
   newId: string
   message: string
@@ -42,6 +50,26 @@ export interface MigrationResult {
     aiMetadata: number
     collectionMovies: number
     relatedMovies: number
+  }
+}
+
+function tableExists(db: Database, tableName: string): boolean {
+  return Boolean(
+    db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(tableName)
+  )
+}
+
+function cleanupHousekeepingTables(db: Database, oldId: string): void {
+  if (tableExists(db, 'match_attempts')) {
+    db.prepare('DELETE FROM match_attempts WHERE movieId = ?').run(oldId)
+  }
+  if (tableExists(db, 'audit_attempts')) {
+    db.prepare('DELETE FROM audit_attempts WHERE movieId = ?').run(oldId)
+  }
+  if (tableExists(db, 'match_review_queue')) {
+    db.prepare(
+      "UPDATE match_review_queue SET status = 'resolved', resolvedAt = datetime('now') WHERE movieId = ? AND status = 'pending'"
+    ).run(oldId)
   }
 }
 
@@ -69,7 +97,12 @@ export interface MigrationResult {
  *   console.error('Migration failed:', result.message)
  * }
  */
-export async function migrateMovieId(oldId: string, newId: string): Promise<MigrationResult> {
+export async function migrateMovieId(
+  oldId: string,
+  newId: string,
+  options?: MigrateMovieIdOptions
+): Promise<MigrationResult> {
+  const mergeIfExists = options?.mergeIfExists ?? false
   // Validate input
   if (!oldId || !newId) {
     return {
@@ -110,12 +143,137 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
         | { movieId: string }
         | undefined
 
-      if (newMovie) {
+      if (newMovie && !mergeIfExists) {
         return {
           success: false,
           oldId,
           newId,
           message: `Movie with ID '${newId}' already exists. Cannot migrate to an existing ID.`,
+        }
+      }
+
+      if (newMovie && mergeIfExists) {
+        const tablesUpdated = {
+          movies: 0,
+          sources: 0,
+          metadata: 0,
+          aiMetadata: 0,
+          collectionMovies: 0,
+          relatedMovies: 0,
+        }
+
+        // a. sources: delete duplicates on oldId that already exist on newId, then move remaining
+        db.prepare(
+          `DELETE FROM sources
+           WHERE movieId = ?
+             AND EXISTS (
+               SELECT 1 FROM sources s2
+               WHERE s2.movieId = ?
+                 AND s2.channelId = sources.channelId
+                 AND s2.sourceId = sources.sourceId
+             )`
+        ).run(oldId, newId)
+        const sourcesRes = db
+          .prepare('UPDATE sources SET movieId = ? WHERE movieId = ?')
+          .run(newId, oldId)
+        tablesUpdated.sources = sourcesRes.changes
+
+        // b. collection_movies
+        const collRes = db
+          .prepare(
+            'INSERT OR IGNORE INTO collection_movies (collectionId, movieId, addedAt) SELECT collectionId, ?, addedAt FROM collection_movies WHERE movieId = ?'
+          )
+          .run(newId, oldId)
+        tablesUpdated.collectionMovies = collRes.changes
+        db.prepare('DELETE FROM collection_movies WHERE movieId = ?').run(oldId)
+
+        // c. related_movies (both directions, avoiding self-references)
+        const relRes1 = db
+          .prepare(
+            'INSERT OR IGNORE INTO related_movies (movieId, relatedMovieId, addedAt) SELECT ?, relatedMovieId, addedAt FROM related_movies WHERE movieId = ? AND relatedMovieId != ?'
+          )
+          .run(newId, oldId, newId)
+        const relRes2 = db
+          .prepare(
+            'INSERT OR IGNORE INTO related_movies (movieId, relatedMovieId, addedAt) SELECT movieId, ?, addedAt FROM related_movies WHERE relatedMovieId = ? AND movieId != ?'
+          )
+          .run(newId, oldId, newId)
+        tablesUpdated.relatedMovies = relRes1.changes + relRes2.changes
+        db.prepare('DELETE FROM related_movies WHERE movieId = ? OR relatedMovieId = ?').run(
+          oldId,
+          oldId
+        )
+
+        // d. movie_quality_labels
+        if (tableExists(db, 'movie_quality_labels')) {
+          db.prepare(
+            `DELETE FROM movie_quality_labels
+             WHERE movieId = ?
+               AND EXISTS (
+                 SELECT 1 FROM movie_quality_labels mql2
+                 WHERE mql2.movieId = ?
+                   AND mql2.label = movie_quality_labels.label
+               )`
+          ).run(oldId, newId)
+          db.prepare('UPDATE movie_quality_labels SET movieId = ? WHERE movieId = ?').run(
+            newId,
+            oldId
+          )
+        }
+
+        // e. metadata and ai_metadata (move only if newId does not already have a row)
+        const newHasMeta = db.prepare('SELECT 1 FROM metadata WHERE movieId = ?').get(newId)
+        if (!newHasMeta) {
+          const metaRes = db
+            .prepare('UPDATE metadata SET movieId = ? WHERE movieId = ?')
+            .run(newId, oldId)
+          tablesUpdated.metadata = metaRes.changes
+        } else {
+          db.prepare('DELETE FROM metadata WHERE movieId = ?').run(oldId)
+        }
+
+        const newHasAiMeta = db.prepare('SELECT 1 FROM ai_metadata WHERE movieId = ?').get(newId)
+        if (!newHasAiMeta) {
+          const aiMetaRes = db
+            .prepare('UPDATE ai_metadata SET movieId = ? WHERE movieId = ?')
+            .run(newId, oldId)
+          tablesUpdated.aiMetadata = aiMetaRes.changes
+        } else {
+          db.prepare('DELETE FROM ai_metadata WHERE movieId = ?').run(oldId)
+        }
+
+        // f. Non-FK housekeeping tables
+        cleanupHousekeepingTables(db, oldId)
+
+        // g. movies: update newId lastUpdated and delete oldId
+        db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(
+          new Date().toISOString(),
+          newId
+        )
+        const moviesDeleteRes = db.prepare('DELETE FROM movies WHERE movieId = ?').run(oldId)
+        tablesUpdated.movies = moviesDeleteRes.changes
+
+        const verifyMovie = db
+          .prepare('SELECT movieId FROM movies WHERE movieId = ?')
+          .get(newId) as { movieId: string } | undefined
+        if (!verifyMovie) {
+          throw new Error(`Verification failed: Movie with ID '${newId}' not found after merge`)
+        }
+
+        const verifyOldMovie = db
+          .prepare('SELECT movieId FROM movies WHERE movieId = ?')
+          .get(oldId) as { movieId: string } | undefined
+        if (verifyOldMovie) {
+          throw new Error(`Verification failed: Movie with ID '${oldId}' still exists after merge`)
+        }
+
+        return {
+          success: true,
+          merged: true,
+          oldId,
+          newId,
+          message: `Successfully merged movie '${oldId}' into '${newId}'`,
+          tablesUpdated,
         }
       }
 
@@ -156,12 +314,7 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
       tablesUpdated.collectionMovies = collectionMoviesResult.changes
 
       // Update movie_quality_labels if the table exists (prevents FK constraint violations on migration)
-      const hasQualityLabelsTable = db
-        .prepare(
-          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'movie_quality_labels'"
-        )
-        .get()
-      if (hasQualityLabelsTable) {
+      if (tableExists(db, 'movie_quality_labels')) {
         db.prepare('UPDATE movie_quality_labels SET movieId = ? WHERE movieId = ?').run(
           newId,
           oldId
@@ -190,6 +343,9 @@ export async function migrateMovieId(oldId: string, newId: string): Promise<Migr
       const moviesStmt = db.prepare('UPDATE movies SET movieId = ? WHERE movieId = ?')
       const moviesResult = moviesStmt.run(newId, oldId)
       tablesUpdated.movies = moviesResult.changes
+
+      // Clean up non-FK housekeeping rows for oldId
+      cleanupHousekeepingTables(db, oldId)
 
       // Verify the migration was successful
       const verifyMovie = db.prepare('SELECT movieId FROM movies WHERE movieId = ?').get(newId) as

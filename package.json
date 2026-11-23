@@ -21,6 +21,7 @@
     "typecheck:watch": "nuxt typecheck --watch",
     "db:generate": "tsx scripts/generate-sqlite.ts",
     "db:migrate:source-status": "tsx scripts/migrate-source-status.ts",
+    "movies:merge-stuck": "tsx scripts/merge-stuck-matched.ts",
     "channels:sync": "tsx scripts/sync-channels.ts",
     "posters:extract": "tsx scripts/extract-posters.ts",
     "posters:cleanup": "tsx scripts/cleanup-posters.ts",

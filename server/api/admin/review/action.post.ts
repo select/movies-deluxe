@@ -445,7 +445,9 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
     }
 
     if (targetImdbId !== item.movieId) {
-      const migrationResult = await migrateMovieId(item.movieId, targetImdbId)
+      const migrationResult = await migrateMovieId(item.movieId, targetImdbId, {
+        mergeIfExists: true,
+      })
       if (!migrationResult.success) {
         throw createError({
           statusCode: 409,
