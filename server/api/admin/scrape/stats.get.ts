@@ -2,9 +2,9 @@ import { existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { getChannelVideoCount } from '../../../utils/youtubeDataApi'
 import { loadFailedYouTubeVideos } from '../../../utils/failedYoutube'
-import { getFailedOmdbMatches } from '../../../utils/failedOmdb'
 import { getFailedPosterDownloads } from '../../../utils/posterDownloader'
 import { defineEventHandler } from 'h3'
+import { getAdminDatabase } from '#server/utils/adminDb'
 import { emitProgress } from '#server/utils/progress'
 import { loadMoviesDatabase } from '#server/utils/loadMoviesDatabase'
 import { getDatabaseStatsWithChannels } from '#server/utils/movieData'
@@ -49,10 +49,32 @@ export default defineEventHandler(async _event => {
     }
 
     emitStepProgress('Loading failed records...')
-    // Load failed YouTube videos for stats
+    // Load failed YouTube videos and posters for stats
     const failedVideos = loadFailedYouTubeVideos()
-    const failedOmdb = getFailedOmdbMatches()
     const failedPosters = getFailedPosterDownloads()
+
+    // Count still-unmatched movies that failed matching in match_attempts
+    let failedMatchCount = 0
+    try {
+      const adminDb = getAdminDatabase()
+      const hasAttemptsTable = adminDb
+        .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'match_attempts'")
+        .get()
+      if (hasAttemptsTable) {
+        const row = adminDb
+          .prepare(
+            `SELECT COUNT(*) as count
+             FROM match_attempts ma
+             JOIN movies m ON m.movieId = ma.movieId
+             WHERE m.movieId NOT LIKE 'tt%'
+               AND ma.outcome IN ('no_match', 'not_a_movie', 'error')`
+          )
+          .get() as { count: number } | undefined
+        failedMatchCount = row?.count ?? 0
+      }
+    } catch (e) {
+      console.error('Failed to query match_attempts count', e)
+    }
 
     // Calculate YouTube totals
     const youtubeTotalScraped = youtubeChannels.reduce((sum, c) => sum + c.scraped, 0)
@@ -175,10 +197,10 @@ export default defineEventHandler(async _event => {
         matched: dbStats.matched,
         unmatched: dbStats.unmatched,
         percent: dbStats.total > 0 ? (dbStats.matched / dbStats.total) * 100 : 0,
-        failed: failedOmdb.length,
+        failed: failedMatchCount,
         failureRate:
-          dbStats.matched + failedOmdb.length > 0
-            ? (failedOmdb.length / (dbStats.matched + failedOmdb.length)) * 100
+          dbStats.matched + failedMatchCount > 0
+            ? (failedMatchCount / (dbStats.matched + failedMatchCount)) * 100
             : 0,
       },
       ai: {
