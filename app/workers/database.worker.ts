@@ -145,7 +145,10 @@ const SQLITE_MAGIC = [
   0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00,
 ]
 
-const DB_CACHE_NAME = 'movies-deluxe-db-v1'
+const DB_SCHEMA_VERSION = 2
+const DB_CACHE_PREFIX = 'movies-deluxe-db-v'
+const DB_CACHE_NAME = `${DB_CACHE_PREFIX}${DB_SCHEMA_VERSION}`
+let hasPrunedOldCaches = false
 
 function hasSqliteMagic(bytes: Uint8Array): boolean {
   if (bytes.length < SQLITE_MAGIC.length) return false
@@ -158,16 +161,35 @@ function hasSqliteMagic(bytes: Uint8Array): boolean {
 function buildCanonicalCacheKey(url: string): string {
   try {
     const resolved = new URL(url, self.location.href)
-    return `${resolved.origin}${resolved.pathname}`
+    return `${resolved.origin}${resolved.pathname}${resolved.search}`
   } catch {
     return url
   }
 }
 
-async function openDbCache(): Promise<Cache | null> {
-  if (typeof caches === 'undefined') return null
+async function pruneOldDbCaches(): Promise<void> {
   try {
-    return await caches.open(DB_CACHE_NAME)
+    if (typeof caches === 'undefined') return
+    const keys = await caches.keys()
+    await Promise.all(
+      keys
+        .filter(key => key.startsWith(DB_CACHE_PREFIX) && key !== DB_CACHE_NAME)
+        .map(key => caches.delete(key))
+    )
+  } catch {
+    // Ignore cache cleanup errors
+  }
+}
+
+async function openDbCache(): Promise<Cache | null> {
+  try {
+    if (typeof caches === 'undefined') return null
+    const cache = await caches.open(DB_CACHE_NAME)
+    if (!hasPrunedOldCaches) {
+      hasPrunedOldCaches = true
+      void pruneOldDbCaches()
+    }
+    return cache
   } catch (err) {
     console.warn('Cache API unavailable for database caching:', err)
     return null
@@ -179,17 +201,26 @@ async function writeDbToCache(
   cacheKey: string,
   bytes: Uint8Array,
   etag: string | null,
-  lastModified: string | null
+  lastModified: string | null,
+  encoding: 'gzip' | 'raw'
 ): Promise<void> {
   try {
     const headers = new Headers({
       'Content-Type': 'application/x-sqlite3',
       'Content-Length': String(bytes.byteLength),
+      'X-DB-Encoding': encoding,
     })
     if (etag) headers.set('X-DB-ETag', etag)
     if (lastModified) headers.set('X-DB-Last-Modified', lastModified)
 
-    const cacheResponse = new Response(bytes.slice().buffer, {
+    const body: BodyInit =
+      bytes.buffer instanceof ArrayBuffer &&
+      bytes.byteOffset === 0 &&
+      bytes.byteLength === bytes.buffer.byteLength
+        ? bytes.buffer
+        : (bytes as unknown as BodyInit)
+
+    const cacheResponse = new Response(body, {
       status: 200,
       headers,
     })
@@ -266,17 +297,42 @@ async function revalidateCacheInBackground(
   cachedResponse: Response
 ): Promise<void> {
   try {
-    const headers = new Headers()
     const cachedEtag = cachedResponse.headers.get('X-DB-ETag')
     const cachedLastModified = cachedResponse.headers.get('X-DB-Last-Modified')
-    if (cachedEtag) headers.set('If-None-Match', cachedEtag)
-    if (cachedLastModified) headers.set('If-Modified-Since', cachedLastModified)
+    const cachedEncoding = cachedResponse.headers.get('X-DB-Encoding')
+
+    const buildConditionalHeaders = (targetEncoding: 'gzip' | 'raw'): Headers => {
+      const headers = new Headers()
+      if (!cachedEncoding || cachedEncoding === targetEncoding) {
+        if (cachedEtag) headers.set('If-None-Match', cachedEtag)
+        if (cachedLastModified) headers.set('If-Modified-Since', cachedLastModified)
+      }
+      return headers
+    }
+
+    const isUnchangedResponse = (response: Response, targetEncoding: 'gzip' | 'raw'): boolean => {
+      if (cachedEncoding && cachedEncoding !== targetEncoding) return false
+      const respEtag = response.headers.get('ETag')
+      if (cachedEtag && respEtag && respEtag === cachedEtag) return true
+      const respLastModified = response.headers.get('Last-Modified')
+      if (!cachedEtag && cachedLastModified && respLastModified === cachedLastModified) {
+        return true
+      }
+      return false
+    }
 
     const gzUrl = typeof DecompressionStream !== 'undefined' ? buildGzipUrl(url) : null
     if (gzUrl) {
       try {
-        const gzResponse = await fetch(gzUrl, { headers })
+        const gzResponse = await fetch(gzUrl, {
+          headers: buildConditionalHeaders('gzip'),
+          cache: 'no-cache',
+        })
         if (gzResponse.status === 304) {
+          return
+        }
+        if (gzResponse.ok && isUnchangedResponse(gzResponse, 'gzip')) {
+          await gzResponse.body?.cancel()
           return
         }
         if (gzResponse.ok && gzResponse.body) {
@@ -301,7 +357,8 @@ async function revalidateCacheInBackground(
                 cacheKey,
                 bytes,
                 gzResponse.headers.get('ETag'),
-                gzResponse.headers.get('Last-Modified')
+                gzResponse.headers.get('Last-Modified'),
+                'gzip'
               )
             }
             return
@@ -314,8 +371,15 @@ async function revalidateCacheInBackground(
       }
     }
 
-    const response = await fetch(url, { headers })
+    const response = await fetch(url, {
+      headers: buildConditionalHeaders('raw'),
+      cache: 'no-cache',
+    })
     if (response.status === 304 || !response.ok) {
+      await response.body?.cancel()
+      return
+    }
+    if (isUnchangedResponse(response, 'raw')) {
       await response.body?.cancel()
       return
     }
@@ -332,7 +396,8 @@ async function revalidateCacheInBackground(
         cacheKey,
         bytes,
         response.headers.get('ETag'),
-        response.headers.get('Last-Modified')
+        response.headers.get('Last-Modified'),
+        'raw'
       )
     }
   } catch {
@@ -340,10 +405,17 @@ async function revalidateCacheInBackground(
   }
 }
 
+interface NetworkDatabaseResult {
+  bytes: Uint8Array
+  etag: string | null
+  lastModified: string | null
+  encoding: 'gzip' | 'raw'
+}
+
 async function fetchDatabaseBytesFromNetwork(
   url: string,
   signal?: AbortSignal
-): Promise<{ bytes: Uint8Array; etag: string | null; lastModified: string | null }> {
+): Promise<NetworkDatabaseResult> {
   const gzUrl = typeof DecompressionStream !== 'undefined' ? buildGzipUrl(url) : null
   if (gzUrl) {
     try {
@@ -365,6 +437,7 @@ async function fetchDatabaseBytesFromNetwork(
             bytes,
             etag: gzResponse.headers.get('ETag'),
             lastModified: gzResponse.headers.get('Last-Modified'),
+            encoding: 'gzip',
           }
         }
 
@@ -379,6 +452,7 @@ async function fetchDatabaseBytesFromNetwork(
             bytes,
             etag: gzResponse.headers.get('ETag'),
             lastModified: gzResponse.headers.get('Last-Modified'),
+            encoding: 'gzip',
           }
         }
 
@@ -411,10 +485,14 @@ async function fetchDatabaseBytesFromNetwork(
     bytes,
     etag: response.headers.get('ETag'),
     lastModified: response.headers.get('Last-Modified'),
+    encoding: 'raw',
   }
 }
 
-async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+async function fetchDatabaseBytes(
+  url: string,
+  signal?: AbortSignal
+): Promise<{ bytes: Uint8Array; fromCache: boolean }> {
   const cacheKey = buildCanonicalCacheKey(url)
   const cache = await openDbCache()
 
@@ -423,62 +501,82 @@ async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Ui
       const cachedResponse = await cache.match(cacheKey)
       if (cachedResponse) {
         const cachedBytes = new Uint8Array(await cachedResponse.arrayBuffer())
+        if (signal?.aborted) {
+          throw new DOMException('Aborted', 'AbortError')
+        }
         if (hasSqliteMagic(cachedBytes)) {
           console.log('Loaded database from Cache API:', cacheKey)
           void revalidateCacheInBackground(url, cacheKey, cachedResponse)
-          return cachedBytes
+          return { bytes: cachedBytes, fromCache: true }
         }
         console.warn('Cached database failed SQLite magic check, evicting:', cacheKey)
         await cache.delete(cacheKey).catch(() => {})
       }
     } catch (err) {
+      if (signal?.aborted) {
+        throw err
+      }
       console.warn('Failed to read database from Cache API:', err)
     }
   }
 
-  const { bytes, etag, lastModified } = await fetchDatabaseBytesFromNetwork(url, signal)
+  const { bytes, etag, lastModified, encoding } = await fetchDatabaseBytesFromNetwork(url, signal)
   if (cache) {
-    void writeDbToCache(cache, cacheKey, bytes, etag, lastModified)
+    void writeDbToCache(cache, cacheKey, bytes, etag, lastModified, encoding)
   }
-  return bytes
+  return { bytes, fromCache: false }
 }
 
-async function loadRemoteDatabase(url: string) {
-  const abortController = new AbortController()
+function validateDatabaseSchema(database: SQLiteDatabase): number {
+  const tableRows = database.exec({
+    sql: "SELECT name FROM sqlite_master WHERE type = 'table'",
+    returnValue: 'resultRows',
+    rowMode: 'object',
+  }) as Array<{ name: string }>
+  const tableNames = new Set(tableRows.map(r => r.name))
+
+  const requiredTables = ['movies', 'genres', 'countries', 'config']
+  for (const table of requiredTables) {
+    if (!tableNames.has(table)) {
+      throw new Error(`Invalid database schema: missing required table "${table}"`)
+    }
+  }
+
+  if (!tableNames.has('fts_search') && !tableNames.has('fts_movies')) {
+    throw new Error(
+      'Invalid database schema: missing required FTS table ("fts_search" or "fts_movies")'
+    )
+  }
+
+  const testResult = database.exec({
+    sql: 'SELECT COUNT(*) as count FROM movies',
+    returnValue: 'resultRows',
+    rowMode: 'object',
+  })
+
+  const firstRow = testResult[0] as { count: number } | undefined
+  return firstRow?.count || 0
+}
+
+function deserializeAndValidateDatabase(sqlite: SQLite3, uint8Array: Uint8Array): number {
+  if (db) {
+    db.close()
+    db = null
+  }
+
+  db = new sqlite.oo1.DB(':memory:')
+
   try {
-    const [sqlite, uint8Array] = await Promise.all([
-      initDatabase().catch(err => {
-        abortController.abort()
-        throw err
-      }),
-      fetchDatabaseBytes(url, abortController.signal),
-    ])
-    if (!sqlite) {
-      throw new Error('Failed to initialize SQLite')
-    }
-
-    // Close existing database if any
-    if (db) {
-      db.close()
-      db = null
-    }
-
-    // Create a new in-memory database
-    db = new sqlite.oo1.DB(':memory:')
-
-    // Check if sqlite3_deserialize is available
     if (typeof sqlite.capi.sqlite3_deserialize !== 'function') {
       console.error('sqlite3_deserialize is not available!')
       throw new Error('sqlite3_deserialize is not available in this SQLite build')
     }
 
-    // Allocate memory using sqlite3_malloc (required for deserialize)
     const pMem = sqlite.capi.sqlite3_malloc(uint8Array.byteLength)
     if (!pMem) {
       throw new Error('Failed to allocate memory for database')
     }
 
-    // Copy the database content to the allocated memory
     try {
       sqlite.wasm.heap8u().set(uint8Array, pMem)
     } catch (err) {
@@ -507,17 +605,63 @@ async function loadRemoteDatabase(url: string) {
       throw new Error(`Failed to deserialize database: ${errMsg}`)
     }
 
-    // Verify the database loaded correctly
-    const testResult = db.exec({
-      sql: 'SELECT COUNT(*) as count FROM movies',
-      returnValue: 'resultRows',
-      rowMode: 'object',
-    })
-
-    const firstRow = testResult[0] as { count: number } | undefined
-    const movieCount = firstRow?.count || 0
+    const movieCount = validateDatabaseSchema(db)
     console.log('Database loaded successfully, movies count:', movieCount)
     return movieCount
+  } catch (err) {
+    if (db) {
+      db.close()
+      db = null
+    }
+    throw err
+  }
+}
+
+async function loadRemoteDatabase(url: string) {
+  const abortController = new AbortController()
+  try {
+    const [sqlite, fetchResult] = await Promise.all([
+      initDatabase().catch(err => {
+        abortController.abort()
+        throw err
+      }),
+      fetchDatabaseBytes(url, abortController.signal),
+    ])
+    if (!sqlite) {
+      throw new Error('Failed to initialize SQLite')
+    }
+
+    try {
+      return deserializeAndValidateDatabase(sqlite, fetchResult.bytes)
+    } catch (err) {
+      if (!fetchResult.fromCache) {
+        throw err
+      }
+
+      console.warn(
+        'Cached database failed deserialization or schema validation, evicting and retrying from network:',
+        err
+      )
+      const cacheKey = buildCanonicalCacheKey(url)
+      const cache = await openDbCache()
+      if (cache) {
+        await cache.delete(cacheKey).catch(() => {})
+      }
+
+      const networkResult = await fetchDatabaseBytesFromNetwork(url, abortController.signal)
+      const movieCount = deserializeAndValidateDatabase(sqlite, networkResult.bytes)
+      if (cache) {
+        void writeDbToCache(
+          cache,
+          cacheKey,
+          networkResult.bytes,
+          networkResult.etag,
+          networkResult.lastModified,
+          networkResult.encoding
+        )
+      }
+      return movieCount
+    }
   } catch (err) {
     console.error('Failed to load remote database:', err)
     throw err

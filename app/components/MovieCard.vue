@@ -208,9 +208,11 @@ if (props.eager) {
   const scheduleLookup = (movieId: string) => {
     cancelScheduledLookup()
     const run = async () => {
-      if (isUnmounted || movieCollections.value.length > 0) return
+      if (isUnmounted || movie.value?.movieId !== movieId || movieCollections.value.length > 0) {
+        return
+      }
       const cols = await getCollectionsForMovie(movieId)
-      if (!isUnmounted) {
+      if (!isUnmounted && movie.value?.movieId === movieId) {
         movieCollections.value = cols
       }
     }
@@ -231,7 +233,10 @@ if (props.eager) {
   onMounted(() => {
     stopWatch = watch(
       () => movie.value?.movieId,
-      movieId => {
+      (movieId, prevMovieId) => {
+        if (movieId !== prevMovieId) {
+          movieCollections.value = []
+        }
         if (movieId && movieCollections.value.length === 0) {
           scheduleLookup(movieId)
         }

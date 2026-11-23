@@ -69,7 +69,7 @@ import { useIntersectionObserver, useEventListener } from '@vueuse/core'
 import type { LightweightMovie } from '~/types'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { ref, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, nextTick, watch, onMounted, onUnmounted } from 'vue'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
 import MovieCard from '~/components/MovieCard.vue'
 import HomeExploreMoreCard from '~/components/HomeExploreMoreCard.vue'
@@ -221,6 +221,19 @@ onUnmounted(() => {
 if (typeof window !== 'undefined') {
   useEventListener('resize', updateScrollState)
 }
+
+// Re-sync if collection movieIds prop updates in place
+watch(
+  () => props.collection.movieIds,
+  (newIds, oldIds) => {
+    if (newIds === oldIds) return
+    const wasLoaded = hasLoaded.value
+    hasLoaded.value = false
+    if (props.eager || wasLoaded) {
+      void loadMovies()
+    }
+  }
+)
 </script>
 
 <style scoped>

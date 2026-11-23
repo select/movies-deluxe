@@ -16,8 +16,8 @@ export const useCollectionsStore = defineStore('collections', () => {
    * Subsequent calls will use the cached data unless force=true
    */
   const loadCollections = async (force = false): Promise<void> => {
-    // Return early if already loaded and not forcing a refresh
-    if (!force && isLoaded.value) {
+    // Return early if already loaded and not forcing a refresh or awaiting an in-flight refresh
+    if (!force && isLoaded.value && !loadingPromise) {
       return
     }
 
@@ -73,8 +73,8 @@ export const useCollectionsStore = defineStore('collections', () => {
    * Loads collections if not loaded yet
    */
   const getCollectionById = async (id: string): Promise<Collection | null> => {
-    // Load collections if not loaded yet
-    if (!isLoaded.value) {
+    // Load collections if not loaded yet or refresh is in-flight
+    if (!isLoaded.value || loadingPromise) {
       await loadCollections()
     }
 
