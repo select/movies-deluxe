@@ -14,17 +14,16 @@
         <div class="i-mdi-home text-xl"></div>
       </NuxtLink>
 
-      <!-- Search -->
+      <!-- Collections -->
       <NuxtLink
-        to="/search"
+        to="/collections"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
-        title="Search (Shift+S)"
-        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
-        @click="handleSearchClick"
+        title="Collections"
+        :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
       >
         <div
-          class="i-mdi-magnify text-xl"
-          :class="{ 'text-theme-primary': route.path === '/search' }"
+          class="i-mdi:movie-roll text-xl"
+          :class="{ 'text-theme-primary': route.path.startsWith('/collections') }"
         ></div>
       </NuxtLink>
 
@@ -47,16 +46,17 @@
         </span>
       </NuxtLink>
 
-      <!-- Collections -->
+      <!-- Search -->
       <NuxtLink
-        to="/collections"
+        to="/search"
         class="p-2 hover:bg-theme-selection rounded-full transition-colors relative group"
-        title="Collections"
-        :class="{ 'bg-theme-primary/20': route.path.startsWith('/collections') }"
+        title="Search (Shift+S)"
+        :class="{ 'bg-theme-primary/20': route.path === '/search' }"
+        @click="handleSearchClick"
       >
         <div
-          class="i-mdi:movie-roll text-xl"
-          :class="{ 'text-theme-primary': route.path.startsWith('/collections') }"
+          class="i-mdi-magnify text-xl"
+          :class="{ 'text-theme-primary': route.path === '/search' }"
         ></div>
       </NuxtLink>
 
