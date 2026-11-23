@@ -17,7 +17,16 @@
 
 import Database from 'better-sqlite3'
 import { join } from 'path'
-import { existsSync, unlinkSync } from 'fs'
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  renameSync,
+  statSync,
+  unlinkSync,
+} from 'fs'
+import { pipeline } from 'node:stream/promises'
+import { createGzip } from 'node:zlib'
 import { getAdminDatabase } from './adminDb'
 import { createLogger } from './logger'
 import { normalizeLanguageCode } from '../../shared/utils/languageNormalizer'
@@ -26,6 +35,7 @@ import type { MovieMetadata } from '../../shared/types/movie'
 
 const logger = createLogger('SQLiteGen')
 const DB_PATH = join(process.cwd(), 'public/data/movies.db')
+const GZ_PATH = `${DB_PATH}.gz`
 
 export interface GenerateSQLiteOptions {
   skipJsonGeneration?: boolean
@@ -129,10 +139,14 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
 
   onProgress?.({ current: 0, total: movies.length, message: 'Loading data' })
 
-  // 3. Remove existing DB if it exists
+  // 3. Remove existing DBs if they exist
   if (existsSync(DB_PATH)) {
     logger.info('Removing existing database file')
     unlinkSync(DB_PATH)
+  }
+  if (existsSync(GZ_PATH)) {
+    logger.info('Removing existing gzipped database file')
+    unlinkSync(GZ_PATH)
   }
 
   // 4. Initialize Database
@@ -140,6 +154,8 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
 
   // Use DELETE mode instead of WAL for better compatibility with WASM
   sqlite.pragma('journal_mode = DELETE')
+
+  let movieCount: number
 
   try {
     // 4. Create Schema
@@ -680,18 +696,49 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     logger.success('SQLite database generated successfully!')
 
     const stats = sqlite.prepare('SELECT count(*) as count FROM movies').get() as { count: number }
-    logger.info(`Final database contains ${stats.count} movies`)
-    onProgress?.({
-      current: movies.length,
-      total: movies.length,
-      message: `Completed: ${stats.count} movies generated`,
-    })
+    movieCount = stats.count
+    logger.info(`Final database contains ${movieCount} movies`)
   } catch (error) {
     logger.error('Failed to generate SQLite database:', error)
     throw error
   } finally {
     sqlite.close()
   }
+
+  // 9. Generate gzipped database for faster client transport
+  logger.info('Compressing database to movies.db.gz...')
+  onProgress?.({
+    current: movies.length,
+    total: movies.length,
+    message: 'Compressing database...',
+  })
+  const gzStartTime = Date.now()
+  const tmpGzPath = `${GZ_PATH}.tmp`
+  try {
+    await pipeline(
+      createReadStream(DB_PATH),
+      createGzip({ level: 9 }),
+      createWriteStream(tmpGzPath)
+    )
+    renameSync(tmpGzPath, GZ_PATH)
+  } catch (error) {
+    if (existsSync(tmpGzPath)) {
+      unlinkSync(tmpGzPath)
+    }
+    logger.error('Failed to compress SQLite database:', error)
+    throw error
+  }
+  const rawSize = statSync(DB_PATH).size
+  const gzSize = statSync(GZ_PATH).size
+  const ratio = rawSize > 0 ? ((1 - gzSize / rawSize) * 100).toFixed(1) : '0.0'
+  logger.success(
+    `Compressed database: ${(gzSize / 1024 / 1024).toFixed(2)} MB (${ratio}% smaller than ${(rawSize / 1024 / 1024).toFixed(2)} MB) in ${Date.now() - gzStartTime}ms`
+  )
+  onProgress?.({
+    current: movies.length,
+    total: movies.length,
+    message: `Completed: ${movieCount} movies generated`,
+  })
 }
 
 /**

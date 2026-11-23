@@ -38,6 +38,7 @@ interface WorkerErrorResponse extends WorkerResponseBase {
  */
 interface WorkerInitResponse extends WorkerResponseBase {
   totalMovies: number
+  config?: Record<string, string>
 }
 
 /**

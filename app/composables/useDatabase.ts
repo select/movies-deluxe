@@ -118,6 +118,9 @@ function createDatabase(): UseDatabaseReturn {
         pendingQueries.set(id, {
           resolve: (data: WorkerResponse) => {
             totalMovies = 'totalMovies' in data ? data.totalMovies : 0
+            if ('config' in data && data.config) {
+              configCache.value = data.config
+            }
             resolve()
           },
           reject,
@@ -126,10 +129,19 @@ function createDatabase(): UseDatabaseReturn {
       })
     })()
 
-    await initPromise.value
-    // Pre-fetch config to ensure metadata is available immediately
-    await getConfig()
-    return totalMovies
+    try {
+      await initPromise.value
+      // Fallback to fetching config only if worker didn't include it in init-success
+      if (!configCache.value) {
+        await getConfig()
+      }
+      return totalMovies
+    } catch (err) {
+      initPromise.value = null
+      worker.value?.terminate()
+      worker.value = null
+      throw err
+    }
   }
 
   const query = async <T = Record<string, unknown>>(

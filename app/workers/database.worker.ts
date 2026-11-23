@@ -109,6 +109,7 @@ const movieCache = new Map<string, LightweightMovie>()
 // Cache for embedding dimensions and quantization from database metadata
 let cachedDimensions: number | null = null
 let cachedQuantization: 'float32' | 'int8' = 'float32'
+let cachedConfig: Record<string, string> | null = null
 
 // Track attached embeddings database state
 let embeddingsDbAttached = false
@@ -139,21 +140,143 @@ async function initDatabase() {
   }
 }
 
-async function loadRemoteDatabase(url: string) {
-  const sqlite = await initDatabase()
-  if (!sqlite) {
-    throw new Error('Failed to initialize SQLite')
+// SQLite 3 magic header: "SQLite format 3\0" (16 bytes)
+const SQLITE_MAGIC = [
+  0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00,
+]
+
+function hasSqliteMagic(bytes: Uint8Array): boolean {
+  if (bytes.length < SQLITE_MAGIC.length) return false
+  for (let i = 0; i < SQLITE_MAGIC.length; i++) {
+    if (bytes[i] !== SQLITE_MAGIC[i]) return false
+  }
+  return true
+}
+
+function buildGzipUrl(url: string): string | null {
+  const match = url.match(/^([^?#]+)(.*)$/)
+  if (!match) return null
+  const [, base, suffix] = match
+  if (!base || base.endsWith('.gz')) return null
+  return `${base}.gz${suffix}`
+}
+
+async function readStreamWithMagicCheck(
+  body: ReadableStream<Uint8Array>
+): Promise<{ isGzip: boolean; isSqlite: boolean; stream: ReadableStream<Uint8Array> }> {
+  const reader = body.getReader()
+  const firstChunks: Uint8Array[] = []
+  let totalRead = 0
+
+  while (totalRead < SQLITE_MAGIC.length) {
+    const { done, value } = await reader.read()
+    if (done) break
+    if (value && value.byteLength > 0) {
+      firstChunks.push(value)
+      totalRead += value.byteLength
+    }
   }
 
-  try {
-    console.log('Fetching database from:', url)
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`)
+  let header: Uint8Array
+  if (firstChunks.length === 1) {
+    header = firstChunks[0]!
+  } else {
+    header = new Uint8Array(totalRead)
+    let offset = 0
+    for (const chunk of firstChunks) {
+      header.set(chunk, offset)
+      offset += chunk.byteLength
     }
+  }
 
-    const arrayBuffer = await response.arrayBuffer()
-    const uint8Array = new Uint8Array(arrayBuffer)
+  const isGzip = header.length >= 2 && header[0] === 0x1f && header[1] === 0x8b
+  const isSqlite = hasSqliteMagic(header)
+
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      if (header.byteLength > 0) {
+        controller.enqueue(header)
+      }
+    },
+    async pull(controller) {
+      const { done, value } = await reader.read()
+      if (done) {
+        controller.close()
+      } else if (value) {
+        controller.enqueue(value)
+      }
+    },
+    cancel(reason) {
+      return reader.cancel(reason)
+    },
+  })
+
+  return { isGzip, isSqlite, stream }
+}
+
+async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+  const gzUrl = typeof DecompressionStream !== 'undefined' ? buildGzipUrl(url) : null
+  if (gzUrl) {
+    try {
+      console.log('Fetching gzipped database from:', gzUrl)
+      const gzResponse = await fetch(gzUrl, { signal })
+      if (gzResponse.ok && gzResponse.body) {
+        const { isGzip, isSqlite, stream } = await readStreamWithMagicCheck(gzResponse.body)
+
+        if (isGzip) {
+          const decompressed = stream.pipeThrough(
+            new DecompressionStream('gzip') as unknown as TransformStream<Uint8Array, Uint8Array>
+          )
+          const arrayBuffer = await new Response(decompressed).arrayBuffer()
+          const bytes = new Uint8Array(arrayBuffer)
+          if (!hasSqliteMagic(bytes)) {
+            throw new Error('Decompressed response is not a valid SQLite database')
+          }
+          return bytes
+        }
+
+        if (isSqlite) {
+          // Server/CDN already transparently decompressed the .gz response
+          const arrayBuffer = await new Response(stream).arrayBuffer()
+          return new Uint8Array(arrayBuffer)
+        }
+
+        await stream.cancel()
+        console.warn('Gzipped database response was neither gzip nor SQLite, falling back to:', url)
+      } else {
+        await gzResponse.body?.cancel()
+      }
+    } catch (err) {
+      if (signal?.aborted) {
+        throw err
+      }
+      console.warn('Failed to fetch/decompress gzipped database, falling back to:', url, err)
+    }
+  }
+
+  console.log('Fetching database from:', url)
+  const response = await fetch(url, { signal })
+  if (!response.ok) {
+    throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`)
+  }
+
+  const arrayBuffer = await response.arrayBuffer()
+  return new Uint8Array(arrayBuffer)
+}
+
+async function loadRemoteDatabase(url: string) {
+  const abortController = new AbortController()
+  try {
+    const [sqlite, uint8Array] = await Promise.all([
+      initDatabase().catch(err => {
+        abortController.abort()
+        throw err
+      }),
+      fetchDatabaseBytes(url, abortController.signal),
+    ])
+    if (!sqlite) {
+      throw new Error('Failed to initialize SQLite')
+    }
 
     // Close existing database if any
     if (db) {
@@ -274,7 +397,12 @@ async function handleMessage(e: QueuedMessage) {
     if (type === 'init') {
       if (initializationPromise) {
         await initializationPromise
-        self.postMessage({ id, type: 'init-success', success: true })
+        self.postMessage({
+          id,
+          type: 'init-success',
+          success: true,
+          ...(cachedConfig !== null ? { config: cachedConfig } : {}),
+        })
         return
       }
 
@@ -286,32 +414,51 @@ async function handleMessage(e: QueuedMessage) {
       let totalMovies = 0
 
       initializationPromise = (async () => {
-        await initDatabase()
         if (url) {
           totalMovies = await loadRemoteDatabase(url)
 
-          // Fetch embedding dimensions from config table if it exists
+          // Fetch all config rows in one query (including embedding_dimensions if present)
           if (db) {
             try {
               const rows = db.exec({
-                sql: "SELECT value FROM config WHERE key = 'embedding_dimensions'",
+                sql: 'SELECT key, value FROM config',
                 returnValue: 'resultRows',
                 rowMode: 'object',
-              })
-              if (rows.length > 0) {
-                const value = (rows[0] as { value: string }).value
-                cachedDimensions = parseInt(value, 10)
+              }) as Array<{ key: string; value: string }>
+              cachedConfig = rows.reduce(
+                (acc, row) => {
+                  acc[row.key] = row.value
+                  return acc
+                },
+                {} as Record<string, string>
+              )
+              if (cachedConfig.embedding_dimensions) {
+                cachedDimensions = parseInt(cachedConfig.embedding_dimensions, 10)
                 console.log('Detected embedding dimensions from DB config:', cachedDimensions)
               }
             } catch (err) {
-              console.warn('Could not fetch embedding_dimensions from config table:', err)
+              console.warn('Could not fetch config from config table:', err)
             }
           }
+        } else {
+          await initDatabase()
         }
       })()
 
-      await initializationPromise
-      self.postMessage({ id, type: 'init-success', success: true, totalMovies })
+      try {
+        await initializationPromise
+      } catch (err) {
+        initializationPromise = null
+        throw err
+      }
+
+      self.postMessage({
+        id,
+        type: 'init-success',
+        success: true,
+        totalMovies,
+        ...(cachedConfig !== null ? { config: cachedConfig } : {}),
+      })
       return
     }
 
