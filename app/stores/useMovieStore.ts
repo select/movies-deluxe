@@ -244,6 +244,24 @@ export const useMovieStore = defineStore('movie', () => {
   // ============================================
 
   /**
+   * Seed lightweightMovieCache with preloaded movie metadata (e.g. from home page JSON)
+   */
+  const seedLightweightCache = (movies: LightweightMovie[]) => {
+    if (!movies.length) return
+    const nextCache = new Map(lightweightMovieCache.value)
+    let updated = false
+    for (const movie of movies) {
+      if (!nextCache.has(movie.movieId)) {
+        nextCache.set(movie.movieId, movie)
+        updated = true
+      }
+    }
+    if (updated) {
+      lightweightMovieCache.value = nextCache
+    }
+  }
+
+  /**
    * Load movies from the SQLite database file
    * Idempotent and deduplicated with an in-flight promise
    * Note: Only loads the main movies.db - embeddings are loaded separately via loadEmbeddings()
@@ -266,8 +284,6 @@ export const useMovieStore = defineStore('movie', () => {
         totalMovies.value = await db.init(`${baseURL}data/movies.db`, baseURL)
         console.log('[loadFromFile] Database initialized successfully')
         console.log('[loadFromFile] Total movies count:', totalMovies.value)
-
-        isFiltering.value = false
       } catch (err) {
         console.error('[loadFromFile] Failed to initialize SQLite:', err)
 
@@ -278,9 +294,9 @@ export const useMovieStore = defineStore('movie', () => {
           'error',
           5000
         )
+        throw err
       } finally {
         console.log('[loadFromFile] Finished database initialization')
-        isFiltering.value = false
         loadPromise = null
       }
     })()
@@ -296,6 +312,9 @@ export const useMovieStore = defineStore('movie', () => {
   const loadEmbeddings = async (modelId: string): Promise<number> => {
     console.log('[loadEmbeddings] Loading embeddings for model:', modelId)
     try {
+      if (!db.isReady.value) {
+        await loadFromFile()
+      }
       const count = await db.attachEmbeddings(modelId)
       console.log('[loadEmbeddings] Embeddings loaded successfully, count:', count)
       return count
@@ -914,6 +933,7 @@ export const useMovieStore = defineStore('movie', () => {
     // ============================================
     loadFromFile,
     loadEmbeddings,
+    seedLightweightCache,
     fetchMoviesByIds,
     getMovieById,
     getSimilarMovies,

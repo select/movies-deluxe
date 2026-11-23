@@ -13,17 +13,20 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   /**
    * Load all collections from JSON file once and cache them
-   * Subsequent calls will use the cached data
+   * Subsequent calls will use the cached data unless force=true
    */
-  const loadCollections = async (): Promise<void> => {
-    // Return early if already loaded
-    if (isLoaded.value) {
+  const loadCollections = async (force = false): Promise<void> => {
+    // Return early if already loaded and not forcing a refresh
+    if (!force && isLoaded.value) {
       return
     }
 
-    // Deduplicate concurrent fetches
+    // Deduplicate concurrent fetches, or wait for in-flight fetch before forcing refresh
     if (loadingPromise) {
-      return loadingPromise
+      if (!force) {
+        return loadingPromise
+      }
+      await loadingPromise.catch(() => {})
     }
 
     loadingPromise = (async () => {
@@ -87,8 +90,7 @@ export const useCollectionsStore = defineStore('collections', () => {
       })
       if (response.success) {
         // Force reload collections from server to get latest data
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -104,8 +106,7 @@ export const useCollectionsStore = defineStore('collections', () => {
       })
       if (response.success) {
         // Force reload collections from server to get latest data
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -133,8 +134,7 @@ export const useCollectionsStore = defineStore('collections', () => {
         }
       )
       if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -157,8 +157,7 @@ export const useCollectionsStore = defineStore('collections', () => {
         }
       )
       if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -181,8 +180,7 @@ export const useCollectionsStore = defineStore('collections', () => {
         }
       )
       if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -205,8 +203,7 @@ export const useCollectionsStore = defineStore('collections', () => {
         }
       )
       if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -221,8 +218,7 @@ export const useCollectionsStore = defineStore('collections', () => {
         body: { collectionIds },
       })
       if (response.success) {
-        isLoaded.value = false
-        await loadCollections()
+        await loadCollections(true)
       }
       return response.success
     } catch {
@@ -239,7 +235,7 @@ export const useCollectionsStore = defineStore('collections', () => {
       if (!isLoaded.value) {
         await loadCollections()
       }
-      return movieToCollectionsMap.get(movieId) || []
+      return [...(movieToCollectionsMap.get(movieId) || [])]
     } catch {
       return []
     }

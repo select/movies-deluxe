@@ -129,18 +129,20 @@ export async function generateHomePages(
     .filter((c): c is Collection => c !== undefined && typeof c === 'object' && 'movieIds' in c)
     .filter(c => c.enabled !== false) // Only include collections that are not explicitly disabled
 
+  const moviesMetadata = loadMoviesMetadata()
+
   const validCollections = collections
     .map(c => ({
       ...c,
-      movieIds: c.movieIds.filter((id: string) => id.startsWith('tt')),
+      movieIds: c.movieIds.filter(
+        (id: string) => id.startsWith('tt') && (moviesMetadata.size === 0 || moviesMetadata.has(id))
+      ),
     }))
     .filter(c => c.movieIds.length > 0)
 
   if (validCollections.length === 0) {
     throw new Error('No valid collections found with IMDB IDs.')
   }
-
-  const moviesMetadata = loadMoviesMetadata()
 
   const totalDays = 31
   for (let day = 1; day <= totalDays; day++) {
@@ -151,8 +153,9 @@ export async function generateHomePages(
 
     const homeData = {
       day,
+      totalMovies: moviesMetadata.size,
       collections: pickedCollections.map(c => {
-        const movieIds = rng.pick(c.movieIds, 10)
+        const movieIds = rng.pick(c.movieIds, 9)
         const movies = movieIds
           .map(id => moviesMetadata.get(id))
           .filter((m): m is LightweightMovie => m !== undefined)
@@ -167,7 +170,7 @@ export async function generateHomePages(
     }
 
     const outputPath = path.join(OUTPUT_DIR, `day-${day}.json`)
-    fs.writeFileSync(outputPath, JSON.stringify(homeData, null, 2))
+    fs.writeFileSync(outputPath, JSON.stringify(homeData))
 
     if (onProgress) {
       onProgress({

@@ -69,7 +69,7 @@ import { useIntersectionObserver, useEventListener } from '@vueuse/core'
 import type { LightweightMovie } from '~/types'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
 import MovieCard from '~/components/MovieCard.vue'
 import HomeExploreMoreCard from '~/components/HomeExploreMoreCard.vue'
@@ -90,14 +90,16 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   eager: false,
 })
-const { fetchMoviesByIds } = useMovieStore()
-const { lightweightMovieCache } = storeToRefs(useMovieStore())
+const movieStore = useMovieStore()
+const { fetchMoviesByIds, seedLightweightCache } = movieStore
+const { lightweightMovieCache } = storeToRefs(movieStore)
 
 const isLoading = ref(true)
 const displayMovies = ref<LightweightMovie[]>([])
 const scrollContainer = ref<HTMLElement | null>(null)
 const rowElement = ref<HTMLElement | null>(null)
 const hasLoaded = ref(false)
+let isLoadingInFlight = false
 
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
@@ -120,62 +122,60 @@ const scroll = (direction: 'left' | 'right') => {
 }
 
 const loadMovies = async () => {
-  if (hasLoaded.value) return
-  if (props.collection.movieIds.length > 0) {
-    // We only show up to 9 movies, then the explore more card
-    const movieIds = props.collection.movieIds.slice(0, 9)
+  if (hasLoaded.value || isLoadingInFlight) return
+  isLoadingInFlight = true
+  try {
+    if (props.collection.movieIds.length > 0) {
+      // We only show up to 9 movies, then the explore more card
+      const movieIds = props.collection.movieIds.slice(0, 9)
 
-    // Seed cache from embedded collection.movies if not already present
-    if (props.collection.movies?.length) {
-      const nextCache = new Map(lightweightMovieCache.value)
-      let updated = false
-      for (const movie of props.collection.movies) {
-        if (!nextCache.has(movie.movieId)) {
-          nextCache.set(movie.movieId, movie)
-          updated = true
+      // Seed cache from embedded collection.movies if not already present
+      if (props.collection.movies?.length) {
+        seedLightweightCache(props.collection.movies)
+      }
+
+      // Only query SQLite for IDs missing from cache
+      const missingIds = movieIds.filter(id => !lightweightMovieCache.value.has(id))
+      if (missingIds.length > 0) {
+        isLoading.value = true
+        await fetchMoviesByIds(missingIds)
+      }
+
+      // Get movies from cache
+      displayMovies.value = movieIds
+        .map(id => lightweightMovieCache.value.get(id))
+        .filter((movie): movie is LightweightMovie => !!movie)
+
+      isLoading.value = false
+      hasLoaded.value = true
+
+      // Ensure scroll position is at the left after loading
+      nextTick(() => {
+        if (scrollContainer.value) {
+          scrollContainer.value.scrollLeft = 0
+          updateScrollState()
         }
-      }
-      if (updated) {
-        lightweightMovieCache.value = nextCache
-      }
+      })
+    } else {
+      isLoading.value = false
+      hasLoaded.value = true
     }
-
-    // Only query SQLite for IDs missing from cache
-    const missingIds = movieIds.filter(id => !lightweightMovieCache.value.has(id))
-    if (missingIds.length > 0) {
-      isLoading.value = true
-      await fetchMoviesByIds(missingIds)
-    }
-
-    // Get movies from cache
-    displayMovies.value = movieIds
-      .map(id => lightweightMovieCache.value.get(id))
-      .filter((movie): movie is LightweightMovie => !!movie)
-
-    isLoading.value = false
-    hasLoaded.value = true
-
-    // Ensure scroll position is at the left after loading
-    nextTick(() => {
-      if (scrollContainer.value) {
-        scrollContainer.value.scrollLeft = 0
-        updateScrollState()
-      }
-    })
-  } else {
-    isLoading.value = false
-    hasLoaded.value = true
+  } finally {
+    isLoadingInFlight = false
   }
 }
 
 // Lazy load when visible (unless eager)
+let stopObserver: (() => void) | null = null
 if (!props.eager) {
-  useIntersectionObserver(rowElement, entries => {
+  const { stop } = useIntersectionObserver(rowElement, entries => {
     const entry = entries[0]
     if (entry?.isIntersecting) {
+      stop()
       loadMovies()
     }
   })
+  stopObserver = stop
 }
 
 onMounted(() => {
@@ -184,6 +184,10 @@ onMounted(() => {
   }
   // Initial scroll state update
   updateScrollState()
+})
+
+onUnmounted(() => {
+  stopObserver?.()
 })
 
 // Update scroll state on window resize

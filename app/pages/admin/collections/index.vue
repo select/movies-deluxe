@@ -188,6 +188,7 @@ import { useCollectionsStore } from '~/stores/useCollectionsStore'
 import { storeToRefs } from '#imports'
 import { isLocalhost } from '~/utils/isLocalhost'
 import { useToastStore } from '~/stores/useToastStore'
+import { useMovieStore } from '~/stores/useMovieStore'
 import { useDatabase } from '~/composables/useDatabase'
 import AdminCollectionSelector from '~/components/AdminCollectionSelector.vue'
 import AdminMovieSearch from '~/components/AdminMovieSearch.vue'
@@ -226,7 +227,9 @@ const selectedCollection = computed(() => {
 
 onMounted(async () => {
   isLocal.value = isLocalhost()
-  // Database will already be ready thanks to the splash screen plugin
+  useMovieStore()
+    .loadFromFile()
+    .catch(() => {})
 })
 
 const onMovieAdded = () => {
@@ -269,6 +272,11 @@ const onCleanupCollection = async () => {
     // 2. Check which ones exist in the database using direct database query
     // We use the database composable directly to check for existing IDs
     const db = useDatabase()
+    if (!db.isReady.value) {
+      await useMovieStore()
+        .loadFromFile()
+        .catch(() => {})
+    }
     if (!db.isReady.value) {
       useToastStore().showToast('Database not ready', 'error')
       return

@@ -152,7 +152,7 @@ import type { Collection } from '~/types'
 import { storeToRefs } from '#imports'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { useCollectionsStore } from '~/stores/useCollectionsStore'
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { getPosterPath } from '~/utils/posterPath'
 import { formatVotes } from '~/utils/formatVotes'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
@@ -184,26 +184,32 @@ const movieCollections = ref<Collection[]>([])
 const showFullDetails = ref(props.eager)
 const cardRef = ref<HTMLElement | null>(null)
 
-// Use useTimeoutFn for better control over the timeout
-const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(
-  async () => {
-    showFullDetails.value = true
-    // Fetch collections when showing full details
-    if (movie.value?.movieId && movieCollections.value.length === 0) {
-      movieCollections.value = await getCollectionsForMovie(movie.value.movieId)
-    }
-  },
-  200,
-  { immediate: false }
-)
-
 if (props.eager) {
-  onMounted(async () => {
-    if (movie.value?.movieId && movieCollections.value.length === 0) {
-      movieCollections.value = await getCollectionsForMovie(movie.value.movieId)
-    }
+  onMounted(() => {
+    watch(
+      () => movie.value?.movieId,
+      async movieId => {
+        if (movieId && movieCollections.value.length === 0) {
+          movieCollections.value = await getCollectionsForMovie(movieId)
+        }
+      },
+      { immediate: true }
+    )
   })
 } else {
+  // Use useTimeoutFn for better control over the timeout
+  const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(
+    async () => {
+      showFullDetails.value = true
+      // Fetch collections when showing full details
+      if (movie.value?.movieId && movieCollections.value.length === 0) {
+        movieCollections.value = await getCollectionsForMovie(movie.value.movieId)
+      }
+    },
+    200,
+    { immediate: false }
+  )
+
   // Use intersection observer to detect when card becomes visible
   const { stop } = useIntersectionObserver(
     cardRef,

@@ -9,15 +9,15 @@
             <span
               :class="[
                 'inline-block transition-opacity duration-1000 ease-in-out absolute inset-0',
-                isShowingNumber ? 'opacity-100' : 'opacity-0',
+                displayTotalMovies > 0 && isShowingNumber ? 'opacity-100' : 'opacity-0',
               ]"
             >
-              {{ totalMovies.toLocaleString() }}
+              {{ displayTotalMovies.toLocaleString() }}
             </span>
             <span
               :class="[
                 'inline-block transition-opacity duration-1000 ease-in-out absolute inset-0',
-                isShowingNumber ? 'opacity-0' : 'opacity-100',
+                displayTotalMovies > 0 && isShowingNumber ? 'opacity-0' : 'opacity-100',
               ]"
             >
               thousands of
@@ -105,8 +105,14 @@
             <div class="space-y-2 text-left">
               <h3 class="text-xl font-bold">Search Catalog</h3>
               <p class="text-theme-textmuted">
-                Looking for something specific? Search our full library of
-                {{ totalMovies.toLocaleString() }} movies by title, year, or genre.
+                <template v-if="displayTotalMovies > 0">
+                  Looking for something specific? Search our full library of
+                  {{ displayTotalMovies.toLocaleString() }} movies by title, year, or genre.
+                </template>
+                <template v-else>
+                  Looking for something specific? Search our full library of movies by title, year,
+                  or genre.
+                </template>
               </p>
             </div>
             <div
@@ -153,8 +159,8 @@
 import { useRuntimeConfig, useHead, useFetch } from '#app'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { ref, onMounted, watch } from 'vue'
-import { setInterval } from '#app/compat/interval'
+import { computed, ref, watch } from 'vue'
+import { useIntervalFn } from '@vueuse/core'
 import type { LightweightMovie } from '~/types'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
 import HomeCollectionRow from '~/components/HomeCollectionRow.vue'
@@ -162,6 +168,7 @@ import { NuxtLink } from '#components'
 
 interface HomeData {
   day: number
+  totalMovies?: number
   collections: Array<{
     id: string
     name: string
@@ -217,27 +224,17 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`, { server: false })
 
 const movieStore = useMovieStore()
-const { totalMovies, lightweightMovieCache } = storeToRefs(movieStore)
+const { totalMovies } = storeToRefs(movieStore)
+
+const displayTotalMovies = computed(() => homeData.value?.totalMovies || totalMovies.value || 0)
 
 // Seed lightweightMovieCache immediately when homeData loads so HomeCollectionRow renders without SQLite
 watch(
   homeData,
   data => {
     if (!data?.collections?.length) return
-    const nextCache = new Map(lightweightMovieCache.value)
-    let updated = false
-    for (const collection of data.collections) {
-      if (!collection.movies?.length) continue
-      for (const movie of collection.movies) {
-        if (!nextCache.has(movie.movieId)) {
-          nextCache.set(movie.movieId, movie)
-          updated = true
-        }
-      }
-    }
-    if (updated) {
-      lightweightMovieCache.value = nextCache
-    }
+    const embeddedMovies = data.collections.flatMap(collection => collection.movies ?? [])
+    movieStore.seedLightweightCache(embeddedMovies)
   },
   { immediate: true }
 )
@@ -245,12 +242,11 @@ watch(
 const _displayText = ref('thousands of')
 const isShowingNumber = ref(false)
 
-onMounted(async () => {
-  // Start animation loop
-  setInterval(() => {
+useIntervalFn(() => {
+  if (displayTotalMovies.value > 0) {
     isShowingNumber.value = !isShowingNumber.value
-  }, 6000)
-})
+  }
+}, 6000)
 </script>
 
 <style scoped>

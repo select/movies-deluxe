@@ -813,6 +813,7 @@ const movie = ref<MovieEntry | null>(seoMovie.value ?? null)
 const relatedMovies = ref<LightweightMovie[]>([])
 const similarMovies = ref<LightweightMovie[]>([])
 const isLoading = ref(!seoMovie.value)
+const isMounted = ref(false)
 const isRelatedLoading = ref(false)
 const isSimilarLoading = ref(false)
 const error = ref<string | null>(null)
@@ -940,9 +941,10 @@ const getSourceUrl = (source: MovieSource): string => {
   return `https://archive.org/details/${source.sourceId}`
 }
 
-// Liked computed
+// Liked computed (gated on client mount to prevent SSR hydration mismatch with localStorage)
 const isLiked = computed(() => {
-  return movie.value ? likedMovieIds.value.includes(movie.value.movieId) : false
+  if (!isMounted.value || !movie.value) return false
+  return likedMovieIds.value.includes(movie.value.movieId)
 })
 
 // Load related movies
@@ -1079,6 +1081,7 @@ const loadMovieData = async (movieId: string) => {
 
 // Load movie on mount
 onMounted(async () => {
+  isMounted.value = true
   // Scroll to top when entering movie detail page
   scrollY.value = 0
 

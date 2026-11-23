@@ -63,6 +63,6 @@ const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 const _isLoadingLiked = ref(false)
 
 onMounted(() => {
-  movieStore.loadFromFile()
+  movieStore.loadFromFile().catch(() => {})
 })
 </script>

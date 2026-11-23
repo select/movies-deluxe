@@ -87,7 +87,7 @@ const movieIds = computed(() => {
 // Note: No need to call triggerSearchUpdate() on mount
 // The watchDebounced in useMovieStore already handles initial filter state
 onMounted(() => {
-  movieStore.loadFromFile()
+  movieStore.loadFromFile().catch(() => {})
 })
 </script>
 
