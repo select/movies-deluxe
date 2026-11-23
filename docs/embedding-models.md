@@ -88,6 +88,50 @@ To fix this, run the corresponding embedding generation script mentioned above.
 
 The SQLite database schema is automatically adjusted to match the dimensions of the selected model. If you switch models, you must regenerate the SQLite database to update the schema.
 
+## Model Research & Candidate Upgrades (2025–2026)
+
+In a November 2026 review of browser-capable ONNX / Transformers.js embedding models, several 2025–2026 releases offer major retrieval quality gains over `bge-micro-v2` (16.6 MB `q8` ONNX, 384d, ~54 MB embeddings DB) and `potion-base-2M` (7.3 MB ONNX, 64d, ~8.6 MB embeddings DB).
+
+### Sub-50M & Browser-Friendly Candidates
+
+| Model                                                                                                                                         | Params        | Browser ONNX (`q8`)                                 | Dimensions (MRL?)                         | BEIR Avg (nDCG@10)          | Notes                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | --------------------------------------------------- | ----------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------- |
+| **`TaylorAI/bge-micro-v2`** _(current)_                                                                                                       | 17M           | 16.6 MB                                             | 384 (No)                                  | ~42                         | Current baseline                                                                             |
+| **[`MongoDB/mdbr-leaf-ir`](https://huggingface.co/MongoDB/mdbr-leaf-ir)** _(Aug 2025)_                                                        | 23M           | **22.1 MB**                                         | 768 → **256 / 128** (MRL + `int8`/binary) | **53.55** (**54.03** asym.) | **Top pick.** #1 on BEIR for ≤100M; official `transformers.js`                               |
+| **[`Snowflake/snowflake-arctic-embed-xs`](https://huggingface.co/Snowflake/snowflake-arctic-embed-xs)**                                       | 23M           | 21.9 MB                                             | 384 (No)                                  | 50.15                       | Solid runner-up; single `.onnx` file; official `transformers.js`                             |
+| **[`onnx-community/granite-embedding-30m-english-ONNX`](https://huggingface.co/onnx-community/granite-embedding-30m-english-ONNX)**           | 30M           | 29.0 MB                                             | 384 (No)                                  | ~49                         | Apache 2.0                                                                                   |
+| **[`onnx-community/granite-embedding-small-english-r2-ONNX`](https://huggingface.co/onnx-community/granite-embedding-small-english-r2-ONNX)** | 47M           | 50.1 MB                                             | 384 (No)                                  | 50.87                       | ModernBERT, 8192-token context (heavier than needed for short queries)                       |
+| **[`minishlab/blink-8M`](https://huggingface.co/minishlab/blink-8M)** _(Nov 2026)_                                                            | 7.7M (static) | ~29 MB fp32 (no prebuilt ONNX yet; ~8 MB if `int8`) | 256                                       | ~38.9 (MTEB Ret.)           | Successor to `potion`; +7.6 pts retrieval over `potion-base-8M` with zero transformer layers |
+
+### Larger 2026 Models (Heavier Browser Downloads)
+
+Most 2026 MTEB leaderboard movement has occurred at **150M–600M+ parameters**, which are generally too heavy for a lightweight browser download compared to `bge-micro-v2`:
+
+- **`UltraBERT-Embed-150M`** (Oct 2026, Apache 2.0, 151M, 768d, #52 MTEB Eng v2)
+- **`onnx-community/embeddinggemma-300m-ONNX`** (300M, 168 MB WebGPU `q4f16` / 295 MB WASM `q8`, MRL 768→128d, 100+ languages)
+- **`onnx-community/embeddinggemma-2-ONNX`** (Oct 2026, 270M text encoder + optional vision/audio, ~150 MB `q4f16`, MRL 768→128d; trades slight English-only score for native multimodality)
+- **`MongoDB/voyage-4-nano`** (346M, 201 MB WebGPU `q4f16` / 402 MB WASM `q8`)
+- **`harrier-oss-v1-0.6b`** & **`Qwen3-Embedding-0.6B`** (~540+ MB in browser)
+
+### Why `MongoDB/mdbr-leaf-ir` Fits Movies Deluxe Best
+
+1. **Huge quality jump for +5.5 MB:** 53.55 BEIR nDCG@10 (outperforming `bge-small-en-v1.5` at 51.65 and OpenAI `text-embedding-3-small` at 51.08) at **22.1 MB** `q8` ONNX.
+2. **Smaller embeddings DB via MRL + quantization:** Native output is 768d, but Matryoshka Representation Learning (MRL) lets us truncate to **256d** (or **128d**) and optionally quantize vectors to **`int8`** or **binary**, shrinking the downloaded `sqlite-vec` DB by 33%–80%+ compared to `bge-micro-v2`'s 384d float32 DB.
+3. **Asymmetric retrieval (54.03 BEIR):** `mdbr-leaf-ir` is distilled and vector-space-aligned to [`Snowflake/snowflake-arctic-embed-m-v1.5`](https://huggingface.co/Snowflake/snowflake-arctic-embed-m-v1.5) (109M). Movie documents can be embedded offline with the stronger 109M Snowflake model while user queries are embedded in the browser with the 22 MB `mdbr-leaf-ir` model.
+4. **Implementation notes:**
+   - Queries must be prefixed with `"Represent this sentence for searching relevant passages: "` (documents take no prefix).
+   - Uses ONNX external data format (`model_quantized.onnx` + `model_quantized.onnx_data`).
+   - Compatible with `@huggingface/transformers` v4 (`dtype: 'q8'`).
+
+### Browser Runtime Note (WASM vs. WebGPU)
+
+For small (<50M parameter) single-query embedding models, **WASM (`q8`/`uint8`)** remains faster and more practical than WebGPU (~8–12 ms per query, no 1–5 s shader compilation cold start, smaller quantized downloads, and universal browser support). WebGPU mainly pays off for >100M models or batched inference.
+
+### Summary Recommendations
+
+- **Primary upgrade (`bge-micro-v2` → `MongoDB/mdbr-leaf-ir`):** Best quality-to-size ratio for browser semantic search, especially paired with MRL 256d truncation and optional asymmetric offline indexing.
+- **Static fallback (`potion-base-2M` → `minishlab/blink-8M`):** Worth revisiting once an official quantized ONNX export is available (or exported/quantized locally from its `model.safetensors`).
+
 ## Architecture
 
 For detailed technical documentation on how embeddings are generated and used for vector search, see **[Embedding Generation & Vector Search Architecture](./architecture-embedding-generation.md)**.
