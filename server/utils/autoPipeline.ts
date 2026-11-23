@@ -135,6 +135,7 @@ export interface AutoMatchUnmatchedOptions {
   minConfidence?: number
   allowGoogle?: boolean
   model?: string
+  pass1Only?: boolean
   skipAttempted?: boolean
   retryAfterDays?: number
   concurrency?: number
@@ -143,6 +144,7 @@ export interface AutoMatchUnmatchedOptions {
 export interface AutoMatchUnmatchedResult {
   task: 'match_unmatched'
   dryRun: boolean
+  pass1Only?: boolean
   scanned: number
   directUrlMatches: number
   deterministicMatches: number
@@ -150,6 +152,7 @@ export interface AutoMatchUnmatchedResult {
   plannedLlmMatches?: number
   notAMovie?: number
   queuedUncertain: number
+  deferredToPass2?: number
   noMatch: number
   errors: number
   samples: Array<{
@@ -2031,6 +2034,7 @@ export async function runAutoMatchUnmatched(
   const minConfidence = options.minConfidence ?? 0.85
   const allowGoogle = options.allowGoogle ?? false
   const model = options.model || 'google/gemini-2.5-flash-lite'
+  const pass1Only = options.pass1Only ?? false
   const concurrency = options.concurrency ?? 5
   const omdbApiKey = process.env.OMDB_API_KEY
   const serializeDbWrite = createDbWriteSerializer()
@@ -2118,6 +2122,7 @@ export async function runAutoMatchUnmatched(
   let plannedLlmMatches = 0
   let notAMovie = 0
   let queuedUncertain = 0
+  let deferredToPass2 = 0
   let noMatch = 0
   let errors = 0
   const samples: AutoMatchUnmatchedResult['samples'] = []
@@ -2127,7 +2132,7 @@ export async function runAutoMatchUnmatched(
     status: 'starting',
     current: 0,
     total,
-    message: `Starting ${dryRun ? 'dry-run ' : ''}auto-match for ${total} unmatched movies...`,
+    message: `Starting ${dryRun ? 'dry-run ' : ''}${pass1Only ? 'Pass 1 only ' : ''}auto-match for ${total} unmatched movies...`,
     successCurrent: 0,
     failedCurrent: 0,
   })
@@ -2380,6 +2385,11 @@ export async function runAutoMatchUnmatched(
               }
             }
           }
+        }
+
+        if (pass1Only) {
+          deferredToPass2++
+          return
         }
 
         // Pass 2: Tiered multi-source retrieval (parallel Tiers 3–7)
@@ -2854,7 +2864,7 @@ export async function runAutoMatchUnmatched(
           status: 'in_progress',
           current: scanned,
           total,
-          message: `Matching: ${queryTitle} (matched: ${directUrlMatches + deterministicMatches + llmMatches})`,
+          message: `Matching: ${queryTitle} (matched: ${directUrlMatches + deterministicMatches + llmMatches}${pass1Only ? `, deferred: ${deferredToPass2}` : ''})`,
           successCurrent: directUrlMatches + deterministicMatches + llmMatches,
           failedCurrent: noMatch + errors,
           estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned, total),
@@ -2867,7 +2877,7 @@ export async function runAutoMatchUnmatched(
       status: 'completed',
       current: scanned,
       total,
-      message: `Auto-match ${dryRun ? '(dry run) ' : ''}complete: ${directUrlMatches + deterministicMatches + llmMatches} matched, ${queuedUncertain} uncertain queued`,
+      message: `Auto-match ${dryRun ? '(dry run) ' : ''}${pass1Only ? '(Pass 1 only) ' : ''}complete: ${directUrlMatches + deterministicMatches + llmMatches} matched, ${queuedUncertain} uncertain queued${pass1Only ? `, ${deferredToPass2} deferred to Pass 2` : ''}`,
       successCurrent: directUrlMatches + deterministicMatches + llmMatches,
       failedCurrent: noMatch + errors,
     })
@@ -2875,6 +2885,7 @@ export async function runAutoMatchUnmatched(
     return {
       task: 'match_unmatched',
       dryRun,
+      ...(pass1Only ? { pass1Only: true, deferredToPass2 } : {}),
       scanned,
       directUrlMatches,
       deterministicMatches,

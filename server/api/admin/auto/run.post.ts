@@ -22,6 +22,7 @@ interface AutoRunBody {
   allowGoogle?: boolean
   channel?: string
   model?: string
+  pass1Only?: boolean
 }
 
 const VALID_TASKS: AutoTask[] = [
@@ -80,5 +81,6 @@ export default defineEventHandler(async event => {
     minConfidence: body.minConfidence,
     allowGoogle: body.allowGoogle,
     model: body.model,
+    pass1Only: body.pass1Only,
   })
 })

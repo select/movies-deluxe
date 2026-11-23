@@ -40,35 +40,61 @@
 
       <!-- Task Selector Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <button
+        <div
           v-for="card in autoTaskCards"
           :key="card.id"
-          type="button"
-          class="text-left p-3 rounded-lg border transition-colors space-y-1"
-          :class="
+          role="button"
+          :tabindex="autoRunning ? -1 : 0"
+          :aria-disabled="autoRunning"
+          class="text-left p-3 rounded-lg border transition-colors space-y-1 flex flex-col justify-between"
+          :class="[
             autoTask === card.id
               ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-900/20'
-              : 'border-theme-border bg-theme-surface hover:bg-theme-selection/50'
-          "
-          :disabled="autoRunning"
-          @click="autoTask = card.id"
+              : 'border-theme-border bg-theme-surface hover:bg-theme-selection/50',
+            autoRunning ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer',
+          ]"
+          @click="!autoRunning && (autoTask = card.id)"
+          @keydown.enter.prevent="!autoRunning && (autoTask = card.id)"
+          @keydown.space.prevent="!autoRunning && (autoTask = card.id)"
         >
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-xs font-bold text-theme-text flex items-center gap-1.5">
-              <div :class="[card.icon, card.iconClass]"></div>
-              {{ card.title }}
-            </span>
-            <span
-              v-if="autoTask === card.id"
-              class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-blue-600 text-white"
-            >
-              Selected
-            </span>
+          <div class="space-y-1">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-theme-text flex items-center gap-1.5">
+                <div :class="[card.icon, card.iconClass]"></div>
+                {{ card.title }}
+              </span>
+              <span
+                v-if="autoTask === card.id"
+                class="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-blue-600 text-white"
+              >
+                Selected
+              </span>
+            </div>
+            <p class="text-[11px] text-theme-textmuted leading-snug">
+              {{ card.description }}
+            </p>
           </div>
-          <p class="text-[11px] text-theme-textmuted leading-snug">
-            {{ card.description }}
-          </p>
-        </button>
+          <div
+            v-if="card.id === 'match_unmatched'"
+            class="pt-2 mt-2 border-t border-theme-border/60"
+            @click.stop
+            @keydown.space.stop
+          >
+            <label
+              class="inline-flex items-center gap-1.5 text-[11px] font-medium text-theme-text select-none"
+              :class="autoRunning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'"
+              title="Only run Pass 1 (direct IMDb ID + local fast path) and skip Pass 2/LLM web search, leaving hard cases untouched for a full run"
+            >
+              <input
+                v-model="autoPass1Only"
+                type="checkbox"
+                class="rounded border-theme-border text-blue-600 focus:ring-blue-500"
+                :disabled="autoRunning"
+              />
+              <span>Pass 1 only (fast)</span>
+            </label>
+          </div>
+        </div>
       </div>
 
       <!-- Auto-Pipeline Result Summary Banner -->
@@ -116,6 +142,9 @@
                 Not a Movie: {{ autoResult.notAMovie }}
               </span>
               <span class="font-mono">Queued: {{ autoResult.queuedUncertain }}</span>
+              <span v-if="autoResult.deferredToPass2" class="font-mono">
+                Deferred (Pass 2): {{ autoResult.deferredToPass2 }}
+              </span>
               <span class="font-mono">No Match: {{ autoResult.noMatch }}</span>
               <span v-if="autoResult.errors" class="font-mono text-red-600 dark:text-red-300">
                 Errors: {{ autoResult.errors }}
@@ -765,6 +794,7 @@ interface AutoAuditFalseHitsResponse {
 interface AutoMatchUnmatchedResponse {
   task: 'match_unmatched'
   dryRun: boolean
+  pass1Only?: boolean
   scanned: number
   directUrlMatches: number
   deterministicMatches: number
@@ -772,6 +802,7 @@ interface AutoMatchUnmatchedResponse {
   plannedLlmMatches?: number
   notAMovie?: number
   queuedUncertain: number
+  deferredToPass2?: number
   noMatch: number
   errors: number
   samples: Array<{ title: string; action: string }>
@@ -851,6 +882,7 @@ const errorMessage = ref<string | null>(null)
 
 const autoTask = ref<AutoTaskType>('clean_previews')
 const autoLimit = ref(500)
+const autoPass1Only = ref(false)
 const autoRunning = ref(false)
 const autoResult = ref<AutoPipelineResult | null>(null)
 const showAutoSamples = ref(false)
@@ -878,6 +910,11 @@ async function runAutoPipeline() {
           ? {
               minConfidence: 0.85,
               allowGoogle: true,
+            }
+          : {}),
+        ...(autoTask.value === 'match_unmatched'
+          ? {
+              pass1Only: autoPass1Only.value,
             }
           : {}),
       },
