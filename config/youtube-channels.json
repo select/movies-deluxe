@@ -193,6 +193,14 @@
       "language": "en",
       "enabled": true,
       "notes": "Non-monetized collection of US public-domain films sourced from the Internet Archive"
+    },
+    {
+      "id": "UCNJ4O0LvYuMOiOvS-g6eADA",
+      "handle": "@cinemochannel",
+      "name": "CineMo",
+      "language": "tl",
+      "enabled": true,
+      "notes": "Philippine cable entertainment channel featuring action and comedy movies and series"
     }
   ]
 }
