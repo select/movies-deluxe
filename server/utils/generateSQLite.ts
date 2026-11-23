@@ -12,7 +12,7 @@
  *
  * Note: Embeddings are stored in separate DB files (e.g., embeddings-leaf-ir-movies.db)
  * and are generated via AdminEmbeddingsGenerator. This utility only generates the main
- * movies.db with movie data, collections, and full-text search indexes.
+ * movies.db with movie data and full-text search index.
  */
 
 import Database from 'better-sqlite3'
@@ -121,23 +121,20 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
 
   onProgress?.({ current: 0, total: movies.length, message: 'Loading data' })
 
-  // 3. Remove existing DBs if they exist
+  // 3. Remove any stale temporary files from previous interrupted runs
+  const tmpDbPath = `${DB_PATH}.tmp`
   const tmpGzPath = `${GZ_PATH}.tmp`
-  if (existsSync(DB_PATH)) {
-    logger.info('Removing existing database file')
-    unlinkSync(DB_PATH)
-  }
-  if (existsSync(GZ_PATH)) {
-    logger.info('Removing existing gzipped database file')
-    unlinkSync(GZ_PATH)
+  if (existsSync(tmpDbPath)) {
+    logger.info('Removing existing temporary database file')
+    unlinkSync(tmpDbPath)
   }
   if (existsSync(tmpGzPath)) {
     logger.info('Removing existing temporary gzipped database file')
     unlinkSync(tmpGzPath)
   }
 
-  // 4. Initialize Database
-  const sqlite = new Database(DB_PATH)
+  // 4. Initialize Database (write to temp path for atomic replacement)
+  const sqlite = new Database(tmpDbPath)
 
   // Use DELETE mode instead of WAL for better compatibility with WASM
   sqlite.pragma('journal_mode = DELETE')
@@ -150,7 +147,8 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     onProgress?.({ current: 0, total: movies.length, message: 'Creating schema' })
     sqlite.exec(`
       CREATE TABLE movies (
-        movieId TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
+        movieId TEXT NOT NULL UNIQUE,
         title TEXT NOT NULL,
         year INTEGER,
         imdbRating REAL,
@@ -210,6 +208,7 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
       CREATE INDEX idx_countries_name ON countries(name);
       CREATE INDEX idx_countries_count ON countries(movie_count DESC);
     `)
+    sqlite.pragma('user_version = 2')
 
     // 5. Prepare Statements
     const insertMovie = sqlite.prepare(`
@@ -428,12 +427,26 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
     logger.info(`Final database contains ${movieCount} movies`)
   } catch (error) {
     logger.error('Failed to generate SQLite database:', error)
+    try {
+      sqlite.close()
+    } catch {
+      // Ignore close errors during failure cleanup
+    }
+    try {
+      if (existsSync(tmpDbPath)) {
+        unlinkSync(tmpDbPath)
+      }
+    } catch {
+      // Ignore cleanup errors so the original error is preserved
+    }
     throw error
   } finally {
-    sqlite.close()
+    if (sqlite.open) {
+      sqlite.close()
+    }
   }
 
-  // 9. Generate gzipped database for faster client transport
+  // 9. Generate gzipped database for faster client transport, then atomically replace both files
   logger.info('Compressing database to movies.db.gz...')
   onProgress?.({
     current: movies.length,
@@ -443,12 +456,20 @@ export async function generateSQLite(options: GenerateSQLiteOptions = {}): Promi
   const gzStartTime = Date.now()
   try {
     await pipeline(
-      createReadStream(DB_PATH),
+      createReadStream(tmpDbPath),
       createGzip({ level: 9 }),
       createWriteStream(tmpGzPath)
     )
+    renameSync(tmpDbPath, DB_PATH)
     renameSync(tmpGzPath, GZ_PATH)
   } catch (error) {
+    try {
+      if (existsSync(tmpDbPath)) {
+        unlinkSync(tmpDbPath)
+      }
+    } catch {
+      // Ignore cleanup errors so the original compression error is preserved
+    }
     try {
       if (existsSync(tmpGzPath)) {
         unlinkSync(tmpGzPath)

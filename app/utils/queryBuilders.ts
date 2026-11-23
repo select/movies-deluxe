@@ -84,22 +84,6 @@ export function buildVectorSearchQuery(
 }
 
 /**
- * Build query to get collections for a specific movie
- */
-export function buildCollectionsForMovieQuery(movieId: string): QueryResult {
-  return {
-    sql: `
-      SELECT c.id, c.name, c.description, c.createdAt, c.updatedAt
-      FROM collections c
-      INNER JOIN collection_movies cm ON c.id = cm.collectionId
-      WHERE cm.movieId = ?
-      ORDER BY c.name ASC
-    `,
-    params: [movieId],
-  }
-}
-
-/**
  * Build queries for filter options (genres, countries, channels)
  */
 export function buildFilterOptionsQueries(): FilterOptionsQueries {

@@ -1,11 +1,10 @@
 import type { WorkerResponse, FilterOptionsResponse, VectorSearchResult } from '~/types/database'
-import type { Collection, LightweightMovie } from '~/types'
+import type { LightweightMovie } from '~/types'
 import { getModelConfig, type EmbeddingModelConfig } from '~~/config/embedding-models'
 import type { Ref, ComputedRef } from 'vue'
 import { ref, toRaw, computed } from 'vue'
 import {
   buildQueryByIdsQuery,
-  buildCollectionsForMovieQuery,
   buildFilterOptionsQueries,
   buildVectorSearchQuery,
 } from '~/utils/queryBuilders'
@@ -15,7 +14,6 @@ export interface UseDatabaseReturn {
   init: (url?: string, baseURL?: string) => Promise<number>
   query: <T = Record<string, unknown>>(sql: string, params?: (string | number)[]) => Promise<T[]>
   queryByIds: (movieIds: string[]) => Promise<LightweightMovie[]>
-  getCollectionsForMovie: (movieId: string) => Promise<Collection[]>
   getFilterOptions: () => Promise<FilterOptionsResponse>
   vectorSearch: (
     embedding: Float32Array | Int8Array | number[],
@@ -194,12 +192,6 @@ function createDatabase(): UseDatabaseReturn {
         params: toRaw(params),
       })
     })
-  }
-
-  const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
-    // Build query using centralized query builder
-    const { sql, params } = buildCollectionsForMovieQuery(movieId)
-    return query<Collection>(sql, params)
   }
 
   const getFilterOptions = async (): Promise<FilterOptionsResponse> => {
@@ -392,7 +384,6 @@ function createDatabase(): UseDatabaseReturn {
     init,
     query,
     queryByIds,
-    getCollectionsForMovie,
     getFilterOptions,
     vectorSearch,
     getConfig,

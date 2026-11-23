@@ -126,8 +126,10 @@ export const useMovieStore = defineStore('movie', () => {
   // In-flight promise for deduplicating concurrent loadFromFile() calls
   let loadPromise: Promise<void> | null = null
 
-  // In-flight promises for deduplicating concurrent loadEmbeddings() calls per model
-  const embeddingsLoadPromises = new Map<string, Promise<number>>()
+  // In-flight state for deduplicating identical and serializing different loadEmbeddings() calls
+  let currentEmbeddingsLoad: { modelId: string; promise: Promise<number>; token: symbol } | null =
+    null
+  let activeEmbeddingsLoads = 0
 
   // ============================================
   // COMPUTED PROPERTIES - Data Views
@@ -312,20 +314,30 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Load embeddings for semantic search
-   * Deduplicated per modelId with an in-flight promise so rapid clicks cannot trigger
-   * duplicate attach-embeddings messages.
+   * Deduplicates concurrent calls for the same modelId and serializes switches to a different
+   * modelId so the worker never receives concurrent attach-embeddings requests.
    * @param modelId - The embedding model ID (e.g., 'nomic', 'leaf-ir', 'potion')
    */
   const loadEmbeddings = async (modelId: string): Promise<number> => {
-    const existingPromise = embeddingsLoadPromises.get(modelId)
-    if (existingPromise) {
-      return existingPromise
+    if (currentEmbeddingsLoad?.modelId === modelId) {
+      return currentEmbeddingsLoad.promise
     }
 
+    const previousPromise = currentEmbeddingsLoad?.promise
+    const loadToken = Symbol(modelId)
+    activeEmbeddingsLoads++
     isLoadingEmbeddings.value = true
+
     const promise = (async () => {
       console.log('[loadEmbeddings] Loading embeddings for model:', modelId)
       try {
+        if (previousPromise) {
+          try {
+            await previousPromise
+          } catch {
+            // Ignore previous load failure so the new model load can proceed
+          }
+        }
         if (!db.isReady.value) {
           await loadFromFile()
         }
@@ -341,14 +353,17 @@ export const useMovieStore = defineStore('movie', () => {
 
         throw err
       } finally {
-        embeddingsLoadPromises.delete(modelId)
-        if (embeddingsLoadPromises.size === 0) {
+        if (currentEmbeddingsLoad?.token === loadToken) {
+          currentEmbeddingsLoad = null
+        }
+        activeEmbeddingsLoads--
+        if (activeEmbeddingsLoads === 0) {
           isLoadingEmbeddings.value = false
         }
       }
     })()
 
-    embeddingsLoadPromises.set(modelId, promise)
+    currentEmbeddingsLoad = { modelId, promise, token: loadToken }
     return promise
   }
 
@@ -464,10 +479,10 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Escape and quote an FTS5 phrase safely.
-   * Returns null for empty/whitespace-only terms.
+   * Strips NUL bytes and returns null for empty/whitespace-only terms.
    */
   const formatFtsPhrase = (term: string): string | null => {
-    const trimmed = term.trim()
+    const trimmed = term.replace(/\0/g, '').trim()
     if (!trimmed) return null
     return `"${trimmed.replace(/"/g, '""')}"`
   }
@@ -483,12 +498,6 @@ export const useMovieStore = defineStore('movie', () => {
 
     if (searchQuery?.trim()) {
       const parsed = parseSearchQuery(searchQuery)
-      const hasKeywords = !!(
-        parsed.actors?.length ||
-        parsed.directors?.length ||
-        parsed.writers?.length ||
-        parsed.title
-      )
       const ftsTerms: string[] = []
 
       if (parsed.title) {
@@ -528,7 +537,7 @@ export const useMovieStore = defineStore('movie', () => {
       if (parsed.general) {
         const phrase = formatFtsPhrase(parsed.general)
         if (phrase) {
-          ftsTerms.push(hasKeywords ? `title:${phrase}` : phrase)
+          ftsTerms.push(ftsTerms.length > 0 ? `title:${phrase}` : phrase)
         }
       }
 
