@@ -70,6 +70,7 @@ export interface AutoAuditFalseHitsOptions {
   rematch?: boolean
   allowGoogle?: boolean
   model?: string
+  concurrency?: number
 }
 
 export interface AutoAuditFalseHitsResult {
@@ -134,6 +135,7 @@ export interface AutoMatchUnmatchedOptions {
   model?: string
   skipAttempted?: boolean
   retryAfterDays?: number
+  concurrency?: number
 }
 
 export interface AutoMatchUnmatchedResult {
@@ -159,13 +161,59 @@ export interface AutoMatchUnmatchedResult {
   }>
 }
 
+function createDbWriteSerializer(): <T>(fn: () => Promise<T> | T) => Promise<T> {
+  let chain: Promise<void> = Promise.resolve()
+  return async <T>(fn: () => Promise<T> | T): Promise<T> => {
+    const run = chain.then(() => fn())
+    chain = run.then(
+      () => undefined,
+      () => undefined
+    )
+    return run
+  }
+}
+
+async function runWithConcurrency<T>(
+  items: T[],
+  concurrency: number,
+  worker: (item: T, index: number) => Promise<void>
+): Promise<void> {
+  if (items.length === 0) return
+  const safeConcurrency = Math.min(Math.max(Math.floor(concurrency) || 1, 1), 10)
+  let nextIndex = 0
+  const workers = Array.from({ length: Math.min(safeConcurrency, items.length) }, async () => {
+    while (true) {
+      const currentIndex = nextIndex++
+      if (currentIndex >= items.length) break
+      await worker(items[currentIndex]!, currentIndex)
+    }
+  })
+  await Promise.all(workers)
+}
+
+async function fetchOmdbCached(
+  imdbId: string,
+  omdbApiKey?: string,
+  omdbCache?: Map<string, MovieMetadata | null>
+): Promise<MovieMetadata | null> {
+  if (!omdbApiKey) return null
+  const key = imdbId.toLowerCase()
+  if (omdbCache?.has(key)) {
+    return omdbCache.get(key) ?? null
+  }
+  const meta = await getMovieByImdbId(imdbId, omdbApiKey).catch(() => null)
+  omdbCache?.set(key, meta)
+  return meta
+}
+
 /**
  * Hydrate top candidates with local IMDb metadata (free) and OMDb plot/director/cast
  * before sending them to the LLM adjudicator, preventing title-only guessing and false positives.
  */
 async function hydrateCandidatesForAdjudication(
   candidates: RetrievedCandidate[],
-  omdbApiKey?: string
+  omdbApiKey?: string,
+  omdbCache?: Map<string, MovieMetadata | null>
 ): Promise<VerifierCandidateInput[]> {
   const localAvailable = isImdbLocalIndexAvailable()
 
@@ -206,7 +254,7 @@ async function hydrateCandidatesForAdjudication(
     if (needsOmdb.length > 0) {
       await Promise.allSettled(
         needsOmdb.map(async c => {
-          const meta = await getMovieByImdbId(c.imdbId, omdbApiKey).catch(() => null)
+          const meta = await fetchOmdbCached(c.imdbId, omdbApiKey, omdbCache)
           if (!meta) return
           if (!c.overview && meta.Plot && meta.Plot !== 'N/A') {
             c.overview = meta.Plot
@@ -402,6 +450,7 @@ async function findReplacementImdbMatch(
 
   const rejectedIds = new Set<string>([excludedIdLower])
   const rejectedSummaries: Array<{ imdbId: string; title: string; year: number | null }> = []
+  const omdbCache = new Map<string, MovieMetadata | null>()
 
   // Phase 1: Multi-source retrieval + deterministic scoring + hydrated LLM adjudication
   const candidates = (
@@ -468,7 +517,8 @@ async function findReplacementImdbMatch(
     if (adjudicateList.length > 0) {
       const hydratedInputs = await hydrateCandidatesForAdjudication(
         adjudicateList.map(s => s.cand),
-        omdbApiKey
+        omdbApiKey,
+        omdbCache
       )
       const adj = await adjudicateCandidates(
         {
@@ -494,9 +544,7 @@ async function findReplacementImdbMatch(
         adj.confidence >= minRematchConfidence &&
         adj.chosenImdbId.toLowerCase() !== excludedIdLower
       ) {
-        const meta = omdbApiKey
-          ? await getMovieByImdbId(adj.chosenImdbId, omdbApiKey).catch(() => null)
-          : null
+        const meta = await fetchOmdbCached(adj.chosenImdbId, omdbApiKey, omdbCache)
         const runtimeCheck = scoreMatchCandidate(
           { title: queryTitle, sourceDurationMin: input.sourceDurationMin },
           {
@@ -566,18 +614,25 @@ async function findReplacementImdbMatch(
   const plannedDirector = plan.director || extracted.director
   const plannedCast = plan.cast.length > 0 ? plan.cast : extracted.cast
 
-  const plannedCandidates = await retrieveCandidates(
-    {
-      title: plannedTitle,
-      originalTitle: plan.originalTitle || extracted.originalTitle,
-      altTitles: plannedAlts,
-      year: plannedYear,
-      description: input.description || undefined,
-      director: plannedDirector,
-      cast: plannedCast,
-    },
-    { limit: 8, omdbApiKey, allowGoogleFallback: allowGoogle }
-  )
+  const [plannedCandidates, searxSettled] = await Promise.all([
+    retrieveCandidates(
+      {
+        title: plannedTitle,
+        originalTitle: plan.originalTitle || extracted.originalTitle,
+        altTitles: plannedAlts,
+        year: plannedYear,
+        description: input.description || undefined,
+        director: plannedDirector,
+        cast: plannedCast,
+      },
+      { limit: 8, omdbApiKey, allowGoogleFallback: allowGoogle }
+    ),
+    isSearxngAvailable() && plan.webQueries.length > 0
+      ? Promise.allSettled(
+          plan.webQueries.slice(0, 2).map(wq => searchSearxngRawForImdb(wq, 4).catch(() => []))
+        )
+      : Promise.resolve([]),
+  ])
 
   const freshMap = new Map<string, RetrievedCandidate>()
   for (const c of plannedCandidates) {
@@ -586,23 +641,21 @@ async function findReplacementImdbMatch(
     }
   }
 
-  if (isSearxngAvailable() && plan.webQueries.length > 0) {
-    for (const wq of plan.webQueries.slice(0, 2)) {
-      const searxHits = await searchSearxngRawForImdb(wq, 4).catch(() => [])
-      for (const hit of searxHits) {
-        const hitId = hit.imdbId.toLowerCase()
-        if (rejectedIds.has(hitId) || freshMap.has(hitId)) continue
-        freshMap.set(hitId, {
-          imdbId: hit.imdbId,
-          title: hit.title,
-          altTitles: [],
-          year: hit.year,
-          directors: [],
-          cast: [],
-          overview: hit.snippet,
-          sources: ['searxng'],
-        })
-      }
+  for (const res of searxSettled) {
+    if (res.status !== 'fulfilled') continue
+    for (const hit of res.value) {
+      const hitId = hit.imdbId.toLowerCase()
+      if (rejectedIds.has(hitId) || freshMap.has(hitId)) continue
+      freshMap.set(hitId, {
+        imdbId: hit.imdbId,
+        title: hit.title,
+        altTitles: [],
+        year: hit.year,
+        directors: [],
+        cast: [],
+        overview: hit.snippet,
+        sources: ['searxng'],
+      })
     }
   }
 
@@ -652,7 +705,8 @@ async function findReplacementImdbMatch(
 
   const hydratedFresh = await hydrateCandidatesForAdjudication(
     scoredFresh.map(s => s.cand),
-    omdbApiKey
+    omdbApiKey,
+    omdbCache
   )
   const adj2 = await adjudicateCandidates(
     {
@@ -678,9 +732,7 @@ async function findReplacementImdbMatch(
     adj2.confidence >= minRematchConfidence &&
     adj2.chosenImdbId.toLowerCase() !== excludedIdLower
   ) {
-    const meta = omdbApiKey
-      ? await getMovieByImdbId(adj2.chosenImdbId, omdbApiKey).catch(() => null)
-      : null
+    const meta = await fetchOmdbCached(adj2.chosenImdbId, omdbApiKey, omdbCache)
     const runtimeCheck = scoreMatchCandidate(
       { title: plannedTitle, sourceDurationMin: input.sourceDurationMin },
       {
@@ -999,7 +1051,9 @@ export async function runAutoAuditFalseHits(
   const rematch = options.rematch ?? true
   const allowGoogle = options.allowGoogle ?? false
   const model = options.model || 'google/gemini-2.5-flash-lite'
+  const concurrency = options.concurrency ?? 5
   const omdbApiKey = process.env.OMDB_API_KEY
+  const serializeDbWrite = createDbWriteSerializer()
 
   const db = getAdminDatabase()
   ensureMatchReviewQueueTable(db)
@@ -1125,19 +1179,7 @@ export async function runAutoAuditFalseHits(
 
   try {
     // Step 1: Resolve pending false_hit queue items first
-    for (const row of queueRows) {
-      scanned++
-      emitProgress({
-        type: 'audit',
-        status: 'in_progress',
-        current: scanned,
-        total,
-        message: `Resolving queued false hit #${row.id} (${row.movieId})`,
-        successCurrent: autoRematched + autoUnmatched + llmKept,
-        failedCurrent: queuedUncertain + errors,
-        estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
-      })
-
+    await runWithConcurrency(queueRows, concurrency, async row => {
       try {
         const movie = getMovieStmt.get(row.movieId) as
           | {
@@ -1159,9 +1201,9 @@ export async function runAutoAuditFalseHits(
 
         if (!movie || !movie.movieId.startsWith('tt') || !primarySource) {
           if (!dryRun) {
-            resolveReviewItem(db, row.id, 'resolved')
+            await serializeDbWrite(() => resolveReviewItem(db, row.id, 'resolved'))
           }
-          continue
+          return
         }
 
         const candidateTitle = movie.omdbTitle || movie.movieTitle
@@ -1210,8 +1252,10 @@ export async function runAutoAuditFalseHits(
         if (verdict.verdict === 'match' && verdict.confidence >= minConfidence) {
           llmKept++
           if (!dryRun) {
-            resolveReviewItem(db, row.id, 'resolved')
-            recordAudit(movie.movieId, 'kept', verdict.reason)
+            await serializeDbWrite(() => {
+              resolveReviewItem(db, row.id, 'resolved')
+              recordAudit(movie.movieId, 'kept', verdict.reason)
+            })
           }
           if (samples.length < 30) {
             samples.push({
@@ -1224,7 +1268,7 @@ export async function runAutoAuditFalseHits(
               flags: ['queued_false_hit'],
             })
           }
-          continue
+          return
         }
 
         if (verdict.verdict === 'mismatch' && verdict.confidence >= minConfidence) {
@@ -1260,22 +1304,26 @@ export async function runAutoAuditFalseHits(
           }
 
           if (replacementId && isImdbId(replacementId)) {
+            const finalReplacementId = replacementId
+            const finalReplacementMeta = replacementMeta
             autoRematched++
             if (!dryRun) {
-              const mig = await migrateMovieId(movie.movieId, replacementId)
-              if (mig.success && replacementMeta) {
-                upsertMetadataAndMovie(db, replacementId, replacementMeta)
-              }
-              resolveReviewItem(db, row.id, 'resolved')
-              deleteAudit(movie.movieId)
-              recordAudit(replacementId, 'rematched', `Rematched from ${movie.movieId}`)
+              await serializeDbWrite(async () => {
+                const mig = await migrateMovieId(movie.movieId, finalReplacementId)
+                if (mig.success && finalReplacementMeta) {
+                  upsertMetadataAndMovie(db, finalReplacementId, finalReplacementMeta)
+                }
+                resolveReviewItem(db, row.id, 'resolved')
+                deleteAudit(movie.movieId)
+                recordAudit(finalReplacementId, 'rematched', `Rematched from ${movie.movieId}`)
+              })
             }
             if (samples.length < 30) {
               samples.push({
                 movieId: movie.movieId,
                 title: candidateTitle,
                 action: 'rematched',
-                newMovieId: replacementId,
+                newMovieId: finalReplacementId,
                 llmVerdict: verdict.verdict,
                 llmConfidence: verdict.confidence,
                 llmReason: verdict.reason,
@@ -1289,13 +1337,15 @@ export async function runAutoAuditFalseHits(
                 ? generateYouTubeId(primarySource.sourceId)
                 : generateArchiveId(primarySource.sourceId)
             if (!dryRun) {
-              db.prepare('DELETE FROM metadata WHERE movieId = ?').run(movie.movieId)
-              await migrateMovieId(movie.movieId, tempId)
-              db.prepare(
-                'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
-              ).run(rawSourceTitle, new Date().toISOString(), tempId)
-              resolveReviewItem(db, row.id, 'resolved')
-              deleteAudit(movie.movieId)
+              await serializeDbWrite(async () => {
+                db.prepare('DELETE FROM metadata WHERE movieId = ?').run(movie.movieId)
+                await migrateMovieId(movie.movieId, tempId)
+                db.prepare(
+                  'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
+                ).run(rawSourceTitle, new Date().toISOString(), tempId)
+                resolveReviewItem(db, row.id, 'resolved')
+                deleteAudit(movie.movieId)
+              })
             }
             if (samples.length < 30) {
               samples.push({
@@ -1310,7 +1360,7 @@ export async function runAutoAuditFalseHits(
               })
             }
           }
-          continue
+          return
         }
 
         queuedUncertain++
@@ -1331,15 +1381,29 @@ export async function runAutoAuditFalseHits(
           `[AutoAuditFalseHits] Error resolving queue #${row.id} (${row.movieId}):`,
           err
         )
+      } finally {
+        scanned++
+        emitProgress({
+          type: 'audit',
+          status: 'in_progress',
+          current: scanned,
+          total,
+          message: `Resolving queued false hit #${row.id} (${row.movieId})`,
+          successCurrent: autoRematched + autoUnmatched + llmKept,
+          failedCurrent: queuedUncertain + errors,
+          estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned, total),
+        })
       }
-    }
+    })
 
     // Step 2: Scan unverified matched movies
-    for (const movie of movies) {
-      scanned++
+    await runWithConcurrency(movies, concurrency, async movie => {
       const sources = getSourcesStmt.all(movie.movieId) as SourceRow[]
       const primarySource = sources[0]
-      if (!primarySource) continue
+      if (!primarySource) {
+        scanned++
+        return
+      }
 
       const candidateTitle = movie.omdbTitle || movie.movieTitle
       const candidateYear = extractYearFromTitle(movie.omdbYear) ?? movie.movieYear ?? null
@@ -1350,231 +1414,242 @@ export async function runAutoAuditFalseHits(
           ? Math.round(primarySource.duration / 60)
           : null
 
-      const scoreResult = scoreMatchCandidate(
-        {
-          title: rawSourceTitle,
-          sourceYear: primarySource.year ?? null,
-          titleYear: extractYearFromTitle(rawSourceTitle),
-          sourceDurationMin,
-        },
-        {
-          imdbId: movie.movieId,
-          title: candidateTitle,
-          year: candidateYear,
-          runtimeMin: candidateRuntimeMin,
-          director: movie.omdbDirector,
-          cast: movie.omdbActors,
-          type: movie.omdbType,
-        }
-      )
-
-      const isSuspicious =
-        scoreResult.tier === 'reject' ||
-        scoreResult.flags.some(f =>
-          [
-            'runtime_feature_short_mismatch',
-            'runtime_major_mismatch',
-            'year_major_mismatch',
-            'non_movie_candidate',
-            'title_low_similarity',
-          ].includes(f)
+      try {
+        const scoreResult = scoreMatchCandidate(
+          {
+            title: rawSourceTitle,
+            sourceYear: primarySource.year ?? null,
+            titleYear: extractYearFromTitle(rawSourceTitle),
+            sourceDurationMin,
+          },
+          {
+            imdbId: movie.movieId,
+            title: candidateTitle,
+            year: candidateYear,
+            runtimeMin: candidateRuntimeMin,
+            director: movie.omdbDirector,
+            cast: movie.omdbActors,
+            type: movie.omdbType,
+          }
         )
 
-      if (!isSuspicious) {
-        recordAudit(movie.movieId, 'clean', `Score ${scoreResult.score}`)
-        if (scanned % 50 === 0 || scanned === total) {
-          emitProgress({
-            type: 'audit',
-            status: 'in_progress',
-            current: scanned,
-            total,
-            message: `Scanning: ${candidateTitle} (flagged: ${deterministicFlagged}, fixed: ${autoRematched + autoUnmatched})`,
-            successCurrent: autoRematched + autoUnmatched + llmKept,
-            failedCurrent: queuedUncertain,
-            estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
+        const isSuspicious =
+          scoreResult.tier === 'reject' ||
+          scoreResult.flags.some(f =>
+            [
+              'runtime_feature_short_mismatch',
+              'runtime_major_mismatch',
+              'year_major_mismatch',
+              'non_movie_candidate',
+              'title_low_similarity',
+            ].includes(f)
+          )
+
+        if (!isSuspicious) {
+          if (!dryRun) {
+            await serializeDbWrite(() =>
+              recordAudit(movie.movieId, 'clean', `Score ${scoreResult.score}`)
+            )
+          }
+          return
+        }
+
+        deterministicFlagged++
+
+        const verdict = await verifyMatchCandidate(
+          {
+            movieId: movie.movieId,
+            title: rawSourceTitle,
+            year: primarySource.year ?? extractYearFromTitle(rawSourceTitle),
+            durationMin: sourceDurationMin,
+            description: primarySource.description,
+            channelName: primarySource.channelName,
+          },
+          {
+            imdbId: movie.movieId,
+            title: candidateTitle,
+            year: candidateYear,
+            runtimeMin: candidateRuntimeMin,
+            director: movie.omdbDirector,
+            actors: movie.omdbActors,
+            plot: movie.omdbPlot,
+            type: movie.omdbType,
+          },
+          { model }
+        )
+
+        // High-confidence KEEP
+        if (verdict.verdict === 'match' && verdict.confidence >= minConfidence) {
+          llmKept++
+          if (!dryRun) {
+            await serializeDbWrite(() => recordAudit(movie.movieId, 'kept', verdict.reason))
+          }
+          if (samples.length < 30) {
+            samples.push({
+              movieId: movie.movieId,
+              title: candidateTitle,
+              action: 'kept',
+              llmVerdict: verdict.verdict,
+              llmConfidence: verdict.confidence,
+              llmReason: verdict.reason,
+              flags: scoreResult.flags,
+            })
+          }
+          return
+        }
+
+        // High-confidence MISMATCH -> try auto-rematch, else auto-unmatch
+        if (verdict.verdict === 'mismatch' && verdict.confidence >= minConfidence) {
+          let replacementId: string | null = null
+          let replacementMeta: MovieMetadata | null = null
+
+          if (rematch) {
+            const replacement = await findReplacementImdbMatch(
+              {
+                movieId: movie.movieId,
+                rawTitle: rawSourceTitle,
+                description: primarySource.description,
+                sourceId: primarySource.sourceId,
+                platform: primarySource.platform,
+                channelId: primarySource.channelId,
+                channelName: primarySource.channelName,
+                sourceYear: primarySource.year,
+                movieYear: movie.movieYear,
+                sourceDurationMin,
+                excludeImdbId: movie.movieId,
+              },
+              {
+                minRematchConfidence: Math.max(minConfidence, 0.85),
+                allowGoogle,
+                model,
+                omdbApiKey,
+              }
+            )
+            if (replacement) {
+              replacementId = replacement.imdbId
+              replacementMeta = replacement.meta
+            }
+          }
+
+          if (replacementId && isImdbId(replacementId)) {
+            const finalReplacementId = replacementId
+            const finalReplacementMeta = replacementMeta
+            autoRematched++
+            if (!dryRun) {
+              await serializeDbWrite(async () => {
+                const mig = await migrateMovieId(movie.movieId, finalReplacementId)
+                if (mig.success && finalReplacementMeta) {
+                  upsertMetadataAndMovie(db, finalReplacementId, finalReplacementMeta)
+                }
+                db.prepare(
+                  `UPDATE match_review_queue
+                   SET status = 'resolved', resolvedAt = datetime('now')
+                   WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
+                ).run(movie.movieId)
+                deleteAudit(movie.movieId)
+                recordAudit(finalReplacementId, 'rematched', `Rematched from ${movie.movieId}`)
+              })
+            }
+            if (samples.length < 30) {
+              samples.push({
+                movieId: movie.movieId,
+                title: candidateTitle,
+                action: 'rematched',
+                newMovieId: finalReplacementId,
+                llmVerdict: verdict.verdict,
+                llmConfidence: verdict.confidence,
+                llmReason: verdict.reason,
+                flags: scoreResult.flags,
+              })
+            }
+          } else {
+            autoUnmatched++
+            const tempId =
+              primarySource.platform === 'youtube'
+                ? generateYouTubeId(primarySource.sourceId)
+                : generateArchiveId(primarySource.sourceId)
+            if (!dryRun) {
+              await serializeDbWrite(async () => {
+                db.prepare('DELETE FROM metadata WHERE movieId = ?').run(movie.movieId)
+                await migrateMovieId(movie.movieId, tempId)
+                db.prepare(
+                  'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
+                ).run(rawSourceTitle, new Date().toISOString(), tempId)
+                db.prepare(
+                  `UPDATE match_review_queue
+                   SET status = 'resolved', resolvedAt = datetime('now')
+                   WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
+                ).run(movie.movieId)
+                deleteAudit(movie.movieId)
+              })
+            }
+            if (samples.length < 30) {
+              samples.push({
+                movieId: movie.movieId,
+                title: candidateTitle,
+                action: 'unmatched',
+                newMovieId: tempId,
+                llmVerdict: verdict.verdict,
+                llmConfidence: verdict.confidence,
+                llmReason: verdict.reason,
+                flags: scoreResult.flags,
+              })
+            }
+          }
+          return
+        }
+
+        // Uncertain -> enqueue ONLY these for human review
+        queuedUncertain++
+        if (!dryRun) {
+          await serializeDbWrite(() => {
+            if (!verdict.reason.startsWith('Verification error:')) {
+              recordAudit(movie.movieId, 'uncertain', verdict.reason)
+            }
+            enqueueReviewItem(db, {
+              movieId: movie.movieId,
+              kind: 'false_hit',
+              sourceId: primarySource.sourceId,
+              currentImdbId: movie.movieId,
+              proposedImdbId: null,
+              score: scoreResult.score,
+              llmVerdict: verdict.verdict,
+              llmConfidence: verdict.confidence,
+              llmReason: verdict.reason,
+              flags: scoreResult.flags,
+            })
           })
         }
-        continue
-      }
-
-      deterministicFlagged++
-      emitProgress({
-        type: 'audit',
-        status: 'in_progress',
-        current: scanned,
-        total,
-        message: `LLM verifying: ${candidateTitle} (${deterministicFlagged} flagged)`,
-        successCurrent: autoRematched + autoUnmatched + llmKept,
-        failedCurrent: queuedUncertain,
-        estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
-      })
-
-      const verdict = await verifyMatchCandidate(
-        {
-          movieId: movie.movieId,
-          title: rawSourceTitle,
-          year: primarySource.year ?? extractYearFromTitle(rawSourceTitle),
-          durationMin: sourceDurationMin,
-          description: primarySource.description,
-          channelName: primarySource.channelName,
-        },
-        {
-          imdbId: movie.movieId,
-          title: candidateTitle,
-          year: candidateYear,
-          runtimeMin: candidateRuntimeMin,
-          director: movie.omdbDirector,
-          actors: movie.omdbActors,
-          plot: movie.omdbPlot,
-          type: movie.omdbType,
-        },
-        { model }
-      )
-
-      // High-confidence KEEP
-      if (verdict.verdict === 'match' && verdict.confidence >= minConfidence) {
-        llmKept++
-        recordAudit(movie.movieId, 'kept', verdict.reason)
         if (samples.length < 30) {
           samples.push({
             movieId: movie.movieId,
             title: candidateTitle,
-            action: 'kept',
+            action: 'queued',
             llmVerdict: verdict.verdict,
             llmConfidence: verdict.confidence,
             llmReason: verdict.reason,
             flags: scoreResult.flags,
           })
         }
-        continue
-      }
-
-      // High-confidence MISMATCH -> try auto-rematch, else auto-unmatch
-      if (verdict.verdict === 'mismatch' && verdict.confidence >= minConfidence) {
-        let replacementId: string | null = null
-        let replacementMeta: MovieMetadata | null = null
-
-        if (rematch) {
-          const replacement = await findReplacementImdbMatch(
-            {
-              movieId: movie.movieId,
-              rawTitle: rawSourceTitle,
-              description: primarySource.description,
-              sourceId: primarySource.sourceId,
-              platform: primarySource.platform,
-              channelId: primarySource.channelId,
-              channelName: primarySource.channelName,
-              sourceYear: primarySource.year,
-              movieYear: movie.movieYear,
-              sourceDurationMin,
-              excludeImdbId: movie.movieId,
-            },
-            {
-              minRematchConfidence: Math.max(minConfidence, 0.85),
-              allowGoogle,
-              model,
-              omdbApiKey,
-            }
-          )
-          if (replacement) {
-            replacementId = replacement.imdbId
-            replacementMeta = replacement.meta
-          }
+      } catch (err) {
+        errors++
+        console.error(`[AutoAuditFalseHits] Error auditing ${movie.movieId}:`, err)
+      } finally {
+        scanned++
+        if (scanned % 25 === 0 || scanned === total || deterministicFlagged > 0) {
+          emitProgress({
+            type: 'audit',
+            status: 'in_progress',
+            current: scanned,
+            total,
+            message: `Auditing: ${candidateTitle} (flagged: ${deterministicFlagged}, fixed: ${autoRematched + autoUnmatched})`,
+            successCurrent: autoRematched + autoUnmatched + llmKept,
+            failedCurrent: queuedUncertain + errors,
+            estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned, total),
+          })
         }
-
-        if (replacementId && isImdbId(replacementId)) {
-          autoRematched++
-          if (!dryRun) {
-            const mig = await migrateMovieId(movie.movieId, replacementId)
-            if (mig.success && replacementMeta) {
-              upsertMetadataAndMovie(db, replacementId, replacementMeta)
-            }
-            db.prepare(
-              `UPDATE match_review_queue
-               SET status = 'resolved', resolvedAt = datetime('now')
-               WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
-            ).run(movie.movieId)
-            deleteAudit(movie.movieId)
-            recordAudit(replacementId, 'rematched', `Rematched from ${movie.movieId}`)
-          }
-          if (samples.length < 30) {
-            samples.push({
-              movieId: movie.movieId,
-              title: candidateTitle,
-              action: 'rematched',
-              newMovieId: replacementId,
-              llmVerdict: verdict.verdict,
-              llmConfidence: verdict.confidence,
-              llmReason: verdict.reason,
-              flags: scoreResult.flags,
-            })
-          }
-        } else {
-          autoUnmatched++
-          const tempId =
-            primarySource.platform === 'youtube'
-              ? generateYouTubeId(primarySource.sourceId)
-              : generateArchiveId(primarySource.sourceId)
-          if (!dryRun) {
-            db.prepare('DELETE FROM metadata WHERE movieId = ?').run(movie.movieId)
-            await migrateMovieId(movie.movieId, tempId)
-            db.prepare(
-              'UPDATE movies SET title = ?, verified = 0, lastUpdated = ? WHERE movieId = ?'
-            ).run(rawSourceTitle, new Date().toISOString(), tempId)
-            db.prepare(
-              `UPDATE match_review_queue
-               SET status = 'resolved', resolvedAt = datetime('now')
-               WHERE movieId = ? AND kind = 'false_hit' AND status = 'pending'`
-            ).run(movie.movieId)
-            deleteAudit(movie.movieId)
-          }
-          if (samples.length < 30) {
-            samples.push({
-              movieId: movie.movieId,
-              title: candidateTitle,
-              action: 'unmatched',
-              newMovieId: tempId,
-              llmVerdict: verdict.verdict,
-              llmConfidence: verdict.confidence,
-              llmReason: verdict.reason,
-              flags: scoreResult.flags,
-            })
-          }
-        }
-        continue
       }
-
-      // Uncertain -> enqueue ONLY these for human review
-      queuedUncertain++
-      if (!dryRun) {
-        if (!verdict.reason.startsWith('Verification error:')) {
-          recordAudit(movie.movieId, 'uncertain', verdict.reason)
-        }
-        enqueueReviewItem(db, {
-          movieId: movie.movieId,
-          kind: 'false_hit',
-          sourceId: primarySource.sourceId,
-          currentImdbId: movie.movieId,
-          proposedImdbId: null,
-          score: scoreResult.score,
-          llmVerdict: verdict.verdict,
-          llmConfidence: verdict.confidence,
-          llmReason: verdict.reason,
-          flags: scoreResult.flags,
-        })
-      }
-      if (samples.length < 30) {
-        samples.push({
-          movieId: movie.movieId,
-          title: candidateTitle,
-          action: 'queued',
-          llmVerdict: verdict.verdict,
-          llmConfidence: verdict.confidence,
-          llmReason: verdict.reason,
-          flags: scoreResult.flags,
-        })
-      }
-    }
+    })
 
     emitProgress({
       type: 'audit',
@@ -1954,7 +2029,9 @@ export async function runAutoMatchUnmatched(
   const minConfidence = options.minConfidence ?? 0.85
   const allowGoogle = options.allowGoogle ?? false
   const model = options.model || 'google/gemini-2.5-flash-lite'
+  const concurrency = options.concurrency ?? 5
   const omdbApiKey = process.env.OMDB_API_KEY
+  const serializeDbWrite = createDbWriteSerializer()
 
   const db = getAdminDatabase()
   ensureMatchAttemptsTable(db)
@@ -2056,8 +2133,7 @@ export async function runAutoMatchUnmatched(
   const startedAt = Date.now()
 
   try {
-    for (const movie of movies) {
-      scanned++
+    await runWithConcurrency(movies, concurrency, async movie => {
       const rawTitle = movie.sourceTitle || movie.movieTitle
       const extracted = extractSourceMetadata({
         rawTitle,
@@ -2079,31 +2155,22 @@ export async function runAutoMatchUnmatched(
           ? Math.round(movie.sourceDuration / 60)
           : null
 
-      emitProgress({
-        type: 'audit',
-        status: 'in_progress',
-        current: scanned,
-        total,
-        message: `Matching: ${queryTitle} (matched: ${directUrlMatches + deterministicMatches + llmMatches})`,
-        successCurrent: directUrlMatches + deterministicMatches + llmMatches,
-        failedCurrent: noMatch + errors,
-        estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned - 1, total),
-      })
+      const omdbCache = new Map<string, MovieMetadata | null>()
 
       try {
         // Pass 1: Direct tt* in description
         const directId = extractImdbIdFromText(movie.sourceDescription || undefined)
         if (directId) {
-          const meta = omdbApiKey
-            ? await getMovieByImdbId(directId, omdbApiKey).catch(() => null)
-            : null
-          if (!dryRun) {
-            const mig = await migrateMovieId(movie.movieId, directId)
-            if (mig.success && meta) {
-              upsertMetadataAndMovie(db, directId, meta)
+          const meta = await fetchOmdbCached(directId, omdbApiKey, omdbCache)
+          await serializeDbWrite(async () => {
+            if (!dryRun) {
+              const mig = await migrateMovieId(movie.movieId, directId)
+              if (mig.success && meta) {
+                upsertMetadataAndMovie(db, directId, meta)
+              }
             }
-          }
-          recordAttempt(movie.movieId, 'matched', 1, `Direct IMDb ID ${directId}`)
+            recordAttempt(movie.movieId, 'matched', 1, `Direct IMDb ID ${directId}`)
+          })
           directUrlMatches++
           if (samples.length < 30) {
             samples.push({
@@ -2116,26 +2183,102 @@ export async function runAutoMatchUnmatched(
               reason: 'Direct IMDb ID in source description',
             })
           }
-          continue
+          return
         }
 
-        // Pass 2: Tiered multi-source retrieval
-        const candidates = await retrieveCandidates(
-          {
-            title: queryTitle,
-            originalTitle: extracted.originalTitle,
-            altTitles: extracted.altTitles,
-            year: queryYear,
-            description: movie.sourceDescription || undefined,
-            director: extracted.director,
-            cast: extracted.cast,
-          },
-          {
-            limit: 6,
-            omdbApiKey,
-            allowGoogleFallback: allowGoogle,
+        const queryInput = {
+          title: queryTitle,
+          originalTitle: extracted.originalTitle,
+          altTitles: extracted.altTitles,
+          year: queryYear,
+          description: movie.sourceDescription || undefined,
+          director: extracted.director,
+          cast: extracted.cast,
+        }
+
+        const scoreCandidate = (cand: RetrievedCandidate) =>
+          scoreMatchCandidate(
+            {
+              title: queryTitle,
+              originalTitle: extracted.originalTitle ?? null,
+              altTitles: extracted.altTitles,
+              sourceYear: queryYear ?? null,
+              titleYear: extracted.year ?? null,
+              sourceDurationMin,
+              director: extracted.director ?? null,
+              cast: extracted.cast,
+            },
+            {
+              imdbId: cand.imdbId,
+              title: cand.title,
+              originalTitle: cand.originalTitle,
+              altTitles: cand.altTitles,
+              year: cand.year ?? null,
+              runtimeMin: cand.runtimeMinutes ?? null,
+              director: cand.directors.join(', ') || null,
+              cast: cand.cast,
+              type: cand.titleType ?? null,
+            }
+          )
+
+        // Pass 1b: Local-first fast path (<2ms via local imdb-index.db)
+        const localCandidates = await retrieveCandidates(queryInput, {
+          limit: 15,
+          omdbApiKey,
+          skipExternalApis: true,
+        })
+        if (localCandidates.length > 0) {
+          const localScored = localCandidates
+            .map(cand => ({ cand, result: scoreCandidate(cand) }))
+            .sort((a, b) => b.result.score - a.result.score)
+          const localTop = localScored[0]!
+          const localSecond = localScored[1]
+          const localHasYearOrPeople =
+            localTop.result.breakdown.yearScore > 0 || localTop.result.breakdown.peopleScore > 0
+
+          if (
+            localTop.result.tier === 'auto_accept' &&
+            localTop.result.score >= 85 &&
+            localHasYearOrPeople &&
+            (!localSecond || localTop.result.score - localSecond.result.score >= 10)
+          ) {
+            const meta = await fetchOmdbCached(localTop.cand.imdbId, omdbApiKey, omdbCache)
+            await serializeDbWrite(async () => {
+              if (!dryRun) {
+                const mig = await migrateMovieId(movie.movieId, localTop.cand.imdbId)
+                if (mig.success && meta) {
+                  upsertMetadataAndMovie(db, localTop.cand.imdbId, meta)
+                }
+              }
+              recordAttempt(
+                movie.movieId,
+                'matched',
+                localCandidates.length,
+                `Local deterministic auto-accept (${localTop.cand.imdbId}, score ${localTop.result.score})`
+              )
+            })
+            deterministicMatches++
+            if (samples.length < 30) {
+              samples.push({
+                oldMovieId: movie.movieId,
+                title: rawTitle,
+                action: 'deterministic_match',
+                imdbId: localTop.cand.imdbId,
+                matchedTitle: meta?.Title || localTop.cand.title,
+                confidence: Number((localTop.result.score / 100).toFixed(2)),
+                reason: `Local deterministic auto-accept (score ${localTop.result.score}) via ${localTop.cand.sources.join('+')}`,
+              })
+            }
+            return
           }
-        )
+        }
+
+        // Pass 2: Tiered multi-source retrieval (parallel Tiers 3–7)
+        const candidates = await retrieveCandidates(queryInput, {
+          limit: 6,
+          omdbApiKey,
+          allowGoogleFallback: allowGoogle,
+        })
 
         // Pass 3: Deterministic scoring & Pass-1 LLM adjudication (when candidates exist)
         let pass1Top: {
@@ -2148,32 +2291,7 @@ export async function runAutoMatchUnmatched(
 
         if (candidates.length > 0) {
           const scored = candidates
-            .map(cand => ({
-              cand,
-              result: scoreMatchCandidate(
-                {
-                  title: queryTitle,
-                  originalTitle: extracted.originalTitle ?? null,
-                  altTitles: extracted.altTitles,
-                  sourceYear: queryYear ?? null,
-                  titleYear: extracted.year ?? null,
-                  sourceDurationMin,
-                  director: extracted.director ?? null,
-                  cast: extracted.cast,
-                },
-                {
-                  imdbId: cand.imdbId,
-                  title: cand.title,
-                  originalTitle: cand.originalTitle,
-                  altTitles: cand.altTitles,
-                  year: cand.year ?? null,
-                  runtimeMin: cand.runtimeMinutes ?? null,
-                  director: cand.directors.join(', ') || null,
-                  cast: cand.cast,
-                  type: cand.titleType ?? null,
-                }
-              ),
-            }))
+            .map(cand => ({ cand, result: scoreCandidate(cand) }))
             .sort((a, b) => b.result.score - a.result.score)
 
           const top = scored[0]!
@@ -2189,21 +2307,21 @@ export async function runAutoMatchUnmatched(
             hasYearOrPeopleEvidence &&
             (!second || top.result.score - second.result.score >= 10)
           ) {
-            const meta = omdbApiKey
-              ? await getMovieByImdbId(top.cand.imdbId, omdbApiKey).catch(() => null)
-              : null
-            if (!dryRun) {
-              const mig = await migrateMovieId(movie.movieId, top.cand.imdbId)
-              if (mig.success && meta) {
-                upsertMetadataAndMovie(db, top.cand.imdbId, meta)
+            const meta = await fetchOmdbCached(top.cand.imdbId, omdbApiKey, omdbCache)
+            await serializeDbWrite(async () => {
+              if (!dryRun) {
+                const mig = await migrateMovieId(movie.movieId, top.cand.imdbId)
+                if (mig.success && meta) {
+                  upsertMetadataAndMovie(db, top.cand.imdbId, meta)
+                }
               }
-            }
-            recordAttempt(
-              movie.movieId,
-              'matched',
-              candidates.length,
-              `Deterministic auto-accept (${top.cand.imdbId}, score ${top.result.score})`
-            )
+              recordAttempt(
+                movie.movieId,
+                'matched',
+                candidates.length,
+                `Deterministic auto-accept (${top.cand.imdbId}, score ${top.result.score})`
+              )
+            })
             deterministicMatches++
             if (samples.length < 30) {
               samples.push({
@@ -2216,7 +2334,7 @@ export async function runAutoMatchUnmatched(
                 reason: `Deterministic auto-accept (score ${top.result.score}) via ${top.cand.sources.join('+')}`,
               })
             }
-            continue
+            return
           }
 
           // Ambiguous -> LLM adjudicator (include non-hard-disqualified candidates if nonRejected < 3)
@@ -2239,7 +2357,8 @@ export async function runAutoMatchUnmatched(
           if (adjudicateList.length > 0) {
             const hydratedInputs = await hydrateCandidatesForAdjudication(
               adjudicateList.map(s => s.cand),
-              omdbApiKey
+              omdbApiKey,
+              omdbCache
             )
             const adj = await adjudicateCandidates(
               {
@@ -2261,14 +2380,13 @@ export async function runAutoMatchUnmatched(
             pass1Adj = adj
 
             if (adj.chosenImdbId && adj.verdict === 'match' && adj.confidence >= minConfidence) {
-              const meta = omdbApiKey
-                ? await getMovieByImdbId(adj.chosenImdbId, omdbApiKey).catch(() => null)
-                : null
+              const chosenId = adj.chosenImdbId
+              const meta = await fetchOmdbCached(chosenId, omdbApiKey, omdbCache)
               const finalRuntimeCheck = scoreMatchCandidate(
                 { title: queryTitle, sourceDurationMin },
                 {
-                  imdbId: adj.chosenImdbId,
-                  title: meta?.Title || adj.chosenImdbId,
+                  imdbId: chosenId,
+                  title: meta?.Title || chosenId,
                   runtimeMin: parseRuntimeMinutes(meta?.Runtime),
                 }
               )
@@ -2276,31 +2394,33 @@ export async function runAutoMatchUnmatched(
                 !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
                 !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
               ) {
-                if (!dryRun) {
-                  const mig = await migrateMovieId(movie.movieId, adj.chosenImdbId)
-                  if (mig.success && meta) {
-                    upsertMetadataAndMovie(db, adj.chosenImdbId, meta)
+                await serializeDbWrite(async () => {
+                  if (!dryRun) {
+                    const mig = await migrateMovieId(movie.movieId, chosenId)
+                    if (mig.success && meta) {
+                      upsertMetadataAndMovie(db, chosenId, meta)
+                    }
                   }
-                }
-                recordAttempt(
-                  movie.movieId,
-                  'matched',
-                  candidates.length,
-                  `LLM match (${adj.chosenImdbId}, conf ${adj.confidence})`
-                )
+                  recordAttempt(
+                    movie.movieId,
+                    'matched',
+                    candidates.length,
+                    `LLM match (${chosenId}, conf ${adj.confidence})`
+                  )
+                })
                 llmMatches++
                 if (samples.length < 30) {
                   samples.push({
                     oldMovieId: movie.movieId,
                     title: rawTitle,
                     action: 'llm_match',
-                    imdbId: adj.chosenImdbId,
+                    imdbId: chosenId,
                     matchedTitle: meta?.Title || top.cand.title,
                     confidence: adj.confidence,
                     reason: adj.reason,
                   })
                 }
-                continue
+                return
               }
             }
 
@@ -2341,8 +2461,15 @@ export async function runAutoMatchUnmatched(
         if (plan && !plan.isMovie) {
           notAMovie++
           noMatch++
-          recordAttempt(movie.movieId, 'no_match', candidates.length, `not_a_movie: ${plan.reason}`)
-          continue
+          await serializeDbWrite(() =>
+            recordAttempt(
+              movie.movieId,
+              'no_match',
+              candidates.length,
+              `not_a_movie: ${plan.reason}`
+            )
+          )
+          return
         }
 
         if (plan) {
@@ -2362,22 +2489,31 @@ export async function runAutoMatchUnmatched(
           const plannedDirector = plan.director || extracted.director
           const plannedCast = plan.cast.length > 0 ? plan.cast : extracted.cast
 
-          const plannedCandidates = await retrieveCandidates(
-            {
-              title: plannedTitle,
-              originalTitle: plan.originalTitle || extracted.originalTitle,
-              altTitles: plannedAlts,
-              year: plannedYear,
-              description: movie.sourceDescription || undefined,
-              director: plannedDirector,
-              cast: plannedCast,
-            },
-            {
-              limit: 8,
-              omdbApiKey,
-              allowGoogleFallback: allowGoogle,
-            }
-          )
+          const [plannedCandidates, searxSettled] = await Promise.all([
+            retrieveCandidates(
+              {
+                title: plannedTitle,
+                originalTitle: plan.originalTitle || extracted.originalTitle,
+                altTitles: plannedAlts,
+                year: plannedYear,
+                description: movie.sourceDescription || undefined,
+                director: plannedDirector,
+                cast: plannedCast,
+              },
+              {
+                limit: 8,
+                omdbApiKey,
+                allowGoogleFallback: allowGoogle,
+              }
+            ),
+            isSearxngAvailable() && plan.webQueries.length > 0
+              ? Promise.allSettled(
+                  plan.webQueries
+                    .slice(0, 2)
+                    .map(wq => searchSearxngRawForImdb(wq, 4).catch(() => []))
+                )
+              : Promise.resolve([]),
+          ])
 
           const freshMap = new Map<string, RetrievedCandidate>()
           for (const c of plannedCandidates) {
@@ -2386,23 +2522,20 @@ export async function runAutoMatchUnmatched(
             }
           }
 
-          // Also run LLM webQueries via self-hosted SearXNG (free, great for foreign/obscure titles)
-          if (isSearxngAvailable() && plan.webQueries.length > 0) {
-            for (const wq of plan.webQueries.slice(0, 2)) {
-              const searxHits = await searchSearxngRawForImdb(wq, 4).catch(() => [])
-              for (const hit of searxHits) {
-                if (rejectedIds.has(hit.imdbId) || freshMap.has(hit.imdbId)) continue
-                freshMap.set(hit.imdbId, {
-                  imdbId: hit.imdbId,
-                  title: hit.title,
-                  altTitles: [],
-                  year: hit.year,
-                  directors: [],
-                  cast: [],
-                  overview: hit.snippet,
-                  sources: ['searxng'],
-                })
-              }
+          for (const res of searxSettled) {
+            if (res.status !== 'fulfilled') continue
+            for (const hit of res.value) {
+              if (rejectedIds.has(hit.imdbId) || freshMap.has(hit.imdbId)) continue
+              freshMap.set(hit.imdbId, {
+                imdbId: hit.imdbId,
+                title: hit.title,
+                altTitles: [],
+                year: hit.year,
+                directors: [],
+                cast: [],
+                overview: hit.snippet,
+                sources: ['searxng'],
+              })
             }
           }
 
@@ -2446,7 +2579,8 @@ export async function runAutoMatchUnmatched(
             if (scoredFresh.length > 0) {
               const hydratedFresh = await hydrateCandidatesForAdjudication(
                 scoredFresh.map(s => s.cand),
-                omdbApiKey
+                omdbApiKey,
+                omdbCache
               )
               const adj2 = await adjudicateCandidates(
                 {
@@ -2471,14 +2605,13 @@ export async function runAutoMatchUnmatched(
                 adj2.verdict === 'match' &&
                 adj2.confidence >= minConfidence
               ) {
-                const meta = omdbApiKey
-                  ? await getMovieByImdbId(adj2.chosenImdbId, omdbApiKey).catch(() => null)
-                  : null
+                const chosenId2 = adj2.chosenImdbId
+                const meta = await fetchOmdbCached(chosenId2, omdbApiKey, omdbCache)
                 const finalRuntimeCheck = scoreMatchCandidate(
                   { title: plannedTitle, sourceDurationMin },
                   {
-                    imdbId: adj2.chosenImdbId,
-                    title: meta?.Title || adj2.chosenImdbId,
+                    imdbId: chosenId2,
+                    title: meta?.Title || chosenId2,
                     runtimeMin: parseRuntimeMinutes(meta?.Runtime),
                   }
                 )
@@ -2486,35 +2619,35 @@ export async function runAutoMatchUnmatched(
                   !finalRuntimeCheck.flags.includes('runtime_feature_short_mismatch') &&
                   !finalRuntimeCheck.flags.includes('runtime_major_mismatch')
                 ) {
-                  if (!dryRun) {
-                    const mig = await migrateMovieId(movie.movieId, adj2.chosenImdbId)
-                    if (mig.success && meta) {
-                      upsertMetadataAndMovie(db, adj2.chosenImdbId, meta)
+                  await serializeDbWrite(async () => {
+                    if (!dryRun) {
+                      const mig = await migrateMovieId(movie.movieId, chosenId2)
+                      if (mig.success && meta) {
+                        upsertMetadataAndMovie(db, chosenId2, meta)
+                      }
                     }
-                  }
-                  recordAttempt(
-                    movie.movieId,
-                    'matched',
-                    candidates.length + freshList.length,
-                    `Phase-2 planned LLM match (${adj2.chosenImdbId}, conf ${adj2.confidence})`
-                  )
+                    recordAttempt(
+                      movie.movieId,
+                      'matched',
+                      candidates.length + freshList.length,
+                      `Phase-2 planned LLM match (${chosenId2}, conf ${adj2.confidence})`
+                    )
+                  })
                   llmMatches++
                   plannedLlmMatches++
                   if (samples.length < 30) {
-                    const chosenCand = scoredFresh.find(
-                      s => s.cand.imdbId === adj2.chosenImdbId
-                    )?.cand
+                    const chosenCand = scoredFresh.find(s => s.cand.imdbId === chosenId2)?.cand
                     samples.push({
                       oldMovieId: movie.movieId,
                       title: rawTitle,
                       action: 'llm_match',
-                      imdbId: adj2.chosenImdbId,
-                      matchedTitle: meta?.Title || chosenCand?.title || adj2.chosenImdbId,
+                      imdbId: chosenId2,
+                      matchedTitle: meta?.Title || chosenCand?.title || chosenId2,
                       confidence: adj2.confidence,
                       reason: `[Planned] ${adj2.reason}`,
                     })
                   }
-                  continue
+                  return
                 }
               }
 
@@ -2534,57 +2667,77 @@ export async function runAutoMatchUnmatched(
           pass1Adj.verdict === 'uncertain' &&
           pass1Top.result.score >= 50
         ) {
+          const queuedTop = pass1Top
+          const queuedAdj = pass1Adj
           queuedUncertain++
-          if (!dryRun) {
-            enqueueReviewItem(db, {
-              movieId: movie.movieId,
-              kind: 'new_match',
-              sourceId: movie.sourceId,
-              currentImdbId: null,
-              proposedImdbId: pass1Adj.chosenImdbId || pass1Top.cand.imdbId,
-              score: pass1Top.result.score,
-              llmVerdict: pass1Adj.verdict,
-              llmConfidence: pass1Adj.confidence,
-              llmReason: pass1Adj.reason,
-              flags: pass1Top.result.flags,
-              candidate: {
-                Title: pass1Top.cand.title,
-                Year: pass1Top.cand.year,
-                Runtime: pass1Top.cand.runtimeMinutes
-                  ? `${pass1Top.cand.runtimeMinutes} min`
-                  : undefined,
-                Director: pass1Top.cand.directors.join(', '),
-                Actors: pass1Top.cand.cast.join(', '),
-              },
-            })
-          }
-          recordAttempt(movie.movieId, 'queued', candidates.length, pass1Adj.reason)
+          await serializeDbWrite(() => {
+            if (!dryRun) {
+              enqueueReviewItem(db, {
+                movieId: movie.movieId,
+                kind: 'new_match',
+                sourceId: movie.sourceId,
+                currentImdbId: null,
+                proposedImdbId: queuedAdj.chosenImdbId || queuedTop.cand.imdbId,
+                score: queuedTop.result.score,
+                llmVerdict: queuedAdj.verdict,
+                llmConfidence: queuedAdj.confidence,
+                llmReason: queuedAdj.reason,
+                flags: queuedTop.result.flags,
+                candidate: {
+                  Title: queuedTop.cand.title,
+                  Year: queuedTop.cand.year,
+                  Runtime: queuedTop.cand.runtimeMinutes
+                    ? `${queuedTop.cand.runtimeMinutes} min`
+                    : undefined,
+                  Director: queuedTop.cand.directors.join(', '),
+                  Actors: queuedTop.cand.cast.join(', '),
+                },
+              })
+            }
+            recordAttempt(movie.movieId, 'queued', candidates.length, queuedAdj.reason)
+          })
           if (samples.length < 30) {
             samples.push({
               oldMovieId: movie.movieId,
               title: rawTitle,
               action: 'queued',
-              imdbId: pass1Adj.chosenImdbId || pass1Top.cand.imdbId,
-              matchedTitle: pass1Top.cand.title,
-              confidence: pass1Adj.confidence,
-              reason: pass1Adj.reason,
+              imdbId: queuedAdj.chosenImdbId || queuedTop.cand.imdbId,
+              matchedTitle: queuedTop.cand.title,
+              confidence: queuedAdj.confidence,
+              reason: queuedAdj.reason,
             })
           }
         } else {
-          recordAttempt(
-            movie.movieId,
-            'no_match',
-            candidates.length,
-            pass1Adj?.reason || plan?.reason || 'No match after Phase 2 query planning'
+          await serializeDbWrite(() =>
+            recordAttempt(
+              movie.movieId,
+              'no_match',
+              candidates.length,
+              pass1Adj?.reason || plan?.reason || 'No match after Phase 2 query planning'
+            )
           )
           noMatch++
         }
       } catch (err) {
         errors++
-        recordAttempt(movie.movieId, 'error', 0, err instanceof Error ? err.message : String(err))
+        await serializeDbWrite(() =>
+          recordAttempt(movie.movieId, 'error', 0, err instanceof Error ? err.message : String(err))
+        )
         console.error(`[AutoMatch] Error processing ${movie.movieId}:`, err)
+      } finally {
+        scanned++
+        emitProgress({
+          type: 'audit',
+          status: 'in_progress',
+          current: scanned,
+          total,
+          message: `Matching: ${queryTitle} (matched: ${directUrlMatches + deterministicMatches + llmMatches})`,
+          successCurrent: directUrlMatches + deterministicMatches + llmMatches,
+          failedCurrent: noMatch + errors,
+          estimatedTimeRemaining: computeEtaSeconds(startedAt, scanned, total),
+        })
       }
-    }
+    })
 
     emitProgress({
       type: 'audit',

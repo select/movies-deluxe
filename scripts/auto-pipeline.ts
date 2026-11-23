@@ -39,6 +39,7 @@ interface ParsedArgs {
   rematch: boolean
   removeRedundant: boolean
   model?: string
+  concurrency?: number
 }
 
 function printUsage(): void {
@@ -61,6 +62,7 @@ Options:
   --no-rematch             Disable auto-rematch during audit-false-hits
   --no-remove-redundant    Mark redundant previews incomplete instead of deleting
   --model <ID>             Override OpenRouter/LLM model ID
+  --concurrency <N>        Worker concurrency (1-10, default: 5)
   -h, --help               Show this help message`)
 }
 
@@ -112,6 +114,13 @@ function parseArgs(argv: string[]): ParsedArgs {
       const next = argv[++i]
       if (!next) throw new Error('Missing value for --model')
       parsed.model = next
+    } else if (arg === '--concurrency') {
+      const next = argv[++i]
+      const val = next ? Number(next) : NaN
+      if (!Number.isFinite(val) || val < 1 || val > 10) {
+        throw new Error(`Invalid --concurrency value: ${next ?? '(missing)'}`)
+      }
+      parsed.concurrency = Math.floor(val)
     } else if (arg.startsWith('-')) {
       throw new Error(`Unknown option: ${arg}`)
     } else if (!parsed.task) {
@@ -291,6 +300,7 @@ async function main(): Promise<void> {
       rematch: args.rematch,
       allowGoogle: args.allowGoogle,
       model: args.model,
+      concurrency: args.concurrency,
     })
     printAuditFalseHitsResult(result)
     return
@@ -316,6 +326,7 @@ async function main(): Promise<void> {
     minConfidence: args.minConfidence,
     allowGoogle: args.allowGoogle,
     model: args.model,
+    concurrency: args.concurrency,
   })
   printMatchUnmatchedResult(result)
 }

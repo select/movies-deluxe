@@ -309,39 +309,69 @@ export async function retrieveCandidates(
     return Array.from(candidates.values()).slice(0, limit)
   }
 
-  // Tier 3: TMDB API
-  if (isTmdbAvailable()) {
-    for (const q of searchQueries.slice(0, 3)) {
-      try {
-        const tmdbHits = await searchTmdbCandidates(q, input.year, 5)
-        for (const hit of tmdbHits) {
-          if (!hit.imdbId) continue
-          mergeCandidate(candidates, {
-            imdbId: hit.imdbId,
-            title: hit.title,
-            originalTitle: hit.originalTitle,
-            altTitles: hit.altTitles,
-            year: hit.year,
-            runtimeMinutes: hit.runtime,
-            titleType: 'movie',
-            directors: hit.directors,
-            cast: hit.cast,
-            overview: hit.overview,
-            language: hit.language,
-            source: 'tmdb',
-          })
-        }
-      } catch (error) {
-        console.warn(`[CandidateRetriever] TMDB search failed for "${q}":`, error)
-      }
-    }
-  }
+  const top3Queries = searchQueries.slice(0, 3)
+  const primaryQuery = searchQueries[0]
 
-  // Tier 4: IMDb Suggestion API
-  for (const q of searchQueries.slice(0, 3)) {
-    try {
-      const suggestions = await searchImdbSuggestions(q, 8)
-      for (const hit of suggestions) {
+  // Tiers 3–7: Run external APIs in parallel, then merge in deterministic tier order
+  const [tmdbSettled, suggestionSettled, wikidataSettled, omdbSettled, wikipediaSettled] =
+    await Promise.all([
+      isTmdbAvailable()
+        ? Promise.allSettled(top3Queries.map(q => searchTmdbCandidates(q, input.year, 5)))
+        : Promise.resolve([]),
+      Promise.allSettled(top3Queries.map(q => searchImdbSuggestions(q, 8))),
+      Promise.allSettled(top3Queries.map(q => searchWikidataImdb(q, input.language || 'en', 8))),
+      omdbApiKey && primaryQuery
+        ? (async () => {
+            let res = await searchOMDB(primaryQuery, input.year, omdbApiKey)
+            if ((!res.Search || res.Search.length === 0) && input.year) {
+              res = await searchOMDB(primaryQuery, undefined, omdbApiKey)
+            }
+            return res
+          })().catch(error => {
+            console.warn(`[CandidateRetriever] OMDb search failed for "${primaryQuery}":`, error)
+            return null
+          })
+        : Promise.resolve(null),
+      candidates.size < 3 && primaryQuery
+        ? searchWikipediaForImdb(primaryQuery, input.year).catch(error => {
+            console.warn(
+              `[CandidateRetriever] Wikipedia search failed for "${primaryQuery}":`,
+              error
+            )
+            return []
+          })
+        : Promise.resolve([]),
+    ])
+
+  // Merge Tier 3: TMDB
+  tmdbSettled.forEach((res, idx) => {
+    if (res.status === 'fulfilled') {
+      for (const hit of res.value) {
+        if (!hit.imdbId) continue
+        mergeCandidate(candidates, {
+          imdbId: hit.imdbId,
+          title: hit.title,
+          originalTitle: hit.originalTitle,
+          altTitles: hit.altTitles,
+          year: hit.year,
+          runtimeMinutes: hit.runtime,
+          titleType: 'movie',
+          directors: hit.directors,
+          cast: hit.cast,
+          overview: hit.overview,
+          language: hit.language,
+          source: 'tmdb',
+        })
+      }
+    } else {
+      console.warn(`[CandidateRetriever] TMDB search failed for "${top3Queries[idx]}":`, res.reason)
+    }
+  })
+
+  // Merge Tier 4: IMDb Suggestion
+  suggestionSettled.forEach((res, idx) => {
+    if (res.status === 'fulfilled') {
+      for (const hit of res.value) {
         mergeCandidate(candidates, {
           imdbId: hit.imdbId,
           title: hit.title,
@@ -353,16 +383,18 @@ export async function retrieveCandidates(
           source: 'imdb_suggestion',
         })
       }
-    } catch (error) {
-      console.warn(`[CandidateRetriever] IMDb Suggestion failed for "${q}":`, error)
+    } else {
+      console.warn(
+        `[CandidateRetriever] IMDb Suggestion failed for "${top3Queries[idx]}":`,
+        res.reason
+      )
     }
-  }
+  })
 
-  // Tier 5: Wikidata API
-  for (const q of searchQueries.slice(0, 3)) {
-    try {
-      const wikiHits = await searchWikidataImdb(q, input.language || 'en', 8)
-      for (const hit of wikiHits) {
+  // Merge Tier 5: Wikidata
+  wikidataSettled.forEach((res, idx) => {
+    if (res.status === 'fulfilled') {
+      for (const hit of res.value) {
         mergeCandidate(candidates, {
           imdbId: hit.imdbId,
           title: hit.title,
@@ -374,56 +406,44 @@ export async function retrieveCandidates(
           source: 'wikidata',
         })
       }
-    } catch (error) {
-      console.warn(`[CandidateRetriever] Wikidata search failed for "${q}":`, error)
+    } else {
+      console.warn(
+        `[CandidateRetriever] Wikidata search failed for "${top3Queries[idx]}":`,
+        res.reason
+      )
+    }
+  })
+
+  // Merge Tier 6: OMDb
+  if (omdbSettled) {
+    for (const hit of omdbSettled.Search || []) {
+      if (!hit.imdbID || !/^tt\d+$/i.test(hit.imdbID)) continue
+      const parsedYear = hit.Year ? parseInt(hit.Year, 10) : NaN
+      mergeCandidate(candidates, {
+        imdbId: hit.imdbID.toLowerCase(),
+        title: hit.Title,
+        altTitles: [],
+        year: !Number.isNaN(parsedYear) ? parsedYear : undefined,
+        titleType: hit.Type,
+        directors: [],
+        cast: [],
+        source: 'omdb',
+      })
     }
   }
 
-  // Tier 6: OMDb search
-  if (omdbApiKey && searchQueries[0]) {
-    try {
-      let omdbRes = await searchOMDB(searchQueries[0], input.year, omdbApiKey)
-      if ((!omdbRes.Search || omdbRes.Search.length === 0) && input.year) {
-        omdbRes = await searchOMDB(searchQueries[0], undefined, omdbApiKey)
-      }
-      for (const hit of omdbRes.Search || []) {
-        if (!hit.imdbID || !/^tt\d+$/i.test(hit.imdbID)) continue
-        const parsedYear = hit.Year ? parseInt(hit.Year, 10) : NaN
-        mergeCandidate(candidates, {
-          imdbId: hit.imdbID.toLowerCase(),
-          title: hit.Title,
-          altTitles: [],
-          year: !Number.isNaN(parsedYear) ? parsedYear : undefined,
-          titleType: hit.Type,
-          directors: [],
-          cast: [],
-          source: 'omdb',
-        })
-      }
-    } catch (error) {
-      console.warn(`[CandidateRetriever] OMDb search failed for "${searchQueries[0]}":`, error)
-    }
-  }
-
-  // Tier 7: Wikipedia MediaWiki API (run when few candidates found)
-  if (candidates.size < 3 && searchQueries[0]) {
-    try {
-      const wikiHits = await searchWikipediaForImdb(searchQueries[0], input.year)
-      for (const hit of wikiHits) {
-        mergeCandidate(candidates, {
-          imdbId: hit.imdbId,
-          title: hit.title,
-          altTitles: [],
-          year: hit.year,
-          directors: [],
-          cast: [],
-          overview: hit.overview,
-          source: 'wikipedia',
-        })
-      }
-    } catch (error) {
-      console.warn(`[CandidateRetriever] Wikipedia search failed for "${searchQueries[0]}":`, error)
-    }
+  // Merge Tier 7: Wikipedia
+  for (const hit of wikipediaSettled) {
+    mergeCandidate(candidates, {
+      imdbId: hit.imdbId,
+      title: hit.title,
+      altTitles: [],
+      year: hit.year,
+      directors: [],
+      cast: [],
+      overview: hit.overview,
+      source: 'wikipedia',
+    })
   }
 
   // Tier 8: Self-hosted SearXNG JSON search (if SEARXNG_URL set, when few candidates found)
