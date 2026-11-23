@@ -8,6 +8,8 @@
  * sources.lastCheckedAt, sources.statusChangedAt, and sources.regionRestriction.
  *
  * Run with: pnpm youtube:detect-blocked
+ * Options:
+ *   --unchecked  Only probe YouTube sources where lastCheckedAt IS NULL
  */
 
 import { config } from 'dotenv'
@@ -29,8 +31,14 @@ async function main() {
     process.exit(1)
   }
 
+  const uncheckedOnly = process.argv.includes('--unchecked')
+
   try {
-    logger.info('Loading YouTube sources from admin database...')
+    logger.info(
+      uncheckedOnly
+        ? 'Loading unchecked YouTube sources from admin database...'
+        : 'Loading YouTube sources from admin database...'
+    )
     const db = getAdminDatabase()
 
     const sources = db
@@ -39,7 +47,7 @@ async function main() {
         SELECT s.id, s.sourceId, s.movieId, s.status, s.unavailableReason, s.regionRestriction
         FROM sources s
         JOIN channels c ON s.channelId = c.id
-        WHERE c.platform = 'youtube'
+        WHERE c.platform = 'youtube'${uncheckedOnly ? '\n          AND s.lastCheckedAt IS NULL' : ''}
       `
       )
       .all() as Array<{
