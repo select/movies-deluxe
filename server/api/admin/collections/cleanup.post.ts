@@ -5,12 +5,17 @@ import type { Collection } from '#shared/types/collections'
 
 interface CleanupResult {
   success: boolean
-  collectionsUpdated: number
-  orphanedIdsRemoved: number
+  stats: {
+    collectionsProcessed: number
+    moviesRemoved: number
+    moviesUpdated: number
+    collectionsModified: number
+  }
   details: Array<{
     collectionId: string
     collectionName: string
-    removedIds: string[]
+    removedMovies: string[]
+    updatedMovies: Array<{ oldId: string; newId: string }>
   }>
 }
 
@@ -26,13 +31,15 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
     // Load all collections
     const db = await loadCollectionsDatabase()
     const details: CleanupResult['details'] = []
-    let collectionsUpdated = 0
-    let orphanedIdsRemoved = 0
+    let collectionsProcessed = 0
+    let collectionsModified = 0
+    let moviesRemoved = 0
 
     // Check each collection for orphaned IDs
     for (const [key, value] of Object.entries(db)) {
       if (key.startsWith('_')) continue
 
+      collectionsProcessed++
       const collection = value as Collection
       const orphanedIds = collection.movieIds.filter(id => !validMovieIds.has(id))
 
@@ -44,23 +51,28 @@ export default defineEventHandler(async (): Promise<CleanupResult> => {
         details.push({
           collectionId: collection.id,
           collectionName: collection.name,
-          removedIds: orphanedIds,
+          removedMovies: orphanedIds,
+          updatedMovies: [],
         })
 
-        collectionsUpdated++
-        orphanedIdsRemoved += orphanedIds.length
+        collectionsModified++
+        moviesRemoved += orphanedIds.length
       }
     }
 
     // Save if any changes were made
-    if (collectionsUpdated > 0) {
+    if (collectionsModified > 0) {
       await saveCollectionsDatabase(db)
     }
 
     return {
       success: true,
-      collectionsUpdated,
-      orphanedIdsRemoved,
+      stats: {
+        collectionsProcessed,
+        moviesRemoved,
+        moviesUpdated: 0,
+        collectionsModified,
+      },
       details,
     }
   } catch (error: unknown) {

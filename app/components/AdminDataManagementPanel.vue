@@ -327,22 +327,27 @@
 
       <div
         v-if="collectionCleanupResults"
-        class="px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 border"
+        class="px-3 py-1.5 rounded-lg text-xs flex items-center justify-between gap-2 border"
         :class="
           collectionCleanupResults.success
             ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400'
             : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
         "
       >
-        <div
-          :class="collectionCleanupResults.success ? 'i-mdi-check-circle' : 'i-mdi-alert-circle'"
-        ></div>
-        <span v-if="collectionCleanupResults.success">
-          Collections: {{ collectionCleanupResults.stats.collectionsModified }} modified,
-          {{ collectionCleanupResults.stats.moviesRemoved }} removed,
-          {{ collectionCleanupResults.stats.moviesUpdated }} IDs updated
-        </span>
-        <span v-else>Collection cleanup failed</span>
+        <div class="flex items-center gap-2">
+          <div
+            :class="collectionCleanupResults.success ? 'i-mdi-check-circle' : 'i-mdi-alert-circle'"
+          ></div>
+          <span v-if="collectionCleanupResults.success">
+            Collections: {{ collectionCleanupResults.stats?.collectionsModified ?? 0 }} modified,
+            {{ collectionCleanupResults.stats?.moviesRemoved ?? 0 }} removed,
+            {{ collectionCleanupResults.stats?.moviesUpdated ?? 0 }} IDs updated
+          </span>
+          <span v-else>Collection cleanup failed</span>
+        </div>
+        <button class="opacity-70 hover:opacity-100" @click="collectionCleanupResults = null">
+          <div class="i-mdi-close"></div>
+        </button>
       </div>
 
       <div

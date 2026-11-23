@@ -166,9 +166,6 @@
         />
       </section>
 
-      <!-- Data Management Panel -->
-      <AdminDataManagementPanel />
-
       <!-- YouTube Channel Stats -->
       <section>
         <AdminYouTubeChannelStats
@@ -176,6 +173,9 @@
           :channels="stats.external.youtube.channels"
         />
       </section>
+
+      <!-- Data Management Panel -->
+      <AdminDataManagementPanel />
 
       <!-- Channel Sync & Diff -->
       <AdminChannelSync />
