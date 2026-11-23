@@ -18,6 +18,7 @@
 <script setup lang="ts">
 import { useRoute, useAsyncData, useRuntimeConfig, useHead } from '#app'
 import { useCollectionsStore } from '~/stores/useCollectionsStore'
+import { useMovieStore } from '~/stores/useMovieStore'
 import { useDatabase } from '~/composables/useDatabase'
 import { ref, computed, onMounted } from 'vue'
 import type { Collection } from '#shared/types/collections'
@@ -25,6 +26,7 @@ import MovieListPage from '~/components/MovieListPage.vue'
 
 const route = useRoute()
 const collectionsStore = useCollectionsStore()
+const movieStore = useMovieStore()
 const db = useDatabase()
 
 const { getCollectionById } = collectionsStore
@@ -66,7 +68,7 @@ onMounted(async () => {
 
     // Filter out invalid movie IDs (movies that no longer exist)
     if (collection.value?.movieIds?.length) {
-      await db.init()
+      await movieStore.loadFromFile()
       const existingMovies = await db.queryByIds(collection.value.movieIds)
       const existingIds = new Set(existingMovies.map(m => m.movieId))
       validMovieIds.value = collection.value.movieIds.filter(id => existingIds.has(id))

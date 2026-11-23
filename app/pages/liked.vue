@@ -20,7 +20,7 @@
 import { useRuntimeConfig, useHead } from '#app'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import MovieListPage from '~/components/MovieListPage.vue'
 
 const {
@@ -61,4 +61,8 @@ const { likedMovieIds, likedCount } = storeToRefs(movieStore)
 
 // Local loading state (not currently used but kept for future enhancements)
 const _isLoadingLiked = ref(false)
+
+onMounted(() => {
+  movieStore.loadFromFile()
+})
 </script>

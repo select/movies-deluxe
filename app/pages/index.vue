@@ -57,9 +57,10 @@
 
       <div v-else-if="homeData" class="space-y-12">
         <HomeCollectionRow
-          v-for="collection in homeData.collections"
+          v-for="(collection, index) in homeData.collections"
           :key="collection.id"
           :collection="collection"
+          :eager="index < 2"
         />
 
         <!-- Discover More Section -->
@@ -152,8 +153,9 @@
 import { useRuntimeConfig, useHead, useFetch } from '#app'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { setInterval } from '#app/compat/interval'
+import type { LightweightMovie } from '~/types'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
 import HomeCollectionRow from '~/components/HomeCollectionRow.vue'
 import { NuxtLink } from '#components'
@@ -164,6 +166,7 @@ interface HomeData {
     id: string
     name: string
     movieIds: string[]
+    movies?: LightweightMovie[]
   }>
 }
 
@@ -214,13 +217,35 @@ const {
 } = await useFetch<HomeData>(`/data/home/day-${day}.json`, { server: false })
 
 const movieStore = useMovieStore()
-const { totalMovies } = storeToRefs(movieStore)
+const { totalMovies, lightweightMovieCache } = storeToRefs(movieStore)
+
+// Seed lightweightMovieCache immediately when homeData loads so HomeCollectionRow renders without SQLite
+watch(
+  homeData,
+  data => {
+    if (!data?.collections?.length) return
+    const nextCache = new Map(lightweightMovieCache.value)
+    let updated = false
+    for (const collection of data.collections) {
+      if (!collection.movies?.length) continue
+      for (const movie of collection.movies) {
+        if (!nextCache.has(movie.movieId)) {
+          nextCache.set(movie.movieId, movie)
+          updated = true
+        }
+      }
+    }
+    if (updated) {
+      lightweightMovieCache.value = nextCache
+    }
+  },
+  { immediate: true }
+)
 
 const _displayText = ref('thousands of')
 const isShowingNumber = ref(false)
 
 onMounted(async () => {
-  // Database will already be ready thanks to the splash screen plugin
   // Start animation loop
   setInterval(() => {
     isShowingNumber.value = !isShowingNumber.value

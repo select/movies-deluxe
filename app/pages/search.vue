@@ -34,7 +34,7 @@
 import { useRuntimeConfig, useHead } from '#app'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import SearchHeader from '~/components/SearchHeader.vue'
 import MovieStats from '~/components/MovieStats.vue'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
@@ -86,6 +86,9 @@ const movieIds = computed(() => {
 
 // Note: No need to call triggerSearchUpdate() on mount
 // The watchDebounced in useMovieStore already handles initial filter state
+onMounted(() => {
+  movieStore.loadFromFile()
+})
 </script>
 
 <style scoped>

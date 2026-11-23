@@ -22,7 +22,7 @@
         :alt="movie.title"
         class="w-full h-full object-cover object-center transition-opacity duration-700"
         :class="{ 'opacity-0': !imageLoaded, 'opacity-100': imageLoaded }"
-        loading="lazy"
+        :loading="eager ? 'eager' : 'lazy'"
         @load="imageLoaded = true"
         @error="handlePosterError"
       />
@@ -152,7 +152,7 @@ import type { Collection } from '~/types'
 import { storeToRefs } from '#imports'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { useCollectionsStore } from '~/stores/useCollectionsStore'
-import { computed, ref, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { getPosterPath } from '~/utils/posterPath'
 import { formatVotes } from '~/utils/formatVotes'
 import MovieCardSkeleton from '~/components/MovieCardSkeleton.vue'
@@ -160,9 +160,12 @@ import { NuxtLink } from '#components'
 
 interface Props {
   movieId: string | null
+  eager?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  eager: false,
+})
 
 const { likedMovieIds, lightweightMovieCache } = storeToRefs(useMovieStore())
 const { getCollectionsForMovie } = useCollectionsStore()
@@ -177,8 +180,8 @@ const imageLoaded = ref(false)
 const posterError = ref(false)
 const movieCollections = ref<Collection[]>([])
 
-// Per-movie debounced rendering state
-const showFullDetails = ref(false)
+// Per-movie debounced rendering state (skipped when eager)
+const showFullDetails = ref(props.eager)
 const cardRef = ref<HTMLElement | null>(null)
 
 // Use useTimeoutFn for better control over the timeout
@@ -194,31 +197,39 @@ const { start: startDetailsTimer, stop: stopDetailsTimer } = useTimeoutFn(
   { immediate: false }
 )
 
-// Use intersection observer to detect when card becomes visible
-const { stop } = useIntersectionObserver(
-  cardRef,
-  entries => {
-    const entry = entries[0]
-    if (!entry) return
-
-    if (entry.isIntersecting) {
-      // Card is visible, start the timer
-      startDetailsTimer()
-    } else {
-      // Card is not visible, just cancel the timer
-      // Don't hide details since the component will be unloaded anyway
-      stopDetailsTimer()
+if (props.eager) {
+  onMounted(async () => {
+    if (movie.value?.movieId && movieCollections.value.length === 0) {
+      movieCollections.value = await getCollectionsForMovie(movie.value.movieId)
     }
-  },
-  {
-    rootMargin: '200px', // Start loading 200px before the card enters viewport
-  }
-)
+  })
+} else {
+  // Use intersection observer to detect when card becomes visible
+  const { stop } = useIntersectionObserver(
+    cardRef,
+    entries => {
+      const entry = entries[0]
+      if (!entry) return
 
-// Clean up intersection observer on unmount
-onUnmounted(() => {
-  stop()
-})
+      if (entry.isIntersecting) {
+        // Card is visible, start the timer
+        startDetailsTimer()
+      } else {
+        // Card is not visible, just cancel the timer
+        // Don't hide details since the component will be unloaded anyway
+        stopDetailsTimer()
+      }
+    },
+    {
+      rootMargin: '200px', // Start loading 200px before the card enters viewport
+    }
+  )
+
+  // Clean up intersection observer on unmount
+  onUnmounted(() => {
+    stop()
+  })
+}
 
 // Handle poster loading errors
 const handlePosterError = () => {

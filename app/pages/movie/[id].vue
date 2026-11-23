@@ -89,6 +89,7 @@
                 v-if="movie.movieId?.startsWith('tt')"
                 :src="getPosterPath(movie.movieId)"
                 :alt="movie.title"
+                fetchpriority="high"
                 class="w-full h-full object-cover object-center"
                 @error="handlePosterError"
               />
@@ -808,10 +809,10 @@ const { showToast } = useToastStore()
 const { y: scrollY } = useWindowScroll()
 
 // Component state
-const movie = ref<MovieEntry | null>(null)
+const movie = ref<MovieEntry | null>(seoMovie.value ?? null)
 const relatedMovies = ref<LightweightMovie[]>([])
 const similarMovies = ref<LightweightMovie[]>([])
-const isLoading = ref(true)
+const isLoading = ref(!seoMovie.value)
 const isRelatedLoading = ref(false)
 const isSimilarLoading = ref(false)
 const error = ref<string | null>(null)
@@ -1081,9 +1082,11 @@ onMounted(async () => {
   // Scroll to top when entering movie detail page
   scrollY.value = 0
 
-  // Get movie by ID from route params
+  // Skip redundant fetch if already hydrated from SSR/prerender payload
   const movieId = route.params.id as string
-  await loadMovieData(movieId)
+  if (movie.value?.movieId !== movieId) {
+    await loadMovieData(movieId)
+  }
 })
 
 // Watch for route changes to reload movie data

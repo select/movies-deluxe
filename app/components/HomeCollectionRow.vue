@@ -49,7 +49,7 @@
             :key="movie.movieId"
             class="w-[200px] flex-shrink-0 snap-start"
           >
-            <MovieCard :movie-id="movie.movieId" />
+            <MovieCard :movie-id="movie.movieId" :eager="props.eager" />
           </div>
 
           <div class="w-[200px] flex-shrink-0 snap-start">
@@ -79,13 +79,17 @@ interface CollectionData {
   id: string
   name: string
   movieIds: string[]
+  movies?: LightweightMovie[]
 }
 
 interface Props {
   collection: CollectionData
+  eager?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  eager: false,
+})
 const { fetchMoviesByIds } = useMovieStore()
 const { lightweightMovieCache } = storeToRefs(useMovieStore())
 
@@ -118,12 +122,30 @@ const scroll = (direction: 'left' | 'right') => {
 const loadMovies = async () => {
   if (hasLoaded.value) return
   if (props.collection.movieIds.length > 0) {
-    isLoading.value = true
     // We only show up to 9 movies, then the explore more card
     const movieIds = props.collection.movieIds.slice(0, 9)
 
-    // Fetch movies into cache
-    await fetchMoviesByIds(movieIds)
+    // Seed cache from embedded collection.movies if not already present
+    if (props.collection.movies?.length) {
+      const nextCache = new Map(lightweightMovieCache.value)
+      let updated = false
+      for (const movie of props.collection.movies) {
+        if (!nextCache.has(movie.movieId)) {
+          nextCache.set(movie.movieId, movie)
+          updated = true
+        }
+      }
+      if (updated) {
+        lightweightMovieCache.value = nextCache
+      }
+    }
+
+    // Only query SQLite for IDs missing from cache
+    const missingIds = movieIds.filter(id => !lightweightMovieCache.value.has(id))
+    if (missingIds.length > 0) {
+      isLoading.value = true
+      await fetchMoviesByIds(missingIds)
+    }
 
     // Get movies from cache
     displayMovies.value = movieIds
@@ -146,15 +168,20 @@ const loadMovies = async () => {
   }
 }
 
-// Lazy load when visible
-useIntersectionObserver(rowElement, entries => {
-  const entry = entries[0]
-  if (entry?.isIntersecting) {
-    loadMovies()
-  }
-})
+// Lazy load when visible (unless eager)
+if (!props.eager) {
+  useIntersectionObserver(rowElement, entries => {
+    const entry = entries[0]
+    if (entry?.isIntersecting) {
+      loadMovies()
+    }
+  })
+}
 
 onMounted(() => {
+  if (props.eager) {
+    loadMovies()
+  }
   // Initial scroll state update
   updateScrollState()
 })

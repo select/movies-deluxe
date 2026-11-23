@@ -1,9 +1,69 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import Database from 'better-sqlite3'
 import type { CollectionsDatabase, Collection } from '../../shared/types/collections'
+import type { LightweightMovie, MovieSourceType } from '../../shared/types/movie'
 
 const COLLECTIONS_PATH = path.join(process.cwd(), 'public/data/collections.json')
+const DB_PATH = path.join(process.cwd(), 'public/data/movies.db')
 const OUTPUT_DIR = path.join(process.cwd(), 'public/data/home')
+
+interface MovieRow {
+  movieId: string
+  title: string
+  year: number | null
+  imdbRating: number | null
+  imdbVotes: number | null
+  language: string | null
+  sourceType: MovieSourceType | null
+  channelName: string | null
+  verified: number | null
+  genre: string | null
+  country: string | null
+}
+
+function loadMoviesMetadata(): Map<string, LightweightMovie> {
+  const movieMap = new Map<string, LightweightMovie>()
+  if (!fs.existsSync(DB_PATH)) {
+    return movieMap
+  }
+
+  let db: Database.Database | null = null
+  try {
+    db = new Database(DB_PATH, { readonly: true })
+    const rows = db
+      .prepare(
+        `
+        SELECT m.movieId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
+               m.primarySourceType as sourceType, m.primaryChannelName as channelName,
+               m.verified, m.genre, m.country
+        FROM movies m
+      `
+      )
+      .all() as MovieRow[]
+
+    for (const row of rows) {
+      const movie: LightweightMovie = {
+        movieId: row.movieId,
+        title: row.title,
+        ...(row.year !== null && { year: row.year }),
+        ...(row.imdbRating !== null && { imdbRating: row.imdbRating }),
+        ...(row.imdbVotes !== null && { imdbVotes: row.imdbVotes }),
+        ...(row.language !== null && { language: row.language }),
+        ...(row.sourceType !== null && { sourceType: row.sourceType }),
+        ...(row.channelName !== null && { channelName: row.channelName }),
+        ...(row.verified !== null && { verified: Boolean(row.verified) }),
+        ...(row.genre !== null && { genre: row.genre }),
+        ...(row.country !== null && { country: row.country }),
+      }
+      movieMap.set(row.movieId, movie)
+    }
+  } finally {
+    db?.close()
+  }
+
+  return movieMap
+}
 
 // Simple seeded random generator (LCG)
 class SeededRandom {
@@ -80,6 +140,8 @@ export async function generateHomePages(
     throw new Error('No valid collections found with IMDB IDs.')
   }
 
+  const moviesMetadata = loadMoviesMetadata()
+
   const totalDays = 31
   for (let day = 1; day <= totalDays; day++) {
     const seed = `home-page-day-${day}`
@@ -89,11 +151,19 @@ export async function generateHomePages(
 
     const homeData = {
       day,
-      collections: pickedCollections.map(c => ({
-        id: c.id,
-        name: c.name,
-        movieIds: rng.pick(c.movieIds, 10),
-      })),
+      collections: pickedCollections.map(c => {
+        const movieIds = rng.pick(c.movieIds, 10)
+        const movies = movieIds
+          .map(id => moviesMetadata.get(id))
+          .filter((m): m is LightweightMovie => m !== undefined)
+
+        return {
+          id: c.id,
+          name: c.name,
+          movieIds,
+          movies,
+        }
+      }),
     }
 
     const outputPath = path.join(OUTPUT_DIR, `day-${day}.json`)

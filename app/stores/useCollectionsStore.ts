@@ -2,47 +2,67 @@ import { defineStore, acceptHMRUpdate } from '#imports'
 import { ref } from 'vue'
 import type { Collection, SavedQuery } from '#shared/types/collections'
 import { $fetch } from '#build/fetch'
-import { useDatabase } from '~/composables/useDatabase'
 
 export const useCollectionsStore = defineStore('collections', () => {
   const collections = ref<Map<string, Collection>>(new Map())
+  const movieToCollectionsMap = new Map<string, Collection[]>()
   const isLoading = ref(false)
   const isLoaded = ref(false) // Track if collections have been loaded
   const error = ref<string | null>(null)
+  let loadingPromise: Promise<void> | null = null
 
   /**
    * Load all collections from JSON file once and cache them
    * Subsequent calls will use the cached data
    */
-  const loadCollections = async () => {
+  const loadCollections = async (): Promise<void> => {
     // Return early if already loaded
     if (isLoaded.value) {
       return
     }
 
-    isLoading.value = true
-    error.value = null
-    try {
-      // Fetch directly from static JSON file
-      const data =
-        await $fetch<Record<string, Collection | { version: string }>>('/data/collections.json')
-      collections.value.clear()
-
-      // Filter out schema keys and convert to array
-      const collectionsArray = Object.entries(data)
-        .filter(([key]) => !key.startsWith('_'))
-        .map(([_, value]) => value as Collection)
-
-      collectionsArray.forEach(collection => {
-        collections.value.set(collection.id, collection)
-      })
-
-      isLoaded.value = true
-    } catch (err: unknown) {
-      error.value = (err as Error).message || 'Failed to load collections'
-    } finally {
-      isLoading.value = false
+    // Deduplicate concurrent fetches
+    if (loadingPromise) {
+      return loadingPromise
     }
+
+    loadingPromise = (async () => {
+      isLoading.value = true
+      error.value = null
+      try {
+        // Fetch directly from static JSON file
+        const data =
+          await $fetch<Record<string, Collection | { version: string }>>('/data/collections.json')
+        collections.value.clear()
+        movieToCollectionsMap.clear()
+
+        // Filter out schema keys and convert to array
+        const collectionsArray = Object.entries(data)
+          .filter(([key]) => !key.startsWith('_'))
+          .map(([_, value]) => value as Collection)
+
+        collectionsArray.forEach(collection => {
+          collections.value.set(collection.id, collection)
+          for (const movieId of collection.movieIds) {
+            const existing = movieToCollectionsMap.get(movieId)
+            if (existing) {
+              existing.push(collection)
+            } else {
+              movieToCollectionsMap.set(movieId, [collection])
+            }
+          }
+        })
+
+        isLoaded.value = true
+      } catch (err: unknown) {
+        error.value = (err as Error).message || 'Failed to load collections'
+      } finally {
+        isLoading.value = false
+        loadingPromise = null
+      }
+    })()
+
+    return loadingPromise
   }
 
   /**
@@ -212,26 +232,14 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   /**
    * Get all collections that contain a specific movie
-   * Queries the database to find which collections include this movie
+   * Uses the prebuilt movieToCollectionsMap for O(1) lookup with zero SQLite round-trips
    */
   const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
     try {
-      // Use database only if it's already initialized (e.g., from index page)
-      // This avoids loading the database just for collections on detail pages
-      const db = useDatabase()
-
-      // If database is not ready, fall back to checking loaded collections
-      // This prevents loading the entire SQLite DB just for collections
-      if (!db.isReady.value) {
-        // Ensure collections are loaded
-        if (!isLoaded.value) {
-          await loadCollections()
-        }
-        // Check in-memory collections store
-        return Array.from(collections.value.values()).filter(c => c.movieIds.includes(movieId))
+      if (!isLoaded.value) {
+        await loadCollections()
       }
-
-      return await db.getCollectionsForMovie(movieId)
+      return movieToCollectionsMap.get(movieId) || []
     } catch {
       return []
     }

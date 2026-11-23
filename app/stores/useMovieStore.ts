@@ -120,6 +120,9 @@ export const useMovieStore = defineStore('movie', () => {
   // Simple cache for filter options
   let cachedFilterOptions: FilterOptionsResponse | null = null
 
+  // In-flight promise for deduplicating concurrent loadFromFile() calls
+  let loadPromise: Promise<void> | null = null
+
   // ============================================
   // COMPUTED PROPERTIES - Data Views
   // ============================================
@@ -242,35 +245,47 @@ export const useMovieStore = defineStore('movie', () => {
 
   /**
    * Load movies from the SQLite database file
-   * Called once on app initialization
+   * Idempotent and deduplicated with an in-flight promise
    * Note: Only loads the main movies.db - embeddings are loaded separately via loadEmbeddings()
    */
-  const loadFromFile = async () => {
-    console.log('[loadFromFile] Starting database initialization')
-
-    try {
-      // Initialize database from remote file and get total movie count
-      // Pass baseURL for WASM file loading
-      const baseURL = useRuntimeConfig().app.baseURL
-      totalMovies.value = await db.init(`${baseURL}data/movies.db`, baseURL)
-      console.log('[loadFromFile] Database initialized successfully')
-      console.log('[loadFromFile] Total movies count:', totalMovies.value)
-
-      isFiltering.value = false
-    } catch (err) {
-      console.error('[loadFromFile] Failed to initialize SQLite:', err)
-
-      // Show toast notification for database initialization failure
-      const { showToast } = useToastStore()
-      showToast(
-        'Failed to load movie database. Please refresh the page to try again.',
-        'error',
-        5000
-      )
-    } finally {
-      console.log('[loadFromFile] Finished database initialization')
-      isFiltering.value = false
+  const loadFromFile = async (): Promise<void> => {
+    if (db.isReady.value) {
+      return
     }
+    if (loadPromise) {
+      return loadPromise
+    }
+
+    loadPromise = (async () => {
+      console.log('[loadFromFile] Starting database initialization')
+
+      try {
+        // Initialize database from remote file and get total movie count
+        // Pass baseURL for WASM file loading
+        const baseURL = useRuntimeConfig().app.baseURL
+        totalMovies.value = await db.init(`${baseURL}data/movies.db`, baseURL)
+        console.log('[loadFromFile] Database initialized successfully')
+        console.log('[loadFromFile] Total movies count:', totalMovies.value)
+
+        isFiltering.value = false
+      } catch (err) {
+        console.error('[loadFromFile] Failed to initialize SQLite:', err)
+
+        // Show toast notification for database initialization failure
+        const { showToast } = useToastStore()
+        showToast(
+          'Failed to load movie database. Please refresh the page to try again.',
+          'error',
+          5000
+        )
+      } finally {
+        console.log('[loadFromFile] Finished database initialization')
+        isFiltering.value = false
+        loadPromise = null
+      }
+    })()
+
+    return loadPromise
   }
 
   /**
@@ -315,6 +330,9 @@ export const useMovieStore = defineStore('movie', () => {
     console.log('[fetchMoviesByIds] Fetching', uncachedIds.length, 'uncached movies from database')
 
     try {
+      if (!db.isReady.value) {
+        await loadFromFile()
+      }
       const lightweightMovies = await db.queryByIds(uncachedIds)
       console.log('[fetchMoviesByIds] Fetched', lightweightMovies.length, 'movies from database')
 
@@ -383,6 +401,9 @@ export const useMovieStore = defineStore('movie', () => {
 
     // Fetch from database and cache
     console.log('[getFilterOptions] Fetching filter options from database')
+    if (!db.isReady.value) {
+      await loadFromFile()
+    }
     const data = await db.getFilterOptions()
     cachedFilterOptions = data
 
@@ -642,10 +663,10 @@ export const useMovieStore = defineStore('movie', () => {
    * Execute unified filter query and return only movie IDs
    */
   const executeFilterQuery = async (sessionId: number): Promise<string[]> => {
-    // Wait for database to be ready before querying
+    // Ensure database is initialized before querying
     if (!db.isReady.value) {
-      console.log('[executeFilterQuery] Waiting for DB to be ready...')
-      await db.waitForReady()
+      console.log('[executeFilterQuery] Initializing DB...')
+      await loadFromFile()
       console.log('[executeFilterQuery] DB is now ready')
     }
 
@@ -698,6 +719,9 @@ export const useMovieStore = defineStore('movie', () => {
 
     const vectorSearch = useVectorSearch()
     try {
+      if (!db.isReady.value) {
+        await loadFromFile()
+      }
       const results = await vectorSearch.findSimilar(movieId, limit)
 
       // Convert to lightweight movies and cache them
