@@ -53,8 +53,10 @@ export function buildQueryByIdsQuery(movieIds: string[]): QueryResult {
 export function buildVectorSearchQuery(
   limit: number,
   where?: string,
-  whereParams?: (string | number)[]
+  whereParams?: (string | number)[],
+  quantization: 'float32' | 'int8' = 'float32'
 ): VectorSearchQueryResult {
+  const matchExpr = quantization === 'int8' ? 'vec_int8(?)' : '?'
   let sql = `
     SELECT 
       m.movieId, m.title, m.year, m.imdbRating, m.imdbVotes, m.language,
@@ -63,7 +65,7 @@ export function buildVectorSearchQuery(
       v.distance
     FROM embeddings_db.vec_movies v
     INNER JOIN main.movies m ON v.movieId = m.movieId
-    WHERE v.embedding MATCH ?
+    WHERE v.embedding MATCH ${matchExpr}
       AND k = ?
   `
 

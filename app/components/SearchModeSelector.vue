@@ -135,8 +135,8 @@ const hoverStyle = ref({
   top: '0px',
 })
 
-// Default to bge-micro - runs in browser, good quality
-const DEFAULT_EMBEDDING_MODEL = 'bge-micro'
+// Default to leaf-ir - runs in browser, MRL 256d + int8 quantized
+const DEFAULT_EMBEDDING_MODEL = 'leaf-ir'
 
 /**
  * Check if semantic mode should be disabled (only while loading)

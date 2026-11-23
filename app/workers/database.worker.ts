@@ -106,8 +106,9 @@ let baseURL = '/'
 // Cache for movie data to avoid re-fetching
 const movieCache = new Map<string, LightweightMovie>()
 
-// Cache for embedding dimensions from database metadata
+// Cache for embedding dimensions and quantization from database metadata
 let cachedDimensions: number | null = null
+let cachedQuantization: 'float32' | 'int8' = 'float32'
 
 // Track attached embeddings database state
 let embeddingsDbAttached = false
@@ -240,7 +241,7 @@ interface QueuedMessage {
   // For query-by-ids
   movieIds?: string[]
   // For vector-search
-  embedding?: Float32Array | number[]
+  embedding?: Float32Array | Int8Array | number[]
   limit?: number
 }
 
@@ -405,7 +406,7 @@ async function handleMessage(e: QueuedMessage) {
 
         embeddingsDbAttached = true
 
-        // Try to fetch embedding dimensions from the embeddings database config
+        // Try to fetch embedding dimensions and quantization from the embeddings database config
         try {
           const rows = db.exec({
             sql: "SELECT value FROM embeddings_db.config WHERE key = 'embedding_dimensions'",
@@ -419,6 +420,30 @@ async function handleMessage(e: QueuedMessage) {
           }
         } catch (err) {
           console.warn('Could not fetch embedding_dimensions from embeddings_db.config table:', err)
+        }
+
+        cachedQuantization = 'float32'
+        try {
+          const rows = db.exec({
+            sql: "SELECT value FROM embeddings_db.config WHERE key = 'embedding_quantization'",
+            returnValue: 'resultRows',
+            rowMode: 'object',
+          })
+          if (rows.length > 0) {
+            const value = (rows[0] as { value: string }).value
+            if (value === 'int8' || value === 'float32') {
+              cachedQuantization = value
+              console.log(
+                'Updated embedding quantization from embeddings DB config:',
+                cachedQuantization
+              )
+            }
+          }
+        } catch (err) {
+          console.warn(
+            'Could not fetch embedding_quantization from embeddings_db.config table:',
+            err
+          )
         }
 
         // Verify the embeddings database loaded correctly
@@ -466,8 +491,9 @@ async function handleMessage(e: QueuedMessage) {
         embeddingsDbAttached = false
         _embeddingsDbMemoryPointer = null
 
-        // Reset cached dimensions since they may have come from embeddings DB
+        // Reset cached dimensions and quantization since they may have come from embeddings DB
         cachedDimensions = null
+        cachedQuantization = 'float32'
 
         // Try to re-fetch dimensions from main database
         try {
@@ -580,17 +606,18 @@ async function handleMessage(e: QueuedMessage) {
         return
       }
 
-      // Convert embedding to Float32Array for sqlite-vec
-      // Callers send either number[] (from API) or Float32Array
-      let bindEmbedding: Float32Array
+      // Convert embedding to typed array for sqlite-vec
+      // Callers send number[] (from API), Float32Array, or Int8Array
+      let bindEmbedding: Float32Array | Int8Array
       if (Array.isArray(embedding)) {
-        bindEmbedding = new Float32Array(embedding)
-      } else if (embedding instanceof Float32Array) {
+        bindEmbedding =
+          cachedQuantization === 'int8' ? new Int8Array(embedding) : new Float32Array(embedding)
+      } else if (embedding instanceof Float32Array || embedding instanceof Int8Array) {
         bindEmbedding = embedding
       } else {
         self.postMessage({
           id,
-          error: `Invalid embedding format: expected number[] or Float32Array`,
+          error: `Invalid embedding format: expected number[], Float32Array, or Int8Array`,
         })
         return
       }
@@ -604,12 +631,15 @@ async function handleMessage(e: QueuedMessage) {
         return
       }
 
-      // sqlite-wasm-vec expects ArrayBuffer for vector binding, not Float32Array
+      // sqlite-wasm-vec expects ArrayBuffer for vector binding, not typed array views
+      // Slice exact byte range to safely handle views with non-zero byteOffset
+      const embeddingBuffer = bindEmbedding.buffer.slice(
+        bindEmbedding.byteOffset,
+        bindEmbedding.byteOffset + bindEmbedding.byteLength
+      ) as ArrayBuffer
+
       // Embedding and limit are always first two params
-      const bindParams: (ArrayBuffer | number | string)[] = [
-        bindEmbedding.buffer as ArrayBuffer,
-        limit,
-      ]
+      const bindParams: (ArrayBuffer | number | string)[] = [embeddingBuffer, limit]
 
       // Add WHERE clause params if provided
       if (whereParams) {

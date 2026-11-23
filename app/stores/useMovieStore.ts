@@ -276,7 +276,7 @@ export const useMovieStore = defineStore('movie', () => {
   /**
    * Load embeddings for semantic search
    * Can be called after loadFromFile() to enable semantic search functionality
-   * @param modelId - The embedding model ID (e.g., 'nomic', 'bge-micro', 'potion')
+   * @param modelId - The embedding model ID (e.g., 'nomic', 'leaf-ir', 'potion')
    */
   const loadEmbeddings = async (modelId: string): Promise<number> => {
     console.log('[loadEmbeddings] Loading embeddings for model:', modelId)

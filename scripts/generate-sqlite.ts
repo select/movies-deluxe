@@ -5,7 +5,7 @@
  * Optimized for client-side SQLite Wasm usage.
  *
  * Note: Embeddings are stored separately in their own DB files
- * (e.g., embeddings-bge-micro-movies.db) and are generated via
+ * (e.g., embeddings-leaf-ir-movies.db) and are generated via
  * the embeddings generation scripts or admin UI.
  */
 

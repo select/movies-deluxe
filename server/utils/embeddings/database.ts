@@ -42,18 +42,29 @@ export async function initEmbeddingsDatabase(
 
   // Create vec_movies virtual table for vector search
   // This uses sqlite-vec's vec0 module for efficient KNN search
-  db.exec(`
-    CREATE VIRTUAL TABLE IF NOT EXISTS vec_movies USING vec0(
-      movieId TEXT PRIMARY KEY,
-      embedding FLOAT[${modelConfig.dimensions}]
-    );
-  `)
+  const isInt8 = modelConfig.quantization === 'int8'
+  if (isInt8) {
+    db.exec(`
+      CREATE VIRTUAL TABLE IF NOT EXISTS vec_movies USING vec0(
+        movieId TEXT PRIMARY KEY,
+        embedding int8[${modelConfig.dimensions}] distance_metric=cosine
+      );
+    `)
+  } else {
+    db.exec(`
+      CREATE VIRTUAL TABLE IF NOT EXISTS vec_movies USING vec0(
+        movieId TEXT PRIMARY KEY,
+        embedding FLOAT[${modelConfig.dimensions}]
+      );
+    `)
+  }
 
   // Insert or update model metadata
   const insertConfig = db.prepare('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)')
   insertConfig.run('embedding_model_id', modelConfig.id)
   insertConfig.run('embedding_model_name', modelConfig.name)
   insertConfig.run('embedding_dimensions', modelConfig.dimensions.toString())
+  insertConfig.run('embedding_quantization', modelConfig.quantization || 'float32')
   if (modelConfig.ollamaModel) {
     insertConfig.run('embedding_model_ollama', modelConfig.ollamaModel)
   }
@@ -75,14 +86,23 @@ export function getExistingEmbeddingIds(db: Database.Database): Set<string> {
 export function saveEmbedding(
   db: Database.Database,
   movieId: string,
-  embedding: Float32Array
+  embedding: Float32Array | Int8Array,
+  quantization: 'float32' | 'int8' = 'float32'
 ): void {
-  const buffer = Buffer.from(embedding.buffer)
-  const insert = db.prepare(`
-    INSERT OR REPLACE INTO vec_movies (movieId, embedding)
-    VALUES (?, ?)
-  `)
-  insert.run(movieId, buffer)
+  const buffer = Buffer.from(embedding.buffer, embedding.byteOffset, embedding.byteLength)
+  if (quantization === 'int8' || embedding instanceof Int8Array) {
+    const insert = db.prepare(`
+      INSERT OR REPLACE INTO vec_movies (movieId, embedding)
+      VALUES (?, vec_int8(?))
+    `)
+    insert.run(movieId, buffer)
+  } else {
+    const insert = db.prepare(`
+      INSERT OR REPLACE INTO vec_movies (movieId, embedding)
+      VALUES (?, ?)
+    `)
+    insert.run(movieId, buffer)
+  }
 }
 
 /**

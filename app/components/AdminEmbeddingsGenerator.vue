@@ -210,12 +210,12 @@ interface ModelResult {
 
 const { progress } = storeToRefs(useAdminStore())
 
-// Default to faster models (bge-micro and potion), exclude slow nomic
+// Default to faster models (leaf-ir and potion), exclude slow nomic
 // Initialize all models to false to avoid undefined values
 const selectedModels = ref<Record<string, boolean>>(
   EMBEDDING_MODELS.reduce(
     (acc, model) => {
-      acc[model.id] = model.id === 'bge-micro' || model.id === 'potion'
+      acc[model.id] = model.id === 'leaf-ir' || model.id === 'potion'
       return acc
     },
     {} as Record<string, boolean>
@@ -230,8 +230,15 @@ const options = reactive({
   forceRebuild: false,
 })
 
-function getModelLabel(model: { id: string; name: string; dimensions: number }): string {
-  return `${model.name} (${model.dimensions}D)`
+function getModelLabel(model: {
+  id: string
+  name: string
+  dimensions: number
+  quantization?: 'float32' | 'int8'
+}): string {
+  return model.quantization === 'int8'
+    ? `${model.name} (${model.dimensions}D int8)`
+    : `${model.name} (${model.dimensions}D)`
 }
 
 function selectAll() {

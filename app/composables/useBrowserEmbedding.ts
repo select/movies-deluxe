@@ -8,9 +8,9 @@ export interface UseBrowserEmbeddingReturn {
   isReady: Ref<boolean>
   error: Ref<string | null>
   progress: Ref<number>
-  currentProvider: Ref<'bge' | 'potion' | null>
-  init: (provider: 'bge' | 'potion') => Promise<void>
-  embed: (text: string) => Promise<Float32Array>
+  currentProvider: Ref<'leaf-ir' | 'potion' | null>
+  init: (provider: 'leaf-ir' | 'potion') => Promise<void>
+  embed: (text: string) => Promise<Float32Array | Int8Array>
   dispose: () => Promise<void>
 }
 
@@ -19,13 +19,13 @@ export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
   const isReady = ref(false)
   const error = ref<string | null>(null)
   const progress = ref(0)
-  const currentProvider = ref<'bge' | 'potion' | null>(null)
+  const currentProvider = ref<'leaf-ir' | 'potion' | null>(null)
 
   let worker: Worker | null = null
   const pendingRequests = new Map<
     number,
     {
-      resolve: (value: Float32Array) => void
+      resolve: (value: Float32Array | Int8Array) => void
       reject: (reason?: unknown) => void
     }
   >()
@@ -76,7 +76,7 @@ export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
   /**
    * Initialize the embedding provider.
    */
-  const init = async (provider: 'bge' | 'potion') => {
+  const init = async (provider: 'leaf-ir' | 'potion') => {
     if (currentProvider.value === provider && isReady.value) return
 
     isLoading.value = true
@@ -111,7 +111,7 @@ export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
   /**
    * Generate an embedding for the given text.
    */
-  const embed = async (text: string): Promise<Float32Array> => {
+  const embed = async (text: string): Promise<Float32Array | Int8Array> => {
     if (!isReady.value) {
       throw new Error('Embedding system not ready. Call init() first.')
     }
@@ -119,7 +119,7 @@ export function useBrowserEmbedding(): UseBrowserEmbeddingReturn {
     const id = nextRequestId++
     const w = initWorker()
 
-    return new Promise<Float32Array>((resolve, reject) => {
+    return new Promise<Float32Array | Int8Array>((resolve, reject) => {
       pendingRequests.set(id, { resolve, reject })
       w.postMessage({ type: 'embed', text, id })
     })

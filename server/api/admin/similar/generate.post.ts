@@ -15,7 +15,7 @@ import { defineEventHandler, getRequestHeader, createError, readBody } from 'h3'
 import { emitProgress } from '#server/utils/progress'
 
 interface GenerateSimilarRequest {
-  model?: string // Embedding model to use (default: bge-micro)
+  model?: string // Embedding model to use (default: leaf-ir)
   limit?: number // Number of similar movies per movie (default: 10)
 }
 
@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
   }
 
   const body = await readBody<GenerateSimilarRequest>(event)
-  const modelId = body?.model || 'bge-micro'
+  const modelId = body?.model || 'leaf-ir'
   const limit = body?.limit || 10
 
   const embeddingsDbPath = join(process.cwd(), `public/data/embeddings-${modelId}-movies.db`)
@@ -53,6 +53,11 @@ export default defineEventHandler(async event => {
     const vecDb = new Database(embeddingsDbPath, { readonly: true })
     sqliteVec.load(vecDb)
 
+    const quantRow = vecDb
+      .prepare("SELECT value FROM config WHERE key = 'embedding_quantization'")
+      .get() as { value: string } | undefined
+    const quantization = quantRow?.value || 'float32'
+
     // Get all movie IDs with embeddings
     const embeddingRows = vecDb
       .prepare('SELECT id FROM vec_movies_rowids ORDER BY id')
@@ -61,7 +66,7 @@ export default defineEventHandler(async event => {
     const totalMovies = embeddingRows.length
 
     console.log(
-      `[Similar] Starting generation: ${totalMovies} movies, model=${modelId}, limit=${limit}`
+      `[Similar] Starting generation: ${totalMovies} movies, model=${modelId}, quantization=${quantization}, limit=${limit}`
     )
 
     emitProgress({
@@ -74,13 +79,22 @@ export default defineEventHandler(async event => {
 
     // Prepare KNN statements
     const getEmbeddingStmt = vecDb.prepare('SELECT embedding FROM vec_movies WHERE movieId = ?')
-    const findSimilarStmt = vecDb.prepare(`
-      SELECT v.movieId, v.distance
-      FROM vec_movies v
-      WHERE v.embedding MATCH ?
-        AND k = ?
-      ORDER BY v.distance ASC
-    `)
+    const findSimilarStmt =
+      quantization === 'int8'
+        ? vecDb.prepare(`
+            SELECT v.movieId, v.distance
+            FROM vec_movies v
+            WHERE v.embedding MATCH vec_int8(?)
+              AND k = ?
+            ORDER BY v.distance ASC
+          `)
+        : vecDb.prepare(`
+            SELECT v.movieId, v.distance
+            FROM vec_movies v
+            WHERE v.embedding MATCH ?
+              AND k = ?
+            ORDER BY v.distance ASC
+          `)
 
     // Remove existing output DB
     if (existsSync(outputDbPath)) {

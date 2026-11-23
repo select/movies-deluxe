@@ -4,15 +4,15 @@
  * Precalculates movie-to-movie similarity using vector embeddings (KNN search)
  * and stores results in a lightweight lookup database (data/similar-movies.db).
  *
- * This is an expensive operation (~19 min for bge-micro 384d, ~2 min for potion 64d)
+ * This is an expensive operation (~12 min for leaf-ir 256d, ~2 min for potion 64d)
  * and should be run locally whenever embeddings are updated.
  *
  * The generated DB is committed to the repo and read during `pnpm db:generate`.
  *
  * Usage:
- *   pnpm similar:generate                    # Use default (bge-micro)
+ *   pnpm similar:generate                    # Use default (leaf-ir)
  *   pnpm similar:generate --model=potion     # Use potion (64d, faster)
- *   pnpm similar:generate --model=bge-micro  # Use bge-micro (384d, better quality)
+ *   pnpm similar:generate --model=leaf-ir    # Use leaf-ir (256d int8, better quality)
  *   pnpm similar:generate --limit=15         # Store top 15 similar (default: 10)
  */
 
@@ -24,7 +24,7 @@ import * as sqliteVec from 'sqlite-vec'
 
 const { values } = parseArgs({
   options: {
-    model: { type: 'string', default: 'bge-micro' },
+    model: { type: 'string', default: 'leaf-ir' },
     limit: { type: 'string', default: '10' },
     help: { type: 'boolean', short: 'h' },
   },
@@ -35,8 +35,8 @@ if (values.help) {
 Usage: pnpm similar:generate [options]
 
 Options:
-  --model=<id>   Embedding model to use (default: bge-micro)
-                 Available: bge-micro (384d), potion (64d)
+  --model=<id>   Embedding model to use (default: leaf-ir)
+                 Available: leaf-ir (256d int8), potion (64d)
   --limit=<n>    Number of similar movies to store per movie (default: 10)
   -h, --help     Show this help message
 
@@ -49,7 +49,7 @@ into each movie's JSON file without running expensive vector search.
   process.exit(0)
 }
 
-const modelId = (values.model as string) || 'bge-micro'
+const modelId = (values.model as string) || 'leaf-ir'
 const limit = parseInt((values.limit as string) || '10', 10)
 
 const EMBEDDINGS_DB_PATH = join(process.cwd(), `public/data/embeddings-${modelId}-movies.db`)
@@ -73,23 +73,37 @@ async function main() {
   const vecDb = new Database(EMBEDDINGS_DB_PATH, { readonly: true })
   sqliteVec.load(vecDb)
 
+  const quantRow = vecDb
+    .prepare("SELECT value FROM config WHERE key = 'embedding_quantization'")
+    .get() as { value: string } | undefined
+  const quantization = quantRow?.value || 'float32'
+
   // Get all movie IDs with embeddings
   const embeddingRows = vecDb
     .prepare('SELECT id FROM vec_movies_rowids ORDER BY id')
     .all() as Array<{ id: string }>
 
-  console.log(`📊 Found ${embeddingRows.length} movies with embeddings`)
+  console.log(`📊 Found ${embeddingRows.length} movies with embeddings (${quantization})`)
 
   // Prepare KNN statements
   const getEmbeddingStmt = vecDb.prepare('SELECT embedding FROM vec_movies WHERE movieId = ?')
   // Request more than limit to account for filtering self
-  const findSimilarStmt = vecDb.prepare(`
-    SELECT v.movieId, v.distance
-    FROM vec_movies v
-    WHERE v.embedding MATCH ?
-      AND k = ?
-    ORDER BY v.distance ASC
-  `)
+  const findSimilarStmt =
+    quantization === 'int8'
+      ? vecDb.prepare(`
+          SELECT v.movieId, v.distance
+          FROM vec_movies v
+          WHERE v.embedding MATCH vec_int8(?)
+            AND k = ?
+          ORDER BY v.distance ASC
+        `)
+      : vecDb.prepare(`
+          SELECT v.movieId, v.distance
+          FROM vec_movies v
+          WHERE v.embedding MATCH ?
+            AND k = ?
+          ORDER BY v.distance ASC
+        `)
 
   // Remove existing output DB
   if (existsSync(OUTPUT_DB_PATH)) {

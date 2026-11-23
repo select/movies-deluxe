@@ -16,17 +16,17 @@ The challenge is to find a good model that is small enough
 
 We support multiple embedding models with different trade-offs between search quality, database size, and generation speed. Each model contains approximately **30,600 movie embeddings**.
 
-| Model                | Base Technology | Dimensions | DB File                          | File Size |
-| -------------------- | --------------- | ---------- | -------------------------------- | --------- |
-| **Nomic Embed Text** | Ollama          | 768        | `embeddings-nomic-movies.db`     | 122 MB    |
-| **BGE Micro v2**     | Transformers.js | 384        | `embeddings-bge-micro-movies.db` | 62 MB     |
-| **Potion Base 2M**   | ONNX            | 64         | `embeddings-potion-movies.db`    | 12 MB     |
+| Model                | Base Technology | Dimensions    | DB File                        | File Size |
+| -------------------- | --------------- | ------------- | ------------------------------ | --------- |
+| **Nomic Embed Text** | Ollama          | 768 (float32) | `embeddings-nomic-movies.db`   | ~122 MB   |
+| **LEAF IR**          | Transformers.js | 256 (int8)    | `embeddings-leaf-ir-movies.db` | ~10 MB    |
+| **Potion Base 2M**   | ONNX            | 64 (float32)  | `embeddings-potion-movies.db`  | ~12 MB    |
 
 ### Model Details
 
-- **Nomic Embed Text** (`nomic`): **Default.** Best search quality, but largest database size.
-- **BGE Micro v2** (`bge-micro`): Good balance between size and quality. Faster generation. The results are usable.
-- **Potion Base 2M** (`potion-base-2M`): Smallest and fastest. Ideal for low-bandwidth or low-resource environments. The results are not convincing at all.
+- **LEAF IR** (`leaf-ir`): **Default.** `MongoDB/mdbr-leaf-ir` (`q8` ONNX) with Matryoshka (MRL) truncation to 256 dimensions and `int8` scalar quantization (`range = 0.3`). Best quality-to-size ratio (~10 MB DB, runs in browser).
+- **Nomic Embed Text** (`nomic`): High search quality via Ollama, but server-only and largest database size.
+- **Potion Base 2M** (`potion`): Smallest and fastest. Ideal for low-bandwidth or low-resource environments. The results are not convincing at all.
 
 ## Database Generation
 
@@ -37,11 +37,11 @@ When generating the SQLite database for the frontend, you can select which model
 Use the `--embedding-model` (or `-m`) flag with `pnpm db:generate`:
 
 ```bash
-# Use default (nomic)
+# Use default (leaf-ir)
 pnpm db:generate
 
-# Use BGE Micro
-pnpm db:generate -m bge-micro
+# Use LEAF IR
+pnpm db:generate -m leaf-ir
 
 # Use Potion
 pnpm db:generate -m potion
@@ -50,7 +50,7 @@ pnpm db:generate -m potion
 You can also skip generating individual movie JSON files if they are already up-to-date:
 
 ```bash
-pnpm db:generate -m bge-micro --skip-json
+pnpm db:generate -m leaf-ir --skip-json
 ```
 
 ### Admin UI
@@ -71,7 +71,7 @@ Before a model can be used in the SQLite database, its embeddings must be genera
 Each model has its own generation script:
 
 - **Nomic**: `pnpm embeddings:generate` (runs `scripts/generate-embeddings.ts`)
-- **BGE Micro**: `pnpm embeddings:generate-bge` (runs `scripts/generate-embeddings-bge.ts`)
+- **LEAF IR**: Generated via Admin UI (`/admin`) using `MongoDB/mdbr-leaf-ir` (`public/models/mdbr-leaf-ir`)
 - **Potion**: `pnpm embeddings:generate-potion` (runs `scripts/generate-embeddings-potion.ts`)
 
 > **Note**: Generating embeddings requires an Ollama server running locally with the corresponding models installed.
@@ -143,6 +143,7 @@ export interface EmbeddingModelConfig {
   id: string
   name: string
   dimensions: number
+  quantization?: 'float32' | 'int8'
   dbFileName: string
   description: string
   isDefault?: boolean

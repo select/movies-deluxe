@@ -1,12 +1,23 @@
-import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers'
+import {
+  env,
+  AutoTokenizer,
+  AutoModel,
+  type PreTrainedTokenizer,
+  type PreTrainedModel,
+} from '@huggingface/transformers'
 import type { EmbeddingProvider } from '~/types/embedding'
+import {
+  LEAF_IR_QUERY_PREFIX,
+  LEAF_IR_DIMENSIONS,
+  processLeafIrEmbedding,
+} from '#shared/utils/embeddingQuantization'
 
 // Configure transformers.js to use local models only
 env.allowLocalModels = true
 env.allowRemoteModels = false
 
 /**
- * Clean text for BERT-based embedding models.
+ * Clean text for embedding models.
  * Removes URLs, normalizes accented characters to ASCII, and removes non-ASCII chars.
  */
 function cleanTextForEmbedding(text: string): string {
@@ -31,16 +42,18 @@ function cleanTextForEmbedding(text: string): string {
   )
 }
 
-export class BgeEmbeddingProvider implements EmbeddingProvider {
-  readonly name = 'bge-micro-v2'
-  readonly dimensions = 384
+export class LeafIrEmbeddingProvider implements EmbeddingProvider {
+  readonly name = 'mdbr-leaf-ir'
+  readonly dimensions = LEAF_IR_DIMENSIONS
   readonly maxTokens = 512
+  readonly quantization = 'int8' as const
 
-  private pipeline: FeatureExtractionPipeline | null = null
+  private tokenizer: PreTrainedTokenizer | null = null
+  private model: PreTrainedModel | null = null
   private initializing = false
 
   async init(baseURL: string, onProgress?: (progress: number) => void): Promise<void> {
-    if (this.pipeline) return
+    if (this.tokenizer && this.model) return
     if (this.initializing) {
       // Wait for initialization to complete if already in progress
       while (this.initializing) {
@@ -51,8 +64,11 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
 
     this.initializing = true
     try {
-      // Load model from local /models/ directory (served from public/models/)
-      const result = await pipeline('feature-extraction', `${baseURL}models/bge-micro-v2/`, {
+      const modelPath = `${baseURL}models/mdbr-leaf-ir/`
+      this.tokenizer = await AutoTokenizer.from_pretrained(modelPath, {
+        local_files_only: true,
+      })
+      this.model = await AutoModel.from_pretrained(modelPath, {
         dtype: 'q8',
         local_files_only: true,
         progress_callback: (info: { status: string; progress?: number }) => {
@@ -62,39 +78,47 @@ export class BgeEmbeddingProvider implements EmbeddingProvider {
           }
         },
       })
-      this.pipeline = result as FeatureExtractionPipeline
     } finally {
       this.initializing = false
     }
   }
 
   isReady(): boolean {
-    return this.pipeline !== null
+    return this.tokenizer !== null && this.model !== null
   }
 
-  async generateEmbedding(text: string): Promise<Float32Array> {
-    if (!this.pipeline) {
-      throw new Error('BGE embedding pipeline not initialized. Call init() first.')
+  async generateEmbedding(text: string): Promise<Int8Array> {
+    if (!this.tokenizer || !this.model) {
+      throw new Error('LEAF IR embedding model not initialized. Call init() first.')
     }
 
-    // Clean text to remove URLs and problematic characters
     const cleanedText = cleanTextForEmbedding(text)
+    const prefixedText = `${LEAF_IR_QUERY_PREFIX}${cleanedText}`
 
-    const output = await this.pipeline(cleanedText, {
-      pooling: 'mean',
-      normalize: true,
+    const inputs = this.tokenizer(prefixedText, {
+      padding: true,
+      truncation: true,
+      max_length: this.maxTokens,
     })
 
-    const data = output.tolist()[0] as number[]
-    return new Float32Array(data)
+    const { sentence_embedding } = (await this.model(inputs)) as {
+      sentence_embedding?: { data: Float32Array }
+    }
+
+    if (!sentence_embedding) {
+      throw new Error('No sentence_embedding output from LEAF IR model')
+    }
+
+    return processLeafIrEmbedding(sentence_embedding.data)
   }
 
   async dispose(): Promise<void> {
-    if (this.pipeline) {
-      if (typeof this.pipeline.dispose === 'function') {
-        await this.pipeline.dispose()
+    if (this.model) {
+      if (typeof this.model.dispose === 'function') {
+        await this.model.dispose()
       }
-      this.pipeline = null
+      this.model = null
     }
+    this.tokenizer = null
   }
 }

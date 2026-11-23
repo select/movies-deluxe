@@ -18,7 +18,7 @@ export interface UseDatabaseReturn {
   getCollectionsForMovie: (movieId: string) => Promise<Collection[]>
   getFilterOptions: () => Promise<FilterOptionsResponse>
   vectorSearch: (
-    embedding: Float32Array | number[],
+    embedding: Float32Array | Int8Array | number[],
     limit?: number,
     where?: string,
     whereParams?: (string | number)[]
@@ -211,7 +211,7 @@ function createDatabase(): UseDatabaseReturn {
   }
 
   const vectorSearch = async (
-    embedding: Float32Array | number[],
+    embedding: Float32Array | Int8Array | number[],
     limit: number = 20,
     where?: string,
     whereParams?: (string | number)[]
@@ -225,7 +225,8 @@ function createDatabase(): UseDatabaseReturn {
     }
 
     // Build query using centralized query builder
-    const { sql, params } = buildVectorSearchQuery(limit, where, whereParams)
+    const quantization = getModelConfig(embeddingsModelId.value || '')?.quantization || 'float32'
+    const { sql, params } = buildVectorSearchQuery(limit, where, whereParams, quantization)
 
     const id = Math.random().toString(36).substring(7)
     return new Promise((resolve, reject) => {
@@ -291,7 +292,7 @@ function createDatabase(): UseDatabaseReturn {
 
   /**
    * Attach an embeddings database for a specific model
-   * @param modelId - The model ID (e.g., 'nomic', 'bge-micro', 'potion')
+   * @param modelId - The model ID (e.g., 'nomic', 'leaf-ir', 'potion')
    * @returns Promise that resolves with the embeddings count on success
    */
   const attachEmbeddings = async (modelId: string): Promise<number> => {

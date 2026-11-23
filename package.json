@@ -27,7 +27,7 @@
     "youtube:detect-blocked": "tsx scripts/detect-blocked-youtube.ts",
     "quality:mark-clips": "tsx scripts/mark-clips.ts",
     "embeddings:generate": "tsx scripts/generate-embeddings.ts",
-    "embeddings:generate-bge": "tsx scripts/generate-embeddings-bge.ts",
+    "embeddings:generate-leaf-ir": "tsx scripts/generate-embeddings-leaf-ir.ts",
     "embeddings:generate-potion": "tsx scripts/generate-embeddings-potion.ts",
     "similar:generate": "tsx scripts/generate-similar-movies.ts",
     "embeddings:copy": "tsx scripts/copy-embeddings-db.ts",

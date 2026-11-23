@@ -10,7 +10,7 @@
  * - Same filtering logic (quality marks removed)
  * - Same web DB schema and structure
  *
- * Note: Embeddings are stored in separate DB files (e.g., embeddings-bge-micro-movies.db)
+ * Note: Embeddings are stored in separate DB files (e.g., embeddings-leaf-ir-movies.db)
  * and are generated via AdminEmbeddingsGenerator. This utility only generates the main
  * movies.db with movie data, collections, and full-text search indexes.
  */

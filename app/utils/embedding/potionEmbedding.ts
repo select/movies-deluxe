@@ -36,6 +36,7 @@ export class PotionEmbeddingProvider implements EmbeddingProvider {
   readonly name = 'potion-base-2M'
   readonly dimensions = 64
   readonly maxTokens = 512
+  readonly quantization = 'float32' as const
 
   private session: ort.InferenceSession | null = null
   private tokenizerData: TokenizerData | null = null

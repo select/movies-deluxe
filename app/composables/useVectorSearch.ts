@@ -5,9 +5,9 @@ import type { Ref } from 'vue'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { ref } from 'vue'
 
-// Default to bge-micro - runs in browser, good quality
-// Options: 'bge-micro' (384d) or 'potion' (64d)
-const DEFAULT_EMBEDDING_MODEL = 'bge-micro'
+// Default to leaf-ir - runs in browser, MRL 256d + int8 quantized
+// Options: 'leaf-ir' (256d int8) or 'potion' (64d float32)
+const DEFAULT_EMBEDDING_MODEL = 'leaf-ir'
 
 export interface UseVectorSearchReturn {
   search: (
@@ -99,14 +99,14 @@ export function useVectorSearch(): UseVectorSearchReturn {
       // Auto-detect model from database config
       const modelInfo = await db.getEmbeddingModelInfo()
 
-      // Only bge-micro and potion are supported in browser
+      // Only leaf-ir and potion are supported in browser
       const modelId = modelInfo?.id
-      if (modelId !== 'bge-micro' && modelId !== 'potion') {
-        error.value = `Unsupported embedding model: ${modelId}. Only bge-micro and potion work in browser.`
+      if (modelId !== 'leaf-ir' && modelId !== 'potion') {
+        error.value = `Unsupported embedding model: ${modelId}. Only leaf-ir and potion work in browser.`
         return []
       }
 
-      const provider = modelId === 'bge-micro' ? 'bge' : 'potion'
+      const provider = modelId === 'leaf-ir' ? 'leaf-ir' : 'potion'
       await browserEmbedding.init(provider)
       const embedding = await browserEmbedding.embed(query)
 
@@ -164,13 +164,13 @@ export function useVectorSearch(): UseVectorSearchReturn {
 
       // 2. Perform vector search using that embedding
       // We ask for limit + 1 because the movie itself will be the closest match
-      // Convert Uint8Array from DB to Float32Array for vector search
-      const float32Embedding = new Float32Array(
-        embedding.buffer,
-        embedding.byteOffset,
-        embedding.byteLength / 4
-      )
-      const results = await db.vectorSearch(float32Embedding, limit + 1)
+      // Convert Uint8Array from DB to Int8Array or Float32Array based on model quantization
+      const modelInfo = await db.getEmbeddingModelInfo()
+      const typedEmbedding =
+        modelInfo?.quantization === 'int8'
+          ? new Int8Array(embedding.buffer, embedding.byteOffset, embedding.byteLength)
+          : new Float32Array(embedding.buffer, embedding.byteOffset, embedding.byteLength / 4)
+      const results = await db.vectorSearch(typedEmbedding, limit + 1)
 
       // Filter out the current movie and return requested limit
       return results.filter(r => r.movieId !== movieId).slice(0, limit)

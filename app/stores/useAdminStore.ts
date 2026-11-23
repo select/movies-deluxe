@@ -232,7 +232,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const generateSimilarMovies = async (model = 'bge-micro', limit = 10) => {
+  const generateSimilarMovies = async (model = 'leaf-ir', limit = 10) => {
     generatingSimilar.value = true
     try {
       await $fetch('/api/admin/similar/generate', {

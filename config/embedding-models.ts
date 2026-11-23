@@ -1,7 +1,8 @@
 export interface EmbeddingModelConfig {
-  id: string // 'nomic', 'bge-micro', 'potion'
+  id: string // 'nomic', 'leaf-ir', 'potion'
   name: string // Display name
-  dimensions: number // 768, 384, 64
+  dimensions: number // 768, 256, 64
+  quantization?: 'float32' | 'int8'
   dbFileName: string // 'embeddings-nomic-movies.db'
   description: string // User-facing description
   ollamaModel?: string // Model name in Ollama (if supported)
@@ -10,11 +11,12 @@ export interface EmbeddingModelConfig {
 
 export const EMBEDDING_MODELS: EmbeddingModelConfig[] = [
   {
-    id: 'bge-micro',
-    name: 'BGE Micro v2',
-    dimensions: 384,
-    dbFileName: 'embeddings-bge-micro-movies.db',
-    description: 'Good quality, runs in browser (384 dimensions)',
+    id: 'leaf-ir',
+    name: 'LEAF IR',
+    dimensions: 256,
+    quantization: 'int8',
+    dbFileName: 'embeddings-leaf-ir-movies.db',
+    description: 'Best quality-to-size ratio, runs in browser (256D int8 quantized)',
     isDefault: true,
   },
   {

@@ -2,7 +2,7 @@
  * Embeddings Generation API Endpoint
  *
  * Generates embeddings for movies using the specified embedding model(s).
- * Supports: nomic (Ollama), bge-micro (local Transformers.js), potion (local ONNX)
+ * Supports: nomic (Ollama), leaf-ir (local Transformers.js), potion (local ONNX)
  *
  * NOTE: We use dynamic imports for model-specific modules to avoid loading
  * heavy dependencies (like onnxruntime-node) at startup.
@@ -22,7 +22,7 @@ import { emitProgress } from '#server/utils/progress'
 import { movieToMarkdown } from '#server/utils/movieEmbeddings'
 
 interface GenerateEmbeddingsRequest {
-  models: string[] // ['nomic', 'bge-micro', 'potion'] or ['all']
+  models: string[] // ['nomic', 'leaf-ir', 'potion'] or ['all']
   limit?: number
   forceRebuild?: boolean
 }
@@ -99,7 +99,7 @@ export default defineEventHandler(async event => {
     console.log(`[Embeddings] Processing model: ${modelConfig.name}`)
 
     // Dynamically import model-specific modules to avoid loading heavy deps at startup
-    let generateEmbedding: (text: string) => Promise<Float32Array>
+    let generateEmbedding: (text: string) => Promise<Float32Array | Int8Array>
     let initPipeline: (() => Promise<unknown>) | undefined
     let checkAvailability: () => Promise<{ available: boolean; error?: string }>
 
@@ -108,11 +108,11 @@ export default defineEventHandler(async event => {
         const nomicModule = await import('../../../utils/embeddings/_nomic')
         checkAvailability = nomicModule.checkNomicAvailability
         generateEmbedding = (text: string) => nomicModule.generateNomicEmbedding(text, modelConfig)
-      } else if (modelId === 'bge-micro') {
-        const bgeModule = await import('../../../utils/embeddings/_bge')
-        checkAvailability = bgeModule.checkBgeAvailability
-        initPipeline = bgeModule.initBgeMicroPipeline
-        generateEmbedding = bgeModule.generateBgeMicroEmbedding
+      } else if (modelId === 'leaf-ir') {
+        const leafIrModule = await import('../../../utils/embeddings/_leafIr')
+        checkAvailability = leafIrModule.checkLeafIrAvailability
+        initPipeline = leafIrModule.initLeafIrPipeline
+        generateEmbedding = leafIrModule.generateLeafIrEmbedding
       } else if (modelId === 'potion') {
         const potionModule = await import('../../../utils/embeddings/_potion')
         checkAvailability = potionModule.checkPotionAvailability
@@ -203,7 +203,7 @@ export default defineEventHandler(async event => {
         const text = movieToMarkdown(movie)
         const embedding = await generateEmbedding(text)
 
-        saveEmbedding(db, movie.movieId, embedding)
+        saveEmbedding(db, movie.movieId, embedding, modelConfig.quantization)
         result.processed++
 
         // Calculate timing

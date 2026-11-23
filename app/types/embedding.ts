@@ -1,6 +1,6 @@
 /**
  * Unified interface for embedding providers in the browser.
- * Both BGE and Potion embedding modules should implement this interface.
+ * Both LEAF IR and Potion embedding modules should implement this interface.
  */
 export interface EmbeddingProvider {
   /** Name of the model provider */
@@ -9,6 +9,8 @@ export interface EmbeddingProvider {
   readonly dimensions: number
   /** Maximum number of tokens/text length supported */
   readonly maxTokens: number
+  /** Quantization format of the generated embedding vectors */
+  readonly quantization: 'float32' | 'int8'
 
   /**
    * Initializes the model (downloads and loads into memory if necessary).
@@ -25,9 +27,9 @@ export interface EmbeddingProvider {
   /**
    * Generates an embedding for the given text.
    * @param text The input text to embed
-   * @returns A Float32Array containing the embedding vector
+   * @returns A Float32Array or Int8Array containing the embedding vector
    */
-  generateEmbedding(text: string): Promise<Float32Array>
+  generateEmbedding(text: string): Promise<Float32Array | Int8Array>
 
   /**
    * Disposes of model resources and frees memory.

@@ -1,9 +1,9 @@
-import { BgeEmbeddingProvider } from '../utils/embedding/bgeEmbedding'
+import { LeafIrEmbeddingProvider } from '../utils/embedding/leafIrEmbedding'
 import { PotionEmbeddingProvider } from '../utils/embedding/potionEmbedding'
 import type { EmbeddingProvider } from '../types/embedding'
 
 let currentProvider: EmbeddingProvider | null = null
-let currentProviderName: 'bge' | 'potion' | null = null
+let currentProviderName: 'leaf-ir' | 'potion' | null = null
 let cachedBaseURL = '/'
 
 self.onmessage = async (e: MessageEvent) => {
@@ -26,8 +26,8 @@ self.onmessage = async (e: MessageEvent) => {
         await currentProvider.dispose()
       }
 
-      if (provider === 'bge') {
-        currentProvider = new BgeEmbeddingProvider()
+      if (provider === 'leaf-ir') {
+        currentProvider = new LeafIrEmbeddingProvider()
       } else if (provider === 'potion') {
         currentProvider = new PotionEmbeddingProvider()
       } else {
@@ -48,8 +48,9 @@ self.onmessage = async (e: MessageEvent) => {
 
       const embedding = await currentProvider.generateEmbedding(text)
 
-      // Transfer the buffer for better performance
-      self.postMessage({ type: 'embedding', id, embedding }, { transfer: [embedding.buffer] })
+      // Transfer the buffer for better performance (supports both Float32Array and Int8Array)
+      const transferBuffer = embedding.buffer as ArrayBuffer
+      self.postMessage({ type: 'embedding', id, embedding }, { transfer: [transferBuffer] })
     } else if (type === 'dispose') {
       if (currentProvider) {
         await currentProvider.dispose()
