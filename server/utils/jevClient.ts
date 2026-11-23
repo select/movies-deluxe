@@ -46,6 +46,63 @@ export interface JevClassifyOptions {
 }
 
 const SYSTEM_ONE_URL = 'https://api.typesafe.ai/v1/systemone'
+const DEFAULT_MAX_CONCURRENCY = 2
+const RETRY_DELAYS_MS = [600, 1500, 3000]
+
+let activeJevRequests = 0
+const jevQueue: Array<() => void> = []
+
+function getMaxConcurrency(): number {
+  const parsed = Number(process.env.JEV_MAX_CONCURRENCY)
+  if (Number.isInteger(parsed) && parsed > 0) {
+    return parsed
+  }
+  return DEFAULT_MAX_CONCURRENCY
+}
+
+async function acquireJevSlot(): Promise<void> {
+  if (activeJevRequests < getMaxConcurrency()) {
+    activeJevRequests++
+    return
+  }
+  await new Promise<void>(resolve => {
+    jevQueue.push(resolve)
+  })
+  activeJevRequests++
+}
+
+function releaseJevSlot(): void {
+  activeJevRequests = Math.max(0, activeJevRequests - 1)
+  const next = jevQueue.shift()
+  if (next) {
+    next()
+  }
+}
+
+function formatErrorWithCause(error: unknown): Error {
+  if (!(error instanceof Error)) {
+    return new Error(String(error))
+  }
+  const cause = (error as Error & { cause?: unknown }).cause
+  if (!cause) {
+    return error
+  }
+  if (cause instanceof Error) {
+    const code = (cause as Error & { code?: string }).code
+    const detail = code ? `${code}: ${cause.message}` : cause.message
+    if (detail && !error.message.includes(detail)) {
+      return new Error(`${error.message} (${detail})`, { cause: error })
+    }
+  } else if (typeof cause === 'object' && cause !== null) {
+    const code = 'code' in cause ? String((cause as { code?: unknown }).code) : ''
+    const msg = 'message' in cause ? String((cause as { message?: unknown }).message) : ''
+    const detail = [code, msg].filter(Boolean).join(': ')
+    if (detail && !error.message.includes(detail)) {
+      return new Error(`${error.message} (${detail})`, { cause: error })
+    }
+  }
+  return error
+}
 
 export function isJevAvailable(): boolean {
   return Boolean(process.env.TYPESAFE_API_KEY?.trim())
@@ -96,7 +153,10 @@ export async function classifyWithJev(
   const payload = JSON.stringify(sanitizeForJson({ model, state, questions }))
 
   let lastError: unknown
-  for (let attempt = 0; attempt < 2; attempt++) {
+  const maxAttempts = RETRY_DELAYS_MS.length + 1
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let retryDelayMs: number | null = null
+    await acquireJevSlot()
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), timeoutMs)
 
@@ -114,32 +174,37 @@ export async function classifyWithJev(
       if (!response.ok) {
         const bodyText = await response.text().catch(() => '')
         const err = new Error(`Jev API HTTP ${response.status}: ${bodyText.slice(0, 200)}`)
-        if (attempt === 0 && isRetryableStatus(response.status)) {
+        if (attempt < RETRY_DELAYS_MS.length && isRetryableStatus(response.status)) {
           lastError = err
-          await new Promise(resolve => setTimeout(resolve, 600))
-          continue
+          retryDelayMs = RETRY_DELAYS_MS[attempt]! + Math.floor(Math.random() * 250)
+        } else {
+          throw err
         }
-        throw err
+      } else {
+        const data = (await response.json()) as JevClassifyResponse
+        if (!data || typeof data !== 'object' || !data.answers) {
+          throw new Error('Invalid Jev API response: missing answers')
+        }
+        return data
       }
-
-      const data = (await response.json()) as JevClassifyResponse
-      if (!data || typeof data !== 'object' || !data.answers) {
-        throw new Error('Invalid Jev API response: missing answers')
-      }
-      return data
     } catch (error) {
       lastError = error
       const isAbort = error instanceof Error && error.name === 'AbortError'
       const isNetwork = error instanceof TypeError
-      if (attempt === 0 && (isAbort || isNetwork)) {
-        await new Promise(resolve => setTimeout(resolve, 600))
-        continue
+      if (attempt < RETRY_DELAYS_MS.length && (isAbort || isNetwork)) {
+        retryDelayMs = RETRY_DELAYS_MS[attempt]! + Math.floor(Math.random() * 250)
+      } else {
+        throw formatErrorWithCause(error)
       }
-      throw error
     } finally {
       clearTimeout(timer)
+      releaseJevSlot()
+    }
+
+    if (retryDelayMs !== null) {
+      await new Promise(resolve => setTimeout(resolve, retryDelayMs))
     }
   }
 
-  throw lastError instanceof Error ? lastError : new Error(String(lastError))
+  throw formatErrorWithCause(lastError)
 }
