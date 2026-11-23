@@ -55,6 +55,32 @@ function isRetryableStatus(status: number): boolean {
   return status === 429 || (status >= 500 && status <= 599)
 }
 
+function sanitizeUnicode(value: string): string {
+  // Strip NUL bytes and replace lone UTF-16 surrogates (e.g. from .slice() splitting a surrogate pair)
+  return value
+    .replace(/\u0000/g, '')
+    .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '\uFFFD')
+}
+
+function sanitizeForJson<T>(input: T): T {
+  if (typeof input === 'string') {
+    return sanitizeUnicode(input) as T
+  }
+  if (Array.isArray(input)) {
+    return input.map(sanitizeForJson) as T
+  }
+  if (input && typeof input === 'object') {
+    const out: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(input)) {
+      if (v !== undefined) {
+        out[sanitizeUnicode(k)] = sanitizeForJson(v)
+      }
+    }
+    return out as T
+  }
+  return input
+}
+
 export async function classifyWithJev(
   state: Record<string, unknown>,
   questions: Record<string, JevQuestion>,
@@ -67,6 +93,7 @@ export async function classifyWithJev(
 
   const model = options.model || process.env.JEV_MODEL?.trim() || 'jev-latest'
   const timeoutMs = options.timeoutMs ?? 10000
+  const payload = JSON.stringify(sanitizeForJson({ model, state, questions }))
 
   let lastError: unknown
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -80,7 +107,7 @@ export async function classifyWithJev(
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ model, state, questions }),
+        body: payload,
         signal: controller.signal,
       })
 
