@@ -178,25 +178,45 @@
     <!-- Live Progress & Status Strip -->
     <div v-if="hasStatusActivity" class="space-y-2 pt-1 border-t border-theme-border">
       <!-- Active Progress Bars -->
-      <div v-for="item in activeProgressItems" :key="item.key" class="space-y-1">
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-theme-textmuted truncate mr-2">
-            <span class="font-semibold text-theme-text">{{ item.label }}:</span>
-            {{ item.message }}
-          </span>
-          <span class="font-mono text-nowrap text-theme-textmuted">
-            <template v-if="item.total > 0">{{ item.current }} / {{ item.total }}</template>
-            <template v-if="item.extra"> · {{ item.extra }}</template>
-          </span>
+      <div
+        v-for="item in activeProgressItems"
+        :key="item.key"
+        class="p-2.5 rounded-xl border border-theme-border bg-theme-background/60 space-y-1.5"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="font-semibold text-theme-text shrink-0">{{ item.label }}</span>
+            <span class="text-theme-textmuted truncate">{{ item.message }}</span>
+          </div>
+          <div class="flex items-center gap-3 font-mono text-[11px] shrink-0">
+            <span v-if="item.total > 0" class="text-theme-text">
+              {{ item.current.toLocaleString() }} / {{ item.total.toLocaleString() }}
+              <span class="text-theme-textmuted ml-1">({{ item.percent }}%)</span>
+            </span>
+            <span
+              v-if="item.rate"
+              class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400"
+            >
+              <div class="i-mdi-speedometer text-xs"></div>
+              {{ item.rate }}/s
+            </span>
+            <span
+              v-if="item.eta"
+              class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400"
+            >
+              <div class="i-mdi-timer-outline text-xs"></div>
+              ETA {{ item.eta }}
+            </span>
+          </div>
         </div>
-        <div class="h-1.5 bg-theme-border rounded-full overflow-hidden">
+        <div class="h-2 bg-theme-border rounded-full overflow-hidden">
           <div v-if="item.starting" class="h-full animate-pulse w-full" :class="item.color"></div>
           <div
             v-else
             class="h-full transition-all duration-300"
             :class="item.color"
             :style="{
-              width: item.total > 0 ? `${Math.min(100, (item.current / item.total) * 100)}%` : '0%',
+              width: `${item.percent}%`,
             }"
           ></div>
         </div>
@@ -468,10 +488,15 @@ const activeProgressItems = computed(() => {
     message: string
     current: number
     total: number
+    percent: number
     starting: boolean
     color: string
-    extra?: string
+    rate?: number
+    eta?: string
   }> = []
+
+  const calcPercent = (current: number, total: number) =>
+    total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0
 
   const p = progress.value
   if (p.sqlite && (p.sqlite.status === 'starting' || p.sqlite.status === 'in_progress')) {
@@ -481,6 +506,7 @@ const activeProgressItems = computed(() => {
       message: p.sqlite.message || 'Generating...',
       current: p.sqlite.current,
       total: p.sqlite.total,
+      percent: calcPercent(p.sqlite.current, p.sqlite.total),
       starting: p.sqlite.status === 'starting',
       color: 'bg-blue-500',
     })
@@ -489,30 +515,42 @@ const activeProgressItems = computed(() => {
     p.embeddings &&
     (p.embeddings.status === 'starting' || p.embeddings.status === 'in_progress')
   ) {
-    const extras: string[] = []
-    if (p.embeddings.embeddingsPerSecond) extras.push(`${p.embeddings.embeddingsPerSecond}/s`)
-    if (p.embeddings.estimatedTimeRemaining)
-      extras.push(`ETA ${formatETA(p.embeddings.estimatedTimeRemaining)}`)
     items.push({
       key: 'embeddings',
       label: 'Embeddings',
       message: p.embeddings.message || 'Generating...',
       current: p.embeddings.current,
       total: p.embeddings.total,
+      percent: calcPercent(p.embeddings.current, p.embeddings.total),
       starting: p.embeddings.status === 'starting',
       color: 'bg-indigo-500',
-      extra: extras.join(' · ') || undefined,
+      rate: p.embeddings.embeddingsPerSecond || undefined,
+      eta: p.embeddings.estimatedTimeRemaining
+        ? formatETA(p.embeddings.estimatedTimeRemaining)
+        : undefined,
     })
   }
   if (p.similar && (p.similar.status === 'starting' || p.similar.status === 'in_progress')) {
+    let message = p.similar.message || 'Generating...'
+    let rate = p.similar.embeddingsPerSecond || undefined
+    let etaSeconds = p.similar.estimatedTimeRemaining || undefined
+    const legacyMatch = message.match(/\((\d+)\/s,\s*~(\d+)s left\)/)
+    if (legacyMatch) {
+      if (!rate) rate = Number(legacyMatch[1])
+      if (!etaSeconds) etaSeconds = Number(legacyMatch[2])
+      message = 'Computing nearest neighbors...'
+    }
     items.push({
       key: 'similar',
-      label: 'Similar',
-      message: p.similar.message || 'Generating...',
+      label: 'Similar Movies',
+      message,
       current: p.similar.current,
       total: p.similar.total,
+      percent: calcPercent(p.similar.current, p.similar.total),
       starting: p.similar.status === 'starting',
       color: 'bg-purple-500',
+      rate,
+      eta: etaSeconds ? formatETA(etaSeconds) : undefined,
     })
   }
   if (p.home && (p.home.status === 'starting' || p.home.status === 'in_progress')) {
@@ -522,6 +560,7 @@ const activeProgressItems = computed(() => {
       message: p.home.message || 'Generating...',
       current: p.home.current,
       total: p.home.total,
+      percent: calcPercent(p.home.current, p.home.total),
       starting: p.home.status === 'starting',
       color: 'bg-sky-500',
     })
@@ -533,6 +572,7 @@ const activeProgressItems = computed(() => {
       message: p.posters.message || 'Downloading...',
       current: p.posters.current,
       total: p.posters.total,
+      percent: calcPercent(p.posters.current, p.posters.total),
       starting: false,
       color: 'bg-purple-500',
     })
@@ -544,6 +584,7 @@ const activeProgressItems = computed(() => {
       message: p.posterArchive.message || 'Archiving...',
       current: p.posterArchive.current,
       total: p.posterArchive.total,
+      percent: calcPercent(p.posterArchive.current, p.posterArchive.total),
       starting: false,
       color: 'bg-purple-500',
     })
@@ -555,6 +596,7 @@ const activeProgressItems = computed(() => {
       message: p.databaseArchive.message || 'Archiving...',
       current: p.databaseArchive.current,
       total: p.databaseArchive.total,
+      percent: calcPercent(p.databaseArchive.current, p.databaseArchive.total),
       starting: false,
       color: 'bg-blue-500',
     })

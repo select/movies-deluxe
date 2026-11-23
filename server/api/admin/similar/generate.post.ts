@@ -157,16 +157,20 @@ export default defineEventHandler(async event => {
       processedCount++
       if (processedCount % 500 === 0) {
         const elapsed = (Date.now() - startTime) / 1000
-        const rate = Math.round(processedCount / elapsed)
-        const remaining = Math.round((totalMovies - processedCount) / rate)
-        const msg = `Processing ${processedCount}/${totalMovies} (${rate}/s, ~${remaining}s left)`
-        console.log(`[Similar] ${msg}`)
+        const rate = elapsed > 0 ? Math.round(processedCount / elapsed) : 0
+        const remaining = rate > 0 ? Math.round((totalMovies - processedCount) / rate) : 0
+        const msg = `Computing nearest neighbors (${modelId})`
+        console.log(
+          `[Similar] Processing ${processedCount}/${totalMovies} (${rate}/s, ~${remaining}s left)`
+        )
         emitProgress({
           type: 'similar',
           status: 'in_progress',
           message: msg,
           current: processedCount,
           total: totalMovies,
+          embeddingsPerSecond: rate,
+          estimatedTimeRemaining: remaining,
         })
         // Yield event loop so SSE progress events can flush to client
         await new Promise(resolve => setTimeout(resolve, 0))
