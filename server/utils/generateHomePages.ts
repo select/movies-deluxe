@@ -134,7 +134,7 @@ export async function generateHomePages(
   const validCollections = collections
     .map(c => ({
       ...c,
-      movieIds: c.movieIds.filter(
+      movieIds: Array.from(new Set(c.movieIds)).filter(
         (id: string) => id.startsWith('tt') && (moviesMetadata.size === 0 || moviesMetadata.has(id))
       ),
     }))

@@ -22,7 +22,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
 
     // Deduplicate concurrent fetches, or wait for in-flight fetch before forcing refresh
-    if (loadingPromise) {
+    while (loadingPromise) {
       if (!force) {
         return loadingPromise
       }
@@ -232,7 +232,7 @@ export const useCollectionsStore = defineStore('collections', () => {
    */
   const getCollectionsForMovie = async (movieId: string): Promise<Collection[]> => {
     try {
-      if (!isLoaded.value) {
+      if (!isLoaded.value || loadingPromise) {
         await loadCollections()
       }
       return [...(movieToCollectionsMap.get(movieId) || [])]

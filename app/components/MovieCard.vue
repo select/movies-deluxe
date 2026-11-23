@@ -185,16 +185,65 @@ const showFullDetails = ref(props.eager)
 const cardRef = ref<HTMLElement | null>(null)
 
 if (props.eager) {
+  let idleHandle: number | null = null
+  let timeoutHandle: ReturnType<typeof setTimeout> | null = null
+  let stopWatch: (() => void) | null = null
+  let isUnmounted = false
+
+  const cancelScheduledLookup = () => {
+    if (
+      idleHandle !== null &&
+      typeof window !== 'undefined' &&
+      typeof window.cancelIdleCallback === 'function'
+    ) {
+      window.cancelIdleCallback(idleHandle)
+      idleHandle = null
+    }
+    if (timeoutHandle !== null) {
+      clearTimeout(timeoutHandle)
+      timeoutHandle = null
+    }
+  }
+
+  const scheduleLookup = (movieId: string) => {
+    cancelScheduledLookup()
+    const run = async () => {
+      if (isUnmounted || movieCollections.value.length > 0) return
+      const cols = await getCollectionsForMovie(movieId)
+      if (!isUnmounted) {
+        movieCollections.value = cols
+      }
+    }
+
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+      idleHandle = window.requestIdleCallback(() => {
+        idleHandle = null
+        void run()
+      })
+    } else {
+      timeoutHandle = setTimeout(() => {
+        timeoutHandle = null
+        void run()
+      }, 150)
+    }
+  }
+
   onMounted(() => {
-    watch(
+    stopWatch = watch(
       () => movie.value?.movieId,
-      async movieId => {
+      movieId => {
         if (movieId && movieCollections.value.length === 0) {
-          movieCollections.value = await getCollectionsForMovie(movieId)
+          scheduleLookup(movieId)
         }
       },
       { immediate: true }
     )
+  })
+
+  onUnmounted(() => {
+    isUnmounted = true
+    stopWatch?.()
+    cancelScheduledLookup()
   })
 } else {
   // Use useTimeoutFn for better control over the timeout

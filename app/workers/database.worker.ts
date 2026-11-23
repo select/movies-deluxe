@@ -145,12 +145,58 @@ const SQLITE_MAGIC = [
   0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00,
 ]
 
+const DB_CACHE_NAME = 'movies-deluxe-db-v1'
+
 function hasSqliteMagic(bytes: Uint8Array): boolean {
   if (bytes.length < SQLITE_MAGIC.length) return false
   for (let i = 0; i < SQLITE_MAGIC.length; i++) {
     if (bytes[i] !== SQLITE_MAGIC[i]) return false
   }
   return true
+}
+
+function buildCanonicalCacheKey(url: string): string {
+  try {
+    const resolved = new URL(url, self.location.href)
+    return `${resolved.origin}${resolved.pathname}`
+  } catch {
+    return url
+  }
+}
+
+async function openDbCache(): Promise<Cache | null> {
+  if (typeof caches === 'undefined') return null
+  try {
+    return await caches.open(DB_CACHE_NAME)
+  } catch (err) {
+    console.warn('Cache API unavailable for database caching:', err)
+    return null
+  }
+}
+
+async function writeDbToCache(
+  cache: Cache,
+  cacheKey: string,
+  bytes: Uint8Array,
+  etag: string | null,
+  lastModified: string | null
+): Promise<void> {
+  try {
+    const headers = new Headers({
+      'Content-Type': 'application/x-sqlite3',
+      'Content-Length': String(bytes.byteLength),
+    })
+    if (etag) headers.set('X-DB-ETag', etag)
+    if (lastModified) headers.set('X-DB-Last-Modified', lastModified)
+
+    const cacheResponse = new Response(bytes.slice().buffer, {
+      status: 200,
+      headers,
+    })
+    await cache.put(cacheKey, cacheResponse)
+  } catch (err) {
+    console.warn('Failed to store database in Cache API:', err)
+  }
 }
 
 function buildGzipUrl(url: string): string | null {
@@ -214,7 +260,90 @@ async function readStreamWithMagicCheck(
   return { isGzip, isSqlite, stream }
 }
 
-async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+async function revalidateCacheInBackground(
+  url: string,
+  cacheKey: string,
+  cachedResponse: Response
+): Promise<void> {
+  try {
+    const headers = new Headers()
+    const cachedEtag = cachedResponse.headers.get('X-DB-ETag')
+    const cachedLastModified = cachedResponse.headers.get('X-DB-Last-Modified')
+    if (cachedEtag) headers.set('If-None-Match', cachedEtag)
+    if (cachedLastModified) headers.set('If-Modified-Since', cachedLastModified)
+
+    const gzUrl = typeof DecompressionStream !== 'undefined' ? buildGzipUrl(url) : null
+    if (gzUrl) {
+      try {
+        const gzResponse = await fetch(gzUrl, { headers })
+        if (gzResponse.status === 304) {
+          return
+        }
+        if (gzResponse.ok && gzResponse.body) {
+          const { isGzip, isSqlite, stream } = await readStreamWithMagicCheck(gzResponse.body)
+          let bytes: Uint8Array | null = null
+          if (isGzip) {
+            const decompressed = stream.pipeThrough(
+              new DecompressionStream('gzip') as unknown as TransformStream<Uint8Array, Uint8Array>
+            )
+            bytes = new Uint8Array(await new Response(decompressed).arrayBuffer())
+          } else if (isSqlite) {
+            bytes = new Uint8Array(await new Response(stream).arrayBuffer())
+          } else {
+            await stream.cancel()
+          }
+
+          if (bytes && hasSqliteMagic(bytes)) {
+            const cache = await openDbCache()
+            if (cache) {
+              await writeDbToCache(
+                cache,
+                cacheKey,
+                bytes,
+                gzResponse.headers.get('ETag'),
+                gzResponse.headers.get('Last-Modified')
+              )
+            }
+            return
+          }
+        } else {
+          await gzResponse.body?.cancel()
+        }
+      } catch {
+        // Fall back to raw URL on gzip revalidation error
+      }
+    }
+
+    const response = await fetch(url, { headers })
+    if (response.status === 304 || !response.ok) {
+      await response.body?.cancel()
+      return
+    }
+
+    const bytes = new Uint8Array(await response.arrayBuffer())
+    if (!hasSqliteMagic(bytes)) {
+      return
+    }
+
+    const cache = await openDbCache()
+    if (cache) {
+      await writeDbToCache(
+        cache,
+        cacheKey,
+        bytes,
+        response.headers.get('ETag'),
+        response.headers.get('Last-Modified')
+      )
+    }
+  } catch {
+    // Silently ignore background revalidation failures
+  }
+}
+
+async function fetchDatabaseBytesFromNetwork(
+  url: string,
+  signal?: AbortSignal
+): Promise<{ bytes: Uint8Array; etag: string | null; lastModified: string | null }> {
   const gzUrl = typeof DecompressionStream !== 'undefined' ? buildGzipUrl(url) : null
   if (gzUrl) {
     try {
@@ -232,13 +361,25 @@ async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Ui
           if (!hasSqliteMagic(bytes)) {
             throw new Error('Decompressed response is not a valid SQLite database')
           }
-          return bytes
+          return {
+            bytes,
+            etag: gzResponse.headers.get('ETag'),
+            lastModified: gzResponse.headers.get('Last-Modified'),
+          }
         }
 
         if (isSqlite) {
           // Server/CDN already transparently decompressed the .gz response
           const arrayBuffer = await new Response(stream).arrayBuffer()
-          return new Uint8Array(arrayBuffer)
+          const bytes = new Uint8Array(arrayBuffer)
+          if (!hasSqliteMagic(bytes)) {
+            throw new Error('Gzipped response is not a valid SQLite database')
+          }
+          return {
+            bytes,
+            etag: gzResponse.headers.get('ETag'),
+            lastModified: gzResponse.headers.get('Last-Modified'),
+          }
         }
 
         await stream.cancel()
@@ -261,7 +402,45 @@ async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Ui
   }
 
   const arrayBuffer = await response.arrayBuffer()
-  return new Uint8Array(arrayBuffer)
+  const bytes = new Uint8Array(arrayBuffer)
+  if (!hasSqliteMagic(bytes)) {
+    throw new Error('Fetched response is not a valid SQLite database')
+  }
+
+  return {
+    bytes,
+    etag: response.headers.get('ETag'),
+    lastModified: response.headers.get('Last-Modified'),
+  }
+}
+
+async function fetchDatabaseBytes(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+  const cacheKey = buildCanonicalCacheKey(url)
+  const cache = await openDbCache()
+
+  if (cache) {
+    try {
+      const cachedResponse = await cache.match(cacheKey)
+      if (cachedResponse) {
+        const cachedBytes = new Uint8Array(await cachedResponse.arrayBuffer())
+        if (hasSqliteMagic(cachedBytes)) {
+          console.log('Loaded database from Cache API:', cacheKey)
+          void revalidateCacheInBackground(url, cacheKey, cachedResponse)
+          return cachedBytes
+        }
+        console.warn('Cached database failed SQLite magic check, evicting:', cacheKey)
+        await cache.delete(cacheKey).catch(() => {})
+      }
+    } catch (err) {
+      console.warn('Failed to read database from Cache API:', err)
+    }
+  }
+
+  const { bytes, etag, lastModified } = await fetchDatabaseBytesFromNetwork(url, signal)
+  if (cache) {
+    void writeDbToCache(cache, cacheKey, bytes, etag, lastModified)
+  }
+  return bytes
 }
 
 async function loadRemoteDatabase(url: string) {

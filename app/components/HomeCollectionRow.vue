@@ -94,11 +94,38 @@ const movieStore = useMovieStore()
 const { fetchMoviesByIds, seedLightweightCache } = movieStore
 const { lightweightMovieCache } = storeToRefs(movieStore)
 
-const isLoading = ref(true)
-const displayMovies = ref<LightweightMovie[]>([])
+const initialMovieIds = props.collection.movieIds.slice(0, 9)
+let initialDisplayMovies: LightweightMovie[] = []
+let initiallyLoaded = false
+
+if (props.eager) {
+  if (props.collection.movies?.length) {
+    seedLightweightCache(props.collection.movies)
+  }
+
+  if (initialMovieIds.length === 0) {
+    initiallyLoaded = true
+  } else {
+    const embeddedMap = new Map(
+      (props.collection.movies ?? []).map(movie => [movie.movieId, movie])
+    )
+    const allCovered = initialMovieIds.every(
+      id => lightweightMovieCache.value.has(id) || embeddedMap.has(id)
+    )
+    if (allCovered) {
+      initialDisplayMovies = initialMovieIds
+        .map(id => lightweightMovieCache.value.get(id) ?? embeddedMap.get(id))
+        .filter((movie): movie is LightweightMovie => !!movie)
+      initiallyLoaded = initialDisplayMovies.length === initialMovieIds.length
+    }
+  }
+}
+
+const isLoading = ref(!initiallyLoaded)
+const displayMovies = ref<LightweightMovie[]>(initialDisplayMovies)
 const scrollContainer = ref<HTMLElement | null>(null)
 const rowElement = ref<HTMLElement | null>(null)
-const hasLoaded = ref(false)
+const hasLoaded = ref(initiallyLoaded)
 let isLoadingInFlight = false
 
 const canScrollLeft = ref(false)
