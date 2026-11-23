@@ -68,38 +68,12 @@
             </NuxtLink>
             <button
               class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              :disabled="loading || generatingHomePages"
-              @click="adminStore.generateHomePages"
-            >
-              <div class="i-mdi-home-plus" :class="{ 'animate-spin': generatingHomePages }"></div>
-              Generate Home Pages
-            </button>
-            <button
-              class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               :disabled="loading || refreshingStats"
               @click="adminStore.refreshStats"
             >
               <div class="i-mdi-refresh" :class="{ 'animate-spin': refreshingStats }"></div>
               Refresh Stats
             </button>
-          </div>
-          <!-- Home Page Generation Progress -->
-          <div
-            v-if="progress.home && progress.home.status === 'in_progress'"
-            class="w-full max-w-md space-y-2"
-          >
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-theme-textmuted truncate mr-2">{{ progress.home.message }}</span>
-              <span class="font-mono text-nowrap"
-                >{{ progress.home.current }} / {{ progress.home.total }}</span
-              >
-            </div>
-            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
-              <div
-                class="h-full bg-blue-500 transition-all duration-300"
-                :style="{ width: `${(progress.home.current / progress.home.total) * 100}%` }"
-              ></div>
-            </div>
           </div>
           <!-- Stats Refresh Progress -->
           <div
@@ -116,37 +90,6 @@
               <div
                 class="h-full bg-green-500 transition-all duration-300"
                 :style="{ width: `${(progress.stats.current / progress.stats.total) * 100}%` }"
-              ></div>
-            </div>
-          </div>
-          <!-- SQLite Generation Progress -->
-          <div
-            v-if="
-              progress.sqlite &&
-              (progress.sqlite.status === 'in_progress' || progress.sqlite.status === 'starting')
-            "
-            class="w-full max-w-md space-y-2"
-          >
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-theme-textmuted truncate mr-2">{{ progress.sqlite.message }}</span>
-              <span v-if="progress.sqlite.total > 0" class="font-mono text-nowrap"
-                >{{ progress.sqlite.current }} / {{ progress.sqlite.total }}</span
-              >
-            </div>
-            <div class="h-2 bg-theme-border rounded-full overflow-hidden">
-              <div
-                v-if="progress.sqlite.status === 'starting'"
-                class="h-full bg-purple-500 animate-pulse w-full"
-              ></div>
-              <div
-                v-else
-                class="h-full bg-purple-500 transition-all duration-300"
-                :style="{
-                  width:
-                    progress.sqlite.total > 0
-                      ? `${(progress.sqlite.current / progress.sqlite.total) * 100}%`
-                      : '0%',
-                }"
               ></div>
             </div>
           </div>
@@ -223,6 +166,9 @@
         />
       </section>
 
+      <!-- Data Management Panel -->
+      <AdminDataManagementPanel />
+
       <!-- YouTube Channel Stats -->
       <section>
         <AdminYouTubeChannelStats
@@ -236,122 +182,6 @@
 
       <!-- Match Review Queue -->
       <AdminMatchReviewQueue />
-
-      <!-- Scrape Controls -->
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        <!-- Data Management Section -->
-        <section class="md:col-span-2">
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <div class="i-mdi-database-cog text-blue-600"></div>
-            Data Management
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <AdminDatabaseGenerator />
-
-            <AdminEmbeddingsGenerator />
-
-            <!-- Similar Movies Generator -->
-            <div class="p-8 rounded-3xl shadow-lg border border-theme-border bg-theme-surface">
-              <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <div class="i-mdi-vector-link text-purple-500"></div>
-                Similar Movies
-              </h2>
-
-              <div class="space-y-6">
-                <p class="text-theme-textmuted text-sm">
-                  Precompute top similar movies (similar-movies.db) from leaf-ir vector embeddings
-                  for movie detail pages. Run after updating embeddings and before generating movie
-                  JSONs.
-                </p>
-
-                <button
-                  class="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-purple-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  :disabled="loading || generatingSimilar"
-                  @click="adminStore.generateSimilarMovies()"
-                >
-                  <div v-if="generatingSimilar" class="i-mdi-loading animate-spin"></div>
-                  <div v-else class="i-mdi-vector-link"></div>
-                  {{
-                    generatingSimilar ? 'Generating Similar Movies...' : 'Generate Similar Movies'
-                  }}
-                </button>
-
-                <div
-                  v-if="
-                    progress.similar &&
-                    (progress.similar.status === 'in_progress' ||
-                      progress.similar.status === 'starting')
-                  "
-                  class="space-y-2"
-                >
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="text-theme-textmuted truncate mr-2">{{
-                      progress.similar.message
-                    }}</span>
-                    <span v-if="progress.similar.total > 0" class="font-mono text-nowrap">
-                      {{ progress.similar.current }} / {{ progress.similar.total }}
-                    </span>
-                  </div>
-                  <div class="h-2 bg-theme-border rounded-full overflow-hidden">
-                    <div
-                      v-if="progress.similar.status === 'starting'"
-                      class="h-full bg-purple-500 animate-pulse w-full"
-                    ></div>
-                    <div
-                      v-else
-                      class="h-full bg-purple-500 transition-all duration-300"
-                      :style="{
-                        width:
-                          progress.similar.total > 0
-                            ? `${(progress.similar.current / progress.similar.total) * 100}%`
-                            : '0%',
-                      }"
-                    ></div>
-                  </div>
-                </div>
-
-                <div
-                  v-if="progress.similar?.status === 'completed'"
-                  class="p-3 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center gap-2 text-sm text-green-500"
-                >
-                  <div class="i-mdi-check-circle"></div>
-                  {{ progress.similar.message }}
-                </div>
-                <div
-                  v-if="progress.similar?.status === 'error'"
-                  class="p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-2 text-sm text-red-500"
-                >
-                  <div class="i-mdi-alert-circle"></div>
-                  {{ progress.similar.message }}
-                </div>
-              </div>
-            </div>
-
-            <AdminCollectionCleanup
-              :loading="cleaningCollections"
-              :results="collectionCleanupResults"
-              @start="adminStore.cleanupCollections"
-            />
-
-            <AdminArchiver />
-          </div>
-        </section>
-
-        <!-- Data Enrichment Section -->
-        <section>
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-            <div class="i-mdi-database-sync text-green-600"></div>
-            Data Enrichment
-          </h2>
-          <div class="flex flex-col gap-8">
-            <AdminPosterDownloader
-              v-model="posterOptions"
-              :loading="scraping"
-              @start="adminStore.startPosterDownload"
-            />
-          </div>
-        </section>
-      </div>
 
       <!-- Results Log -->
       <AdminResultsLog
@@ -374,14 +204,10 @@ import { storeToRefs } from '#imports'
 import { isLocalhost } from '~/utils/isLocalhost'
 import { $fetch } from '#build/fetch'
 import AdminStatsCard from '~/components/AdminStatsCard.vue'
+import AdminDataManagementPanel from '~/components/AdminDataManagementPanel.vue'
 import AdminYouTubeChannelStats from '~/components/AdminYouTubeChannelStats.vue'
 import AdminChannelSync from '~/components/AdminChannelSync.vue'
 import AdminMatchReviewQueue from '~/components/AdminMatchReviewQueue.vue'
-import AdminDatabaseGenerator from '~/components/AdminDatabaseGenerator.vue'
-import AdminEmbeddingsGenerator from '~/components/AdminEmbeddingsGenerator.vue'
-import AdminCollectionCleanup from '~/components/AdminCollectionCleanup.vue'
-import AdminPosterDownloader from '~/components/AdminPosterDownloader.vue'
-import AdminArchiver from '~/components/AdminArchiver.vue'
 import AdminResultsLog from '~/components/AdminResultsLog.vue'
 import { NuxtLink } from '#components'
 
@@ -398,13 +224,7 @@ const { connect: connectProgress, isConnected, isReconnecting } = useProgress()
 // Extract reactive state from store
 const {
   loading,
-  generatingHomePages,
-  generatingSimilar,
   stats,
-  scraping,
-  posterOptions,
-  cleaningCollections,
-  collectionCleanupResults,
   results,
   posterResults,
   progress,
