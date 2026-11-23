@@ -11,7 +11,18 @@ interface CleanupPostersBody {
 }
 
 export default defineEventHandler(async (event): Promise<CleanupUnlistedPostersResult> => {
-  const body = ((await readBody(event)) ?? {}) as CleanupPostersBody
+  const rawBody = await readBody(event)
+  if (
+    rawBody !== undefined &&
+    rawBody !== null &&
+    (typeof rawBody !== 'object' || Array.isArray(rawBody))
+  ) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid request body. Expected a JSON object.',
+    })
+  }
+  const body = (rawBody ?? {}) as CleanupPostersBody
 
   let dryRun = false
   if (body.dryRun !== undefined) {

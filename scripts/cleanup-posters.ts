@@ -27,11 +27,18 @@ function parseCliArgs(argv: string[]): {
   let scope: PosterCleanupScope = 'listed'
   let help = false
 
-  for (const arg of argv) {
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!
     if (arg === '--dry-run') {
       dryRun = true
     } else if (arg === '--help' || arg === '-h') {
       help = true
+    } else if (arg === '--scope') {
+      const value = argv[++i]
+      if (value !== 'listed' && value !== 'admin') {
+        throw new Error(`Invalid --scope value "${value ?? ''}". Expected "listed" or "admin".`)
+      }
+      scope = value
     } else if (arg.startsWith('--scope=')) {
       const value = arg.slice('--scope='.length)
       if (value !== 'listed' && value !== 'admin') {

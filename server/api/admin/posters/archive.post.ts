@@ -47,7 +47,7 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
       .sort((a, b) => a.name.localeCompare(b.name))
 
     if (posterFiles.length === 0) {
-      cleanupStalePosterArchives(dataDir, 0)
+      cleanupStalePosterArchives(dataDir, new Set())
       return {
         success: true,
         archivesCreated: 0,
@@ -116,7 +116,7 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
       archiveIndex++
     }
 
-    cleanupStalePosterArchives(dataDir, archives.length)
+    cleanupStalePosterArchives(dataDir, new Set(archiveResults.map(archive => archive.filename)))
 
     emitProgress({
       type: 'posterArchive',
@@ -148,21 +148,19 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
   }
 })
 
-function cleanupStalePosterArchives(dataDir: string, createdCount: number): void {
+function cleanupStalePosterArchives(dataDir: string, createdFilenames: Set<string>): void {
   if (!existsSync(dataDir)) {
     return
   }
 
-  for (const filename of readdirSync(dataDir)) {
-    const match = /^posters-part(\d+)\.tar\.gz$/.exec(filename)
-    if (!match) {
+  for (const entry of readdirSync(dataDir, { withFileTypes: true })) {
+    if (!entry.isFile()) {
       continue
     }
 
-    const partNumber = Number.parseInt(match[1]!, 10)
-    if (partNumber > createdCount) {
+    if (/^posters-part\d+\.tar\.gz$/.test(entry.name) && !createdFilenames.has(entry.name)) {
       try {
-        unlinkSync(join(dataDir, filename))
+        unlinkSync(join(dataDir, entry.name))
       } catch (err) {
         if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
           throw err

@@ -102,9 +102,20 @@ export function cleanupUnlistedPosters(
   const orphanedFiles = posterFiles.filter(file => !validMovieIds.has(file.movieId))
 
   let freedBytes = 0
+  let removedCount = 0
+  const sampleRemovedIds: string[] = []
+
   for (const file of orphanedFiles) {
     try {
-      freedBytes += statSync(file.path).size
+      const fileSize = statSync(file.path).size
+      if (!dryRun) {
+        unlinkSync(file.path)
+      }
+      freedBytes += fileSize
+      removedCount++
+      if (sampleRemovedIds.length < SAMPLE_LIMIT) {
+        sampleRemovedIds.push(file.movieId)
+      }
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw err
@@ -112,22 +123,8 @@ export function cleanupUnlistedPosters(
     }
   }
 
-  if (!dryRun) {
-    for (const file of orphanedFiles) {
-      try {
-        unlinkSync(file.path)
-      } catch (err) {
-        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-          throw err
-        }
-      }
-    }
-  }
-
   const totalScanned = posterFiles.length
-  const removedCount = orphanedFiles.length
   const remainingCount = totalScanned - removedCount
-  const sampleRemovedIds = orphanedFiles.slice(0, SAMPLE_LIMIT).map(file => file.movieId)
 
   logger.info(
     `${dryRun ? '[DRY RUN] ' : ''}Scanned ${totalScanned} posters (scope=${scope}): ` +

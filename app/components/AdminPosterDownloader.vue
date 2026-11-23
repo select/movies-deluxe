@@ -18,7 +18,7 @@
 
       <button
         class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        :disabled="loading"
+        :disabled="loading || cleanupLoading"
         @click="$emit('start')"
       >
         <div v-if="loading" class="i-mdi-loading animate-spin"></div>
@@ -48,14 +48,47 @@
       <!-- Poster Cleanup -->
       <div class="border-t border-theme-border pt-6 space-y-4">
         <button
+          v-if="!confirmingCleanup"
           class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl shadow-lg shadow-amber-600/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           :disabled="loading || cleanupLoading"
-          @click="executeCleanup"
+          @click="requestCleanupConfirmation"
         >
           <div v-if="cleanupLoading" class="i-mdi-loading animate-spin"></div>
           <div v-else class="i-mdi-broom"></div>
           {{ cleanupLoading ? 'Cleaning Up Posters...' : 'Clean Up Unlisted Posters' }}
         </button>
+
+        <!-- Inline Confirmation -->
+        <div
+          v-else
+          class="p-4 rounded-xl border bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 space-y-3"
+        >
+          <div class="flex items-start gap-2 text-sm">
+            <div
+              class="i-mdi-alert text-amber-600 dark:text-amber-400 text-lg shrink-0 mt-0.5"
+            ></div>
+            <p class="text-amber-900 dark:text-amber-100">
+              Permanently delete poster files in <code class="font-mono">public/posters/</code> for
+              movies no longer listed in the catalog?
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              class="flex-1 py-2 px-3 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+              :disabled="loading || cleanupLoading"
+              @click="executeCleanup"
+            >
+              Confirm Delete
+            </button>
+            <button
+              class="py-2 px-3 bg-theme-surface border border-theme-border text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+              :disabled="cleanupLoading"
+              @click="confirmingCleanup = false"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
 
         <!-- Cleanup Result -->
         <div
@@ -141,6 +174,7 @@ const adminStore = useAdminStore()
 const { progress } = storeToRefs(adminStore)
 
 const cleanupLoading = ref(false)
+const confirmingCleanup = ref(false)
 const cleanupResult = ref<PosterCleanupResponse | null>(null)
 const cleanupError = ref<string | null>(null)
 
@@ -152,7 +186,14 @@ function formatBytes(bytes: number): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
 }
 
+function requestCleanupConfirmation() {
+  cleanupResult.value = null
+  cleanupError.value = null
+  confirmingCleanup.value = true
+}
+
 async function executeCleanup() {
+  confirmingCleanup.value = false
   cleanupLoading.value = true
   cleanupResult.value = null
   cleanupError.value = null
