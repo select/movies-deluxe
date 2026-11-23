@@ -16,7 +16,7 @@ import {
   saveFailedYouTubeVideo,
   type FailureReason,
 } from './failedYoutube'
-import { probeArchiveSources, probeYouTubeSources } from './sourceProbe'
+import { probeArchiveSources, probeYouTubeSources, type SourceProbeResult } from './sourceProbe'
 import { upsertMovie } from './upsertMovie'
 import { processYouTubeVideo } from './youtube'
 import { getChannelVideoIds } from './youtubeDataApi'
@@ -391,6 +391,19 @@ async function syncYouTubeChannel(
     if (options.dryRun) {
       summary.added = addedIds.length
     } else if (addedIds.length > 0 && youtube) {
+      let addedProbeResults = new Map<string, SourceProbeResult>()
+      try {
+        addedProbeResults = await probeYouTubeSources(addedIds, {
+          apiKey,
+          skipStage2: true,
+        })
+      } catch (error) {
+        console.warn(
+          `[${channelConfig.name}] Failed to probe new videos, continuing without probe metadata:`,
+          error
+        )
+      }
+
       const minDuration = getMinMovieDurationSeconds()
       let processedNew = 0
       for (const videoId of addedIds) {
@@ -445,6 +458,9 @@ async function syncYouTubeChannel(
             continue
           }
 
+          const probe = addedProbeResults.get(videoId)
+          const hasRealProbe = probe && probe.stage !== 'skipped'
+
           const movieEntry = await processYouTubeVideo(
             {
               id: videoId,
@@ -460,6 +476,11 @@ async function syncYouTubeChannel(
               channelId: channelConfig.id,
               duration,
               viewCount: fullVideo.basic_info.view_count || 0,
+              regionRestriction: hasRealProbe ? probe.regionRestriction : undefined,
+              status: hasRealProbe ? probe.status : undefined,
+              unavailableReason: hasRealProbe ? probe.unavailableReason : undefined,
+              unavailableDetail: hasRealProbe ? probe.unavailableDetail : undefined,
+              lastCheckedAt: hasRealProbe ? probe.checkedAt : undefined,
             },
             channelConfig
           )
@@ -467,7 +488,9 @@ async function syncYouTubeChannel(
           if (movieEntry && movieEntry.sources[0]) {
             movieEntry.sources[0].channelName = channelConfig.name
             movieEntry.sources[0].type = 'youtube'
-            movieEntry.sources[0].status = 'active'
+            if (!movieEntry.sources[0].status) {
+              movieEntry.sources[0].status = 'active'
+            }
             movieEntry.sources[0].lastSeenAt = now
             await upsertMovie(movieEntry.movieId, movieEntry)
             removeFailedYouTubeVideo(videoId)

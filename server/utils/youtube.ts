@@ -3,6 +3,8 @@ import {
   generateYouTubeId,
   type MovieEntry,
   type MovieSource,
+  type SourceStatus,
+  type SourceUnavailableReason,
   type YouTubeRegionRestriction,
 } from '../../shared/types/movie'
 import {
@@ -245,7 +247,17 @@ export async function fetchChannelVideos(
         channelId: fullVideo.basic_info.channel_id || channelIdentifier,
         duration,
         viewCount: fullVideo.basic_info.view_count || 0,
-        regionRestriction: probeResults.get(videoId)?.regionRestriction,
+        ...(() => {
+          const probe = probeResults.get(videoId)
+          if (!probe || probe.stage === 'skipped') return {}
+          return {
+            regionRestriction: probe.regionRestriction,
+            status: probe.status,
+            unavailableReason: probe.unavailableReason,
+            unavailableDetail: probe.unavailableDetail,
+            lastCheckedAt: probe.checkedAt,
+          }
+        })(),
       }
 
       // Process video into movie entry
@@ -300,6 +312,10 @@ export async function processYouTubeVideo(
     duration?: number
     viewCount?: number
     regionRestriction?: YouTubeRegionRestriction
+    status?: SourceStatus
+    unavailableReason?: SourceUnavailableReason
+    unavailableDetail?: string
+    lastCheckedAt?: number
   },
   channelConfig: { id: string; language?: string } | undefined
 ): Promise<MovieEntry | null> {
@@ -318,6 +334,10 @@ export async function processYouTubeVideo(
     duration: video.duration,
     viewCount: video.viewCount,
     regionRestriction: video.regionRestriction,
+    status: video.status,
+    unavailableReason: video.unavailableReason,
+    unavailableDetail: video.unavailableDetail,
+    lastCheckedAt: video.lastCheckedAt,
     addedAt: Math.floor(Date.now() / 1000), // Unix timestamp
   }
 

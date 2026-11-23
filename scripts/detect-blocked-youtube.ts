@@ -31,7 +31,7 @@ async function main() {
     process.exit(1)
   }
 
-  const uncheckedOnly = process.argv.includes('--unchecked')
+  const uncheckedOnly = process.argv.slice(2).includes('--unchecked')
 
   try {
     logger.info(
@@ -63,7 +63,11 @@ async function main() {
     logger.info(`Found ${uniqueVideoIds.length} unique YouTube videos to check`)
 
     if (uniqueVideoIds.length === 0) {
-      logger.info('No YouTube videos found in database')
+      logger.info(
+        uncheckedOnly
+          ? 'No unchecked YouTube videos found in database'
+          : 'No YouTube videos found in database'
+      )
       return
     }
 

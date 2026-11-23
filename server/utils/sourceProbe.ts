@@ -14,6 +14,7 @@ export interface SourceProbeResult {
   unavailableDetail?: string
   regionRestriction?: YouTubeRegionRestriction
   checkedAt: number
+  stage?: 1 | 2 | 'skipped'
 }
 
 export interface ProbeYouTubeOptions {
@@ -216,6 +217,7 @@ export function classifyYouTubeApiVideo(
       unavailableDetail: 'privacyStatus: private',
       regionRestriction,
       checkedAt,
+      stage: 1,
     }
   }
 
@@ -228,6 +230,7 @@ export function classifyYouTubeApiVideo(
       unavailableDetail: 'uploadStatus: deleted',
       regionRestriction,
       checkedAt,
+      stage: 1,
     }
   }
 
@@ -240,6 +243,7 @@ export function classifyYouTubeApiVideo(
       unavailableDetail: `uploadStatus: ${status.uploadStatus}${status.rejectionReason ? ` (${status.rejectionReason})` : ''}`,
       regionRestriction,
       checkedAt,
+      stage: 1,
     }
   }
 
@@ -253,6 +257,7 @@ export function classifyYouTubeApiVideo(
       unavailableDetail: 'embeddable: false',
       regionRestriction,
       checkedAt,
+      stage: 1,
     }
   }
 
@@ -265,6 +270,7 @@ export function classifyYouTubeApiVideo(
       unavailableDetail: 'ytRating: ytAgeRestricted',
       regionRestriction,
       checkedAt,
+      stage: 1,
     }
   }
 
@@ -278,6 +284,7 @@ export function classifyYouTubeApiVideo(
       unavailableDetail: 'privacyStatus: unlisted',
       regionRestriction,
       checkedAt,
+      stage: 1,
     }
   }
 
@@ -287,6 +294,7 @@ export function classifyYouTubeApiVideo(
     status: 'active',
     regionRestriction,
     checkedAt,
+    stage: 1,
   }
 }
 
@@ -376,6 +384,7 @@ export async function probeYouTubeSources(
             unavailableReason: 'deleted',
             unavailableDetail: 'No playability_status returned by youtubei.js',
             checkedAt,
+            stage: 2,
           })
         } else {
           const classified = classifyYouTubePlayability(playability)
@@ -386,6 +395,7 @@ export async function probeYouTubeSources(
             unavailableReason: classified.unavailableReason,
             unavailableDetail: classified.unavailableDetail,
             checkedAt,
+            stage: 2,
           })
         }
       } catch (error) {
@@ -408,6 +418,7 @@ export async function probeYouTubeSources(
           unavailableReason: reason,
           unavailableDetail: msg,
           checkedAt,
+          stage: 2,
         })
       }
 
@@ -424,6 +435,7 @@ export async function probeYouTubeSources(
         unavailableReason: 'unavailable_unknown',
         unavailableDetail: 'Omitted from YouTube Data API response (Stage 2 skipped)',
         checkedAt: now,
+        stage: 'skipped',
       })
     }
   }
