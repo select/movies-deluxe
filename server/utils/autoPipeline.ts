@@ -2050,11 +2050,18 @@ export async function runAutoMatchUnmatched(
   }
   let attemptClause = ''
   if (options.skipAttempted) {
-    attemptClause = 'AND ma.movieId IS NULL'
+    attemptClause = pass1Only
+      ? 'AND ma.movieId IS NULL'
+      : "AND (ma.movieId IS NULL OR ma.outcome = 'pass1_deferred')"
   } else if (options.retryAfterDays && options.retryAfterDays > 0) {
-    attemptClause = "AND (ma.attemptedAt IS NULL OR ma.attemptedAt < datetime('now', ?))"
+    attemptClause = pass1Only
+      ? "AND (ma.attemptedAt IS NULL OR ma.attemptedAt < datetime('now', ?))"
+      : "AND (ma.attemptedAt IS NULL OR ma.outcome = 'pass1_deferred' OR ma.attemptedAt < datetime('now', ?))"
     params.push(`-${Math.floor(options.retryAfterDays)} days`)
   }
+  const orderByClause = pass1Only
+    ? 'ma.attemptedAt IS NOT NULL ASC, ma.attemptedAt ASC, m.lastUpdated DESC'
+    : "CASE WHEN ma.attemptedAt IS NULL THEN 0 WHEN ma.outcome = 'pass1_deferred' THEN 1 ELSE 2 END ASC, ma.attemptedAt ASC, m.lastUpdated DESC"
   params.push(safeLimit)
 
   const movies = db
@@ -2072,7 +2079,7 @@ export async function runAutoMatchUnmatched(
         ${channelClause}
         ${attemptClause}
       GROUP BY m.movieId
-      ORDER BY ma.attemptedAt IS NOT NULL ASC, ma.attemptedAt ASC, m.lastUpdated DESC
+      ORDER BY ${orderByClause}
       LIMIT ?`
     )
     .all(...params) as Array<{
@@ -2094,13 +2101,28 @@ export async function runAutoMatchUnmatched(
      VALUES (?, ?, ?, ?, ?)
      ON CONFLICT(movieId) DO UPDATE SET
        attemptedAt = excluded.attemptedAt,
-       outcome = excluded.outcome,
-       candidateCount = excluded.candidateCount,
-       reason = excluded.reason`
+       outcome = CASE
+         WHEN excluded.outcome = 'pass1_deferred'
+           AND match_attempts.outcome IN ('no_match', 'not_a_movie', 'queued', 'error')
+         THEN match_attempts.outcome
+         ELSE excluded.outcome
+       END,
+       candidateCount = CASE
+         WHEN excluded.outcome = 'pass1_deferred'
+           AND match_attempts.outcome IN ('no_match', 'not_a_movie', 'queued', 'error')
+         THEN match_attempts.candidateCount
+         ELSE excluded.candidateCount
+       END,
+       reason = CASE
+         WHEN excluded.outcome = 'pass1_deferred'
+           AND match_attempts.outcome IN ('no_match', 'not_a_movie', 'queued', 'error')
+         THEN match_attempts.reason
+         ELSE excluded.reason
+       END`
   )
   const recordAttempt = (
     movieId: string,
-    outcome: 'matched' | 'queued' | 'no_match' | 'error',
+    outcome: 'matched' | 'queued' | 'no_match' | 'error' | 'pass1_deferred',
     candidateCount: number,
     reason?: string
   ) => {
@@ -2388,6 +2410,14 @@ export async function runAutoMatchUnmatched(
         }
 
         if (pass1Only) {
+          await serializeDbWrite(() =>
+            recordAttempt(
+              movie.movieId,
+              'pass1_deferred',
+              localCandidates.length,
+              'Deferred to Pass 2 (Pass 1 only)'
+            )
+          )
           deferredToPass2++
           return
         }
