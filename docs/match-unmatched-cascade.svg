@@ -93,10 +93,10 @@
     <rect x="0" y="0" width="960" height="104" rx="12" fill="#1e293b" stroke="#0ea5e9" stroke-width="1.8"/>
     <rect x="16" y="14" width="84" height="22" rx="6" fill="#0369a1"/>
     <text x="58" y="29" text-anchor="middle" class="badge-text" fill="#e0f2fe">PASS 1b</text>
-    <text x="114" y="30" class="heading">Local-First Fast Path (&lt;2ms via data/imdb-index.db)</text>
-    <text x="16" y="54" class="body">FTS5 title + year + director/cast search in local IMDb SQLite (<tspan class="mono">skipExternalApis: true</tspan>) → <tspan class="mono">scoreMatchCandidate()</tspan>.</text>
-    <text x="16" y="75" class="body">Anti-FP Guardrail: <tspan fill="#38bdf8" font-weight="600">tier === 'auto_accept'  AND  score ≥ 85  AND  (yearScore &gt; 0 OR peopleScore &gt; 0)  AND  gap ≥ 10</tspan></text>
-    <text x="16" y="93" class="muted">Skips ALL external search APIs &amp; LLM when local match is unambiguous with year/people backing!</text>
+    <text x="114" y="30" class="heading">Local-First Fast Path (&lt;2ms SQLite + ~250ms Jev, 0 Search APIs)</text>
+    <text x="16" y="54" class="body">1. Deterministic: <tspan fill="#38bdf8" font-weight="600">tier === 'auto_accept' AND score ≥ 85 AND (yearScore &gt; 0 OR peopleScore &gt; 0) AND gap ≥ 10</tspan></text>
+    <text x="16" y="75" class="body">2. Local Jev Fast Path (<tspan class="mono">topScore ≥ 45</tspan>): <tspan class="mono">adjudicateCandidatesWithJev()</tspan> → match ≥0.85 (+OMDb check) OR <tspan fill="#c084fc">not_a_movie ≥0.85</tspan></text>
+    <text x="16" y="93" class="muted">Skips ALL external search APIs &amp; Gemini whenever local imdb-index.db + Jev already resolve the movie!</text>
   </g>
 
   <!-- Pass 1b -> Matched Rail -->
@@ -173,10 +173,10 @@
     <!-- 3b Hydrated LLM -->
     <g transform="translate(16, 120)">
       <rect x="0" y="0" width="928" height="92" rx="8" class="subcard" stroke="#6366f1"/>
-      <text x="14" y="22" class="body" font-weight="700" fill="#a5b4fc">3b. Candidate Hydration + LLM Adjudicator (adjudicateCandidates)</text>
+      <text x="14" y="22" class="body" font-weight="700" fill="#a5b4fc">3b. Candidate Hydration + Jev-First Adjudicator (adjudicateCandidates)</text>
       <text x="14" y="43" class="body">1. Hydrates top 5 candidates from local <tspan class="mono">imdb-index.db</tspan> + top 3 Plot/Director/Actors from <tspan class="mono">OMDb (cached)</tspan>.</text>
-      <text x="14" y="63" class="body">2. LLM (<tspan class="mono">gemini-2.5-flash-lite</tspan> → retry/fallback <tspan class="mono">gpt-4o-mini</tspan>) picks best match with strict anti-FP rules.</text>
-      <text x="14" y="81" class="muted">3. If verdict='match' &amp; conf ≥ 0.85 → final OMDb runtime sanity check (blocks feature-vs-short &amp; major runtime mismatches).</text>
+      <text x="14" y="63" class="body">2. <tspan class="mono" fill="#38bdf8">Jev (jev-latest)</tspan> choice first (~300ms, ≥0.85 match / not_a_movie) → uncertain falls back to <tspan class="mono">Gemini / gpt-4o-mini</tspan>.</text>
+      <text x="14" y="81" class="muted">3. If verdict='match' &amp; conf ≥ 0.85 → final OMDb runtime sanity check; if isNotAMovie → skips Pass 4 immediately.</text>
     </g>
   </g>
 
@@ -219,7 +219,7 @@
     <!-- 4c Pass 2 Adjudication -->
     <g transform="translate(16, 202)">
       <rect x="0" y="0" width="928" height="72" rx="8" class="subcard" stroke="#6366f1"/>
-      <text x="14" y="22" class="body" font-weight="700" fill="#a5b4fc">4c. Fresh Candidate Hydration + LLM Adjudication (Pass 2)</text>
+      <text x="14" y="22" class="body" font-weight="700" fill="#a5b4fc">4c. Fresh Candidate Hydration + Jev-First Adjudication (Pass 2)</text>
       <text x="14" y="42" class="body">Filters out Pass-1 rejected IDs, hydrates fresh top candidates (local IMDb + cached OMDb), runs <tspan class="mono">adjudicateCandidates()</tspan>.</text>
       <text x="14" y="60" class="muted">If verdict='match' &amp; conf ≥ 0.85 + passes OMDb runtime check → Auto-Match! Otherwise falls through to Queue / No Match.</text>
     </g>
@@ -274,10 +274,10 @@
 
     <text x="16" y="258" class="body" font-weight="700" fill="#a7f3d0">Match Entry Points:</text>
     <text x="16" y="284" class="body">• Pass 1: Direct URL</text>
-    <text x="16" y="308" class="body">• Pass 1b: Local Fast Path</text>
+    <text x="16" y="308" class="body">• Pass 1b: Local Det / Jev</text>
     <text x="16" y="332" class="body">• Pass 3a: Deterministic</text>
-    <text x="16" y="356" class="body">• Pass 3b: LLM Pass 1</text>
-    <text x="16" y="380" class="body">• Pass 4c: LLM Pass 2</text>
+    <text x="16" y="356" class="body">• Pass 3b: Jev / LLM Pass 1</text>
+    <text x="16" y="380" class="body">• Pass 4c: Jev / LLM Pass 2</text>
 
     <line x1="16" y1="406" x2="262" y2="406" stroke="#10b981" stroke-opacity="0.35"/>
 
