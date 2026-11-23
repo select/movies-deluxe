@@ -288,7 +288,7 @@
             <div
               v-for="(source, index) in sortedSources"
               :key="source.id"
-              class="flex items-center gap-1"
+              class="flex items-start gap-1"
             >
               <div class="flex flex-col gap-1">
                 <button
@@ -335,6 +335,18 @@
                     {{ mark }}
                   </span>
                 </div>
+                <RegionRestrictionBadges
+                  v-if="
+                    source.type === 'youtube' &&
+                    source.regionRestriction &&
+                    (source.regionRestriction.allowed?.length ||
+                      source.regionRestriction.blocked?.length)
+                  "
+                  :region-restriction="source.regionRestriction"
+                  compact
+                  :max-visible="COMPACT_REGION_LIMIT"
+                  @select-source="selectedSourceIndex = index"
+                />
               </div>
               <a
                 :href="getSourceUrl(source)"
@@ -354,13 +366,13 @@
           </div>
         </div>
 
-        <!-- Region Restrictions (YouTube) -->
+        <!-- Region Restrictions (YouTube, expanded view for lists exceeding compact limit) -->
         <div
           v-if="
             currentSource?.type === 'youtube' &&
             currentSource.regionRestriction &&
-            (currentSource.regionRestriction.allowed?.length ||
-              currentSource.regionRestriction.blocked?.length)
+            ((currentSource.regionRestriction.allowed?.length || 0) > COMPACT_REGION_LIMIT ||
+              (currentSource.regionRestriction.blocked?.length || 0) > COMPACT_REGION_LIMIT)
           "
           class="mb-4"
         >
@@ -814,6 +826,7 @@ const { showToast } = useToastStore()
 const { y: scrollY } = useWindowScroll()
 
 // Component state
+const COMPACT_REGION_LIMIT = 5
 const movie = ref<MovieEntry | null>(null)
 const relatedMovies = ref<LightweightMovie[]>([])
 const similarMovies = ref<LightweightMovie[]>([])

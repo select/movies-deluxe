@@ -1,18 +1,30 @@
 <template>
-  <div v-if="allowedCodes.length > 0 || blockedCodes.length > 0" class="space-y-2">
+  <div
+    v-if="allowedCodes.length > 0 || blockedCodes.length > 0"
+    :class="compact ? 'space-y-1' : 'space-y-2'"
+  >
     <!-- Allowed regions -->
-    <div v-if="allowedCodes.length > 0" class="flex flex-wrap items-center gap-1.5">
+    <div
+      v-if="allowedCodes.length > 0"
+      class="flex flex-wrap items-center"
+      :class="compact ? 'gap-1' : 'gap-1.5'"
+    >
       <span
-        class="text-xs font-medium text-theme-textmuted mr-1 flex items-center gap-1 select-none"
+        class="font-medium text-theme-textmuted flex items-center gap-1 select-none"
+        :class="compact ? 'text-[10px]' : 'text-xs mr-1'"
       >
-        <span class="i-mdi-earth text-sm text-emerald-600 dark:text-emerald-400"></span>
-        Available in
+        <span
+          class="i-mdi-earth text-emerald-600 dark:text-emerald-400"
+          :class="compact ? 'text-xs' : 'text-sm'"
+        ></span>
+        {{ compact ? 'Only:' : 'Available in' }}
       </span>
       <span
         v-for="code in visibleAllowed"
         :key="`allowed-${code}`"
         :title="getRegionName(code)"
-        class="group/badge relative inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 cursor-default select-none"
+        class="group/badge relative inline-flex items-center rounded font-semibold tracking-wide bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 cursor-default select-none"
+        :class="compact ? 'px-1 py-0.5 text-[10px] leading-none' : 'px-1.5 py-0.5 text-[11px]'"
       >
         {{ code }}
         <span
@@ -22,28 +34,46 @@
         </span>
       </span>
       <button
-        v-if="allowedCodes.length > COLLAPSE_THRESHOLD"
+        v-if="compact && allowedCodes.length > effectiveLimit"
+        type="button"
+        :title="`Select source to view all ${allowedCodes.length} regions`"
+        class="px-1.5 py-0.5 rounded text-[10px] leading-none font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
+        @click="emit('selectSource')"
+      >
+        +{{ allowedCodes.length - effectiveLimit }}
+      </button>
+      <button
+        v-else-if="!compact && allowedCodes.length > effectiveLimit"
         type="button"
         class="px-2 py-0.5 rounded text-[11px] font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
         @click="isAllowedExpanded = !isAllowedExpanded"
       >
-        {{ isAllowedExpanded ? 'Show less' : `+${allowedCodes.length - COLLAPSE_THRESHOLD} more` }}
+        {{ isAllowedExpanded ? 'Show less' : `+${allowedCodes.length - effectiveLimit} more` }}
       </button>
     </div>
 
     <!-- Blocked regions -->
-    <div v-if="blockedCodes.length > 0" class="flex flex-wrap items-center gap-1.5">
+    <div
+      v-if="blockedCodes.length > 0"
+      class="flex flex-wrap items-center"
+      :class="compact ? 'gap-1' : 'gap-1.5'"
+    >
       <span
-        class="text-xs font-medium text-theme-textmuted mr-1 flex items-center gap-1 select-none"
+        class="font-medium text-theme-textmuted flex items-center gap-1 select-none"
+        :class="compact ? 'text-[10px]' : 'text-xs mr-1'"
       >
-        <span class="i-mdi-earth-off text-sm text-red-600 dark:text-red-400"></span>
-        Blocked in
+        <span
+          class="i-mdi-earth-off text-red-600 dark:text-red-400"
+          :class="compact ? 'text-xs' : 'text-sm'"
+        ></span>
+        {{ compact ? 'Blocked:' : 'Blocked in' }}
       </span>
       <span
         v-for="code in visibleBlocked"
         :key="`blocked-${code}`"
         :title="getRegionName(code)"
-        class="group/badge relative inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/25 cursor-default select-none"
+        class="group/badge relative inline-flex items-center rounded font-semibold tracking-wide bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/25 cursor-default select-none"
+        :class="compact ? 'px-1 py-0.5 text-[10px] leading-none' : 'px-1.5 py-0.5 text-[11px]'"
       >
         {{ code }}
         <span
@@ -53,12 +83,21 @@
         </span>
       </span>
       <button
-        v-if="blockedCodes.length > COLLAPSE_THRESHOLD"
+        v-if="compact && blockedCodes.length > effectiveLimit"
+        type="button"
+        :title="`Select source to view all ${blockedCodes.length} regions`"
+        class="px-1.5 py-0.5 rounded text-[10px] leading-none font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
+        @click="emit('selectSource')"
+      >
+        +{{ blockedCodes.length - effectiveLimit }}
+      </button>
+      <button
+        v-else-if="!compact && blockedCodes.length > effectiveLimit"
         type="button"
         class="px-2 py-0.5 rounded text-[11px] font-medium text-theme-textmuted hover:text-theme-text bg-theme-surface border border-theme-border/50 hover:bg-theme-selection transition-colors cursor-pointer"
         @click="isBlockedExpanded = !isBlockedExpanded"
       >
-        {{ isBlockedExpanded ? 'Show less' : `+${blockedCodes.length - COLLAPSE_THRESHOLD} more` }}
+        {{ isBlockedExpanded ? 'Show less' : `+${blockedCodes.length - effectiveLimit} more` }}
       </button>
     </div>
   </div>
@@ -69,10 +108,23 @@ import { computed, ref, watch } from 'vue'
 import type { YouTubeRegionRestriction } from '#shared/types/movie'
 import { getRegionName } from '~/utils/regionNames'
 
-const COLLAPSE_THRESHOLD = 14
+const DEFAULT_LIMIT = 14
+const DEFAULT_COMPACT_LIMIT = 5
 
-const props = defineProps<{
-  regionRestriction: YouTubeRegionRestriction
+const props = withDefaults(
+  defineProps<{
+    regionRestriction: YouTubeRegionRestriction
+    compact?: boolean
+    maxVisible?: number
+  }>(),
+  {
+    compact: false,
+    maxVisible: undefined,
+  }
+)
+
+const emit = defineEmits<{
+  selectSource: []
 }>()
 
 const isAllowedExpanded = ref(false)
@@ -86,6 +138,10 @@ watch(
   }
 )
 
+const effectiveLimit = computed(
+  () => props.maxVisible ?? (props.compact ? DEFAULT_COMPACT_LIMIT : DEFAULT_LIMIT)
+)
+
 const allowedCodes = computed(() =>
   (props.regionRestriction.allowed || []).map(code => code.trim().toUpperCase()).filter(Boolean)
 )
@@ -95,10 +151,14 @@ const blockedCodes = computed(() =>
 )
 
 const visibleAllowed = computed(() =>
-  isAllowedExpanded.value ? allowedCodes.value : allowedCodes.value.slice(0, COLLAPSE_THRESHOLD)
+  !props.compact && isAllowedExpanded.value
+    ? allowedCodes.value
+    : allowedCodes.value.slice(0, effectiveLimit.value)
 )
 
 const visibleBlocked = computed(() =>
-  isBlockedExpanded.value ? blockedCodes.value : blockedCodes.value.slice(0, COLLAPSE_THRESHOLD)
+  !props.compact && isBlockedExpanded.value
+    ? blockedCodes.value
+    : blockedCodes.value.slice(0, effectiveLimit.value)
 )
 </script>
