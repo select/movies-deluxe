@@ -403,7 +403,7 @@ async function syncYouTubeChannel(
     for (const sourceId of presentIds) {
       const rows = dbBySourceId.get(sourceId) || []
       for (const row of rows) {
-        if (shouldRestoreSource(row, false)) {
+        if (shouldRestoreSource(row)) {
           if (!options.probeActive) {
             summary.restored++
             if (!options.dryRun && runId !== undefined) {
@@ -615,7 +615,17 @@ async function syncYouTubeChannel(
 
     if (missingRows.length > 0) {
       const missingIds = [...new Set(missingRows.map(r => r.sourceId))]
-      const youtube = options.dryRun ? null : await getYoutube()
+      let youtube: Innertube | null = null
+      if (!options.dryRun) {
+        try {
+          youtube = await getYoutube()
+        } catch (err) {
+          console.warn(
+            `[${channelConfig.name}] Failed to initialize Innertube for missing probe:`,
+            err
+          )
+        }
+      }
       const probeMissingStart = Date.now()
       let stage2Start: number | null = null
       let stage2Baseline = 0
@@ -1104,15 +1114,16 @@ export async function syncChannels(
     const startedAt = Math.floor(Date.now() / 1000)
     const db = options.db ?? getAdminDatabase()
     if (!options.dryRun) {
+      const staleCutoff = startedAt - 7200
       db.prepare(
         `
         UPDATE channel_sync_runs
         SET status = 'failed',
             completedAt = COALESCE(completedAt, ?),
             error = COALESCE(error, 'Interrupted before completion')
-        WHERE status = 'running'
+        WHERE status = 'running' AND startedAt < ?
       `
-      ).run(startedAt)
+      ).run(startedAt, staleCutoff)
     }
     const platform = options.platform ?? 'all'
     const dryRun = options.dryRun ?? false
@@ -1277,19 +1288,6 @@ export async function syncChannels(
       })
       summaries.push(archiveSummary)
       completedTargets++
-
-      if (completedTargets < totalTargets) {
-        options.onProgress?.({
-          current: 0,
-          total: 0,
-          channelId: 'archive.org',
-          channelName: 'Archive.org',
-          channelCurrent,
-          channelTotal: totalTargets,
-          successCurrent: archiveSummary.added,
-          message: `Finished Archive.org: +${archiveSummary.added} / -${archiveSummary.removed} / ↺${archiveSummary.restored}`,
-        })
-      }
     }
 
     const completedAt = Math.floor(Date.now() / 1000)

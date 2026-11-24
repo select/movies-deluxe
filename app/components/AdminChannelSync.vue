@@ -153,7 +153,7 @@
             <span class="text-theme-textmuted ml-1">({{ syncPercent }}%)</span>
           </span>
           <span
-            v-if="syncProgress.successCurrent !== undefined"
+            v-if="syncProgress.successCurrent && syncProgress.successCurrent > 0"
             class="inline-flex items-center gap-1 text-green-600 dark:text-green-400"
           >
             <div class="i-mdi-check-circle text-xs"></div>
@@ -433,11 +433,18 @@ const allEnabledSelected = computed(
 
 const syncStartedAt = ref(0)
 
+const hasRecentRunningRun = computed(() => {
+  const runs = history.value?.runs
+  if (!runs || runs.length === 0) return false
+  const cutoff = Math.floor(Date.now() / 1000) - 7200
+  return runs.some(r => r.status === 'running' && r.startedAt >= cutoff)
+})
+
 const hasRunningExternalSync = computed(() => {
   if (syncing.value) return false
   const progressActive =
     syncProgress.value?.status === 'starting' || syncProgress.value?.status === 'in_progress'
-  return (history.value?.isRunning ?? false) || progressActive
+  return (history.value?.isRunning ?? false) || hasRecentRunningRun.value || progressActive
 })
 
 const shouldPoll = computed(() => syncing.value || hasRunningExternalSync.value)
@@ -479,17 +486,12 @@ const loadHistory = async () => {
   try {
     const data = await $fetch<SyncHistoryResponse>('/api/admin/scrape/sync-history')
     history.value = data
-    const serverRunning = data.isRunning ?? false
+    const serverRunning = (data.isRunning ?? false) || hasRecentRunningRun.value
     if (!serverRunning) {
-      if (syncing.value && Date.now() - syncStartedAt.value > 5000) {
+      if (syncing.value && Date.now() - syncStartedAt.value > 15000) {
         syncing.value = false
         adminStore.clearProgress('channelSync')
         await adminStore.refreshStats()
-      } else if (
-        !syncing.value &&
-        (syncProgress.value?.status === 'starting' || syncProgress.value?.status === 'in_progress')
-      ) {
-        adminStore.clearProgress('channelSync')
       }
     }
   } catch (e) {
@@ -507,7 +509,8 @@ watch(syncProgress, async (current, prev) => {
       prev?.status === 'starting' ||
       prev?.status === 'in_progress' ||
       syncing.value ||
-      (history.value?.isRunning ?? false)
+      (history.value?.isRunning ?? false) ||
+      hasRecentRunningRun.value
     if (wasActive) {
       syncing.value = false
       if (current.channelSyncResult) {

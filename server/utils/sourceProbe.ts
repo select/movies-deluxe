@@ -430,15 +430,25 @@ export async function probeYouTubeSources(
             continue
           }
           const msg = error instanceof Error ? error.message : String(error)
+          const lower = msg.toLowerCase()
+          let reason: SourceUnavailableReason = 'unavailable_unknown'
+          if (lower.includes('private')) reason = 'private'
+          else if (
+            lower.includes('deleted') ||
+            lower.includes('not found') ||
+            lower.includes('404')
+          ) {
+            reason = 'deleted'
+          }
           results.set(videoId, {
             sourceId: videoId,
             platform: 'youtube',
             status: 'unavailable',
-            unavailableReason: 'unavailable_unknown',
+            unavailableReason: reason,
             unavailableDetail: msg,
             checkedAt,
             stage: 2,
-            probeFailed: true,
+            probeFailed: reason === 'unavailable_unknown',
           })
         }
       }
