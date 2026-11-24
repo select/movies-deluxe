@@ -833,7 +833,7 @@ export async function runAutoCleanArchivePreviews(
   let removedRedundant = 0
   let markedIncomplete = 0
   let skippedCartoons = 0
-  const queuedBorderline = 0
+  let queuedBorderline = 0
   const samples: AutoCleanPreviewsResult['samples'] = []
   const now = new Date().toISOString()
 
@@ -897,9 +897,51 @@ export async function runAutoCleanArchivePreviews(
         if (!analysis.isLikelyPreview) continue
 
         const hasKeyword = analysis.flags.includes('preview_keyword')
+        const hasLowRatioOrTiny =
+          analysis.flags.includes('tiny_or_empty_file') ||
+          analysis.flags.includes('low_mb_per_min_feature')
         const hasHealthySibling = allSources.some(other =>
           isHealthySiblingSource(other, runtimeMin, src.id)
         )
+
+        // Only auto-mark/remove when size/MB-per-min confirms it's too small/low-ratio.
+        // Large files that ONLY matched a keyword (e.g. "with New & Original Trailer", > 500 MB)
+        // stay queued for human review so full feature films are never falsely hidden/deleted.
+        if (!hasLowRatioOrTiny) {
+          queuedBorderline++
+          if (!dryRun) {
+            enqueueReviewItem(db, {
+              movieId: movie.movieId,
+              kind: 'archive_preview',
+              sourceId: src.sourceId,
+              currentImdbId: movie.movieId,
+              proposedImdbId: null,
+              score: analysis.mbPerMin,
+              flags: analysis.flags,
+              candidate: {
+                sourceTitle: src.title,
+                omdbTitle: movie.title,
+                sizeMB: analysis.sizeMB,
+                runtimeMinutes: analysis.runtimeMinutes,
+                mbPerMin: analysis.mbPerMin,
+                reason: analysis.reason,
+              },
+            })
+          }
+          if (samples.length < 30) {
+            samples.push({
+              movieId: movie.movieId,
+              sourceId: src.sourceId,
+              title: src.title || movie.title,
+              action: 'queue_borderline',
+              sizeMB: analysis.sizeMB,
+              runtimeMin,
+              mbPerMin: analysis.mbPerMin,
+              flags: analysis.flags,
+            })
+          }
+          continue
+        }
 
         if (hasHealthySibling && removeRedundant) {
           removedRedundant++
@@ -1108,69 +1150,86 @@ export async function runAutoAuditFalseHits(
      WHERE m.movieId = ?`
   )
 
+  type AuditSourceRow = SourceRow & { hasQualityMark: number }
+
   const getSourcesStmt = db.prepare(
     `SELECT s.id, s.movieId, s.sourceId, s.channelId, c.platform, c.name as channelName,
-            s.title, s.description, s.size, s.duration, s.year
+            s.title, s.description, s.size, s.duration, s.year,
+            EXISTS (SELECT 1 FROM source_quality_marks sqm WHERE sqm.sourceId = s.id) as hasQualityMark
      FROM sources s
      JOIN channels c ON s.channelId = c.id
-     WHERE s.movieId = ?`
+     WHERE s.movieId = ?
+     ORDER BY s.id ASC`
   )
 
-  const autoFlagLowRatioArchiveSource = async (
+  const autoFlagLowRatioArchiveSources = async (
     movie: { movieId: string; movieTitle: string },
-    primarySource: SourceRow,
-    candidateRuntimeMin: number | null,
-    queueRowId?: number
-  ): Promise<boolean> => {
-    if (primarySource.platform !== 'archive.org') return false
-    const analysis = analyzeArchiveSourceSize({
-      sourceId: primarySource.sourceId,
-      title: primarySource.title,
-      description: primarySource.description,
-      sizeBytes: primarySource.size,
-      durationSeconds: primarySource.duration,
-      runtimeMinutes: candidateRuntimeMin,
-    })
-    const hasLowRatioOrTiny =
-      analysis.flags.includes('low_mb_per_min_feature') ||
-      analysis.flags.includes('tiny_or_empty_file')
-    if (!hasLowRatioOrTiny) return false
+    sources: AuditSourceRow[],
+    candidateRuntimeMin: number | null
+  ): Promise<{
+    flaggedCount: number
+    remainingCleanSources: AuditSourceRow[]
+    reasons: string[]
+  }> => {
+    const flaggedIds = new Set<number>()
+    const reasons: string[] = []
+    const toFlag: Array<{ src: AuditSourceRow; hasKeyword: boolean; reason: string }> = []
 
-    const now = new Date().toISOString()
-    if (!dryRun) {
-      await serializeDbWrite(() => {
-        db.prepare(
-          "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
-        ).run(primarySource.id, now)
-        if (analysis.flags.includes('preview_keyword')) {
-          const label = /\b(trailer|tv\s*spot)\b/i.test(
-            `${primarySource.title || ''} ${primarySource.sourceId}`
-          )
-            ? 'trailer'
-            : 'clip'
-          db.prepare(
-            'INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
-          ).run(movie.movieId, label, now)
-        }
-        db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movie.movieId)
-        if (queueRowId !== undefined) {
-          resolveReviewItem(db, queueRowId, 'approved')
-        } else {
-          db.prepare(
-            `UPDATE match_review_queue
-             SET status = 'approved', resolvedAt = datetime('now')
-             WHERE movieId = ? AND status = 'pending' AND kind IN ('false_hit', 'archive_preview')`
-          ).run(movie.movieId)
-        }
-        recordAudit(
-          movie.movieId,
-          'kept',
-          `Auto-flagged incomplete (${analysis.reason || analysis.flags.join(', ')})`
-        )
+    for (const src of sources) {
+      if (src.hasQualityMark || src.platform !== 'archive.org') continue
+      const analysis = analyzeArchiveSourceSize({
+        sourceId: src.sourceId,
+        title: src.title,
+        description: src.description,
+        sizeBytes: src.size,
+        durationSeconds: src.duration,
+        runtimeMinutes: candidateRuntimeMin,
+      })
+      const hasLowRatioOrTiny =
+        analysis.flags.includes('low_mb_per_min_feature') ||
+        analysis.flags.includes('tiny_or_empty_file')
+      if (!hasLowRatioOrTiny) continue
+
+      flaggedIds.add(src.id)
+      const reason = analysis.reason || analysis.flags.join(', ')
+      reasons.push(reason)
+      toFlag.push({
+        src,
+        hasKeyword: analysis.flags.includes('preview_keyword'),
+        reason,
       })
     }
 
-    return true
+    if (toFlag.length > 0 && !dryRun) {
+      const now = new Date().toISOString()
+      await serializeDbWrite(() => {
+        for (const item of toFlag) {
+          db.prepare(
+            "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
+          ).run(item.src.id, now)
+          if (item.hasKeyword) {
+            const label = /\b(trailer|tv\s*spot)\b/i.test(
+              `${item.src.title || ''} ${item.src.sourceId}`
+            )
+              ? 'trailer'
+              : 'clip'
+            db.prepare(
+              'INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
+            ).run(movie.movieId, label, now)
+          }
+          db.prepare(
+            `UPDATE match_review_queue
+             SET status = 'approved', resolvedAt = datetime('now')
+             WHERE movieId = ? AND sourceId = ? AND status = 'pending' AND kind = 'archive_preview'`
+          ).run(movie.movieId, item.src.sourceId)
+        }
+        db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movie.movieId)
+      })
+    }
+
+    const remainingCleanSources = sources.filter(s => !s.hasQualityMark && !flaggedIds.has(s.id))
+
+    return { flaggedCount: toFlag.length, remainingCleanSources, reasons }
   }
 
   const total = queueRows.length + movies.length
@@ -1214,8 +1273,48 @@ export async function runAutoAuditFalseHits(
             }
           | undefined
 
-        const sources = movie ? (getSourcesStmt.all(movie.movieId) as SourceRow[]) : []
-        const primarySource = sources[0]
+        const sources = movie ? (getSourcesStmt.all(movie.movieId) as AuditSourceRow[]) : []
+        const candidateRuntimeMin = parseRuntimeMinutes(movie?.omdbRuntime)
+
+        if (movie && movie.movieId.startsWith('tt') && sources.length > 0) {
+          const flagRes = await autoFlagLowRatioArchiveSources(movie, sources, candidateRuntimeMin)
+          if (flagRes.flaggedCount > 0) {
+            deterministicFlagged += flagRes.flaggedCount
+            // If this queued false_hit specifically targeted a source we just flagged incomplete
+            // and no clean sources remain, resolve the queue item as approved and skip LLM.
+            if (flagRes.remainingCleanSources.length === 0) {
+              if (!dryRun) {
+                await serializeDbWrite(() => {
+                  resolveReviewItem(db, row.id, 'approved')
+                  recordAudit(
+                    movie.movieId,
+                    'kept',
+                    `Auto-flagged incomplete (${flagRes.reasons[0] || 'low MB/min'})`
+                  )
+                })
+              }
+              if (samples.length < 30) {
+                samples.push({
+                  movieId: movie.movieId,
+                  title: movie.omdbTitle || movie.movieTitle,
+                  action: 'kept',
+                  llmVerdict: 'match',
+                  llmConfidence: 1,
+                  llmReason: 'Auto-flagged low MB/min Archive.org source as incomplete',
+                  flags: ['low_mb_per_min_feature'],
+                })
+              }
+              return
+            }
+          }
+        }
+
+        const cleanSources = sources.filter(s => !s.hasQualityMark)
+        const primarySource =
+          (row.sourceId ? cleanSources.find(s => s.sourceId === row.sourceId) : undefined) ??
+          cleanSources[0] ??
+          (row.sourceId ? sources.find(s => s.sourceId === row.sourceId) : undefined) ??
+          sources[0]
 
         if (!movie || !movie.movieId.startsWith('tt') || !primarySource) {
           if (!dryRun) {
@@ -1226,30 +1325,11 @@ export async function runAutoAuditFalseHits(
 
         const candidateTitle = movie.omdbTitle || movie.movieTitle
         const candidateYear = extractYearFromTitle(movie.omdbYear) ?? movie.movieYear ?? null
-        const candidateRuntimeMin = parseRuntimeMinutes(movie.omdbRuntime)
         const rawSourceTitle = primarySource.title || movie.movieTitle
         const sourceDurationMin =
           primarySource.duration && primarySource.duration > 0
             ? Math.round(primarySource.duration / 60)
             : null
-
-        if (
-          await autoFlagLowRatioArchiveSource(movie, primarySource, candidateRuntimeMin, row.id)
-        ) {
-          deterministicFlagged++
-          if (samples.length < 30) {
-            samples.push({
-              movieId: movie.movieId,
-              title: candidateTitle,
-              action: 'kept',
-              llmVerdict: 'match',
-              llmConfidence: 1,
-              llmReason: 'Auto-flagged low MB/min Archive.org source as incomplete',
-              flags: ['low_mb_per_min_feature'],
-            })
-          }
-          return
-        }
 
         const hasCachedVerdict =
           row.llmVerdict !== null &&
@@ -1448,9 +1528,8 @@ export async function runAutoAuditFalseHits(
 
     // Step 2: Scan unverified matched movies
     await runWithConcurrency(movies, concurrency, async movie => {
-      const sources = getSourcesStmt.all(movie.movieId) as SourceRow[]
-      const primarySource = sources[0]
-      if (!primarySource) {
+      const sources = getSourcesStmt.all(movie.movieId) as AuditSourceRow[]
+      if (sources.length === 0) {
         scanned++
         return
       }
@@ -1458,28 +1537,42 @@ export async function runAutoAuditFalseHits(
       const candidateTitle = movie.omdbTitle || movie.movieTitle
       const candidateYear = extractYearFromTitle(movie.omdbYear) ?? movie.movieYear ?? null
       const candidateRuntimeMin = parseRuntimeMinutes(movie.omdbRuntime)
-      const rawSourceTitle = primarySource.title || movie.movieTitle
-      const sourceDurationMin =
-        primarySource.duration && primarySource.duration > 0
-          ? Math.round(primarySource.duration / 60)
-          : null
 
       try {
-        if (await autoFlagLowRatioArchiveSource(movie, primarySource, candidateRuntimeMin)) {
-          deterministicFlagged++
-          if (samples.length < 30) {
-            samples.push({
-              movieId: movie.movieId,
-              title: candidateTitle,
-              action: 'kept',
-              llmVerdict: 'match',
-              llmConfidence: 1,
-              llmReason: 'Auto-flagged low MB/min Archive.org source as incomplete',
-              flags: ['low_mb_per_min_feature'],
-            })
+        const flagRes = await autoFlagLowRatioArchiveSources(movie, sources, candidateRuntimeMin)
+        if (flagRes.flaggedCount > 0) {
+          deterministicFlagged += flagRes.flaggedCount
+          if (flagRes.remainingCleanSources.length === 0) {
+            if (!dryRun) {
+              await serializeDbWrite(() =>
+                recordAudit(
+                  movie.movieId,
+                  'kept',
+                  `Auto-flagged incomplete (${flagRes.reasons[0] || 'low MB/min'})`
+                )
+              )
+            }
+            if (samples.length < 30) {
+              samples.push({
+                movieId: movie.movieId,
+                title: candidateTitle,
+                action: 'kept',
+                llmVerdict: 'match',
+                llmConfidence: 1,
+                llmReason: 'Auto-flagged low MB/min Archive.org source as incomplete',
+                flags: ['low_mb_per_min_feature'],
+              })
+            }
+            return
           }
-          return
         }
+
+        const primarySource = flagRes.remainingCleanSources[0] ?? sources[0]!
+        const rawSourceTitle = primarySource.title || movie.movieTitle
+        const sourceDurationMin =
+          primarySource.duration && primarySource.duration > 0
+            ? Math.round(primarySource.duration / 60)
+            : null
 
         const scoreResult = scoreMatchCandidate(
           {
