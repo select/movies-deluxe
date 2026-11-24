@@ -258,9 +258,11 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const postersFailedPercent = computed(() => {
-    if (!stats.value || stats.value.posters.withPosterUrl === 0) return 0
+    if (!stats.value) return 0
+    const denominator = stats.value.posters.withImdbId || stats.value.posters.withPosterUrl
+    if (denominator === 0) return 0
     const failed = stats.value.posters.failed || 0
-    return (failed / stats.value.posters.withPosterUrl) * 100
+    return (failed / denominator) * 100
   })
 
   const cleanupCollections = async () => {
