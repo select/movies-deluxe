@@ -38,10 +38,7 @@
       <span v-if="subtitle" class="text-theme-textmuted">
         {{ subtitle }}
       </span>
-      <span
-        v-if="failureRate !== undefined && failureRate > 0"
-        :class="failureRate > 20 ? 'text-red-500 font-bold' : 'text-orange-500'"
-      >
+      <span v-if="failureRate !== undefined && failureRate > 0" class="text-orange-500">
         {{ failureRate.toFixed(1) }}% fail
       </span>
     </div>
