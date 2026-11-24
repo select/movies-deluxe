@@ -22,16 +22,6 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <select
-          v-model="platform"
-          class="px-3 py-2 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
-          :disabled="syncing"
-        >
-          <option value="all">All Platforms (YouTube + Archive)</option>
-          <option value="youtube">YouTube Only</option>
-          <option value="archive">Archive.org Only</option>
-        </select>
-
         <label class="flex items-center gap-1.5 text-sm cursor-pointer select-none">
           <input v-model="probeActive" type="checkbox" :disabled="syncing" />
           <span>Probe Active YT</span>
@@ -50,19 +40,13 @@
 
     <!-- Channel & Source Selector -->
     <div
-      v-if="platform !== 'archive' && selectableChannels.length > 0"
+      v-if="selectableChannels.length > 0"
       class="rounded-lg bg-theme-background border border-theme-border p-3 space-y-2"
     >
       <div class="flex flex-wrap items-center justify-between gap-2">
-        <button
-          type="button"
-          class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-theme-textmuted hover:text-theme-text transition-colors"
-          @click="channelsExpanded = !channelsExpanded"
+        <div
+          class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-theme-textmuted"
         >
-          <span
-            :class="channelsExpanded ? 'i-mdi-chevron-down' : 'i-mdi-chevron-right'"
-            class="text-base"
-          ></span>
           <span>Channels</span>
           <span
             class="px-1.5 py-0.5 rounded-full text-[11px] font-mono normal-case bg-theme-surface border border-theme-border"
@@ -73,7 +57,7 @@
                 : `${selectedChannels.length} / ${selectableChannels.length} selected`
             }}
           </span>
-        </button>
+        </div>
 
         <div class="flex items-center gap-2 text-xs">
           <button
@@ -96,7 +80,7 @@
         </div>
       </div>
 
-      <div v-if="channelsExpanded" class="flex flex-wrap gap-1.5 pt-1">
+      <div class="flex flex-wrap gap-1.5 pt-1">
         <label
           v-for="ch in selectableChannels"
           :key="ch.id"
@@ -345,10 +329,8 @@ import type { SyncChannelsResponse, SyncHistoryResponse } from '#shared/types/ad
 const adminStore = useAdminStore()
 const { progress, youtubeChannels } = storeToRefs(adminStore)
 
-const platform = ref<'all' | 'youtube' | 'archive'>('all')
 const probeActive = ref(false)
 const selectedChannels = ref<string[]>([])
-const channelsExpanded = ref(false)
 
 const syncing = ref(false)
 const loadingHistory = ref(false)
@@ -360,17 +342,14 @@ let pollTimer: ReturnType<typeof setInterval> | null = null
 
 const syncProgress = computed(() => progress.value.channelSync)
 
-const selectableChannels = computed(() => {
-  const yt = youtubeChannels.value.map(c => ({
+const selectableChannels = computed(() => [
+  ...youtubeChannels.value.map(c => ({
     id: c.id,
     name: c.name,
     enabled: c.enabled,
-  }))
-  if (platform.value === 'all') {
-    return [...yt, { id: 'archive.org', name: 'Archive.org', enabled: true }]
-  }
-  return yt
-})
+  })),
+  { id: 'archive.org', name: 'Archive.org', enabled: true },
+])
 
 const enabledChannelIds = computed(() =>
   selectableChannels.value.filter(c => c.enabled).map(c => c.id)
@@ -406,12 +385,6 @@ const startPolling = () => {
   }, 5000)
 }
 
-watch(platform, nextPlatform => {
-  if (nextPlatform === 'youtube') {
-    selectedChannels.value = selectedChannels.value.filter(id => id !== 'archive.org')
-  }
-})
-
 watch(hasRunningExternalSync, running => {
   if (running) {
     startPolling()
@@ -436,16 +409,12 @@ const runSync = async () => {
   syncing.value = true
   syncError.value = null
   try {
-    const validSelected = selectedChannels.value.filter(id =>
-      selectableChannels.value.some(c => c.id === id)
-    )
-    const channels =
-      platform.value !== 'archive' && validSelected.length > 0 ? validSelected : undefined
+    const channels = selectedChannels.value.length > 0 ? selectedChannels.value : undefined
 
     lastResult.value = await $fetch<SyncChannelsResponse>('/api/admin/scrape/sync-channels', {
       method: 'POST',
       body: {
-        platform: platform.value,
+        platform: 'all',
         channels,
         probeActive: probeActive.value,
       },
