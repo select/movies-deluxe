@@ -101,3 +101,38 @@ export interface SyncHistoryResponse {
   events: ChannelSyncEvent[]
   channelCounts: ChannelStatusCounts[]
 }
+
+export type ProgressType =
+  | 'archive'
+  | 'youtube'
+  | 'posters'
+  | 'sqlite'
+  | 'ai'
+  | 'posterArchive'
+  | 'databaseArchive'
+  | 'stats'
+  | 'home'
+  | 'embeddings'
+  | 'similar'
+  | 'channelSync'
+  | 'audit'
+
+export interface ProgressUpdate {
+  type: ProgressType
+  status: 'starting' | 'in_progress' | 'completed' | 'error'
+  current: number
+  total: number
+  message: string
+  successCurrent?: number
+  successPrevious?: number
+  failedCurrent?: number
+  failedPrevious?: number
+  embeddingsPerSecond?: number
+  itemsPerSecond?: number
+  estimatedTimeRemaining?: number
+  channelCurrent?: number
+  channelTotal?: number
+  channelName?: string
+  channelSyncResult?: SyncChannelsResponse
+  lastError?: string
+}

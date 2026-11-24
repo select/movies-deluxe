@@ -11,36 +11,7 @@ import type {
 import { defineStore, acceptHMRUpdate } from '#imports'
 import { ref, reactive, computed } from 'vue'
 import { $fetch } from '#build/fetch'
-import type { GenerateDatabaseRequest } from '#shared/types/admin'
-
-export interface ProgressUpdate {
-  type:
-    | 'archive'
-    | 'youtube'
-    | 'posters'
-    | 'sqlite'
-    | 'ai'
-    | 'stats'
-    | 'home'
-    | 'embeddings'
-    | 'similar'
-    | 'channelSync'
-    | 'audit'
-  status: 'starting' | 'in_progress' | 'completed' | 'error'
-  current: number
-  total: number
-  message: string
-  successCurrent?: number
-  successPrevious?: number
-  failedCurrent?: number
-  failedPrevious?: number
-  embeddingsPerSecond?: number
-  estimatedTimeRemaining?: number
-  channelCurrent?: number
-  channelTotal?: number
-  channelName?: string
-  lastError?: string
-}
+import type { GenerateDatabaseRequest, ProgressUpdate } from '#shared/types/admin'
 
 export const useAdminStore = defineStore('admin', () => {
   const loading = ref(false)

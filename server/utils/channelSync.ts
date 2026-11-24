@@ -86,6 +86,23 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolvePromise => setTimeout(resolvePromise, ms))
 }
 
+function computeRateAndEta(
+  processed: number,
+  total: number,
+  startTimeMs: number
+): { rate?: number; estimatedTimeRemaining?: number } {
+  const elapsedSec = (Date.now() - startTimeMs) / 1000
+  if (processed <= 0 || elapsedSec <= 0.5) return {}
+  const rawRate = processed / elapsedSec
+  const rate = rawRate >= 0.1 ? Number(rawRate.toFixed(1)) : Number(rawRate.toFixed(2))
+  const estimatedTimeRemaining =
+    rawRate > 0 && total > processed ? Math.round((total - processed) / rawRate) : undefined
+  return {
+    rate: rate > 0 ? rate : undefined,
+    estimatedTimeRemaining,
+  }
+}
+
 function insertSyncRun(db: Database.Database, channelId: string, startedAt: number): number {
   const result = db
     .prepare(
@@ -547,13 +564,11 @@ async function syncYouTubeChannel(
         }
 
         processedNew++
-        const elapsedSec = (Date.now() - addStartTime) / 1000
-        const rate =
-          processedNew > 0 && elapsedSec > 0.5 ? Number((processedNew / elapsedSec).toFixed(1)) : 0
-        const remaining =
-          rate > 0 && addedIds.length > processedNew
-            ? Math.round((addedIds.length - processedNew) / rate)
-            : undefined
+        const { rate, estimatedTimeRemaining } = computeRateAndEta(
+          processedNew,
+          addedIds.length,
+          addStartTime
+        )
 
         options.onProgress?.({
           current: processedNew,
@@ -561,8 +576,8 @@ async function syncYouTubeChannel(
           message: itemTitle,
           successCurrent: summary.added,
           failedCurrent: skippedOrFailed,
-          rate: rate || undefined,
-          estimatedTimeRemaining: remaining,
+          rate,
+          estimatedTimeRemaining,
         })
 
         await sleep(200)
@@ -583,10 +598,29 @@ async function syncYouTubeChannel(
 
     if (missingRows.length > 0) {
       const missingIds = [...new Set(missingRows.map(r => r.sourceId))]
-      options.onStatus?.(`[${channelConfig.name}] Probing ${missingIds.length} missing video(s)...`)
+      const probeMissingStart = Date.now()
+      options.onProgress?.({
+        current: 0,
+        total: missingIds.length,
+        message: `Probing ${missingIds.length} missing video(s)...`,
+      })
       const probeResults = await probeYouTubeSources(missingIds, {
         apiKey,
         youtube: youtube ?? undefined,
+        onProgress: (current, total) => {
+          const { rate, estimatedTimeRemaining } = computeRateAndEta(
+            current,
+            total,
+            probeMissingStart
+          )
+          options.onProgress?.({
+            current,
+            total,
+            message: `Probing missing videos (${current}/${total})...`,
+            rate,
+            estimatedTimeRemaining,
+          })
+        },
       })
       summary.probed += missingIds.length
 
@@ -646,9 +680,29 @@ async function syncYouTubeChannel(
 
     // 7. Optional: probe active YouTube sources via Stage 1 batch
     if (options.probeActive && presentIds.length > 0) {
+      const probeActiveStart = Date.now()
+      options.onProgress?.({
+        current: 0,
+        total: presentIds.length,
+        message: `Probing ${presentIds.length} active video(s)...`,
+      })
       const probeResults = await probeYouTubeSources(presentIds, {
         apiKey,
         skipStage2: true,
+        onProgress: (current, total) => {
+          const { rate, estimatedTimeRemaining } = computeRateAndEta(
+            current,
+            total,
+            probeActiveStart
+          )
+          options.onProgress?.({
+            current,
+            total,
+            message: `Probing active videos (${current}/${total})...`,
+            rate,
+            estimatedTimeRemaining,
+          })
+        },
       })
       summary.probed += presentIds.length
 
@@ -844,38 +898,39 @@ async function syncArchiveCollection(
 
       for (const item of addedItems) {
         processedNew++
-        const movieEntry = await processArchiveMovie(item, 'feature_films')
-        if (movieEntry && movieEntry.sources[0]) {
-          movieEntry.sources[0].channelName = channelName
-          movieEntry.sources[0].status = 'active'
-          movieEntry.sources[0].lastSeenAt = now
-          await upsertMovie(movieEntry.movieId, movieEntry)
-          summary.added++
+        try {
+          const movieEntry = await processArchiveMovie(item, 'feature_films')
+          if (movieEntry && movieEntry.sources[0]) {
+            movieEntry.sources[0].channelName = channelName
+            movieEntry.sources[0].status = 'active'
+            movieEntry.sources[0].lastSeenAt = now
+            await upsertMovie(movieEntry.movieId, movieEntry)
+            summary.added++
 
-          if (runId !== undefined) {
-            logSyncEvent(db, {
-              runId,
-              channelId,
-              sourceId: item.identifier,
-              movieId: movieEntry.movieId,
-              eventType: 'added',
-              createdAt: now,
-            })
+            if (runId !== undefined) {
+              logSyncEvent(db, {
+                runId,
+                channelId,
+                sourceId: item.identifier,
+                movieId: movieEntry.movieId,
+                eventType: 'added',
+                createdAt: now,
+              })
+            }
+          } else {
+            skippedOrFailed++
           }
-        } else {
+        } catch (err) {
+          console.warn(`[Archive.org] Failed to process item ${item.identifier}:`, err)
           skippedOrFailed++
         }
 
         if (processedNew % 10 === 0 || processedNew === addedItems.length) {
-          const elapsedSec = (Date.now() - addStartTime) / 1000
-          const rate =
-            processedNew > 0 && elapsedSec > 0.5
-              ? Number((processedNew / elapsedSec).toFixed(1))
-              : 0
-          const remaining =
-            rate > 0 && addedItems.length > processedNew
-              ? Math.round((addedItems.length - processedNew) / rate)
-              : undefined
+          const { rate, estimatedTimeRemaining } = computeRateAndEta(
+            processedNew,
+            addedItems.length,
+            addStartTime
+          )
 
           options.onProgress?.({
             current: processedNew,
@@ -883,8 +938,8 @@ async function syncArchiveCollection(
             message: item.title || item.identifier,
             successCurrent: summary.added,
             failedCurrent: skippedOrFailed,
-            rate: rate || undefined,
-            estimatedTimeRemaining: remaining,
+            rate,
+            estimatedTimeRemaining,
           })
         }
       }
@@ -904,8 +959,28 @@ async function syncArchiveCollection(
 
     if (missingRows.length > 0) {
       const missingIds = [...new Set(missingRows.map(r => r.sourceId))]
-      options.onStatus?.(`[Archive.org] Probing ${missingIds.length} missing item(s)...`)
-      const probeResults = await probeArchiveSources(missingIds)
+      const probeMissingStart = Date.now()
+      options.onProgress?.({
+        current: 0,
+        total: missingIds.length,
+        message: `Probing ${missingIds.length} missing item(s)...`,
+      })
+      const probeResults = await probeArchiveSources(missingIds, {
+        onProgress: (current, total) => {
+          const { rate, estimatedTimeRemaining } = computeRateAndEta(
+            current,
+            total,
+            probeMissingStart
+          )
+          options.onProgress?.({
+            current,
+            total,
+            message: `Probing missing items (${current}/${total})...`,
+            rate,
+            estimatedTimeRemaining,
+          })
+        },
+      })
       summary.probed += missingIds.length
 
       const updateMissingStmt = db.prepare(`
@@ -1078,16 +1153,18 @@ export async function syncChannels(
         summaries.push(summary)
         completedTargets++
 
-        options.onProgress?.({
-          current: completedTargets,
-          total: totalTargets,
-          channelId: ch.id,
-          channelName: ch.name,
-          channelCurrent,
-          channelTotal: totalTargets,
-          successCurrent: summary.added,
-          message: `Finished ${ch.name}: +${summary.added} / -${summary.removed} / ↺${summary.restored}`,
-        })
+        if (completedTargets < totalTargets) {
+          options.onProgress?.({
+            current: 0,
+            total: 0,
+            channelId: ch.id,
+            channelName: ch.name,
+            channelCurrent,
+            channelTotal: totalTargets,
+            successCurrent: summary.added,
+            message: `Finished ${ch.name}: +${summary.added} / -${summary.removed} / ↺${summary.restored}`,
+          })
+        }
       }
     }
   }
@@ -1130,16 +1207,18 @@ export async function syncChannels(
     summaries.push(archiveSummary)
     completedTargets++
 
-    options.onProgress?.({
-      current: completedTargets,
-      total: totalTargets,
-      channelId: 'archive.org',
-      channelName: 'Archive.org',
-      channelCurrent,
-      channelTotal: totalTargets,
-      successCurrent: archiveSummary.added,
-      message: `Finished Archive.org: +${archiveSummary.added} / -${archiveSummary.removed} / ↺${archiveSummary.restored}`,
-    })
+    if (completedTargets < totalTargets) {
+      options.onProgress?.({
+        current: 0,
+        total: 0,
+        channelId: 'archive.org',
+        channelName: 'Archive.org',
+        channelCurrent,
+        channelTotal: totalTargets,
+        successCurrent: archiveSummary.added,
+        message: `Finished Archive.org: +${archiveSummary.added} / -${archiveSummary.removed} / ↺${archiveSummary.restored}`,
+      })
+    }
   }
 
   const completedAt = Math.floor(Date.now() / 1000)

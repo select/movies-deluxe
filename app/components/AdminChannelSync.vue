@@ -23,17 +23,24 @@
 
       <div class="flex flex-wrap items-center gap-3">
         <label class="flex items-center gap-1.5 text-sm cursor-pointer select-none">
-          <input v-model="probeActive" type="checkbox" :disabled="syncing" />
+          <input
+            v-model="probeActive"
+            type="checkbox"
+            :disabled="syncing || hasRunningExternalSync"
+          />
           <span>Probe Active YT</span>
         </label>
 
         <button
           class="px-4 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
-          :disabled="syncing"
+          :disabled="syncing || hasRunningExternalSync"
           @click="runSync"
         >
-          <div class="i-mdi-sync" :class="{ 'animate-spin': syncing }"></div>
-          {{ syncing ? 'Syncing...' : 'Run Channel Sync' }}
+          <div
+            class="i-mdi-sync"
+            :class="{ 'animate-spin': syncing || hasRunningExternalSync }"
+          ></div>
+          {{ syncing || hasRunningExternalSync ? 'Syncing...' : 'Run Channel Sync' }}
         </button>
       </div>
     </div>
@@ -159,11 +166,11 @@
             {{ syncProgress.failedCurrent.toLocaleString() }}
           </span>
           <span
-            v-if="syncProgress.embeddingsPerSecond"
+            v-if="syncProgress.itemsPerSecond"
             class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400"
           >
             <div class="i-mdi-speedometer text-xs"></div>
-            {{ syncProgress.embeddingsPerSecond }}/s
+            {{ syncProgress.itemsPerSecond }}/s
           </span>
           <span
             v-if="syncProgress.estimatedTimeRemaining && syncProgress.estimatedTimeRemaining > 0"
@@ -467,13 +474,34 @@ const loadHistory = async () => {
   }
 }
 
+watch(
+  () => syncProgress.value?.status,
+  async (status, prevStatus) => {
+    if (status === 'completed' || status === 'error') {
+      if (prevStatus === 'starting' || prevStatus === 'in_progress' || syncing.value) {
+        syncing.value = false
+        const current = syncProgress.value
+        if (current?.channelSyncResult) {
+          lastResult.value = current.channelSyncResult
+        }
+        if (status === 'error' && !current?.channelSyncResult) {
+          syncError.value = current?.lastError || current?.message || 'Channel sync failed'
+        }
+        await loadHistory()
+        await adminStore.refreshStats()
+      }
+    }
+  }
+)
+
 const runSync = async () => {
+  if (syncing.value || hasRunningExternalSync.value) return
   syncing.value = true
   syncError.value = null
   try {
     const channels = selectedChannels.value.length > 0 ? selectedChannels.value : undefined
 
-    lastResult.value = await $fetch<SyncChannelsResponse>('/api/admin/scrape/sync-channels', {
+    await $fetch<{ started: boolean }>('/api/admin/scrape/sync-channels', {
       method: 'POST',
       body: {
         platform: 'all',
@@ -481,13 +509,8 @@ const runSync = async () => {
         probeActive: probeActive.value,
       },
     })
-    await loadHistory()
-    if (lastResult.value) {
-      await adminStore.refreshStats()
-    }
   } catch (e: unknown) {
     syncError.value = e instanceof Error ? e.message : String(e)
-  } finally {
     syncing.value = false
   }
 }

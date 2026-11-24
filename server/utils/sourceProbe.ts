@@ -23,11 +23,13 @@ export interface ProbeYouTubeOptions {
   stage2DelayMs?: number
   stage1BatchDelayMs?: number
   skipStage2?: boolean
+  onProgress?: (current: number, total: number) => void
 }
 
 export interface ProbeArchiveOptions {
   delayMs?: number
   expectedCollection?: string
+  onProgress?: (current: number, total: number) => void
 }
 
 function sleep(ms: number): Promise<void> {
@@ -348,6 +350,8 @@ export async function probeYouTubeSources(
         stage2Queue.push(...batch)
       }
 
+      options.onProgress?.(Math.min(i + batch.length, uniqueIds.length), uniqueIds.length)
+
       if (i + batchSize < uniqueIds.length) {
         await sleep(options.stage1BatchDelayMs ?? 100)
       }
@@ -421,6 +425,8 @@ export async function probeYouTubeSources(
           stage: 2,
         })
       }
+
+      options.onProgress?.(results.size, uniqueIds.length)
 
       if (i + 1 < stage2Queue.length) {
         await sleep(delayMs)
@@ -557,6 +563,8 @@ export async function probeArchiveSources(
         checkedAt,
       })
     }
+
+    options.onProgress?.(i + 1, uniqueIds.length)
 
     if (i + 1 < uniqueIds.length) {
       await sleep(delayMs)
