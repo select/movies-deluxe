@@ -33,9 +33,6 @@ export interface ArchiveVideoLengthResult {
 }
 
 const TEN_MB_BYTES = 10 * 1024 * 1024
-const PREVIEW_KEYWORD_REGEX = /\b(preview|trailer|tv\s*spot|teaser|clip|review|sample)\b/i
-const SUBTITLES_KEYWORD_REGEX = /\bsubtitles?\b/i
-const CAMELCASE_PREVIEW_REGEX = /(?:^|[-_])Preview[A-Z0-9]/
 
 const VIDEO_EXT_REGEX = /\.(mp4|m4v|ogv|mkv|avi|mpeg|mpg|mov|webm|flv|wmv)$/i
 const VIDEO_FORMAT_REGEX = /(mpeg4|h\.264|ogg video|matroska|divx|xvid|quicktime|webm|cinepack)/i
@@ -119,23 +116,7 @@ export function analyzeArchiveSourceSize(input: ArchiveSourceSizeInput): Archive
     reasons.push(`File size is ${sizeMB ?? 0} MB (< 10 MB)`)
   }
 
-  // 2. Preview / trailer / clip keyword check (subtitles only flagged when < 10 MB so full movies with subs aren't flagged)
-  const textToScan = `${input.sourceId} ${input.title || ''} ${input.description || ''}`
-  const hasSubtitleOnlyFile =
-    SUBTITLES_KEYWORD_REGEX.test(textToScan) && sizeBytes !== null && sizeBytes < TEN_MB_BYTES
-  const hasKeyword =
-    PREVIEW_KEYWORD_REGEX.test(input.sourceId) ||
-    CAMELCASE_PREVIEW_REGEX.test(input.sourceId) ||
-    (input.title ? PREVIEW_KEYWORD_REGEX.test(input.title) : false) ||
-    (input.description ? PREVIEW_KEYWORD_REGEX.test(input.description) : false) ||
-    hasSubtitleOnlyFile
-
-  if (hasKeyword) {
-    flags.push('preview_keyword')
-    reasons.push('Preview/trailer/clip keyword detected in identifier, title, or description')
-  }
-
-  // 3. Size + Film Length check (MB/min)
+  // 2. Size + Film Length check (MB/min)
   if (runtimeMinutes !== null && sizeMB !== null) {
     if (runtimeMinutes >= 50 && (sizeMB < 100 || (mbPerMin !== null && mbPerMin < 1.2))) {
       flags.push('low_mb_per_min_feature')
@@ -143,7 +124,7 @@ export function analyzeArchiveSourceSize(input: ArchiveSourceSizeInput): Archive
         `Feature film (${runtimeMinutes} min) has ${sizeMB} MB (${mbPerMin ?? 0} MB/min)`
       )
     }
-    // Note: Shorts/cartoons (< 30 min) with sizeMB >= 10 and no preview keyword are NOT flagged.
+    // Note: Shorts/cartoons (< 30 min) with sizeMB >= 10 are NOT flagged.
   }
 
   const isLikelyPreview = flags.length > 0

@@ -802,14 +802,10 @@ export async function runAutoCleanArchivePreviews(
            SELECT 1 FROM source_quality_marks sqm
            WHERE sqm.sourceId = s.id AND sqm.mark = 'incomplete'
          )
+         AND s.size IS NOT NULL
          AND (
-           s.size IS NOT NULL AND s.size < 104857600
-           OR lower(coalesce(s.title, '')) LIKE '%trailer%'
-           OR lower(coalesce(s.title, '')) LIKE '%preview%'
-           OR lower(coalesce(s.title, '')) LIKE '%tv spot%'
-           OR lower(coalesce(s.title, '')) LIKE '%subtitles%'
-           OR lower(coalesce(s.sourceId, '')) LIKE '%trailer%'
-           OR lower(coalesce(s.sourceId, '')) LIKE '%preview%'
+           s.size < 104857600
+           OR (md.Runtime IS NOT NULL AND s.size < 314572800)
          )
        LIMIT ?`
     )
@@ -833,7 +829,7 @@ export async function runAutoCleanArchivePreviews(
   let removedRedundant = 0
   let markedIncomplete = 0
   let skippedCartoons = 0
-  let queuedBorderline = 0
+  const queuedBorderline = 0
   const samples: AutoCleanPreviewsResult['samples'] = []
   const now = new Date().toISOString()
 
@@ -896,52 +892,9 @@ export async function runAutoCleanArchivePreviews(
 
         if (!analysis.isLikelyPreview) continue
 
-        const hasKeyword = analysis.flags.includes('preview_keyword')
-        const hasLowRatioOrTiny =
-          analysis.flags.includes('tiny_or_empty_file') ||
-          analysis.flags.includes('low_mb_per_min_feature')
         const hasHealthySibling = allSources.some(other =>
           isHealthySiblingSource(other, runtimeMin, src.id)
         )
-
-        // Only auto-mark/remove when size/MB-per-min confirms it's too small/low-ratio.
-        // Large files that ONLY matched a keyword (e.g. "with New & Original Trailer", > 500 MB)
-        // stay queued for human review so full feature films are never falsely hidden/deleted.
-        if (!hasLowRatioOrTiny) {
-          queuedBorderline++
-          if (!dryRun) {
-            enqueueReviewItem(db, {
-              movieId: movie.movieId,
-              kind: 'archive_preview',
-              sourceId: src.sourceId,
-              currentImdbId: movie.movieId,
-              proposedImdbId: null,
-              score: analysis.mbPerMin,
-              flags: analysis.flags,
-              candidate: {
-                sourceTitle: src.title,
-                omdbTitle: movie.title,
-                sizeMB: analysis.sizeMB,
-                runtimeMinutes: analysis.runtimeMinutes,
-                mbPerMin: analysis.mbPerMin,
-                reason: analysis.reason,
-              },
-            })
-          }
-          if (samples.length < 30) {
-            samples.push({
-              movieId: movie.movieId,
-              sourceId: src.sourceId,
-              title: src.title || movie.title,
-              action: 'queue_borderline',
-              sizeMB: analysis.sizeMB,
-              runtimeMin,
-              mbPerMin: analysis.mbPerMin,
-              flags: analysis.flags,
-            })
-          }
-          continue
-        }
 
         if (hasHealthySibling && removeRedundant) {
           removedRedundant++
@@ -974,16 +927,6 @@ export async function runAutoCleanArchivePreviews(
                   "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
                 )
                 .run(src.id, now)
-              if (hasKeyword) {
-                const label = /\b(trailer|tv\s*spot)\b/i.test(`${src.title || ''} ${src.sourceId}`)
-                  ? 'trailer'
-                  : 'clip'
-                txDb
-                  .prepare(
-                    'INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
-                  )
-                  .run(movie.movieId, label, now)
-              }
               txDb
                 .prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?')
                 .run(now, movie.movieId)
@@ -1173,7 +1116,7 @@ export async function runAutoAuditFalseHits(
   }> => {
     const flaggedIds = new Set<number>()
     const reasons: string[] = []
-    const toFlag: Array<{ src: AuditSourceRow; hasKeyword: boolean; reason: string }> = []
+    const toFlag: Array<{ src: AuditSourceRow; reason: string }> = []
 
     for (const src of sources) {
       if (src.hasQualityMark || src.platform !== 'archive.org') continue
@@ -1185,19 +1128,12 @@ export async function runAutoAuditFalseHits(
         durationSeconds: src.duration,
         runtimeMinutes: candidateRuntimeMin,
       })
-      const hasLowRatioOrTiny =
-        analysis.flags.includes('low_mb_per_min_feature') ||
-        analysis.flags.includes('tiny_or_empty_file')
-      if (!hasLowRatioOrTiny) continue
+      if (!analysis.isLikelyPreview) continue
 
       flaggedIds.add(src.id)
       const reason = analysis.reason || analysis.flags.join(', ')
       reasons.push(reason)
-      toFlag.push({
-        src,
-        hasKeyword: analysis.flags.includes('preview_keyword'),
-        reason,
-      })
+      toFlag.push({ src, reason })
     }
 
     if (toFlag.length > 0 && !dryRun) {
@@ -1207,16 +1143,6 @@ export async function runAutoAuditFalseHits(
           db.prepare(
             "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
           ).run(item.src.id, now)
-          if (item.hasKeyword) {
-            const label = /\b(trailer|tv\s*spot)\b/i.test(
-              `${item.src.title || ''} ${item.src.sourceId}`
-            )
-              ? 'trailer'
-              : 'clip'
-            db.prepare(
-              'INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
-            ).run(movie.movieId, label, now)
-          }
           db.prepare(
             `UPDATE match_review_queue
              SET status = 'approved', resolvedAt = datetime('now')
