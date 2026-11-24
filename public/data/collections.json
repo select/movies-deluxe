@@ -2,7 +2,7 @@
   "_schema": {
     "version": "1.1.0",
     "description": "Movie collections database",
-    "lastUpdated": "2026-11-23T15:15:48.266Z"
+    "lastUpdated": "2026-11-23T22:26:58.595Z"
   },
   "top-movies": {
     "id": "top-movies",
@@ -122,22 +122,10 @@
       "tt0466460",
       "tt0169102",
       "tt0055601",
-      "tt0109117",
-      "tt1187043",
-      "tt0056801",
-      "tt0101985",
-      "tt0050371",
-      "tt0049902",
-      "tt0056119",
-      "tt0053779",
-      "tt0252591",
-      "tt0047528",
-      "tt0245712",
-      "tt0080196",
-      "tt0083922"
+      "tt0109117"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-11-23T15:15:48.266Z",
+    "updatedAt": "2026-11-23T22:26:58.592Z",
     "savedQueries": [
       {
         "searchQuery": "",
@@ -449,14 +437,10 @@
       "tt0255274",
       "tt0255441",
       "tt0411270",
-      "tt6725014",
-      "tt0056801",
-      "tt0245712",
-      "tt0080196",
-      "tt0083922"
+      "tt6725014"
     ],
     "createdAt": "2025-12-31T02:45:00.000Z",
-    "updatedAt": "2026-11-23T15:15:02.204Z",
+    "updatedAt": "2026-11-23T22:26:58.592Z",
     "savedQueries": [],
     "tags": [
       "classics",
@@ -486,7 +470,6 @@
       "tt0023591",
       "tt0022528",
       "tt0022584",
-      "archive-betty-boop-1970s-redrawn-colorizations",
       "archive-felix-the-cat-bold-king-cole",
       "archive-felix-the-cat-in-neptune-nonsense-van-beuren-1936",
       "archive-moonlight-moovies-10-sex-n-drugs-n-rock-n-roll",
@@ -1912,7 +1895,7 @@
       "tt0147687"
     ],
     "createdAt": "2025-12-29T00:00:00.000Z",
-    "updatedAt": "2026-11-22T18:38:49.139Z",
+    "updatedAt": "2026-11-23T22:26:58.593Z",
     "savedQueries": [
       {
         "searchQuery": "Popey",
@@ -3057,9 +3040,7 @@
     "movieIds": [
       "archive-1-buster-keaton-a-hard-act-to-follow",
       "archive-BusterKeatonsShorts2",
-      "archive-ONEWEEK1920BusterKeaton",
       "archive-STEAMBOATBILLJR.1928BusterKeaton",
-      "archive-THEPALEFACE1922BusterKeaton",
       "archive-buster-in-paris-dvd-keaton-plus",
       "archive-gowest4k",
       "archive-nils-petter-sundgren-intervjuar-buster-keaton-1960talet-f-b-3-unqm-g",
@@ -3134,7 +3115,7 @@
       "youtube-uSrRnk1Tc1I"
     ],
     "createdAt": "2025-12-30T00:00:00.000Z",
-    "updatedAt": "2026-11-22T18:38:49.139Z",
+    "updatedAt": "2026-11-23T22:26:58.593Z",
     "savedQueries": [],
     "tags": [
       "comedy",
@@ -3373,7 +3354,6 @@
       "youtube-PdVMOvOzZNw",
       "tt0223024",
       "youtube-xU9eLFJ6ZJ4",
-      "archive-LADYWHIRLWIND1973_1",
       "tt0095937",
       "tt1442571",
       "tt6083388",
@@ -3415,7 +3395,7 @@
       "tt0055630"
     ],
     "createdAt": "2025-12-29T16:08:00.000Z",
-    "updatedAt": "2026-11-22T18:38:49.139Z",
+    "updatedAt": "2026-11-23T22:26:58.593Z",
     "savedQueries": [],
     "tags": [
       "action",
@@ -6076,7 +6056,6 @@
       "tt0001245",
       "tt0002342",
       "tt0002400",
-      "tt0036553",
       "tt0001072",
       "tt0000840",
       "tt0000892",
@@ -6140,7 +6119,7 @@
       "tt7805906"
     ],
     "createdAt": "2026-11-22T18:44:36.122Z",
-    "updatedAt": "2026-11-22T18:44:36.122Z",
+    "updatedAt": "2026-11-23T22:26:58.594Z",
     "savedQueries": [
       {
         "searchQuery": "Griffith",
@@ -7485,7 +7464,6 @@
       "tt1422758",
       "tt2095797",
       "tt2234511",
-      "tt21959422",
       "tt0243685",
       "tt0020523",
       "tt0194035",
@@ -8062,7 +8040,7 @@
       "tt37750530"
     ],
     "createdAt": "2026-11-22T18:52:55.495Z",
-    "updatedAt": "2026-11-22T18:52:55.495Z",
+    "updatedAt": "2026-11-23T22:26:58.594Z",
     "savedQueries": [
       {
         "searchQuery": "Documentary",

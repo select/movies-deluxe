@@ -1,27 +1,27 @@
 {
   "database": {
-    "total": 36292,
-    "matched": 24858,
-    "unmatched": 11434,
-    "archiveOrgSources": 30425,
-    "youtubeSources": 16343,
-    "curatedCount": 24826,
+    "total": 30153,
+    "matched": 27218,
+    "unmatched": 2935,
+    "archiveOrgSources": 30420,
+    "youtubeSources": 16333,
+    "curatedCount": 27157,
     "collections": {}
   },
   "external": {
     "archiveOrg": {
       "total": 29641,
-      "scraped": 30425,
-      "percent": 102.64498498701124,
+      "scraped": 30420,
+      "percent": 102.62811646030836,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 16343,
-      "totalAvailable": 27497,
+      "totalScraped": 16333,
+      "totalAvailable": 27503,
       "totalFailed": 7373,
-      "failureRate": 31.088716478326866,
-      "percent": 59.43557478997709,
+      "failureRate": 31.10183076014511,
+      "percent": 59.38624877286114,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -29,7 +29,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2780,
-          "total": 2884,
+          "total": 2886,
           "failed": 456,
           "failureRate": 14.091470951792337
         },
@@ -78,20 +78,20 @@
           "name": "Mosfilm",
           "language": "ru",
           "enabled": true,
-          "scraped": 305,
+          "scraped": 302,
           "total": 315,
           "failed": 17,
-          "failureRate": 5.279503105590062
+          "failureRate": 5.329153605015674
         },
         {
           "id": "UCh4JH8axA_jUjB8YoRnm0cg",
           "name": "Moviedome",
           "language": "de",
           "enabled": true,
-          "scraped": 709,
+          "scraped": 702,
           "total": 689,
           "failed": 111,
-          "failureRate": 13.536585365853659
+          "failureRate": 13.653136531365314
         },
         {
           "id": "UCE34fwgW7kWr7tc7YiOWtRw",
@@ -189,7 +189,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 569,
-          "total": 770,
+          "total": 772,
           "failed": 0,
           "failureRate": 0
         },
@@ -199,7 +199,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 191,
-          "total": 349,
+          "total": 350,
           "failed": 0,
           "failureRate": 0
         },
@@ -219,7 +219,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 926,
-          "total": 1058,
+          "total": 1059,
           "failed": 0,
           "failureRate": 0
         },
@@ -267,37 +267,37 @@
     }
   },
   "curation": {
-    "total": 36292,
-    "curated": 24826,
-    "percent": 68.40626033285572
+    "total": 30153,
+    "curated": 27157,
+    "percent": 90.06400689815275
   },
   "omdb": {
-    "total": 36292,
-    "matched": 24858,
-    "unmatched": 11434,
-    "percent": 68.49443403504904,
-    "failed": 1002,
-    "failureRate": 3.8747099767981434
+    "total": 30153,
+    "matched": 27218,
+    "unmatched": 2935,
+    "percent": 90.26630849335058,
+    "failed": 2922,
+    "failureRate": 9.694757796947579
   },
   "ai": {
-    "totalUnmatched": 11434,
+    "totalUnmatched": 2935,
     "withAiData": 0,
-    "withoutAiData": 11434,
+    "withoutAiData": 2935,
     "percent": 0
   },
   "posters": {
-    "totalMovies": 36292,
+    "totalMovies": 30153,
     "withPosterUrl": 0,
-    "withImdbId": 24858,
-    "downloaded": 16605,
-    "missing": 8253,
-    "failed": 1567,
-    "failureRate": 8.623156504512437,
+    "withImdbId": 27218,
+    "downloaded": 20472,
+    "missing": 6746,
+    "failed": 3526,
+    "failureRate": 14.692891074256186,
     "percentOfMoviesWithUrl": 0,
-    "percentOfMoviesWithImdbId": 66.7994207096307,
-    "percentOfAllMovies": 45.75388515375289,
-    "filesInDirectory": 16605,
-    "matchedPosters": 16605
+    "percentOfMoviesWithImdbId": 75.21493129546624,
+    "percentOfAllMovies": 67.89374191622724,
+    "filesInDirectory": 20473,
+    "matchedPosters": 20472
   },
-  "lastUpdated": "2026-11-23T14:47:29.923Z"
+  "lastUpdated": "2026-11-23T22:32:01.566Z"
 }
