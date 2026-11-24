@@ -12,7 +12,7 @@
             class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
           >
             <span class="i-mdi-sync animate-spin text-sm"></span>
-            Sync running externally (auto-refreshing...)
+            Sync in progress (auto-refreshing...)
           </span>
         </div>
         <p class="text-sm text-theme-textmuted mt-1">
@@ -61,7 +61,7 @@
             {{
               selectedChannels.length === 0
                 ? 'All enabled'
-                : `${selectedChannels.length} / ${enabledChannelIds.length} selected`
+                : `${selectedChannels.length} / ${selectableChannels.length} selected`
             }}
           </span>
         </div>
@@ -433,7 +433,12 @@ const allEnabledSelected = computed(
 
 const syncStartedAt = ref(0)
 
-const hasRunningExternalSync = computed(() => !syncing.value && (history.value?.isRunning ?? false))
+const hasRunningExternalSync = computed(() => {
+  if (syncing.value) return false
+  const progressActive =
+    syncProgress.value?.status === 'starting' || syncProgress.value?.status === 'in_progress'
+  return (history.value?.isRunning ?? false) || progressActive
+})
 
 const shouldPoll = computed(() => syncing.value || hasRunningExternalSync.value)
 
@@ -473,6 +478,7 @@ const loadHistory = async () => {
     if (syncing.value && Date.now() - syncStartedAt.value > 5000) {
       if (!(data.isRunning ?? false)) {
         syncing.value = false
+        adminStore.clearProgress('channelSync')
         await adminStore.refreshStats()
       }
     }
@@ -484,31 +490,31 @@ const loadHistory = async () => {
   }
 }
 
-watch(
-  () => syncProgress.value?.status,
-  async (status, prevStatus) => {
-    if (status === 'completed' || status === 'error') {
-      if (prevStatus === 'starting' || prevStatus === 'in_progress' || syncing.value) {
-        syncing.value = false
-        const current = syncProgress.value
-        if (current?.channelSyncResult) {
-          lastResult.value = current.channelSyncResult
-        }
-        if (status === 'error' && !current?.channelSyncResult) {
-          syncError.value = current?.lastError || current?.message || 'Channel sync failed'
-        }
-        await loadHistory()
-        await adminStore.refreshStats()
+watch(syncProgress, async (current, prev) => {
+  if (!current) return
+  if (current.status === 'completed' || current.status === 'error') {
+    const wasActive = prev?.status === 'starting' || prev?.status === 'in_progress' || syncing.value
+    if (wasActive) {
+      syncing.value = false
+      if (current.channelSyncResult) {
+        lastResult.value = current.channelSyncResult
       }
+      if (current.status === 'error' && !current.channelSyncResult) {
+        syncError.value = current.lastError || current.message || 'Channel sync failed'
+      }
+      await loadHistory()
+      await adminStore.refreshStats()
     }
   }
-)
+})
 
 const runSync = async () => {
   if (syncing.value || hasRunningExternalSync.value) return
   syncing.value = true
   syncStartedAt.value = Date.now()
   syncError.value = null
+  lastResult.value = null
+  adminStore.clearProgress('channelSync')
   try {
     const channels = selectedChannels.value.length > 0 ? selectedChannels.value : undefined
 

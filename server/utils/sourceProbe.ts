@@ -15,6 +15,7 @@ export interface SourceProbeResult {
   regionRestriction?: YouTubeRegionRestriction
   checkedAt: number
   stage?: 1 | 2 | 'skipped'
+  probeFailed?: boolean
 }
 
 export interface ProbeYouTubeOptions {
@@ -23,7 +24,7 @@ export interface ProbeYouTubeOptions {
   stage2DelayMs?: number
   stage1BatchDelayMs?: number
   skipStage2?: boolean
-  onProgress?: (current: number, total: number) => void
+  onProgress?: (current: number, total: number, phase?: 'stage1' | 'stage2') => void
 }
 
 export interface ProbeArchiveOptions {
@@ -350,7 +351,7 @@ export async function probeYouTubeSources(
         stage2Queue.push(...batch)
       }
 
-      options.onProgress?.(results.size, uniqueIds.length)
+      options.onProgress?.(results.size, uniqueIds.length, 'stage1')
 
       if (i + batchSize < uniqueIds.length) {
         await sleep(options.stage1BatchDelayMs ?? 100)
@@ -423,10 +424,11 @@ export async function probeYouTubeSources(
           unavailableDetail: msg,
           checkedAt,
           stage: 2,
+          probeFailed: reason === 'unavailable_unknown',
         })
       }
 
-      options.onProgress?.(results.size, uniqueIds.length)
+      options.onProgress?.(results.size, uniqueIds.length, 'stage2')
 
       if (i + 1 < stage2Queue.length) {
         await sleep(delayMs)
@@ -444,7 +446,7 @@ export async function probeYouTubeSources(
         stage: 'skipped',
       })
     }
-    options.onProgress?.(results.size, uniqueIds.length)
+    options.onProgress?.(results.size, uniqueIds.length, 'stage1')
   }
 
   return results
@@ -554,6 +556,7 @@ export async function probeArchiveSources(
             unavailableReason: 'unavailable_unknown',
             unavailableDetail: `HTTP ${response.status}: ${response.statusText}`,
             checkedAt,
+            probeFailed: response.status === 429 || response.status >= 500,
           })
           break
         } else {
@@ -582,6 +585,7 @@ export async function probeArchiveSources(
           unavailableReason: 'unavailable_unknown',
           unavailableDetail: error instanceof Error ? error.message : String(error),
           checkedAt,
+          probeFailed: true,
         })
       }
     }

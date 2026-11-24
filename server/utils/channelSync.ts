@@ -298,7 +298,7 @@ async function fetchAllArchiveItems(
 async function syncYouTubeChannel(
   db: Database.Database,
   channelConfig: YouTubeChannelEntry,
-  youtube: Innertube | null,
+  getYoutube: () => Promise<Innertube | null>,
   apiKey: string,
   options: {
     dryRun: boolean
@@ -404,21 +404,25 @@ async function syncYouTubeChannel(
       const rows = dbBySourceId.get(sourceId) || []
       for (const row of rows) {
         if (shouldRestoreSource(row)) {
-          summary.restored++
-          if (!options.dryRun && runId !== undefined) {
-            restoreStmt.run(now, now, row.id)
-            logSyncEvent(db, {
-              runId,
-              channelId: channelConfig.id,
-              sourceId,
-              movieId: row.movieId,
-              eventType: 'restored',
-              reason: row.unavailableReason,
-              detail: `Restored from ${row.status}`,
-              createdAt: now,
-            })
-            row.status = 'active'
-            row.unavailableReason = null
+          if (!options.probeActive) {
+            summary.restored++
+            if (!options.dryRun && runId !== undefined) {
+              restoreStmt.run(now, now, row.id)
+              logSyncEvent(db, {
+                runId,
+                channelId: channelConfig.id,
+                sourceId,
+                movieId: row.movieId,
+                eventType: 'restored',
+                reason: row.unavailableReason,
+                detail: `Restored from ${row.status}`,
+                createdAt: now,
+              })
+              row.status = 'active'
+              row.unavailableReason = null
+            }
+          } else if (!options.dryRun) {
+            updateLastSeenStmt.run(now, row.id)
           }
         } else if (!options.dryRun) {
           updateLastSeenStmt.run(now, row.id)
@@ -433,7 +437,11 @@ async function syncYouTubeChannel(
     // 5. Added sources: scrape and upsert
     if (options.dryRun) {
       summary.added = addedIds.length
-    } else if (addedIds.length > 0 && youtube) {
+    } else if (addedIds.length > 0) {
+      const youtube = await getYoutube()
+      if (!youtube) {
+        throw new Error('YouTube client failed to initialize')
+      }
       let addedProbeResults = new Map<string, SourceProbeResult>()
       try {
         addedProbeResults = await probeYouTubeSources(addedIds, {
@@ -607,7 +615,10 @@ async function syncYouTubeChannel(
 
     if (missingRows.length > 0) {
       const missingIds = [...new Set(missingRows.map(r => r.sourceId))]
+      const youtube = options.dryRun ? null : await getYoutube()
       const probeMissingStart = Date.now()
+      let stage2Start: number | null = null
+      let stage2Baseline = 0
       options.onProgress?.({
         current: 0,
         total: missingIds.length,
@@ -616,18 +627,26 @@ async function syncYouTubeChannel(
       const probeResults = await probeYouTubeSources(missingIds, {
         apiKey,
         youtube: youtube ?? undefined,
-        onProgress: (current, total) => {
-          const { rate, estimatedTimeRemaining } = computeRateAndEta(
-            current,
-            total,
-            probeMissingStart
-          )
+        onProgress: (current, total, phase) => {
+          let rateInfo: { rate?: number; estimatedTimeRemaining?: number }
+          if (phase === 'stage2') {
+            if (stage2Start === null) {
+              stage2Start = Date.now()
+              stage2Baseline = Math.max(0, current - 1)
+            }
+            rateInfo = computeRateAndEta(
+              current - stage2Baseline,
+              total - stage2Baseline,
+              stage2Start
+            )
+          } else {
+            rateInfo = computeRateAndEta(current, total, probeMissingStart)
+          }
           options.onProgress?.({
             current,
             total,
             message: `Probing missing videos (${current}/${total})...`,
-            rate,
-            estimatedTimeRemaining,
+            ...rateInfo,
           })
         },
       })
@@ -646,7 +665,7 @@ async function syncYouTubeChannel(
 
       for (const row of missingRows) {
         const probe = probeResults.get(row.sourceId)
-        if (!probe) continue
+        if (!probe || probe.probeFailed || probe.stage === 'skipped') continue
 
         // If missing from channel listing and probe says active, mark as removed_from_channel
         const finalStatus: SourceStatus =
@@ -729,9 +748,10 @@ async function syncYouTubeChannel(
 
         for (const sourceId of presentIds) {
           const probe = probeResults.get(sourceId)
-          if (!probe) continue
+          if (!probe || probe.probeFailed || probe.stage === 'skipped') continue
           const rows = dbBySourceId.get(sourceId) || []
           for (const row of rows) {
+            const wasRestorable = shouldRestoreSource(row)
             const newReason = probe.unavailableReason ?? null
             const changed =
               row.status !== probe.status || (row.unavailableReason ?? null) !== newReason
@@ -749,14 +769,18 @@ async function syncYouTubeChannel(
             )
 
             if (changed) {
+              const isRestored = probe.status === 'active' && wasRestorable
+              if (isRestored) {
+                summary.restored++
+              }
               logSyncEvent(db, {
                 runId,
                 channelId: channelConfig.id,
                 sourceId,
                 movieId: row.movieId,
-                eventType: 'status_changed',
-                reason: newReason,
-                detail: probe.unavailableDetail,
+                eventType: isRestored ? 'restored' : 'status_changed',
+                reason: isRestored ? row.unavailableReason : newReason,
+                detail: isRestored ? `Restored from ${row.status}` : probe.unavailableDetail,
                 createdAt: probe.checkedAt,
               })
             }
@@ -834,6 +858,12 @@ async function syncArchiveCollection(
       dbBySourceId.set(row.sourceId, list)
     }
     summary.existingInDb = dbBySourceId.size
+
+    if (remoteMap.size === 0 && dbBySourceId.size > 0) {
+      throw new Error(
+        `Archive.org returned 0 items while ${dbBySourceId.size} exist in DB; aborting to prevent false removals`
+      )
+    }
 
     const now = Math.floor(Date.now() / 1000)
     const presentIds: string[] = []
@@ -1004,7 +1034,7 @@ async function syncArchiveCollection(
 
       for (const row of missingRows) {
         const probe = probeResults.get(row.sourceId)
-        if (!probe) continue
+        if (!probe || probe.probeFailed) continue
 
         const finalStatus: SourceStatus =
           probe.status === 'active' ? 'removed_from_channel' : probe.status
@@ -1097,6 +1127,9 @@ export async function syncChannels(
           requestedChannels.includes('archive.org')))
 
     const totalTargets = ytTargets.length + (includeArchive ? 1 : 0)
+    if (requestedChannels && requestedChannels.length > 0 && totalTargets === 0) {
+      throw new Error('No matching channels found for requested IDs')
+    }
     const summaries: SyncChannelSummary[] = []
     let completedTargets = 0
 
@@ -1131,9 +1164,13 @@ export async function syncChannels(
         }
       } else {
         let youtube: Innertube | null = null
-        if (!dryRun) {
-          const { Innertube } = await import('youtubei.js')
-          youtube = await Innertube.create()
+        const getYoutube = async (): Promise<Innertube | null> => {
+          if (dryRun) return null
+          if (!youtube) {
+            const { Innertube } = await import('youtubei.js')
+            youtube = await Innertube.create()
+          }
+          return youtube
         }
 
         for (const ch of ytTargets) {
@@ -1148,7 +1185,7 @@ export async function syncChannels(
             message: `Fetching ${ch.name} playlist...`,
           })
 
-          const summary = await syncYouTubeChannel(db, ch, youtube, apiKey, {
+          const summary = await syncYouTubeChannel(db, ch, getYoutube, apiKey, {
             dryRun,
             retryFailed,
             probeActive,
