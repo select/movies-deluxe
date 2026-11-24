@@ -1275,14 +1275,16 @@ export async function runAutoAuditFalseHits(
 
         const sources = movie ? (getSourcesStmt.all(movie.movieId) as AuditSourceRow[]) : []
         const candidateRuntimeMin = parseRuntimeMinutes(movie?.omdbRuntime)
+        let cleanSources = sources.filter(s => !s.hasQualityMark)
 
         if (movie && movie.movieId.startsWith('tt') && sources.length > 0) {
           const flagRes = await autoFlagLowRatioArchiveSources(movie, sources, candidateRuntimeMin)
+          cleanSources = flagRes.remainingCleanSources
           if (flagRes.flaggedCount > 0) {
             deterministicFlagged += flagRes.flaggedCount
             // If this queued false_hit specifically targeted a source we just flagged incomplete
             // and no clean sources remain, resolve the queue item as approved and skip LLM.
-            if (flagRes.remainingCleanSources.length === 0) {
+            if (cleanSources.length === 0) {
               if (!dryRun) {
                 await serializeDbWrite(() => {
                   resolveReviewItem(db, row.id, 'approved')
@@ -1309,7 +1311,6 @@ export async function runAutoAuditFalseHits(
           }
         }
 
-        const cleanSources = sources.filter(s => !s.hasQualityMark)
         const primarySource =
           (row.sourceId ? cleanSources.find(s => s.sourceId === row.sourceId) : undefined) ??
           cleanSources[0] ??
