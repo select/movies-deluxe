@@ -33,16 +33,6 @@
         </select>
 
         <label class="flex items-center gap-1.5 text-sm cursor-pointer select-none">
-          <input v-model="dryRun" type="checkbox" :disabled="syncing" />
-          <span>Dry Run</span>
-        </label>
-
-        <label class="flex items-center gap-1.5 text-sm cursor-pointer select-none">
-          <input v-model="retryFailed" type="checkbox" :disabled="syncing" />
-          <span>Retry Failed</span>
-        </label>
-
-        <label class="flex items-center gap-1.5 text-sm cursor-pointer select-none">
           <input v-model="probeActive" type="checkbox" :disabled="syncing" />
           <span>Probe Active YT</span>
         </label>
@@ -53,23 +43,14 @@
           @click="runSync"
         >
           <div class="i-mdi-sync" :class="{ 'animate-spin': syncing }"></div>
-          {{ syncing ? 'Syncing...' : dryRun ? 'Preview Diff' : 'Run Channel Sync' }}
-        </button>
-
-        <button
-          class="px-3 py-2 text-sm bg-theme-background border border-theme-border rounded-lg hover:bg-theme-selection transition-colors flex items-center gap-1"
-          :disabled="loadingHistory"
-          @click="loadHistory"
-        >
-          <div class="i-mdi-refresh" :class="{ 'animate-spin': loadingHistory }"></div>
-          Refresh
+          {{ syncing ? 'Syncing...' : 'Run Channel Sync' }}
         </button>
       </div>
     </div>
 
-    <!-- YouTube Channel Selector -->
+    <!-- Channel & Source Selector -->
     <div
-      v-if="platform !== 'archive' && youtubeChannels.length > 0"
+      v-if="platform !== 'archive' && selectableChannels.length > 0"
       class="rounded-lg bg-theme-background border border-theme-border p-3 space-y-2"
     >
       <div class="flex flex-wrap items-center justify-between gap-2">
@@ -82,14 +63,14 @@
             :class="channelsExpanded ? 'i-mdi-chevron-down' : 'i-mdi-chevron-right'"
             class="text-base"
           ></span>
-          <span>YouTube Channels</span>
+          <span>Channels</span>
           <span
             class="px-1.5 py-0.5 rounded-full text-[11px] font-mono normal-case bg-theme-surface border border-theme-border"
           >
             {{
               selectedChannels.length === 0
                 ? 'All enabled'
-                : `${selectedChannels.length} / ${youtubeChannels.length} selected`
+                : `${selectedChannels.length} / ${selectableChannels.length} selected`
             }}
           </span>
         </button>
@@ -117,7 +98,7 @@
 
       <div v-if="channelsExpanded" class="flex flex-wrap gap-1.5 pt-1">
         <label
-          v-for="ch in youtubeChannels"
+          v-for="ch in selectableChannels"
           :key="ch.id"
           class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border cursor-pointer select-none transition-colors"
           :class="
@@ -189,7 +170,6 @@
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h3 class="text-sm font-semibold uppercase tracking-wider text-theme-textmuted">
           Latest Sync Result
-          <span v-if="lastResult.dryRun" class="ml-1 text-amber-500">(Dry Run)</span>
         </h3>
         <div class="flex flex-wrap gap-3 text-xs font-mono">
           <span class="text-green-600 dark:text-green-400"
@@ -366,8 +346,6 @@ const adminStore = useAdminStore()
 const { progress, youtubeChannels } = storeToRefs(adminStore)
 
 const platform = ref<'all' | 'youtube' | 'archive'>('all')
-const dryRun = ref(true)
-const retryFailed = ref(false)
 const probeActive = ref(false)
 const selectedChannels = ref<string[]>([])
 const channelsExpanded = ref(false)
@@ -382,8 +360,20 @@ let pollTimer: ReturnType<typeof setInterval> | null = null
 
 const syncProgress = computed(() => progress.value.channelSync)
 
+const selectableChannels = computed(() => {
+  const yt = youtubeChannels.value.map(c => ({
+    id: c.id,
+    name: c.name,
+    enabled: c.enabled,
+  }))
+  if (platform.value === 'all') {
+    return [...yt, { id: 'archive.org', name: 'Archive.org', enabled: true }]
+  }
+  return yt
+})
+
 const enabledChannelIds = computed(() =>
-  youtubeChannels.value.filter(c => c.enabled).map(c => c.id)
+  selectableChannels.value.filter(c => c.enabled).map(c => c.id)
 )
 
 const allEnabledSelected = computed(
@@ -416,6 +406,12 @@ const startPolling = () => {
   }, 5000)
 }
 
+watch(platform, nextPlatform => {
+  if (nextPlatform === 'youtube') {
+    selectedChannels.value = selectedChannels.value.filter(id => id !== 'archive.org')
+  }
+})
+
 watch(hasRunningExternalSync, running => {
   if (running) {
     startPolling()
@@ -440,23 +436,22 @@ const runSync = async () => {
   syncing.value = true
   syncError.value = null
   try {
+    const validSelected = selectedChannels.value.filter(id =>
+      selectableChannels.value.some(c => c.id === id)
+    )
     const channels =
-      platform.value !== 'archive' && selectedChannels.value.length > 0
-        ? selectedChannels.value
-        : undefined
+      platform.value !== 'archive' && validSelected.length > 0 ? validSelected : undefined
 
     lastResult.value = await $fetch<SyncChannelsResponse>('/api/admin/scrape/sync-channels', {
       method: 'POST',
       body: {
         platform: platform.value,
         channels,
-        dryRun: dryRun.value,
-        retryFailed: retryFailed.value,
         probeActive: probeActive.value,
       },
     })
     await loadHistory()
-    if (!dryRun.value && lastResult.value) {
+    if (lastResult.value) {
       await adminStore.refreshStats()
     }
   } catch (e: unknown) {
