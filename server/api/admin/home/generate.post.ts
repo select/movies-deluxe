@@ -12,13 +12,26 @@ export default defineEventHandler(async () => {
       total: 31,
     })
 
+    const startTime = Date.now()
+
     await generateHomePages(progress => {
+      const elapsedSec = (Date.now() - startTime) / 1000
+      const rate =
+        progress.current > 0 && elapsedSec > 0.5
+          ? Number((progress.current / elapsedSec).toFixed(1))
+          : 0
+      const remaining =
+        rate > 0 && progress.total > progress.current
+          ? Math.round((progress.total - progress.current) / rate)
+          : undefined
       emitProgress({
         type: 'home',
         status: 'in_progress',
         current: progress.current,
         total: progress.total,
         message: progress.message,
+        embeddingsPerSecond: rate || undefined,
+        estimatedTimeRemaining: remaining,
       })
     })
 

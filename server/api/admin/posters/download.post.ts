@@ -41,15 +41,24 @@ export default defineEventHandler(async event => {
     .slice(0, limit) // Take only limit items
 
   const total = toProcess.length
+  const startTime = Date.now()
 
   let count = 0
   for (const movie of toProcess) {
+    const elapsedSec = (Date.now() - startTime) / 1000
+    const rate = count > 0 && elapsedSec > 0.5 ? Number((count / elapsedSec).toFixed(1)) : 0
+    const remaining = rate > 0 && total > count ? Math.round((total - count) / rate) : undefined
+
     emitProgress({
       type: 'posters',
       status: 'in_progress',
       message: `Downloading poster for: ${movie.title}`,
       current: count,
       total,
+      successCurrent: results.successful,
+      failedCurrent: results.failed + results.skipped,
+      embeddingsPerSecond: rate || undefined,
+      estimatedTimeRemaining: remaining,
     })
 
     try {
@@ -63,6 +72,8 @@ export default defineEventHandler(async event => {
       count++
     } catch (e: unknown) {
       results.failed++
+      results.processed++
+      count++
       results.errors.push(
         `Error downloading poster for ${movie.movieId}: ${e instanceof Error ? e.message : String(e)}`
       )
@@ -77,6 +88,8 @@ export default defineEventHandler(async event => {
     status: 'completed',
     current: count,
     total: count,
+    successCurrent: results.successful,
+    failedCurrent: results.failed + results.skipped,
     message: 'Poster download completed',
   })
 

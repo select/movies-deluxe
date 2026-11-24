@@ -21,16 +21,27 @@ export default defineEventHandler(async event => {
       total: 100,
     })
 
+    const startTime = Date.now()
+
     // Call the generation function with progress callback
     await generateSQLite({
       skipJsonGeneration: skipJson,
       onProgress: progress => {
+        const elapsedSec = (Date.now() - startTime) / 1000
+        const rate =
+          progress.current > 0 && elapsedSec > 1 ? Math.round(progress.current / elapsedSec) : 0
+        const remaining =
+          rate > 0 && progress.total > progress.current
+            ? Math.round((progress.total - progress.current) / rate)
+            : undefined
         emitProgress({
           type: 'sqlite',
           status: 'in_progress',
           current: progress.current,
           total: progress.total,
           message: progress.message,
+          embeddingsPerSecond: rate || undefined,
+          estimatedTimeRemaining: remaining,
         })
       },
     })

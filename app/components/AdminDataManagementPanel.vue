@@ -194,6 +194,20 @@
               <span class="text-theme-textmuted ml-1">({{ item.percent }}%)</span>
             </span>
             <span
+              v-if="item.successCurrent !== undefined"
+              class="inline-flex items-center gap-1 text-green-600 dark:text-green-400"
+            >
+              <div class="i-mdi-check-circle text-xs"></div>
+              {{ item.successCurrent.toLocaleString() }}
+            </span>
+            <span
+              v-if="item.failedCurrent !== undefined && item.failedCurrent > 0"
+              class="inline-flex items-center gap-1 text-orange-500"
+            >
+              <div class="i-mdi-alert-circle text-xs"></div>
+              {{ item.failedCurrent.toLocaleString() }}
+            </span>
+            <span
               v-if="item.rate"
               class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400"
             >
@@ -498,6 +512,8 @@ const activeProgressItems = computed(() => {
     color: string
     rate?: number
     eta?: string
+    successCurrent?: number
+    failedCurrent?: number
   }> = []
 
   const calcPercent = (current: number, total: number) =>
@@ -514,6 +530,8 @@ const activeProgressItems = computed(() => {
       percent: calcPercent(p.sqlite.current, p.sqlite.total),
       starting: p.sqlite.status === 'starting',
       color: 'bg-blue-500',
+      rate: p.sqlite.embeddingsPerSecond || undefined,
+      eta: p.sqlite.estimatedTimeRemaining ? formatETA(p.sqlite.estimatedTimeRemaining) : undefined,
     })
   }
   if (
@@ -533,6 +551,8 @@ const activeProgressItems = computed(() => {
       eta: p.embeddings.estimatedTimeRemaining
         ? formatETA(p.embeddings.estimatedTimeRemaining)
         : undefined,
+      successCurrent: p.embeddings.successCurrent,
+      failedCurrent: p.embeddings.failedCurrent,
     })
   }
   if (p.similar && (p.similar.status === 'starting' || p.similar.status === 'in_progress')) {
@@ -568,9 +588,11 @@ const activeProgressItems = computed(() => {
       percent: calcPercent(p.home.current, p.home.total),
       starting: p.home.status === 'starting',
       color: 'bg-sky-500',
+      rate: p.home.embeddingsPerSecond || undefined,
+      eta: p.home.estimatedTimeRemaining ? formatETA(p.home.estimatedTimeRemaining) : undefined,
     })
   }
-  if (p.posters && p.posters.status === 'in_progress') {
+  if (p.posters && (p.posters.status === 'starting' || p.posters.status === 'in_progress')) {
     items.push({
       key: 'posters',
       label: 'Posters',
@@ -578,11 +600,20 @@ const activeProgressItems = computed(() => {
       current: p.posters.current,
       total: p.posters.total,
       percent: calcPercent(p.posters.current, p.posters.total),
-      starting: false,
+      starting: p.posters.status === 'starting',
       color: 'bg-purple-500',
+      rate: p.posters.embeddingsPerSecond || undefined,
+      eta: p.posters.estimatedTimeRemaining
+        ? formatETA(p.posters.estimatedTimeRemaining)
+        : undefined,
+      successCurrent: p.posters.successCurrent,
+      failedCurrent: p.posters.failedCurrent,
     })
   }
-  if (p.posterArchive && p.posterArchive.status === 'in_progress') {
+  if (
+    p.posterArchive &&
+    (p.posterArchive.status === 'starting' || p.posterArchive.status === 'in_progress')
+  ) {
     items.push({
       key: 'posterArchive',
       label: 'Poster Archive',
@@ -590,11 +621,17 @@ const activeProgressItems = computed(() => {
       current: p.posterArchive.current,
       total: p.posterArchive.total,
       percent: calcPercent(p.posterArchive.current, p.posterArchive.total),
-      starting: false,
+      starting: p.posterArchive.status === 'starting',
       color: 'bg-purple-500',
+      eta: p.posterArchive.estimatedTimeRemaining
+        ? formatETA(p.posterArchive.estimatedTimeRemaining)
+        : undefined,
     })
   }
-  if (p.databaseArchive && p.databaseArchive.status === 'in_progress') {
+  if (
+    p.databaseArchive &&
+    (p.databaseArchive.status === 'starting' || p.databaseArchive.status === 'in_progress')
+  ) {
     items.push({
       key: 'databaseArchive',
       label: 'DB Archive',
@@ -602,8 +639,11 @@ const activeProgressItems = computed(() => {
       current: p.databaseArchive.current,
       total: p.databaseArchive.total,
       percent: calcPercent(p.databaseArchive.current, p.databaseArchive.total),
-      starting: false,
+      starting: p.databaseArchive.status === 'starting',
       color: 'bg-blue-500',
+      eta: p.databaseArchive.estimatedTimeRemaining
+        ? formatETA(p.databaseArchive.estimatedTimeRemaining)
+        : undefined,
     })
   }
 

@@ -81,18 +81,26 @@ export default defineEventHandler(async (): Promise<ArchiveResult> => {
 
     // Create tar.gz archives
     const archiveResults: ArchiveResult['archives'] = []
+    const startTime = Date.now()
 
     let archiveIndex = 1
     for (const archive of archives) {
       const archiveFilename = `posters-part${archiveIndex.toString().padStart(2, '0')}.tar.gz`
       const archivePath = join(dataDir, archiveFilename)
+      const completed = archiveIndex - 1
+      const elapsedSec = (Date.now() - startTime) / 1000
+      const remaining =
+        completed > 0 && elapsedSec > 0.5
+          ? Math.round(((archives.length - completed) * elapsedSec) / completed)
+          : undefined
 
       emitProgress({
         type: 'posterArchive',
         status: 'in_progress',
         message: `Creating archive ${archiveIndex}/${archives.length}`,
-        current: archiveIndex - 1,
+        current: completed,
         total: archives.length,
+        estimatedTimeRemaining: remaining,
       })
 
       // Create tar.gz archive
