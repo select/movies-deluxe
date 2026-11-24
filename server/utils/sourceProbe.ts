@@ -366,8 +366,26 @@ export async function probeYouTubeSources(
   if (stage2Queue.length > 0 && !options.skipStage2) {
     let youtube = options.youtube
     if (!youtube) {
-      const { Innertube } = await import('youtubei.js')
-      youtube = await Innertube.create()
+      try {
+        const { Innertube } = await import('youtubei.js')
+        youtube = await Innertube.create()
+      } catch (initError) {
+        const detail = initError instanceof Error ? initError.message : String(initError)
+        for (const videoId of stage2Queue) {
+          results.set(videoId, {
+            sourceId: videoId,
+            platform: 'youtube',
+            status: 'unavailable',
+            unavailableReason: 'unavailable_unknown',
+            unavailableDetail: `Innertube init failed: ${detail}`,
+            checkedAt: now,
+            stage: 2,
+            probeFailed: true,
+          })
+        }
+        options.onProgress?.(results.size, uniqueIds.length, 'stage2')
+        return results
+      }
     }
 
     const delayMs = options.stage2DelayMs ?? 250
@@ -375,57 +393,54 @@ export async function probeYouTubeSources(
       const videoId = stage2Queue[i]!
       const checkedAt = Math.floor(Date.now() / 1000)
 
-      try {
-        const info = await youtube.getBasicInfo(videoId)
-        const playability = info?.playability_status as
-          | { status?: string; reason?: unknown; error_screen?: unknown }
-          | undefined
+      const maxAttempts = 2
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const info = await youtube.getBasicInfo(videoId)
+          const playability = info?.playability_status as
+            | { status?: string; reason?: unknown; error_screen?: unknown }
+            | undefined
 
-        if (!playability) {
+          if (!playability) {
+            results.set(videoId, {
+              sourceId: videoId,
+              platform: 'youtube',
+              status: 'unavailable',
+              unavailableReason: 'deleted',
+              unavailableDetail: 'No playability_status returned by youtubei.js',
+              checkedAt,
+              stage: 2,
+            })
+          } else {
+            const classified = classifyYouTubePlayability(playability)
+            results.set(videoId, {
+              sourceId: videoId,
+              platform: 'youtube',
+              status: classified.status,
+              unavailableReason: classified.unavailableReason,
+              unavailableDetail: classified.unavailableDetail,
+              checkedAt,
+              stage: 2,
+            })
+          }
+          break
+        } catch (error) {
+          if (attempt < maxAttempts) {
+            await sleep(delayMs * attempt * 2)
+            continue
+          }
+          const msg = error instanceof Error ? error.message : String(error)
           results.set(videoId, {
             sourceId: videoId,
             platform: 'youtube',
             status: 'unavailable',
-            unavailableReason: 'deleted',
-            unavailableDetail: 'No playability_status returned by youtubei.js',
+            unavailableReason: 'unavailable_unknown',
+            unavailableDetail: msg,
             checkedAt,
             stage: 2,
-          })
-        } else {
-          const classified = classifyYouTubePlayability(playability)
-          results.set(videoId, {
-            sourceId: videoId,
-            platform: 'youtube',
-            status: classified.status,
-            unavailableReason: classified.unavailableReason,
-            unavailableDetail: classified.unavailableDetail,
-            checkedAt,
-            stage: 2,
+            probeFailed: true,
           })
         }
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error)
-        const lower = msg.toLowerCase()
-        let reason: SourceUnavailableReason = 'unavailable_unknown'
-        if (lower.includes('private')) reason = 'private'
-        else if (
-          lower.includes('deleted') ||
-          lower.includes('not found') ||
-          lower.includes('404')
-        ) {
-          reason = 'deleted'
-        }
-
-        results.set(videoId, {
-          sourceId: videoId,
-          platform: 'youtube',
-          status: 'unavailable',
-          unavailableReason: reason,
-          unavailableDetail: msg,
-          checkedAt,
-          stage: 2,
-          probeFailed: reason === 'unavailable_unknown',
-        })
       }
 
       options.onProgress?.(results.size, uniqueIds.length, 'stage2')
@@ -537,7 +552,8 @@ export async function probeArchiveSources(
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const response = await fetch(
-          `https://archive.org/metadata/${encodeURIComponent(identifier)}`
+          `https://archive.org/metadata/${encodeURIComponent(identifier)}`,
+          { signal: AbortSignal.timeout(30_000) }
         )
         if (response.status === 404) {
           results.set(

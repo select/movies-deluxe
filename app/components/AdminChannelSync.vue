@@ -462,24 +462,34 @@ const startPolling = () => {
   }, 5000)
 }
 
-watch(shouldPoll, active => {
-  if (active) {
-    startPolling()
-  } else {
-    stopPolling()
-  }
-})
+watch(
+  shouldPoll,
+  active => {
+    if (active) {
+      startPolling()
+    } else {
+      stopPolling()
+    }
+  },
+  { immediate: true }
+)
 
 const loadHistory = async () => {
   loadingHistory.value = true
   try {
     const data = await $fetch<SyncHistoryResponse>('/api/admin/scrape/sync-history')
     history.value = data
-    if (syncing.value && Date.now() - syncStartedAt.value > 5000) {
-      if (!(data.isRunning ?? false)) {
+    const serverRunning = data.isRunning ?? false
+    if (!serverRunning) {
+      if (syncing.value && Date.now() - syncStartedAt.value > 5000) {
         syncing.value = false
         adminStore.clearProgress('channelSync')
         await adminStore.refreshStats()
+      } else if (
+        !syncing.value &&
+        (syncProgress.value?.status === 'starting' || syncProgress.value?.status === 'in_progress')
+      ) {
+        adminStore.clearProgress('channelSync')
       }
     }
   } catch (e) {
@@ -493,7 +503,11 @@ const loadHistory = async () => {
 watch(syncProgress, async (current, prev) => {
   if (!current) return
   if (current.status === 'completed' || current.status === 'error') {
-    const wasActive = prev?.status === 'starting' || prev?.status === 'in_progress' || syncing.value
+    const wasActive =
+      prev?.status === 'starting' ||
+      prev?.status === 'in_progress' ||
+      syncing.value ||
+      (history.value?.isRunning ?? false)
     if (wasActive) {
       syncing.value = false
       if (current.channelSyncResult) {

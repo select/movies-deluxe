@@ -181,8 +181,8 @@ function logSyncEvent(
   )
 }
 
-function shouldRestoreSource(row: DbSourceRow): boolean {
-  if (row.status === 'removed_from_channel' || row.status === 'unlisted') {
+function shouldRestoreSource(row: DbSourceRow, includeUnlisted = true): boolean {
+  if (row.status === 'removed_from_channel' || (includeUnlisted && row.status === 'unlisted')) {
     return true
   }
   if (
@@ -215,7 +215,7 @@ async function fetchArchivePageWithRetry(
   let lastError: unknown
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const response = await fetch(url.toString())
+      const response = await fetch(url.toString(), { signal: AbortSignal.timeout(30_000) })
       if (!response.ok) {
         throw new Error(`Archive.org HTTP ${response.status}: ${response.statusText}`)
       }
@@ -403,7 +403,7 @@ async function syncYouTubeChannel(
     for (const sourceId of presentIds) {
       const rows = dbBySourceId.get(sourceId) || []
       for (const row of rows) {
-        if (shouldRestoreSource(row)) {
+        if (shouldRestoreSource(row, false)) {
           if (!options.probeActive) {
             summary.restored++
             if (!options.dryRun && runId !== undefined) {
@@ -1103,6 +1103,17 @@ export async function syncChannels(
   try {
     const startedAt = Math.floor(Date.now() / 1000)
     const db = options.db ?? getAdminDatabase()
+    if (!options.dryRun) {
+      db.prepare(
+        `
+        UPDATE channel_sync_runs
+        SET status = 'failed',
+            completedAt = COALESCE(completedAt, ?),
+            error = COALESCE(error, 'Interrupted before completion')
+        WHERE status = 'running'
+      `
+      ).run(startedAt)
+    }
     const platform = options.platform ?? 'all'
     const dryRun = options.dryRun ?? false
     const retryFailed = options.retryFailed ?? false
