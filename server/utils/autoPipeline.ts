@@ -833,7 +833,7 @@ export async function runAutoCleanArchivePreviews(
   let removedRedundant = 0
   let markedIncomplete = 0
   let skippedCartoons = 0
-  let queuedBorderline = 0
+  const queuedBorderline = 0
   const samples: AutoCleanPreviewsResult['samples'] = []
   const now = new Date().toISOString()
 
@@ -897,53 +897,9 @@ export async function runAutoCleanArchivePreviews(
         if (!analysis.isLikelyPreview) continue
 
         const hasKeyword = analysis.flags.includes('preview_keyword')
-        const isTiny = analysis.sizeMB !== null && analysis.sizeMB < 5
-        const isVeryLowRatioFeature =
-          runtimeMin !== null &&
-          runtimeMin >= 50 &&
-          analysis.mbPerMin !== null &&
-          (analysis.mbPerMin < 0.5 || (analysis.mbPerMin < 0.8 && hasKeyword))
-
-        const isHighConfidencePreview = isTiny || isVeryLowRatioFeature
         const hasHealthySibling = allSources.some(other =>
           isHealthySiblingSource(other, runtimeMin, src.id)
         )
-
-        if (!isHighConfidencePreview) {
-          queuedBorderline++
-          if (!dryRun) {
-            enqueueReviewItem(db, {
-              movieId: movie.movieId,
-              kind: 'archive_preview',
-              sourceId: src.sourceId,
-              currentImdbId: movie.movieId,
-              proposedImdbId: null,
-              score: analysis.mbPerMin,
-              flags: analysis.flags,
-              candidate: {
-                sourceTitle: src.title,
-                omdbTitle: movie.title,
-                sizeMB: analysis.sizeMB,
-                runtimeMinutes: analysis.runtimeMinutes,
-                mbPerMin: analysis.mbPerMin,
-                reason: analysis.reason,
-              },
-            })
-          }
-          if (samples.length < 30) {
-            samples.push({
-              movieId: movie.movieId,
-              sourceId: src.sourceId,
-              title: src.title || movie.title,
-              action: 'queue_borderline',
-              sizeMB: analysis.sizeMB,
-              runtimeMin,
-              mbPerMin: analysis.mbPerMin,
-              flags: analysis.flags,
-            })
-          }
-          continue
-        }
 
         if (hasHealthySibling && removeRedundant) {
           removedRedundant++
@@ -1160,6 +1116,63 @@ export async function runAutoAuditFalseHits(
      WHERE s.movieId = ?`
   )
 
+  const autoFlagLowRatioArchiveSource = async (
+    movie: { movieId: string; movieTitle: string },
+    primarySource: SourceRow,
+    candidateRuntimeMin: number | null,
+    queueRowId?: number
+  ): Promise<boolean> => {
+    if (primarySource.platform !== 'archive.org') return false
+    const analysis = analyzeArchiveSourceSize({
+      sourceId: primarySource.sourceId,
+      title: primarySource.title,
+      description: primarySource.description,
+      sizeBytes: primarySource.size,
+      durationSeconds: primarySource.duration,
+      runtimeMinutes: candidateRuntimeMin,
+    })
+    const hasLowRatioOrTiny =
+      analysis.flags.includes('low_mb_per_min_feature') ||
+      analysis.flags.includes('tiny_or_empty_file')
+    if (!hasLowRatioOrTiny) return false
+
+    const now = new Date().toISOString()
+    if (!dryRun) {
+      await serializeDbWrite(() => {
+        db.prepare(
+          "INSERT OR IGNORE INTO source_quality_marks (sourceId, mark, addedAt) VALUES (?, 'incomplete', ?)"
+        ).run(primarySource.id, now)
+        if (analysis.flags.includes('preview_keyword')) {
+          const label = /\b(trailer|tv\s*spot)\b/i.test(
+            `${primarySource.title || ''} ${primarySource.sourceId}`
+          )
+            ? 'trailer'
+            : 'clip'
+          db.prepare(
+            'INSERT OR IGNORE INTO movie_quality_labels (movieId, label, addedAt) VALUES (?, ?, ?)'
+          ).run(movie.movieId, label, now)
+        }
+        db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(now, movie.movieId)
+        if (queueRowId !== undefined) {
+          resolveReviewItem(db, queueRowId, 'approved')
+        } else {
+          db.prepare(
+            `UPDATE match_review_queue
+             SET status = 'approved', resolvedAt = datetime('now')
+             WHERE movieId = ? AND status = 'pending' AND kind IN ('false_hit', 'archive_preview')`
+          ).run(movie.movieId)
+        }
+        recordAudit(
+          movie.movieId,
+          'kept',
+          `Auto-flagged incomplete (${analysis.reason || analysis.flags.join(', ')})`
+        )
+      })
+    }
+
+    return true
+  }
+
   const total = queueRows.length + movies.length
   let scanned = 0
   let deterministicFlagged = 0
@@ -1219,6 +1232,24 @@ export async function runAutoAuditFalseHits(
           primarySource.duration && primarySource.duration > 0
             ? Math.round(primarySource.duration / 60)
             : null
+
+        if (
+          await autoFlagLowRatioArchiveSource(movie, primarySource, candidateRuntimeMin, row.id)
+        ) {
+          deterministicFlagged++
+          if (samples.length < 30) {
+            samples.push({
+              movieId: movie.movieId,
+              title: candidateTitle,
+              action: 'kept',
+              llmVerdict: 'match',
+              llmConfidence: 1,
+              llmReason: 'Auto-flagged low MB/min Archive.org source as incomplete',
+              flags: ['low_mb_per_min_feature'],
+            })
+          }
+          return
+        }
 
         const hasCachedVerdict =
           row.llmVerdict !== null &&
@@ -1434,6 +1465,22 @@ export async function runAutoAuditFalseHits(
           : null
 
       try {
+        if (await autoFlagLowRatioArchiveSource(movie, primarySource, candidateRuntimeMin)) {
+          deterministicFlagged++
+          if (samples.length < 30) {
+            samples.push({
+              movieId: movie.movieId,
+              title: candidateTitle,
+              action: 'kept',
+              llmVerdict: 'match',
+              llmConfidence: 1,
+              llmReason: 'Auto-flagged low MB/min Archive.org source as incomplete',
+              flags: ['low_mb_per_min_feature'],
+            })
+          }
+          return
+        }
+
         const scoreResult = scoreMatchCandidate(
           {
             title: rawSourceTitle,
