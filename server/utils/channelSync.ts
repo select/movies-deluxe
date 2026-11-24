@@ -45,6 +45,23 @@ export interface SyncChannelsProgress {
   total: number
   message: string
   channelId?: string
+  channelName?: string
+  channelCurrent?: number
+  channelTotal?: number
+  successCurrent?: number
+  failedCurrent?: number
+  rate?: number
+  estimatedTimeRemaining?: number
+}
+
+interface ChannelItemProgress {
+  current: number
+  total: number
+  message: string
+  successCurrent?: number
+  failedCurrent?: number
+  rate?: number
+  estimatedTimeRemaining?: number
 }
 
 export interface SyncChannelsOptions extends SyncChannelsRequest {
@@ -271,6 +288,7 @@ async function syncYouTubeChannel(
     retryFailed: boolean
     probeActive: boolean
     onStatus?: (message: string) => void
+    onProgress?: (progress: ChannelItemProgress) => void
   }
 ): Promise<SyncChannelSummary> {
   const startedAt = Math.floor(Date.now() / 1000)
@@ -405,14 +423,22 @@ async function syncYouTubeChannel(
       }
 
       const minDuration = getMinMovieDurationSeconds()
+      const addStartTime = Date.now()
       let processedNew = 0
+      let skippedOrFailed = 0
+
+      if (addedIds.length > 0) {
+        options.onProgress?.({
+          current: 0,
+          total: addedIds.length,
+          message: `Checking ${addedIds.length} new video(s)...`,
+          successCurrent: 0,
+          failedCurrent: 0,
+        })
+      }
+
       for (const videoId of addedIds) {
-        processedNew++
-        if (processedNew % 25 === 0 || processedNew === addedIds.length) {
-          options.onStatus?.(
-            `[${channelConfig.name}] Checked ${processedNew}/${addedIds.length} new videos (added: ${summary.added})`
-          )
-        }
+        let itemTitle = videoId
         try {
           const fullVideo = await youtube.getBasicInfo(videoId)
           if (!fullVideo || !fullVideo.basic_info) {
@@ -422,89 +448,92 @@ async function syncYouTubeChannel(
               title: 'Unknown',
               reason: 'missing_data',
             })
-            continue
-          }
+            skippedOrFailed++
+          } else {
+            const title = fullVideo.basic_info.title || 'Unknown'
+            itemTitle = title
+            const duration = fullVideo.basic_info.duration || 0
+            let skipReason: FailureReason | null = null
 
-          const title = fullVideo.basic_info.title || 'Unknown'
-          const duration = fullVideo.basic_info.duration || 0
-          let skipReason: FailureReason | null = null
-
-          if (
-            (fullVideo.basic_info &&
-              typeof fullVideo.basic_info === 'object' &&
-              'is_short' in fullVideo.basic_info &&
-              fullVideo.basic_info.is_short) ||
-            title.toLowerCase().includes('#shorts')
-          ) {
-            skipReason = 'shorts'
-          } else if (
-            title.toLowerCase().includes('trailer') ||
-            title.toLowerCase().includes('clip') ||
-            title.toLowerCase().includes('preview')
-          ) {
-            skipReason = 'trailer_clip'
-          } else if (duration < minDuration) {
-            skipReason = 'duration'
-          }
-
-          if (skipReason) {
-            saveFailedYouTubeVideo({
-              videoId,
-              channelId: channelConfig.id,
-              title,
-              reason: skipReason,
-              duration,
-            })
-            continue
-          }
-
-          const probe = addedProbeResults.get(videoId)
-          const hasRealProbe = probe && probe.stage !== 'skipped'
-
-          const movieEntry = await processYouTubeVideo(
-            {
-              id: videoId,
-              title,
-              description: fullVideo.basic_info.short_description || '',
-              publishedAt:
-                (fullVideo.basic_info &&
+            if (
+              (fullVideo.basic_info &&
                 typeof fullVideo.basic_info === 'object' &&
-                'upload_date' in fullVideo.basic_info
-                  ? (fullVideo.basic_info.upload_date as string)
-                  : '') || '',
-              channelName: fullVideo.basic_info.author || channelConfig.name,
-              channelId: channelConfig.id,
-              duration,
-              viewCount: fullVideo.basic_info.view_count || 0,
-              regionRestriction: hasRealProbe ? probe.regionRestriction : undefined,
-              status: hasRealProbe ? probe.status : undefined,
-              unavailableReason: hasRealProbe ? probe.unavailableReason : undefined,
-              unavailableDetail: hasRealProbe ? probe.unavailableDetail : undefined,
-              lastCheckedAt: hasRealProbe ? probe.checkedAt : undefined,
-            },
-            channelConfig
-          )
-
-          if (movieEntry && movieEntry.sources[0]) {
-            movieEntry.sources[0].channelName = channelConfig.name
-            movieEntry.sources[0].type = 'youtube'
-            if (!movieEntry.sources[0].status) {
-              movieEntry.sources[0].status = 'active'
+                'is_short' in fullVideo.basic_info &&
+                fullVideo.basic_info.is_short) ||
+              title.toLowerCase().includes('#shorts')
+            ) {
+              skipReason = 'shorts'
+            } else if (
+              title.toLowerCase().includes('trailer') ||
+              title.toLowerCase().includes('clip') ||
+              title.toLowerCase().includes('preview')
+            ) {
+              skipReason = 'trailer_clip'
+            } else if (duration < minDuration) {
+              skipReason = 'duration'
             }
-            movieEntry.sources[0].lastSeenAt = now
-            await upsertMovie(movieEntry.movieId, movieEntry)
-            removeFailedYouTubeVideo(videoId)
-            summary.added++
 
-            if (runId !== undefined) {
-              logSyncEvent(db, {
-                runId,
+            if (skipReason) {
+              saveFailedYouTubeVideo({
+                videoId,
                 channelId: channelConfig.id,
-                sourceId: videoId,
-                movieId: movieEntry.movieId,
-                eventType: 'added',
-                createdAt: now,
+                title,
+                reason: skipReason,
+                duration,
               })
+              skippedOrFailed++
+            } else {
+              const probe = addedProbeResults.get(videoId)
+              const hasRealProbe = probe && probe.stage !== 'skipped'
+
+              const movieEntry = await processYouTubeVideo(
+                {
+                  id: videoId,
+                  title,
+                  description: fullVideo.basic_info.short_description || '',
+                  publishedAt:
+                    (fullVideo.basic_info &&
+                    typeof fullVideo.basic_info === 'object' &&
+                    'upload_date' in fullVideo.basic_info
+                      ? (fullVideo.basic_info.upload_date as string)
+                      : '') || '',
+                  channelName: fullVideo.basic_info.author || channelConfig.name,
+                  channelId: channelConfig.id,
+                  duration,
+                  viewCount: fullVideo.basic_info.view_count || 0,
+                  regionRestriction: hasRealProbe ? probe.regionRestriction : undefined,
+                  status: hasRealProbe ? probe.status : undefined,
+                  unavailableReason: hasRealProbe ? probe.unavailableReason : undefined,
+                  unavailableDetail: hasRealProbe ? probe.unavailableDetail : undefined,
+                  lastCheckedAt: hasRealProbe ? probe.checkedAt : undefined,
+                },
+                channelConfig
+              )
+
+              if (movieEntry && movieEntry.sources[0]) {
+                movieEntry.sources[0].channelName = channelConfig.name
+                movieEntry.sources[0].type = 'youtube'
+                if (!movieEntry.sources[0].status) {
+                  movieEntry.sources[0].status = 'active'
+                }
+                movieEntry.sources[0].lastSeenAt = now
+                await upsertMovie(movieEntry.movieId, movieEntry)
+                removeFailedYouTubeVideo(videoId)
+                summary.added++
+
+                if (runId !== undefined) {
+                  logSyncEvent(db, {
+                    runId,
+                    channelId: channelConfig.id,
+                    sourceId: videoId,
+                    movieId: movieEntry.movieId,
+                    eventType: 'added',
+                    createdAt: now,
+                  })
+                }
+              } else {
+                skippedOrFailed++
+              }
             }
           }
         } catch {
@@ -514,7 +543,27 @@ async function syncYouTubeChannel(
             title: 'Error',
             reason: 'api_error',
           })
+          skippedOrFailed++
         }
+
+        processedNew++
+        const elapsedSec = (Date.now() - addStartTime) / 1000
+        const rate =
+          processedNew > 0 && elapsedSec > 0.5 ? Number((processedNew / elapsedSec).toFixed(1)) : 0
+        const remaining =
+          rate > 0 && addedIds.length > processedNew
+            ? Math.round((addedIds.length - processedNew) / rate)
+            : undefined
+
+        options.onProgress?.({
+          current: processedNew,
+          total: addedIds.length,
+          message: itemTitle,
+          successCurrent: summary.added,
+          failedCurrent: skippedOrFailed,
+          rate: rate || undefined,
+          estimatedTimeRemaining: remaining,
+        })
 
         await sleep(200)
       }
@@ -672,6 +721,7 @@ async function syncArchiveCollection(
   options: {
     dryRun: boolean
     onStatus?: (message: string) => void
+    onProgress?: (progress: ChannelItemProgress) => void
   }
 ): Promise<SyncChannelSummary> {
   const channelId = 'archive.org'
@@ -778,12 +828,22 @@ async function syncArchiveCollection(
     if (options.dryRun) {
       summary.added = addedItems.length
     } else {
+      const addStartTime = Date.now()
       let processedNew = 0
+      let skippedOrFailed = 0
+
+      if (addedItems.length > 0) {
+        options.onProgress?.({
+          current: 0,
+          total: addedItems.length,
+          message: `Adding ${addedItems.length} new item(s)...`,
+          successCurrent: 0,
+          failedCurrent: 0,
+        })
+      }
+
       for (const item of addedItems) {
         processedNew++
-        if (processedNew % 100 === 0 || processedNew === addedItems.length) {
-          options.onStatus?.(`[Archive.org] Added ${processedNew}/${addedItems.length} new items`)
-        }
         const movieEntry = await processArchiveMovie(item, 'feature_films')
         if (movieEntry && movieEntry.sources[0]) {
           movieEntry.sources[0].channelName = channelName
@@ -802,6 +862,30 @@ async function syncArchiveCollection(
               createdAt: now,
             })
           }
+        } else {
+          skippedOrFailed++
+        }
+
+        if (processedNew % 10 === 0 || processedNew === addedItems.length) {
+          const elapsedSec = (Date.now() - addStartTime) / 1000
+          const rate =
+            processedNew > 0 && elapsedSec > 0.5
+              ? Number((processedNew / elapsedSec).toFixed(1))
+              : 0
+          const remaining =
+            rate > 0 && addedItems.length > processedNew
+              ? Math.round((addedItems.length - processedNew) / rate)
+              : undefined
+
+          options.onProgress?.({
+            current: processedNew,
+            total: addedItems.length,
+            message: item.title || item.identifier,
+            successCurrent: summary.added,
+            failedCurrent: skippedOrFailed,
+            rate: rate || undefined,
+            estimatedTimeRemaining: remaining,
+          })
         }
       }
     }
@@ -955,11 +1039,15 @@ export async function syncChannels(
       }
 
       for (const ch of ytTargets) {
+        const channelCurrent = completedTargets + 1
         options.onProgress?.({
-          current: completedTargets,
-          total: totalTargets,
+          current: 0,
+          total: 0,
           channelId: ch.id,
-          message: `Syncing ${ch.name}...`,
+          channelName: ch.name,
+          channelCurrent,
+          channelTotal: totalTargets,
+          message: `Fetching ${ch.name} playlist...`,
         })
 
         const summary = await syncYouTubeChannel(db, ch, youtube, apiKey, {
@@ -968,10 +1056,22 @@ export async function syncChannels(
           probeActive,
           onStatus: message => {
             options.onProgress?.({
-              current: completedTargets,
-              total: totalTargets,
+              current: 0,
+              total: 0,
               channelId: ch.id,
+              channelName: ch.name,
+              channelCurrent,
+              channelTotal: totalTargets,
               message,
+            })
+          },
+          onProgress: itemProgress => {
+            options.onProgress?.({
+              ...itemProgress,
+              channelId: ch.id,
+              channelName: ch.name,
+              channelCurrent,
+              channelTotal: totalTargets,
             })
           },
         })
@@ -982,6 +1082,10 @@ export async function syncChannels(
           current: completedTargets,
           total: totalTargets,
           channelId: ch.id,
+          channelName: ch.name,
+          channelCurrent,
+          channelTotal: totalTargets,
+          successCurrent: summary.added,
           message: `Finished ${ch.name}: +${summary.added} / -${summary.removed} / ↺${summary.restored}`,
         })
       }
@@ -989,21 +1093,37 @@ export async function syncChannels(
   }
 
   if (includeArchive) {
+    const channelCurrent = completedTargets + 1
     options.onProgress?.({
-      current: completedTargets,
-      total: totalTargets,
+      current: 0,
+      total: 0,
       channelId: 'archive.org',
-      message: 'Syncing Archive.org (feature_films)...',
+      channelName: 'Archive.org',
+      channelCurrent,
+      channelTotal: totalTargets,
+      message: 'Fetching Archive.org catalog...',
     })
 
     const archiveSummary = await syncArchiveCollection(db, {
       dryRun,
       onStatus: message => {
         options.onProgress?.({
-          current: completedTargets,
-          total: totalTargets,
+          current: 0,
+          total: 0,
           channelId: 'archive.org',
+          channelName: 'Archive.org',
+          channelCurrent,
+          channelTotal: totalTargets,
           message,
+        })
+      },
+      onProgress: itemProgress => {
+        options.onProgress?.({
+          ...itemProgress,
+          channelId: 'archive.org',
+          channelName: 'Archive.org',
+          channelCurrent,
+          channelTotal: totalTargets,
         })
       },
     })
@@ -1014,6 +1134,10 @@ export async function syncChannels(
       current: completedTargets,
       total: totalTargets,
       channelId: 'archive.org',
+      channelName: 'Archive.org',
+      channelCurrent,
+      channelTotal: totalTargets,
+      successCurrent: archiveSummary.added,
       message: `Finished Archive.org: +${archiveSummary.added} / -${archiveSummary.removed} / ↺${archiveSummary.restored}`,
     })
   }

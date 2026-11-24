@@ -27,6 +27,9 @@ export interface ProgressUpdate {
   failedPrevious?: number
   embeddingsPerSecond?: number
   estimatedTimeRemaining?: number
+  channelCurrent?: number
+  channelTotal?: number
+  channelName?: string
   lastError?: string
 }
 

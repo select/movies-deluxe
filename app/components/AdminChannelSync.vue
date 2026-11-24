@@ -120,23 +120,69 @@
         syncProgress &&
         (syncProgress.status === 'starting' || syncProgress.status === 'in_progress')
       "
-      class="space-y-2 p-3 rounded-lg bg-theme-background border border-theme-border"
+      class="p-2.5 rounded-xl border border-theme-border bg-theme-background/60 space-y-1.5"
     >
-      <div class="flex items-center justify-between text-xs">
-        <span class="text-theme-textmuted truncate mr-2">{{ syncProgress.message }}</span>
-        <span v-if="syncProgress.total > 0" class="font-mono text-nowrap">
-          {{ syncProgress.current }} / {{ syncProgress.total }}
-        </span>
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="font-semibold text-theme-text shrink-0">
+            <template v-if="syncProgress.channelTotal && syncProgress.channelTotal > 1">
+              Channel {{ syncProgress.channelCurrent || 1 }}/{{ syncProgress.channelTotal }}
+              <template v-if="syncProgress.channelName">
+                · {{ syncProgress.channelName }}
+              </template>
+            </template>
+            <template v-else-if="syncProgress.channelName">
+              {{ syncProgress.channelName }}
+            </template>
+            <template v-else>Channel Sync</template>
+          </span>
+          <span class="text-theme-textmuted truncate">{{ syncProgress.message }}</span>
+        </div>
+        <div class="flex items-center gap-3 font-mono text-[11px] shrink-0">
+          <span v-if="syncProgress.total > 0" class="text-theme-text">
+            {{ syncProgress.current.toLocaleString() }} /
+            {{ syncProgress.total.toLocaleString() }}
+            <span class="text-theme-textmuted ml-1">({{ syncPercent }}%)</span>
+          </span>
+          <span
+            v-if="syncProgress.successCurrent !== undefined"
+            class="inline-flex items-center gap-1 text-green-600 dark:text-green-400"
+          >
+            <div class="i-mdi-check-circle text-xs"></div>
+            {{ syncProgress.successCurrent.toLocaleString() }}
+          </span>
+          <span
+            v-if="syncProgress.failedCurrent !== undefined && syncProgress.failedCurrent > 0"
+            class="inline-flex items-center gap-1 text-orange-500"
+          >
+            <div class="i-mdi-alert-circle text-xs"></div>
+            {{ syncProgress.failedCurrent.toLocaleString() }}
+          </span>
+          <span
+            v-if="syncProgress.embeddingsPerSecond"
+            class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400"
+          >
+            <div class="i-mdi-speedometer text-xs"></div>
+            {{ syncProgress.embeddingsPerSecond }}/s
+          </span>
+          <span
+            v-if="syncProgress.estimatedTimeRemaining && syncProgress.estimatedTimeRemaining > 0"
+            class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400"
+          >
+            <div class="i-mdi-timer-outline text-xs"></div>
+            ETA {{ formatETA(syncProgress.estimatedTimeRemaining) }}
+          </span>
+        </div>
       </div>
       <div class="h-2 bg-theme-border rounded-full overflow-hidden">
         <div
+          v-if="syncProgress.status === 'starting' || syncProgress.total === 0"
+          class="h-full bg-blue-500 animate-pulse w-full"
+        ></div>
+        <div
+          v-else
           class="h-full bg-blue-500 transition-all duration-300"
-          :style="{
-            width:
-              syncProgress.total > 0
-                ? `${Math.min(100, (syncProgress.current / syncProgress.total) * 100)}%`
-                : '100%',
-          }"
+          :style="{ width: `${syncPercent}%` }"
         ></div>
       </div>
     </div>
@@ -341,6 +387,22 @@ const history = ref<SyncHistoryResponse | null>(null)
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
 const syncProgress = computed(() => progress.value.channelSync)
+
+const syncPercent = computed(() => {
+  const p = syncProgress.value
+  if (!p || p.total <= 0) return 0
+  return Math.min(100, Math.round((p.current / p.total) * 100))
+})
+
+function formatETA(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  if (mins < 60) return `${mins}m ${secs}s`
+  const hours = Math.floor(mins / 60)
+  const remMins = mins % 60
+  return `${hours}h ${remMins}m`
+}
 
 const selectableChannels = computed(() => [
   ...youtubeChannels.value.map(c => ({

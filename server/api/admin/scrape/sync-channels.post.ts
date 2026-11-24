@@ -29,6 +29,13 @@ export default defineEventHandler(async event => {
           current: progress.current,
           total: progress.total,
           message: progress.message,
+          successCurrent: progress.successCurrent,
+          failedCurrent: progress.failedCurrent,
+          embeddingsPerSecond: progress.rate,
+          estimatedTimeRemaining: progress.estimatedTimeRemaining,
+          channelCurrent: progress.channelCurrent,
+          channelTotal: progress.channelTotal,
+          channelName: progress.channelName,
         })
       },
     })
