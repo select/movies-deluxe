@@ -433,18 +433,11 @@ const allEnabledSelected = computed(
 
 const syncStartedAt = ref(0)
 
-const hasRecentRunningRun = computed(() => {
-  const runs = history.value?.runs
-  if (!runs || runs.length === 0) return false
-  const cutoff = Math.floor(Date.now() / 1000) - 7200
-  return runs.some(r => r.status === 'running' && r.startedAt >= cutoff)
-})
-
 const hasRunningExternalSync = computed(() => {
   if (syncing.value) return false
   const progressActive =
     syncProgress.value?.status === 'starting' || syncProgress.value?.status === 'in_progress'
-  return (history.value?.isRunning ?? false) || hasRecentRunningRun.value || progressActive
+  return (history.value?.isRunning ?? false) || progressActive
 })
 
 const shouldPoll = computed(() => syncing.value || hasRunningExternalSync.value)
@@ -486,10 +479,15 @@ const loadHistory = async () => {
   try {
     const data = await $fetch<SyncHistoryResponse>('/api/admin/scrape/sync-history')
     history.value = data
-    const serverRunning = (data.isRunning ?? false) || hasRecentRunningRun.value
+    const serverRunning = data.isRunning ?? false
     if (!serverRunning) {
+      const progressActive =
+        syncProgress.value?.status === 'starting' || syncProgress.value?.status === 'in_progress'
       if (syncing.value && Date.now() - syncStartedAt.value > 15000) {
         syncing.value = false
+        adminStore.clearProgress('channelSync')
+        await adminStore.refreshStats()
+      } else if (!syncing.value && progressActive) {
         adminStore.clearProgress('channelSync')
         await adminStore.refreshStats()
       }
@@ -504,15 +502,21 @@ const loadHistory = async () => {
 
 watch(syncProgress, async (current, prev) => {
   if (!current) return
+  if (current.status === 'starting') {
+    syncError.value = null
+    return
+  }
   if (current.status === 'completed' || current.status === 'error') {
     const wasActive =
       prev?.status === 'starting' ||
       prev?.status === 'in_progress' ||
       syncing.value ||
-      (history.value?.isRunning ?? false) ||
-      hasRecentRunningRun.value
+      (history.value?.isRunning ?? false)
     if (wasActive) {
       syncing.value = false
+      if (current.status === 'completed') {
+        syncError.value = null
+      }
       if (current.channelSyncResult) {
         lastResult.value = current.channelSyncResult
       }

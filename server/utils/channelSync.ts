@@ -642,7 +642,7 @@ async function syncYouTubeChannel(
           if (phase === 'stage2') {
             if (stage2Start === null) {
               stage2Start = Date.now()
-              stage2Baseline = Math.max(0, current - 1)
+              stage2Baseline = current
             }
             rateInfo = computeRateAndEta(
               current - stage2Baseline,
