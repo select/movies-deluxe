@@ -430,9 +430,20 @@ const allEnabledSelected = computed(
     enabledChannelIds.value.every(id => selectedChannels.value.includes(id))
 )
 
+const syncStartedAt = ref(0)
+
+const hasRecentRunningRun = computed(() => {
+  const runs = history.value?.runs
+  if (!runs || runs.length === 0) return false
+  const cutoff = Math.floor(Date.now() / 1000) - 7200
+  return runs.some(r => r.status === 'running' && r.startedAt >= cutoff)
+})
+
 const hasRunningExternalSync = computed(
-  () => !syncing.value && (history.value?.runs?.some(r => r.status === 'running') ?? false)
+  () => !syncing.value && ((history.value?.isRunning ?? false) || hasRecentRunningRun.value)
 )
+
+const shouldPoll = computed(() => syncing.value || hasRunningExternalSync.value)
 
 const selectAllChannels = () => {
   selectedChannels.value = [...enabledChannelIds.value]
@@ -454,8 +465,8 @@ const startPolling = () => {
   }, 5000)
 }
 
-watch(hasRunningExternalSync, running => {
-  if (running) {
+watch(shouldPoll, active => {
+  if (active) {
     startPolling()
   } else {
     stopPolling()
@@ -465,7 +476,15 @@ watch(hasRunningExternalSync, running => {
 const loadHistory = async () => {
   loadingHistory.value = true
   try {
-    history.value = await $fetch<SyncHistoryResponse>('/api/admin/scrape/sync-history')
+    const data = await $fetch<SyncHistoryResponse>('/api/admin/scrape/sync-history')
+    history.value = data
+    if (syncing.value && Date.now() - syncStartedAt.value > 5000) {
+      const stillRunning = (data.isRunning ?? false) || hasRecentRunningRun.value
+      if (!stillRunning) {
+        syncing.value = false
+        await adminStore.refreshStats()
+      }
+    }
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Failed to load sync history:', e)
@@ -497,6 +516,7 @@ watch(
 const runSync = async () => {
   if (syncing.value || hasRunningExternalSync.value) return
   syncing.value = true
+  syncStartedAt.value = Date.now()
   syncError.value = null
   try {
     const channels = selectedChannels.value.length > 0 ? selectedChannels.value : undefined

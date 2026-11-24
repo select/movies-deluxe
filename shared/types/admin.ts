@@ -100,6 +100,7 @@ export interface SyncHistoryResponse {
   runs: ChannelSyncRun[]
   events: ChannelSyncEvent[]
   channelCounts: ChannelStatusCounts[]
+  isRunning?: boolean
 }
 
 export type ProgressType =

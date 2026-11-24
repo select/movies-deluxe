@@ -573,7 +573,7 @@ async function syncYouTubeChannel(
         options.onProgress?.({
           current: processedNew,
           total: addedIds.length,
-          message: itemTitle,
+          message: `New videos: ${itemTitle}`,
           successCurrent: summary.added,
           failedCurrent: skippedOrFailed,
           rate,
@@ -935,7 +935,7 @@ async function syncArchiveCollection(
           options.onProgress?.({
             current: processedNew,
             total: addedItems.length,
-            message: item.title || item.identifier,
+            message: `New items: ${item.title || item.identifier}`,
             successCurrent: summary.added,
             failedCurrent: skippedOrFailed,
             rate,
@@ -1048,112 +1048,84 @@ async function syncArchiveCollection(
   }
 }
 
+let activeSyncRunning = false
+
+export function isChannelSyncRunning(): boolean {
+  return activeSyncRunning
+}
+
 export async function syncChannels(
   options: SyncChannelsOptions = {}
 ): Promise<SyncChannelsResponse> {
-  const startedAt = Math.floor(Date.now() / 1000)
-  const db = options.db ?? getAdminDatabase()
-  const platform = options.platform ?? 'all'
-  const dryRun = options.dryRun ?? false
-  const retryFailed = options.retryFailed ?? false
-  const probeActive = options.probeActive ?? false
+  if (activeSyncRunning) {
+    throw new Error('Channel sync is already running')
+  }
+  activeSyncRunning = true
+  try {
+    const startedAt = Math.floor(Date.now() / 1000)
+    const db = options.db ?? getAdminDatabase()
+    const platform = options.platform ?? 'all'
+    const dryRun = options.dryRun ?? false
+    const retryFailed = options.retryFailed ?? false
+    const probeActive = options.probeActive ?? false
 
-  const requestedChannels = options.channels?.filter(Boolean)
-  const allYtConfigs = loadYouTubeChannelConfigs()
-  const enabledYtConfigs = allYtConfigs.filter(c => c.enabled)
+    const requestedChannels = options.channels?.filter(Boolean)
+    const allYtConfigs = loadYouTubeChannelConfigs()
+    const enabledYtConfigs = allYtConfigs.filter(c => c.enabled)
 
-  const ytTargets =
-    platform === 'archive'
-      ? []
-      : requestedChannels && requestedChannels.length > 0
-        ? allYtConfigs.filter(c => requestedChannels.includes(c.id))
-        : enabledYtConfigs
+    const ytTargets =
+      platform === 'archive'
+        ? []
+        : requestedChannels && requestedChannels.length > 0
+          ? allYtConfigs.filter(c => requestedChannels.includes(c.id))
+          : enabledYtConfigs
 
-  const includeArchive =
-    platform === 'archive' ||
-    (platform === 'all' &&
-      (!requestedChannels ||
-        requestedChannels.length === 0 ||
-        requestedChannels.includes('archive.org')))
+    const includeArchive =
+      platform === 'archive' ||
+      (platform === 'all' &&
+        (!requestedChannels ||
+          requestedChannels.length === 0 ||
+          requestedChannels.includes('archive.org')))
 
-  const totalTargets = ytTargets.length + (includeArchive ? 1 : 0)
-  const summaries: SyncChannelSummary[] = []
-  let completedTargets = 0
+    const totalTargets = ytTargets.length + (includeArchive ? 1 : 0)
+    const summaries: SyncChannelSummary[] = []
+    let completedTargets = 0
 
-  if (ytTargets.length > 0) {
-    const apiKey = process.env.YOUTUBE_API_KEY
-    if (!apiKey) {
-      for (const ch of ytTargets) {
-        completedTargets++
-        summaries.push({
-          channelId: ch.id,
-          channelName: ch.name,
-          platform: 'youtube',
-          totalRemote: 0,
-          existingInDb: 0,
-          added: 0,
-          removed: 0,
-          restored: 0,
-          skippedFailed: 0,
-          probed: 0,
-          removalReasons: {},
-          error: 'YOUTUBE_API_KEY environment variable is not set',
-        })
-        options.onProgress?.({
-          current: completedTargets,
-          total: totalTargets,
-          channelId: ch.id,
-          message: `[${ch.name}] Skipped: missing YOUTUBE_API_KEY`,
-        })
-      }
-    } else {
-      let youtube: Innertube | null = null
-      if (!dryRun) {
-        const { Innertube } = await import('youtubei.js')
-        youtube = await Innertube.create()
-      }
+    if (ytTargets.length > 0) {
+      const apiKey = process.env.YOUTUBE_API_KEY
+      if (!apiKey) {
+        for (const ch of ytTargets) {
+          completedTargets++
+          summaries.push({
+            channelId: ch.id,
+            channelName: ch.name,
+            platform: 'youtube',
+            totalRemote: 0,
+            existingInDb: 0,
+            added: 0,
+            removed: 0,
+            restored: 0,
+            skippedFailed: 0,
+            probed: 0,
+            removalReasons: {},
+            error: 'YOUTUBE_API_KEY environment variable is not set',
+          })
+          options.onProgress?.({
+            current: completedTargets,
+            total: totalTargets,
+            channelId: ch.id,
+            message: `[${ch.name}] Skipped: missing YOUTUBE_API_KEY`,
+          })
+        }
+      } else {
+        let youtube: Innertube | null = null
+        if (!dryRun) {
+          const { Innertube } = await import('youtubei.js')
+          youtube = await Innertube.create()
+        }
 
-      for (const ch of ytTargets) {
-        const channelCurrent = completedTargets + 1
-        options.onProgress?.({
-          current: 0,
-          total: 0,
-          channelId: ch.id,
-          channelName: ch.name,
-          channelCurrent,
-          channelTotal: totalTargets,
-          message: `Fetching ${ch.name} playlist...`,
-        })
-
-        const summary = await syncYouTubeChannel(db, ch, youtube, apiKey, {
-          dryRun,
-          retryFailed,
-          probeActive,
-          onStatus: message => {
-            options.onProgress?.({
-              current: 0,
-              total: 0,
-              channelId: ch.id,
-              channelName: ch.name,
-              channelCurrent,
-              channelTotal: totalTargets,
-              message,
-            })
-          },
-          onProgress: itemProgress => {
-            options.onProgress?.({
-              ...itemProgress,
-              channelId: ch.id,
-              channelName: ch.name,
-              channelCurrent,
-              channelTotal: totalTargets,
-            })
-          },
-        })
-        summaries.push(summary)
-        completedTargets++
-
-        if (completedTargets < totalTargets) {
+        for (const ch of ytTargets) {
+          const channelCurrent = completedTargets + 1
           options.onProgress?.({
             current: 0,
             total: 0,
@@ -1161,53 +1133,55 @@ export async function syncChannels(
             channelName: ch.name,
             channelCurrent,
             channelTotal: totalTargets,
-            successCurrent: summary.added,
-            message: `Finished ${ch.name}: +${summary.added} / -${summary.removed} / ↺${summary.restored}`,
+            message: `Fetching ${ch.name} playlist...`,
           })
+
+          const summary = await syncYouTubeChannel(db, ch, youtube, apiKey, {
+            dryRun,
+            retryFailed,
+            probeActive,
+            onStatus: message => {
+              options.onProgress?.({
+                current: 0,
+                total: 0,
+                channelId: ch.id,
+                channelName: ch.name,
+                channelCurrent,
+                channelTotal: totalTargets,
+                message,
+              })
+            },
+            onProgress: itemProgress => {
+              options.onProgress?.({
+                ...itemProgress,
+                channelId: ch.id,
+                channelName: ch.name,
+                channelCurrent,
+                channelTotal: totalTargets,
+              })
+            },
+          })
+          summaries.push(summary)
+          completedTargets++
+
+          if (completedTargets < totalTargets) {
+            options.onProgress?.({
+              current: 0,
+              total: 0,
+              channelId: ch.id,
+              channelName: ch.name,
+              channelCurrent,
+              channelTotal: totalTargets,
+              successCurrent: summary.added,
+              message: `Finished ${ch.name}: +${summary.added} / -${summary.removed} / ↺${summary.restored}`,
+            })
+          }
         }
       }
     }
-  }
 
-  if (includeArchive) {
-    const channelCurrent = completedTargets + 1
-    options.onProgress?.({
-      current: 0,
-      total: 0,
-      channelId: 'archive.org',
-      channelName: 'Archive.org',
-      channelCurrent,
-      channelTotal: totalTargets,
-      message: 'Fetching Archive.org catalog...',
-    })
-
-    const archiveSummary = await syncArchiveCollection(db, {
-      dryRun,
-      onStatus: message => {
-        options.onProgress?.({
-          current: 0,
-          total: 0,
-          channelId: 'archive.org',
-          channelName: 'Archive.org',
-          channelCurrent,
-          channelTotal: totalTargets,
-          message,
-        })
-      },
-      onProgress: itemProgress => {
-        options.onProgress?.({
-          ...itemProgress,
-          channelId: 'archive.org',
-          channelName: 'Archive.org',
-          channelCurrent,
-          channelTotal: totalTargets,
-        })
-      },
-    })
-    summaries.push(archiveSummary)
-    completedTargets++
-
-    if (completedTargets < totalTargets) {
+    if (includeArchive) {
+      const channelCurrent = completedTargets + 1
       options.onProgress?.({
         current: 0,
         total: 0,
@@ -1215,41 +1189,81 @@ export async function syncChannels(
         channelName: 'Archive.org',
         channelCurrent,
         channelTotal: totalTargets,
-        successCurrent: archiveSummary.added,
-        message: `Finished Archive.org: +${archiveSummary.added} / -${archiveSummary.removed} / ↺${archiveSummary.restored}`,
+        message: 'Fetching Archive.org catalog...',
       })
-    }
-  }
 
-  const completedAt = Math.floor(Date.now() / 1000)
-  const totals = summaries.reduce(
-    (acc, s) => {
-      acc.totalRemote += s.totalRemote
-      acc.added += s.added
-      acc.removed += s.removed
-      acc.restored += s.restored
-      acc.skippedFailed += s.skippedFailed
-      acc.probed += s.probed
-      if (s.error) acc.errors++
-      return acc
-    },
-    {
-      totalRemote: 0,
-      added: 0,
-      removed: 0,
-      restored: 0,
-      skippedFailed: 0,
-      probed: 0,
-      errors: 0,
-    }
-  )
+      const archiveSummary = await syncArchiveCollection(db, {
+        dryRun,
+        onStatus: message => {
+          options.onProgress?.({
+            current: 0,
+            total: 0,
+            channelId: 'archive.org',
+            channelName: 'Archive.org',
+            channelCurrent,
+            channelTotal: totalTargets,
+            message,
+          })
+        },
+        onProgress: itemProgress => {
+          options.onProgress?.({
+            ...itemProgress,
+            channelId: 'archive.org',
+            channelName: 'Archive.org',
+            channelCurrent,
+            channelTotal: totalTargets,
+          })
+        },
+      })
+      summaries.push(archiveSummary)
+      completedTargets++
 
-  return {
-    success: totals.errors === 0,
-    dryRun,
-    startedAt,
-    completedAt,
-    channels: summaries,
-    totals,
+      if (completedTargets < totalTargets) {
+        options.onProgress?.({
+          current: 0,
+          total: 0,
+          channelId: 'archive.org',
+          channelName: 'Archive.org',
+          channelCurrent,
+          channelTotal: totalTargets,
+          successCurrent: archiveSummary.added,
+          message: `Finished Archive.org: +${archiveSummary.added} / -${archiveSummary.removed} / ↺${archiveSummary.restored}`,
+        })
+      }
+    }
+
+    const completedAt = Math.floor(Date.now() / 1000)
+    const totals = summaries.reduce(
+      (acc, s) => {
+        acc.totalRemote += s.totalRemote
+        acc.added += s.added
+        acc.removed += s.removed
+        acc.restored += s.restored
+        acc.skippedFailed += s.skippedFailed
+        acc.probed += s.probed
+        if (s.error) acc.errors++
+        return acc
+      },
+      {
+        totalRemote: 0,
+        added: 0,
+        removed: 0,
+        restored: 0,
+        skippedFailed: 0,
+        probed: 0,
+        errors: 0,
+      }
+    )
+
+    return {
+      success: totals.errors === 0,
+      dryRun,
+      startedAt,
+      completedAt,
+      channels: summaries,
+      totals,
+    }
+  } finally {
+    activeSyncRunning = false
   }
 }

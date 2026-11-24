@@ -6,6 +6,7 @@ import type {
   SyncHistoryResponse,
 } from '../../../../shared/types/admin'
 import { getAdminDatabase } from '../../../utils/adminDb'
+import { isChannelSyncRunning } from '../../../utils/channelSync'
 
 export default defineEventHandler((): SyncHistoryResponse => {
   const db = getAdminDatabase()
@@ -119,5 +120,6 @@ export default defineEventHandler((): SyncHistoryResponse => {
     runs,
     events,
     channelCounts: Array.from(channelMap.values()),
+    isRunning: isChannelSyncRunning(),
   }
 })

@@ -350,7 +350,7 @@ export async function probeYouTubeSources(
         stage2Queue.push(...batch)
       }
 
-      options.onProgress?.(Math.min(i + batch.length, uniqueIds.length), uniqueIds.length)
+      options.onProgress?.(results.size, uniqueIds.length)
 
       if (i + batchSize < uniqueIds.length) {
         await sleep(options.stage1BatchDelayMs ?? 100)

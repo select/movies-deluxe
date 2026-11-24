@@ -1,12 +1,10 @@
 import { defineEventHandler, readBody, createError, setResponseStatus } from 'h3'
 import type { SyncChannelsRequest } from '../../../../shared/types/admin'
-import { syncChannels } from '../../../utils/channelSync'
+import { isChannelSyncRunning, syncChannels } from '../../../utils/channelSync'
 import { emitProgress } from '../../../utils/progress'
 
-let isSyncRunning = false
-
 export default defineEventHandler(async event => {
-  if (isSyncRunning) {
+  if (isChannelSyncRunning()) {
     throw createError({
       statusCode: 409,
       message: 'Channel sync is already running',
@@ -15,8 +13,6 @@ export default defineEventHandler(async event => {
 
   const body: SyncChannelsRequest =
     (await readBody<SyncChannelsRequest>(event).catch(() => ({}))) || {}
-
-  isSyncRunning = true
 
   emitProgress({
     type: 'channelSync',
@@ -73,9 +69,6 @@ export default defineEventHandler(async event => {
         message: `Channel sync failed: ${message}`,
         lastError: message,
       })
-    })
-    .finally(() => {
-      isSyncRunning = false
     })
 
   setResponseStatus(event, 202)
