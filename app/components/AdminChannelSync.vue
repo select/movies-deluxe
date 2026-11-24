@@ -61,7 +61,7 @@
             {{
               selectedChannels.length === 0
                 ? 'All enabled'
-                : `${selectedChannels.length} / ${selectableChannels.length} selected`
+                : `${selectedChannels.length} / ${enabledChannelIds.length} selected`
             }}
           </span>
         </div>
@@ -70,7 +70,7 @@
           <button
             type="button"
             class="px-2 py-0.5 rounded border border-theme-border bg-theme-surface hover:bg-theme-selection transition-colors disabled:opacity-50"
-            :disabled="syncing || allEnabledSelected"
+            :disabled="syncing || hasRunningExternalSync || allEnabledSelected"
             @click="selectAllChannels"
           >
             All
@@ -79,7 +79,7 @@
             v-if="selectedChannels.length > 0"
             type="button"
             class="px-2 py-0.5 rounded border border-theme-border bg-theme-surface hover:bg-theme-selection text-theme-textmuted transition-colors disabled:opacity-50"
-            :disabled="syncing"
+            :disabled="syncing || hasRunningExternalSync"
             @click="selectedChannels = []"
           >
             Clear
@@ -102,7 +102,7 @@
             v-model="selectedChannels"
             type="checkbox"
             :value="ch.id"
-            :disabled="syncing"
+            :disabled="syncing || hasRunningExternalSync"
             class="sr-only"
           />
           <span
@@ -124,6 +124,7 @@
     <!-- Live SSE Progress -->
     <div
       v-if="
+        (syncing || hasRunningExternalSync) &&
         syncProgress &&
         (syncProgress.status === 'starting' || syncProgress.status === 'in_progress')
       "
@@ -432,16 +433,7 @@ const allEnabledSelected = computed(
 
 const syncStartedAt = ref(0)
 
-const hasRecentRunningRun = computed(() => {
-  const runs = history.value?.runs
-  if (!runs || runs.length === 0) return false
-  const cutoff = Math.floor(Date.now() / 1000) - 7200
-  return runs.some(r => r.status === 'running' && r.startedAt >= cutoff)
-})
-
-const hasRunningExternalSync = computed(
-  () => !syncing.value && ((history.value?.isRunning ?? false) || hasRecentRunningRun.value)
-)
+const hasRunningExternalSync = computed(() => !syncing.value && (history.value?.isRunning ?? false))
 
 const shouldPoll = computed(() => syncing.value || hasRunningExternalSync.value)
 
@@ -479,8 +471,7 @@ const loadHistory = async () => {
     const data = await $fetch<SyncHistoryResponse>('/api/admin/scrape/sync-history')
     history.value = data
     if (syncing.value && Date.now() - syncStartedAt.value > 5000) {
-      const stillRunning = (data.isRunning ?? false) || hasRecentRunningRun.value
-      if (!stillRunning) {
+      if (!(data.isRunning ?? false)) {
         syncing.value = false
         await adminStore.refreshStats()
       }

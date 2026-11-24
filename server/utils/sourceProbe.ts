@@ -444,6 +444,7 @@ export async function probeYouTubeSources(
         stage: 'skipped',
       })
     }
+    options.onProgress?.(results.size, uniqueIds.length)
   }
 
   return results
@@ -530,38 +531,59 @@ export async function probeArchiveSources(
     const identifier = uniqueIds[i]!
     const checkedAt = Math.floor(Date.now() / 1000)
 
-    try {
-      const response = await fetch(`https://archive.org/metadata/${encodeURIComponent(identifier)}`)
-      if (response.status === 404) {
-        results.set(
-          identifier,
-          classifyArchiveMetadata(identifier, null, 404, expectedCollection, checkedAt)
+    const maxAttempts = 3
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const response = await fetch(
+          `https://archive.org/metadata/${encodeURIComponent(identifier)}`
         )
-      } else if (!response.ok) {
+        if (response.status === 404) {
+          results.set(
+            identifier,
+            classifyArchiveMetadata(identifier, null, 404, expectedCollection, checkedAt)
+          )
+          break
+        } else if ((response.status === 429 || response.status >= 500) && attempt < maxAttempts) {
+          await sleep(delayMs * Math.pow(2, attempt))
+          continue
+        } else if (!response.ok) {
+          results.set(identifier, {
+            sourceId: identifier,
+            platform: 'archive.org',
+            status: 'unavailable',
+            unavailableReason: 'unavailable_unknown',
+            unavailableDetail: `HTTP ${response.status}: ${response.statusText}`,
+            checkedAt,
+          })
+          break
+        } else {
+          const data = (await response.json()) as Record<string, unknown>
+          results.set(
+            identifier,
+            classifyArchiveMetadata(
+              identifier,
+              data,
+              response.status,
+              expectedCollection,
+              checkedAt
+            )
+          )
+          break
+        }
+      } catch (error) {
+        if (attempt < maxAttempts) {
+          await sleep(delayMs * Math.pow(2, attempt))
+          continue
+        }
         results.set(identifier, {
           sourceId: identifier,
           platform: 'archive.org',
           status: 'unavailable',
           unavailableReason: 'unavailable_unknown',
-          unavailableDetail: `HTTP ${response.status}: ${response.statusText}`,
+          unavailableDetail: error instanceof Error ? error.message : String(error),
           checkedAt,
         })
-      } else {
-        const data = (await response.json()) as Record<string, unknown>
-        results.set(
-          identifier,
-          classifyArchiveMetadata(identifier, data, response.status, expectedCollection, checkedAt)
-        )
       }
-    } catch (error) {
-      results.set(identifier, {
-        sourceId: identifier,
-        platform: 'archive.org',
-        status: 'unavailable',
-        unavailableReason: 'unavailable_unknown',
-        unavailableDetail: error instanceof Error ? error.message : String(error),
-        checkedAt,
-      })
     }
 
     options.onProgress?.(i + 1, uniqueIds.length)

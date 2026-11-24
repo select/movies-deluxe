@@ -4,15 +4,15 @@ import { isChannelSyncRunning, syncChannels } from '../../../utils/channelSync'
 import { emitProgress } from '../../../utils/progress'
 
 export default defineEventHandler(async event => {
+  const body: SyncChannelsRequest =
+    (await readBody<SyncChannelsRequest>(event).catch(() => ({}))) || {}
+
   if (isChannelSyncRunning()) {
     throw createError({
       statusCode: 409,
       message: 'Channel sync is already running',
     })
   }
-
-  const body: SyncChannelsRequest =
-    (await readBody<SyncChannelsRequest>(event).catch(() => ({}))) || {}
 
   emitProgress({
     type: 'channelSync',

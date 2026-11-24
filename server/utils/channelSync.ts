@@ -358,6 +358,12 @@ async function syncYouTubeChannel(
     }
     summary.existingInDb = dbBySourceId.size
 
+    if (remoteSet.size === 0 && dbBySourceId.size > 0) {
+      throw new Error(
+        `YouTube returned 0 videos for ${channelConfig.name} while ${dbBySourceId.size} exist in DB; aborting to prevent false removals`
+      )
+    }
+
     // 3. Load failed video IDs
     const failedVideoIds = new Set<string>()
     if (!options.retryFailed) {
@@ -411,6 +417,8 @@ async function syncYouTubeChannel(
               detail: `Restored from ${row.status}`,
               createdAt: now,
             })
+            row.status = 'active'
+            row.unavailableReason = null
           }
         } else if (!options.dryRun) {
           updateLastSeenStmt.run(now, row.id)
@@ -553,7 +561,8 @@ async function syncYouTubeChannel(
               }
             }
           }
-        } catch {
+        } catch (err) {
+          console.warn(`[${channelConfig.name}] Failed to process video ${videoId}:`, err)
           saveFailedYouTubeVideo({
             videoId,
             channelId: channelConfig.id,
@@ -1111,9 +1120,12 @@ export async function syncChannels(
             error: 'YOUTUBE_API_KEY environment variable is not set',
           })
           options.onProgress?.({
-            current: completedTargets,
-            total: totalTargets,
+            current: 0,
+            total: 0,
             channelId: ch.id,
+            channelName: ch.name,
+            channelCurrent: completedTargets,
+            channelTotal: totalTargets,
             message: `[${ch.name}] Skipped: missing YOUTUBE_API_KEY`,
           })
         }
