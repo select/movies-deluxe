@@ -53,6 +53,8 @@ public/sqlite-wasm/
 
 # SQLite temporary files
 *.db-journal
+*.db-wal
+*.db-shm
 
 # Database backup files (uncompressed)
 data/*.db.backup*
