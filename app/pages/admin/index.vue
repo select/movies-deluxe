@@ -97,7 +97,7 @@
       </header>
 
       <!-- Stats Overview -->
-      <section v-if="stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <section v-if="stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         <AdminStatsCard
           title="Total Movies"
           :value="stats.database.total"
