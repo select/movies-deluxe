@@ -42,7 +42,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Extract admin database
-        run: tar -xzf data/movies-db.tar.gz -C data/
+        run: |
+          if ls data/movies-db-part*.tar.gz >/dev/null 2>&1; then
+            cat data/movies-db-part*.tar.gz | tar -xzf - -C data/
+          else
+            tar -xzf data/movies-db.tar.gz -C data/
+          fi
 
       - name: Generate database
         run: pnpm db:generate
