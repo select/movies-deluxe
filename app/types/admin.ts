@@ -47,6 +47,11 @@ export interface ScrapeStats {
     failed: number
     failureRate: number
   }
+  audit?: {
+    audited: number
+    unverifiedMatched: number
+    percent: number
+  }
   posters: {
     totalMovies: number
     withPosterUrl: number

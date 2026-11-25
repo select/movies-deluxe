@@ -97,7 +97,7 @@
       </header>
 
       <!-- Stats Overview -->
-      <section v-if="stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      <section v-if="stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <AdminStatsCard
           title="Total Movies"
           :value="stats.database.total"
@@ -163,6 +163,18 @@
           :percent="stats.posters.percentOfMoviesWithImdbId"
           progress-color="bg-purple-500"
           :subtitle="`${stats.posters.downloaded} / ${stats.posters.withImdbId} movies with IMDB ID`"
+        />
+
+        <AdminStatsCard
+          title="Audited"
+          :value="stats.audit?.audited ?? 0"
+          icon="i-mdi-shield-check"
+          icon-color="text-cyan-500"
+          show-progress
+          :percent="stats.audit?.percent ?? 0"
+          :percent-precision="1"
+          progress-color="bg-cyan-500"
+          :subtitle="`${(stats.audit?.audited ?? 0).toLocaleString()} / ${(stats.audit?.unverifiedMatched ?? 0).toLocaleString()} unverified tt*`"
         />
       </section>
 

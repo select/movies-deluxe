@@ -55,6 +55,8 @@ export default defineEventHandler(async _event => {
 
     // Count still-unmatched movies that failed matching in match_attempts
     let failedMatchCount = 0
+    let auditedCount = 0
+    let unverifiedMatchedCount = 0
     try {
       const adminDb = getAdminDatabase()
       const hasAttemptsTable = adminDb
@@ -72,8 +74,23 @@ export default defineEventHandler(async _event => {
           .get() as { count: number } | undefined
         failedMatchCount = row?.count ?? 0
       }
+
+      const hasAuditTable = adminDb
+        .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'audit_attempts'")
+        .get()
+      if (hasAuditTable) {
+        const auditRow = adminDb.prepare('SELECT COUNT(*) as count FROM audit_attempts').get() as
+          | { count: number }
+          | undefined
+        auditedCount = auditRow?.count ?? 0
+      }
+
+      const unverifiedRow = adminDb
+        .prepare("SELECT COUNT(*) as count FROM movies WHERE movieId LIKE 'tt%' AND verified = 0")
+        .get() as { count: number } | undefined
+      unverifiedMatchedCount = unverifiedRow?.count ?? 0
     } catch (e) {
-      console.error('Failed to query match_attempts count', e)
+      console.error('Failed to query match_attempts / audit_attempts count', e)
     }
 
     // Calculate YouTube totals
@@ -202,6 +219,11 @@ export default defineEventHandler(async _event => {
           dbStats.matched + failedMatchCount > 0
             ? (failedMatchCount / (dbStats.matched + failedMatchCount)) * 100
             : 0,
+      },
+      audit: {
+        audited: auditedCount,
+        unverifiedMatched: unverifiedMatchedCount,
+        percent: unverifiedMatchedCount > 0 ? (auditedCount / unverifiedMatchedCount) * 100 : 0,
       },
       ai: {
         totalUnmatched: unmatchedMovies.length,
