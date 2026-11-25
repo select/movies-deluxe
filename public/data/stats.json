@@ -1,27 +1,27 @@
 {
   "database": {
-    "total": 30153,
-    "matched": 27218,
-    "unmatched": 2935,
-    "archiveOrgSources": 30420,
-    "youtubeSources": 16333,
-    "curatedCount": 27157,
+    "total": 31095,
+    "matched": 26454,
+    "unmatched": 4641,
+    "archiveOrgSources": 30417,
+    "youtubeSources": 17984,
+    "curatedCount": 26384,
     "collections": {}
   },
   "external": {
     "archiveOrg": {
       "total": 29641,
-      "scraped": 30420,
-      "percent": 102.62811646030836,
+      "scraped": 30417,
+      "percent": 102.61799534428664,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
-      "totalScraped": 16333,
-      "totalAvailable": 27503,
-      "totalFailed": 7373,
-      "failureRate": 31.10183076014511,
-      "percent": 59.38624877286114,
+      "totalScraped": 17984,
+      "totalAvailable": 27522,
+      "totalFailed": 8953,
+      "failureRate": 33.236811820172996,
+      "percent": 65.3440883656711,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -29,7 +29,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2780,
-          "total": 2886,
+          "total": 2885,
           "failed": 456,
           "failureRate": 14.091470951792337
         },
@@ -39,7 +39,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 406,
-          "total": 543,
+          "total": 544,
           "failed": 159,
           "failureRate": 28.14159292035398
         },
@@ -59,7 +59,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2800,
-          "total": 2827,
+          "total": 2825,
           "failed": 435,
           "failureRate": 13.446676970633694
         },
@@ -68,10 +68,10 @@
           "name": "Timeless Classic Movies",
           "language": "en",
           "enabled": true,
-          "scraped": 169,
+          "scraped": 168,
           "total": 174,
           "failed": 8,
-          "failureRate": 4.519774011299435
+          "failureRate": 4.545454545454546
         },
         {
           "id": "UCm5U4zqpahzyNXBv5ZT51Jw",
@@ -89,7 +89,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 702,
-          "total": 689,
+          "total": 691,
           "failed": 111,
           "failureRate": 13.653136531365314
         },
@@ -99,7 +99,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2150,
-          "total": 3965,
+          "total": 3966,
           "failed": 1820,
           "failureRate": 45.843828715365234
         },
@@ -109,7 +109,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 180,
-          "total": 976,
+          "total": 985,
           "failed": 763,
           "failureRate": 80.9119830328738
         },
@@ -139,7 +139,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2669,
-          "total": 6132,
+          "total": 6134,
           "failed": 2903,
           "failureRate": 52.09978463747308
         },
@@ -159,7 +159,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 206,
-          "total": 206,
+          "total": 207,
           "failed": 0,
           "failureRate": 0
         },
@@ -169,7 +169,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 427,
-          "total": 429,
+          "total": 430,
           "failed": 0,
           "failureRate": 0
         },
@@ -179,7 +179,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 724,
-          "total": 916,
+          "total": 919,
           "failed": 0,
           "failureRate": 0
         },
@@ -189,7 +189,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 569,
-          "total": 772,
+          "total": 774,
           "failed": 0,
           "failureRate": 0
         },
@@ -199,7 +199,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 191,
-          "total": 350,
+          "total": 351,
           "failed": 0,
           "failureRate": 0
         },
@@ -219,7 +219,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 926,
-          "total": 1059,
+          "total": 1057,
           "failed": 0,
           "failureRate": 0
         },
@@ -228,76 +228,81 @@
           "name": "菲林阿爺HK-Movie House",
           "language": "zh",
           "enabled": true,
-          "scraped": 0,
-          "total": 264,
-          "failed": 0,
-          "failureRate": 0
+          "scraped": 253,
+          "total": 265,
+          "failed": 1,
+          "failureRate": 0.39370078740157477
         },
         {
           "id": "UCKiw9OKbQecHMy_K1JqxKeA",
           "name": "8號電影院 - HK Movie",
           "language": "zh",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 1003,
           "total": 2004,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 782,
+          "failureRate": 43.80952380952381
         },
         {
           "id": "UC6zrOqTxWKL22LZi7sv1JSQ",
           "name": "Public Domain Films",
           "language": "en",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 68,
           "total": 99,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 28,
+          "failureRate": 29.166666666666668
         },
         {
           "id": "UCNJ4O0LvYuMOiOvS-g6eADA",
           "name": "CineMo",
           "language": "tl",
           "enabled": true,
-          "scraped": 0,
+          "scraped": 328,
           "total": 1096,
-          "failed": 0,
-          "failureRate": 0
+          "failed": 769,
+          "failureRate": 70.10027347310847
         }
       ]
     }
   },
   "curation": {
-    "total": 30153,
-    "curated": 27157,
-    "percent": 90.06400689815275
+    "total": 31095,
+    "curated": 26384,
+    "percent": 84.84965428525486
   },
   "omdb": {
-    "total": 30153,
-    "matched": 27218,
-    "unmatched": 2935,
-    "percent": 90.26630849335058,
-    "failed": 2922,
-    "failureRate": 9.694757796947579
+    "total": 31095,
+    "matched": 26454,
+    "unmatched": 4641,
+    "percent": 85.07477086348287,
+    "failed": 3240,
+    "failureRate": 10.911295211153767
+  },
+  "audit": {
+    "audited": 25945,
+    "unverifiedMatched": 25881,
+    "percent": 100.24728565356827
   },
   "ai": {
-    "totalUnmatched": 2935,
+    "totalUnmatched": 4641,
     "withAiData": 0,
-    "withoutAiData": 2935,
+    "withoutAiData": 4641,
     "percent": 0
   },
   "posters": {
-    "totalMovies": 30153,
+    "totalMovies": 31095,
     "withPosterUrl": 0,
-    "withImdbId": 27218,
-    "downloaded": 20472,
-    "missing": 6746,
-    "failed": 3526,
-    "failureRate": 14.692891074256186,
+    "withImdbId": 26454,
+    "downloaded": 20369,
+    "missing": 6085,
+    "failed": 5126,
+    "failureRate": 20.10590311825848,
     "percentOfMoviesWithUrl": 0,
-    "percentOfMoviesWithImdbId": 75.21493129546624,
-    "percentOfAllMovies": 67.89374191622724,
-    "filesInDirectory": 20473,
-    "matchedPosters": 20472
+    "percentOfMoviesWithImdbId": 76.99780751493158,
+    "percentOfAllMovies": 65.50570831323364,
+    "filesInDirectory": 21921,
+    "matchedPosters": 20369
   },
-  "lastUpdated": "2026-11-23T22:32:01.566Z"
+  "lastUpdated": "2026-11-25T17:02:35.873Z"
 }
