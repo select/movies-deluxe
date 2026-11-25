@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.1](https://github.com/select/movies-deluxe/compare/v0.13.0...v0.13.1) (2026-11-25)
+
+### Bug Fixes
+
+* **ci:** extract split movies-db-part archives and remove stale movies-db.tar.gz ([00f286b](https://github.com/select/movies-deluxe/commit/00f286bd87eb62320c56cdffd109b9f6f99a1121))
+
 # [0.13.0](https://github.com/select/movies-deluxe/compare/v0.12.2...v0.13.0) (2026-11-25)
 
 ### Bug Fixes
