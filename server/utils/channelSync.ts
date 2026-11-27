@@ -9,7 +9,12 @@ import type {
 } from '../../shared/types/admin'
 import type { SourceStatus, SourceUnavailableReason } from '../../shared/types/movie'
 import { getAdminDatabase } from './adminDb'
-import { processArchiveMovie, type ArchiveOrgMovie, type ArchiveOrgResponse } from './archive'
+import {
+  hasPlayableVideoFormat,
+  processArchiveMovie,
+  type ArchiveOrgMovie,
+  type ArchiveOrgResponse,
+} from './archive'
 import {
   loadFailedYouTubeVideos,
   removeFailedYouTubeVideo,
@@ -188,7 +193,8 @@ function shouldRestoreSource(row: DbSourceRow, includeUnlisted = true): boolean 
   if (
     row.status === 'unavailable' &&
     row.unavailableReason !== 'not_embeddable' &&
-    row.unavailableReason !== 'age_restricted'
+    row.unavailableReason !== 'age_restricted' &&
+    row.unavailableReason !== 'no_video_file'
   ) {
     return true
   }
@@ -205,7 +211,7 @@ async function fetchArchivePageWithRetry(
   url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
   url.searchParams.set(
     'fields',
-    'identifier,title,description,date,year,downloads,collection,language,item_size'
+    'identifier,title,description,date,year,downloads,collection,language,item_size,format'
   )
   url.searchParams.set('count', Math.max(100, rows).toString())
   if (cursor) {
@@ -244,6 +250,7 @@ async function fetchAllArchiveItems(
   const remoteMap = new Map<string, ArchiveOrgMovie>()
   let cursor: string | undefined
   let expectedTotal: number | null = null
+  let fetchedCount = 0
   let page = 0
 
   while (true) {
@@ -255,23 +262,24 @@ async function fetchAllArchiveItems(
     }
 
     if (response.items.length === 0) {
-      if (expectedTotal !== null && expectedTotal > 0 && remoteMap.size < expectedTotal * 0.9) {
+      if (expectedTotal !== null && expectedTotal > 0 && fetchedCount < expectedTotal * 0.9) {
         throw new Error(
-          `Archive.org pagination stopped abruptly at ${remoteMap.size}/${expectedTotal} items`
+          `Archive.org pagination stopped abruptly at ${fetchedCount}/${expectedTotal} items`
         )
       }
       break
     }
 
     for (const item of response.items) {
-      if (item.identifier) {
+      fetchedCount++
+      if (item.identifier && hasPlayableVideoFormat(item.format)) {
         remoteMap.set(item.identifier, item)
       }
     }
 
     if (page === 1 || page % 5 === 0) {
       onStatus?.(
-        `Archive.org page ${page}: ${remoteMap.size}${expectedTotal ? `/${expectedTotal}` : ''} items`
+        `Archive.org page ${page}: ${remoteMap.size} playable (${fetchedCount}${expectedTotal ? `/${expectedTotal}` : ''} fetched)`
       )
     }
 
@@ -282,13 +290,13 @@ async function fetchAllArchiveItems(
     await sleep(150)
   }
 
-  if (expectedTotal !== null && expectedTotal > 0 && remoteMap.size === 0) {
+  if (expectedTotal !== null && expectedTotal > 0 && fetchedCount === 0) {
     throw new Error(`Archive.org returned 0 items when expectedTotal=${expectedTotal}`)
   }
 
-  if (expectedTotal !== null && expectedTotal > 0 && remoteMap.size < expectedTotal * 0.9) {
+  if (expectedTotal !== null && expectedTotal > 0 && fetchedCount < expectedTotal * 0.9) {
     throw new Error(
-      `Archive.org crawl incomplete: fetched ${remoteMap.size} of ${expectedTotal} expected items`
+      `Archive.org crawl incomplete: fetched ${fetchedCount} of ${expectedTotal} expected items`
     )
   }
 

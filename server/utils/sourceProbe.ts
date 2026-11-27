@@ -1,5 +1,6 @@
 import { google, type youtube_v3 } from 'googleapis'
 import type { Innertube } from 'youtubei.js'
+import { hasPlayableVideoFile, type ArchiveOrgFile } from './archive'
 import type {
   SourceStatus,
   SourceUnavailableReason,
@@ -507,6 +508,23 @@ export function classifyArchiveMetadata(
       status: 'unavailable',
       unavailableReason: 'archive_dark',
       unavailableDetail: darkReason,
+      checkedAt,
+    }
+  }
+
+  const files = Array.isArray(data.files) ? (data.files as ArchiveOrgFile[]) : []
+  if (!hasPlayableVideoFile(files)) {
+    const formats = [
+      ...new Set(
+        files.map(f => f.format).filter((f): f is string => typeof f === 'string' && Boolean(f))
+      ),
+    ]
+    return {
+      sourceId: identifier,
+      platform: 'archive.org',
+      status: 'unavailable',
+      unavailableReason: 'no_video_file',
+      unavailableDetail: `No playable video file; formats: ${formats.join(', ') || '(none)'}`,
       checkedAt,
     }
   }

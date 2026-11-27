@@ -289,7 +289,9 @@ export default defineEventHandler(async event => {
           if (verifyArchiveMetadata) {
             const meta = await fetchArchiveVideoLength(arch.sourceId, candidateRuntimeMin)
             confirmedLengthMin = meta.longestVideoMinutes
-            if (meta.confirmedPreview) {
+            if (meta.hasVideoFile === false) {
+              flags.push('no_video_file')
+            } else if (meta.confirmedPreview) {
               flags.push('confirmed_short_archive_video')
             }
           }

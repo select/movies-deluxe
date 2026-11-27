@@ -33,7 +33,7 @@ export function migrateSourceStatus(db: Database.Database): void {
     },
     {
       name: 'unavailableReason',
-      sql: `ALTER TABLE sources ADD COLUMN unavailableReason TEXT CHECK (unavailableReason IS NULL OR unavailableReason IN ('deleted', 'private', 'unlisted', 'copyright_takedown', 'tos_violation', 'channel_terminated', 'members_only', 'age_restricted', 'not_embeddable', 'geo_blocked_all', 'archive_dark', 'delisted_from_collection', 'unavailable_unknown'))`,
+      sql: `ALTER TABLE sources ADD COLUMN unavailableReason TEXT CHECK (unavailableReason IS NULL OR unavailableReason IN ('deleted', 'private', 'unlisted', 'copyright_takedown', 'tos_violation', 'channel_terminated', 'members_only', 'age_restricted', 'not_embeddable', 'geo_blocked_all', 'archive_dark', 'delisted_from_collection', 'no_video_file', 'unavailable_unknown'))`,
     },
     {
       name: 'unavailableDetail',
@@ -62,6 +62,90 @@ export function migrateSourceStatus(db: Database.Database): void {
     } else {
       logger.debug(`Column sources.${col.name} already exists`)
     }
+  }
+
+  // Ensure CHECK constraint on sources.unavailableReason includes 'no_video_file'
+  const sourcesSchema = db
+    .prepare(`SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'sources'`)
+    .get() as { sql?: string } | undefined
+
+  if (sourcesSchema?.sql && !sourcesSchema.sql.includes("'no_video_file'")) {
+    logger.info("Updating sources.unavailableReason CHECK constraint to include 'no_video_file'...")
+    const fkEnabled = (db.pragma('foreign_keys', { simple: true }) as number) === 1
+    if (fkEnabled) {
+      db.pragma('foreign_keys = OFF')
+    }
+
+    const dependentViews = db
+      .prepare(`SELECT name, sql FROM sqlite_master WHERE type = 'view' AND sql LIKE '%sources%'`)
+      .all() as Array<{ name: string; sql: string }>
+
+    const rebuildTx = db.transaction(() => {
+      for (const view of dependentViews) {
+        db.exec(`DROP VIEW IF EXISTS "${view.name}"`)
+      }
+
+      db.exec(`
+        CREATE TABLE sources_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          movieId TEXT NOT NULL,
+          channelId TEXT NOT NULL,
+          sourceId TEXT NOT NULL,
+          title TEXT,
+          description TEXT,
+          size INTEGER,
+          addedAt INTEGER,
+          duration INTEGER,
+          language TEXT,
+          year INTEGER,
+          downloads INTEGER,
+          viewCount INTEGER,
+          regionRestriction TEXT,
+          status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'unlisted', 'unavailable', 'removed_from_channel')),
+          unavailableReason TEXT CHECK (unavailableReason IS NULL OR unavailableReason IN ('deleted', 'private', 'unlisted', 'copyright_takedown', 'tos_violation', 'channel_terminated', 'members_only', 'age_restricted', 'not_embeddable', 'geo_blocked_all', 'archive_dark', 'delisted_from_collection', 'no_video_file', 'unavailable_unknown')),
+          unavailableDetail TEXT,
+          lastSeenAt INTEGER,
+          lastCheckedAt INTEGER,
+          statusChangedAt INTEGER,
+          FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE,
+          FOREIGN KEY (channelId) REFERENCES channels(id),
+          UNIQUE(movieId, channelId, sourceId)
+        );
+
+        INSERT INTO sources_new (
+          id, movieId, channelId, sourceId, title, description, size, addedAt,
+          duration, language, year, downloads, viewCount, regionRestriction,
+          status, unavailableReason, unavailableDetail, lastSeenAt, lastCheckedAt, statusChangedAt
+        )
+        SELECT
+          id, movieId, channelId, sourceId, title, description, size, addedAt,
+          duration, language, year, downloads, viewCount, regionRestriction,
+          status, unavailableReason, unavailableDetail, lastSeenAt, lastCheckedAt, statusChangedAt
+        FROM sources;
+
+        DROP TABLE sources;
+        ALTER TABLE sources_new RENAME TO sources;
+
+        CREATE INDEX IF NOT EXISTS idx_sources_movieId ON sources(movieId);
+        CREATE INDEX IF NOT EXISTS idx_sources_channelId ON sources(channelId);
+        CREATE INDEX IF NOT EXISTS idx_sources_sourceId ON sources(sourceId);
+        CREATE INDEX IF NOT EXISTS idx_sources_year ON sources(year);
+        CREATE INDEX IF NOT EXISTS idx_sources_addedAt ON sources(addedAt);
+        CREATE INDEX IF NOT EXISTS idx_sources_channelId_movieId ON sources(channelId, movieId);
+      `)
+
+      for (const view of dependentViews) {
+        if (view.sql) {
+          db.exec(view.sql)
+        }
+      }
+    })
+
+    rebuildTx()
+    if (fkEnabled) {
+      db.pragma('foreign_keys = ON')
+    }
+    logger.info('Rebuilt sources table with updated CHECK constraint')
   }
 
   // Indexes on sources

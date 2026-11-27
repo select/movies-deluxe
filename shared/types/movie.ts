@@ -31,6 +31,7 @@ export type SourceUnavailableReason =
   | 'geo_blocked_all'
   | 'archive_dark'
   | 'delisted_from_collection'
+  | 'no_video_file'
   | 'unavailable_unknown'
 
 /**

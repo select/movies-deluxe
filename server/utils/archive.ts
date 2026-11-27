@@ -10,6 +10,43 @@ export interface ArchiveOrgMovie {
   collection?: string[]
   language?: string // 2-letter language code from Archive.org metadata
   item_size?: number // File size in bytes
+  format?: string | string[] // Available file formats from Archive.org Scrape API
+  mediatype?: string
+}
+
+export interface ArchiveOrgFile {
+  name?: string
+  format?: string
+  size?: string | number
+  length?: string | number
+  source?: string
+}
+
+export const ARCHIVE_VIDEO_EXT_REGEX =
+  /\.(mp4|m4v|ogv|mkv|avi|mpeg|mpg|mov|webm|flv|wmv|3gp|divx)$/i
+
+export const ARCHIVE_VIDEO_FORMAT_REGEX =
+  /(mpeg4|h\.264|ogg video|theora|matroska|divx|xvid|quicktime|webm|cinepack|mpeg2|mpeg1|mpeg-ps|mpeg-ts|windows media|flash video|motion jpeg|\bavi\b|\bmp4\b|\bm4v\b|\bflv\b|\bwmv\b|\b3gp\b)/i
+
+/**
+ * Check whether an Archive.org Scrape API `format` field contains at least one playable video format.
+ */
+export function hasPlayableVideoFormat(format?: string | string[] | null): boolean {
+  if (!format) return false
+  const formats = Array.isArray(format) ? format : [format]
+  return formats.some(f => typeof f === 'string' && ARCHIVE_VIDEO_FORMAT_REGEX.test(f))
+}
+
+/**
+ * Check whether an Archive.org /metadata/<id> `files` array contains at least one playable video file.
+ */
+export function hasPlayableVideoFile(files?: ArchiveOrgFile[] | null): boolean {
+  if (!Array.isArray(files) || files.length === 0) return false
+  return files.some(file => {
+    const name = typeof file.name === 'string' ? file.name : ''
+    const format = typeof file.format === 'string' ? file.format : ''
+    return ARCHIVE_VIDEO_EXT_REGEX.test(name) || ARCHIVE_VIDEO_FORMAT_REGEX.test(format)
+  })
 }
 
 export interface ArchiveOrgResponse {
@@ -31,7 +68,7 @@ export async function fetchArchiveOrgMovies(
   url.searchParams.set('q', `mediatype:movies AND collection:${collection}`)
   url.searchParams.set(
     'fields',
-    'identifier,title,description,date,year,downloads,collection,language,item_size'
+    'identifier,title,description,date,year,downloads,collection,language,item_size,format'
   )
   url.searchParams.set('count', Math.max(100, rows).toString())
   if (cursor) {
@@ -73,6 +110,11 @@ export async function processArchiveMovie(
   movie: ArchiveOrgMovie,
   _collection: string
 ): Promise<MovieEntry | null> {
+  // Skip items with no web-playable video format
+  if (!hasPlayableVideoFormat(movie.format)) {
+    return null
+  }
+
   const year = extractYear(movie.date || movie.year)
 
   const source: ArchiveOrgSource = {

@@ -6,6 +6,8 @@
  * flagged as previews, while small-size feature films are caught.
  */
 
+import { ARCHIVE_VIDEO_EXT_REGEX, ARCHIVE_VIDEO_FORMAT_REGEX, type ArchiveOrgFile } from './archive'
+
 export interface ArchiveSourceSizeInput {
   sourceId: string
   title?: string | null
@@ -29,13 +31,12 @@ export interface ArchiveVideoLengthResult {
   longestVideoSeconds: number | null
   longestVideoMinutes: number | null
   confirmedPreview: boolean
+  hasVideoFile?: boolean
+  videoFileCount?: number
   error?: string
 }
 
 const TEN_MB_BYTES = 10 * 1024 * 1024
-
-const VIDEO_EXT_REGEX = /\.(mp4|m4v|ogv|mkv|avi|mpeg|mpg|mov|webm|flv|wmv)$/i
-const VIDEO_FORMAT_REGEX = /(mpeg4|h\.264|ogg video|matroska|divx|xvid|quicktime|webm|cinepack)/i
 
 let lastArchiveFetchAt = 0
 
@@ -169,21 +170,35 @@ export async function fetchArchiveVideoLength(
     }
 
     const data = (await response.json()) as {
-      files?: Array<{ name?: string; format?: string; length?: string | number }>
+      files?: ArchiveOrgFile[]
     }
 
     const files = Array.isArray(data.files) ? data.files : []
     let longestSeconds = 0
+    let videoFileCount = 0
 
     for (const file of files) {
       const name = file.name || ''
       const format = file.format || ''
-      const isVideo = VIDEO_EXT_REGEX.test(name) || VIDEO_FORMAT_REGEX.test(format)
+      const isVideo = ARCHIVE_VIDEO_EXT_REGEX.test(name) || ARCHIVE_VIDEO_FORMAT_REGEX.test(format)
       if (!isVideo) continue
 
+      videoFileCount++
       const sec = parseArchiveFileLengthSeconds(file.length)
       if (sec !== null && sec > longestSeconds) {
         longestSeconds = sec
+      }
+    }
+
+    if (videoFileCount === 0) {
+      return {
+        sourceId,
+        longestVideoSeconds: null,
+        longestVideoMinutes: null,
+        confirmedPreview: false,
+        hasVideoFile: false,
+        videoFileCount: 0,
+        error: 'no_video_file',
       }
     }
 
@@ -193,6 +208,8 @@ export async function fetchArchiveVideoLength(
         longestVideoSeconds: null,
         longestVideoMinutes: null,
         confirmedPreview: false,
+        hasVideoFile: true,
+        videoFileCount,
       }
     }
 
@@ -208,6 +225,8 @@ export async function fetchArchiveVideoLength(
       longestVideoSeconds: Math.round(longestSeconds),
       longestVideoMinutes: longestMinutes,
       confirmedPreview,
+      hasVideoFile: true,
+      videoFileCount,
     }
   } catch (error) {
     return {
