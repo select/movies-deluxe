@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.2](https://github.com/select/movies-deluxe/compare/v0.13.1...v0.13.2) (2026-11-27)
+
+### Bug Fixes
+
+* **admin:** validate collection movie IDs against SQLite admin DB instead of stale movies.json ([fcca17e](https://github.com/select/movies-deluxe/commit/fcca17e2668c28e8687c03d75f1c1cc44198e989))
+
 ## [0.13.1](https://github.com/select/movies-deluxe/compare/v0.13.0...v0.13.1) (2026-11-25)
 
 ### Bug Fixes
