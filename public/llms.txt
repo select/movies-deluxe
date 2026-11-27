@@ -1,0 +1,49 @@
+# Movies Deluxe (mdlx.org)
+
+> Movies Deluxe is a pure static GitHub Pages web application for discovering, searching, and streaming free and public-domain movies from Archive.org and YouTube.
+
+Because mdlx.org is a static site without a backend API server, all catalog data is published as static JSON files and a compressed SQLite database. Browser-based AI agents can also use WebMCP tools registered on `navigator.modelContext`.
+
+## Agent Skill
+
+- [Movies Deluxe Agent Skill](https://github.com/select/movies-deluxe/blob/main/skills/movies-deluxe/SKILL.md): Complete guide for CLI and coding agents on querying static JSON endpoints, `movies.db.gz`, and `/search` URLs.
+
+## Static Data Endpoints
+
+All paths are relative to `https://mdlx.org`:
+
+- [`/data/collections.json`](https://mdlx.org/data/collections.json): Curated movie collections keyed by collection ID (includes `_schema` metadata, `id`, `name`, `description`, `category`, `tags`, `enabled`, `movieIds`, and `savedQueries`).
+- [`/data/stats.json`](https://mdlx.org/data/stats.json): Catalog statistics (`database` counts plus `external.archiveOrg` and `external.youtube` channel breakdowns).
+- `/movies/<id>.json`: Full metadata for a single movie, including `title`, `year`, `sources` (Archive.org / YouTube), `metadata` (`Rated`, `Runtime`, `imdbRating`, `imdbVotes`, `Genre`, `Plot`, `Director`, `Writer`, `Actors`, `Language`, `Country`, `Awards`), `relatedMovies`, `similarMovies`, and `collections`. Movie IDs use `tt<imdb>` (e.g. `/movies/tt0082096.json`), `archive-<slug>`, or `youtube-<id>`.
+- [`/data/movies.db.gz`](https://mdlx.org/data/movies.db.gz): Gzip-compressed SQLite database containing `movies`, `genres`, `countries`, `config`, and the FTS5 virtual table `fts_search(title, actors, directors, writers)`.
+
+## Search URL & Query Syntax
+
+- Search page: `https://mdlx.org/search`
+- Note: `/search` is a client-side SPA that loads `/data/movies.db.gz` via SQLite WASM in the browser. CLI agents without a browser should query `/data/movies.db.gz` or `/movies/<id>.json` directly.
+
+Supported URL query parameters (all optional, combinable):
+
+- `q`: Search query text (supports `actor:`, `director:`, `writer:`, `title:` prefixes; quote multi-word values, e.g. `actor:"Roy Rogers"`)
+- `mode`: `exact` (default) or `semantic` (natural-language vector search via `leaf-ir`)
+- `genres`: Comma-separated genres (e.g. `Film-Noir,Thriller`)
+- `countries`: Comma-separated countries (e.g. `USA,Germany`)
+- `source`: Comma-separated sources (`archive.org` or YouTube channel names like `Netzkino`; alias `sources` also accepted)
+- `year`: Single year (`1955`) or range (`1940-1959`, `1980-`, `-1960`)
+- `rating`: Minimum IMDb rating (e.g. `7.5`)
+- `votes`: Minimum votes (`5000`) or range (`1000-50000`, `5000-`, `-10000`)
+- `sort`: `relevance`, `year-desc`, `year-asc`, `rating-desc`, `rating-asc`, `title-asc`, `title-desc`, `votes-desc`
+
+Examples:
+- `https://mdlx.org/search?q=actor:%22Roy%20Rogers%22%20director:Fleischer`
+- `https://mdlx.org/search?genres=Film-Noir&year=1940-1959&rating=7&sort=rating-desc`
+- `https://mdlx.org/search?q=lonely+detective+rainy+city&mode=semantic`
+
+## WebMCP Client Tools
+
+When visited in a WebMCP-enabled browser, the site registers read-only tools via `navigator.modelContext`:
+
+- `search_movies`: Search and filter the local SQLite database (`query` with `actor:`/`director:`/`writer:`/`title:` prefixes, `genres`, `countries`, `sources`, `minRating`, `minYear`, `maxYear`, `minVotes`, `maxVotes`, `sortBy`, `sortDirection`, `limit`).
+- `semantic_search_movies`: Natural-language plot/mood/theme search (`query`, `limit`) using browser-side vector embeddings (`leaf-ir` + `sqlite-vec`).
+- `get_movie_details`: Fetch full metadata, streaming sources, collections, and similar movies for a `movieId`.
+- `list_collections`: List curated collections (with optional `category` filter) or fetch a single collection by `collectionId` including its `movieIds`.

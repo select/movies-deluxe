@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { useRuntimeConfig, useHead } from '#app'
 import { useMovieStore } from '~/stores/useMovieStore'
+import { useSearchUrlSync } from '~/composables/useSearchUrlSync'
 import { storeToRefs } from '#imports'
 import { computed, onMounted } from 'vue'
 import SearchHeader from '~/components/SearchHeader.vue'
@@ -75,6 +76,7 @@ useHead({
 })
 
 const movieStore = useMovieStore()
+useSearchUrlSync()
 const { isFiltering, totalFiltered, searchResultMovies } = storeToRefs(movieStore)
 
 const safeTotalMovies = computed(() => totalFiltered.value || 0)

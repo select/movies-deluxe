@@ -2,7 +2,7 @@
 
 A Nuxt application for discovering and managing free legal movie streams.
 
-Visit [Movies Deluxe](https://select.github.io/movies/)
+Visit [Movies Deluxe](https://mdlx.org)
 
 <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-collections.png?raw=true" alt="Curated Collections" width="60%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-liked.png?raw=true" alt="Liked Movies" width="16%" /> <img src="https://github.com/select/movies-deluxe/blob/main/docs/screenshots/movies-deluxe-movie.png?raw=true" alt="Movie View" width="18%" />
 
@@ -27,15 +27,28 @@ This project is built with
 - [VueUse](https://vueuse.org/), and
 - [Pinia](https://pinia.vuejs.org/).
 
-The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side without a backend server. In production, movie data is queried using an [in-browser SQLite database](https://github.com/sql-js/sql.js) via WebAssembly, enabling offline-capable search functionality directly in the user's browser, next to static files.
+The server API is exclusively used for local administration tasks for data collection, while the production build runs entirely client-side as a static site (GitHub Pages via `nuxt generate`) without a backend server. In production, movie data is queried using an in-browser SQLite database (`sqlite-wasm-vec`, SQLite WebAssembly + `sqlite-vec`) inside a Web Worker, enabling fast full-text (FTS5) and semantic vector search directly in the user's browser alongside static JSON files.
 
-**[Embedding Models](./docs/embedding-models.md)**: Learn about the different semantic search models available (Nomic, BGE Micro, Potion) with detailed comparisons of dimensions, file sizes, and performance trade-offs.
+**[Embedding Models](./docs/embedding-models.md)**: Semantic search uses **`MongoDB/mdbr-leaf-ir`** (`leaf-ir`), running in-browser via `@huggingface/transformers` with 256D Matryoshka truncation and `int8` scalar quantization (`embeddings-leaf-ir-movies.db`). See the doc for model comparisons, quantization trade-offs, and research notes.
+
+## AI Agent Support
+
+Movies Deluxe is designed to be agent-friendly while remaining a pure static site with zero backend infrastructure:
+
+- **WebMCP (`navigator.modelContext` / `document.modelContext`)**: In WebMCP-enabled browsers, `app/plugins/webmcp.client.ts` registers read-only client-side tools directly backed by the in-browser SQLite + vector search workers and static JSON files:
+  - `search_movies` — FTS5 & filter search (`actor:`, `director:`, `writer:`, `title:` prefixes, genres, countries, sources, rating, year, votes, sort)
+  - `semantic_search_movies` — natural-language plot/mood/theme search using `leaf-ir` + `sqlite-vec`
+  - `get_movie_details` — full metadata, streaming sources, collections, and similar movies for a `movieId`
+  - `list_collections` — list curated collections or inspect a specific collection's `movieIds`
+- **`/llms.txt`**: [`public/llms.txt`](./public/llms.txt) (linked via `<link rel="describedby" href="/llms.txt" type="text/markdown">`) documents the static JSON endpoints (`/data/collections.json`, `/data/stats.json`, `/movies/<id>.json`, `/data/movies.db.gz`), `/search` URL query parameters, WebMCP tools, and the Agent Skill.
+- **Agent Skill**: [`skills/movies-deluxe/SKILL.md`](./skills/movies-deluxe/SKILL.md) follows the [Agent Skills](https://agentskills.io/) format to teach CLI and coding agents how to query `mdlx.org` via static JSON endpoints, `movies.db.gz`, and `/search` URLs.
+- **Shareable `/search` URLs**: `app/utils/searchUrlParams.ts` and `app/composables/useSearchUrlSync.ts` bidirectionally sync search state (`q`, `mode`, `genres`, `countries`, `source`, `year`, `rating`, `votes`, `sort`) with the URL query string so users and agents can deep-link directly to filtered or semantic search results.
 
 ### Architecture Diagrams
 
 - **[SQLite Browser Architecture](./docs/architecture-sqlite-browser.md)**: Detailed architecture of the in-browser SQLite database including WebAssembly initialization, database worker with message queue, embeddings attach/detach pattern, query execution flow, and caching strategy.
 
-- **[Embedding Generation & Vector Search](./docs/architecture-embedding-generation.md)**: Complete architecture for semantic search including embedding worker, BGE and Potion providers, text preprocessing, model inference, and vector search with sqlite-vec.
+- **[Embedding Generation & Vector Search](./docs/architecture-embedding-generation.md)**: Architecture for semantic search including the browser embedding worker (`MongoDB/mdbr-leaf-ir` via `@huggingface/transformers`), text preprocessing, `int8` quantization, and vector search with `sqlite-vec`.
 
 #### SQLite Browser Architecture Flow
 
@@ -90,15 +103,11 @@ flowchart TB
 
     subgraph Worker["Embedding Worker"]
         Handler["Message Handler"]
-        subgraph Providers["Providers"]
-            BGE["BGE<br/>(transformers.js)"]
-            Potion["Potion<br/>(onnxruntime-web)"]
-        end
+        LeafIR["LEAF IR<br/>(transformers.js)"]
     end
 
     subgraph Models["Models"]
-        BGE2["BGE-micro-v2<br/>384d"]
-        Potion2["Potion-base-2M<br/>64d"]
+        LeafModel["MongoDB/mdbr-leaf-ir<br/>256d int8 (MRL)"]
     end
 
     subgraph DB["SQLite Database"]
@@ -110,13 +119,11 @@ flowchart TB
     VS -->|"init / embed"| BE
     BE -->|"postMessage()"| Handler
 
-    Handler -->|"Load"| BGE
-    Handler -->|"Load"| Potion
-    BGE -->|"Fetch"| BGE2
-    Potion -->|"Fetch"| Potion2
+    Handler -->|"Load"| LeafIR
+    LeafIR -->|"Fetch"| LeafModel
 
-    Handler -->|"Generate Embedding"| Providers
-    Providers -->|"Return"| BE
+    Handler -->|"Generate Embedding"| LeafIR
+    LeafIR -->|"Return"| BE
 
     VS -->|"vectorSearch"| Vec
     Vec -->|"Similarity"| Table
@@ -146,22 +153,18 @@ pnpm posters:extract
 
 ### Database Generation Options
 
-The `pnpm db:generate` command supports several options for customizing the database generation:
+The `pnpm db:generate` command converts `data/movies.json` into `public/data/movies.db` (plus gzipped `movies.db.gz`) and individual `public/movies/<id>.json` files:
 
-- `-m, --embedding-model <model>`: Select the embedding model to use for semantic search.
-  - `nomic`: Nomic Embed Text (768D, default)
-  - `bge-micro`: BGE Micro v2 (384D)
-  - `potion`: Potion Base 2M (64D)
 - `--skip-json`: Skip generating individual movie JSON files (faster if only the SQLite database needs updating).
 - `-h, --help`: Show help message.
 
 Example:
 
 ```bash
-pnpm db:generate -m bge-micro --skip-json
+pnpm db:generate --skip-json
 ```
 
-For more details on embedding models, see the [Embedding Models Documentation](./docs/embedding-models.md).
+Embeddings (`public/data/embeddings-leaf-ir-movies.db`) are stored in a separate SQLite database file and generated via the Admin UI (`/admin`). For more details on embedding models, see the [Embedding Models Documentation](./docs/embedding-models.md).
 
 ### API Keys Setup
 
@@ -171,42 +174,44 @@ For more details on embedding models, see the [Embedding Models Documentation](.
 
 ```
 movies-deluxe/
-├── app/                    # Frontend application (Nuxt 4)
+├── app/                    # Frontend application (Nuxt 4, strict explicit imports)
 │   ├── assets/             # Processed assets (images, SVGs)
-│   ├── components/         # Vue components (auto-imported)
-│   ├── composables/        # Composables (auto-imported)
-│   ├── constants/          # Application constants
+│   ├── components/         # Vue components
+│   ├── composables/        # Composables (useDatabase, useVectorSearch, useSearchUrlSync, ...)
 │   ├── layouts/            # Layout components
 │   ├── pages/              # File-based routing
-│   ├── plugins/            # Nuxt plugins (dark mode, splash screen)
-│   ├── stores/             # Pinia stores (auto-imported)
-│   ├── types/              # Frontend TypeScript types
-│   ├── utils/              # Utility functions (auto-imported)
-│   └── workers/            # Web Workers (database worker)
-├── config/                 # Configuration files
-│   └── youtube-channels.json  # YouTube channel configuration
+│   ├── plugins/            # Nuxt plugins (WebMCP, dark mode, canonical, scroll restoration)
+│   ├── stores/             # Pinia stores
+│   ├── types/              # Frontend TypeScript types (including webmcp.d.ts)
+│   ├── utils/              # Utility functions (searchQueryParser, searchUrlParams, leafIrEmbedding, ...)
+│   └── workers/            # Web Workers (database.worker.ts, embedding.worker.ts)
+├── config/                 # Configuration files (embedding-models.ts, youtube-channels.json)
 ├── data/                   # Raw data files
 │   ├── movies.json         # Source movie database
 │   ├── failed-*.json       # Failed operation tracking
 │   └── posters-*.tar.gz    # Archived poster images
 ├── docs/                   # Project documentation
-├── prompts/                # AI prompts for data extraction
 ├── public/                 # Static assets (served at root)
-│   ├── data/               # Generated data files
-│   │   ├── collections.json   # Curated movie collections (top-movies, etc.)
-│   │   └── stats.json         # Database statistics and metrics
-│   ├── posters/            # Downloaded poster images (13,000+ files)
-│   └── sqlite-wasm/        # SQLite WebAssembly files (sql.js)
+│   ├── data/               # Generated static databases & JSON
+│   │   ├── collections.json            # Curated movie collections
+│   │   ├── embeddings-leaf-ir-movies.db # LEAF IR 256D int8 vector embeddings
+│   │   ├── movies.db / movies.db.gz    # Client-side SQLite catalog + FTS5 index
+│   │   └── stats.json                  # Database statistics and metrics
+│   ├── llms.txt            # Machine-readable site guide for AI agents
+│   ├── models/             # Browser ONNX embedding model assets (mdbr-leaf-ir)
+│   ├── movies/             # Pre-generated per-movie JSON files (/movies/<id>.json)
+│   ├── posters/            # Downloaded poster images
+│   └── sqlite-wasm/        # SQLite WebAssembly + sqlite-vec files (sqlite-wasm-vec)
 ├── scripts/                # Maintenance and migration scripts
-├── server/                 # Backend API (Nuxt server, localhost only)
-│   ├── api/                # API endpoints
-│   │   ├── admin/          # Admin API (scraping, enrichment, etc.)
-│   │   └── movies.get.ts   # Public movie data API
-│   ├── plugins/            # Server plugins
+├── server/                 # Backend API (Nuxt server, localhost admin + prerender helpers)
+│   ├── api/                # API endpoints (admin/*, movie/[id].get.ts)
+│   ├── routes/             # Server routes (sitemap.xml.ts)
 │   └── utils/              # Server utilities
-└── shared/                 # Shared code between frontend and backend
-    ├── types/              # Shared TypeScript types
-    └── utils/              # Shared utility functions
+├── shared/                 # Code shared between frontend and backend
+│   ├── types/              # Shared TypeScript types
+│   └── utils/              # Shared utility functions
+└── skills/                 # Agent Skills (agentskills.io)
+    └── movies-deluxe/      # SKILL.md for querying mdlx.org from CLI/coding agents
 ```
 
 ## Admin Dashboard

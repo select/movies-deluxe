@@ -40,6 +40,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'describedby' as 'alternate', href: '/llms.txt', type: 'text/markdown' },
       ],
       bodyAttrs: {
         class: 'font-sans',

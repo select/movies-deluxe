@@ -9,6 +9,7 @@ import { useRuntimeConfig, useRoute } from '#app'
 import { useToastStore } from '~/stores/useToastStore'
 import { $fetch } from '#build/fetch'
 import { parseSearchQuery } from '~/utils/searchQueryParser'
+import { DEFAULT_SEARCH_FILTERS, SEARCH_SORT_OPTIONS } from '~/utils/searchUrlParams'
 import { useVectorSearch } from '~/composables/useVectorSearch'
 
 /**
@@ -29,33 +30,12 @@ export interface LoadingState {
 /**
  * Available sort options for movies
  */
-const SORT_OPTIONS: SortOption[] = [
-  { field: 'relevance', direction: 'desc', label: 'Relevance' },
-  { field: 'year', direction: 'desc', label: 'Year (Newest)' },
-  { field: 'year', direction: 'asc', label: 'Year (Oldest)' },
-  { field: 'rating', direction: 'desc', label: 'Rating (High)' },
-  { field: 'rating', direction: 'asc', label: 'Rating (Low)' },
-  { field: 'title', direction: 'asc', label: 'Title (A-Z)' },
-  { field: 'title', direction: 'desc', label: 'Title (Z-A)' },
-  { field: 'votes', direction: 'desc', label: 'Most Popular' },
-]
+const SORT_OPTIONS: SortOption[] = SEARCH_SORT_OPTIONS
 
 /**
  * Default filter state
  */
-const DEFAULT_FILTERS: FilterState = {
-  sort: { field: 'year', direction: 'desc' }, // Year (Newest)
-  sources: [],
-  minRating: 0,
-  minYear: 0,
-  maxYear: 0,
-  minVotes: 0,
-  maxVotes: 0,
-  genres: [],
-  countries: [],
-  searchQuery: '',
-  searchMode: 'exact',
-}
+const DEFAULT_FILTERS: FilterState = DEFAULT_SEARCH_FILTERS
 
 /**
  * Unified Movie Store
@@ -167,8 +147,13 @@ export const useMovieStore = defineStore('movie', () => {
     let count = 0
     if (filters.value.sources.length > 0) count++
     if (filters.value.minRating > 0) count++
-    if (filters.value.minYear > 0) count++
-    if (filters.value.minVotes > 0) count++
+    if (filters.value.minYear > 0 || (filters.value.maxYear ?? 0) > 0) count++
+    if (
+      filters.value.minVotes > 0 ||
+      ((filters.value.maxVotes ?? 0) > 0 && (filters.value.maxVotes ?? 0) < 1000000)
+    ) {
+      count++
+    }
     if (filters.value.genres.length > 0) count++
     if (filters.value.countries.length > 0) count++
     return count
@@ -182,7 +167,9 @@ export const useMovieStore = defineStore('movie', () => {
       filters.value.sources.length > 0 ||
       filters.value.minRating > 0 ||
       filters.value.minYear > 0 ||
+      (filters.value.maxYear ?? 0) > 0 ||
       filters.value.minVotes > 0 ||
+      ((filters.value.maxVotes ?? 0) > 0 && (filters.value.maxVotes ?? 0) < 1000000) ||
       filters.value.genres.length > 0 ||
       filters.value.countries.length > 0
     )
@@ -887,12 +874,19 @@ export const useMovieStore = defineStore('movie', () => {
       return
     }
 
+    currentSearchSessionId.value++
+    const sessionId = currentSearchSessionId.value
+
     // Set filtering state
     isFiltering.value = true
 
     try {
       // Use the same unified query approach to get movie IDs
-      const filteredResults = await executeFilterQuery(currentSearchSessionId.value)
+      const filteredResults = await executeFilterQuery(sessionId)
+
+      if (sessionId !== currentSearchSessionId.value) {
+        return
+      }
 
       // Store the filtered movie IDs directly
       searchResultMovies.value = filteredResults

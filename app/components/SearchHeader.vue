@@ -257,8 +257,8 @@
 import { useDebounceFn } from '@vueuse/core'
 import { useMovieStore } from '~/stores/useMovieStore'
 import { storeToRefs } from '#imports'
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
-import { useRoute, useRouter, navigateTo } from '#app'
+import { ref, computed, watch, nextTick } from 'vue'
+import { useRoute, navigateTo } from '#app'
 import { formatCount } from '~/utils/formatCount'
 import { hasKeywords } from '~/utils/searchQueryParser'
 import SearchModeSelector from '~/components/SearchModeSelector.vue'
@@ -355,37 +355,16 @@ const clearVotes = () => {
   filters.value.maxVotes = 0
 }
 
-// Initialize search from URL query parameter on mount
-onMounted(() => {
-  const urlQuery = route.query.q as string
-  if (urlQuery && urlQuery !== localQuery.value) {
-    localQuery.value = urlQuery
-  }
-
-  // Trigger search when on search page (handles navigation from other pages)
-  if (route.path === '/search') {
-    movieStore.triggerSearchUpdate()
-  }
-})
-
 // Debounced function to update store (500ms delay)
 const debouncedSetSearchQuery = useDebounceFn((query: string) => {
+  if (query === filters.value.searchQuery) return
+
   // If query contains keywords, automatically switch to exact mode
   if (hasKeywords(query)) {
     filters.value.searchMode = 'exact'
   }
 
   filters.value.searchQuery = query
-
-  // Update URL query parameter (but not on admin pages)
-  if (!route.path.startsWith('/admin')) {
-    const router = useRouter()
-    if (query) {
-      router.replace({ query: { q: query } })
-    } else {
-      router.replace({ query: {} })
-    }
-  }
 
   // If searching from a non-search page, navigate to search (but not from admin pages)
   if (query && route.path !== '/search' && !route.path.startsWith('/admin')) {
@@ -394,6 +373,8 @@ const debouncedSetSearchQuery = useDebounceFn((query: string) => {
 
   if (query && filters.value.sort.field !== 'relevance') {
     filters.value.sort = { field: 'relevance', direction: 'desc' }
+  } else if (!query && filters.value.sort.field === 'relevance') {
+    filters.value.sort = { field: 'year', direction: 'desc' }
   }
 }, 500)
 
