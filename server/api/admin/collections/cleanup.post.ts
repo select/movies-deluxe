@@ -1,5 +1,5 @@
 import { defineEventHandler, createError } from 'h3'
-import { extractMovieKeys } from '../../../utils/movieData'
+import { getAdminDatabase } from '#server/utils/adminDb'
 import { loadCollectionsDatabase, saveCollectionsDatabase } from '#server/utils/collections'
 import type { Collection } from '#shared/types/collections'
 
@@ -25,8 +25,10 @@ interface CleanupResult {
  */
 export default defineEventHandler(async (): Promise<CleanupResult> => {
   try {
-    // Get all valid movie IDs from the database
-    const validMovieIds = new Set(await extractMovieKeys('all'))
+    // Get all valid movie IDs from the SQLite admin database
+    const adminDb = getAdminDatabase()
+    const rows = adminDb.prepare('SELECT movieId FROM movies').all() as Array<{ movieId: string }>
+    const validMovieIds = new Set(rows.map(r => r.movieId))
 
     // Load all collections
     const db = await loadCollectionsDatabase()
