@@ -178,11 +178,13 @@ export default defineEventHandler((event): MatchReviewListResponse => {
   const query = getQuery(event)
   const rawStatus = typeof query.status === 'string' ? query.status : 'pending'
   const rawKind = typeof query.kind === 'string' ? query.kind : 'all'
+  const rawFlag = typeof query.flag === 'string' ? query.flag.trim() : ''
   const rawLimit = Number(query.limit ?? 50)
   const rawOffset = Number(query.offset ?? 0)
 
   const status = VALID_STATUSES.has(rawStatus) ? rawStatus : 'pending'
   const kind = VALID_KINDS.has(rawKind) ? rawKind : 'all'
+  const flag = rawFlag && rawFlag !== 'all' ? rawFlag : ''
   const limit = Number.isFinite(rawLimit) ? Math.min(200, Math.max(1, Math.trunc(rawLimit))) : 50
   const offset = Number.isFinite(rawOffset) ? Math.max(0, Math.trunc(rawOffset)) : 0
 
@@ -221,6 +223,11 @@ export default defineEventHandler((event): MatchReviewListResponse => {
     if (kind !== 'all') {
       whereClauses.push('q.kind = ?')
       params.push(kind)
+    }
+
+    if (flag) {
+      whereClauses.push('q.flagsJson LIKE ?')
+      params.push(`%"${flag}"%`)
     }
 
     const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
@@ -265,6 +272,7 @@ export default defineEventHandler((event): MatchReviewListResponse => {
         ${whereSql}
         ORDER BY
           CASE WHEN q.llmVerdict = 'mismatch' THEN 0 WHEN q.llmVerdict = 'uncertain' THEN 1 ELSE 2 END,
+          q.llmConfidence DESC,
           q.createdAt DESC,
           q.id DESC
         LIMIT ? OFFSET ?

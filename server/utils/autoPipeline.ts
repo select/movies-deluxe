@@ -340,7 +340,11 @@ function computeEtaSeconds(
   return Math.max(1, Math.round(remainingMs / 1000))
 }
 
-function upsertMetadataAndMovie(db: Database.Database, imdbId: string, meta: MovieMetadata): void {
+export function upsertMetadataAndMovie(
+  db: Database.Database,
+  imdbId: string,
+  meta: MovieMetadata
+): void {
   const now = new Date().toISOString()
   const yearNum = meta.Year ? parseInt(meta.Year.slice(0, 4), 10) : null
   const validYear = yearNum && !Number.isNaN(yearNum) ? yearNum : null
@@ -396,7 +400,7 @@ function upsertMetadataAndMovie(db: Database.Database, imdbId: string, meta: Mov
   )
 }
 
-interface FindReplacementImdbMatchInput {
+export interface FindReplacementImdbMatchInput {
   movieId: string
   rawTitle: string
   description?: string | null
@@ -410,14 +414,14 @@ interface FindReplacementImdbMatchInput {
   excludeImdbId: string
 }
 
-interface FindReplacementImdbMatchOptions {
+export interface FindReplacementImdbMatchOptions {
   minRematchConfidence?: number
   allowGoogle?: boolean
   model?: string
   omdbApiKey?: string
 }
 
-interface FindReplacementImdbMatchResult {
+export interface FindReplacementImdbMatchResult {
   imdbId: string
   meta: MovieMetadata | null
   confidence: number
@@ -427,7 +431,7 @@ interface FindReplacementImdbMatchResult {
 /**
  * Shared Phase 1 + Phase 2 LLM rematch helper (excludes `excludeImdbId`).
  */
-async function findReplacementImdbMatch(
+export async function findReplacementImdbMatch(
   input: FindReplacementImdbMatchInput,
   options: FindReplacementImdbMatchOptions = {}
 ): Promise<FindReplacementImdbMatchResult | null> {

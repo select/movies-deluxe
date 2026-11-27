@@ -7,6 +7,7 @@ export type LlmVerdict = 'match' | 'mismatch' | 'uncertain'
 export type MatchReviewActionType =
   | 'keep_verified'
   | 'approve_match'
+  | 'find_and_update'
   | 'unmatch'
   | 'detach_source'
   | 'mark_preview'
@@ -101,6 +102,9 @@ export interface MatchReviewActionResponse {
   action: MatchReviewActionType
   status: ReviewItemStatus
   movieId: string
+  matchedImdbId?: string
+  matchedTitle?: string
+  confidence?: number
   message?: string
 }
 

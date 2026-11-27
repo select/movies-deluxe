@@ -291,6 +291,33 @@
       </button>
     </div>
 
+    <!-- Action Feedback Banner -->
+    <div
+      v-if="actionFeedback"
+      class="p-3 rounded-lg text-sm flex items-center justify-between gap-2 border"
+      :class="
+        actionFeedback.success
+          ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+          : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200'
+      "
+    >
+      <div class="flex flex-wrap items-center gap-2">
+        <span>{{ actionFeedback.message }}</span>
+        <NuxtLink
+          v-if="actionFeedback.matchedImdbId"
+          :to="`/movie/${actionFeedback.matchedImdbId}`"
+          target="_blank"
+          class="font-mono text-xs underline inline-flex items-center gap-1"
+        >
+          <span>/movie/{{ actionFeedback.matchedImdbId }}</span>
+          <div class="i-mdi-open-in-new text-xs"></div>
+        </NuxtLink>
+      </div>
+      <button class="text-xs underline opacity-80 hover:opacity-100" @click="actionFeedback = null">
+        Dismiss
+      </button>
+    </div>
+
     <!-- Filter Tabs & Status Selector -->
     <div
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-theme-border pb-3"
@@ -321,20 +348,41 @@
         </button>
       </div>
 
-      <div class="flex items-center gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
-          Status:
-        </span>
-        <select
-          v-model="selectedStatus"
-          class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
-          @change="onStatusChange"
-        >
-          <option value="pending">Pending ({{ counts.byStatus.pending }})</option>
-          <option value="approved">Approved ({{ counts.byStatus.approved }})</option>
-          <option value="rejected">Rejected ({{ counts.byStatus.rejected }})</option>
-          <option value="resolved">Resolved ({{ counts.byStatus.resolved }})</option>
-        </select>
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
+            Flag:
+          </span>
+          <select
+            v-model="selectedFlag"
+            class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
+            @change="onFilterChange"
+          >
+            <option value="all">All flags</option>
+            <option value="jev_scan">Jev Scan</option>
+            <option value="wrong_year_remake">Wrong Year / Remake</option>
+            <option value="wrong_title">Wrong Title</option>
+            <option value="wrong_cast_or_director">Wrong Cast / Director</option>
+            <option value="clip_or_non_movie">Clip / Non-Movie</option>
+            <option value="verified_movie">Verified Movies</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-theme-textmuted">
+            Status:
+          </span>
+          <select
+            v-model="selectedStatus"
+            class="px-3 py-1.5 text-sm rounded-lg border border-theme-border bg-theme-background text-theme-text"
+            @change="onFilterChange"
+          >
+            <option value="pending">Pending ({{ counts.byStatus.pending }})</option>
+            <option value="approved">Approved ({{ counts.byStatus.approved }})</option>
+            <option value="rejected">Rejected ({{ counts.byStatus.rejected }})</option>
+            <option value="resolved">Resolved ({{ counts.byStatus.resolved }})</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -671,6 +719,27 @@
         >
           <div class="flex flex-wrap items-center gap-2">
             <button
+              v-if="item.kind === 'false_hit'"
+              class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              :disabled="actingId === item.id"
+              title="Search IMDb/TMDB/OMDb + LLM for the right movie and update (or move the flagged source to it)"
+              @click="performAction(item.id, 'find_and_update')"
+            >
+              <div
+                :class="
+                  actingId === item.id && actingType === 'find_and_update'
+                    ? 'i-mdi-loading animate-spin'
+                    : 'i-mdi-auto-fix'
+                "
+              ></div>
+              {{
+                actingId === item.id && actingType === 'find_and_update'
+                  ? 'Finding Match...'
+                  : 'Find & Update Match'
+              }}
+            </button>
+
+            <button
               class="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-white transition-colors flex items-center gap-1.5 disabled:opacity-50"
               :class="recommendedFix(item).buttonClass"
               :disabled="actingId === item.id"
@@ -876,10 +945,17 @@ const counts = ref<MatchReviewCounts>({
 
 const selectedKind = ref<KindFilter>('all')
 const selectedStatus = ref<ReviewItemStatus>('pending')
+const selectedFlag = ref<string>('all')
 
 const loading = ref(false)
 const actingId = ref<number | null>(null)
+const actingType = ref<MatchReviewActionType | null>(null)
 const errorMessage = ref<string | null>(null)
+const actionFeedback = ref<{
+  success: boolean
+  message: string
+  matchedImdbId?: string
+} | null>(null)
 
 const autoTask = ref<AutoTaskType>('clean_previews')
 const autoLimit = ref(500)
@@ -938,6 +1014,7 @@ async function fetchQueue() {
       query: {
         status: selectedStatus.value,
         kind: selectedKind.value,
+        ...(selectedFlag.value !== 'all' ? { flag: selectedFlag.value } : {}),
         limit: limit.value,
         offset: offset.value,
       },
@@ -954,9 +1031,11 @@ async function fetchQueue() {
 
 async function performAction(id: number, action: MatchReviewActionType, customImdbId?: string) {
   actingId.value = id
+  actingType.value = action
   errorMessage.value = null
+  actionFeedback.value = null
   try {
-    await $fetch<MatchReviewActionResponse>('/api/admin/review/action', {
+    const res = await $fetch<MatchReviewActionResponse>('/api/admin/review/action', {
       method: 'POST',
       body: {
         id,
@@ -964,11 +1043,19 @@ async function performAction(id: number, action: MatchReviewActionType, customIm
         ...(customImdbId ? { customImdbId } : {}),
       },
     })
+    if (res.message && (action === 'find_and_update' || !res.success)) {
+      actionFeedback.value = {
+        success: res.success,
+        message: res.message,
+        matchedImdbId: res.matchedImdbId,
+      }
+    }
     await fetchQueue()
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : 'Failed to apply review action'
   } finally {
     actingId.value = null
+    actingType.value = null
   }
 }
 
@@ -990,7 +1077,7 @@ function selectKind(kind: KindFilter) {
   fetchQueue()
 }
 
-function onStatusChange() {
+function onFilterChange() {
   offset.value = 0
   fetchQueue()
 }

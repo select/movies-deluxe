@@ -3,6 +3,7 @@ import { getAdminDatabase, withTransaction } from '../../../utils/adminDb'
 import { migrateMovieId } from '../../../utils/migrateMovieId'
 import { getMovieByImdbId } from '../../../utils/omdb'
 import { upsertMovie } from '../../../utils/upsertMovie'
+import { findReplacementImdbMatch, upsertMetadataAndMovie } from '../../../utils/autoPipeline'
 import { isImdbId, generateArchiveId, generateYouTubeId } from '#shared/types/movie'
 import type { MovieEntry } from '#shared/types/movie'
 import type {
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS match_review_queue (
 const VALID_ACTIONS = new Set<MatchReviewActionType>([
   'keep_verified',
   'approve_match',
+  'find_and_update',
   'unmatch',
   'detach_source',
   'mark_preview',
@@ -405,6 +407,200 @@ export default defineEventHandler(async (event): Promise<MatchReviewActionRespon
         status: 'approved',
         movieId: finalMovieId,
         message: `Unmatched movie to ${finalMovieId}`,
+      }
+    }
+
+    if (action === 'find_and_update') {
+      const targetSource = (
+        item.sourceId
+          ? db
+              .prepare(
+                `
+                SELECT s.id, s.sourceId, s.channelId, c.platform, c.name AS channelName,
+                       s.title, s.description, s.year, s.duration
+                FROM sources s
+                JOIN channels c ON s.channelId = c.id
+                WHERE s.movieId = ? AND s.sourceId = ?
+                LIMIT 1
+              `
+              )
+              .get(item.movieId, item.sourceId)
+          : db
+              .prepare(
+                `
+                SELECT s.id, s.sourceId, s.channelId, c.platform, c.name AS channelName,
+                       s.title, s.description, s.year, s.duration
+                FROM sources s
+                JOIN channels c ON s.channelId = c.id
+                WHERE s.movieId = ?
+                ORDER BY s.id ASC
+                LIMIT 1
+              `
+              )
+              .get(item.movieId)
+      ) as
+        | {
+            id: number
+            sourceId: string
+            channelId: string
+            platform: 'youtube' | 'archive.org'
+            channelName: string
+            title: string | null
+            description: string | null
+            year: number | null
+            duration: number | null
+          }
+        | undefined
+
+      if (!targetSource) {
+        throw createError({
+          statusCode: 404,
+          message: `No source found on movie ${item.movieId} to rematch`,
+        })
+      }
+
+      const sourceCountRow = db
+        .prepare('SELECT COUNT(*) as cnt FROM sources WHERE movieId = ?')
+        .get(item.movieId) as { cnt: number }
+
+      const sourceDurationMin =
+        targetSource.duration && targetSource.duration > 0
+          ? Math.round(targetSource.duration / 60)
+          : null
+
+      const replacement = await findReplacementImdbMatch(
+        {
+          movieId: item.movieId,
+          rawTitle: targetSource.title || targetSource.sourceId,
+          description: targetSource.description,
+          sourceId: targetSource.sourceId,
+          platform: targetSource.platform,
+          channelId: targetSource.channelId,
+          channelName: targetSource.channelName,
+          sourceYear: targetSource.year,
+          movieYear: null,
+          sourceDurationMin,
+          excludeImdbId: item.movieId,
+        },
+        {
+          minRematchConfidence: 0.75,
+          allowGoogle: true,
+          omdbApiKey: process.env.OMDB_API_KEY,
+        }
+      )
+
+      if (!replacement || !isImdbId(replacement.imdbId)) {
+        return {
+          success: false,
+          id,
+          action,
+          status: item.status,
+          movieId: item.movieId,
+          message:
+            'No confident replacement IMDb match found. Try entering a custom IMDb ID or detaching/unmatching.',
+        }
+      }
+
+      const targetImdbId = replacement.imdbId
+      const matchedTitle = replacement.meta?.Title || targetImdbId
+      const matchedYear = replacement.meta?.Year ? ` (${replacement.meta.Year})` : ''
+
+      // Multi-source movie with a specific flagged source: move ONLY the flagged source to targetImdbId
+      if (item.sourceId && sourceCountRow.cnt > 1) {
+        await withTransaction(async txDb => {
+          const targetExists = txDb
+            .prepare('SELECT 1 FROM movies WHERE movieId = ?')
+            .get(targetImdbId)
+
+          if (!targetExists) {
+            const yearNum = replacement.meta?.Year
+              ? parseInt(replacement.meta.Year.slice(0, 4), 10)
+              : null
+            const validYear = yearNum && !Number.isNaN(yearNum) ? yearNum : null
+            txDb
+              .prepare(
+                'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, 0, ?)'
+              )
+              .run(targetImdbId, matchedTitle, validYear, now)
+          }
+
+          if (replacement.meta) {
+            upsertMetadataAndMovie(txDb, targetImdbId, replacement.meta)
+          }
+
+          const duplicateSource = txDb
+            .prepare(
+              'SELECT id FROM sources WHERE movieId = ? AND channelId = ? AND sourceId = ? LIMIT 1'
+            )
+            .get(targetImdbId, targetSource.channelId, targetSource.sourceId) as
+            | { id: number }
+            | undefined
+
+          if (duplicateSource) {
+            txDb.prepare('DELETE FROM sources WHERE id = ?').run(targetSource.id)
+          } else {
+            txDb
+              .prepare('UPDATE sources SET movieId = ? WHERE id = ?')
+              .run(targetImdbId, targetSource.id)
+          }
+
+          txDb
+            .prepare('UPDATE movies SET lastUpdated = ? WHERE movieId IN (?, ?)')
+            .run(now, item.movieId, targetImdbId)
+
+          txDb
+            .prepare(
+              "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+            )
+            .run(id)
+        })
+
+        return {
+          success: true,
+          id,
+          action,
+          status: 'approved',
+          movieId: targetImdbId,
+          matchedImdbId: targetImdbId,
+          matchedTitle,
+          confidence: replacement.confidence,
+          message: `Moved flagged source to ${targetImdbId} — ${matchedTitle}${matchedYear} (${Math.round(replacement.confidence * 100)}%)`,
+        }
+      }
+
+      // Single-source movie: migrate the whole movie to targetImdbId
+      const migrationResult = await migrateMovieId(item.movieId, targetImdbId, {
+        mergeIfExists: true,
+      })
+
+      if (!migrationResult.success) {
+        throw createError({
+          statusCode: 500,
+          message: `Failed to migrate ${item.movieId} -> ${targetImdbId}: ${migrationResult.message}`,
+        })
+      }
+
+      await withTransaction(async txDb => {
+        if (replacement.meta) {
+          upsertMetadataAndMovie(txDb, targetImdbId, replacement.meta)
+        }
+        txDb
+          .prepare(
+            "UPDATE match_review_queue SET status = 'approved', resolvedAt = datetime('now') WHERE id = ?"
+          )
+          .run(id)
+      })
+
+      return {
+        success: true,
+        id,
+        action,
+        status: 'approved',
+        movieId: targetImdbId,
+        matchedImdbId: targetImdbId,
+        matchedTitle,
+        confidence: replacement.confidence,
+        message: `Rematched movie to ${targetImdbId} — ${matchedTitle}${matchedYear} (${Math.round(replacement.confidence * 100)}%)`,
       }
     }
 
