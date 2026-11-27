@@ -37,6 +37,7 @@ interface ParsedArgs {
   channel?: string
   allowGoogle: boolean
   rematch: boolean
+  recheckSuspects: boolean
   removeRedundant: boolean
   model?: string
   concurrency?: number
@@ -60,6 +61,7 @@ Options:
   --channel <NAME>         Filter by channelId/channel name (for match-unmatched)
   --allow-google           Allow Google Search fallback (<=100/day)
   --no-rematch             Disable auto-rematch during audit-false-hits
+  --recheck-suspects       Scan all unverified matched movies for high-signal mismatch indicators (ignores audit_attempts)
   --no-remove-redundant    Mark redundant previews incomplete instead of deleting
   --model <ID>             Override OpenRouter/LLM model ID
   --concurrency <N>        Worker concurrency (1-10, default: 5)
@@ -73,6 +75,7 @@ function parseArgs(argv: string[]): ParsedArgs {
     dryRun: true,
     allowGoogle: false,
     rematch: true,
+    recheckSuspects: false,
     removeRedundant: true,
   }
 
@@ -90,6 +93,8 @@ function parseArgs(argv: string[]): ParsedArgs {
       parsed.allowGoogle = true
     } else if (arg === '--no-rematch') {
       parsed.rematch = false
+    } else if (arg === '--recheck-suspects') {
+      parsed.recheckSuspects = true
     } else if (arg === '--no-remove-redundant') {
       parsed.removeRedundant = false
     } else if (arg === '--limit') {
@@ -298,6 +303,7 @@ async function main(): Promise<void> {
       limit: args.limit,
       minConfidence: args.minConfidence,
       rematch: args.rematch,
+      recheckSuspects: args.recheckSuspects,
       allowGoogle: args.allowGoogle,
       model: args.model,
       concurrency: args.concurrency,

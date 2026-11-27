@@ -23,6 +23,9 @@ export interface ExtractedSourceMetadata {
   originalTitle?: string
   altTitles: string[]
   year?: number
+  titleYear?: number
+  descYear?: number
+  descYearExplicit?: boolean
   director?: string
   cast: string[]
   slugTitle?: string
@@ -38,7 +41,10 @@ const TRAILING_CAST_RE =
   /\s+(?:with|starring|featuring|mit)\s+[A-Z][\p{L}.'-]+(?:\s+[A-Z][\p{L}.'-]+){0,3}.*$/u
 
 const PROMO_LINE_RE =
-  /(?:©|copyright|subscribe|abonnieren|facebook|youtube|new\s+.*\s+movies|films?\s+from)/i
+  /(?:©|copyright|subscribe|abonnieren|facebook|youtube|bit\.ly|playlists|new\s+.*\s+movies|films?\s+from)/i
+
+const PIPE_NON_PERSON_RE =
+  /\b(?:movie|movies|film|films|full|free|hd|4k|english|german|deutsch|spanish|french|subtitles?|subtitulos|vose|classic|action|drama|comedy|horror|thriller|romance|romantic|sci-fi|fantasy|western|mystery|adventure|crime|war|family|documentary|epic|christmas|holiday|survival|disaster|monster|shark|vampire|zombie|central|cinema|classics|filmrise|netzkino|moviedome|popcornflix|mosfilm|pizzaflix|part|episode|season|chapter|trailer|teaser)\b/i
 
 function stripEmojis(text: string): string {
   return text.replace(/\p{Extended_Pictographic}/gu, ' ')
@@ -68,33 +74,47 @@ function stripParentheticalAndYearNoise(text: string): string {
     .trim()
 }
 
-function extractDescriptionYear(description?: string | null): number | undefined {
-  if (!description) return undefined
+function extractDescriptionYear(description?: string | null): {
+  year?: number
+  isExplicit: boolean
+} {
+  if (!description) return { isExplicit: false }
   const lines = description
     .split(/\r?\n/)
     .map(l => l.trim())
     .filter(Boolean)
-    .slice(0, 8)
+    .slice(0, 10)
+
+  let parenYear: number | undefined
 
   for (const line of lines) {
     if (PROMO_LINE_RE.test(line)) continue
 
     const explicitMatch = line.match(
-      /^(?:Year|Release(?:\s+Date)?|Erscheinungsjahr|Jahr)\s*:\s*.*?\b(18\d{2}|19\d{2}|20[0-3]\d)\b/i
+      /^(?:Year|Release(?:\s+Date)?|Released|Erscheinungsjahr|Jahr)\s*[:-]\s*.*?\b(18\d{2}|19\d{2}|20[0-3]\d)\b/i
     )
     if (explicitMatch?.[1]) {
       const y = parseInt(explicitMatch[1], 10)
-      if (y >= 1888 && y <= 2035) return y
+      if (y >= 1888 && y <= 2035) return { year: y, isExplicit: true }
     }
 
-    const parenMatch = line.match(/\((\d{4})\)/)
-    if (parenMatch?.[1]) {
-      const y = parseInt(parenMatch[1], 10)
-      if (y >= 1888 && y <= 2035) return y
+    // Leading year on a line, e.g. "2010.  Stars: Estella Warren, Rhett Giles" or "2010 | ..."
+    const leadingMatch = line.match(/^(18\d{2}|19\d{2}|20[0-3]\d)\s*[.|\-–•,]/)
+    if (leadingMatch?.[1]) {
+      const y = parseInt(leadingMatch[1], 10)
+      if (y >= 1888 && y <= 2035) return { year: y, isExplicit: true }
+    }
+
+    if (!parenYear) {
+      const parenMatch = line.match(/\((\d{4})\)/)
+      if (parenMatch?.[1]) {
+        const y = parseInt(parenMatch[1], 10)
+        if (y >= 1888 && y <= 2035) parenYear = y
+      }
     }
   }
 
-  return undefined
+  return parenYear ? { year: parenYear, isExplicit: false } : { isExplicit: false }
 }
 
 function extractArchiveSlugInfo(sourceId?: string | null): {
@@ -144,7 +164,7 @@ function extractOriginalTitle(description?: string | null): string | undefined {
 function extractDirector(description?: string | null): string | undefined {
   if (!description) return undefined
   const lineMatch = description.match(
-    /(?:^|\r?\n)\s*(?:Director|Directed\s+by|Regie|Dir\.?)\s*:\s*([^\r\n]+)/i
+    /(?:^|\r?\n|[.\-|•]\s*)(?:Director|Directed\s+by|Regie|Dir\.?)\s*:\s*([^\r\n]+)/i
   )
   if (lineMatch?.[1]) {
     const cleaned = lineMatch[1]
@@ -184,7 +204,7 @@ function extractCast(rawTitle: string, description?: string | null): string[] {
 
   if (description) {
     const castMatch = description.match(
-      /(?:^|\r?\n)\s*(?:Stars|Starring|Mit|Cast|Actors|Darsteller)\s*:\s*([^\r\n]+)/i
+      /(?:^|\r?\n|[.\-|•]\s*)(?:Stars|Starring|Mit|Cast|Actors|Darsteller)\s*:\s*([^\r\n]+)/i
     )
     if (castMatch?.[1]) {
       for (const part of castMatch[1].split(/[,/;&]+/)) {
@@ -201,6 +221,24 @@ function extractCast(rawTitle: string, description?: string | null): string[] {
     addName(titleCastMatch[1])
   }
 
+  // Extract trailing pipe-separated person names like "| Estella Warren | Rhett Giles"
+  if (rawTitle.includes('|') && names.length < 6) {
+    const segments = rawTitle.split('|').slice(1)
+    for (const seg of segments) {
+      const trimmed = stripEmojis(seg).trim()
+      if (
+        trimmed.length >= 5 &&
+        trimmed.length <= 35 &&
+        !PROMO_SEGMENT_RE.test(trimmed) &&
+        !PIPE_NON_PERSON_RE.test(trimmed) &&
+        /^[A-Z][\p{L}'-]+(?:\s+[A-Z]\.?)?\s+[A-Z][\p{L}'-]+$/u.test(trimmed)
+      ) {
+        addName(trimmed)
+        if (names.length >= 6) break
+      }
+    }
+  }
+
   return names.slice(0, 6)
 }
 
@@ -212,7 +250,7 @@ export function extractSourceMetadata(input: SourceMetadataInput): ExtractedSour
   const director = extractDirector(input.description)
   const cast = extractCast(rawTitle, input.description)
 
-  const descYear = extractDescriptionYear(input.description)
+  const descYearInfo = extractDescriptionYear(input.description)
   // Strip promo-tag years (e.g. "2026 Rom Com Movie", "HD 2025 Movie", "Kriegsfilme 2026", "family films 2023 new")
   const titleWithoutPromoYears = rawTitle
     .replace(
@@ -226,7 +264,11 @@ export function extractSourceMetadata(input: SourceMetadataInput): ExtractedSour
   const titleYear = extractYearFromTitle(titleWithoutPromoYears) ?? undefined
   const archiveInfo = platform === 'archive.org' ? extractArchiveSlugInfo(input.sourceId) : {}
 
-  const year = descYear ?? titleYear ?? archiveInfo.slugYear
+  // Explicit description year (e.g. "Year: 2010" or "2010. Stars:") beats incidental title noise,
+  // while an explicit titleYear (e.g. "Tarzan's Revenge (1938)") beats incidental parenthetical years in descriptions.
+  const year = descYearInfo.isExplicit
+    ? (titleYear ?? descYearInfo.year ?? archiveInfo.slugYear)
+    : (titleYear ?? descYearInfo.year ?? archiveInfo.slugYear)
 
   // Build channel-cleaned and general-cleaned titles
   const channelCleaned =
@@ -286,6 +328,9 @@ export function extractSourceMetadata(input: SourceMetadataInput): ExtractedSour
     originalTitle,
     altTitles: Array.from(altSet.values()),
     year,
+    titleYear,
+    descYear: descYearInfo.year,
+    descYearExplicit: descYearInfo.isExplicit,
     director,
     cast,
     slugTitle: archiveInfo.slugTitle,

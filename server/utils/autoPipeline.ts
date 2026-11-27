@@ -21,7 +21,12 @@ import {
   enqueueReviewItem,
   resolveReviewItem,
 } from './matchReviewQueue'
-import { extractYearFromTitle, parseRuntimeMinutes, scoreMatchCandidate } from './matchScorer'
+import {
+  evaluateMatchAuditSuspect,
+  extractYearFromTitle,
+  parseRuntimeMinutes,
+  scoreMatchCandidate,
+} from './matchScorer'
 import {
   adjudicateCandidates,
   adjudicateCandidatesWithJev,
@@ -68,6 +73,7 @@ export interface AutoAuditFalseHitsOptions {
   dryRun?: boolean
   limit?: number
   includeVerified?: boolean
+  recheckSuspects?: boolean
   minConfidence?: number
   rematch?: boolean
   allowGoogle?: boolean
@@ -437,7 +443,7 @@ export async function findReplacementImdbMatch(
 ): Promise<FindReplacementImdbMatchResult | null> {
   const minRematchConfidence = options.minRematchConfidence ?? 0.85
   const allowGoogle = options.allowGoogle ?? false
-  const model = options.model || 'google/gemini-2.5-flash-lite'
+  const model = options.model
   const omdbApiKey = options.omdbApiKey ?? process.env.OMDB_API_KEY
   const excludedIdLower = input.excludeImdbId.toLowerCase()
 
@@ -997,10 +1003,11 @@ export async function runAutoAuditFalseHits(
   const dryRun = options.dryRun ?? true
   const safeLimit = Math.max(1, Math.min(20000, Number(options.limit) || 500))
   const includeVerified = options.includeVerified ?? false
+  const recheckSuspects = options.recheckSuspects ?? false
   const minConfidence = options.minConfidence ?? 0.85
   const rematch = options.rematch ?? true
   const allowGoogle = options.allowGoogle ?? false
-  const model = options.model || 'google/gemini-2.5-flash-lite'
+  const model = options.model
   const concurrency = options.concurrency ?? 5
   const omdbApiKey = process.env.OMDB_API_KEY
   const serializeDbWrite = createDbWriteSerializer()
@@ -1054,59 +1061,194 @@ export async function runAutoAuditFalseHits(
   const queueMovieIds = new Set(queueRows.map(r => r.movieId))
   const remaining = Math.max(0, safeLimit - queueRows.length)
 
-  // Step 2: Unverified matched movies not already in Step 1
-  const rawMovies =
-    remaining > 0
-      ? (db
-          .prepare(
-            `SELECT
-              m.movieId, m.title as movieTitle, m.year as movieYear,
-              md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
-              md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
-            FROM movies m
-            LEFT JOIN metadata md ON m.movieId = md.movieId
-            LEFT JOIN audit_attempts aa ON m.movieId = aa.movieId
-            WHERE m.movieId LIKE 'tt%'
-              ${verifiedFilter}
-            ORDER BY aa.auditedAt IS NOT NULL ASC, aa.auditedAt ASC, m.lastUpdated DESC
-            LIMIT ?`
-          )
-          .all(remaining + queueMovieIds.size) as Array<{
-          movieId: string
-          movieTitle: string
-          movieYear: number | null
-          omdbTitle: string | null
-          omdbYear: string | null
-          omdbRuntime: string | null
-          omdbDirector: string | null
-          omdbActors: string | null
-          omdbPlot: string | null
-          omdbType: string | null
-        }>)
-      : []
+  type AuditMovieRow = {
+    movieId: string
+    movieTitle: string
+    movieYear: number | null
+    verified?: number
+    omdbTitle: string | null
+    omdbYear: string | null
+    omdbRuntime: string | null
+    omdbDirector: string | null
+    omdbActors: string | null
+    omdbGenre: string | null
+    omdbImdbVotes: number | null
+    omdbPlot: string | null
+    omdbType: string | null
+  }
 
-  const movies = rawMovies.filter(m => !queueMovieIds.has(m.movieId)).slice(0, remaining)
+  const HIGH_SIGNAL_RECHECK_FLAGS = new Set([
+    'year_major_mismatch',
+    'year_mismatch',
+    'director_mismatch',
+    'cast_mismatch',
+    'high_votes_youtube_unverified',
+    'animation_genre_mismatch',
+    'non_movie_source_title',
+    'runtime_major_mismatch',
+    'runtime_feature_short_mismatch',
+    'non_movie_candidate',
+  ])
 
-  const getMovieStmt = db.prepare(
-    `SELECT
-      m.movieId, m.title as movieTitle, m.year as movieYear,
-      md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
-      md.Director as omdbDirector, md.Actors as omdbActors, md.Plot as omdbPlot, md.Type as omdbType
-     FROM movies m
-     LEFT JOIN metadata md ON m.movieId = md.movieId
-     WHERE m.movieId = ?`
-  )
-
-  type AuditSourceRow = SourceRow & { hasQualityMark: number }
+  type AuditSourceRow = SourceRow & { hasQualityMark: number; status?: string }
 
   const getSourcesStmt = db.prepare(
     `SELECT s.id, s.movieId, s.sourceId, s.channelId, c.platform, c.name as channelName,
-            s.title, s.description, s.size, s.duration, s.year,
+            s.title, s.description, s.size, s.duration, s.year, s.status,
             EXISTS (SELECT 1 FROM source_quality_marks sqm WHERE sqm.sourceId = s.id) as hasQualityMark
      FROM sources s
      JOIN channels c ON s.channelId = c.id
      WHERE s.movieId = ?
      ORDER BY s.id ASC`
+  )
+
+  // Step 2: Unverified matched movies not already in Step 1
+  let movies: AuditMovieRow[] = []
+  if (remaining > 0) {
+    if (recheckSuspects) {
+      // Fast single-query in-memory pre-filter over all unverified matched movies to find high-signal suspects
+      // (even if previously stamped 'clean' by older weak heuristics), prioritized by flag count & imdbVotes.
+      const joinedRows = db
+        .prepare(
+          `SELECT
+            m.movieId, m.title as movieTitle, m.year as movieYear, m.verified,
+            md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
+            md.Director as omdbDirector, md.Actors as omdbActors, md.Genre as omdbGenre,
+            md.imdbVotes as omdbImdbVotes, md.Plot as omdbPlot, md.Type as omdbType,
+            s.sourceId, s.channelId, c.platform, c.name as channelName,
+            s.title as srcTitle, s.description as srcDesc, s.duration as srcDuration, s.year as srcYear,
+            EXISTS (SELECT 1 FROM source_quality_marks sqm WHERE sqm.sourceId = s.id) as hasQualityMark
+          FROM movies m
+          LEFT JOIN metadata md ON m.movieId = md.movieId
+          JOIN sources s ON s.movieId = m.movieId
+          JOIN channels c ON s.channelId = c.id
+          WHERE m.movieId LIKE 'tt%'
+            ${verifiedFilter}
+            AND s.status = 'active'`
+        )
+        .all() as Array<
+        AuditMovieRow & {
+          sourceId: string
+          channelId: string
+          platform: string
+          channelName: string
+          srcTitle: string | null
+          srcDesc: string | null
+          srcDuration: number | null
+          srcYear: number | null
+          hasQualityMark: number
+        }
+      >
+
+      const bestByMovie = new Map<string, { movie: AuditMovieRow; priority: number }>()
+      for (const r of joinedRows) {
+        if (queueMovieIds.has(r.movieId) || r.hasQualityMark) continue
+
+        const candTitle = r.omdbTitle || r.movieTitle
+        const candYear = extractYearFromTitle(r.omdbYear) ?? r.movieYear ?? null
+        const candRuntime = parseRuntimeMinutes(r.omdbRuntime)
+        const rawTitle = r.srcTitle || r.movieTitle
+        const extracted = extractSourceMetadata({
+          rawTitle,
+          description: r.srcDesc,
+          sourceId: r.sourceId,
+          platform: r.platform,
+          channelId: r.channelId,
+          channelName: r.channelName,
+        })
+        const durMin = r.srcDuration && r.srcDuration > 0 ? Math.round(r.srcDuration / 60) : null
+        const sr = scoreMatchCandidate(
+          {
+            title: extracted.cleanTitle || rawTitle,
+            originalTitle: extracted.originalTitle ?? null,
+            altTitles: [rawTitle, ...extracted.altTitles],
+            sourceYear: extracted.year ?? r.srcYear ?? null,
+            titleYear: extracted.titleYear ?? null,
+            sourceDurationMin: durMin,
+            director: extracted.director ?? null,
+            cast: extracted.cast,
+          },
+          {
+            imdbId: r.movieId,
+            title: candTitle,
+            year: candYear,
+            runtimeMin: candRuntime,
+            director: r.omdbDirector,
+            cast: r.omdbActors,
+            type: r.omdbType,
+          }
+        )
+        const suspect = evaluateMatchAuditSuspect({
+          scoreResult: sr,
+          platform: r.platform,
+          sourceTitle: rawTitle,
+          sourceDescription: r.srcDesc,
+          omdbGenre: r.omdbGenre,
+          omdbImdbVotes: r.omdbImdbVotes,
+          verified: r.verified,
+        })
+        const highSignalCount = suspect.flags.filter(f => HIGH_SIGNAL_RECHECK_FLAGS.has(f)).length
+
+        if (highSignalCount > 0) {
+          const votesBoost = Math.min(1, (r.omdbImdbVotes ?? 0) / 1_000_000)
+          const priority = highSignalCount * 10 + votesBoost
+          const prev = bestByMovie.get(r.movieId)
+          if (!prev || priority > prev.priority) {
+            bestByMovie.set(r.movieId, {
+              movie: {
+                movieId: r.movieId,
+                movieTitle: r.movieTitle,
+                movieYear: r.movieYear,
+                verified: r.verified,
+                omdbTitle: r.omdbTitle,
+                omdbYear: r.omdbYear,
+                omdbRuntime: r.omdbRuntime,
+                omdbDirector: r.omdbDirector,
+                omdbActors: r.omdbActors,
+                omdbGenre: r.omdbGenre,
+                omdbImdbVotes: r.omdbImdbVotes,
+                omdbPlot: r.omdbPlot,
+                omdbType: r.omdbType,
+              },
+              priority,
+            })
+          }
+        }
+      }
+
+      const prioritized = Array.from(bestByMovie.values()).sort((a, b) => b.priority - a.priority)
+      movies = prioritized.slice(0, remaining).map(p => p.movie)
+    } else {
+      const rawMovies = db
+        .prepare(
+          `SELECT
+            m.movieId, m.title as movieTitle, m.year as movieYear, m.verified,
+            md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
+            md.Director as omdbDirector, md.Actors as omdbActors, md.Genre as omdbGenre,
+            md.imdbVotes as omdbImdbVotes, md.Plot as omdbPlot, md.Type as omdbType
+          FROM movies m
+          LEFT JOIN metadata md ON m.movieId = md.movieId
+          LEFT JOIN audit_attempts aa ON m.movieId = aa.movieId
+          WHERE m.movieId LIKE 'tt%'
+            ${verifiedFilter}
+          ORDER BY aa.auditedAt IS NOT NULL ASC, aa.auditedAt ASC, m.lastUpdated DESC
+          LIMIT ?`
+        )
+        .all(remaining + queueMovieIds.size) as AuditMovieRow[]
+
+      movies = rawMovies.filter(m => !queueMovieIds.has(m.movieId)).slice(0, remaining)
+    }
+  }
+
+  const getMovieStmt = db.prepare(
+    `SELECT
+      m.movieId, m.title as movieTitle, m.year as movieYear, m.verified,
+      md.Title as omdbTitle, md.Year as omdbYear, md.Runtime as omdbRuntime,
+      md.Director as omdbDirector, md.Actors as omdbActors, md.Genre as omdbGenre,
+      md.imdbVotes as omdbImdbVotes, md.Plot as omdbPlot, md.Type as omdbType
+     FROM movies m
+     LEFT JOIN metadata md ON m.movieId = md.movieId
+     WHERE m.movieId = ?`
   )
 
   const autoFlagLowRatioArchiveSources = async (
@@ -1459,7 +1601,8 @@ export async function runAutoAuditFalseHits(
 
     // Step 2: Scan unverified matched movies
     await runWithConcurrency(movies, concurrency, async movie => {
-      const sources = getSourcesStmt.all(movie.movieId) as AuditSourceRow[]
+      const allSources = getSourcesStmt.all(movie.movieId) as AuditSourceRow[]
+      const sources = allSources.filter(s => !s.status || s.status === 'active')
       if (sources.length === 0) {
         scanned++
         return
@@ -1498,19 +1641,34 @@ export async function runAutoAuditFalseHits(
           }
         }
 
-        const primarySource = flagRes.remainingCleanSources[0] ?? sources[0]!
-        const rawSourceTitle = primarySource.title || movie.movieTitle
-        const sourceDurationMin =
+        const cleanSources =
+          flagRes.remainingCleanSources.length > 0 ? flagRes.remainingCleanSources : [sources[0]!]
+
+        // Evaluate all clean active sources and pick the most suspicious one to audit
+        let primarySource = cleanSources[0]!
+        let rawSourceTitle = primarySource.title || movie.movieTitle
+        let sourceDurationMin =
           primarySource.duration && primarySource.duration > 0
             ? Math.round(primarySource.duration / 60)
             : null
-
-        const scoreResult = scoreMatchCandidate(
+        let extracted = extractSourceMetadata({
+          rawTitle: rawSourceTitle,
+          description: primarySource.description,
+          sourceId: primarySource.sourceId,
+          platform: primarySource.platform,
+          channelId: primarySource.channelId,
+          channelName: primarySource.channelName,
+        })
+        let scoreResult = scoreMatchCandidate(
           {
-            title: rawSourceTitle,
-            sourceYear: primarySource.year ?? null,
-            titleYear: extractYearFromTitle(rawSourceTitle),
+            title: extracted.cleanTitle || rawSourceTitle,
+            originalTitle: extracted.originalTitle ?? null,
+            altTitles: [rawSourceTitle, ...extracted.altTitles],
+            sourceYear: extracted.year ?? primarySource.year ?? null,
+            titleYear: extracted.titleYear ?? null,
             sourceDurationMin,
+            director: extracted.director ?? null,
+            cast: extracted.cast,
           },
           {
             imdbId: movie.movieId,
@@ -1522,20 +1680,73 @@ export async function runAutoAuditFalseHits(
             type: movie.omdbType,
           }
         )
+        let suspectResult = evaluateMatchAuditSuspect({
+          scoreResult,
+          platform: primarySource.platform,
+          sourceTitle: rawSourceTitle,
+          sourceDescription: primarySource.description,
+          omdbGenre: movie.omdbGenre,
+          omdbImdbVotes: movie.omdbImdbVotes,
+          verified: movie.verified,
+        })
 
-        const isSuspicious =
-          scoreResult.tier === 'reject' ||
-          scoreResult.flags.some(f =>
-            [
-              'runtime_feature_short_mismatch',
-              'runtime_major_mismatch',
-              'year_major_mismatch',
-              'non_movie_candidate',
-              'title_low_similarity',
-            ].includes(f)
+        for (let idx = 1; idx < cleanSources.length; idx++) {
+          const altSrc = cleanSources[idx]!
+          const altRawTitle = altSrc.title || movie.movieTitle
+          const altDurMin =
+            altSrc.duration && altSrc.duration > 0 ? Math.round(altSrc.duration / 60) : null
+          const altExtracted = extractSourceMetadata({
+            rawTitle: altRawTitle,
+            description: altSrc.description,
+            sourceId: altSrc.sourceId,
+            platform: altSrc.platform,
+            channelId: altSrc.channelId,
+            channelName: altSrc.channelName,
+          })
+          const altScore = scoreMatchCandidate(
+            {
+              title: altExtracted.cleanTitle || altRawTitle,
+              originalTitle: altExtracted.originalTitle ?? null,
+              altTitles: [altRawTitle, ...altExtracted.altTitles],
+              sourceYear: altExtracted.year ?? altSrc.year ?? null,
+              titleYear: altExtracted.titleYear ?? null,
+              sourceDurationMin: altDurMin,
+              director: altExtracted.director ?? null,
+              cast: altExtracted.cast,
+            },
+            {
+              imdbId: movie.movieId,
+              title: candidateTitle,
+              year: candidateYear,
+              runtimeMin: candidateRuntimeMin,
+              director: movie.omdbDirector,
+              cast: movie.omdbActors,
+              type: movie.omdbType,
+            }
           )
+          const altSuspect = evaluateMatchAuditSuspect({
+            scoreResult: altScore,
+            platform: altSrc.platform,
+            sourceTitle: altRawTitle,
+            sourceDescription: altSrc.description,
+            omdbGenre: movie.omdbGenre,
+            omdbImdbVotes: movie.omdbImdbVotes,
+            verified: movie.verified,
+          })
+          if (
+            altSuspect.isSuspect &&
+            (!suspectResult.isSuspect || altSuspect.flags.length > suspectResult.flags.length)
+          ) {
+            primarySource = altSrc
+            rawSourceTitle = altRawTitle
+            sourceDurationMin = altDurMin
+            extracted = altExtracted
+            scoreResult = altScore
+            suspectResult = altSuspect
+          }
+        }
 
-        if (!isSuspicious) {
+        if (!suspectResult.isSuspect) {
           if (!dryRun) {
             await serializeDbWrite(() =>
               recordAudit(movie.movieId, 'clean', `Score ${scoreResult.score}`)
@@ -1549,9 +1760,14 @@ export async function runAutoAuditFalseHits(
         const verdict = await verifyMatchCandidate(
           {
             movieId: movie.movieId,
+            sourceId: primarySource.sourceId,
             title: rawSourceTitle,
-            year: primarySource.year ?? extractYearFromTitle(rawSourceTitle),
+            originalTitle: extracted.originalTitle ?? null,
+            altTitles: extracted.altTitles,
+            year: extracted.year ?? primarySource.year ?? extractYearFromTitle(rawSourceTitle),
             durationMin: sourceDurationMin,
+            director: extracted.director ?? null,
+            cast: extracted.cast,
             description: primarySource.description,
             channelName: primarySource.channelName,
           },
@@ -1582,18 +1798,138 @@ export async function runAutoAuditFalseHits(
               llmVerdict: verdict.verdict,
               llmConfidence: verdict.confidence,
               llmReason: verdict.reason,
-              flags: scoreResult.flags,
+              flags: suspectResult.flags,
             })
           }
           return
         }
 
-        // High-confidence MISMATCH -> try auto-rematch, else auto-unmatch
+        // High-confidence MISMATCH -> if multi-source movie, detach only the bad source; else rematch/unmatch whole movie
         if (verdict.verdict === 'mismatch' && verdict.confidence >= minConfidence) {
+          if (cleanSources.length > 1) {
+            // Multi-source movie: detach ONLY this bad source into its own temp movie (and optionally rematch it)
+            let replacementId: string | null = null
+            let replacementMeta: MovieMetadata | null = null
+            if (rematch && !suspectResult.flags.includes('non_movie_source_title')) {
+              const replacement = await findReplacementImdbMatch(
+                {
+                  movieId: movie.movieId,
+                  rawTitle: rawSourceTitle,
+                  description: primarySource.description,
+                  sourceId: primarySource.sourceId,
+                  platform: primarySource.platform,
+                  channelId: primarySource.channelId,
+                  channelName: primarySource.channelName,
+                  sourceYear: primarySource.year,
+                  movieYear: movie.movieYear,
+                  sourceDurationMin,
+                  excludeImdbId: movie.movieId,
+                },
+                {
+                  minRematchConfidence: Math.max(minConfidence, 0.85),
+                  allowGoogle,
+                  model,
+                  omdbApiKey,
+                }
+              )
+              if (replacement) {
+                replacementId = replacement.imdbId
+                replacementMeta = replacement.meta
+              }
+            }
+
+            const baseTempId =
+              primarySource.platform === 'youtube'
+                ? generateYouTubeId(primarySource.sourceId)
+                : generateArchiveId(primarySource.sourceId)
+
+            if (!dryRun) {
+              await serializeDbWrite(async () => {
+                const now = new Date().toISOString()
+                if (replacementId && isImdbId(replacementId)) {
+                  const targetExists = db
+                    .prepare('SELECT 1 FROM movies WHERE movieId = ?')
+                    .get(replacementId)
+                  if (!targetExists) {
+                    db.prepare(
+                      'INSERT OR IGNORE INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, 0, ?)'
+                    ).run(
+                      replacementId,
+                      replacementMeta?.Title || rawSourceTitle,
+                      extracted.year ?? null,
+                      now
+                    )
+                    if (replacementMeta) {
+                      upsertMetadataAndMovie(db, replacementId, replacementMeta)
+                    }
+                  }
+                  const dupSrc = db
+                    .prepare(
+                      'SELECT 1 FROM sources WHERE movieId = ? AND channelId = ? AND sourceId = ?'
+                    )
+                    .get(replacementId, primarySource.channelId, primarySource.sourceId)
+                  if (dupSrc) {
+                    db.prepare('DELETE FROM sources WHERE id = ?').run(primarySource.id)
+                  } else {
+                    db.prepare('UPDATE sources SET movieId = ? WHERE id = ?').run(
+                      replacementId,
+                      primarySource.id
+                    )
+                  }
+                  db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(
+                    now,
+                    movie.movieId
+                  )
+                } else {
+                  let detachedId = baseTempId
+                  let counter = 1
+                  while (db.prepare('SELECT 1 FROM movies WHERE movieId = ?').get(detachedId)) {
+                    detachedId = `${baseTempId}-${counter++}`
+                  }
+                  db.prepare(
+                    'INSERT INTO movies (movieId, title, year, verified, lastUpdated) VALUES (?, ?, ?, 0, ?)'
+                  ).run(
+                    detachedId,
+                    rawSourceTitle,
+                    extracted.year ?? primarySource.year ?? null,
+                    now
+                  )
+                  db.prepare('UPDATE sources SET movieId = ? WHERE id = ?').run(
+                    detachedId,
+                    primarySource.id
+                  )
+                  db.prepare('UPDATE movies SET lastUpdated = ? WHERE movieId = ?').run(
+                    now,
+                    movie.movieId
+                  )
+                }
+              })
+            }
+
+            if (replacementId && isImdbId(replacementId)) {
+              autoRematched++
+            } else {
+              autoUnmatched++
+            }
+            if (samples.length < 30) {
+              samples.push({
+                movieId: movie.movieId,
+                title: candidateTitle,
+                action: replacementId && isImdbId(replacementId) ? 'rematched' : 'unmatched',
+                newMovieId: replacementId || baseTempId,
+                llmVerdict: verdict.verdict,
+                llmConfidence: verdict.confidence,
+                llmReason: `Detached bad source (${primarySource.sourceId}): ${verdict.reason}`,
+                flags: suspectResult.flags,
+              })
+            }
+            return
+          }
+
           let replacementId: string | null = null
           let replacementMeta: MovieMetadata | null = null
 
-          if (rematch) {
+          if (rematch && !suspectResult.flags.includes('non_movie_source_title')) {
             const replacement = await findReplacementImdbMatch(
               {
                 movieId: movie.movieId,
@@ -1806,7 +2142,7 @@ export async function runAutoResolveFalseHitQueue(
   const minConfidence = options.minConfidence ?? 0.85
   const rematch = options.rematch ?? true
   const allowGoogle = options.allowGoogle ?? false
-  const model = options.model || 'google/gemini-2.5-flash-lite'
+  const model = options.model
   const omdbApiKey = process.env.OMDB_API_KEY
 
   const db = getAdminDatabase()
@@ -2146,7 +2482,7 @@ export async function runAutoMatchUnmatched(
   const safeLimit = Math.max(1, Math.min(10000, Number(options.limit) || 200))
   const minConfidence = options.minConfidence ?? 0.85
   const allowGoogle = options.allowGoogle ?? false
-  const model = options.model || 'google/gemini-2.5-flash-lite'
+  const model = options.model
   const pass1Only = options.pass1Only ?? false
   const concurrency = options.concurrency ?? 5
   const omdbApiKey = process.env.OMDB_API_KEY

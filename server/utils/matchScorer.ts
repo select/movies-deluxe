@@ -197,12 +197,24 @@ export function extractYearFromTitle(title?: string | null): number | null {
   return Math.min(...years)
 }
 
+function normalizePersonToken(token: string): string {
+  return token
+    .replace(/shch/g, 'sch')
+    .replace(/iy$/g, 'y')
+    .replace(/y/g, 'i')
+    .replace(/ks/g, 'x')
+    .replace(/ph/g, 'f')
+    .replace(/v/g, 'w')
+    .replace(/e/g, 'e')
+}
+
 function parsePeopleList(input?: string[] | string | null): string[] {
   if (!input) return []
   const items = Array.isArray(input) ? input : input.split(',')
   return items
     .map(s =>
       s
+        .replace(/\s+as\s+.+$/i, '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
@@ -216,9 +228,13 @@ function parsePeopleList(input?: string[] | string | null): string[] {
 function peopleOverlapCount(aList: string[], bList: string[]): number {
   if (aList.length === 0 || bList.length === 0) return 0
   let matches = 0
-  const bLastNames = new Set(
-    bList.map(name => name.split(' ').pop() || '').filter(ln => ln.length >= 3)
+  const bTokenSets = bList.map(name =>
+    name
+      .split(' ')
+      .filter(t => t.length >= 2)
+      .map(normalizePersonToken)
   )
+  const bAllLongTokens = new Set(bTokenSets.flat().filter(t => t.length >= 4))
   const bFullSet = new Set(bList)
 
   for (const person of aList) {
@@ -226,8 +242,37 @@ function peopleOverlapCount(aList: string[], bList: string[]): number {
       matches++
       continue
     }
-    const last = person.split(' ').pop() || ''
-    if (last.length >= 4 && bLastNames.has(last)) {
+    const aTokens = person
+      .split(' ')
+      .filter(t => t.length >= 2)
+      .map(normalizePersonToken)
+    if (aTokens.length === 0) continue
+
+    // Order-independent full/multi-token match (handles "Shakhnazarov Karen" vs "Karen Shakhnazarov")
+    const hasTokenSetMatch = bTokenSets.some(bTokens => {
+      if (bTokens.length === 0) return false
+      const bSet = new Set(bTokens)
+      let overlap = 0
+      for (const t of aTokens) {
+        if (bSet.has(t)) overlap++
+      }
+      if (overlap >= 2) return true
+      // Single long surname match when either side is a multi-word name
+      const aLast = aTokens[aTokens.length - 1] || ''
+      const aFirst = aTokens[0] || ''
+      return (
+        (aLast.length >= 4 && bSet.has(aLast)) ||
+        (aTokens.length >= 2 && aFirst.length >= 5 && bSet.has(aFirst))
+      )
+    })
+
+    if (hasTokenSetMatch) {
+      matches++
+      continue
+    }
+
+    const last = aTokens[aTokens.length - 1] || ''
+    if (last.length >= 4 && bAllLongTokens.has(last)) {
       matches++
     }
   }
@@ -382,7 +427,7 @@ export function scoreMatchCandidate(
     }
   }
 
-  // 4. People overlap (0..20 points)
+  // 4. People overlap & contradiction (-25..+20 points)
   const srcDirectors = parsePeopleList(source.director)
   const candDirectors = parsePeopleList(candidate.director)
   const srcCast = parsePeopleList(source.cast)
@@ -395,6 +440,15 @@ export function scoreMatchCandidate(
   if (castOverlap > 0) peopleScore += 10
   peopleScore = Math.min(20, peopleScore)
   const peopleEvidence = peopleScore > 0
+
+  if (srcDirectors.length > 0 && candDirectors.length > 0 && directorOverlap === 0) {
+    flags.push('director_mismatch')
+    peopleScore -= 20
+  }
+  if (srcCast.length >= 2 && candCast.length >= 2 && castOverlap === 0 && directorOverlap === 0) {
+    flags.push('cast_mismatch')
+    peopleScore -= 20
+  }
 
   // 5. Content type check (-30..0 points)
   let contentTypePenalty = 0
@@ -428,11 +482,18 @@ export function scoreMatchCandidate(
   const score = Math.max(0, Math.min(100, rawScore))
   const hasSupportingEvidence = yearEvidence || runtimeEvidence || peopleEvidence
   const hasHardReject = flags.some(f => HARD_REJECT_FLAGS.has(f))
+  const hasPeopleContradiction =
+    flags.includes('director_mismatch') || flags.includes('cast_mismatch')
 
   let tier: MatchTier
   if (hasHardReject || score < 45 || bestTitleSimilarity < 0.45) {
     tier = 'reject'
-  } else if (score >= 75 && bestTitleSimilarity >= 0.85 && hasSupportingEvidence) {
+  } else if (
+    score >= 75 &&
+    bestTitleSimilarity >= 0.85 &&
+    hasSupportingEvidence &&
+    !hasPeopleContradiction
+  ) {
     tier = 'auto_accept'
   } else {
     tier = 'needs_review'
@@ -455,4 +516,82 @@ export function scoreMatchCandidate(
       hasSupportingEvidence,
     },
   }
+}
+
+export interface AuditSuspectInput {
+  scoreResult: MatchScoreResult
+  platform?: string | null
+  sourceTitle?: string | null
+  sourceDescription?: string | null
+  omdbGenre?: string | null
+  omdbImdbVotes?: number | null
+  verified?: number | boolean | null
+}
+
+export interface AuditSuspectResult {
+  isSuspect: boolean
+  flags: string[]
+}
+
+const NON_MOVIE_SOURCE_TITLE_RE =
+  /\b(trailer|teaser|featurette|behind the scenes|making of|film and analysis|starring movies)\b/i
+
+const ANIMATION_SOURCE_HINT_RE =
+  /\b(animat\w*|cartoon|anime|zeichentrick|trickfilm|disney|pixar|dreamworks|stop[- ]?motion|claymation|cgi)\b/i
+
+/**
+ * Evaluate whether an existing IMDb match has deterministic false-hit indicators
+ * that warrant Jev / LLM verification (even if title + runtime alone look plausible).
+ */
+export function evaluateMatchAuditSuspect(input: AuditSuspectInput): AuditSuspectResult {
+  const flags = new Set<string>(input.scoreResult.flags)
+  const platform = (input.platform || '').toLowerCase()
+  const srcTitle = input.sourceTitle || ''
+  const srcDesc = input.sourceDescription || ''
+  const omdbGenre = input.omdbGenre || ''
+  const imdbVotes = input.omdbImdbVotes ?? 0
+  const isVerified = Boolean(input.verified)
+
+  if (NON_MOVIE_SOURCE_TITLE_RE.test(srcTitle)) {
+    flags.add('non_movie_source_title')
+  }
+
+  if (
+    platform === 'youtube' &&
+    /\bAnimation\b/i.test(omdbGenre) &&
+    !ANIMATION_SOURCE_HINT_RE.test(`${srcTitle} ${srcDesc.slice(0, 600)}`)
+  ) {
+    flags.add('animation_genre_mismatch')
+  }
+
+  // High-popularity IMDb titles on free YouTube channels are frequent targets of
+  // mockbusters / remakes / shared-title false hits (e.g. Beauty and the Beast 1991,
+  // War of the Worlds 2005). Send to Jev unless people overlap already confirms it.
+  if (
+    !isVerified &&
+    platform === 'youtube' &&
+    imdbVotes >= 30000 &&
+    input.scoreResult.breakdown.peopleScore <= 0
+  ) {
+    flags.add('high_votes_youtube_unverified')
+  }
+
+  const SUSPECT_FLAGS = new Set([
+    'runtime_feature_short_mismatch',
+    'runtime_major_mismatch',
+    'year_major_mismatch',
+    'year_mismatch',
+    'director_mismatch',
+    'cast_mismatch',
+    'non_movie_candidate',
+    'title_low_similarity',
+    'non_movie_source_title',
+    'animation_genre_mismatch',
+    'high_votes_youtube_unverified',
+  ])
+
+  const flagList = Array.from(flags)
+  const isSuspect = input.scoreResult.tier === 'reject' || flagList.some(f => SUSPECT_FLAGS.has(f))
+
+  return { isSuspect, flags: flagList }
 }

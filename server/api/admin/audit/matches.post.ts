@@ -1,10 +1,12 @@
 import { defineEventHandler, readBody } from 'h3'
 import { getAdminDatabase } from '#server/utils/adminDb'
 import {
+  evaluateMatchAuditSuspect,
   extractYearFromTitle,
   parseRuntimeMinutes,
   scoreMatchCandidate,
 } from '#server/utils/matchScorer'
+import { extractSourceMetadata } from '#server/utils/sourceMetadataExtractor'
 import { verifyMatchCandidate } from '#server/utils/matchVerifier'
 import {
   analyzeArchiveSourceSize,
@@ -33,6 +35,8 @@ interface MatchedMovieRow {
   omdbRuntime: string | null
   omdbDirector: string | null
   omdbActors: string | null
+  omdbGenre: string | null
+  omdbImdbVotes: number | null
   omdbPlot: string | null
   omdbType: string | null
 }
@@ -79,6 +83,8 @@ export default defineEventHandler(async event => {
         md.Runtime as omdbRuntime,
         md.Director as omdbDirector,
         md.Actors as omdbActors,
+        md.Genre as omdbGenre,
+        md.imdbVotes as omdbImdbVotes,
         md.Plot as omdbPlot,
         md.Type as omdbType
       FROM movies m
@@ -168,12 +174,25 @@ export default defineEventHandler(async event => {
           ? Math.round(primarySource.duration / 60)
           : null
 
+      const extracted = extractSourceMetadata({
+        rawTitle: rawSourceTitle,
+        description: primarySource?.description ?? null,
+        sourceId: primarySource?.sourceId ?? null,
+        platform: primarySource?.platform ?? null,
+        channelId: primarySource?.channelId ?? null,
+        channelName: primarySource?.channelName ?? null,
+      })
+
       const scoreResult = scoreMatchCandidate(
         {
-          title: rawSourceTitle,
-          sourceYear: primarySource?.year ?? null,
-          titleYear: extractYearFromTitle(rawSourceTitle),
+          title: extracted.cleanTitle || rawSourceTitle,
+          originalTitle: extracted.originalTitle ?? null,
+          altTitles: [rawSourceTitle, ...extracted.altTitles],
+          sourceYear: extracted.year ?? primarySource?.year ?? null,
+          titleYear: extracted.titleYear ?? null,
           sourceDurationMin,
+          director: extracted.director ?? null,
+          cast: extracted.cast,
         },
         {
           imdbId: movie.movieId,
@@ -186,8 +205,18 @@ export default defineEventHandler(async event => {
         }
       )
 
+      const suspectResult = evaluateMatchAuditSuspect({
+        scoreResult,
+        platform: primarySource?.platform ?? null,
+        sourceTitle: rawSourceTitle,
+        sourceDescription: primarySource?.description ?? null,
+        omdbGenre: movie.omdbGenre,
+        omdbImdbVotes: movie.omdbImdbVotes,
+        verified: movie.verified,
+      })
+
       const isFalseHit =
-        scoreResult.tier === 'reject' ||
+        suspectResult.isSuspect ||
         (scoreResult.tier === 'needs_review' &&
           scoreResult.score < 60 &&
           scoreResult.flags.some(
@@ -204,9 +233,14 @@ export default defineEventHandler(async event => {
           const verification = await verifyMatchCandidate(
             {
               movieId: movie.movieId,
+              sourceId: primarySource?.sourceId ?? null,
               title: rawSourceTitle,
-              year: primarySource?.year ?? null,
+              originalTitle: extracted.originalTitle ?? null,
+              altTitles: extracted.altTitles,
+              year: extracted.year ?? primarySource?.year ?? null,
               durationMin: sourceDurationMin,
+              director: extracted.director ?? null,
+              cast: extracted.cast,
               description: primarySource?.description ?? null,
               channelName: primarySource?.channelName ?? null,
             },
@@ -239,7 +273,7 @@ export default defineEventHandler(async event => {
             llmVerdict,
             llmConfidence,
             llmReason,
-            flags: scoreResult.flags,
+            flags: suspectResult.flags,
             candidate: {
               omdbTitle: candidateTitle,
               omdbYear: candidateYear,
@@ -258,7 +292,7 @@ export default defineEventHandler(async event => {
             sourceId: primarySource?.sourceId ?? null,
             title: candidateTitle,
             score: scoreResult.score,
-            flags: scoreResult.flags,
+            flags: suspectResult.flags,
             llmVerdict,
             llmReason,
           })
