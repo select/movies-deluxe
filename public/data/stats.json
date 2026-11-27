@@ -10,18 +10,18 @@
   },
   "external": {
     "archiveOrg": {
-      "total": 29641,
+      "total": 29644,
       "scraped": 30417,
-      "percent": 102.61799534428664,
+      "percent": 102.60761030900014,
       "failed": 0,
       "failureRate": 0
     },
     "youtube": {
       "totalScraped": 17984,
-      "totalAvailable": 27522,
+      "totalAvailable": 27558,
       "totalFailed": 8953,
       "failureRate": 33.236811820172996,
-      "percent": 65.3440883656711,
+      "percent": 65.258727048407,
       "channels": [
         {
           "id": "UCGkHFrwE8KEuOHPVsIOskAg",
@@ -29,7 +29,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 2780,
-          "total": 2885,
+          "total": 2879,
           "failed": 456,
           "failureRate": 14.091470951792337
         },
@@ -59,7 +59,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2800,
-          "total": 2825,
+          "total": 2831,
           "failed": 435,
           "failureRate": 13.446676970633694
         },
@@ -89,7 +89,7 @@
           "language": "de",
           "enabled": true,
           "scraped": 702,
-          "total": 691,
+          "total": 689,
           "failed": 111,
           "failureRate": 13.653136531365314
         },
@@ -99,7 +99,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2150,
-          "total": 3966,
+          "total": 3971,
           "failed": 1820,
           "failureRate": 45.843828715365234
         },
@@ -109,7 +109,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 180,
-          "total": 985,
+          "total": 992,
           "failed": 763,
           "failureRate": 80.9119830328738
         },
@@ -139,7 +139,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 2669,
-          "total": 6134,
+          "total": 6148,
           "failed": 2903,
           "failureRate": 52.09978463747308
         },
@@ -179,7 +179,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 724,
-          "total": 919,
+          "total": 923,
           "failed": 0,
           "failureRate": 0
         },
@@ -189,7 +189,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 569,
-          "total": 774,
+          "total": 778,
           "failed": 0,
           "failureRate": 0
         },
@@ -199,7 +199,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 191,
-          "total": 351,
+          "total": 352,
           "failed": 0,
           "failureRate": 0
         },
@@ -219,7 +219,7 @@
           "language": "en",
           "enabled": true,
           "scraped": 926,
-          "total": 1057,
+          "total": 1060,
           "failed": 0,
           "failureRate": 0
         },
@@ -229,7 +229,7 @@
           "language": "zh",
           "enabled": true,
           "scraped": 253,
-          "total": 265,
+          "total": 264,
           "failed": 1,
           "failureRate": 0.39370078740157477
         },
@@ -239,7 +239,7 @@
           "language": "zh",
           "enabled": true,
           "scraped": 1003,
-          "total": 2004,
+          "total": 2005,
           "failed": 782,
           "failureRate": 43.80952380952381
         },
@@ -304,5 +304,5 @@
     "filesInDirectory": 21921,
     "matchedPosters": 20369
   },
-  "lastUpdated": "2026-11-25T17:02:35.873Z"
+  "lastUpdated": "2026-11-27T12:19:40.169Z"
 }
